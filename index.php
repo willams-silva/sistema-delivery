@@ -10,7 +10,7 @@
     <meta name="keywords" content="barbearia freitas, salão de beleza" />
     <meta name="description" content="Fazemos todo tipo de serviço ..." />
     <meta name="author" content="Hugo Vasconcelos" />
-    <link rel="shortcut icon" href="images/<?php echo $icone_site ?>" type="image/x-icon">
+    <link rel="shortcut icon" href="img/logo.png" type="image/x-icon">
     <title>Sistema de Delivery</title>
 </head>
 
