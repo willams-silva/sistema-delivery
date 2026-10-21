@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="pt-br">
 
 <head>
     <meta charset="utf-8" />
@@ -27,6 +27,8 @@
 
 <body>
 
+<div class="'main-container">
+
     <nav class="navbar bg-1 fg-2">
         <div class="container-fluid">
             <a class="navbar-brand" href="index.php">
@@ -35,13 +37,15 @@
             </a>
             <big>
                 <span class="bi bi-cart-fill"></i>
-                    <small><small><small></small><span class="position-absolute top-3 start-90 translate-middle badge rounded-pill border border-bg theme-danger">
-                                0+
+                    <small><small><small></small><span
+                                class="position-absolute top-3 start-90 translate-middle badge rounded-pill border border-bg theme-danger">
+                                0
                             </span></small></small></small>
                 </span>
             </big>
         </div>
     </nav>
+</div>
 
 </body>
 
