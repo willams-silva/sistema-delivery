@@ -36,9 +36,8 @@
             <big>
                 <span class="bi bi-cart-fill"></i>
                     <small><small><small></small>
-                            <span
-                                class="position-absolute top-0 start-100 translate-middle badge rounded-pill border border-bg theme-danger">
-                                99+
+                            <span class="position-absolute top-3 start-90 translate-middle badge rounded-pill border border-bg theme-danger">
+                                0+
                                 <span class="visually-hidden">unread messages</span>
                             </span>
                         </small></small></small>
