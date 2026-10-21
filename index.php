@@ -30,10 +30,20 @@
     <nav class="navbar bg-1 fg-2">
         <div class="container-fluid">
             <a class="navbar-brand" href="index.php">
-                <img src="img/logo.png" alt="Logo" width="30" height="30" class="d-inline-block align-text-top">
+                <img src="img/logo.png" alt="Logo" width="30" height="24" class="d-inline-block align-text-top">
                 Sistema de Delivery
             </a>
-            <i class="bi bi-cart-fill"></i>
+            <big>
+                <span class="bi bi-cart-fill"></i>
+                    <small><small><small></small>
+                            <span
+                                class="position-absolute top-0 start-100 translate-middle badge rounded-pill border border-bg theme-danger">
+                                99+
+                                <span class="visually-hidden">unread messages</span>
+                            </span>
+                        </small></small></small>
+                </span>
+            </big>
         </div>
     </nav>
 
