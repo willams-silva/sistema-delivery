@@ -20,6 +20,8 @@
         integrity="sha384-1a/pXj49ZQ1aHEmrJ+gMw1otqoVsYwlEnlD8mIfY2TV03r20Y0CN7uqx1tQogjPL"
         crossorigin="anonymous"></script>
 
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.2/font/bootstrap-icons.min.css">
+
     <title>Sistema de Delivery</title>
 </head>
 
@@ -27,11 +29,11 @@
 
     <nav class="navbar bg-1 fg-2">
         <div class="container-fluid">
-            <a class="navbar-brand" href="#">
-                <img src="img/logo.png" alt="Logo" width="30" height="30"
-                    class="d-inline-block align-text-top">
-                Bootstrap
+            <a class="navbar-brand" href="index.php">
+                <img src="img/logo.png" alt="Logo" width="30" height="30" class="d-inline-block align-text-top">
+                Sistema de Delivery
             </a>
+            <i class="bi bi-cart-fill"></i>
         </div>
     </nav>
 
