@@ -52,11 +52,11 @@
                 <h3 class="card-title">PIZZAS</h3>
             </div>
 
-            <div class="card col-md-3 col-5">
+            <div class="card rosa col-md-3 col-5">
                 <h3 class="card-title">HAMBURGERS</h3>
             </div>
 
-            <div class="card col-md-3 col-5">
+            <div class="card azul-escuro col-md-3 col-5">
                 <h3 class="card-title">ESFIRRAS</h3>
             </div>
         </div>
