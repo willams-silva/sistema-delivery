@@ -21,31 +21,47 @@
         crossorigin="anonymous"></script>
 
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.2/font/bootstrap-icons.min.css">
+    <link rel="stylesheet" type="text/css" href="style.css">
 
     <title>Sistema de Delivery</title>
 </head>
 
 <body>
 
-<div class="'main-container">
+    <div class="'main-container">
 
-    <nav class="navbar bg-1 fg-2">
-        <div class="container-fluid">
-            <a class="navbar-brand" href="index.php">
-                <img src="img/logo.png" alt="Logo" width="30" height="24" class="d-inline-block align-text-top">
-                Sistema de Delivery
-            </a>
-            <big>
-                <span class="bi bi-cart-fill"></i>
-                    <small><small><small></small><span
-                                class="position-absolute top-3 start-90 translate-middle badge rounded-pill border border-bg theme-danger">
-                                0
-                            </span></small></small></small>
-                </span>
-            </big>
+        <nav class="navbar bg-1 fg-2">
+            <div class="container-fluid">
+                <a class="navbar-brand" href="index.php">
+                    <img src="img/logo.png" alt="Logo" width="30" height="24" class="d-inline-block align-text-top">
+                    Sistema de Delivery
+                </a>
+                <big>
+                    <span class="bi bi-cart-fill"></i>
+                        <small><small><small></small><span
+                                    class="position-absolute top-3 start-90 translate-middle badge rounded-pill border border-bg theme-danger">
+                                    0
+                                </span></small></small></small>
+                    </span>
+                </big>
+            </div>
+        </nav>
+
+        <div class="row cards">
+            <div class="col-md-4 col-6">
+                <h3>PIZZA</h3>
+            </div>
+
+            <div class="col-md-4 col-6">
+                HAMBURGUER
+            </div>
+
+            <div class="col-md-4 col-6">
+                ESFIRRA
+            </div>
         </div>
-    </nav>
-</div>
+
+    </div>
 
 </body>
 
