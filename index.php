@@ -37,14 +37,17 @@
                     <img src="img/logo.png" alt="Logo" width="30" height="24" class="d-inline-block align-text-top">
                     Sistema de Delivery
                 </a>
-                <big>
-                    <span class="bi bi-cart-fill"></i>
-                        <small><small><small></small><span
-                                    class="position-absolute top-3 start-90 translate-middle badge rounded-pill border border-bg theme-danger">
-                                    0
-                                </span></small></small></small>
-                    </span>
-                </big>
+
+                <div class="d-flex">
+                    <big>
+                        <span class="bi bi-cart-fill"></i>
+                            <small><small><small></small><span
+                                        class="position-absolute top-3 start-90 translate-middle badge rounded-pill border border-bg theme-danger">
+                                        0
+                                    </span></small></small></small>
+                        </span>
+                    </big>
+                </div>
             </div>
         </nav>
 
