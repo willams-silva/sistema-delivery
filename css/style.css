@@ -68,3 +68,9 @@ body{
 .vermelho{
     background: radial-gradient(#f58888, #e32424);
 }
+
+
+h3.card-title {
+    color: red !important;
+    font-size: 40px !important;
+}
