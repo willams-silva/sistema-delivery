@@ -48,8 +48,11 @@
         </nav>
 
         <div class="row cards">
-            <div class="card azul col-md-3 col-5">
-                <h3 class="card-title">PIZZAS</h3>
+            <div class="col-md-3 col-5">
+                <div class="card azul">
+                    <h3 class="card-title">PIZZAS</h3>
+                </div>
+                
             </div>
 
             <div class="card rosa col-md-3 col-5">
@@ -59,15 +62,15 @@
             <div class="card azul-escuro col-md-3 col-5">
                 <h3 class="card-title">ESFIRRAS</h3>
             </div>
-            <div class="card azul col-md-3 col-5">
+            <div class="card verde col-md-3 col-5">
                 <h3 class="card-title">SUCOS</h3>
             </div>
 
-            <div class="card rosa col-md-3 col-5">
+            <div class="card roxo col-md-3 col-5">
                 <h3 class="card-title">PASTEIS</h3>
             </div>
 
-            <div class="card azul-escuro col-md-3 col-5">
+            <div class="card vermelho col-md-3 col-5">
                 <h3 class="card-title">REFRIGERANTES</h3>
             </div>
 
