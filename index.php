@@ -48,15 +48,15 @@
         </nav>
 
         <div class="row cards">
-            <div class="col-md-3 col-5">
+            <div class="card col-md-3 col-5">
                 <h3>PIZZA</h3>
             </div>
 
-            <div class="col-md-3 col-5">
+            <div class="card col-md-3 col-5">
                 HAMBURGUER
             </div>
 
-            <div class="col-md-3 col-5">
+            <div class="card col-md-3 col-5">
                 ESFIRRA
             </div>
         </div>
