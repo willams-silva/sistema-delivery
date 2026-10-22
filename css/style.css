@@ -36,6 +36,7 @@ body {
     font-weight: 300;
     color: #fff;
     text-align: center;
+    position: relative;
     margin: 0;
 }
 
@@ -64,3 +65,22 @@ body {
 .vermelho {
     background: radial-gradient(#f58888, #e32424);
 }
+
+@media (max-width: 798px){
+    .card{
+        padding: 5px;
+        min-height: 70px;
+    }
+
+    .card-title{
+      font-size: 18px;  
+    }
+}
+
+
+
+
+
+
+
+
