@@ -53,11 +53,11 @@
             </div>
 
             <div class="card col-md-3 col-5">
-                HAMBURGUER
+                <h3 class="card-title">HAMBURGERS</h3>
             </div>
 
             <div class="card col-md-3 col-5">
-                ESFIRRA
+                <h3 class="card-title">ESFIRRAS</h3>
             </div>
         </div>
 
