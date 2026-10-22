@@ -36,12 +36,14 @@ body{
 .card-title{
     grid-row: 2/4;
     font-weight: 300;
-    color: #000000;
+    color: #fff;
     text-align: center;
     position: relative;
     top: 50%;
     transform: translateY(-50%);
 }
+
+/* CARD BACKGROUNDS */
 
 .azul{
     background: radial-gradient(#1fe4f5, #3fbafe);
