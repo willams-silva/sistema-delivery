@@ -48,7 +48,7 @@
         </nav>
 
         <div class="row cards">
-            <div class="cardazul col-md-3 col-5">
+            <div class="card azul col-md-3 col-5">
                 <h3 class="card-title">PIZZAS</h3>
             </div>
 
