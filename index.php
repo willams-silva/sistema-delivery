@@ -50,7 +50,7 @@
         <div class="row cards">
             <div class="col-md-3 col-5">
                 <div class="card azul">
-                    <h3 class="card-title">PIZZAS</h3>
+                    <h3 class="card-title" style="color: red; font-size: 40px;">PIZZAS</h3>
                 </div>
                 
             </div>
