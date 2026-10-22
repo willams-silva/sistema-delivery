@@ -59,6 +59,20 @@
             <div class="card azul-escuro col-md-3 col-5">
                 <h3 class="card-title">ESFIRRAS</h3>
             </div>
+            <div class="card azul col-md-3 col-5">
+                <h3 class="card-title">SUCOS</h3>
+            </div>
+
+            <div class="card rosa col-md-3 col-5">
+                <h3 class="card-title">PASTEIS</h3>
+            </div>
+
+            <div class="card azul-escuro col-md-3 col-5">
+                <h3 class="card-title">REFRIGERANTES</h3>
+            </div>
+
+
+
         </div>
 
     </div>
