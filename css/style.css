@@ -34,8 +34,13 @@ body{
 }
 
 .card-title{
-     color: red !important;
-    font-size: 40px !important;
+    grid-row: 2/4;
+    font-weight: 300;
+    color: #fff;
+    text-align: center;
+    position: relative;
+    top: 50%;
+    transform: translateY(-50%);
 }
 
 /* CARD BACKGROUNDS */
