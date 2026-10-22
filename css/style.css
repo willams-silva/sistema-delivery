@@ -43,6 +43,10 @@ body {
   transform: translateY(-50%);
 }
 
+.carrinho{
+    margin-right: 10px;
+}
+
 /* CARD BACKGROUNDS */
 
 .azul {

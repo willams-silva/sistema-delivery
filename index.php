@@ -38,7 +38,7 @@
                     Sistema de Delivery
                 </a>
 
-                <div class="d-flex">
+                <div class="d-flex carrinho">
                     <big>
                         <span class="bi bi-cart-fill"></i>
                             <small><small><small></small><span
