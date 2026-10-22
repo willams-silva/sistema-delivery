@@ -24,13 +24,19 @@
     <link rel="stylesheet" type="text/css" href="css/style.css">
 
     <title>Sistema de Delivery</title>
+
+    <style>
+    body {
+        background-color: yellow !important;
+    }
+</style>
 </head>
 
 <body>
 
     <div class="main-container">
 
-        <nav class="navbar bg-1 fg-2">
+        <nav class="navbar bg-1 fg-2 fixed-top">
             <div class="container-fluid">
                 <a class="navbar-brand" href="index.php">
                     <img src="img/logo.png" alt="Logo" width="30" height="24" class="d-inline-block align-text-top">
