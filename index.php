@@ -21,11 +21,10 @@
         crossorigin="anonymous"></script>
 
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.2/font/bootstrap-icons.min.css">
-    <link rel="stylesheet" type="text/css" href="https:/css/style.css">
+    <link rel="stylesheet" type="text/css" href="/css/style.css">
 
     <title>Sistema de Delivery</title>
 
-</style>
 </head>
 
 <body>
@@ -54,30 +53,37 @@
                 <div class="card azul">
                     <h3 class="card-title">PIZZAS</h3>
                 </div>
-                
             </div>
 
-            <div class="card rosa col-md-3 col-5">
-                <h3 class="card-title">HAMBURGERS</h3>
+            <div class="col-md-3 col-5">
+                <div class="card rosa">
+                    <h3 class="card-title">HAMBURGERS</h3>
+                </div>
             </div>
 
-            <div class="card azul-escuro col-md-3 col-5">
-                <h3 class="card-title">ESFIRRAS</h3>
-            </div>
-            <div class="card verde col-md-3 col-5">
-                <h3 class="card-title">SUCOS</h3>
-            </div>
-
-            <div class="card roxo col-md-3 col-5">
-                <h3 class="card-title">PASTEIS</h3>
+            <div class="col-md-3 col-5">
+                <div class="card azul-escuro">
+                    <h3 class="card-title">ESFIRRAS</h3>
+                </div>
             </div>
 
-            <div class="card vermelho col-md-3 col-5">
-                <h3 class="card-title">REFRIGERANTES</h3>
+            <div class="col-md-3 col-5">
+                <div class="card verde">
+                    <h3 class="card-title">SUCOS</h3>
+                </div>
             </div>
 
+            <div class="col-md-3 col-5">
+                <div class="card roxo">
+                    <h3 class="card-title">PASTEIS</h3>
+                </div>
+            </div>
 
-
+            <div class="col-md-3 col-5">
+                <div class="card vermelho">
+                    <h3 class="card-title">REFRIGERANTES</h3>
+                </div>
+            </div>
         </div>
 
     </div>
