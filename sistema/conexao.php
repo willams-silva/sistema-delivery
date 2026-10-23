@@ -14,7 +14,7 @@ try {
 }
 
 
-$nome_sistema = 'Delivery Interativo';
+$nome_sistema = 'Delivery Interativo - Will';
 $email_sistema = 'contato@hugocursos.com.br';
 $telefone_sistema = '(31) 97527-5084';
 $whatsapp_sistema = '55'.preg_replace('/[ ()-]+/' , '' , $telefone_sistema);
