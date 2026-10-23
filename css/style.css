@@ -101,36 +101,6 @@ body{
 
 
 
-@media (max-width: 768px) {
-.card {
-  padding: 5px;  
-  min-height: 70px; 
-  margin: 0px 0px 20px 0px;
-}
-
-.card-title {
-  font-size:18px;
-}
-
-.cards {
-  margin-left: 0px; 
-  margin-right: 0px; 
-}
-
-.ocultar-mobile{
-  display:none;
-}
-}
-
-
-
-@media (min-width: 768px) {
-.cards {
-  margin-left: 100px; 
-  margin-right: 100px; 
-}
-
-}
 
 
 .overlay {
@@ -189,13 +159,13 @@ body{
 
 
 .rodape{
-	position:absolute;
+	position:relative;
 	bottom:0;
 	width:100%;
 	padding:10px;
 	background: #ededed;
 	text-align:center;
-	font-size: 13px;
+	font-size: 12px;
 	color:#363636;
 }
 
@@ -215,7 +185,7 @@ body{
 
 
 .titulo-itens{
-	margin-top: 70px;
+	
 	margin-bottom:8px;
 	background: #f2f0f0;
 	padding:5px;
@@ -308,7 +278,12 @@ body{
 	height:45px;
 }
 
+.area-pedidos{
+  position:fixed;
+  bottom:0;
+  width:100%;
 
+}
 
 
 
@@ -424,11 +399,8 @@ body{
 
 
 
-
-
-
 .imagem-produto{
-	width:100%;
+	width:300px;
 	margin-top: 10px;
 }
 
@@ -486,20 +458,13 @@ body{
 
 .overlay-excluir {
   position: absolute;
-  top: 75px;
-  right:20px;    
-  visibility: hidden;
-  opacity: 0;
+  top: 10px;
+  right:10px;    
+  display:none;
   background: #ffeae6;
   width:300px;
   height:auto;
   z-index:1;
-  
-
-}
-.overlay-excluir:target {
-  visibility: visible;
-  opacity: 1;
 }
 
 
@@ -532,4 +497,81 @@ body{
   color:#FFF;
   border:0px;
   border-radius:0px;
+}
+
+
+
+
+.badge2 {
+  position: absolute;
+  display: inline-block;
+  min-width: 10px;
+  padding: 4px 9px;
+  font-size: 14px;
+  font-weight: 700;
+  text-transform: uppercase;
+  color: #f6f2f8;
+  line-height: 1;
+  vertical-align: middle;
+  white-space: nowrap;
+  text-align: center;
+  background-color: #242424;
+  border-radius: 5px;
+    left: 0;
+    top: -10px;
+    z-index:200;
+    
+   
+    
+}
+
+
+
+.ocultar{
+  display: none;
+}
+
+
+
+
+@media (max-width: 768px) {
+.card {
+  padding: 5px;  
+  min-height: 70px; 
+  margin: 0px 0px 20px 0px;
+}
+
+.card-title {
+  font-size:18px;
+}
+
+.cards {
+  margin-left: 0px; 
+  margin-right: 0px; 
+}
+
+.ocultar-mobile{
+  display:none;
+}
+
+
+.imagem-produto{
+  width:100%;  
+  padding:0px 10px;
+}
+}
+
+
+
+@media (min-width: 768px) {
+.cards {
+  margin-left: 100px; 
+  margin-right: 100px; 
+}
+}
+
+
+.subtitulo-item{
+  font-weight: 500;
+  font-size:13px;
 }

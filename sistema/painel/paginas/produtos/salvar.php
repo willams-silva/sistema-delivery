@@ -14,10 +14,27 @@ $tem_estoque = $_POST['tem_estoque'];
 
 $categoria = @$_POST['categoria'];
 
+$nome_novo = strtolower( preg_replace("[^a-zA-Z0-9-]", "-", 
+        strtr(utf8_decode(trim($nome)), utf8_decode("áàãâéêíóôõúüñçÁÀÃÂÉÊÍÓÔÕÚÜÑÇ"),
+        "aaaaeeiooouuncAAAAEEIOOOUUNC-")) );
+$url = preg_replace('/[ -]+/' , '-' , $nome_novo);
+
+
 if($categoria == 0 || $categoria == ""){
 	echo 'Cadastre uma Categoria de Produtos para o Produto';
 	exit();
 }
+
+
+
+//validar nome
+$query = $pdo->query("SELECT * from $tabela where nome = '$nome'");
+$res = $query->fetchAll(PDO::FETCH_ASSOC);
+if(@count($res) > 0 and $id != $res[0]['id']){
+	echo 'Produto já Cadastrado, escolha outro nome!!';
+	exit();
+}
+
 
 
 
@@ -62,9 +79,9 @@ if(@$_FILES['foto']['name'] != ""){
 
 
 if($id == ""){
-	$query = $pdo->prepare("INSERT INTO $tabela SET nome = :nome, categoria = '$categoria', valor_compra = :valor_compra, valor_venda = :valor_venda, descricao = :descricao, foto = '$foto', nivel_estoque = '$nivel_estoque', tem_estoque = '$tem_estoque', ativo = 'Sim'");
+	$query = $pdo->prepare("INSERT INTO $tabela SET nome = :nome, categoria = '$categoria', valor_compra = :valor_compra, valor_venda = :valor_venda, descricao = :descricao, foto = '$foto', nivel_estoque = '$nivel_estoque', tem_estoque = '$tem_estoque', ativo = 'Sim', url = '$url'");
 }else{
-	$query = $pdo->prepare("UPDATE $tabela SET nome = :nome, categoria = '$categoria', valor_compra = :valor_compra, valor_venda = :valor_venda, descricao = :descricao, foto = '$foto', nivel_estoque = '$nivel_estoque', tem_estoque = '$tem_estoque' WHERE id = '$id'");
+	$query = $pdo->prepare("UPDATE $tabela SET nome = :nome, categoria = '$categoria', valor_compra = :valor_compra, valor_venda = :valor_venda, descricao = :descricao, foto = '$foto', nivel_estoque = '$nivel_estoque', tem_estoque = '$tem_estoque', url = '$url' WHERE id = '$id'");
 }
 
 $query->bindValue(":nome", "$nome");

@@ -5,6 +5,7 @@ $tabela = 'adicionais';
 $nome = $_POST['nome'];
 $produto = $_POST['id'];
 $valor = $_POST['valor'];
+$valor = str_replace(',', '.', $valor);
 
 //validar sigla
 $query = $pdo->query("SELECT * from $tabela where nome = '$nome' and produto = '$produto'");

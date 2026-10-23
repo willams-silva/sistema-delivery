@@ -83,7 +83,7 @@ HTML;
 
 
 }else{
-	echo '<small>Não possui nenhuma variação cadastrada!</small>';
+	echo '<small>Não possui nenhum Ingrediente cadastrado!</small>';
 }
 
 
