@@ -21,7 +21,7 @@
         crossorigin="anonymous"></script>
 
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.2/font/bootstrap-icons.min.css">
-    <link rel="stylesheet" type="text/css" href="/css/style.css?v=5">
+    <link rel="stylesheet" type="text/css" href="/css/style.css?v=6">
 
     <title>Sistema de Delivery</title>
 
@@ -37,17 +37,19 @@
                     <img src="img/logo.png" alt="Logo" width="30" height="24" class="d-inline-block align-text-top">
                     Sistema de Delivery
                 </a>
+                <a class="text-dark" href="#popup1">
 
-                <div class="d-flex carrinho">
-                    <big>
-                        <span class="bi bi-cart-fill"></i>
-                            <small><small><small></small><span
-                                        class="position-absolute top-3 start-90 translate-middle badge rounded-pill border border-bg theme-danger">
-                                        0
-                                    </span></small></small></small>
-                        </span>
-                    </big>
-                </div>
+                    <div class="d-flex carrinho">
+                        <big>
+                            <span class="bi bi-cart-fill"></i>
+                                <small><small><small></small><span
+                                            class="position-absolute top-3 start-90 translate-middle badge rounded-pill border border-bg theme-danger">
+                                            0
+                                        </span></small></small></small>
+                            </span>
+                        </big>
+                    </div>
+                </a>
             </div>
         </nav>
 
@@ -94,3 +96,21 @@
 </body>
 
 </html>
+
+
+<div id="popup1" class="overlay">
+  <div class="popup">
+    <div class="row">
+      <div class="col-9">
+    <h3 class="titulo-popup">3 Itens Adicionados</h3>
+  </div>
+  <div class="col-3">
+    <a class="close" href="#">&times;</a>
+  </div>
+    </div>
+    <hr class="linha">
+    <div class="conteudo-popup">
+      Aqui vamos colocar depois o conteúdo desse popup trazendo os itens que forem adicionados no carrinho
+    </div>
+  </div>
+</div>
