@@ -1,7 +1,7 @@
 <?php 
 
 $usuario = 'u719820352_delivery';
-$senha = 'Ti@v3n3z222';
+$senha = 'Ti@v3n3z@22';
 $banco = 'u719820352_db_delivery';
 $servidor = 'localhost';
 
