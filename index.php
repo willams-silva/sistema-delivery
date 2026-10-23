@@ -1,119 +1,89 @@
-<!DOCTYPE html>
-<html lang="pt-br">
+<?php require_once("cabecalho.php") ?>
 
-<head>
-    <meta charset="utf-8" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+	<div class="main-container">
 
-    <!-- Mobile Metas -->
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+		<nav class="navbar bg-light fixed-top" style="box-shadow: 0px 3px 5px rgba(0, 0, 0, 0.20);">
+			<div class="container-fluid">
+				<a class="navbar-brand" href="index.php">
+					<img src="img/logo.png" alt="" width="30" height="30" class="d-inline-block align-text-top">
+					Delivery Interativo
+				</a>
 
-    <!-- Site Metas -->
-    <meta name="keywords" content="barbearia freitas, salão de beleza" />
-    <meta name="description" content="Fazemos todo tipo de serviço ..." />
-    <meta name="author" content="Hugo Vasconcelos" />
-    <link rel="shortcut icon" href="img/logo.png" type="image/x-icon">
+				<?php require_once("icone-carrinho.php") ?>
 
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@6.0.0-alpha.1/dist/css/bootstrap.min.css" rel="stylesheet"
-        integrity="sha384-B/GM4XqrwHnWXNOWMbloTmrYXZg10cakYGmpfsR/bbzQ6JAJI4ihuyADKLnBgrCe" crossorigin="anonymous">
-    <script type="module" src="https://cdn.jsdelivr.net/npm/bootstrap@6.0.0-alpha.1/dist/js/bootstrap.bundle.min.js"
-        integrity="sha384-1a/pXj49ZQ1aHEmrJ+gMw1otqoVsYwlEnlD8mIfY2TV03r20Y0CN7uqx1tQogjPL"
-        crossorigin="anonymous"></script>
+			</div>
+		</nav>
 
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.2/font/bootstrap-icons.min.css">
-    <link rel="stylesheet" type="text/css" href="/css/style.css?v=7">
 
-    <title>Sistema de Delivery</title>
+		<div class="row cards">
+			<div class="col-md-4 col-6">
+			<a class="link-card" href="itens.php">
+				<div class="card azul ">
+					<h3 class="card-title">PIZZAS</h3>
+				</div>
+			</a>
+			</div>
 
-</head>
+			<div class="col-md-4 col-6">
+			<a class="link-card" href="#">
+				<div class="card rosa ">
+					<h3 class="card-title">PASTÉIS</h3>
+				</div>
+			</a>
+			</div>
 
-<body>
+			<div class="col-md-4 col-6">
+			<a class="link-card" href="#">
+				<div class="card azul-escuro ">
+					<h3 class="card-title">SANDUÍCHES</h3>
+				</div>
+			</a>
+			</div>
 
-    <div class="main-container">
+			<div class="col-md-4 col-6">
+			<a class="link-card" href="#">
+				<div class="card verde ">
+					<h3 class="card-title">HOT DOG</h3>
+				</div>
+			</a>
+			</div>
 
-        <nav class="navbar bg-1 fg-2 fixed-top">
-            <div class="container-fluid">
-                <a class="navbar-brand" href="index.php">
-                    <img src="img/logo.png" alt="Logo" width="30" height="24" class="d-inline-block align-text-top">
-                    Sistema de Delivery
-                </a>
-                <a class="text-dark" href="#popup1">
+			<div class="col-md-4 col-6">
+			<a class="link-card" href="#">
+				<div class="card roxo ">
+					<h3 class="card-title">BEBIDAS</h3>
+				</div>
+			</a>
+			</div>
 
-                    <div class="d-flex carrinho">
-                        <big>
-                            <span class="bi bi-cart-fill"></i>
-                                <small><small><small></small><span
-                                            class="position-absolute top-3 start-90 translate-middle badge rounded-pill border border-bg theme-danger">
-                                            0
-                                        </span></small></small></small>
-                            </span>
-                        </big>
-                    </div>
-                </a>
-            </div>
-        </nav>
+			<div class="col-md-4 col-6">
+			<a class="link-card" href="#">
+				<div class="card vermelho ">
+					<h3 class="card-title">SOBREMESAS</h3>
+				</div>
+			</a>
+			</div>
+		</div>
 
-        <div class="row cards">
-            <div class="col-md-3 col-5">
-                <div class="card azul">
-                    <h3 class="card-title">PIZZAS</h3>
-                </div>
-            </div>
 
-            <div class="col-md-3 col-5">
-                <div class="card rosa">
-                    <h3 class="card-title">HAMBURGERS</h3>
-                </div>
-            </div>
+	</div>
 
-            <div class="col-md-3 col-5">
-                <div class="card azul-escuro">
-                    <h3 class="card-title">ESFIRRAS</h3>
-                </div>
-            </div>
 
-            <div class="col-md-3 col-5">
-                <div class="card verde">
-                    <h3 class="card-title">SUCOS</h3>
-                </div>
-            </div>
+	<footer class="rodape">			
+		<span>Rua X Número 0 Bairro Centro</span>  		
+		<span style="margin-left: 15px"><a href="" class="link-neutro"><i class="bi bi-whatsapp text-success"></i> (31) 97527-5084</a></span> 
+		
 
-            <div class="col-md-3 col-5">
-                <div class="card roxo">
-                    <h3 class="card-title">PASTEIS</h3>
-                </div>
-            </div>
+	</footer>
 
-            <div class="col-md-3 col-5">
-                <div class="card vermelho">
-                    <h3 class="card-title">REFRIGERANTES</h3>
-                </div>
-            </div>
-        </div>
 
-    </div>
-    <footer class="rodape bg-1">
-        texto do rodape
-    </footer>
+
 
 </body>
-
 </html>
 
 
-<div id="popup1" class="overlay">
-    <div class="popup">
-        <div class="row">
-            <div class="col-9">
-                <h3 class="titulo-popup">3 Itens Adicionados</h3>
-            </div>
-            <div class="col-3">
-                <a class="close" href="#">&times;</a>
-            </div>
-        </div>
-        <hr class="linha">
-        <div class="conteudo-popup">
-            Aqui vamos colocar depois o conteúdo desse popup trazendo os itens que forem adicionados no carrinho
-        </div>
-    </div>
-</div>
+
+
+
+
