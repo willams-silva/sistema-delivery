@@ -502,3 +502,34 @@ body{
   opacity: 1;
 }
 
+
+
+.nome_user{
+  font-size: 18px;
+}
+
+.telefone_user{
+  font-size: 16px;
+  color:#335a9c;
+  font-weight: bold;
+  
+}
+
+.botao_sim{
+  width:100%;
+  background-color: green;
+  padding:10px;
+  color:#FFF;
+   border:0px;
+  border-radius:0px;
+}
+
+
+.botao_nao{
+  width:100%;
+  background-color: red;
+  padding:10px;
+  color:#FFF;
+  border:0px;
+  border-radius:0px;
+}

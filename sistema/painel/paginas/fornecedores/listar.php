@@ -31,6 +31,8 @@ for($i=0; $i < $total_reg; $i++){
 		$email = $res[$i]['email'];
 		$endereco = $res[$i]['endereco'];		
 		$data = $res[$i]['data'];
+		$tipo_chave = $res[$i]['tipo_chave'];
+	$chave_pix = $res[$i]['chave_pix'];
 
 
 		$dataF = implode('/', array_reverse(explode('-', $data)));
@@ -46,9 +48,9 @@ echo <<<HTML
 <td class="esc">{$dataF}</td>
 
 <td>
-	<big><a href="#" onclick="editar('{$id}','{$nome}', '{$telefone}', '{$email}', '{$endereco}')" title="Editar Dados"><i class="fa fa-edit text-primary"></i></a></big>
+	<big><a href="#" onclick="editar('{$id}','{$nome}', '{$telefone}', '{$email}', '{$endereco}', '{$tipo_chave}', '{$chave_pix}')" title="Editar Dados"><i class="fa fa-edit text-primary"></i></a></big>
 
-	<big><a href="#" onclick="mostrar('{$nome}', '{$telefone}', '{$email}', '{$endereco}', '{$dataF}')" title="Ver Dados"><i class="fa fa-info-circle text-secondary"></i></a></big>
+	<big><a href="#" onclick="mostrar('{$nome}', '{$telefone}', '{$email}', '{$endereco}', '{$dataF}', '{$tipo_chave}', '{$chave_pix}')" title="Ver Dados"><i class="fa fa-info-circle text-secondary"></i></a></big>
 
 
 	<li class="dropdown head-dpdn2" style="display: inline-block;">
@@ -99,12 +101,14 @@ HTML;
 
 
 <script type="text/javascript">
-	function editar(id, nome, telefone, email, endereco){
+	function editar(id, nome, telefone, email, endereco, tipo_chave, chave_pix){
 		$('#id').val(id);
 		$('#nome').val(nome);
 		$('#telefone').val(telefone);
 		$('#email').val(email);
 		$('#endereco').val(endereco);
+		$('#tipo_chave').val(tipo_chave).change();
+		$('#chave_pix').val(chave_pix);
 					
 		$('#titulo_inserir').text('Editar Registro');
 		$('#modalForm').modal('show');
@@ -114,13 +118,15 @@ HTML;
 
 
 
-	function mostrar(nome, telefone, email, endereco, data){
+	function mostrar(nome, telefone, email, endereco, data, tipo_chave, chave_pix){
 
 		$('#nome_dados').text(nome);		
 		$('#endereco_dados').text(endereco);
 		$('#email_dados').text(email);		
 		$('#data_dados').text(data);		
 		$('#telefone_dados').text(telefone);		
+		$('#tipo_chave_dados').text(tipo_chave);
+		$('#chave_pix_dados').text(chave_pix);		
 		
 		$('#modalDados').modal('show');
 	}
@@ -131,7 +137,8 @@ HTML;
 		$('#nome').val('');
 		$('#telefone').val('');
 		$('#endereco').val('');
-		$('#email').val('');		
+		$('#email').val('');
+		$('#chave_pix').val('');		
 		
 		
 	}

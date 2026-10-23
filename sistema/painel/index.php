@@ -22,6 +22,17 @@ if(@$_GET['pagina'] != ""){
 }
 
 
+$data_atual = date('Y-m-d');
+$mes_atual = Date('m');
+$ano_atual = Date('Y');
+$data_mes = $ano_atual."-".$mes_atual."-01";
+$data_ano = $ano_atual."-01-01";
+
+
+$partesInicial = explode('-', $data_atual);
+$dataDiaInicial = $partesInicial[2];
+$dataMesInicial = $partesInicial[1];
+
 
 ?>
 <!DOCTYPE HTML>
@@ -114,12 +125,12 @@ if(@$_GET['pagina'] != ""){
 
 
 	<link rel="stylesheet" type="text/css" href="DataTables/datatables.min.css"/> 
-<script type="text/javascript" src="DataTables/datatables.min.js"></script>
+	<script type="text/javascript" src="DataTables/datatables.min.js"></script>
 
-<link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
-<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+	<link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+	<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 
-<style type="text/css">
+	<style type="text/css">
 		.select2-selection__rendered {
 			line-height: 36px !important;
 			font-size:16px !important;
@@ -160,6 +171,13 @@ if(@$_GET['pagina'] != ""){
 									<i class="fa fa-dashboard"></i> <span>Home</span>
 								</a>
 							</li>
+
+							<li class="treeview">
+								<a href="index.php?pagina=pedidos">
+									<i class="fa fa-motorcycle"></i> <span>Pedidos</span>
+								</a>
+							</li>
+
 							<li class="treeview">
 								<a href="#">
 									<i class="fa fa-users"></i>
@@ -217,12 +235,42 @@ if(@$_GET['pagina'] != ""){
 
 							<li class="treeview">
 								<a href="#">
+									<i class="fa fa-dollar"></i>
+									<span>Financeiro</span>
+									<i class="fa fa-angle-left pull-right"></i>
+								</a>
+								<ul class="treeview-menu">
+
+									<li><a href="index.php?pagina=vendas"><i class="fa fa-angle-right"></i> Vendas / Pedidos</a></li>
+
+									<li><a href="index.php?pagina=pagar"><i class="fa fa-angle-right"></i> Contas à Pagar</a></li>
+
+									<li><a href="index.php?pagina=receber"><i class="fa fa-angle-right"></i> Contas à Receber</a></li>
+
+									<li><a href="index.php?pagina=compras"><i class="fa fa-angle-right"></i> Compras</a></li>
+
+									
+								</ul>
+							</li>
+
+
+
+
+							<li class="treeview">
+								<a href="#">
 									<i class="fa fa-file-pdf-o"></i>
 									<span>Relatórios</span>
 									<i class="fa fa-angle-left pull-right"></i>
 								</a>
 								<ul class="treeview-menu">
 									<li><a href="rel/produtos_class.php" target="_blank"><i class="fa fa-angle-right"></i> Produtos</a></li>
+
+									<li><a href="" data-toggle="modal" data-target="#RelCon"><i class="fa fa-angle-right"></i> Relatório de Contas</a></li>
+
+
+									<li><a href="" data-toggle="modal" data-target="#RelLucro"><i class="fa fa-angle-right"></i> Demonstrativo de Lucro</a></li>
+
+									<li><a href="" data-toggle="modal" data-target="#RelVen"><i class="fa fa-angle-right"></i> Vendas / Pedidos</a></li>
 
 									
 									
@@ -245,49 +293,66 @@ if(@$_GET['pagina'] != ""){
 				<!--toggle button end-->
 				<div class="profile_details_left"><!--notifications of menu start -->
 					<ul class="nofitications-dropdown">
+						<?php 
+						$query = $pdo->query("SELECT * FROM vendas where data = CurDate() and status = 'Iniciado'");
+						$res = $query->fetchAll(PDO::FETCH_ASSOC);
+						$total_reg = @count($res); 
+						if($total_reg > 1){
+							$texto_pedidos = 'Você possui '.$total_reg.' novos Pedidos!';
+						}else if($total_reg == 1){
+							$texto_pedidos = 'Você possui '.$total_reg.' novo Pedido!';
+						}else{
+							$texto_pedidos = 'Você não possui novos Pedidos!';
+						}
+						?>
 						<li class="dropdown head-dpdn">
-							<a href="#" class="dropdown-toggle" data-toggle="dropdown" aria-expanded="false"><i class="fa fa-envelope"></i><span class="badge">4</span></a>
+							<a href="#" class="dropdown-toggle" data-toggle="dropdown" aria-expanded="false"><i class="fa fa-cutlery" style="color:#FFF"></i><span class="badge"><?php echo $total_reg ?></span></a>
 							<ul class="dropdown-menu">
 								<li>
 									<div class="notification_header">
-										<h3>You have 3 new messages</h3>
+										<h3><?php echo $texto_pedidos ?></h3>
 									</div>
 								</li>
-								<li><a href="#">
-									<div class="user_img"><img src="images/1.jpg" alt=""></div>
-									<div class="notification_desc">
-										<p>Lorem ipsum dolor amet</p>
-										<p><span>1 hour ago</span></p>
-									</div>
-									<div class="clearfix"></div>	
-								</a></li>
-								<li class="odd"><a href="#">
-									<div class="user_img"><img src="images/4.jpg" alt=""></div>
-									<div class="notification_desc">
-										<p>Lorem ipsum dolor amet </p>
-										<p><span>1 hour ago</span></p>
-									</div>
-									<div class="clearfix"></div>	
-								</a></li>
-								<li><a href="#">
-									<div class="user_img"><img src="images/3.jpg" alt=""></div>
-									<div class="notification_desc">
-										<p>Lorem ipsum dolor amet </p>
-										<p><span>1 hour ago</span></p>
-									</div>
-									<div class="clearfix"></div>	
-								</a></li>
-								<li><a href="#">
-									<div class="user_img"><img src="images/2.jpg" alt=""></div>
-									<div class="notification_desc">
-										<p>Lorem ipsum dolor amet </p>
-										<p><span>1 hour ago</span></p>
-									</div>
-									<div class="clearfix"></div>	
-								</a></li>
+
+								<?php 
+								$query = $pdo->query("SELECT * FROM vendas where data = CurDate() and status = 'Iniciado' order by id desc limit 6");
+						$res = $query->fetchAll(PDO::FETCH_ASSOC);
+						$total_reg = @count($res);
+								for($i=0; $i < $total_reg; $i++){
+									foreach ($res[$i] as $key => $value){}
+										$id = $res[$i]['id'];
+										$cliente = $res[$i]['cliente'];
+	$valor = $res[$i]['valor'];
+	$valorF = number_format($valor, 2, ',', '.');
+
+	$query2 = $pdo->query("SELECT * FROM clientes where id = '$cliente'");
+		$res2 = $query2->fetchAll(PDO::FETCH_ASSOC);
+		$total_reg2 = @count($res2);
+		if($total_reg2 > 0){
+			$nome_cliente = $res2[0]['nome'];
+		}else{
+			$nome_cliente = 'Nenhum!';
+		}
+										?>
+
+									<li>
+										<a href="#">
+											<div class="user_img"><img src="images/1.jpg" alt=""></div>
+											<div class="notification_desc">
+												<p><b>Pedido <?php echo $id ?></b> Valor: <span style="color:green !important"><?php echo $valorF ?></span> </p>
+												<p><span>Cliente <?php echo $nome_cliente ?></span></p>
+											</div>
+											<div class="clearfix"></div>	
+										</a>
+									</li>
+									<hr style="margin:2px">
+
+								<?php } ?>							
+
+
 								<li>
 									<div class="notification_bottom">
-										<a href="#">See all messages</a>
+										<a href="index.php?pagina=pedidos">Ir para os Pedidos</a>
 									</div> 
 								</li>
 							</ul>
@@ -398,10 +463,10 @@ if(@$_GET['pagina'] != ""){
 
 
 	<!-- Mascaras JS -->
-<script type="text/javascript" src="../../js/mascaras.js"></script>
+	<script type="text/javascript" src="../../js/mascaras.js"></script>
 
-<!-- Ajax para funcionar Mascaras JS -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.mask/1.14.11/jquery.mask.min.js"></script> 
+	<!-- Ajax para funcionar Mascaras JS -->
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.mask/1.14.11/jquery.mask.min.js"></script> 
 
 	
 </body>
@@ -423,31 +488,31 @@ if(@$_GET['pagina'] != ""){
 				</button>
 			</div>
 			<form id="form-perfil">
-			<div class="modal-body">
-				
+				<div class="modal-body">
+
 
 					<div class="row">
 						<div class="col-md-6">							
-								<label>Nome</label>
-								<input type="text" class="form-control" id="nome_perfil" name="nome" placeholder="Seu Nome" value="<?php echo $nome_usuario ?>" required>							
+							<label>Nome</label>
+							<input type="text" class="form-control" id="nome_perfil" name="nome" placeholder="Seu Nome" value="<?php echo $nome_usuario ?>" required>							
 						</div>
 
 						<div class="col-md-6">							
-								<label>Email</label>
-								<input type="email" class="form-control" id="email_perfil" name="email" placeholder="Seu Nome" value="<?php echo $email_usuario ?>" required>							
+							<label>Email</label>
+							<input type="email" class="form-control" id="email_perfil" name="email" placeholder="Seu Nome" value="<?php echo $email_usuario ?>" required>							
 						</div>
 					</div>
 
 
 					<div class="row">
 						<div class="col-md-6">							
-								<label>Telefone</label>
-								<input type="text" class="form-control" id="telefone_perfil" name="telefone" placeholder="Seu Telefone" value="<?php echo $telefone_usuario ?>" required>							
+							<label>Telefone</label>
+							<input type="text" class="form-control" id="telefone_perfil" name="telefone" placeholder="Seu Telefone" value="<?php echo $telefone_usuario ?>" required>							
 						</div>
 
 						<div class="col-md-6">							
-								<label>CPF</label>
-								<input type="text" class="form-control" id="cpf_perfil" name="cpf" placeholder="Seu CPF" value="<?php echo $cpf_usuario ?>">							
+							<label>CPF</label>
+							<input type="text" class="form-control" id="cpf_perfil" name="cpf" placeholder="Seu CPF" value="<?php echo $cpf_usuario ?>">							
 						</div>
 					</div>
 
@@ -455,21 +520,21 @@ if(@$_GET['pagina'] != ""){
 
 					<div class="row">
 						<div class="col-md-6">							
-								<label>Senha</label>
-								<input type="password" class="form-control" id="senha_perfil" name="senha" placeholder="Senha" value="<?php echo $senha_usuario ?>" required>							
+							<label>Senha</label>
+							<input type="password" class="form-control" id="senha_perfil" name="senha" placeholder="Senha" value="<?php echo $senha_usuario ?>" required>							
 						</div>
 
 						<div class="col-md-6">							
-								<label>Confirmar Senha</label>
-								<input type="password" class="form-control" id="conf_senha_perfil" name="conf_senha" placeholder="Confirmar Senha" value="" required>							
+							<label>Confirmar Senha</label>
+							<input type="password" class="form-control" id="conf_senha_perfil" name="conf_senha" placeholder="Confirmar Senha" value="" required>							
 						</div>
 					</div>
 
 
 					<div class="row">
 						<div class="col-md-6">							
-								<label>Foto</label>
-								<input type="file" class="form-control" id="foto_perfil" name="foto" value="<?php echo $foto_usuario ?>" onchange="carregarImgPerfil()">							
+							<label>Foto</label>
+							<input type="file" class="form-control" id="foto_perfil" name="foto" value="<?php echo $foto_usuario ?>" onchange="carregarImgPerfil()">							
 						</div>
 
 						<div class="col-md-6">								
@@ -482,14 +547,14 @@ if(@$_GET['pagina'] != ""){
 
 
 					<input type="hidden" name="id_usuario" value="<?php echo $id_usuario ?>">
-				
 
-				<br>
-				<small><div id="msg-perfil" align="center"></div></small>
-			</div>
-			<div class="modal-footer">       
-				<button type="submit" class="btn btn-primary">Salvar</button>
-			</div>
+
+					<br>
+					<small><div id="msg-perfil" align="center"></div></small>
+				</div>
+				<div class="modal-footer">       
+					<button type="submit" class="btn btn-primary">Salvar</button>
+				</div>
 			</form>
 		</div>
 	</div>
@@ -513,42 +578,42 @@ if(@$_GET['pagina'] != ""){
 				</button>
 			</div>
 			<form id="form-config">
-			<div class="modal-body">
-				
+				<div class="modal-body">
+
 
 					<div class="row">
 						<div class="col-md-3">							
-								<label>Nome do Projeto</label>
-								<input type="text" class="form-control" id="nome_sistema" name="nome_sistema" placeholder="Delivery Interativo" value="<?php echo @$nome_sistema ?>" required>							
+							<label>Nome do Projeto</label>
+							<input type="text" class="form-control" id="nome_sistema" name="nome_sistema" placeholder="Delivery Interativo" value="<?php echo @$nome_sistema ?>" required>							
 						</div>
 
 						<div class="col-md-3">							
-								<label>Email Sistema</label>
-								<input type="email" class="form-control" id="email_sistema" name="email_sistema" placeholder="Email do Sistema" value="<?php echo @$email_sistema ?>" >							
+							<label>Email Sistema</label>
+							<input type="email" class="form-control" id="email_sistema" name="email_sistema" placeholder="Email do Sistema" value="<?php echo @$email_sistema ?>" >							
 						</div>
 
 
 						<div class="col-md-3">							
-								<label>Telefone Sistema</label>
-								<input type="text" class="form-control" id="telefone_sistema" name="telefone_sistema" placeholder="Telefone do Sistema" value="<?php echo @$telefone_sistema ?>" required>							
+							<label>Telefone Sistema</label>
+							<input type="text" class="form-control" id="telefone_sistema" name="telefone_sistema" placeholder="Telefone do Sistema" value="<?php echo @$telefone_sistema ?>" required>							
 						</div>
 
 						<div class="col-md-3">							
-								<label>Telefone Fixo</label>
-								<input type="text" class="form-control" id="telefone_fixo" name="telefone_fixo" placeholder="Telefone Fixo" value="<?php echo @$telefone_fixo ?>" >							
+							<label>Telefone Fixo</label>
+							<input type="text" class="form-control" id="telefone_fixo" name="telefone_fixo" placeholder="Telefone Fixo" value="<?php echo @$telefone_fixo ?>" >							
 						</div>
 					</div>
 
 
 					<div class="row">
 						<div class="col-md-6">							
-								<label>Endereço <small>(Rua Número Bairro e Cidade)</small></label>
-								<input type="text" class="form-control" id="endereco_sistema" name="endereco_sistema" placeholder="Rua X..." value="<?php echo @$endereco_sistema ?>" >							
+							<label>Endereço <small>(Rua Número Bairro e Cidade)</small></label>
+							<input type="text" class="form-control" id="endereco_sistema" name="endereco_sistema" placeholder="Rua X..." value="<?php echo @$endereco_sistema ?>" >							
 						</div>
 
 						<div class="col-md-6">							
-								<label>Instagram</label>
-								<input type="text" class="form-control" id="instagram_sistema" name="instagram_sistema" placeholder="Link do Instagram" value="<?php echo @$instagram_sistema ?>">							
+							<label>Instagram</label>
+							<input type="text" class="form-control" id="instagram_sistema" name="instagram_sistema" placeholder="Link do Instagram" value="<?php echo @$instagram_sistema ?>">							
 						</div>
 					</div>
 
@@ -556,34 +621,34 @@ if(@$_GET['pagina'] != ""){
 
 					<div class="row">
 						<div class="col-md-3">							
-								<label>Tipo Relatório</label>
-								<select class="form-control" name="tipo_rel">
-									<option value="PDF" <?php if(@$tipo_rel == 'PDF'){?> selected <?php } ?> >PDF</option>
-									<option value="HTML" <?php if(@$tipo_rel == 'HTML'){?> selected <?php } ?> >HTML</option>
-								</select>							
+							<label>Tipo Relatório</label>
+							<select class="form-control" name="tipo_rel">
+								<option value="PDF" <?php if(@$tipo_rel == 'PDF'){?> selected <?php } ?> >PDF</option>
+								<option value="HTML" <?php if(@$tipo_rel == 'HTML'){?> selected <?php } ?> >HTML</option>
+							</select>							
 						</div>
 
 						<div class="col-md-3">							
-								<label>Mostrar Miniaturas</label>
-								<select class="form-control" name="tipo_miniatura">
+							<label>Mostrar Miniaturas</label>
+							<select class="form-control" name="tipo_miniatura">
 								<option value="Cores" <?php if(@$tipo_miniatura == 'Cores'){?> selected <?php } ?> >Cores</option>
-									<option value="Foto" <?php if(@$tipo_miniatura == 'Foto'){?> selected <?php } ?> >Foto</option>	
-									</select>					
+								<option value="Foto" <?php if(@$tipo_miniatura == 'Foto'){?> selected <?php } ?> >Foto</option>	
+							</select>					
 						</div>
 
 
 						<div class="col-md-3">							
-								<label>Status Whatsapp</label>
-								<select class="form-control" name="status_whatsapp">
+							<label>Status Whatsapp</label>
+							<select class="form-control" name="status_whatsapp">
 								<option value="Sim" <?php if(@$status_whatsapp == 'Sim'){?> selected <?php } ?> >Sim</option>
-									<option value="Não" <?php if(@$status_whatsapp == 'Não'){?> selected <?php } ?> >Não</option>	
-									</select>					
+								<option value="Não" <?php if(@$status_whatsapp == 'Não'){?> selected <?php } ?> >Não</option>	
+							</select>					
 						</div>
 
 
 						<div class="col-md-3">							
-								<label>Previsão Entrega <small>Minutos</small></label>
-								<input type="number" class="form-control" id="previsao_entrega" name="previsao_entrega" placeholder="Previsão Minutos" value="<?php echo @$previsao_entrega ?>" required>							
+							<label>Previsão Entrega <small>Minutos</small></label>
+							<input type="number" class="form-control" id="previsao_entrega" name="previsao_entrega" placeholder="Previsão Minutos" value="<?php echo @$previsao_entrega ?>" required>							
 						</div>
 
 					</div>
@@ -591,18 +656,18 @@ if(@$_GET['pagina'] != ""){
 
 					<div class="row">
 						<div class="col-md-2">							
-								<label>Abertura</label>
-								<input type="time" name="horario_abertura" class="form-control" value="<?php echo @$horario_abertura ?>">					
+							<label>Abertura</label>
+							<input type="time" name="horario_abertura" class="form-control" value="<?php echo @$horario_abertura ?>">					
 						</div>
 
 						<div class="col-md-2">							
-								<label>Fechamento</label>
-								<input type="time" name="horario_fechamento" class="form-control" value="<?php echo @$horario_fechamento ?>">					
+							<label>Fechamento</label>
+							<input type="time" name="horario_fechamento" class="form-control" value="<?php echo @$horario_fechamento ?>">					
 						</div>
 
 						<div class="col-md-8">
 							<label>Texto Fechamento <small>Fora do Horário</small></label>
-								<input maxlength="255" type="text" name="texto_fechamento_horario" class="form-control" value="<?php echo @$texto_fechamento_horario ?>" placeholder="Texto que vai aparecer quando o cliente tentar fazer pedido fora do horário de funcionamento">		
+							<input maxlength="255" type="text" name="texto_fechamento_horario" class="form-control" value="<?php echo @$texto_fechamento_horario ?>" placeholder="Texto que vai aparecer quando o cliente tentar fazer pedido fora do horário de funcionamento">		
 						</div>
 						
 					</div>
@@ -611,44 +676,58 @@ if(@$_GET['pagina'] != ""){
 
 					<div class="row">
 						<div class="col-md-3">							
-								<label>Estabelecimento</label>
-								<select class="form-control" name="status_estabelecimento">
+							<label>Estabelecimento</label>
+							<select class="form-control" name="status_estabelecimento">
 								<option value="Aberto" <?php if(@$status_estabelecimento == 'Aberto'){?> selected <?php } ?> >Aberto</option>
-									<option value="Fechado" <?php if(@$status_estabelecimento == 'Fechado'){?> selected <?php } ?> >Fechado</option>	
-									</select>
+								<option value="Fechado" <?php if(@$status_estabelecimento == 'Fechado'){?> selected <?php } ?> >Fechado</option>	
+							</select>
 						</div>
 						<div class="col-md-9">
 							<label>Texto Fechamento <small>(Imprevisto)</small></label>
-								<input maxlength="255" type="text" name="texto_fechamento" class="form-control" value="<?php echo @$texto_fechamento ?>" placeholder="Caso marque a opção de Estabelecimento Fechado, coloque aqui o texto que deseja aparecer">		
+							<input maxlength="255" type="text" name="texto_fechamento" class="form-control" value="<?php echo @$texto_fechamento ?>" placeholder="Caso marque a opção de Estabelecimento Fechado, coloque aqui o texto que deseja aparecer">		
 						</div>
 					</div>
+
+
+
+
+
+
+					<div class="row">
+						<div class="col-md-3">							
+							<label>Atualizar Pedidos</label>
+							<input type="number" name="tempo_atualizar" class="form-control" value="<?php echo @$tempo_atualizar ?>" placeholder="Tempo Segundos">	
+						</div>
+					
+					</div>
+
 
 
 					<div class="row">
 						<div class="col-md-4">						
-								<div class="form-group"> 
-									<label>Logo (*PNG)</label> 
-									<input class="form-control" type="file" name="foto-logo" onChange="carregarImgLogo();" id="foto-logo">
-								</div>						
+							<div class="form-group"> 
+								<label>Logo (*PNG)</label> 
+								<input class="form-control" type="file" name="foto-logo" onChange="carregarImgLogo();" id="foto-logo">
+							</div>						
+						</div>
+						<div class="col-md-2">
+							<div id="divImg">
+								<img src="../../img/<?php echo $logo_sistema ?>"  width="80px" id="target-logo">									
 							</div>
-							<div class="col-md-2">
-								<div id="divImg">
-									<img src="../../img/<?php echo $logo_sistema ?>"  width="80px" id="target-logo">									
-								</div>
-							</div>
+						</div>
 
 
-							<div class="col-md-4">						
-								<div class="form-group"> 
-									<label>Ícone (*Png)</label> 
-									<input class="form-control" type="file" name="foto-icone" onChange="carregarImgIcone();" id="foto-icone">
-								</div>						
+						<div class="col-md-4">						
+							<div class="form-group"> 
+								<label>Ícone (*Png)</label> 
+								<input class="form-control" type="file" name="foto-icone" onChange="carregarImgIcone();" id="foto-icone">
+							</div>						
+						</div>
+						<div class="col-md-2">
+							<div id="divImg">
+								<img src="../../img/<?php echo $favicon_sistema ?>"  width="50px" id="target-icone">									
 							</div>
-							<div class="col-md-2">
-								<div id="divImg">
-									<img src="../../img/<?php echo $favicon_sistema ?>"  width="50px" id="target-icone">									
-								</div>
-							</div>
+						</div>
 
 						
 					</div>
@@ -657,29 +736,29 @@ if(@$_GET['pagina'] != ""){
 
 
 					<div class="row">
-							<div class="col-md-4">						
-								<div class="form-group"> 
-									<label>Logo Relatório (*Jpg)</label> 
-									<input class="form-control" type="file" name="foto-logo-rel" onChange="carregarImgLogoRel();" id="foto-logo-rel">
-								</div>						
+						<div class="col-md-4">						
+							<div class="form-group"> 
+								<label>Logo Relatório (*Jpg)</label> 
+								<input class="form-control" type="file" name="foto-logo-rel" onChange="carregarImgLogoRel();" id="foto-logo-rel">
+							</div>						
+						</div>
+						<div class="col-md-2">
+							<div id="divImg">
+								<img src="../../img/<?php echo @$logo_rel ?>"  width="80px" id="target-logo-rel">									
 							</div>
-							<div class="col-md-2">
-								<div id="divImg">
-									<img src="../../img/<?php echo @$logo_rel ?>"  width="80px" id="target-logo-rel">									
-								</div>
-							</div>
+						</div>
 
 
 						
 					</div>					
-				
 
-				<br>
-				<small><div id="msg-config" align="center"></div></small>
-			</div>
-			<div class="modal-footer">       
-				<button type="submit" class="btn btn-primary">Salvar</button>
-			</div>
+
+					<br>
+					<small><div id="msg-config" align="center"></div></small>
+				</div>
+				<div class="modal-footer">       
+					<button type="submit" class="btn btn-primary">Salvar</button>
+				</div>
 			</form>
 		</div>
 	</div>
@@ -688,24 +767,307 @@ if(@$_GET['pagina'] != ""){
 
 
 
+
+
+
+
+
+<!-- Modal Rel Contas -->
+<div class="modal fade" id="RelCon" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+	<div class="modal-dialog" role="document">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h4 class="modal-title" id="exampleModalLabel">Relatório de Contas
+					<small>(
+						<a href="#" onclick="datas('1980-01-01', 'tudo-Con', 'Con')">
+							<span style="color:#000" id="tudo-Con">Tudo</span>
+						</a> / 
+						<a href="#" onclick="datas('<?php echo $data_atual ?>', 'hoje-Con', 'Con')">
+							<span id="hoje-Con">Hoje</span>
+						</a> /
+						<a href="#" onclick="datas('<?php echo $data_mes ?>', 'mes-Con', 'Con')">
+							<span style="color:#000" id="mes-Con">Mês</span>
+						</a> /
+						<a href="#" onclick="datas('<?php echo $data_ano ?>', 'ano-Con', 'Con')">
+							<span style="color:#000" id="ano-Con">Ano</span>
+						</a> 
+					)</small>
+
+
+
+				</h4>
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close" style="margin-top: -20px">
+					<span aria-hidden="true">&times;</span>
+				</button>
+			</div>
+			<form method="post" action="rel/rel_contas_class.php" target="_blank">
+				<div class="modal-body">
+
+					<div class="row">
+						<div class="col-md-4">						
+							<div class="form-group"> 
+								<label>Data Inicial</label> 
+								<input type="date" class="form-control" name="dataInicial" id="dataInicialRel-Con" value="<?php echo date('Y-m-d') ?>" required> 
+							</div>						
+						</div>
+						<div class="col-md-4">
+							<div class="form-group"> 
+								<label>Data Final</label> 
+								<input type="date" class="form-control" name="dataFinal" id="dataFinalRel-Con" value="<?php echo date('Y-m-d') ?>" required> 
+							</div>
+						</div>
+
+						<div class="col-md-4">						
+							<div class="form-group"> 
+								<label>Pago</label> 
+								<select class="form-control" name="pago" style="width:100%;">
+									<option value="">Todas</option>
+									<option value="Sim">Somente Pagas</option>
+									<option value="Não">Pendentes</option>
+
+								</select> 
+							</div>						
+						</div>
+
+					</div>
+
+
+
+					<div class="row">
+						<div class="col-md-6">						
+							<div class="form-group"> 
+								<label>Pagar / Receber</label> 
+								<select class="form-control sel13" name="tabela" style="width:100%;">
+									<option value="pagar">Contas à Pagar</option>
+									<option value="receber">Contas à Receber</option>
+
+								</select> 
+							</div>						
+						</div>
+						<div class="col-md-6">
+							<div class="form-group"> 
+								<label>Consultar Por</label> 
+								<select class="form-control sel13" name="busca" style="width:100%;">
+									<option value="data_venc">Data de Vencimento</option>
+									<option value="data_pgto">Data de Pagamento</option>
+
+								</select>
+							</div>
+						</div>
+
+
+
+					</div>
+
+
+
+
+				</div>
+
+				<div class="modal-footer">
+					<button type="submit" class="btn btn-primary">Gerar Relatório</button>
+				</div>
+			</form>
+
+		</div>
+	</div>
+</div>
+
+
+
+
+
+
+
+
+<!-- Modal Rel Lucro -->
+<div class="modal fade" id="RelLucro" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+	<div class="modal-dialog" role="document">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h4 class="modal-title" id="exampleModalLabel">Demonstrativo de Lucro
+					<small>(
+						<a href="#" onclick="datas('1980-01-01', 'tudo-Luc', 'Luc')">
+							<span style="color:#000" id="tudo-Luc">Tudo</span>
+						</a> / 
+						<a href="#" onclick="datas('<?php echo $data_atual ?>', 'hoje-Luc', 'Luc')">
+							<span id="hoje-Luc">Hoje</span>
+						</a> /
+						<a href="#" onclick="datas('<?php echo $data_mes ?>', 'mes-Luc', 'Luc')">
+							<span style="color:#000" id="mes-Luc">Mês</span>
+						</a> /
+						<a href="#" onclick="datas('<?php echo $data_ano ?>', 'ano-Luc', 'Luc')">
+							<span style="color:#000" id="ano-Luc">Ano</span>
+						</a> 
+					)</small>
+
+
+
+				</h4>
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close" style="margin-top: -20px">
+					<span aria-hidden="true">&times;</span>
+				</button>
+			</div>
+			<form method="post" action="rel/rel_lucro_class.php" target="_blank">
+				<div class="modal-body">
+
+					<div class="row">
+						<div class="col-md-4">						
+							<div class="form-group"> 
+								<label>Data Inicial</label> 
+								<input type="date" class="form-control" name="dataInicial" id="dataInicialRel-Luc" value="<?php echo date('Y-m-d') ?>" required> 
+							</div>						
+						</div>
+						<div class="col-md-4">
+							<div class="form-group"> 
+								<label>Data Final</label> 
+								<input type="date" class="form-control" name="dataFinal" id="dataFinalRel-Luc" value="<?php echo date('Y-m-d') ?>" required> 
+							</div>
+						</div>
+
+
+
+					</div>
+
+
+
+
+				</div>
+
+				<div class="modal-footer">
+					<button type="submit" class="btn btn-primary">Gerar Relatório</button>
+				</div>
+			</form>
+
+		</div>
+	</div>
+</div>
+
+
+
+
+
+
+
+
+
+<!-- Modal Rel Contas -->
+<div class="modal fade" id="RelVen" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+	<div class="modal-dialog" role="document">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h4 class="modal-title" id="exampleModalLabel">Relatório de Vendas
+					<small>(
+						<a href="#" onclick="datas('1980-01-01', 'tudo-Ven', 'Ven')">
+							<span style="color:#000" id="tudo-Ven">Tudo</span>
+						</a> / 
+						<a href="#" onclick="datas('<?php echo $data_atual ?>', 'hoje-Ven', 'Ven')">
+							<span id="hoje-Ven">Hoje</span>
+						</a> /
+						<a href="#" onclick="datas('<?php echo $data_mes ?>', 'mes-Ven', 'Ven')">
+							<span style="color:#000" id="mes-Ven">Mês</span>
+						</a> /
+						<a href="#" onclick="datas('<?php echo $data_ano ?>', 'ano-Ven', 'Ven')">
+							<span style="color:#000" id="ano-Ven">Ano</span>
+						</a> 
+					)</small>
+
+
+
+				</h4>
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close" style="margin-top: -20px">
+					<span aria-hidden="true">&times;</span>
+				</button>
+			</div>
+			<form method="post" action="rel/rel_vendas_class.php" target="_blank">
+				<div class="modal-body">
+
+					<div class="row">
+						<div class="col-md-6">						
+							<div class="form-group"> 
+								<label>Data Inicial</label> 
+								<input type="date" class="form-control" name="dataInicial" id="dataInicialRel-Ven" value="<?php echo date('Y-m-d') ?>" required> 
+							</div>						
+						</div>
+						<div class="col-md-6">
+							<div class="form-group"> 
+								<label>Data Final</label> 
+								<input type="date" class="form-control" name="dataFinal" id="dataFinalRel-Ven" value="<?php echo date('Y-m-d') ?>" required> 
+							</div>
+						</div>
+
+
+
+					</div>
+
+
+
+					<div class="row">
+						<div class="col-md-6">						
+							<div class="form-group"> 
+								<label>Status</label> 
+								<select class="form-control" name="status" style="width:100%;">
+									<option value="">Todas</option>
+									<option value="Finalizado">Finalizadas</option>
+									<option value="Cancelado">Canceladas</option>
+
+								</select> 
+							</div>						
+						</div>
+						<div class="col-md-6">
+							<div class="form-group"> 
+								<label>Forma PGTO</label> 
+								<select class="form-control" name="forma_pgto" style="width:100%;">
+									<option value="">Todas</option>
+									<option value="Dinheiro">Dinheiro</option>
+									<option value="Pix">Pix</option>
+									<option value="Cartão de Crédito">Cartão de Crédito</option>
+									<option value="Cartão de Débito">Cartão de Débito</option>																		
+								</select>
+							</div>
+						</div>
+
+
+
+					</div>
+
+
+
+
+				</div>
+
+				<div class="modal-footer">
+					<button type="submit" class="btn btn-primary">Gerar Relatório</button>
+				</div>
+			</form>
+
+		</div>
+	</div>
+</div>
+
+
+
+
+
+
 <script type="text/javascript">
 	function carregarImgPerfil() {
-    var target = document.getElementById('target-usu');
-    var file = document.querySelector("#foto_perfil").files[0];
-    
-        var reader = new FileReader();
+		var target = document.getElementById('target-usu');
+		var file = document.querySelector("#foto_perfil").files[0];
 
-        reader.onloadend = function () {
-            target.src = reader.result;
-        };
+		var reader = new FileReader();
 
-        if (file) {
-            reader.readAsDataURL(file);
+		reader.onloadend = function () {
+			target.src = reader.result;
+		};
 
-        } else {
-            target.src = "";
-        }
-    }
+		if (file) {
+			reader.readAsDataURL(file);
+
+		} else {
+			target.src = "";
+		}
+	}
 </script>
 
 
@@ -713,7 +1075,7 @@ if(@$_GET['pagina'] != ""){
 
 
 
- <script type="text/javascript">
+<script type="text/javascript">
 	$("#form-perfil").submit(function () {
 
 		event.preventDefault();
@@ -731,7 +1093,7 @@ if(@$_GET['pagina'] != ""){
 
 					$('#btn-fechar-perfil').click();
 					location.reload();				
-						
+
 
 				} else {
 
@@ -756,7 +1118,7 @@ if(@$_GET['pagina'] != ""){
 
 
 
- <script type="text/javascript">
+<script type="text/javascript">
 	$("#form-config").submit(function () {
 
 		event.preventDefault();
@@ -774,7 +1136,7 @@ if(@$_GET['pagina'] != ""){
 
 					$('#btn-fechar-config').click();
 					location.reload();				
-						
+
 
 				} else {
 
@@ -799,22 +1161,22 @@ if(@$_GET['pagina'] != ""){
 
 <script type="text/javascript">
 	function carregarImgLogo() {
-    var target = document.getElementById('target-logo');
-    var file = document.querySelector("#foto-logo").files[0];
-    
-        var reader = new FileReader();
+		var target = document.getElementById('target-logo');
+		var file = document.querySelector("#foto-logo").files[0];
 
-        reader.onloadend = function () {
-            target.src = reader.result;
-        };
+		var reader = new FileReader();
 
-        if (file) {
-            reader.readAsDataURL(file);
+		reader.onloadend = function () {
+			target.src = reader.result;
+		};
 
-        } else {
-            target.src = "";
-        }
-    }
+		if (file) {
+			reader.readAsDataURL(file);
+
+		} else {
+			target.src = "";
+		}
+	}
 </script>
 
 
@@ -823,22 +1185,22 @@ if(@$_GET['pagina'] != ""){
 
 <script type="text/javascript">
 	function carregarImgLogoRel() {
-    var target = document.getElementById('target-logo-rel');
-    var file = document.querySelector("#foto-logo-rel").files[0];
-    
-        var reader = new FileReader();
+		var target = document.getElementById('target-logo-rel');
+		var file = document.querySelector("#foto-logo-rel").files[0];
 
-        reader.onloadend = function () {
-            target.src = reader.result;
-        };
+		var reader = new FileReader();
 
-        if (file) {
-            reader.readAsDataURL(file);
+		reader.onloadend = function () {
+			target.src = reader.result;
+		};
 
-        } else {
-            target.src = "";
-        }
-    }
+		if (file) {
+			reader.readAsDataURL(file);
+
+		} else {
+			target.src = "";
+		}
+	}
 </script>
 
 
@@ -847,20 +1209,66 @@ if(@$_GET['pagina'] != ""){
 
 <script type="text/javascript">
 	function carregarImgIcone() {
-    var target = document.getElementById('target-icone');
-    var file = document.querySelector("#foto-icone").files[0];
-    
-        var reader = new FileReader();
+		var target = document.getElementById('target-icone');
+		var file = document.querySelector("#foto-icone").files[0];
 
-        reader.onloadend = function () {
-            target.src = reader.result;
-        };
+		var reader = new FileReader();
 
-        if (file) {
-            reader.readAsDataURL(file);
+		reader.onloadend = function () {
+			target.src = reader.result;
+		};
 
-        } else {
-            target.src = "";
-        }
-    }
+		if (file) {
+			reader.readAsDataURL(file);
+
+		} else {
+			target.src = "";
+		}
+	}
+</script>
+
+
+
+
+
+
+<script type="text/javascript">
+	function datas(data, id, campo){			
+
+		var data_atual = "<?=$data_atual?>";
+		var separarData = data_atual.split("-");
+		var mes = separarData[1];
+		var ano = separarData[0];
+
+		var separarId = id.split("-");
+
+		if(separarId[0] == 'tudo'){
+			data_atual = '2100-12-31';
+		}
+
+		if(separarId[0] == 'ano'){
+			data_atual = ano + '-12-31';
+		}
+
+		if(separarId[0] == 'mes'){
+			if(mes == 4 || mes == 6 || mes == 9 || mes == 11){
+				data_atual = ano + '-'+ mes + '-30';
+			}else if (mes == 2){
+				data_atual = ano + '-'+ mes + '-28';
+			}else{
+				data_atual = ano + '-'+ mes + '-31';
+			}
+
+		}
+
+		$('#dataInicialRel-'+campo).val(data);
+		$('#dataFinalRel-'+campo).val(data_atual);
+
+		document.getElementById('hoje-'+campo).style.color = "#000";
+		document.getElementById('mes-'+campo).style.color = "#000";
+		document.getElementById(id).style.color = "blue";	
+		document.getElementById('tudo-'+campo).style.color = "#000";
+		document.getElementById('ano-'+campo).style.color = "#000";
+		document.getElementById(id).style.color = "blue";		
+	}
 </script>

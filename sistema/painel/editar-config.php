@@ -16,7 +16,7 @@ $horario_fechamento = $_POST['horario_fechamento'];
 $texto_fechamento_horario = $_POST['texto_fechamento_horario'];
 $status_estabelecimento = $_POST['status_estabelecimento'];
 $texto_fechamento = $_POST['texto_fechamento'];
-
+$tempo_atualizar = $_POST['tempo_atualizar'];
 
 //$logo_rel = $_POST['logo_rel'];
 
@@ -141,7 +141,7 @@ if(@$_FILES['foto-logo-rel']['name'] != ""){
 
 
 
-$query = $pdo->prepare("UPDATE config SET nome_sistema = :nome_sistema, email_sistema = :email_sistema, telefone_sistema = :telefone_sistema, telefone_fixo = :telefone_fixo, endereco_sistema = :endereco_sistema, instagram_sistema = :instagram_sistema, tipo_rel = '$tipo_rel', tipo_miniatura = '$tipo_miniatura', status_whatsapp = '$status_whatsapp', previsao_entrega = '$previsao_entrega', horario_abertura = '$horario_abertura', horario_fechamento = '$horario_fechamento', texto_fechamento_horario = :texto_fechamento_horario, status_estabelecimento = '$status_estabelecimento', texto_fechamento = :texto_fechamento, logo_sistema = '$logo_sistema', favicon_sistema = '$favicon_sistema', logo_rel = '$logo_rel' ");
+$query = $pdo->prepare("UPDATE config SET nome_sistema = :nome_sistema, email_sistema = :email_sistema, telefone_sistema = :telefone_sistema, telefone_fixo = :telefone_fixo, endereco_sistema = :endereco_sistema, instagram_sistema = :instagram_sistema, tipo_rel = '$tipo_rel', tipo_miniatura = '$tipo_miniatura', status_whatsapp = '$status_whatsapp', previsao_entrega = '$previsao_entrega', horario_abertura = '$horario_abertura', horario_fechamento = '$horario_fechamento', texto_fechamento_horario = :texto_fechamento_horario, status_estabelecimento = '$status_estabelecimento', texto_fechamento = :texto_fechamento, logo_sistema = '$logo_sistema', favicon_sistema = '$favicon_sistema', logo_rel = '$logo_rel', tempo_atualizar = '$tempo_atualizar' ");
 
 $query->bindValue(":nome_sistema", "$nome_sistema");
 $query->bindValue(":email_sistema", "$email_sistema");

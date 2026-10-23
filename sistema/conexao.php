@@ -32,7 +32,7 @@ $res = $query->fetchAll(PDO::FETCH_ASSOC);
 $total_reg = @count($res);
 if($total_reg == 0){
 //CRIAR UM USUÁRIO ADMIN
-$pdo->query("INSERT INTO config SET nome_sistema = '$nome_sistema', email_sistema = '$email_sistema', telefone_sistema = '$telefone_sistema', tipo_rel = 'PDF', tipo_miniatura = 'Cores', status_whatsapp = 'Sim', previsao_entrega = '60', horario_abertura = '18:00', horario_fechamento = '00:00', status_estabelecimento = 'Aberto', logo_sistema = 'logo.png', favicon_sistema = 'favicon.png', logo_rel = 'logo_rel.jpg' ");
+$pdo->query("INSERT INTO config SET nome_sistema = '$nome_sistema', email_sistema = '$email_sistema', telefone_sistema = '$telefone_sistema', tipo_rel = 'PDF', tipo_miniatura = 'Cores', status_whatsapp = 'Sim', previsao_entrega = '60', horario_abertura = '18:00', horario_fechamento = '00:00', status_estabelecimento = 'Aberto', logo_sistema = 'logo.png', favicon_sistema = 'favicon.png', logo_rel = 'logo_rel.jpg', tempo_atualizar = '30' ");
 }else{
 $nome_sistema = $res[0]['nome_sistema'];
 $email_sistema = $res[0]['email_sistema'];
@@ -52,7 +52,7 @@ $texto_fechamento = $res[0]['texto_fechamento'];
 $logo_sistema = $res[0]['logo_sistema'];
 $favicon_sistema = $res[0]['favicon_sistema'];
 $logo_rel = $res[0]['logo_rel'];
-
+$tempo_atualizar = $res[0]['tempo_atualizar'];
 }
 
 

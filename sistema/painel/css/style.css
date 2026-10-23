@@ -8538,3 +8538,13 @@ h4.asd label {
 .text-cinza{
   color:#575757;
 }
+
+
+.ocultar{
+  display: none;
+}
+
+
+.text-laranja{
+  color: #e6841c;
+}

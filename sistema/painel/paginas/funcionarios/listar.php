@@ -35,6 +35,8 @@ for($i=0; $i < $total_reg; $i++){
 		$data = $res[$i]['data'];
 		$foto = $res[$i]['foto'];
 		$telefone = $res[$i]['telefone'];
+		$tipo_chave = $res[$i]['tipo_chave'];
+	$chave_pix = $res[$i]['chave_pix'];
 
 		if($nivel == 'Administrador'){
 			$senha = '*********';
@@ -63,9 +65,9 @@ echo <<<HTML
 <td class="esc">{$nivel}</td>
 <td class="esc"><img src="images/perfil/{$foto}" width="30px"></td>
 <td>
-	<big><a href="#" onclick="editar('{$id}','{$nome}', '{$email}', '{$senha}', '{$nivel}', '{$foto}', '{$telefone}', '{$cpf}')" title="Editar Dados"><i class="fa fa-edit text-primary"></i></a></big>
+	<big><a href="#" onclick="editar('{$id}','{$nome}', '{$email}', '{$senha}', '{$nivel}', '{$foto}', '{$telefone}', '{$cpf}', '{$tipo_chave}', '{$chave_pix}')" title="Editar Dados"><i class="fa fa-edit text-primary"></i></a></big>
 
-	<big><a href="#" onclick="mostrar('{$nome}', '{$email}', '{$cpf}', '{$senha}', '{$nivel}', '{$dataF}', '{$ativo}', '{$telefone}', '{$foto}')" title="Ver Dados"><i class="fa fa-info-circle text-secondary"></i></a></big>
+	<big><a href="#" onclick="mostrar('{$nome}', '{$email}', '{$cpf}', '{$senha}', '{$nivel}', '{$dataF}', '{$ativo}', '{$telefone}', '{$foto}', '{$tipo_chave}', '{$chave_pix}')" title="Ver Dados"><i class="fa fa-info-circle text-secondary"></i></a></big>
 
 
 	<li class="dropdown head-dpdn2" style="display: inline-block;">
@@ -119,13 +121,15 @@ HTML;
 
 
 <script type="text/javascript">
-	function editar(id, nome, email, senha, nivel, foto, telefone, cpf){
+	function editar(id, nome, email, senha, nivel, foto, telefone, cpf, tipo_chave, chave_pix){
 		$('#id').val(id);
 		$('#nome').val(nome);
 		$('#email').val(email);
 		$('#telefone').val(telefone);
 		$('#cpf').val(cpf);
 		$('#cargo').val(nivel).change();
+		$('#tipo_chave').val(tipo_chave).change();
+		$('#chave_pix').val(chave_pix);
 		
 		
 		$('#titulo_inserir').text('Editar Registro');
@@ -137,7 +141,7 @@ HTML;
 
 
 
-	function mostrar(nome, email, cpf, senha, nivel, data, ativo, telefone, foto){
+	function mostrar(nome, email, cpf, senha, nivel, data, ativo, telefone, foto, tipo_chave, chave_pix){
 
 		$('#nome_dados').text(nome);
 		$('#email_dados').text(email);
@@ -147,6 +151,8 @@ HTML;
 		$('#data_dados').text(data);
 		$('#ativo_dados').text(ativo);
 		$('#telefone_dados').text(telefone);
+		$('#tipo_chave_dados').text(tipo_chave);
+		$('#chave_pix_dados').text(chave_pix);	
 		
 		$('#target_mostrar').attr('src','images/perfil/' + foto);
 		$('#modalDados').modal('show');
@@ -160,6 +166,7 @@ HTML;
 		$('#email').val('');
 		$('#cpf').val('');		
 		$('#foto').val('');
+		$('#chave_pix').val('');
 		$('#target').attr('src','images/perfil/sem-foto.jpg');
 	}
 
