@@ -13,6 +13,16 @@ if($total_reg == 0){
 $pdo->query("INSERT INTO usuarios SET nome = 'Administrador', email = '$email_sistema', cpf = '000.000.000-00', senha = '$senha', senha_crip = '$senha_crip', nivel = 'Administrador', ativo = 'Sim', data = curDate(), foto = 'sem-foto.jpg', telefone = '$telefone_sistema' ");
 }
 
+
+//VERIFICAR SE EXISTE CARGO ADMIN CADASTRADO
+$query = $pdo->query("SELECT * FROM cargos WHERE nome = 'Administrador'");
+$res = $query->fetchAll(PDO::FETCH_ASSOC);
+$total_reg = @count($res);
+if($total_reg == 0){
+//CRIAR UM USUÁRIO ADMIN
+$pdo->query("INSERT INTO cargos SET nome = 'Administrador'");
+}
+
  ?>
 <!DOCTYPE html>
 <html>

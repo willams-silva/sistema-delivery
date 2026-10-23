@@ -86,6 +86,18 @@ body{
 }
 
 
+.verde-escuro {
+  background: radial-gradient(#1adb54, #36a867);
+}
+
+
+.laranja {
+  background: radial-gradient(#f5c071, #c98116);
+}
+
+.amarelo {
+  background: radial-gradient(#e4eb6e, #c3cc14);
+}
 
 
 
