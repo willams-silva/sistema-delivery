@@ -3,7 +3,7 @@
 $usuario = 'u719820352_delivery';
 $senha = 'Ti@v3n3z@22';
 $banco = 'u719820352_db_delivery';
-$servidor = 'https://maroon-quail-215556.hostingersite.com';
+$servidor = 'localhost';
 
 date_default_timezone_set('America/Sao_Paulo');
 
