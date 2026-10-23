@@ -1,10 +1,7 @@
-<?php 
-require_once("sistema/conexao.php");
- ?>
 <!DOCTYPE html>
 <html>
 <head>
-	<title><?php echo $nome_sistema ?></title>
+	<title>Delivery Interativo</title>
 	<meta charset="utf-8" />
 	<meta http-equiv="X-UA-Compatible" content="IE=edge" />
 	<!-- Mobile Metas -->
@@ -14,7 +11,7 @@ require_once("sistema/conexao.php");
 	<meta name="description" content="Temos sanduíches de qualidade.." />
 	<meta name="author" content="Hugo Vasconcelos" />
 
-	<link rel="shortcut icon" href="img/<?php echo $favicon_sistema ?>" type="image/x-icon">
+	<link rel="shortcut icon" href="img/favicon.png" type="image/x-icon">
 
 
 	<!-- CSS only -->
@@ -25,7 +22,7 @@ require_once("sistema/conexao.php");
 
 	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.3/font/bootstrap-icons.css">
 
-	<link rel="stylesheet" type="text/css" href="css/style.css?v=20">
+	<link rel="stylesheet" type="text/css" href="css/style.css">
 
 
 </head>
