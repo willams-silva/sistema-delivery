@@ -1,4 +1,62 @@
-<?php require_once("cabecalho.php") ?>
+<?php require_once("cabecalho.php");
+
+$img = 'aberto.png';
+
+if($status_estabelecimento == "Fechado"){		
+	$img = 'fechado.png';
+}
+
+
+$data = date('Y-m-d');
+//verificar se está aberto hoje
+$diasemana = array("Domingo", "Segunda-Feira", "Terça-Feira", "Quarta-Feira", "Quinta-Feira", "Sexta-Feira", "Sábado");
+$diasemana_numero = date('w', strtotime($data));
+$dia_procurado = $diasemana[$diasemana_numero];
+
+//percorrer os dias da semana que ele trabalha
+$query = $pdo->query("SELECT * FROM dias where dia = '$dia_procurado'");
+$res = $query->fetchAll(PDO::FETCH_ASSOC);
+if(@count($res) > 0){		
+	$img = 'fechado.png';
+}
+
+$hora_atual = date('H:i:s');
+//verificar se o delivery está aberto dentro da hora prevista
+if(strtotime($hora_atual) > strtotime($horario_abertura) and strtotime($hora_atual) < strtotime($horario_fechamento)){
+	
+}else{
+	if(strtotime($hora_atual) > strtotime($horario_abertura) and strtotime($hora_atual) > strtotime($horario_fechamento)){
+		
+	}else{
+			$img = 'fechado.png';
+	}
+}
+
+ ?>
+
+ <style type="text/css">
+
+.img-aberto {
+  animation-duration: 2s;
+  animation-name: slidein;
+  opacity:0.9;
+  position:fixed;
+  bottom:10px;
+  left:0;
+}
+
+ 	@keyframes slidein {
+  from {
+    margin-left: 200%;
+    width: 200%
+  }
+
+  to {
+    margin-left: 0%;
+    width: 70px;
+  }
+}
+ </style>
 
 <div class="main-container">
 
@@ -6,7 +64,8 @@
 		<div class="container-fluid">
 			<a class="navbar-brand" href="index.php">
 				<img src="img/<?php echo $logo_sistema ?>" alt="" width="30" height="30" class="d-inline-block align-text-top">
-				<?php echo $nome_sistema ?>
+				<?php echo $nome_sistema ?> 
+				
 			</a>
 
 			<?php require_once("icone-carrinho.php") ?>
@@ -15,7 +74,7 @@
 	</nav>
 
 
-	<div class="row cards">
+	<div class="row cards" style="margin-bottom: 60px">
 
 		<?php 
 		$query = $pdo->query("SELECT * FROM categorias where ativo = 'Sim'");
@@ -106,7 +165,7 @@
 		</footer>
 
 
-
+<img src="img/<?php echo $img ?>" width="70px" class="img-aberto">
 
 	</body>
 	</html>

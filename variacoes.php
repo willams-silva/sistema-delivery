@@ -18,6 +18,16 @@ $query = $pdo->query("SELECT * FROM categorias where id = '$categoria'");
 $res = $query->fetchAll(PDO::FETCH_ASSOC);
 $url_cat = $res[0]['url'];
 
+
+//verificar se o produto tem adicionais ou ingredientes
+$query = $pdo->query("SELECT * FROM adicionais where produto = '$id'");
+$res = $query->fetchAll(PDO::FETCH_ASSOC);
+$total_adc = @count($res);
+
+$query = $pdo->query("SELECT * FROM ingredientes where produto = '$id'");
+$res = $query->fetchAll(PDO::FETCH_ASSOC);
+$total_ing = @count($res);
+
 }
  ?>
 
@@ -56,7 +66,14 @@ $url_cat = $res[0]['url'];
 
 				?>
 
-		<a href="adicionais-<?php echo $url ?>_<?php echo $nome_var ?>" class="link-neutro">
+		<?php 
+			if($total_adc > 0 || $total_ing > 0){ ?>
+	<a href="adicionais-<?php echo $url ?>_<?php echo $nome_var ?>" class="link-neutro">
+		<?php }else{ ?>
+
+	<a href="observacoes-<?php echo $url ?>_<?php echo $nome_var ?>" class="link-neutro">
+		<?php } ?>
+		
 		<li class="list-group-item d-flex justify-content-between align-items-start"> 
 			<div class="me-auto">
 				<div class="fw-bold titulo-item"><?php echo $nome_var ?> <span class="subtitulo-item">(<?php echo $descricao ?>)</span></div>
@@ -68,8 +85,18 @@ $url_cat = $res[0]['url'];
 
 	<?php }
 }else{ ?>
+	
+	<?php 
+			if($total_adc > 0 || $total_ing > 0){ ?>
 	<a href="adicionais-<?php echo $url ?>" class="link-neutro">
-		<li class="list-group-item">		    	
+		<?php }else{ ?>
+
+	<a href="observacoes-<?php echo $url ?>" class="link-neutro">
+		<?php } ?>
+
+		<li class="list-group-item">
+
+				<i class="bi bi-circle"></i>		    	
 				<?php echo $nome ?> <span class="valor-item">(R$ <?php echo $valorF ?>)</span>
 				<big><big><i class="bi bi-check direita text-success"></i></big></big>	
 		</li>

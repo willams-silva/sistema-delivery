@@ -110,8 +110,8 @@ body{
   visibility: hidden;
   opacity: 0;
   background: #fcfbeb;
-  width:300px;
-  height:auto;
+  width:320px;
+  max-height:500px;
 }
 .overlay:target {
   visibility: visible;
@@ -159,7 +159,7 @@ body{
 
 
 .rodape{
-	position:relative;
+	position:fixed;
 	bottom:0;
 	width:100%;
 	padding:10px;
@@ -414,6 +414,20 @@ body{
 
 }
 
+.itens-carrinho-qtd{
+  position:absolute;
+  left: 30px;
+   display: inline-block;
+  font-size: 18px;
+}
+
+.itens-carrinho-qtd-adc{
+  position:absolute;
+  left: 60px;
+   display: inline-block;
+  font-size: 15px;
+}
+
 
 .menos-mais{
 	width:35px;
@@ -574,4 +588,27 @@ body{
 .subtitulo-item{
   font-weight: 500;
   font-size:13px;
+}
+
+
+.ingredientes{
+  font-size:11px;
+}
+
+
+.avancar-pgto{
+  font-size:13px;
+}
+
+.previsao_entrega{
+  font-size:11px;
+  margin-bottom: 10px;
+}
+
+
+.total-finalizar{
+  position: fixed;
+  bottom:0;
+  width:100%;
+  
 }

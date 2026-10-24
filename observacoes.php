@@ -3,7 +3,13 @@
 require_once("cabecalho.php");
 $url_completa = $_GET['url'];
 
-$sessao = $_SESSION['sessao_usuario'];
+if(@$_SESSION['sessao_usuario'] == ""){
+	$sessao = date('Y-m-d-H:i:s-').rand(0, 1500);;
+	$_SESSION['sessao_usuario'] = $sessao;
+}else{
+	$sessao = $_SESSION['sessao_usuario'];
+}
+
 $query = $pdo->query("SELECT * FROM carrinho where sessao = '$sessao'");
 $res = $query->fetchAll(PDO::FETCH_ASSOC);
 $total_reg = @count($res);
@@ -60,6 +66,55 @@ if($total_reg > 0){
 }
 
 $valor_itemF = number_format($valor_item, 2, ',', '.');
+
+
+if($status_estabelecimento == "Fechado"){		
+		echo "<script>window.alert('$texto_fechamento')</script>";
+	echo "<script>window.location='index.php'</script>";
+	exit();
+}
+
+
+$data = date('Y-m-d');
+//verificar se está aberto hoje
+$diasemana = array("Domingo", "Segunda-Feira", "Terça-Feira", "Quarta-Feira", "Quinta-Feira", "Sexta-Feira", "Sábado");
+$diasemana_numero = date('w', strtotime($data));
+$dia_procurado = $diasemana[$diasemana_numero];
+
+//percorrer os dias da semana que ele trabalha
+$query = $pdo->query("SELECT * FROM dias where dia = '$dia_procurado'");
+$res = $query->fetchAll(PDO::FETCH_ASSOC);
+if(@count($res) > 0){		
+		echo "<script>window.alert('Estamos Fechados! Não funcionamos Hoje!')</script>";
+	echo "<script>window.location='index.php'</script>";
+	exit();
+}
+
+$hora_atual = date('H:i:s');
+//verificar se o delivery está aberto dentro da hora prevista
+if(strtotime($hora_atual) > strtotime($horario_abertura) and strtotime($hora_atual) < strtotime($horario_fechamento)){
+	
+}else{
+	if(strtotime($hora_atual) > strtotime($horario_abertura) and strtotime($hora_atual) > strtotime($horario_fechamento)){
+		
+	}else{
+			echo "<script>window.alert('$texto_fechamento_horario')</script>";
+	echo "<script>window.location='index.php'</script>";
+	exit();
+	}
+}
+
+
+//verificar se o produto tem adicionais ou ingredientes
+$query = $pdo->query("SELECT * FROM adicionais where produto = '$id_prod'");
+$res = $query->fetchAll(PDO::FETCH_ASSOC);
+$total_adc = @count($res);
+
+$query = $pdo->query("SELECT * FROM ingredientes where produto = '$id_prod'");
+$res = $query->fetchAll(PDO::FETCH_ASSOC);
+$total_ing = @count($res);
+
+
 ?>
 
 <style type="text/css">
@@ -74,7 +129,11 @@ $valor_itemF = number_format($valor_item, 2, ',', '.');
 	<nav class="navbar bg-light fixed-top" style="box-shadow: 0px 3px 5px rgba(0, 0, 0, 0.20);">
 		<div class="container-fluid">
 			<div class="navbar-brand" >
+				<?php if($total_adc > 0 || $total_ing > 0){ ?>
 				<a href="adicionais-<?php echo $url_completa ?>"><big><i class="bi bi-arrow-left"></i></big></a>
+				<?php }else{ ?>
+				<a href="produto-<?php echo $url ?>"><big><i class="bi bi-arrow-left"></i></big></a>
+				<?php } ?>	
 				<span style="margin-left: 15px">Resumo do Item</span>
 			</div>
 

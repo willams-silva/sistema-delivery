@@ -206,6 +206,8 @@ $dataMesInicial = $partesInicial[1];
 									<li><a href="index.php?pagina=bairros"><i class="fa fa-angle-right"></i> Bairros / Locais</a></li>
 
 									<li><a href="index.php?pagina=cargos"><i class="fa fa-angle-right"></i> Cargos</a></li>
+
+									<li><a href="index.php?pagina=dias"><i class="fa fa-angle-right"></i> Dias Fechados</a></li>
 									
 								</ul>
 							</li>
@@ -694,9 +696,31 @@ $dataMesInicial = $partesInicial[1];
 
 
 					<div class="row">
+
+						<div class="col-md-3">							
+							<label>CNPJ da Loja</label>
+							<input type="text" name="cnpj_sistema" id="cnpj" class="form-control" value="<?php echo @$cnpj_sistema ?>" placeholder="CNPJ caso tenha">	
+						</div>
+
 						<div class="col-md-3">							
 							<label>Atualizar Pedidos</label>
 							<input type="number" name="tempo_atualizar" class="form-control" value="<?php echo @$tempo_atualizar ?>" placeholder="Tempo Segundos">	
+						</div>
+
+						<div class="col-md-3">							
+							<label>Tipo Chave Pix</label>
+							<select class="form-control" name="tipo_chave">
+								<option value="CNPJ" <?php if(@$tipo_chave == 'CNPJ'){?> selected <?php } ?> >CNPJ</option>
+								<option value="CPF" <?php if(@$tipo_chave == 'CPF'){?> selected <?php } ?> >CPF</option>	
+								<option value="Código" <?php if(@$tipo_chave == 'Código'){?> selected <?php } ?> >Código</option>	
+								<option value="Telefone" <?php if(@$tipo_chave == 'Telefone'){?> selected <?php } ?> >Telefone</option>	
+								<option value="Email" <?php if(@$tipo_chave == 'Email'){?> selected <?php } ?> >Email</option>	
+							</select>	
+						</div>
+
+						<div class="col-md-3">							
+							<label>Chave Pix</label>
+							<input type="text" name="chave_pix" class="form-control" value="<?php echo @$chave_pix ?>" placeholder="Chave Pix">	
 						</div>
 					
 					</div>

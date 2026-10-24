@@ -21,7 +21,7 @@ $sessao = $_SESSION['sessao_usuario'];
 				<span style="margin-left: 15px">RESUMO DO PEDIDO</span>
 			</div>
 
-			<?php require_once("icone-carrinho.php") ?>
+			
 
 		</div>
 	</nav>
@@ -49,7 +49,7 @@ $sessao = $_SESSION['sessao_usuario'];
 
 
 	<div class="d-grid gap-2 mt-4 abaixo">
-		<a href='#popup2' class="btn btn-primary botao-carrinho">Finalizar Pedido</a>
+		<a href='finalizar' class="btn btn-primary botao-carrinho">Finalizar Pedido</a>
 	</div>
 </div>
 
@@ -57,6 +57,58 @@ $sessao = $_SESSION['sessao_usuario'];
 </body>
 </html>
 
+
+
+
+
+<!-- Modal -->
+<div class="modal fade" id="modalObs" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel"><span id="nome_item"></span></h5>
+        <button type="button" id="btn-fechar-obs" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <form id="form-obs">
+      <div class="modal-body">
+       <div class="destaque-qtd">
+		<b>OBSERVAÇÕES</b>
+		<div class="form-group mt-3">
+			<textarea maxlength="255" class="form-control" type="text" name="obs" id="obs"></textarea>
+		</div>
+	</div>
+
+	<input type="hidden" name="id" id="id_obs">
+	<br><small><div id="mensagem-obs" align="center"></div></small>
+      </div>
+      <div class="modal-footer">       
+        <button type="submit" class="btn btn-primary">Salvar</button>
+      </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+
+
+
+<!-- Modal -->
+<div class="modal fade" id="modalAdc" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel"><span id="nome_item_adc"></span></h5>
+        <button type="button" id="btn-fechar-adc" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      
+      <div class="modal-body">    
+     	<div id="listar-adc-carrinho">
+     		
+     	</div>
+      
+    </div>
+  </div>
+</div>
 
 
 
@@ -80,5 +132,45 @@ function listarCarrinho(){
         }
     });
 }
+
+</script>
+
+
+<script type="text/javascript">
+	
+
+$("#form-obs").submit(function () {
+
+    event.preventDefault();
+    var formData = new FormData(this);
+
+    $.ajax({
+        url: 'js/ajax/editar-obs-carrinho.php',
+        type: 'POST',
+        data: formData,
+
+        success: function (mensagem) {
+            $('#mensagem-obs').text('');
+            $('#mensagem-obs').removeClass()
+            if (mensagem.trim() == "Salvo com Sucesso") {
+                $('#btn-fechar-obs').click();
+                listarCarrinho();
+
+            } else {
+
+                $('#mensagem-obs').addClass('text-danger')
+                $('#mensagem-obs').text(mensagem)
+            }
+
+
+        },
+
+        cache: false,
+        contentType: false,
+        processData: false,
+
+    });
+
+});
 
 </script>
