@@ -1,12 +1,54 @@
-<?php require_once("cabecalho.php") ?>
+<?php
+@session_start(); 
+require_once("cabecalho.php");
+$url_completa = $_GET['url'];
+
+$sessao = date('Y-m-d-H:i:s-').rand(0, 1500);;
+
+if(@$_SESSION['sessao_usuario'] == ""){
+	$_SESSION['sessao_usuario'] = $sessao;
+}
+
+$nova_sessao = $_SESSION['sessao_usuario'];
+
+$separar_url = explode("_", $url_completa);
+$url = $separar_url[0]; 
+$item = @$separar_url[1];
+
+
+$query = $pdo->query("SELECT * FROM produtos where url = '$url'");
+$res = $query->fetchAll(PDO::FETCH_ASSOC);
+$total_reg = @count($res);
+if($total_reg > 0){
+$nome = $res[0]['nome'];
+$descricao = $res[0]['descricao'];
+$foto = $res[0]['foto'];
+$id_prod = $res[0]['id'];
+$valor = $res[0]['valor_venda'];
+$valorF = number_format($valor, 2, ',', '.');
+$categoria = $res[0]['categoria'];
+
+if($item == ""){
+	$valor_item = $valor;
+}else{
+	$query = $pdo->query("SELECT * FROM variacoes where produto = '$id_prod' and nome = '$item'");
+	$res = $query->fetchAll(PDO::FETCH_ASSOC);
+	$valor_item = $res[0]['valor'];
+
+}
+
+
+
+}
+ ?>
 
 <div class="main-container">
 
 	<nav class="navbar bg-light fixed-top" style="box-shadow: 0px 3px 5px rgba(0, 0, 0, 0.20);">
 		<div class="container-fluid">
 			<div class="navbar-brand" >
-				<a href="itens.php"><big><i class="bi bi-arrow-left"></i></big></a>
-				<span style="margin-left: 15px">Pizza Calabresa - Tamanho P</span>
+				<a href="produto-<?php echo $url ?>"><big><i class="bi bi-arrow-left"></i></big></a>
+				<span style="margin-left: 15px"><?php echo $nome ?> <?php echo $item ?></span>
 			</div>
 
 			<?php require_once("icone-carrinho.php") ?>
@@ -14,83 +56,22 @@
 		</div>
 	</nav>
 
-	<div class="titulo-itens">
-		Inserir Adicionais?
+	<div id="listar-adicionais" style='margin-top: 70px;'>
+
+
+	
 	</div>
 
 
+	<div id="listar-ing">
 
 
-	<ol class="list-group">
-
-		<a href="adicionais.php" class="link-neutro">
-		<li class="list-group-item">		    	
-				Bacon <span class="valor-item">(R$ 5,00)</span>
-				<i class="bi bi-square direita"></i>			
-		</li>
-		</a>
-
-
-		<a href="adicionais.php" class="link-neutro">
-		<li class="list-group-item">		    	
-				Cheddar <span class="valor-item">(R$ 5,00)</span>
-				<i class="bi bi-square direita"></i>			
-		</li>
-		</a>
-
-
-		
-		<a href="adicionais.php" class="link-neutro">
-		<li class="list-group-item">		    	
-				Palmito <span class="valor-item">(R$ 4,00)</span>
-				<i class="bi bi-square direita"></i>			
-		</li>
-		</a>
-
-	</ol>
-
-
-	<div class="total">
-		R$ <b>25,00</b>
+	
 	</div>
 
-
-
-	<div class="titulo-itens-2">
-		Remover Ingredientes?
-	</div>
-
-
-	<ol class="list-group">
-
-		<a href="adicionais.php" class="link-neutro">
-		<li class="list-group-item">		    	
-				Cebola
-				<i class="bi bi-check-square-fill direita"></i>			
-		</li>
-		</a>
-
-
-		<a href="adicionais.php" class="link-neutro">
-		<li class="list-group-item">		    	
-				Tomate 
-				<i class="bi bi-check-square-fill direita"></i>			
-		</li>
-		</a>
-
-
-		
-		<a href="adicionais.php" class="link-neutro">
-		<li class="list-group-item">		    	
-				Palmito 
-				<i class="bi bi-check-square-fill direita"></i>			
-		</li>
-		</a>
-
-	</ol>
 
 	<div class="d-grid gap-2 mt-4">
-		<a href='observacoes.php' class="btn btn-primary">Avançar</a>
+		<a href='observacoes-<?php echo $url_completa ?>' class="btn btn-primary">Avançar</a>
 	</div>
 
 
@@ -99,3 +80,88 @@
 
 </body>
 </html>
+
+
+<script type="text/javascript">
+
+	$(document).ready(function() {    		
+    listarAdicionais(); 
+     listarIng();    
+} );
+	
+function adicionar(id, acao){	
+
+    $.ajax({
+        url: 'js/ajax/adicionais.php',
+        method: 'POST',
+        data: {id, acao},
+        dataType: "text",
+
+        success: function (mensagem) {  
+                  
+            if (mensagem.trim() == "Alterado com Sucesso") {                
+                listarAdicionais();                
+            } 
+
+        },      
+
+    });
+}
+
+
+
+function adicionarIng(id, acao){	
+
+    $.ajax({
+        url: 'js/ajax/adicionar-ing.php',
+        method: 'POST',
+        data: {id, acao},
+        dataType: "text",
+
+        success: function (mensagem) {  
+                  
+            if (mensagem.trim() == "Alterado com Sucesso") {                
+                listarIng();                
+            } 
+
+        },      
+
+    });
+}
+
+
+function listarAdicionais(){
+	var id = '<?=$id_prod?>';
+	var valor = '<?=$valor_item?>';
+
+    $.ajax({
+         url: 'js/ajax/listar-adicionais.php',
+        method: 'POST',
+        data: {id, valor},
+        dataType: "html",
+
+        success:function(result){
+            $("#listar-adicionais").html(result);
+           
+        }
+    });
+}
+
+
+function listarIng(){
+	var id = '<?=$id_prod?>';
+	
+    $.ajax({
+         url: 'js/ajax/listar-ing.php',
+        method: 'POST',
+        data: {id},
+        dataType: "html",
+
+        success:function(result){
+            $("#listar-ing").html(result);
+           
+        }
+    });
+}
+
+</script>
