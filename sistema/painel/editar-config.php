@@ -17,7 +17,9 @@ $texto_fechamento_horario = $_POST['texto_fechamento_horario'];
 $status_estabelecimento = $_POST['status_estabelecimento'];
 $texto_fechamento = $_POST['texto_fechamento'];
 $tempo_atualizar = $_POST['tempo_atualizar'];
-
+$tipo_chave = $_POST['tipo_chave'];
+$chave_pix = $_POST['chave_pix'];
+$cnpj_sistema = $_POST['cnpj_sistema'];
 //$logo_rel = $_POST['logo_rel'];
 
 
@@ -141,7 +143,7 @@ if(@$_FILES['foto-logo-rel']['name'] != ""){
 
 
 
-$query = $pdo->prepare("UPDATE config SET nome_sistema = :nome_sistema, email_sistema = :email_sistema, telefone_sistema = :telefone_sistema, telefone_fixo = :telefone_fixo, endereco_sistema = :endereco_sistema, instagram_sistema = :instagram_sistema, tipo_rel = '$tipo_rel', tipo_miniatura = '$tipo_miniatura', status_whatsapp = '$status_whatsapp', previsao_entrega = '$previsao_entrega', horario_abertura = '$horario_abertura', horario_fechamento = '$horario_fechamento', texto_fechamento_horario = :texto_fechamento_horario, status_estabelecimento = '$status_estabelecimento', texto_fechamento = :texto_fechamento, logo_sistema = '$logo_sistema', favicon_sistema = '$favicon_sistema', logo_rel = '$logo_rel', tempo_atualizar = '$tempo_atualizar' ");
+$query = $pdo->prepare("UPDATE config SET nome_sistema = :nome_sistema, email_sistema = :email_sistema, telefone_sistema = :telefone_sistema, telefone_fixo = :telefone_fixo, endereco_sistema = :endereco_sistema, instagram_sistema = :instagram_sistema, tipo_rel = '$tipo_rel', tipo_miniatura = '$tipo_miniatura', status_whatsapp = '$status_whatsapp', previsao_entrega = '$previsao_entrega', horario_abertura = '$horario_abertura', horario_fechamento = '$horario_fechamento', texto_fechamento_horario = :texto_fechamento_horario, status_estabelecimento = '$status_estabelecimento', texto_fechamento = :texto_fechamento, logo_sistema = '$logo_sistema', favicon_sistema = '$favicon_sistema', logo_rel = '$logo_rel', tempo_atualizar = '$tempo_atualizar', tipo_chave = '$tipo_chave', chave_pix = :chave_pix, cnpj = :cnpj_sistema ");
 
 $query->bindValue(":nome_sistema", "$nome_sistema");
 $query->bindValue(":email_sistema", "$email_sistema");
@@ -151,6 +153,8 @@ $query->bindValue(":endereco_sistema", "$endereco_sistema");
 $query->bindValue(":telefone_fixo", "$telefone_fixo");
 $query->bindValue(":texto_fechamento_horario", "$texto_fechamento_horario");
 $query->bindValue(":texto_fechamento", "$texto_fechamento");
+$query->bindValue(":chave_pix", "$chave_pix");
+$query->bindValue(":cnpj_sistema", "$cnpj_sistema");
 $query->execute();
 
 echo 'Editado com Sucesso';
