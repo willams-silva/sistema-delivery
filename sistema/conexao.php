@@ -1,8 +1,8 @@
 <?php 
 
-$usuario = 'root';
-$senha = '';
-$banco = 'delivery_interativo';
+$usuario = 'u719820352_delivery';
+$senha = 'Ti@v3n3z@22';
+$banco = 'u719820352_db_delivery';
 $servidor = 'localhost';
 
 $url_sistema = "http://$_SERVER[HTTP_HOST]/";
