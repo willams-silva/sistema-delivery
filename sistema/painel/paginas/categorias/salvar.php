@@ -7,7 +7,12 @@ $nome = $_POST['nome'];
 $descricao = $_POST['descricao'];
 $cor = $_POST['cor'];
 
-//validar email
+$nome_novo = strtolower( preg_replace("[^a-zA-Z0-9-]", "-", 
+        strtr(utf8_decode(trim($nome)), utf8_decode("áàãâéêíóôõúüñçÁÀÃÂÉÊÍÓÔÕÚÜÑÇ"),
+        "aaaaeeiooouuncAAAAEEIOOOUUNC-")) );
+$url = preg_replace('/[ -]+/' , '-' , $nome_novo);
+
+//validar nome
 $query = $pdo->query("SELECT * from $tabela where nome = '$nome'");
 $res = $query->fetchAll(PDO::FETCH_ASSOC);
 if(@count($res) > 0 and $id != $res[0]['id']){
@@ -62,9 +67,9 @@ if(@$_FILES['foto']['name'] != ""){
 
 
 if($id == ""){
-	$query = $pdo->prepare("INSERT INTO $tabela SET nome = :nome, descricao = :descricao, cor = '$cor',  ativo = 'Sim', foto = '$foto'");
+	$query = $pdo->prepare("INSERT INTO $tabela SET nome = :nome, descricao = :descricao, cor = '$cor',  ativo = 'Sim', foto = '$foto', url = '$url'");
 }else{
-	$query = $pdo->prepare("UPDATE $tabela SET nome = :nome, descricao = :descricao, cor = '$cor',  ativo = 'Sim', foto = '$foto' WHERE id = '$id'");
+	$query = $pdo->prepare("UPDATE $tabela SET nome = :nome, descricao = :descricao, cor = '$cor',  ativo = 'Sim', foto = '$foto', url = '$url' WHERE id = '$id'");
 }
 
 $query->bindValue(":nome", "$nome");

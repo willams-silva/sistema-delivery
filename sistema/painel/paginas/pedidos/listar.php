@@ -28,7 +28,7 @@ $total_pedidos = @count($res);
 
 $query = $pdo->query("SELECT * FROM $tabela where data = curDate() and status != 'Finalizado' and status != 'Cancelado' order by id desc limit 1");
 $res = $query->fetchAll(PDO::FETCH_ASSOC);
-$id_ult_pedido = $res[0]['id'];
+$id_ult_pedido = @$res[0]['id'];
 
 if($ult_ped < $id_ult_pedido and $ult_ped != ""){
 	echo '<audio autoplay="true">
@@ -75,6 +75,7 @@ for($i=0; $i < $total_reg; $i++){
 	$taxa_entrega = $res[$i]['taxa_entrega'];
 	$tipo_pgto = $res[$i]['tipo_pgto'];
 	$usuario_baixa = $res[$i]['usuario_baixa'];
+	$entrega = $res[$i]['entrega'];
 	
 	$valorF = number_format($valor, 2, ',', '.');
 	$total_pagoF = number_format($total_pago, 2, ',', '.');
@@ -83,7 +84,13 @@ for($i=0; $i < $total_reg; $i++){
 	$dataF = implode('/', array_reverse(explode('-', $data)));
 	//$horaF = date("H:i", strtotime($hora));	
 
-	
+	$hora_pedido = date('H:i', strtotime("+$previsao_entrega minutes",strtotime($hora)));
+
+	if($hora_pedido < date('H:i')){
+		$classe_hora = 'text-danger';
+	}else{
+		$classe_hora = '';
+	}
 
 		$query2 = $pdo->query("SELECT * FROM usuarios where id = '$usuario_baixa'");
 		$res2 = $query2->fetchAll(PDO::FETCH_ASSOC);
@@ -100,9 +107,14 @@ for($i=0; $i < $total_reg; $i++){
 		$total_reg2 = @count($res2);
 		if($total_reg2 > 0){
 			$nome_cliente = $res2[0]['nome'];
+			$telefone_cliente = $res2[0]['telefone'];
 		}else{
 			$nome_cliente = 'Nenhum!';
+			$telefone_cliente = '';
 		}
+
+
+		$whatsapp_cliente = '55'.preg_replace('/[ ()-]+/' , '' , $telefone_cliente);
 
 
 		if($status == 'Iniciado'){
@@ -143,22 +155,30 @@ for($i=0; $i < $total_reg; $i++){
 			$classe_info = 'text-secondary';
 		}
 
+		if($entrega == 'Delivery'){
+			$classe_entrega = 'text-danger';
+		}else if($entrega == 'Retirar'){
+			$classe_entrega = 'text-primary';
+		}else{
+			$classe_entrega = 'text-verde';
+		}
+
 
 
 echo <<<HTML
 <tr class="">
-<td><i class="fa fa-square {$classe_alerta}"></i> <b>Pedido ({$id})</b> / {$nome_cliente}</td>
+<td><i class="fa fa-square {$classe_alerta}"></i> <b>Pedido ({$id})</b> / {$nome_cliente} <span class="{$classe_entrega}"><small>({$entrega})</small></span></td>
 <td class="esc">R$ {$valorF}</td>
 <td class="esc">R$ {$total_pagoF}</td>
 <td class="esc">R$ {$trocoF}</td>
 <td class="esc">{$tipo_pgto}</td>
 <td class="esc">
-<a title="{$titulo_link}" href="#" onclick="ativar('{$id}','{$acao_link}')">
+<a title="{$titulo_link}" href="#" onclick="ativar('{$id}','{$acao_link}','{$whatsapp_cliente}','{$valorF}','{$tipo_pgto}','{$hora_pedido}','{$entrega}')">
 {$status} 
 <i class="fa fa-arrow-right {$cor_icone_link}"></i>
 </a>
 </td>
-<td class="esc">{$hora}</td>
+<td class="esc {$classe_hora}">{$hora}</td>
 <td>	
 
 		<big><a href="#" onclick="mostrar('{$nome_cliente}', '{$valorF}', '{$total_pagoF}', '{$trocoF}',  '{$dataF}', '{$hora}', '{$status}', '{$pago}', '{$obs}', '{$taxa_entregaF}', '{$tipo_pgto}', '{$nome_usuario_pgto}')" title="Ver Dados"><i class="fa fa-info-circle {$classe_info}"></i></a></big>
@@ -192,6 +212,10 @@ echo <<<HTML
 		</ul>
 		</li>
 
+
+		<big><a href="#" onclick="gerarComprovante('{$id}')" title="Gerar Comprovante"><i class="fa fa-file-pdf-o text-primary"></i></a></big>
+
+
 		
 	
 		</td>
@@ -215,7 +239,7 @@ HTML;
 
 
 }else{
-	echo '<small>Não possui nenhum registro Cadastrado!</small>';
+	echo '<small>Não possui nenhum Pedido Hoje ainda!</small>';
 }
 
 ?>
@@ -259,5 +283,55 @@ HTML;
 </script>
 
 
+<script type="text/javascript">
+	
+function ativar(id, acao, telefone, total, pagamento, hora, entrega){
+	var pedido_whatsapp = "<?=$status_whatsapp?>";
 
 
+	if(entrega == 'Delivery'){
+		var texto = 'Seu Pedido saiu para entrega';
+	}else if(entrega == 'Retirar'){
+		var texto = 'Seu Pedido ficou pronto, pode vir retirá-lo';
+	}else{
+		var texto = 'Seu Pedido já ficou pronto, pode vir!!';
+	}
+	
+    $.ajax({
+        url: 'paginas/' + pag + "/mudar-status.php",
+        method: 'POST',
+        data: {id, acao},
+        dataType: "text",
+
+        success: function (mensagem) {            
+            if (mensagem.trim() == "Alterado com Sucesso") {                
+                listar();     
+                if(acao.trim() === 'Entrega'){
+                	if(pedido_whatsapp == 'Sim'){
+		              let a= document.createElement('a');
+		                a.target= '_blank';
+		                a.href= 'http://api.whatsapp.com/send?1=pt_BR&phone='+telefone+'&text= *Atenção*  %0A '+texto+' %0A *Total* R$'+total+' %0A *Tipo Pagamento* '+pagamento+' %0A';
+		                a.click();
+           }
+
+                }           
+            } else {
+                $('#mensagem-excluir').addClass('text-danger')
+                $('#mensagem-excluir').text(mensagem)
+            }
+
+        },      
+
+    });
+}
+
+</script>
+
+<script type="text/javascript">
+	function gerarComprovante(id){
+		let a= document.createElement('a');
+		                a.target= '_blank';
+		                a.href= 'rel/comprovante.php?id='+ id;
+		                a.click();
+	}
+</script>
