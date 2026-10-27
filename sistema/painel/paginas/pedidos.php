@@ -113,6 +113,59 @@ $segundos = $tempo_atualizar * 1000;
 			</div>
 		</div>
 	</div>
+</div>
+
+
+
+
+<!-- Modal Entregador-->
+<div class="modal fade" id="modalEntregador" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true" data-backdrop="static">
+	<div class="modal-dialog" role="document">
+		<div class="modal-content">
+
+			<div class="modal-header">
+				<h4 class="modal-title" id="exampleModalLabel">Selecionar Entregador</h4>
+				<button id="btn-fechar-entregador" type="button" class="close" data-dismiss="modal" aria-label="Close" style="margin-top: -20px">
+					<span aria-hidden="true" >&times;</span>
+				</button>
+			</div>
+						
+			<div class="modal-body">
+			<form id="form-entregador">	
+				<div class="row">
+					<div class="col-md-8">
+						<select class="form-control " id="entregador" name="entregador" style="width:100%;" > 
+							<?php 
+									$query = $pdo->query("SELECT * FROM usuarios WHERE nivel = 'Entregador' or nivel = 'Motoboy' or nivel = 'Motoboys' or nivel = 'Entregadores' ORDER BY id asc");
+									$res = $query->fetchAll(PDO::FETCH_ASSOC);
+									$total_reg = @count($res);
+									if($total_reg > 0){
+										for($i=0; $i < $total_reg; $i++){
+										foreach ($res[$i] as $key => $value){}
+										echo '<option value="'.$res[$i]['id'].'">'.$res[$i]['nome'].'</option>';
+										}
+									}else{
+											echo '<option value="0">Cadastre uma Categoria</option>';
+										}
+									 ?>
+						</select>
+
+						<input type="hidden" name="id" id="id_entregador">   
+					</div>
+					<div class="col-md-4">
+						<button type="submit" class="btn btn-primary">Selecionar</button>
+					</div>
+
+
+				</div>
+</form>
+
+<br><small><div align="center" id="mensagem-entregador"></div></small>
+
+			</div>
+		</div>
+	</div>
+</div>
 
 
 
@@ -206,6 +259,43 @@ $("#form-baixar").submit(function () {
 
                 $('#mensagem-baixar').addClass('text-danger')
                 $('#mensagem-baixar').text(mensagem)
+            }
+
+
+        },
+
+        cache: false,
+        contentType: false,
+        processData: false,
+
+    });
+
+});
+
+
+
+$("#form-entregador").submit(function () {
+
+    event.preventDefault();
+    var formData = new FormData(this);
+
+    $.ajax({
+       url: 'paginas/' + pag + "/entregador.php",
+        type: 'POST',
+        data: formData,
+
+        success: function (mensagem) {
+            $('#mensagem-entregador').text('');
+            $('#mensagem-entregador').removeClass()
+            if (mensagem.trim() == "Salvo com Sucesso") {
+
+                $('#btn-fechar-entregador').click();
+                listar();          
+
+            } else {
+
+                $('#mensagem-entregador').addClass('text-danger')
+                $('#mensagem-entregador').text(mensagem)
             }
 
 

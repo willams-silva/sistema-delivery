@@ -47,6 +47,31 @@ $pag = 'cupons';
 					
 					</div>
 
+					<div class="row">
+						<div class="col-md-4">
+							<div class="form-group">
+								<label for="exampleInputEmail1">Quantidade</label>
+								<input type="number" class="form-control" id="quantidade" name="quantidade" placeholder="Quantidade" value="1">    
+							</div> 	
+						</div>
+
+						<div class="col-md-4">
+							<div class="form-group">
+								<label for="exampleInputEmail1">Data Validade</label>
+								<input type="date" class="form-control" id="data" name="data" placeholder="Data de Validade" >    
+							</div> 	
+						</div>
+
+
+						<div class="col-md-4">
+							<div class="form-group">
+								<label for="exampleInputEmail1">Valor Mínimo</label>
+								<input type="text" class="form-control" id="valor_minimo" name="valor_minimo" placeholder="Valor Mínimo" >    
+							</div> 	
+						</div>
+					
+					</div>
+
 
 								
 						<input type="hidden" name="id" id="id">

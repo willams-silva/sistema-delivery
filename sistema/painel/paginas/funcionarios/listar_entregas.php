@@ -47,6 +47,7 @@ for($i=0; $i < $total_reg; $i++){
 	$entrega = $res[$i]['entrega'];
 	$mesa = $res[$i]['mesa'];
 	$nome_cliente_ped = $res[$i]['nome_cliente'];
+	$pedido = $res[$i]['pedido'];
 	
 	$valorF = number_format($valor, 2, ',', '.');
 
@@ -60,7 +61,7 @@ for($i=0; $i < $total_reg; $i++){
 
 echo <<<HTML
 <tr class="">
-<td><b>{$id}</b></td>
+<td><b>{$pedido}</b></td>
 <td>R$ {$valorF}</td>
 <td>{$tipo_pgto}</td>
 <td>{$dataF}</td>

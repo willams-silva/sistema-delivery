@@ -210,6 +210,9 @@ echo <<<HTML
 
 
 		<big><a href="http://api.whatsapp.com/send?1=pt_BR&phone=$whats&text=" target="_blank" title="Abrir Whatsapp" class="{$classe_whats}"><i class="fa fa-whatsapp text-verde"></i></a></big>
+
+
+		<big><a href="rel/recibo_conta_class.php?id={$id}" target="_blank" title="Recibo" class="text-success"><i class="fa fa-file-pdf-o text-verde"></i></a></big>
 	
 		</td>
 </tr>

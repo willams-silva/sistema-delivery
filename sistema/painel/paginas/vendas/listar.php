@@ -50,6 +50,7 @@ for($i=0; $i < $total_reg; $i++){
 	$usuario_baixa = $res[$i]['usuario_baixa'];
 	$mesa = $res[$i]['mesa'];
 	$nome_cliente_ped = $res[$i]['nome_cliente'];
+	$pedido = $res[$i]['pedido'];
 	
 	$valorF = number_format($valor, 2, ',', '.');
 	$total_pagoF = number_format($total_pago, 2, ',', '.');
@@ -105,7 +106,7 @@ for($i=0; $i < $total_reg; $i++){
 
 echo <<<HTML
 <tr class="{$classe_linha}">
-<td><i class="fa fa-square {$classe_alerta}"></i> <b>Pedido ({$id})</b> / {$nome_cliente}</td>
+<td><i class="fa fa-square {$classe_alerta}"></i> <b>Pedido ({$pedido})</b> / {$nome_cliente}</td>
 <td class="esc">R$ {$valorF}</td>
 <td class="esc">R$ {$total_pagoF}</td>
 <td class="esc">R$ {$trocoF}</td>

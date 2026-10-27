@@ -161,7 +161,7 @@ $pag = 'funcionarios';
 	<div class="modal-dialog" role="document">
 		<div class="modal-content">
 			<div class="modal-header">
-				<h4 class="modal-title" id="exampleModalLabel"><span id="nome_dados"></span></h4>
+				<h4 class="modal-title" id="exampleModalLabel"><span id="nome_dados"></span> </h4>
 				<button id="btn-fechar-dados" type="button" class="close" data-dismiss="modal" aria-label="Close" style="margin-top: -20px">
 					<span aria-hidden="true" >&times;</span>
 				</button>
@@ -248,6 +248,31 @@ $pag = 'funcionarios';
 
 
 
+<!-- Modal Entregas-->
+<div class="modal fade" id="modalEntregas" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+	<div class="modal-dialog" role="document">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h4 class="modal-title" id="exampleModalLabel"><span id="nome_entrega"></span> / Total: <span class="text-danger" id="total_pagar"></span></h4>
+				<button id="btn-fechar-entrega" type="button" class="close" data-dismiss="modal" aria-label="Close" style="margin-top: -20px">
+					<span aria-hidden="true" >&times;</span>
+				</button>
+			</div>
+			
+			<div class="modal-body">			
+
+				<div id="listar_entregas">
+					
+				</div>
+
+				<input type="hidden" id="id_entrega">
+
+			</div>
+
+			
+		</div>
+	</div>
+</div>
 
 
 
@@ -274,4 +299,20 @@ $pag = 'funcionarios';
             target.src = "";
         }
     }
+</script>
+
+
+<script type="text/javascript">
+	function listarEntregas(id){
+		$.ajax({
+        url: 'paginas/' + pag + "/listar_entregas.php",
+        method: 'POST',
+        data: {id},
+        dataType: "html",
+
+        success:function(result){
+            $("#listar_entregas").html(result);           
+        }
+    });
+	}
 </script>
