@@ -23,6 +23,33 @@ if($total_reg == 0){
 $pdo->query("INSERT INTO cargos SET nome = 'Administrador'");
 }
 
+
+//APAGAR OS REGISTROS DOS DIAS ANTERIORES A 30 DIAS
+$data_atual = date('Y-m-d');
+$data_30_ant = date('Y-m-d', strtotime("-$dias_apagar days",strtotime($data_atual)));
+$query = $pdo->query("SELECT * FROM temp WHERE data < '$data_30_ant'");
+$res = $query->fetchAll(PDO::FETCH_ASSOC);
+$total_reg = @count($res);
+if($total_reg > 0){
+ for($i=0; $i < $total_reg; $i++){
+    foreach ($res[$i] as $key => $value){}
+        $id = $res[$i]['id'];
+    	$pdo->query("DELETE FROM temp WHERE id = '$id'");
+}
+}
+
+
+$query = $pdo->query("SELECT * FROM carrinho WHERE data < '$data_30_ant'");
+$res = $query->fetchAll(PDO::FETCH_ASSOC);
+$total_reg = @count($res);
+if($total_reg > 0){
+ for($i=0; $i < $total_reg; $i++){
+    foreach ($res[$i] as $key => $value){}
+        $id = $res[$i]['id'];
+    	$pdo->query("DELETE FROM carrinho WHERE id = '$id'");
+}
+}
+
  ?>
 <!DOCTYPE html>
 <html>
