@@ -1,6 +1,6 @@
 <?php 
 require_once('../../sistema/conexao.php');
-require_once('../../js/ajax/Apiconfig.php');
+require_once('../../js/ajax/ApiConfig.php');
 
 if($access_token == ""){
 	echo 'Configure o Token da Api Pix no arquivo ApiConfig';
@@ -55,7 +55,7 @@ echo "
 <img style='display:block;' width='200px' id='base64image'
        src='data:image/jpeg;base64, ".$resultado->point_of_interaction->transaction_data->qr_code_base64."'/>";
 echo '
- <a style="margin-left:15px" class="link-neutro" href="#" onClick="copiar()"><i class="bi bi-clipboard text-primary"></i> <span ><small><small>Copiar Chave Pix <br><input type="text" id="chave_pix_copia" value="'.$codigo_pix.'" style="background: transparent; border:none; width:1px" readonly></small></small></span> </a>';
+ <a style="margin-left:15px" class="link-neutro" href="#" onClick="copiar()"><i class="bi bi-clipboard text-primary"></i> <span ><small><small>Copiar Chave Pix <br><input type="text" id="chave_pix_copia" value="'.$codigo_pix.'" style="background: transparent; border:none; width:100px; opacity:0" readonly></small></small></span> </a>';
 
 echo '<input type="hidden" id="codigo_pix" value="'.$id_ref.'">';
 ?>   

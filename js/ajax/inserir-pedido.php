@@ -18,6 +18,9 @@ $cliente = @$_POST['id_cliente'];
 $mesa = @$_POST['mesa'];
 $cupom = @$_POST['cupom'];
 $codigo_pix = @$_POST['codigo_pix'];
+$cep = @$_POST['cep'];
+$cidade = @$_POST['cidade'];
+$taxa_entrega = @$_POST['taxa_entrega'];
 
 //verificar pgto pix
 require("verificar_pgto.php");
@@ -39,36 +42,32 @@ if($tel_cliente != ""){
 
 
     //atualiza os dados do cliente
-$query = $pdo->prepare("UPDATE clientes SET nome = :nome, rua = :rua, numero = :numero, complemento = :complemento, bairro = :bairro where id = '$cliente'");
+$query = $pdo->prepare("UPDATE clientes SET nome = :nome, rua = :rua, numero = :numero, complemento = :complemento, bairro = :bairro, cep = :cep, cidade = :cidade where id = '$cliente'");
 $query->bindValue(":nome", "$nome_cliente_ped");
 $query->bindValue(":rua", "$rua");
 $query->bindValue(":numero", "$numero");
 $query->bindValue(":complemento", "$complemento");
 $query->bindValue(":bairro", "$bairro");
+$query->bindValue(":cep", "$cep");
+$query->bindValue(":cidade", "$cidade");
 $query->execute();
 
   }else{
-    $query = $pdo->prepare("INSERT INTO clientes SET nome = :nome, telefone = :telefone, rua = :rua, numero = :numero, bairro = :bairro, complemento = :complemento, data = curDate()");
+    $query = $pdo->prepare("INSERT INTO clientes SET nome = :nome, telefone = :telefone, rua = :rua, numero = :numero, bairro = :bairro, complemento = :complemento, data = curDate(), cep = :cep, cidade = :cidade");
     $query->bindValue(":nome", "$nome_cliente_ped");
   $query->bindValue(":telefone", "$tel_cliente");
   $query->bindValue(":rua", "$rua");
   $query->bindValue(":numero", "$numero");
   $query->bindValue(":bairro", "$bairro");
   $query->bindValue(":complemento", "$complemento");
+  $query->bindValue(":cep", "$cep");
+  $query->bindValue(":cidade", "$cidade");
   $query->execute();
   $cliente = $pdo->lastInsertId();
   }
 }
 
 
-
-if($entrega == "Delivery"){
-  $query = $pdo->query("SELECT * FROM bairros where nome = '$bairro'");
-$res = $query->fetchAll(PDO::FETCH_ASSOC);
-$taxa_entrega = $res[0]['valor'];
-}else{
-  $taxa_entrega = 0;
-}
 
 
 
@@ -442,7 +441,7 @@ if($obs != ""){
 
  if($entrega == "Delivery"){
       $mensagem .= '%0A*Endereço do Cliente*%0A';
-      $endereco = $rua.' '.$numero.' '.$complemento.' '.$bairro;
+      $endereco = $rua.' '.$numero.' '.$complemento.' '.$bairro.' '.$cidade;
        $mensagem .= '_'.$endereco.'_';
     
 }

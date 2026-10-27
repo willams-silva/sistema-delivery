@@ -579,7 +579,11 @@ body{
   width:100%;  
   padding:0px 10px;
 }
+
+  
+
 }
+
 
 
 
@@ -594,8 +598,14 @@ body{
 
 }
 
+
+
 .cards{
   margin-top:65px;
+}
+
+.margin_top_web{
+  margin-top: 30px;
 }
 }
 
