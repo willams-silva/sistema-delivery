@@ -23,8 +23,8 @@ if(@count($res) > 0){
 $hora_atual = date('H:i:s');
 
 //nova verificação de horarios
-$start = strtotime( date('Y-m-d' .$horario_abertura) );
-$end = strtotime( date('Y-m-d' . $horario_fechamento) );
+$start = strtotime(date('Y-m-d') . ' ' . $horario_abertura);
+$end = strtotime(date('Y-m-d') . ' ' . $horario_fechamento);
 $now = time();
 
 if ( $start <= $now && $now <= $end ) {
