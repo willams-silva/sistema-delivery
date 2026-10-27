@@ -33,7 +33,7 @@ $res = $query->fetchAll(PDO::FETCH_ASSOC);
 $total_reg = @count($res);
 if($total_reg == 0){
 //CRIAR UM USUÁRIO ADMIN
-$pdo->query("INSERT INTO config SET nome_sistema = '$nome_sistema', email_sistema = '$email_sistema', telefone_sistema = '$telefone_sistema', tipo_rel = 'PDF', tipo_miniatura = 'Cores', status_whatsapp = 'Sim', previsao_entrega = '60', horario_abertura = '18:00', horario_fechamento = '00:00', status_estabelecimento = 'Aberto', logo_sistema = 'logo.png', favicon_sistema = 'favicon.png', logo_rel = 'logo_rel.jpg', tempo_atualizar = '30', dias_apagar = '30', impressao_automatica = 'Não', fonte_comprovante = '11', banner_rotativo = 'Sim' ");
+$pdo->query("INSERT INTO config SET nome_sistema = '$nome_sistema', email_sistema = '$email_sistema', telefone_sistema = '$telefone_sistema', tipo_rel = 'PDF', tipo_miniatura = 'Cores', status_whatsapp = 'Sim', previsao_entrega = '60', horario_abertura = '18:00', horario_fechamento = '00:00', status_estabelecimento = 'Aberto', logo_sistema = 'logo.png', favicon_sistema = 'favicon.png', logo_rel = 'logo_rel.jpg', tempo_atualizar = '30', dias_apagar = '30', impressao_automatica = 'Não', fonte_comprovante = '11', banner_rotativo = 'Sim', mostrar_aberto = 'Sim' ");
 }else{
 $nome_sistema = $res[0]['nome_sistema'];
 $email_sistema = $res[0]['email_sistema'];
@@ -65,6 +65,15 @@ $token = $res[0]['token'];
 $instancia = $res[0]['instancia'];
 $ativo_sistema = $res[0]['ativo'];
 $pedido_minimo = $res[0]['pedido_minimo'];
+$mostrar_aberto = $res[0]['mostrar_aberto'];
+$chave_api_maps = $res[0]['chave_api_maps'];
+$entrega_distancia = $res[0]['entrega_distancia'];
+
+$latitude_rest = $res[0]['latitude_rest'];
+$longitude_rest = $res[0]['longitude_rest'];
+$distancia_entrega_km = $res[0]['distancia_entrega_km'];
+$valor_km = $res[0]['valor_km'];
+
 
 $whatsapp_sistema = '55'.preg_replace('/[ ()-]+/' , '' , $telefone_sistema);
 }
@@ -80,7 +89,7 @@ if($ativo_sistema != 'Sim' and $ativo_sistema != ''){ ?>
 }
 	</style>
 	<div style="text-align: center; margin-top: 100px">
-	<img src="img/bloqueio.png" class="imgsistema_mobile">	
+	<img src="<?php echo $url_sistema ?>img/bloqueio.png" class="imgsistema_mobile">	
 	</div>
 <?php 
 exit();
