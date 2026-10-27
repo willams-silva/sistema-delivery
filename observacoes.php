@@ -134,31 +134,24 @@ if(@count($res) > 0){
 }
 
 $hora_atual = date('H:i:s');
-
-//nova verificação de horarios
-$start = strtotime( date('Y-m-d' .$horario_abertura) );
-$end = strtotime( date('Y-m-d' . $horario_fechamento) );
-$now = time();
-
-if ( $start <= $now && $now <= $end ) {
-    
+//verificar se o delivery está aberto dentro da hora prevista
+if(strtotime($hora_atual) > strtotime($horario_abertura) and strtotime($hora_atual) < strtotime($horario_fechamento)){
+	
 }else{
-	echo "<script>window.alert('$texto_fechamento_horario')</script>";
+	if(strtotime($hora_atual) > strtotime($horario_abertura) and strtotime($hora_atual) > strtotime($horario_fechamento)){
+		
+	}else{
+			echo "<script>window.alert('$texto_fechamento_horario')</script>";
 	echo "<script>window.location='index.php'</script>";
 	exit();
+	}
 }
-
-
 
 
 //verificar se o produto tem adicionais ou ingredientes
 $query = $pdo->query("SELECT * FROM adicionais where produto = '$id_prod'");
 $res = $query->fetchAll(PDO::FETCH_ASSOC);
 $total_adc = @count($res);
-
-$query = $pdo->query("SELECT * FROM guarnicoes where produto = '$id_prod'");
-$res = $query->fetchAll(PDO::FETCH_ASSOC);
-$total_guarn = @count($res);
 
 $query = $pdo->query("SELECT * FROM ingredientes where produto = '$id_prod'");
 $res = $query->fetchAll(PDO::FETCH_ASSOC);
@@ -179,18 +172,11 @@ $total_ing = @count($res);
 	<nav class="navbar bg-light fixed-top" style="box-shadow: 0px 3px 5px rgba(0, 0, 0, 0.20);">
 		<div class="container-fluid">
 			<div class="navbar-brand" >
-				<?php if($total_adc > 0 || $total_ing > 0 || $total_guarn > 0){ ?>
+				<?php if($total_adc > 0 || $total_ing > 0){ ?>
 				<a href="adicionais-<?php echo $url_completa ?>&sabores=<?php echo $sabores ?>"><big><i class="bi bi-arrow-left"></i></big></a>
-				<?php }else{
-					$query =$pdo->query("SELECT * FROM variacoes where produto = '$id_prod' and ativo = 'Sim'");
-					$res = $query->fetchAll(PDO::FETCH_ASSOC);
-					$total_var = @count($res);
-					if($total_var > 0){
-				 ?>
-				<a href="produto-<?php echo $url ?>&sabores=<?php echo $sabores ?>"><big><i class="bi bi-arrow-left"></i></big></a>
 				<?php }else{ ?>
-					<a href="categoria-<?php echo $url_cat ?>"><big><i class="bi bi-arrow-left"></i></big></a>
-				<?php } } ?>	
+				<a href="produto-<?php echo $url ?>&sabores=<?php echo $sabores ?>"><big><i class="bi bi-arrow-left"></i></big></a>
+				<?php } ?>	
 				<span style="margin-left: 15px">Resumo do Item</span>
 			</div>
 
@@ -401,10 +387,6 @@ $total_ing = @count($res);
 		var obs = $('#obs').val();
 		var sabores = "<?=$sabores?>";
 		var variacao = "<?=$id_variacao?>";
-
-		if(total_item == ""){			
-			return;
-		}
 		
 		 $.ajax({
         url: 'js/ajax/add-carrinho.php',
@@ -419,8 +401,6 @@ $total_ing = @count($res);
 
             window.location='carrinho';              
                           
-            }else{
-            	alert(mensagem)
             } 
 
         },      

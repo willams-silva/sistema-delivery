@@ -20,12 +20,7 @@ if($total_reg > 0){
 		$obs = $res[$i]['obs'];
 		$item = $res[$i]['item'];
 		$variacao = $res[$i]['variacao'];
-		if($total_item > 0 and $quantidade > 0){
-			$valor_unit = $total_item / $quantidade;
-		}else{
-			$valor_unit = 0;
-		}
-		
+		$valor_unit = $total_item / $quantidade;
 		$id_sabor = $res[$i]['id_sabor'];
 
 		$total_carrinho += $total_item;
@@ -210,9 +205,6 @@ HTML;
 		$("#total-do-pedido").text("<?=$total_carrinhoF?>");
 
 		function mudarQuant(id, quantidade, acao){
-			if(acao == 'menos' && quantidade == 1){
-				excluirCarrinho(id);
-			}
 			$.ajax({
 				url: 'js/ajax/mudar-quant-carrinho.php',
 				method: 'POST',

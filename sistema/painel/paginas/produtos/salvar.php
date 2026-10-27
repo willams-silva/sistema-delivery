@@ -11,7 +11,6 @@ $valor_venda = str_replace(',', '.', $valor_venda);
 $descricao = $_POST['descricao'];
 $nivel_estoque = $_POST['nivel_estoque'];
 $tem_estoque = $_POST['tem_estoque'];
-$guarnicoes = $_POST['guarnicoes'];
 
 $categoria = @$_POST['categoria'];
 
@@ -80,9 +79,9 @@ if(@$_FILES['foto']['name'] != ""){
 
 
 if($id == ""){
-	$query = $pdo->prepare("INSERT INTO $tabela SET nome = :nome, categoria = '$categoria', valor_compra = :valor_compra, valor_venda = :valor_venda, descricao = :descricao, foto = '$foto', nivel_estoque = '$nivel_estoque', tem_estoque = '$tem_estoque', ativo = 'Sim', url = '$url', guarnicoes = '$guarnicoes'");
+	$query = $pdo->prepare("INSERT INTO $tabela SET nome = :nome, categoria = '$categoria', valor_compra = :valor_compra, valor_venda = :valor_venda, descricao = :descricao, foto = '$foto', nivel_estoque = '$nivel_estoque', tem_estoque = '$tem_estoque', ativo = 'Sim', url = '$url'");
 }else{
-	$query = $pdo->prepare("UPDATE $tabela SET nome = :nome, categoria = '$categoria', valor_compra = :valor_compra, valor_venda = :valor_venda, descricao = :descricao, foto = '$foto', nivel_estoque = '$nivel_estoque', tem_estoque = '$tem_estoque', url = '$url', guarnicoes = '$guarnicoes' WHERE id = '$id'");
+	$query = $pdo->prepare("UPDATE $tabela SET nome = :nome, categoria = '$categoria', valor_compra = :valor_compra, valor_venda = :valor_venda, descricao = :descricao, foto = '$foto', nivel_estoque = '$nivel_estoque', tem_estoque = '$tem_estoque', url = '$url' WHERE id = '$id'");
 }
 
 $query->bindValue(":nome", "$nome");

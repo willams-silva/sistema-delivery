@@ -331,19 +331,6 @@ if($id_usuario != ''){
 
 </div>
 
-
-
- <div class="row" style="margin:10px" id="div_cupom">
-  <small><b>Tem Cupom?</b></small> 
-    <div class="col-md-2 col-9">             
-     <input class="form-control" type="text" name="cupom" id="cupom" placeholder="Código do Cupom"> 
-   </div>  
-   <div class="col-md-1 col-3">
-<button onclick="cupom()" class="btn btn-primary" type="button" name="btn_cupom" id="btn_cupom"><i class="bi bi-search"></i></button>
-   </div>
-  </div>
-
-
 <div class="group mt-4 mx-4" id="area-obs">
           <input type="text" class="input" name="obs" id="obs" value="">
           <span class="highlight"></span>
@@ -357,9 +344,6 @@ if($id_usuario != ''){
 </div>
 
 
-
-
-
 </div>
 
 
@@ -370,7 +354,7 @@ if($id_usuario != ''){
 <input type="hidden" id="pagamento">
 <input type="hidden" id="taxa-entrega-input">
 <input type="hidden" id="id_cliente">
-<input type="hidden" id="valor-cupom">
+
 
 
 <div class="total-finalizar">
@@ -576,11 +560,6 @@ if($id_usuario != ''){
    var obs = $('#obs').val();
    var taxa_entrega = $('#taxa-entrega-input').val();
    var pedido_whatsapp = "<?=$status_whatsapp?>";
-   var cupom = $('#valor-cupom').val();
-
-   if(cupom == ""){
-    cupom = 0;
-   }
 
    if(taxa_entrega == ""){
     taxa_entrega = 0;
@@ -631,7 +610,7 @@ if($id_usuario != ''){
     return;
    }
 
-   var total_compra_final = parseFloat(total_compra) + parseFloat(taxa_entrega) - parseFloat(cupom);
+   var total_compra_final = parseFloat(total_compra) + parseFloat(taxa_entrega);
 
    var total_compra_finalF = total_compra_final.toFixed(2)
    
@@ -645,7 +624,7 @@ if($id_usuario != ''){
     $.ajax({
          url: 'js/ajax/inserir-pedido.php',
         method: 'POST',
-        data: {pagamento, entrega, rua, numero, bairro, complemento, troco, obs, nome_cliente, tel_cliente, id_cliente, mesa, cupom},
+        data: {pagamento, entrega, rua, numero, bairro, complemento, troco, obs, nome_cliente, tel_cliente, id_cliente, mesa},
         dataType: "html",
 
         success:function(result){
@@ -724,8 +703,6 @@ if($id_usuario != ''){
   function buscarNome(){
 
     var tel = $('#telefone').val(); 
-
-     var nome = $('#nome').val(); 
         
     $.ajax({
       url: 'js/ajax/listar-nome.php',
@@ -737,10 +714,7 @@ if($id_usuario != ''){
 
         var split = result.split("**");    
 
-        if(nome == ""){
-          $('#nome').val(split[0]); 
-        }
-        
+        $('#nome').val(split[0]); 
         $('#rua').val(split[1]); 
         $('#numero').val(split[2]); 
         $('#bairro').val(split[3]).change(); 
@@ -786,43 +760,5 @@ if($id_usuario != ''){
   $('#colapse-2').click();
   }
 
-  }
-
-
-
-
-  function cupom(){
-    var total_compra = "<?=$total_carrinho?>";
-    var taxa_entrega = $('#taxa-entrega-input').val();
-    if(taxa_entrega == ""){
-      taxa_entrega = 0;
-    }
-    var total_final = parseFloat(total_compra) + parseFloat(taxa_entrega);
-    var codigo_cupom = $('#cupom').val();
-    if(codigo_cupom == ""){
-      alert("Preencha o código do cupom");
-      return;
-    }
-
-     $.ajax({
-        url: 'js/ajax/cupom.php',
-        method: 'POST',
-        data: {total_final, codigo_cupom},
-        dataType: "text",
-
-        success: function (mensagem) {          
-        if(mensagem.trim() == '0'){
-           alert ('Código do Cupom Inválido');
-         }else{
-            var split = mensagem.split('**')
-            $('#total-carrinho-finalizar').text(split[0]);
-            $('#valor-cupom').val(split[1]);
-            $('#div_cupom').hide();
-            alert ('Cupom Inserido!');
-         }
-         
-        },      
-
-    });
   }
 </script>

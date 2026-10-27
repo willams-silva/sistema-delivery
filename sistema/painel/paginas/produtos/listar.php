@@ -36,7 +36,6 @@ for($i=0; $i < $total_reg; $i++){
 	$nivel_estoque = $res[$i]['nivel_estoque'];
 	$tem_estoque = $res[$i]['tem_estoque'];
 	$ativo = $res[$i]['ativo'];
-	$guarnicoes = $res[$i]['guarnicoes'];
 
 	$nomeF = mb_strimwidth($nome, 0, 25, "...");	
 
@@ -84,9 +83,9 @@ echo <<<HTML
 <td class="esc">R$ {$valor_vendaF}</td>
 <td class="esc">{$estoque}</td>
 <td>
-	<big><a href="#" onclick="editar('{$id}','{$nome}', '{$categoria}', '{$descricao}', '{$valor_compra}', '{$valor_venda}', '{$foto}', '{$nivel_estoque}', '{$tem_estoque}', '{$guarnicoes}')" title="Editar Dados"><i class="fa fa-edit text-primary"></i></a></big>
+	<big><a href="#" onclick="editar('{$id}','{$nome}', '{$categoria}', '{$descricao}', '{$valor_compra}', '{$valor_venda}', '{$foto}', '{$nivel_estoque}', '{$tem_estoque}')" title="Editar Dados"><i class="fa fa-edit text-primary"></i></a></big>
 
-		<big><a href="#" onclick="mostrar('{$nome}', '{$nome_cat}', '{$descricao}', '{$valor_compraF}',  '{$valor_vendaF}', '{$estoque}', '{$foto}', '{$nivel_estoque}', '{$tem_estoque}', '{$guarnicoes}')" title="Ver Dados"><i class="fa fa-info-circle text-secondary"></i></a></big>
+		<big><a href="#" onclick="mostrar('{$nome}', '{$nome_cat}', '{$descricao}', '{$valor_compraF}',  '{$valor_vendaF}', '{$estoque}', '{$foto}', '{$nivel_estoque}', '{$tem_estoque}')" title="Ver Dados"><i class="fa fa-info-circle text-secondary"></i></a></big>
 
 
 	<li class="dropdown head-dpdn2" style="display: inline-block;">
@@ -115,8 +114,6 @@ echo <<<HTML
 		<a href="#" onclick="ingredientes('{$id}','{$nome}')" title="Ingredientes do Produto"><i class="fa fa-cutlery text-cinza"></i></a>
 
 		<a href="#" onclick="adicionais('{$id}','{$nome}')" title="Adicionais do Produto"><i class="fa fa-plus text-verde"></i></a>
-
-		<a href="#" onclick="guarnicoes('{$id}','{$nome}')" title="Guarnições do Produto"><i class="fa fa-plus text-primary"></i></a>
 
 
 </td>
@@ -155,7 +152,7 @@ HTML;
 
 
 <script type="text/javascript">
-	function editar(id, nome, categoria, descricao, valor_compra, valor_venda, foto, nivel_estoque, tem_estoque, guarnicoes){
+	function editar(id, nome, categoria, descricao, valor_compra, valor_venda, foto, nivel_estoque, tem_estoque){
 		$('#id').val(id);
 		$('#nome').val(nome);
 		$('#valor_venda').val(valor_venda);
@@ -164,7 +161,6 @@ HTML;
 		$('#descricao').val(descricao);
 		$('#nivel_estoque').val(nivel_estoque);
 		$('#tem_estoque').val(tem_estoque).change();
-		$('#guarnicoes').val(guarnicoes);
 						
 		$('#titulo_inserir').text('Editar Registro');
 		$('#modalForm').modal('show');
@@ -179,7 +175,6 @@ HTML;
 		$('#valor_venda').val('');
 		$('#descricao').val('');		
 		$('#foto').val('');
-		$('#guarnicoes').val('');
 		$('#target').attr('src','images/produtos/sem-foto.jpg');
 	}
 </script>
@@ -187,7 +182,7 @@ HTML;
 
 
 <script type="text/javascript">
-	function mostrar(nome, categoria, descricao, valor_compra, valor_venda, estoque, foto, nivel_estoque, tem_estoque, guarnicoes){
+	function mostrar(nome, categoria, descricao, valor_compra, valor_venda, estoque, foto, nivel_estoque, tem_estoque){
 
 		$('#nome_dados').text(nome);
 		$('#valor_compra_dados').text(valor_compra);
@@ -197,7 +192,6 @@ HTML;
 		$('#estoque_dados').text(estoque);
 		$('#nivel_estoque_dados').text(nivel_estoque);
 		$('#tem_estoque_dados').text(tem_estoque);
-		$('#guarnicoes_dados').text(guarnicoes);
 		
 		$('#target_mostrar').attr('src','images/produtos/' + foto);
 
@@ -242,20 +236,6 @@ HTML;
 		listarVariacoes(id);
 		$('#modalVariacoes').modal('show');
 		limparCamposVar();
-	}
-</script>
-
-
-
-<script type="text/javascript">
-	function guarnicoes(id, nome){
-
-		$('#titulo_nome_guar').text(nome);		
-		$('#id_guar').val(id);		
-		
-		listarGuarnicoes(id);
-		$('#modalGuarnicoes').modal('show');
-		limparCamposGuar();
 	}
 </script>
 
