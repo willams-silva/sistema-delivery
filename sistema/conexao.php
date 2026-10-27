@@ -58,6 +58,7 @@ $cnpj_sistema = $res[0]['cnpj'];
 $dias_apagar = $res[0]['dias_apagar'];
 $impressao_automatica = $res[0]['impressao_automatica'];
 $fonte_comprovante = $res[0]['fonte_comprovante'];
+$banner_rotativo = $res[0]['banner_rotativo'];
 
 $whatsapp_sistema = '55'.preg_replace('/[ ()-]+/' , '' , $telefone_sistema);
 }

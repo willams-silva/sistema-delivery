@@ -15,12 +15,6 @@ $senha_usuario = $res[0]['senha'];
 $foto_usuario = $res[0]['foto'];
 $telefone_usuario = $res[0]['telefone'];
 
-if(@$_GET['pagina'] != ""){
-	$pagina = @$_GET['pagina'];
-}else{
-	$pagina = 'home';
-}
-
 
 $data_atual = date('Y-m-d');
 $mes_atual = Date('m');
@@ -33,8 +27,16 @@ $partesInicial = explode('-', $data_atual);
 $dataDiaInicial = $partesInicial[2];
 $dataMesInicial = $partesInicial[1];
 
+$pag_inicial = 'home';
+
 if(@$_SESSION['nivel'] != 'Administrador'){
 	require_once("verificar-permissoes.php");
+}
+
+if(@$_GET['pagina'] != ""){
+	$pagina = @$_GET['pagina'];
+}else{
+	$pagina = $pag_inicial;
 }
 
 ?>
@@ -215,6 +217,10 @@ if(@$_SESSION['nivel'] != 'Administrador'){
 									<li class="<?php echo @$grupos ?>"><a href="index.php?pagina=grupos"><i class="fa fa-angle-right"></i> Grupo Acessos</a></li>
 
 									<li class="<?php echo @$acessos ?>"><a href="index.php?pagina=acessos"><i class="fa fa-angle-right"></i> Acessos</a></li>
+
+									<li class="<?php echo @$banner_rotativo ?>"><a href="index.php?pagina=banner_rotativo"><i class="fa fa-angle-right"></i> Banner Rotativo</a></li>
+
+									<li class="<?php echo @$mesas ?>"><a href="index.php?pagina=mesas"><i class="fa fa-angle-right"></i>Mesas</a></li>
 									
 								</ul>
 							</li>
@@ -286,6 +292,13 @@ if(@$_SESSION['nivel'] != 'Administrador'){
 								</ul>
 							</li>
 
+
+							<li class="treeview <?php echo @$novo_pedido ?>" >
+								<a href="index.php?pagina=novo_pedido">
+									<i class="fa fa-columns"></i> <span>Novo Pedido</span>
+								</a>
+							</li>
+
 						</ul>
 					</div>
 					<!-- /.navbar-collapse -->
@@ -315,11 +328,11 @@ if(@$_SESSION['nivel'] != 'Administrador'){
 						}
 						?>
 						<li class="dropdown head-dpdn">
-							<a href="#" class="dropdown-toggle" data-toggle="dropdown" aria-expanded="false"><i class="fa fa-cutlery" style="color:#FFF"></i><span class="badge"><?php echo $total_reg ?></span></a>
+							<a href="#" class="dropdown-toggle" data-toggle="dropdown" aria-expanded="false"><i class="fa fa-cutlery" style="color:#FFF"></i><span id="total-dos-pedidos" class="badge"><?php echo $total_reg ?></span></a>
 							<ul class="dropdown-menu">
 								<li>
 									<div class="notification_header">
-										<h3><?php echo $texto_pedidos ?></h3>
+										<h3 ><?php echo $texto_pedidos ?></h3>
 									</div>
 								</li>
 
@@ -392,7 +405,7 @@ if(@$_SESSION['nivel'] != 'Administrador'){
 								</div>	
 							</a>
 							<ul class="dropdown-menu drp-mnu">
-								<li> <a href="" data-toggle="modal" data-target="#modalConfig"><i class="fa fa-cog"></i> Configurações</a> </li> 
+								<li class="<?php echo @$configuracoes ?>"> <a href="" data-toggle="modal" data-target="#modalConfig"><i class="fa fa-cog"></i> Configurações</a> </li> 
 								<li> <a href="" data-toggle="modal" data-target="#modalPerfil"><i class="fa fa-user"></i> Perfil</a> </li> 								
 								<li> <a href="logout.php"><i class="fa fa-sign-out"></i> Sair</a> </li>
 							</ul>
@@ -649,8 +662,9 @@ if(@$_SESSION['nivel'] != 'Administrador'){
 						<div class="col-md-3">							
 							<label>Status Whatsapp</label>
 							<select class="form-control" name="status_whatsapp">
-								<option value="Sim" <?php if(@$status_whatsapp == 'Sim'){?> selected <?php } ?> >Sim</option>
+								<option value="Sim" <?php if(@$status_whatsapp == 'Sim'){?> selected <?php } ?> >Sim (Manual)</option>
 								<option value="Não" <?php if(@$status_whatsapp == 'Não'){?> selected <?php } ?> >Não</option>	
+								<option value="Api" <?php if(@$status_whatsapp == 'Api'){?> selected <?php } ?> >Api Paga</option>	
 							</select>					
 						</div>
 
@@ -752,6 +766,15 @@ if(@$_SESSION['nivel'] != 'Administrador'){
 						<div class="col-md-3">							
 							<label>Fonte Comprovante</label>
 							<input type="number" name="fonte_comprovante" id="fonte_comprovante" class="form-control" value="<?php echo @$fonte_comprovante ?>" placeholder="Tamanho Letra">	
+						</div>
+
+
+						<div class="col-md-3">							
+							<label>Banner Rotativo</label>
+							<select class="form-control" name="banner_rotativo">
+								<option value="Sim" <?php if(@$banner_rotativo == 'Sim'){?> selected <?php } ?> >Sim</option>
+								<option value="Não" <?php if(@$banner_rotativo == 'Não'){?> selected <?php } ?> >Não</option>	
+							</select>					
 						</div>
 
 						

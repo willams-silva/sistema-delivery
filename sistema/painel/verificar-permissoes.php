@@ -6,6 +6,8 @@ $id_usuario = $_SESSION['id'];
 
 $home = 'ocultar';
 $pedidos = 'ocultar';
+$configuracoes = 'ocultar';
+$novo_pedido = 'ocultar';
 
 //grupo pessoas
 $usuarios = 'ocultar';
@@ -20,7 +22,8 @@ $cargos = 'ocultar';
 $dias = 'ocultar';
 $grupos = 'ocultar';
 $acessos = 'ocultar';
-
+$banner_rotativo = 'ocultar';
+$mesas = 'ocultar';
 
 //grupo produtos
 $produtos = 'ocultar';
@@ -70,6 +73,14 @@ if($total_reg > 0){
 			$pedidos = '';
 		}
 
+		if($chave == 'configuracoes'){
+			$configuracoes = '';
+		}
+
+		if($chave == 'novo_pedido'){
+			$novo_pedido = '';
+		}
+
 
 
 
@@ -112,6 +123,14 @@ if($total_reg > 0){
 
 		if($chave == 'acessos'){
 			$acessos = '';
+		}
+
+		if($chave == 'banner_rotativo'){
+			$banner_rotativo = '';
+		}
+
+		if($chave == 'mesas'){
+			$mesas = '';
 		}
 
 
@@ -191,16 +210,15 @@ if($total_reg > 0){
 
 if($home != 'ocultar'){
 	$pag_inicial = 'home';
-}else if($atendimento == 'Sim'){
-	$pag_inicial = 'pedidos';
 }else{
 	$query = $pdo->query("SELECT * FROM usuarios_permissoes where usuario = '$id_usuario' order by id asc limit 1");
 	$res = $query->fetchAll(PDO::FETCH_ASSOC);
 	$total_reg = @count($res);
+
 	if($total_reg > 0){	
 			$permissao = $res[0]['permissao'];		
 			$query2 = $pdo->query("SELECT * FROM acessos where id = '$permissao'");
-			$res2 = $query2->fetchAll(PDO::FETCH_ASSOC);		
+			$res2 = $query2->fetchAll(PDO::FETCH_ASSOC);				
 			$pag_inicial = $res2[0]['chave'];		
 
 	}
@@ -216,7 +234,7 @@ if($usuarios == 'ocultar' and $funcionarios == 'ocultar' and $clientes == 'ocult
 
 
 
-if($bairros == 'ocultar' and $cargos == 'ocultar' and $dias == 'ocultar' and $grupos == 'ocultar' and $acessos == 'ocultar'){
+if($bairros == 'ocultar' and $cargos == 'ocultar' and $dias == 'ocultar' and $grupos == 'ocultar' and $acessos == 'ocultar' and $banner_rotativo == 'ocultar' and $mesas == 'ocultar'){
 	$menu_cadastros = 'ocultar';
 }else{
 	$menu_cadastros = '';
