@@ -19,7 +19,14 @@ $sessao = $_SESSION['sessao_usuario'];
 			<div class="navbar-brand" >
 				<a href="index"><big><i class="bi bi-arrow-left"></i></big></a>
 				<span style="margin-left: 15px">RESUMO DO PEDIDO</span>
+
 			</div>
+
+      <a class="text-dark" href="index.php" >
+          <div class="d-flex carrinho" style="color:blue"> 
+            <small><small>Comprar Mais?</small></small>
+          </div>
+        </a>
 
 			
 
@@ -37,7 +44,10 @@ $sessao = $_SESSION['sessao_usuario'];
 
 
 
+
+
 </div>
+
 
 <div class="area-pedidos">
 	<div class="total-pedido">
@@ -67,7 +77,7 @@ $sessao = $_SESSION['sessao_usuario'];
     <div class="modal-content">
       <div class="modal-header">
         <h5 class="modal-title" id="exampleModalLabel"><span id="nome_item"></span></h5>
-        <button type="button" id="btn-fechar-obs" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        <button type="button" id="btn-fechar-obs" class="btn-close" data-dismiss="modal" aria-label="Close"></button>
       </div>
       <form id="form-obs">
       <div class="modal-body">
@@ -98,7 +108,7 @@ $sessao = $_SESSION['sessao_usuario'];
     <div class="modal-content">
       <div class="modal-header">
         <h5 class="modal-title" id="exampleModalLabel"><span id="nome_item_adc"></span></h5>
-        <button type="button" id="btn-fechar-adc" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        <button type="button" id="btn-fechar-adc" class="btn-close" data-dismiss="modal" aria-label="Close"></button>
       </div>
       
       <div class="modal-body">    

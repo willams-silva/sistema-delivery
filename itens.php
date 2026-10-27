@@ -62,6 +62,7 @@ $mais_sabores = $res[0]['mais_sabores'];
 				$id = $res[$i]['id'];
 				$foto = $res[$i]['foto'];
 				$nome = $res[$i]['nome'];
+				$descricao = $res[$i]['descricao'];
 				$url = $res[$i]['url'];
 				$estoque = $res[$i]['estoque'];
 				$tem_estoque = $res[$i]['tem_estoque'];
@@ -76,17 +77,47 @@ $mais_sabores = $res[0]['mais_sabores'];
 					$url_produto = 'produto-'.$url;
 				}
 
+				$query2 = $pdo->query("SELECT * FROM variacoes where produto = '$id' and ativo = 'Sim'");
+		$res2 = $query2->fetchAll(PDO::FETCH_ASSOC);
+		$total_reg2 = @count($res2);		
+		if($total_reg2 == 0){
+
+			//verificar se o produto tem adicionais
+$query3 = $pdo->query("SELECT * FROM adicionais where produto = '$id'");
+$res3 = $query3->fetchAll(PDO::FETCH_ASSOC);
+$total_adc = @count($res3);
+			if($total_adc > 0){
+				if($tem_estoque == 'Sim' and $estoque <= 0){
+					$url_produto = '#';
+				}else{
+					$url_produto = 'adicionais-'.$url.'&sabores='.$url;
+				}
 				
+			}else{
+				if($tem_estoque == 'Sim' and $estoque <= 0){
+					$url_produto = '#';
+				}else{
+					$url_produto = 'observacoes-'.$url.'&sabores='.$url;
+				}
+				
+			}
+			
+		}
 
 
 				?>
 
 		<a href="<?php echo $url_produto ?>" class="link-neutro">
 		<li class="list-group-item d-flex justify-content-between align-items-start "> 
-			<div class="me-auto">
+			
 				<img class="<?php echo $mostrar ?>" src="img/esgotado.png" width="65px" height="65px" style="position:absolute; right:0; top:0px">
+				<div class="row" style="width:100%">
+					<div class="col-10">
+
+				<div class="me-auto">
 				<div class="fw-bold titulo-item"><?php echo $nome ?></div>
-				<span class="valor-item">
+				<div class="subtitulo-item-menor"><?php echo $descricao ?></div>
+				<span class="valor-item-maior">
 					<?php 
 $query2 = $pdo->query("SELECT * FROM variacoes where produto = '$id' and ativo = 'Sim'");
 		$res2 = $query2->fetchAll(PDO::FETCH_ASSOC);
@@ -106,11 +137,23 @@ $query2 = $pdo->query("SELECT * FROM variacoes where produto = '$id' and ativo =
 				 } 
 				}else{
 					echo 'R$ '.$valorF;
+					
 					}
 				  ?>
 				
 			</span>
 			</div>
+
+			</div>
+		
+
+		<div class="col-2" style="margin-top: 10px;" align="right">
+			<img class="" src="sistema/painel/images/produtos/<?php echo $foto ?>" width="60px" height="60px">
+		</div>
+
+	
+
+</div>
 			
 		</li>
 		</a>

@@ -132,7 +132,7 @@ if(strtotime($hora_atual) > strtotime($horario_abertura) and strtotime($hora_atu
 <?php } } ?>
 
 
-	<div class="row cards" style="margin-bottom: 60px; ">
+	<div class="row cards" style="margin-bottom: 60px;" >
 
 		<?php 
 		$query = $pdo->query("SELECT * FROM categorias where ativo = 'Sim'");

@@ -89,10 +89,17 @@ if($sabores != "2"){
 
 		<a href="<?php echo $url_produto ?>" class="link-neutro">
 		<li class="list-group-item d-flex justify-content-between align-items-start "> 
+
+			<img class="<?php echo $mostrar ?>" src="img/esgotado.png" width="75px" height="75px" style="position:absolute; right:0; top:0px">
+
+				<div class="row" style="width:100%">
+					<div class="col-10">
+
 			<div class="me-auto">
-				<img class="<?php echo $mostrar ?>" src="img/esgotado.png" width="75px" height="75px" style="position:absolute; right:0; top:0px">
+				
 				<div class="fw-bold titulo-item"><?php echo $nome ?></div>
-				<span class="valor-item">
+				<div class="subtitulo-item-menor"><?php echo $descricao ?></div>
+				<span class="valor-item-maior">
 					<?php 
 $query2 = $pdo->query("SELECT * FROM variacoes where produto = '$id' and ativo = 'Sim'");
 		$res2 = $query2->fetchAll(PDO::FETCH_ASSOC);
@@ -117,6 +124,17 @@ $query2 = $pdo->query("SELECT * FROM variacoes where produto = '$id' and ativo =
 				
 			</span>
 			</div>
+
+				</div>
+		
+
+		<div class="col-2" style="margin-top: 10px;" align="right">
+			<img class="" src="sistema/painel/images/produtos/<?php echo $foto ?>" width="60px" height="60px">
+		</div>
+
+	
+
+</div>
 			
 		</li>
 		</a>

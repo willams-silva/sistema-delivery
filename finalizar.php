@@ -2,6 +2,7 @@
 @session_start(); 
 require_once("cabecalho.php");
 $sessao = @$_SESSION['sessao_usuario'];
+$id_usuario = @$_SESSION['id'];
 
 $total_carrinho = 0;
 $total_carrinhoF = 0;
@@ -12,10 +13,7 @@ $total_reg = @count($res);
 if($total_reg == 0){
   echo "<script>window.location='index'</script>";
   exit();
-}else{
-  $cliente = $res[0]['cliente'];
-  $nome_cliente_pedido = $res[0]['nome_cliente'];
-  $mesa_pedido = $res[0]['mesa'];
+}else{ 
   for($i=0; $i < $total_reg; $i++){
     foreach ($res[$i] as $key => $value){}  
 
@@ -29,49 +27,31 @@ if($total_reg == 0){
   }
 }
 
-$query2 = $pdo->query("SELECT * FROM clientes where id = '$cliente'");
-    $res2 = $query2->fetchAll(PDO::FETCH_ASSOC);
-    if(@count($res2) > 0){
-    $nome_cliente = $res2[0]['nome'];
-    $tel_cliente = $res2[0]['telefone'];
-    $rua = $res2[0]['rua'];
-    $numero = $res2[0]['numero'];
-    $bairro = $res2[0]['bairro'];
-    $complemento = $res2[0]['complemento'];
+$esconder_opc_delivery = '';
+$valor_entrega = '';
+$clicar_sim = '#collapseTwo';
+$numero_colapse = '4';
 
-    $esconder_opc_delivery = '';
-    $valor_entrega = '';
-    $clicar_sim = '#collapseTwo';
-    $numero_colapse = '4';
-           
-  }else{
-    if($mesa_pedido != '0' and $mesa_pedido != ''){
-        $nome_cliente = 'Mesa: '.$mesa_pedido;
-        $valor_entrega = 'Consumir Local';       
-      }else{
-        $nome_cliente = $nome_cliente_pedido;
-        $valor_entrega = 'Retirar';
-        
-      }
-    
+$taxa_entregaF = 0;
+$taxa_entrega = 0;
+
+$nome_cliente = "";
+$tel_cliente = "";
+$rua = "";
+$numero = "";
+$bairro = "";
+$complemento = "";
+
+
+if($id_usuario != ''){
+
+    $valor_entrega = 'Consumir Local';  
     $tel_cliente = 'Mesa: '.$mesa_pedido;
-
-    $esconder_opc_delivery = 'ocultar';
-    $clicar_sim = '#collapse4';
+    $esconder_opc_delivery = 'ocultar';    
     $numero_colapse = '2';
-  }
-
-
-$query = $pdo->query("SELECT * FROM bairros where nome = '$bairro'");
-$res = $query->fetchAll(PDO::FETCH_ASSOC);
-
-if(@count($res) > 0){
-  $taxa_entrega = $res[0]['valor'];
-}else{
-  $taxa_entrega = 0;
+  
 }
 
-$taxa_entregaF = number_format($taxa_entrega, 2, ',', '.');
 
  ?>
 
@@ -99,8 +79,36 @@ $taxa_entregaF = number_format($taxa_entrega, 2, ',', '.');
     <div id="collapseOne" class="accordion-collapse collapse show" aria-labelledby="headingOne" data-bs-parent="#accordionExample">
       <div class="accordion-body" align="center">
        <img src="img/user.png" width="50px" height="50px" >
-       <div class="nome_user"> <?php echo $nome_cliente ?> </div>
-       <div class="telefone_user"> <?php echo $tel_cliente ?> </div>
+
+       <?php if($id_usuario == ""){ ?>
+       <div class="nome_user"> <input onclick="buscarNome()" type="text" class="input" name="nome" id="nome" required value="" placeholder="Seu Nome" style="width:150px; text-align: center; border:0"></div >
+       <input onkeyup="buscarNome()" type="text" class="input telefone_user" name="telefone" id="telefone" required value="" placeholder="(00) 00000-0000" style="width:150px; text-align: center; border:0; margin-top: -15px">
+     <?php }else{ ?>
+       <div class="nome_user"> <input type="text" class="input" id="nome" value="" placeholder="Nome Cliente" style="width:150px; text-align: center; border:0"></div >
+       <select class="input telefone_user" name="mesa" id="mesa" style="width:100px; text-align: center; border:0; margin-top: -15px">
+        <option value="0">Mesa</option>
+
+        <?php 
+                  $query = $pdo->query("SELECT * FROM mesas");
+                  $res = $query->fetchAll(PDO::FETCH_ASSOC);
+                  $total_reg = @count($res);
+                  if($total_reg > 0){
+                    for($i=0; $i < $total_reg; $i++){
+                    foreach ($res[$i] as $key => $value){}
+                    if($mesa_carrinho == $res[$i]['nome']){
+                      $selected = 'selected';
+                    }else{
+                      $selected = '';
+                    } 
+                    echo '<option value="'.$res[$i]['nome'].'" '.$selected.'>'.$res[$i]['nome'].'</option>';
+                    }
+                  }
+                   ?>
+                  
+
+       </select>
+     <?php } ?>
+       
        <hr>
        <div><b>Finalizar seu Pedido?</b></div>
        <hr>
@@ -112,7 +120,7 @@ $taxa_entregaF = number_format($taxa_entrega, 2, ',', '.');
 
          <div class="col-6">
 
-          <a class="btn btn-success botao_sim" data-bs-toggle="collapse" data-bs-target="<?php echo $clicar_sim ?>">SIM</a>
+          <a class="btn btn-success botao_sim" onclick="dados()">SIM</a>
         </div>
       </div>
     </div>
@@ -170,7 +178,7 @@ $taxa_entregaF = number_format($taxa_entrega, 2, ',', '.');
     <div class="row">
       <div class="col-8"> 
         <div class="group">
-          <input type="text" class="input" name="rua" id="rua" value="<?php echo $rua ?>" required>
+          <input type="text" class="input" name="rua" id="rua"  required>
           <span class="highlight"></span>
           <span class="bar"></span>
           <label class="label">Rua*</label>
@@ -180,7 +188,7 @@ $taxa_entregaF = number_format($taxa_entrega, 2, ',', '.');
 
       <div class="col-4"> 
         <div class="group">
-          <input type="text" class="input" name="numero" id="numero" value="<?php echo $numero ?>" required>
+          <input type="text" class="input" name="numero" id="numero"  required>
           <span class="highlight"></span>
           <span class="bar"></span>
           <label class="label">Número*</label>
@@ -192,7 +200,7 @@ $taxa_entregaF = number_format($taxa_entrega, 2, ',', '.');
     <div class="row">
       <div class="col-5"> 
         <div class="group">
-          <input type="text" class="input" name="complemento" id="complemento" value="<?php echo $complemento ?>" required>
+          <input type="text" class="input" name="complemento" id="complemento" required>
           <span class="highlight"></span>
           <span class="bar"></span>
           <label class="label">Complemento</label>
@@ -224,7 +232,7 @@ $taxa_entregaF = number_format($taxa_entrega, 2, ',', '.');
                     echo '<option value="'.$res[$i]['nome'].'" '.$classe_bairro.'>'.$res[$i]['nome'].' - '.$valorF.'</option>';
                     }
                   }else{
-                      echo '<option value="">Cadastre uma Categoria</option>';
+                      echo '<option value="">Cadastre um Bairro</option>';
                     }
                    ?>
           </select>
@@ -235,7 +243,7 @@ $taxa_entregaF = number_format($taxa_entrega, 2, ',', '.');
 
       </div>
 
-      <div align="center" class="avancar-pgto"><a href="#" data-bs-toggle="collapse" data-bs-target="#collapse4">Avançar para Pagamento</a></div>
+      <div align="center" class="avancar-pgto"><a id="colap-4" href="#" data-bs-toggle="collapse" data-bs-target="#collapse4">Avançar para Pagamento</a></div>
     </div>
 
 
@@ -246,7 +254,7 @@ $taxa_entregaF = number_format($taxa_entrega, 2, ',', '.');
 </div>
 <div class="accordion-item">
   <h2 class="accordion-header" id="heading4">
-    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse4" aria-expanded="false" aria-controls="collapse4">
+    <button id="collapse-4" class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse4" aria-expanded="false" aria-controls="collapse4">
       <?php echo $numero_colapse ?> - PAGAMENTO
     </button>
   </h2>
@@ -345,12 +353,14 @@ $taxa_entregaF = number_format($taxa_entrega, 2, ',', '.');
 <input type="hidden" id="entrega" value="<?php echo $valor_entrega ?>">
 <input type="hidden" id="pagamento">
 <input type="hidden" id="taxa-entrega-input">
+<input type="hidden" id="id_cliente">
+
 
 
 <div class="total-finalizar">
 <div class="total-pedido">
   <span id="area-taxa">
-   <span class="previsao_entrega" >Taxa de Entrega: <span class="text-danger">R$ <span id="taxa-entrega"><?php echo $taxa_entregaF ?></span> </span></span>
+   <span class="previsao_entrega" >Taxa de Entrega: <span class="text-danger">R$ <span id="taxa-entrega"></span> </span></span>
   <span class="previsao_entrega mx-2">Previsão <?php echo $previsao_entrega ?> Minutos</span>
  
  </span>
@@ -372,11 +382,22 @@ $taxa_entregaF = number_format($taxa_entrega, 2, ',', '.');
 </html>
 
 
+<!-- jQery -->
+<script src="js/jquery-3.4.1.min.js"></script>
+
+<!-- Mascaras JS -->
+<script type="text/javascript" src="js/mascaras.js"></script>
+
+<!-- Ajax para funcionar Mascaras JS -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.mask/1.14.11/jquery.mask.min.js"></script> 
+
+
 
 
 <script type="text/javascript">
 
-  $(document).ready(function() {        
+  $(document).ready(function() {     
+  $('#telefone').focus();     
     document.getElementById('area-endereco').style.display = "none";
     document.getElementById('area-obs').style.display = "none";
     document.getElementById('area-taxa').style.display = "none";
@@ -502,7 +523,33 @@ $taxa_entregaF = number_format($taxa_entrega, 2, ',', '.');
 
 
   function finalizarPedido(){  
-   
+
+
+     var nome = $('#nome').val();
+   var telefone = $('#telefone').val();    
+    var mesa = $('#mesa').val();
+   var id_usuario = "<?=$id_usuario?>";
+
+    if(telefone == "" && id_usuario == ""){
+    alert('Preencha seu Telefone'); 
+    $('#telefone').focus();  
+    return;
+   }
+
+
+    if(nome == ""){
+    alert('Preencha seu Nome'); 
+    $('#nome').focus();     
+    return;
+   }
+  
+ 
+
+    var nome_cliente = $('#nome').val();
+     var tel_cliente = $('#telefone').val();
+      var id_cliente = $('#id_cliente').val();
+
+
    var pagamento = $('#pagamento').val();
    var entrega = $('#entrega').val();
    var rua = $('#rua').val();
@@ -513,6 +560,10 @@ $taxa_entregaF = number_format($taxa_entrega, 2, ',', '.');
    var obs = $('#obs').val();
    var taxa_entrega = $('#taxa-entrega-input').val();
    var pedido_whatsapp = "<?=$status_whatsapp?>";
+
+   if(taxa_entrega == ""){
+    taxa_entrega = 0;
+   }
 
    var dataAtual = new Date();
    var horas = dataAtual.getHours();
@@ -573,7 +624,7 @@ $taxa_entregaF = number_format($taxa_entrega, 2, ',', '.');
     $.ajax({
          url: 'js/ajax/inserir-pedido.php',
         method: 'POST',
-        data: {pagamento, entrega, rua, numero, bairro, complemento, troco, obs},
+        data: {pagamento, entrega, rua, numero, bairro, complemento, troco, obs, nome_cliente, tel_cliente, id_cliente, mesa},
         dataType: "html",
 
         success:function(result){
@@ -589,15 +640,16 @@ $taxa_entregaF = number_format($taxa_entrega, 2, ',', '.');
            if(pedido_whatsapp == 'Sim'){
               let a= document.createElement('a');
                 //a.target= '_blank';
-                a.href= 'http://api.whatsapp.com/send?1=pt_BR&phone=<?=$whatsapp_sistema?>&text= *Novo Pedido*  %0A Hora: *' + hora + '* %0A Total: R$ *' + total_compra_finalF + '* %0A Entrega: *' + entrega + '* %0A Pagamento: *' + pagamento + '* %0A Cliente: *<?=$nome_cliente?>* %0A Previsão de Entrega: *' + result + '*';
+                a.href= 'http://api.whatsapp.com/send?1=pt_BR&phone=<?=$whatsapp_sistema?>&text= *Novo Pedido*  %0A Hora: *' + hora + '* %0A Total: R$ *' + total_compra_finalF + '* %0A Entrega: *' + entrega + '* %0A Pagamento: *' + pagamento + '* %0A Cliente: *' + nome_cliente + '* %0A Previsão de Entrega: *' + result + '*';
                 a.click();
            }else if(pedido_whatsapp == 'Api'){
-
+            /*
              $.ajax({
-                url: 'https://api.callmebot.com/whatsapp.php?phone=+553171390746&text=*Novo Pedido*  %0A Hora: *' + hora + '* %0A Total: R$ *' + total_compra_finalF + '* %0A Entrega: *' + entrega + '* %0A Pagamento: *' + pagamento + '* %0A Cliente: *<?=$nome_cliente?>* %0A Previsão de Entrega: *' + result + '*&apikey=320525',
+                url: 'https://api.callmebot.com/whatsapp.php?phone=+553171390746&text=*Novo Pedido*  %0A Hora: *' + hora + '* %0A Total: R$ *' + total_compra_finalF + '* %0A Entrega: *' + entrega + '* %0A Pagamento: *' + pagamento + '* %0A Cliente: *' + nome_cliente + '* %0A Previsão de Entrega: *' + result + '*&apikey=320525',
                  method: 'GET',          
                  
                 });
+                */
            }else{
 
            }
@@ -612,7 +664,7 @@ $taxa_entregaF = number_format($taxa_entrega, 2, ',', '.');
 
 
 
-  function calcularFrete(){
+  function calcularFrete(){   
 
     var bairro = $('#bairro').val();
     var total_compra = "<?=$total_carrinho?>";
@@ -642,5 +694,71 @@ $taxa_entregaF = number_format($taxa_entrega, 2, ',', '.');
     document.querySelector("#chave_pix_copia").select();
     document.querySelector("#chave_pix_copia").setSelectionRange(0, 99999); /* Para mobile */
     document.execCommand("copy");
+  }
+</script>
+
+
+
+<script type="text/javascript">
+  function buscarNome(){
+
+    var tel = $('#telefone').val(); 
+        
+    $.ajax({
+      url: 'js/ajax/listar-nome.php',
+      method: 'POST',
+      data: {tel},
+      dataType: "text",
+
+      success:function(result){    
+
+        var split = result.split("**");    
+
+        $('#nome').val(split[0]); 
+        $('#rua').val(split[1]); 
+        $('#numero').val(split[2]); 
+        $('#bairro').val(split[3]).change(); 
+        $('#complemento').val(split[4]); 
+        $('#taxa-entrega-input').val(split[5]); 
+        $('#taxa-entrega').text(split[6]); 
+        $('#id_cliente').text(split[7]); 
+      }
+    }); 
+  }
+</script>
+
+
+
+
+<script type="text/javascript">
+  function dados(){
+
+     
+   var nome = $('#nome').val();
+   var telefone = $('#telefone').val();   
+    var id_usuario = "<?=$id_usuario?>";
+
+    if(telefone == ""){
+    alert('Preencha seu Telefone'); 
+    $('#telefone').focus();  
+    return;
+   }
+
+
+    if(nome == ""){
+    alert('Preencha seu Nome'); 
+    $('#telefone').focus();     
+    return;
+   }
+
+
+   
+
+   if(id_usuario != ""){
+    $('#collapse-4').click();
+  }else{
+  $('#colapse-2').click();
+  }
+
   }
 </script>

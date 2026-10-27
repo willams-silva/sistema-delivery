@@ -225,7 +225,7 @@ $total_ing = @count($res);
 
 
 <div class="d-grid gap-2 mt-4 abaixo">
-	<a href='#popup2' class="btn btn-primary botao-carrinho"><?php echo $texto_botao ?></a>
+	<a href='#' onclick="addCarrinho()" class="btn btn-primary botao-carrinho"><?php echo $texto_botao ?></a>
 </div>
 
 
@@ -331,15 +331,6 @@ $total_ing = @count($res);
 </div>
 
 
-<!-- jQery -->
-<script src="js/jquery-3.4.1.min.js"></script>
-
-<!-- Mascaras JS -->
-<script type="text/javascript" src="js/mascaras.js"></script>
-
-<!-- Ajax para funcionar Mascaras JS -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.mask/1.14.11/jquery.mask.min.js"></script> 
-
 
 <script type="text/javascript">
 	$(document).ready(function() {    		
@@ -386,148 +377,29 @@ $total_ing = @count($res);
 
 <script type="text/javascript">
 	
-	function buscarNome(){
-
-		var tel = $('#telefone').val();	
-				
-		$.ajax({
-			url: 'js/ajax/listar-nome.php',
-			method: 'POST',
-			data: {tel},
-			dataType: "text",
-
-			success:function(result){	
-
-				$('#nome').val(result);	
-			}
-		});	
-	}
+	
 
 
-
-
-	function comprarMais(){
-		var telefone = $('#telefone').val();
-		var nome = $('#nome').val();
-		if(telefone == ''){
-			alert('Preencha o Telefone!');
-			return;
-		}
-		if(nome == ''){
-			alert('Preencha o Nome!');
-			return;
-		}
-		addCarrinho();
-		setTimeout(redirecionar, 1000);
-	}
-
-
-	function comprarMaisPainel(){
-		var telefone = $('#mesa').val();
-		var nome = $('#nome').val();
-		if(telefone == '0'  && nome == ""){
-			alert('Escolha uma mesa ou preencha o nome do cliente');
-			return;
-		}
-		addCarrinho();
-		setTimeout(redirecionar, 1000);
-	}
-
-
-	function finalizarPedido(){
-		var telefone = $('#telefone').val();
-		var nome = $('#nome').val();
-		if(telefone == ''){
-			alert('Preencha o Telefone!');
-			return;
-		}
-		if(nome == ''){
-			alert('Preencha o Nome!');
-			return;
-		}
-		addCarrinho();
-		setTimeout(redirecionarCarrinho, 1000);
-	}
-
-
-	function finalizarPedidoPainel(){
-		var telefone = $('#mesa').val();
-		var nome = $('#nome').val();
-		if(telefone == '0'  && nome == ""){
-			alert('Escolha uma mesa ou preencha o nome do cliente');
-			return;
-		}
-		
-		addCarrinho();
-		setTimeout(redirecionarCarrinho, 1000);
-	}
-
-
-	function selecionarSegundo(){
-		var telefone = $('#telefone').val();
-		var nome = $('#nome').val();
-		if(telefone == ''){
-			alert('Preencha o Telefone!');
-			return;
-		}
-		if(nome == ''){
-			alert('Preencha o Nome!');
-			return;
-		}
-		addCarrinho();
-		setTimeout(redirecionarCategoria, 1000);
-	}
-
-
-
-	function selecionarSegundoPedido(){
-		var telefone = $('#mesa').val();
-		var nome = $('#nome').val();
-		if(telefone == '0'  && nome == ""){
-			alert('Escolha uma mesa ou preencha o nome do cliente');
-			return;
-		}
-		addCarrinho();
-		setTimeout(redirecionarCategoria, 1000);
-	}
-
-
-	function redirecionar(){
-		 window.location='index';
-	}
-
-
-	function redirecionarCarrinho(){
-		 window.location='carrinho';
-	}
-
-
-	function redirecionarCategoria(){
-		var url = "<?=$url_itens?>";
-		 window.location=url;
-	}
-
-
-	function addCarrinho(){
-		var telefone = $('#telefone').val();
-		var nome = $('#nome').val();
+	function addCarrinho(){		
 		var quantidade = $('#quantidade').val();
 		var total_item = $('#total_item_input').val();
 		var produto = "<?=$id_prod?>";
 		var obs = $('#obs').val();
 		var sabores = "<?=$sabores?>";
 		var variacao = "<?=$id_variacao?>";
-		var mesa = $('#mesa').val();
-
+		
 		 $.ajax({
         url: 'js/ajax/add-carrinho.php',
         method: 'POST',
-        data: {telefone, nome, quantidade, total_item, produto, obs, sabores, variacao, mesa},
+        data: {quantidade, total_item, produto, obs, sabores, variacao},
         dataType: "text",
 
         success: function (mensagem) {  
+        	
                   
-            if (mensagem.trim() == "Inserido com Sucesso") {                
+            if (mensagem.trim() == "Inserido com Sucesso") {  
+
+            window.location='carrinho';              
                           
             } 
 
