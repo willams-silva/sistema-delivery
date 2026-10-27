@@ -28,6 +28,8 @@ $query = $pdo->query("SELECT * FROM carrinho where sessao = '$sessao' and id_sab
 $res = $query->fetchAll(PDO::FETCH_ASSOC);
 $total_reg = @count($res);
 $cliente = $res[0]['cliente'];
+$mesa = $res[0]['mesa'];
+$nome_cliente_ped = $res[0]['nome_cliente'];
 
   for($i=0; $i < $total_reg; $i++){
     foreach ($res[$i] as $key => $value){}  
@@ -58,7 +60,7 @@ $query->bindValue(":bairro", "$bairro");
 $query->execute();    
 
 
-$query = $pdo->prepare("INSERT INTO vendas SET cliente = '$cliente', valor = '$total_com_frete', total_pago = '$total_pago', troco = '$troco', data = curDate(), hora = curTime(), status = 'Iniciado', pago = 'Não', obs = :obs, taxa_entrega = '$taxa_entrega', tipo_pgto = '$pagamento', usuario_baixa = '0', entrega = '$entrega'"); 
+$query = $pdo->prepare("INSERT INTO vendas SET cliente = '$cliente', valor = '$total_com_frete', total_pago = '$total_pago', troco = '$troco', data = curDate(), hora = curTime(), status = 'Iniciado', pago = 'Não', obs = :obs, taxa_entrega = '$taxa_entrega', tipo_pgto = '$pagamento', usuario_baixa = '0', entrega = '$entrega', mesa = '$mesa', nome_cliente = '$nome_cliente_ped'"); 
 $query->bindValue(":obs", "$obs");
 $query->execute();
 $id_pedido = $pdo->lastInsertId();
@@ -70,7 +72,7 @@ $pdo->query("UPDATE carrinho SET pedido = '$id_pedido' where sessao = '$sessao' 
 
 //limpar a sessao aberta
 @$_SESSION['sessao_usuario'] = "";
-session_destroy();
+//session_destroy();
 
 $hora_pedido = date('H:i', strtotime("+$previsao_entrega minutes",strtotime(date('H:i'))));
 echo $hora_pedido;

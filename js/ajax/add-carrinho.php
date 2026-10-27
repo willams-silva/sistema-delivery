@@ -11,6 +11,7 @@ $obs = $_POST['obs'];
 $sessao = @$_SESSION['sessao_usuario'];
 $sabores = $_POST['sabores'];
 $variacao = $_POST['variacao'];
+$mesa = $_POST['mesa'];
 
 $query = $pdo->query("SELECT * FROM carrinho where sessao = '$sessao' and id_sabor != 0 order by id desc limit 1 ");
 $res = $query->fetchAll(PDO::FETCH_ASSOC);
@@ -66,22 +67,23 @@ if($valor_produto > $valor_ult_produto){
 
 $total_item2 = $ult_total_item + $total_item - $produto_menor;
 
-
-$query = $pdo->query("SELECT * FROM clientes where telefone = '$telefone' ");
-$res = $query->fetchAll(PDO::FETCH_ASSOC);
-if(@count($res) > 0){	
-	$id_cliente = $res[0]['id'];	
-}else{
-	$query = $pdo->prepare("INSERT INTO clientes SET nome = :nome, telefone = :telefone, data = curDate()");
-	$query->bindValue(":nome", "$nome");
-$query->bindValue(":telefone", "$telefone");
-$query->execute();
-$id_cliente = $pdo->lastInsertId();
+if($telefone != ""){
+	$query = $pdo->query("SELECT * FROM clientes where telefone = '$telefone' ");
+	$res = $query->fetchAll(PDO::FETCH_ASSOC);
+	if(@count($res) > 0){	
+		$id_cliente = $res[0]['id'];	
+	}else{
+		$query = $pdo->prepare("INSERT INTO clientes SET nome = :nome, telefone = :telefone, data = curDate()");
+		$query->bindValue(":nome", "$nome");
+	$query->bindValue(":telefone", "$telefone");
+	$query->execute();
+	$id_cliente = $pdo->lastInsertId();
+	}
 }
 
-
-$query = $pdo->prepare("INSERT INTO carrinho SET sessao = '$sessao', cliente = '$id_cliente', produto = '$produto', quantidade = '$quantidade', total_item = '$total_item', obs = :obs, pedido = '0', id_sabor = '$id_sabor', data = curDate(), variacao = '$variacao'"); 
+$query = $pdo->prepare("INSERT INTO carrinho SET sessao = '$sessao', cliente = '$id_cliente', produto = '$produto', quantidade = '$quantidade', total_item = '$total_item', obs = :obs, pedido = '0', id_sabor = '$id_sabor', data = curDate(), variacao = '$variacao', mesa = '$mesa', nome_cliente = :nome_cliente"); 
 $query->bindValue(":obs", "$obs");
+$query->bindValue(":nome_cliente", "$nome");
 $query->execute();
 $id_carrinho = $pdo->lastInsertId();
 echo 'Inserido com Sucesso';
@@ -91,7 +93,10 @@ echo 'Inserido com Sucesso';
 $pdo->query("UPDATE temp SET carrinho = '$id_carrinho' where sessao = '$sessao' and carrinho = '0'"); 
 
 if($sabores == 2){
-	$pdo->query("INSERT INTO carrinho SET sessao = '$sessao', cliente = '$id_cliente', produto = '0', quantidade = '1', total_item = '$total_item2',  pedido = '0', id_sabor = '0', data = curDate(), categoria = '$id_categoria', item = '$id_sabor', variacao = '$variacao'"); 
+	$query = $pdo->prepare("INSERT INTO carrinho SET sessao = '$sessao', cliente = '$id_cliente', produto = '0', quantidade = '1', total_item = '$total_item2',  pedido = '0', id_sabor = '0', data = curDate(), categoria = '$id_categoria', item = '$id_sabor', variacao = '$variacao', mesa = '$mesa', nome_cliente = :nome_cliente"); 
+
+$query->bindValue(":nome_cliente", "$nome");
+$query->execute();
 }
 
  ?>

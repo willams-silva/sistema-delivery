@@ -43,6 +43,7 @@ if($total_reg > 0){
 			$nome_produto = $res2[0]['nome'];
 			$foto_produto = $res2[0]['foto'];
 		}else{
+			$nome_produto2 = '';
 			$query3 = $pdo->query("SELECT * FROM carrinho where id_sabor = '$item' and sessao = '$sessao' ");
 $res3 = $query3->fetchAll(PDO::FETCH_ASSOC);
 $total_reg3 = @count($res3);

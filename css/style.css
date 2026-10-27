@@ -15,7 +15,7 @@ body{
 }
 
 .cards{
-	margin-top:70px;
+	margin-top:25px;
 	justify-content: center;
 }
 
@@ -581,6 +581,15 @@ body{
 .cards {
   margin-left: 100px; 
   margin-right: 100px; 
+}
+
+.ocultar-banner-web{
+   display:none;
+
+}
+
+.cards{
+  margin-top:65px;
 }
 }
 
