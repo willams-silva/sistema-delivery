@@ -2,18 +2,25 @@
 require_once("../../../conexao.php");
 $tabela = 'variacoes';
 
-$sigla = $_POST['sigla'];
-$nome = $_POST['nome'];
+$variacao = $_POST['variacao'];
+
+$query = $pdo->query("SELECT * from variacoes_cat where id = '$variacao'");
+$res = $query->fetchAll(PDO::FETCH_ASSOC);
+
+$sigla = $res[0]['sigla'];
+$nome = $res[0]['nome'];
 $valor = $_POST['valor'];
 $valor = str_replace(',', '.', $valor);
-$descricao = $_POST['descricao'];
+$descricao = $res[0]['descricao'];
 $produto = $_POST['id'];
+
+$sigla = str_replace(' ', '', $sigla);
 
 //validar sigla
 $query = $pdo->query("SELECT * from $tabela where sigla = '$sigla' and produto = '$produto'");
 $res = $query->fetchAll(PDO::FETCH_ASSOC);
-if(@count($res) > 0 and $id != $res[0]['id']){
-	echo 'Sigla já Cadastrada, escolha outra!!';
+if(@count($res) > 0){
+	echo 'Valor Já Cadastrado para essa variação';
 	exit();
 }
 

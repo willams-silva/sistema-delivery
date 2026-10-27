@@ -64,9 +64,16 @@ for($i=0; $i < $total_reg; $i++){
 		$total_reg2 = @count($res2);
 		if($total_reg2 > 0){
 			$nome_cat = $res2[0]['nome'];
+			$mais_sabores = $res2[0]['mais_sabores'];
 		}else{
 			$nome_cat = 'Sem Referência!';
+			$mais_sabores = '';
 		}
+
+		$ocultar_ad = '';
+		if($mais_sabores == 'Sim'){
+			$ocultar_ad = 'ocultar';
+		}	
 
 
 		if($nivel_estoque >= $estoque and $tem_estoque == 'Sim'){
@@ -117,11 +124,11 @@ echo <<<HTML
 		<big><a href="#" onclick="entrada('{$id}','{$nome}', '{$estoque}')" title="Entrada de Produto"><i class="fa fa-sign-in text-verde"></i></a></big>
 
 
-		<a href="#" onclick="variacoes('{$id}','{$nome}')" title="Variações do Produto"><i class="fa fa-list text-primary"></i></a>
+		<a href="#" onclick="variacoes('{$id}','{$nome}','{$categoria}')" title="Variações do Produto"><i class="fa fa-list text-primary"></i></a>
 
 		<a href="#" onclick="ingredientes('{$id}','{$nome}')" title="Ingredientes do Produto"><i class="fa fa-cutlery text-cinza"></i></a>
 
-		<a href="#" onclick="adicionais('{$id}','{$nome}')" title="Adicionais do Produto"><i class="fa fa-plus text-verde"></i></a>
+		<a class="{$ocultar_ad}" href="#" onclick="adicionais('{$id}','{$nome}')" title="Adicionais do Produto"><i class="fa fa-plus text-verde"></i></a>
 
 		<a href="#" onclick="guarnicoes('{$id}','{$nome}')" title="Guarnições do Produto"><i class="fa fa-plus text-primary"></i></a>
 
@@ -249,12 +256,13 @@ HTML;
 
 
 <script type="text/javascript">
-	function variacoes(id, nome){
+	function variacoes(id, nome, cat){
 
 		$('#titulo_nome_var').text(nome);		
 		$('#id_var').val(id);		
 		
 		listarVariacoes(id);
+		listarVarCat(cat);
 		$('#modalVariacoes').modal('show');
 		limparCamposVar();
 	}

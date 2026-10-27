@@ -66,15 +66,14 @@ $instancia = $res[0]['instancia'];
 $ativo_sistema = $res[0]['ativo'];
 $pedido_minimo = $res[0]['pedido_minimo'];
 $mostrar_aberto = $res[0]['mostrar_aberto'];
-$entrega_distancia = $res[0]['entrega_distancia'];
 $chave_api_maps = $res[0]['chave_api_maps'];
-
+$entrega_distancia = $res[0]['entrega_distancia'];
 
 $latitude_rest = $res[0]['latitude_rest'];
 $longitude_rest = $res[0]['longitude_rest'];
 $distancia_entrega_km = $res[0]['distancia_entrega_km'];
 $valor_km = $res[0]['valor_km'];
-
+$mais_sabores = $res[0]['mais_sabores'];
 
 $whatsapp_sistema = '55'.preg_replace('/[ ()-]+/' , '' , $telefone_sistema);
 }

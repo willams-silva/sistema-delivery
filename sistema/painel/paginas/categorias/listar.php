@@ -31,7 +31,12 @@ for($i=0; $i < $total_reg; $i++){
 		$foto = $res[$i]['foto'];
 		$descricao = $res[$i]['descricao'];
 		$cor = $res[$i]['cor'];
-		$mais_sabores = $res[$i]['mais_sabores'];	
+		$mais_sabores = $res[$i]['mais_sabores'];
+
+		$ocultar_ad = 'ocultar';
+		if($mais_sabores == 'Sim'){
+			$ocultar_ad = '';
+		}	
 
 		$descricaoF = mb_strimwidth($descricao, 0, 120, "...");	
 
@@ -73,7 +78,11 @@ echo <<<HTML
 
 		<big><a href="#" onclick="ativar('{$id}', '{$acao}')" title="{$titulo_link}"><i class="fa {$icone} text-success"></i></a></big>
 
+		<a href="#" onclick="variacoes('{$id}','{$nome}')" title="Variações do Produto"><i class="fa fa-list text-primary"></i></a>
 
+		<a class="{$ocultar_ad}" href="#" onclick="adicionais('{$id}','{$nome}')" title="Adicionais da Categoria"><i class="fa fa-plus text-verde"></i></a>
+
+		<a class="{$ocultar_ad}" href="#" onclick="bordas('{$id}','{$nome}')" title="Opções de Bordas"><i class="fa fa-plus-circle text-primary"></i></a>
 
 
 </td>
@@ -134,4 +143,43 @@ HTML;
 		$('#target').attr('src','images/categorias/sem-foto.jpg');
 	}
 
+</script>
+
+
+<script type="text/javascript">
+	function variacoes(id, nome){
+
+		$('#titulo_nome_var').text(nome);		
+		$('#id_var').val(id);		
+		
+		listarVariacoes(id);
+		$('#modalVariacoes').modal('show');
+		limparCamposVar();
+	}
+</script>
+
+
+<script type="text/javascript">
+	function adicionais(id, nome){
+
+		$('#titulo_nome_adc').text(nome);		
+		$('#id_adc').val(id);		
+		
+		listarAdicionais(id);
+		$('#modalAdicionais').modal('show');
+		limparCamposAdc();
+	}
+</script>
+
+
+<script type="text/javascript">
+	function bordas(id, nome){
+
+		$('#titulo_nome_bordas').text(nome);		
+		$('#id_bordas').val(id);		
+		
+		listarBordas(id);
+		$('#modalBordas').modal('show');
+		limparCamposBordas();
+	}
 </script>

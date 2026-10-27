@@ -443,34 +443,21 @@ $pag = 'produtos';
 
 
 					<div class="row">
-					<div class="col-md-4">
+					<div class="col-md-6">
 							<div class="form-group">
-								<label for="exampleInputEmail1">Sigla</label>
-								<input maxlength="5" type="text" class="form-control" id="sigla" name="sigla" placeholder="P / M / G" >    
+								<label for="exampleInputEmail1">Variação</label>
+								<div id="listar_var_cat">
+									
+								</div>
+														 
 							</div> 	
 						</div>	
 
-					<div class="col-md-4">
-							<div class="form-group">
-								<label for="exampleInputEmail1">Nome</label>
-								<input maxlength="35" type="text" class="form-control" id="nome_var" name="nome" placeholder="Pequena / Média ..." required>    
-							</div> 	
-						</div>
-						
-						<div class="col-md-4">
+											
+						<div class="col-md-3">
 							<div class="form-group">
 								<label for="exampleInputEmail1">Valor</label>
 								<input type="text" class="form-control" id="valor_var" name="valor" placeholder="50,00" required>    
-							</div> 	
-						</div>
-					</div>	
-
-				<div class="row">
-
-						<div class="col-md-9">
-							<div class="form-group">
-								<label for="exampleInputEmail1">Descrição</label>
-								<input maxlength="50" type="text" class="form-control" id="descricao_var" name="descricao" placeholder="8 Fatias" >    
 							</div> 	
 						</div>
 
@@ -478,7 +465,10 @@ $pag = 'produtos';
 							<button type="submit" class="btn btn-primary">Salvar</button>
 						
 						</div>
+
 					</div>	
+
+			
 				
 				<input type="hidden" id="id_var" name="id">
 				
@@ -1275,4 +1265,21 @@ function ativarAdc(id, acao){
     	dropdownParent: $('#modalForm')
     });
 });
+</script>
+
+
+<script type="text/javascript">
+		function listarVarCat(id){
+    $.ajax({
+        url: 'paginas/' + pag + "/listar_var_cat.php",
+        method: 'POST',
+        data: {id},
+        dataType: "html",
+
+        success:function(result){
+            $("#listar_var_cat").html(result);           
+        }
+    });
+}
+
 </script>

@@ -1,9 +1,6 @@
 <?php 
 include('../../conexao.php');
-
-setlocale(LC_TIME, 'pt_BR', 'pt_BR.utf-8', 'pt_BR.utf-8', 'portuguese');
-date_default_timezone_set('America/Sao_Paulo');
-$data_hoje = utf8_encode(strftime('%A, %d de %B de %Y', strtotime('today')));
+include('data_formatada.php');
 
 $id = $_GET['id'];
 
@@ -219,6 +216,10 @@ for ($i=0; $i < count($dados); $i++) {
 	$obs_item = $dados[$i]['obs'];
 	$item = $dados[$i]['item'];
 		$variacao = $dados[$i]['variacao'];
+		$nome_produto_tab = $dados[$i]['nome_produto'];
+    $sabores = $dados[$i]['sabores'];
+    $borda = $dados[$i]['borda'];
+    $categoria = $dados[$i]['categoria'];
 
 
 		$query2 = $pdo->query("SELECT * FROM variacoes where id = '$variacao'");
@@ -235,39 +236,29 @@ for ($i=0; $i < count($dados); $i++) {
 			$nome_produto = $res2[0]['nome'];
 			$foto_produto = $res2[0]['foto'];
 		}else{
-			$nome_produto2 = '';
-			$query33 = $pdo->query("SELECT * FROM carrinho where id_sabor = '$item' and pedido = '$id' ");
-$res33 = $query33->fetchAll(PDO::FETCH_ASSOC);
-$total_reg33 = @count($res33);
-if($total_reg33 > 0){
-	
-	for($i33=0; $i33 < $total_reg33; $i33++){
-		foreach ($res33[$i33] as $key => $value){}
-		$prod = $res33[$i33]['produto'];
-		$id_car = $res33[$i33]['id'];
-
-		$query2 = $pdo->query("SELECT * FROM produtos where id = '$prod'");
-		$res2 = $query2->fetchAll(PDO::FETCH_ASSOC);
-		if(@count(@$res2) > 0){
-			
-			$foto_produto = $res2[0]['foto'];
-			$cat_produto = $res2[0]['categoria'];
-			if($i33 < $total_reg33 - 1){
-				$nome_prod = $res2[0]['nome']. ' / ';
-			}else{
-				$nome_prod = $res2[0]['nome'];
-			}
-			
-		}		
-
-		$nome_produto2 .= $nome_prod;
-	}
-	
-	$nome_produto = $nome_produto2;
-
-
-}
+			$nome_produto = $nome_produto_tab;
+      		$foto_produto = "";
 		} 
+
+
+		 $tabela_ad = 'adicionais';
+    if($sabores > 0){     
+      $nome_produto = $nome_produto_tab;     
+      $tabela_ad = 'adicionais_cat';
+    }
+
+
+
+      $query8 =$pdo->query("SELECT * FROM bordas where id = '$borda'");
+    $res8 = $query8->fetchAll(PDO::FETCH_ASSOC);
+    $total_reg8 = @count($res8);
+    if($total_reg8 > 0){
+    $nome_borda = $res8[0]['nome'];
+    }else{
+      $nome_borda = '';
+    }
+
+
 
 
 	?>
@@ -288,158 +279,16 @@ if($total_reg33 > 0){
 
 
 
-		<?php 
-
-		$query33 = $pdo->query("SELECT * FROM carrinho where id_sabor = '$item' and pedido = '$id' and id_sabor > 0");
-$res33 = $query33->fetchAll(PDO::FETCH_ASSOC);
-$total_reg33 = @count($res33);
-if($total_reg33 > 0){
-	
-	for($i33=0; $i33 < $total_reg33; $i33++){
-		foreach ($res33[$i33] as $key => $value){}
-		$prod = $res33[$i33]['produto'];
-		$id_car = $res33[$i33]['id'];
-		$obs_item2 = $res33[$i33]['obs'];
-
-		$query2 = $pdo->query("SELECT * FROM produtos where id = '$prod'");
-		$res2 = $query2->fetchAll(PDO::FETCH_ASSOC);
-		if(@count(@$res2) > 0){
-			
-			$nome_prod = $res2[0]['nome'];
-		}
-
-	
-	//listar adicionais pizza 2 sab	
-	$query2 =$pdo->query("SELECT * FROM temp where carrinho = '$id_car' and tabela = 'adicionais'");
-	$res2 = $query2->fetchAll(PDO::FETCH_ASSOC);
-	$total_reg2 = @count($res2);
-	if($total_reg2 > 0){
-		if($total_reg2 > 1){
-			$texto_adicional = $nome_prod .' ('.$total_reg2.') Adicionais';
-		}else{
-			$texto_adicional = $nome_prod .' ('.$total_reg2.') Adicional';
-		}
-		?>
-
-		<div align="left" style="margin-left: 15px">
-			<small><b><?php echo $texto_adicional ?> : </b>
-				<?php 
-				for($i2=0; $i2 < $total_reg2; $i2++){
-					foreach ($res2[$i2] as $key => $value){}
-						$id_temp = $res2[$i2]['id'];				
-					$id_item = $res2[$i2]['id_item'];		
-
-					$query3 =$pdo->query("SELECT * FROM adicionais where id = '$id_item'");
-					$res3 = $query3->fetchAll(PDO::FETCH_ASSOC);
-					$total_reg3 = @count($res3);
-					$nome_adc = $res3[0]['nome'];
-					echo $nome_adc;
-					if($i2 < ($total_reg2 - 1)){
-						echo ', ';
-					}
-				}
-				?>
-			</small>
-		</div>
-
 	<?php 
 
-		} ?>
+	if($sabores > 1){
+		echo '<span style="margin-left: 15px"><small><b>Atenção: </b>'.$sabores.' Sabores</small></span><br>';
+	}
 
+	 if($total_reg8 > 0){
+		echo '<span style="margin-left: 15px"><small><b>Borda: </b>'.$nome_borda.'</small></span><br>';
+	}
 
-		<?php  
-
-		//listar guarnicoes pizza 2 sab	
-	$query2 =$pdo->query("SELECT * FROM temp where carrinho = '$id_car' and tabela = 'guarnicoes'");
-	$res2 = $query2->fetchAll(PDO::FETCH_ASSOC);
-	$total_reg2 = @count($res2);
-	if($total_reg2 > 0){
-		if($total_reg2 > 1){
-			$texto_adicional = $nome_prod .' ('.$total_reg2.') Guarnições';
-		}else{
-			$texto_adicional = $nome_prod .' ('.$total_reg2.') Guarnição';
-		}
-		?>
-
-		<div align="left" style="margin-left: 15px">
-			<small><b><?php echo $texto_adicional ?> : </b>
-				<?php 
-				for($i2=0; $i2 < $total_reg2; $i2++){
-					foreach ($res2[$i2] as $key => $value){}
-						$id_temp = $res2[$i2]['id'];				
-					$id_item = $res2[$i2]['id_item'];		
-
-					$query3 =$pdo->query("SELECT * FROM guarnicoes where id = '$id_item'");
-					$res3 = $query3->fetchAll(PDO::FETCH_ASSOC);
-					$total_reg3 = @count($res3);
-					$nome_adc = $res3[0]['nome'];
-					echo $nome_adc;
-					if($i2 < ($total_reg2 - 1)){
-						echo ', ';
-					}
-				}
-				?>
-			</small>
-		</div>
-
-	<?php 
-
-		} ?>
-
-
-
-
-
-	<?php 
-
-	$query2 =$pdo->query("SELECT * FROM temp where carrinho = '$id_car' and tabela = 'ingredientes'");
-	$res2 = $query2->fetchAll(PDO::FETCH_ASSOC);
-	$total_reg2 = @count($res2);
-	if($total_reg2 > 0){
-		if($total_reg2 > 1){
-			$texto_adicional = $nome_prod .' ('.$total_reg2.') Retirar Ingredientes';
-		}else{
-			$texto_adicional = $nome_prod .' ('.$total_reg2.') Retirar Ingrediente';
-		}
-		?>
-		<div align="left" style="margin-left: 15px">
-			<small><b><?php echo $texto_adicional ?> : </b>
-				<?php 
-				for($i2=0; $i2 < $total_reg2; $i2++){
-					foreach ($res2[$i2] as $key => $value){}
-						$id_temp = $res2[$i2]['id'];				
-					$id_item = $res2[$i2]['id_item'];		
-
-					$query3 =$pdo->query("SELECT * FROM ingredientes where id = '$id_item'");
-					$res3 = $query3->fetchAll(PDO::FETCH_ASSOC);
-					$total_reg3 = @count($res3);
-					$nome_adc = $res3[0]['nome'];
-					echo $nome_adc;
-					if($i2 < ($total_reg2 - 1)){
-						echo ', ';
-					}
-				}
-				?>
-			</small>
-		</div>
-	<?php } ?>
-
-
-	<?php 
-
-	if($obs_item2 != ""){
-		?>	
-		<div align="left" style="margin-left: 15px">
-			<small><b>Observação : </b>
-				<?php echo $obs_item2 ?>
-			</small>		
-		</div>
-	<?php } ?>
-
-
-<?php } } ?>
-
-	<?php 
 
 	$query2 =$pdo->query("SELECT * FROM temp where carrinho = '$id_carrinho' and tabela = 'adicionais'");
 	$res2 = $query2->fetchAll(PDO::FETCH_ASSOC);
@@ -460,7 +309,7 @@ if($total_reg33 > 0){
 						$id_temp = $res2[$i2]['id'];				
 					$id_item = $res2[$i2]['id_item'];		
 
-					$query3 =$pdo->query("SELECT * FROM adicionais where id = '$id_item'");
+					$query3 =$pdo->query("SELECT * FROM $tabela_ad where id = '$id_item'");
 					$res3 = $query3->fetchAll(PDO::FETCH_ASSOC);
 					$total_reg3 = @count($res3);
 					$nome_adc = $res3[0]['nome'];

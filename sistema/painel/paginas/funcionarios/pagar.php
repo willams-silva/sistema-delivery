@@ -11,7 +11,7 @@ $funcionario = $_POST['id_func'];
 
 $data_atual = date('Y-m-d');
 
-if(strtotime($data) <= strtotime($data_atual)){
+if(@strtotime($data) <= @strtotime($data_atual)){
 	$data_pgto = $data;
 	$pago = 'Sim';
 	$usuario_pgto = $id_usuario;

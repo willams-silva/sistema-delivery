@@ -352,6 +352,7 @@ if(@$_GET['pagina'] != ""){
 									foreach ($res[$i] as $key => $value){}
 										$id = $res[$i]['id'];
 										$cliente = $res[$i]['cliente'];
+										$pedido = $res[$i]['pedido'];
 	$valor = $res[$i]['valor'];
 	$valorF = number_format($valor, 2, ',', '.');
 
@@ -369,7 +370,7 @@ if(@$_GET['pagina'] != ""){
 										<a href="#">
 											<div class="user_img"><img src="images/1.jpg" alt=""></div>
 											<div class="notification_desc">
-												<p><b>Pedido <?php echo $id ?></b> Valor: <span style="color:green !important"><?php echo $valorF ?></span> </p>
+												<p><b>Pedido <?php echo $pedido ?></b> Valor: <span style="color:green !important"><?php echo $valorF ?></span> </p>
 												<p><span>Cliente <?php echo $nome_cliente ?></span></p>
 											</div>
 											<div class="clearfix"></div>	
@@ -867,6 +868,15 @@ if(@$_GET['pagina'] != ""){
 						<div class="col-md-3">						
 							<label>Valor por KM</label>
 							<input type="number" name="valor_km" id="valor_km" class="form-control" value="<?php echo @$valor_km ?>" placeholder="Valor cobrado por KM">	
+						</div>
+
+						<div class="col-md-3">							
+							<label>Cobrar Mais Sabores</label>
+							<select class="form-control" name="mais_sabores">
+								<option value="Média" <?php if(@$mais_sabores == 'Média'){?> selected <?php } ?> >Média dos Valores</option>
+								<option value="Maior Valor" <?php if(@$mais_sabores == 'Maior Valor'){?> selected <?php } ?> >Maior Valor</option>	
+									
+							</select>					
 						</div>
 					</div>
 

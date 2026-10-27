@@ -9,6 +9,14 @@ $estoque = $_POST['estoque'];
 $quantidade_entrada = $_POST['quantidade_entrada'];
 $motivo_entrada = $_POST['motivo_entrada'];
 
+if($estoque == ""){
+	$estoque = 0;
+}
+
+if($quantidade_entrada == ""){
+	$quantidade_entrada = 0;
+}
+
 $novo_estoque = $estoque + $quantidade_entrada;
 
 $query = $pdo->prepare("INSERT INTO $tabela SET produto = '$id_produto', quantidade = '$quantidade_entrada', motivo = :motivo, usuario = '$id_usuario', data = curDate()");
