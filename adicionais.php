@@ -37,6 +37,14 @@ $valor = $res[0]['valor_venda'];
 $valorF = number_format($valor, 2, ',', '.');
 $categoria = $res[0]['categoria'];
 
+$query2 = $pdo->query("SELECT * FROM categorias where id = '$categoria'");
+$res2 = $query2->fetchAll(PDO::FETCH_ASSOC);
+$total_reg2 = @count($res2);
+if($total_reg2 > 0){
+    $url_cat = $res2[0]['url'];
+}
+
+
 if($item == ""){
 	$valor_item_prod = $valor;
 }else{
@@ -56,7 +64,16 @@ if($item == ""){
 	<nav class="navbar bg-light fixed-top" style="box-shadow: 0px 3px 5px rgba(0, 0, 0, 0.20);">
 		<div class="container-fluid">
 			<div class="navbar-brand" >
+                <?php 
+                $query =$pdo->query("SELECT * FROM variacoes where produto = '$id_prod' and ativo = 'Sim'");
+                    $res = $query->fetchAll(PDO::FETCH_ASSOC);
+                    $total_var = @count($res);
+                    if($total_var > 0){
+                 ?>
 				<a href="produto-<?php echo $url ?>&sabores=<?php echo $sabores ?>"><big><i class="bi bi-arrow-left"></i></big></a>
+            <?php }else{ ?>
+               <a href="categoria-<?php echo $url_cat ?>"><big><i class="bi bi-arrow-left"></i></big></a>
+            <?php } ?>
 				<span style="margin-left: 15px"><?php echo $nome ?> <?php echo $item ?> <small><small> <?php echo $texto_sabor ?></small></small></span>
 			</div>
 
@@ -72,9 +89,12 @@ if($item == ""){
 	</div>
 
 
+    <div id="listar-guarnicoes">
+    
+    </div>
+
+
 	<div id="listar-ing">
-
-
 	
 	</div>
 
@@ -291,7 +311,8 @@ $total_ing = @count($res);
 
 	$(document).ready(function() {    		
     listarAdicionais(); 
-     listarIng();    
+     listarIng();   
+     listarGuarnicoes(); 
 } );
 	
 function adicionar(id, acao){
@@ -314,6 +335,27 @@ function adicionar(id, acao){
 }
 
 
+
+function adicionarGuar(id, acao){
+
+    $.ajax({
+        url: 'js/ajax/adicionar-guar.php',
+        method: 'POST',
+        data: {id, acao},
+        dataType: "text",
+
+        success: function (mensagem) {  
+                  
+            if (mensagem.trim() == "Alterado com Sucesso") {                
+                listarGuarnicoes();                
+            }else{
+                alert(mensagem)
+            } 
+
+        },      
+
+    });
+}
 
 function adicionarIng(id, acao){	
 
@@ -356,13 +398,37 @@ function listarAdicionais(){
 }
 
 
+
+function listarGuarnicoes(){
+
+     var quant = $("#quantidade").val();  
+
+    var id = '<?=$id_prod?>';
+    var valor = '<?=$valor_item_prod?>';
+
+    $.ajax({
+         url: 'js/ajax/listar-guarnicoes.php',
+        method: 'POST',
+        data: {id, valor, quant},
+        dataType: "html",
+
+        success:function(result){
+            $("#listar-guarnicoes").html(result);
+           
+        }
+    });
+}
+
+
 function listarIng(){
-	var id = '<?=$id_prod?>';
+	var quant = $("#quantidade").val();
+    var id = '<?=$id_prod?>';
+    var valor = '<?=$valor_item_prod?>';
 	
     $.ajax({
          url: 'js/ajax/listar-ing.php',
         method: 'POST',
-        data: {id},
+        data: {id, valor, quant},
         dataType: "html",
 
         success:function(result){

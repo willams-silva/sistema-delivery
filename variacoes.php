@@ -51,6 +51,10 @@ $query = $pdo->query("SELECT * FROM adicionais where produto = '$id'");
 $res = $query->fetchAll(PDO::FETCH_ASSOC);
 $total_adc = @count($res);
 
+$query = $pdo->query("SELECT * FROM guarnicoes where produto = '$id'");
+$res = $query->fetchAll(PDO::FETCH_ASSOC);
+$total_guar = @count($res);
+
 $query = $pdo->query("SELECT * FROM ingredientes where produto = '$id'");
 $res = $query->fetchAll(PDO::FETCH_ASSOC);
 $total_ing = @count($res);
@@ -104,7 +108,7 @@ $total_ing = @count($res);
 				?>
 
 		<?php 
-			if($total_adc > 0 || $total_ing > 0){ ?>
+			if($total_adc > 0 || $total_ing > 0 || $total_guar > 0){ ?>
 	<a href="adicionais-<?php echo $url ?>_<?php echo $nome_var ?>&sabores=<?php echo $sabores ?>" class="link-neutro">
 		<?php }else{ ?>			
 			
