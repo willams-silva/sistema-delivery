@@ -25,6 +25,40 @@ $url = $separar_url[0];
 $item = @$separar_url[1];
 
 
+$data = date('Y-m-d');
+//verificar se está aberto hoje
+$diasemana = array("Domingo", "Segunda-Feira", "Terça-Feira", "Quarta-Feira", "Quinta-Feira", "Sexta-Feira", "Sábado");
+$diasemana_numero = date('w', strtotime($data));
+$dia_procurado = $diasemana[$diasemana_numero];
+
+//percorrer os dias da semana que ele trabalha
+$query = $pdo->query("SELECT * FROM dias where dia = '$dia_procurado'");
+$res = $query->fetchAll(PDO::FETCH_ASSOC);
+if(@count($res) > 0){       
+        echo "<script>window.alert('Estamos Fechados! Não funcionamos Hoje!')</script>";
+    echo "<script>window.location='index.php'</script>";
+    exit();
+}
+
+$hora_atual = date('H:i:s');
+
+//nova verificação de horarios
+$start = strtotime( date('Y-m-d' .$horario_abertura) );
+$end = strtotime( date('Y-m-d' . $horario_fechamento) );
+$now = time();
+
+if(@$id_usuario == ''){
+if ( $start <= $now && $now <= $end ) {
+    
+}else{
+    echo "<script>window.alert('$texto_fechamento_horario')</script>";
+    echo "<script>window.location='index.php'</script>";
+    exit();
+}
+
+}
+
+
 $query = $pdo->query("SELECT * FROM produtos where url = '$url'");
 $res = $query->fetchAll(PDO::FETCH_ASSOC);
 $total_reg = @count($res);
@@ -323,8 +357,7 @@ function adicionar(id, acao){
         data: {id, acao},
         dataType: "text",
 
-        success: function (mensagem) {  
-                  
+        success: function (mensagem) {
             if (mensagem.trim() == "Alterado com Sucesso") {                
                 listarAdicionais();                
             } 
@@ -539,7 +572,14 @@ function listarIng(){
         var obs = $('#obs').val();
         var sabores = "<?=$sabores?>";
         var variacao = "<?=$id_variacao?>";
-       
+
+        if(total_item > 0){
+            
+        }else{
+            total_item = "<?=$valor_item_prod?>";
+        }
+        
+       //alert(total_item)
 
          $.ajax({
         url: 'js/ajax/add-carrinho.php',

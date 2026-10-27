@@ -16,6 +16,6 @@ $curl = curl_init();
     $resultado = json_decode($response);
 curl_close($curl);
 //echo $resultado->status;
-$status_api = $resultado->status;
+$status_api = @$resultado->status;
 //var_dump($resultado);
 ?>

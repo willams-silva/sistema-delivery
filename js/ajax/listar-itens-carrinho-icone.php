@@ -5,7 +5,7 @@ require_once('../../sistema/conexao.php');
 $sessao = @$_SESSION['sessao_usuario'];
 
 
-$query = $pdo->query("SELECT * FROM carrinho where sessao = '$sessao' and id_sabor = 0 ");
+$query = $pdo->query("SELECT * FROM carrinho where sessao = '$sessao'");
 $res = $query->fetchAll(PDO::FETCH_ASSOC);
 $total_reg = @count($res);
 $total_carrinho = 0;
@@ -21,6 +21,10 @@ if($total_reg > 0){
 		$obs = $res[$i]['obs'];
 		$item = $res[$i]['item'];
 		$variacao = $res[$i]['variacao'];
+		$nome_produto_tab = $res[$i]['nome_produto'];
+		$sabores = $res[$i]['sabores'];
+		$borda = $res[$i]['borda'];
+		$categoria = $res[$i]['categoria'];
 
 		$valor_unit = $total_item / $quantidade;
 
@@ -46,29 +50,9 @@ if($total_reg > 0){
 			$nome_produto = $res2[0]['nome'];
 			$foto_produto = $res2[0]['foto'];
 		}else{
-			$query3 = $pdo->query("SELECT * FROM carrinho where id_sabor = '$item' and sessao = '$sessao'");
-$res3 = $query3->fetchAll(PDO::FETCH_ASSOC);
-$total_reg3 = @count($res3);
-if($total_reg3 > 0){
-	for($i3=0; $i3 < $total_reg3; $i3++){
-		foreach ($res3[$i3] as $key => $value){}
-		$prod = $res3[$i3]['produto'];
-
-		$query2 = $pdo->query("SELECT * FROM produtos where id = '$prod'");
-		$res2 = $query2->fetchAll(PDO::FETCH_ASSOC);
-		if(@count(@$res2) > 0){
-			
-			$foto_produto = $res2[0]['foto'];
-			$cat_produto = $res2[0]['categoria'];
-
-			$query5 = $pdo->query("SELECT * FROM categorias where id = '$cat_produto'");
-		$res5 = $query5->fetchAll(PDO::FETCH_ASSOC);
-		$nome_cat = $res5[0]['nome'];
-		}		
-	}
-	$nome_produto = '('.$nome_cat .') 2 Sabores';
-}
-		}
+			$nome_produto = $nome_produto_tab;
+			$foto_produto = "";
+		}	
 		
 
 		if($obs == ''){
@@ -77,15 +61,21 @@ if($total_reg3 > 0){
 			$classe_obs = 'text-danger';
 		}
 
+		if($sabores > 0){			
+			$nome_produto = $nome_produto_tab;
+		}
+
+
+
 echo <<<HTML
 
 		
 		<li class="list-group-item" style="padding:5px">
-		<img src="sistema/painel/images/produtos/{$foto_produto}" width="30px">		    	
-		<span class="nome-produto"><b><small>{$quantidade} {$nome_produto} {$sigla_variacao}<span class="text-success">R$ ($valor_unitF)</span></small></b></span>
+		<img class="" src="sistema/painel/images/produtos/{$foto_produto}" width="30px">		    	
+		<span class="nome-produto"><b><small>{$quantidade} {$nome_produto} {$sigla_variacao}<span class="text-success">R$ ($total_itemF)</span></small></b></span>
 
 			
-		<a href="#popup1" onclick="excluirCarrinhoIcone('{$id}')" class="link-neutro"><i class="bi bi-x-lg direita"></i></a>		
+		<a href="#popup1" onclick="excluirCarrinhoIcone('{$id}')" class="link-neutro"><i class="bi bi-x-lg direita" style="margin-top: -10px"></i></a>		
 
 
 			</li>

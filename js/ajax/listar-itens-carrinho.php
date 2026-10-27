@@ -5,7 +5,7 @@ require_once('../../sistema/conexao.php');
 $sessao = @$_SESSION['sessao_usuario'];
 
 $nome_produto2 = '';
-$query = $pdo->query("SELECT * FROM carrinho where sessao = '$sessao' and id_sabor = 0");
+$query = $pdo->query("SELECT * FROM carrinho where sessao = '$sessao'");
 $res = $query->fetchAll(PDO::FETCH_ASSOC);
 $total_reg = @count($res);
 $total_carrinho = 0;
@@ -20,6 +20,10 @@ if($total_reg > 0){
 		$obs = $res[$i]['obs'];
 		$item = $res[$i]['item'];
 		$variacao = $res[$i]['variacao'];
+		$nome_produto_tab = $res[$i]['nome_produto'];
+		$sabores = $res[$i]['sabores'];
+		$borda = $res[$i]['borda'];
+		$categoria = $res[$i]['categoria'];
 		if($total_item > 0 and $quantidade > 0){
 			$valor_unit = $total_item / $quantidade;
 		}else{
@@ -35,6 +39,7 @@ if($total_reg > 0){
 		$valor_unitF = number_format($valor_unit, 2, ',', '.');
 		$total_carrinhoF = number_format($total_carrinho, 2, ',', '.');
 
+		
 		$query2 = $pdo->query("SELECT * FROM variacoes where id = '$variacao'");
 		$res2 = $query2->fetchAll(PDO::FETCH_ASSOC);
 		if(@count(@$res2) > 0){
@@ -49,43 +54,9 @@ if($total_reg > 0){
 			$nome_produto = $res2[0]['nome'];
 			$foto_produto = $res2[0]['foto'];
 		}else{
-			$nome_produto2 = '';
-			$query3 = $pdo->query("SELECT * FROM carrinho where id_sabor = '$item' and sessao = '$sessao' ");
-$res3 = $query3->fetchAll(PDO::FETCH_ASSOC);
-
-$total_reg3 = @count($res3);
-if($total_reg3 > 0){
-	
-	for($i3=0; $i3 < $total_reg3; $i3++){
-		foreach ($res3[$i3] as $key => $value){}
-		$prod = $res3[$i3]['produto'];
-		$id = $res3[$i3]['id'];
-		$id_sabor = $res3[$i3]['id_sabor'];
-
-		$query2 = $pdo->query("SELECT * FROM produtos where id = '$prod'");
-		$res2 = $query2->fetchAll(PDO::FETCH_ASSOC);
-		if(@count(@$res2) > 0){
-			
-			$foto_produto = $res2[0]['foto'];
-			$cat_produto = $res2[0]['categoria'];
-			if($i3 < $total_reg3 - 1){
-				$nome_prod = $res2[0]['nome']. ' / ';
-			}else{
-				$nome_prod = $res2[0]['nome'];
-			}
-			
+			$nome_produto = $nome_produto_tab;
+			$foto_produto = "";
 		}		
-
-		$nome_produto2 .= $nome_prod;
-	}
-	
-	$nome_produto = $nome_produto2;
-}
-		}
-
-
-
-		
 
 		if($obs == ''){
 			$classe_obs = 'text-warning';
@@ -93,14 +64,32 @@ if($total_reg3 > 0){
 			$classe_obs = 'text-danger';
 		}
 
+		$classe_borda = 'ocultar';
+		if($sabores > 0){			
+			$nome_produto = $nome_produto_tab;
+			$classe_borda = '';
+		}
+
+
+		$query8 =$pdo->query("SELECT * FROM bordas where id = '$borda'");
+		$res8 = $query8->fetchAll(PDO::FETCH_ASSOC);
+		$total_reg8 = @count($res8);
+		if($total_reg8 > 0){
+		$nome_borda = ' - '.$res8[0]['nome'];
+		}else{
+			$nome_borda = '';
+		}
+
+
 
 
 echo <<<HTML
 
 		
 		<li class="list-group-item">
-		<img src="sistema/painel/images/produtos/{$foto_produto}" width="30px">		    	
+		<img class="" src="sistema/painel/images/produtos/{$foto_produto}" width="30px">		    	
 		<span class="nome-produto"><b>{$nome_produto} {$sigla_variacao}</b></span>
+		<span class="{$classe_borda}" style="font-size:11px; color:#450703"><b> {$nome_borda}</b></span>
 
 HTML;
 
@@ -164,7 +153,7 @@ echo <<<HTML
 			</div>
 
 			<div class="itens-carrinho-qtd-adc {$classe_adc}">
-				<a title="Ver Adicionais" class="link-neutro" href="#" onclick="adicionais('{$nome_produto}', '{$id}', '{$id_sabor}')"><i class="bi  bi-plus text-primary"></i><small><small>Adicionais</small></small></a>
+				<a title="Ver Adicionais" class="link-neutro" href="#" onclick="adicionais('{$nome_produto}', '{$id}', '{$id_sabor}', '{$categoria}')"><i class="bi  bi-plus text-primary"></i><small><small>Adicionais</small></small></a>
 			</div>
 
 			<a href="#" onclick="mudarQuant('{$id}', '{$quantidade}', 'menos')" class="link-neutro">
@@ -276,9 +265,9 @@ HTML;
 		}
 
 
-		function adicionais(nome, id, id_sabor){			
+		function adicionais(nome, id, id_sabor, cat){			
 			$("#nome_item_adc").text(nome)			
-			listarAdicionais(id, id_sabor);
+			listarAdicionais(id, id_sabor, cat);
 
 			var myModal = new bootstrap.Modal(document.getElementById('modalAdc'), {
         		//backdrop: 'static',
@@ -287,12 +276,12 @@ HTML;
 
 		}
 
-		function listarAdicionais(id, id_sabor){
+		function listarAdicionais(id, id_sabor, cat){
 
 			$.ajax({
          url: 'js/ajax/listar-adc-carrinho.php',
         method: 'POST',
-        data: {id, id_sabor},
+        data: {id, id_sabor, cat},
         dataType: "html",
 
         success:function(result){

@@ -4,11 +4,13 @@ require_once("cabecalho.php");
 $sessao = @$_SESSION['sessao_usuario'];
 $id_usuario = @$_SESSION['id'];
 
+
 $total_carrinho = 0;
 $total_carrinhoF = 0;
 $query = $pdo->query("SELECT * FROM carrinho where sessao = '$sessao' and id_sabor = 0");
 $res = $query->fetchAll(PDO::FETCH_ASSOC);
 $total_reg = @count($res);
+
 
 if($total_reg == 0){
   echo "<script>window.location='index'</script>";
@@ -20,12 +22,14 @@ if($total_reg == 0){
       $id = $res[$i]['id'];
     $total_item = $res[$i]['total_item'];
     $produto = $res[$i]['produto']; 
+    $pedido = $res[$i]['pedido'];  
 
     $total_carrinho += $total_item;    
     $total_carrinhoF = number_format($total_carrinho, 2, ',', '.');
 
   }
 }
+
 
 $esconder_opc_delivery = '';
 $valor_entrega = '';
@@ -346,7 +350,7 @@ if($id_usuario != ''){
      </div>  
      <div class="col-7" style="margin-top: -13px">
       <div class="group">
-        <input type="number" class="input" name="troco" id="troco">
+        <input type="text" class="input" name="troco" id="troco">
         <span class="highlight"></span>
         <span class="bar"></span>
         <label class="label">Vou precisar de troco para</label>
@@ -519,7 +523,9 @@ if($id_usuario != ''){
   }else{
     calcularFreteDistancia();
   }
- 
+
+
+ setTimeout(pix, 1000);
  
   }
 
@@ -530,7 +536,9 @@ if($id_usuario != ''){
    function pix(){ 
 
      var total_compra = "<?=$total_carrinho?>";
+     total_compra = total_compra.replace(",", ".");
      var taxa_entrega = $('#taxa-entrega-input').val();
+     taxa_entrega = taxa_entrega.replace(",", ".");
      var cupom = $('#valor-cupom').val();
 
      if(taxa_entrega == ""){
@@ -675,8 +683,19 @@ if($id_usuario != ''){
     var cidade = $('#cidade').val();
   }
 
-   
 
+  if(entrega == "Delivery" && entrega_distancia == 'Sim'){
+     if(cep == ""){
+      alert("Preencha o CEP");
+      $('#cep').focus();    
+      $('#botao_finalizar').show(); 
+      $('#div_img').hide(); 
+      return;
+    }
+   }
+
+   
+  
     if(taxa_entrega == "" && id_usuario == ""){
     alert("Digite um CEP válido para receber seu Pedido");
     $('#botao_finalizar').show(); 
@@ -719,11 +738,14 @@ if($id_usuario != ''){
     return;
    }
 
+   
+
     if(entrega == "Delivery" && rua == ""){
-    alert('Preencha o Campo Rua');
+    alert('Preencha o Campo Rua');    
     $('#colapse-3').click();
     $('#botao_finalizar').show(); 
     $('#div_img').hide();
+
     return;
    }
 
@@ -777,24 +799,44 @@ if($id_usuario != ''){
         data: {pagamento, entrega, rua, numero, bairro, complemento, troco, obs, nome_cliente, tel_cliente, id_cliente, mesa, cupom, codigo_pix, cep, cidade, taxa_entrega},
         dataType: "html",
 
-        success:function(result){
-         
-            if(result == '0'){
-              alert('Sem Itens no Carrinho!');
-              window.location='index.php';
-              return;
-            }
-           
-            setTimeout(()=>{
+
+      success: function (mensagem) {        
+        
+         if (mensagem == 'Pagamento nao realizado!!') {
+          alert('Realize o Pagamento antes de Prosseguir!!');
+           $('#botao_finalizar').show(); 
+          $('#div_img').hide();
+          return;
+         }
+
+        var msg = mensagem.split("*")
+
+        
+        $('#mensagem').text('');
+        $('#mensagem').removeClass()
+        if (msg[1].trim() == "Pedido Finalizado") {
+
+          setTimeout(()=>{
               alert('Pedido Finalizado!');
               if(id_usuario == ""){
+
+                   //chamar o relatorio da reserva 
+                var id = msg[2].trim();                
+                window.open("sistema/painel/rel/comprovante2_class.php?id="+id+"&enviar=sim");
                  window.location='index.php';
                }else{
                 window.location='sistema/painel/index.php?pagina=novo_pedido';
                }
            
         },500);
-           
+                
+
+
+            }else{
+
+            }
+
+        
 
            if(pedido_whatsapp == 'Sim'){
               let a= document.createElement('a');
@@ -812,6 +854,8 @@ if($id_usuario != ''){
            }else{
 
            }
+          
+
 
           $('#botao_finalizar').show(); 
           $('#div_img').hide();

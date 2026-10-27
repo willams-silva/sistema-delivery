@@ -2,7 +2,7 @@
 @session_start(); 
 require_once("cabecalho.php");
 
-$sessao = $_SESSION['sessao_usuario'];
+$sessao = @$_SESSION['sessao_usuario'];
 
 ?>
 

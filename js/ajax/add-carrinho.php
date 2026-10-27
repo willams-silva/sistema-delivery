@@ -95,9 +95,6 @@ $query->execute();
 }
 
 //abater produto estoque
-if($tem_estoque == 'Sim'){
-$total_produtos = $estoque - $quantidade;
-$pdo->query("UPDATE produtos SET estoque = '$total_produtos' where id = '$produto'"); 
-}
+
 
  ?>

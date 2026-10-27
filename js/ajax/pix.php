@@ -3,7 +3,8 @@ require_once('../../sistema/conexao.php');
 require_once('../../js/ajax/ApiConfig.php');
 
 if($access_token == ""){
-	echo 'Configure o Token da Api Pix no arquivo ApiConfig';
+	echo '<b>Chave Pix</b><br>';
+    echo '<b>'.$tipo_chave.'</b> : '.$chave_pix;
 	exit();
 }
 
@@ -38,6 +39,7 @@ $curl = curl_init();
     CURLOPT_HTTPHEADER => array(
         'accept: application/json',
         'content-type: application/json',
+        'X-Idempotency-Key: '.date('Y-m-d-H:i:s-').rand(0, 1500),
         'Authorization: Bearer '.$access_token
     ),
     ));

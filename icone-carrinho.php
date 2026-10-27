@@ -56,6 +56,7 @@ function listarCarrinhoIcone(){
         dataType: "html",
 
         success:function(result){
+        	//alert(result)
             $("#listar-itens-carrinho-icone").html(result);
            
         }

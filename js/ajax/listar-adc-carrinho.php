@@ -4,13 +4,12 @@ require_once('../../sistema/conexao.php');
 $id = $_POST['id'];
 $id_sabor = @$_POST['id_sabor'];
 $sessao = $_SESSION['sessao_usuario'];
+$categoria = @$_POST['cat'];
 
-if($id_sabor != 0){
-	$query_car = $pdo->query("SELECT * FROM carrinho where sessao = '$sessao' and id_sabor = '$id_sabor'");
-}else{
-	$query_car = $pdo->query("SELECT * FROM carrinho where id = '$id'");
-	$id_sabor = 0;
-}
+
+
+$query_car = $pdo->query("SELECT * FROM carrinho where id = '$id'");
+$id_sabor = 0;
 
 $res_car = $query_car->fetchAll(PDO::FETCH_ASSOC);
 $total_reg_car = @count($res_car);
@@ -29,7 +28,12 @@ if($total_reg > 0){
 			$id_temp = $res[$i]['id'];				
 		$id_item = $res[$i]['id_item'];		
 
-		$query2 =$pdo->query("SELECT * FROM adicionais where id = '$id_item'");
+		if($categoria > 0){
+			$query2 =$pdo->query("SELECT * FROM adicionais_cat where id = '$id_item'");
+		}else{
+			$query2 =$pdo->query("SELECT * FROM adicionais where id = '$id_item'");
+		}
+		
 		$res2 = $query2->fetchAll(PDO::FETCH_ASSOC);
 		$total_reg2 = @count($res2);
 		$nome_adc = $res2[0]['nome'];
@@ -41,7 +45,7 @@ echo <<<HTML
 
 		<i class="bi bi-check-lg text-success"></i>
 		{$nome_adc} <span class="text-danger">(R$ {$valor_adcF})</span>
-		<a href="#" onclick="excluirAdc('{$id_temp}', '{$id}', '{$valor_adc}', '{$id_sabor}', '{$item}')"><i class="bi bi-trash text-danger"></i></a>
+		<a href="#" onclick="excluirAdc('{$id_temp}', '{$id}', '{$valor_adc}', '{$id_sabor}', '{$item}', '{$categoria}')"><i class="bi bi-trash text-danger"></i></a>
 		<hr>
 
 HTML;
@@ -56,7 +60,7 @@ HTML;
 
 
 <script type="text/javascript">
-	function excluirAdc(id, carrinho, valor, id_sabor, item){
+	function excluirAdc(id, carrinho, valor, id_sabor, item, cat){
 		
 
 			$.ajax({
@@ -68,7 +72,7 @@ HTML;
 				success: function (mensagem) {  
 
 					if (mensagem.trim() == "Excluido com Sucesso") {                
-						listarAdicionais(carrinho, id_sabor);
+						listarAdicionais(carrinho, id_sabor, cat);
 						listarCarrinho();         
 					} 
 

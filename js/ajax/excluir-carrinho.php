@@ -22,10 +22,7 @@ $pdo->query("DELETE FROM carrinho WHERE id = '$id'");
 
 
 //abater produto estoque
-if($tem_estoque == 'Sim'){
-$total_produtos = $estoque + $quantidade;
-$pdo->query("UPDATE produtos SET estoque = '$total_produtos' where id = '$produto'"); 
-}
+
 
 
 if($id_sabor > 0){

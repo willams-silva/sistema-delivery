@@ -110,11 +110,13 @@ $total_ing = @count($res);
 		<?php 
 			if($total_adc > 0 || $total_ing > 0 || $total_guar > 0){ ?>
 	<a href="adicionais-<?php echo $url ?>_<?php echo $sigla ?>&sabores=<?php echo $sabores ?>" class="link-neutro">
-		<?php }else{ ?>			
-			
+		<?php }else{ ?>	
 
 	<a href="observacoes-<?php echo $url ?>_<?php echo $sigla ?>&sabores=<?php echo $sabores ?>" class="link-neutro <?php echo $ocultar_item ?>">
-		<?php } ?>
+
+		<?php if($sabores == "1"){ ?>
+			<a href="adicionais-<?php echo $url ?>_<?php echo $sigla ?>&sabores=<?php echo $sabores ?>" class="link-neutro">
+		<?php } } ?>
 
 
 		<div class="<?php echo $ocultar_item ?>">

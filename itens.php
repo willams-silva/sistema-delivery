@@ -11,7 +11,15 @@ $descricao = $res[0]['descricao'];
 $id = $res[0]['id'];
 $mais_sabores = $res[0]['mais_sabores'];
 
-$pdo->query("DELETE FROM temp where carrinho = 0");
+@session_start();
+$sessao = @$_SESSION['sessao_usuario'];
+
+$pdo->query("DELETE FROM temp where carrinho = 0 and sessao = '$sessao'");
+
+if($mais_sabores == 'Sim'){
+	echo "<script>window.location='categoria-sabores-$url'</script>";
+}
+
 
 }
 
@@ -32,27 +40,8 @@ $pdo->query("DELETE FROM temp where carrinho = 0");
 		</div>
 	</nav>
 
-<?php if($mais_sabores == 'Sim'){ ?>
-<div class="sabores row" style="margin-top: 65px; margin-bottom: 10px">	
-	<div class="col-6">
-	<div class="sabores-itens" style="background-color: #e6f8ff">
-	<img src="img/1sabor.png" width="35px"><br>
- 1 Sabor
-	</div>
-</div>
-	<div class="col-6">
-	<a href="2sabores-<?php echo $url ?>" class="link-neutro">
-	<div class="sabores-itens">
-		<img src="img/2sabor.png" width="35px"><br>
-2 Sabores
-	</div>
-	</a>
-</div>
-</div>
-<ol class="list-group ">
-<?php }else{ ?>
 	<ol class="list-group " style="margin-top: 65px">
-<?php } ?>
+
 
 		<?php 
 		$query = $pdo->query("SELECT * FROM produtos where categoria = '$id' and ativo = 'Sim'");
@@ -148,10 +137,11 @@ $query2 = $pdo->query("SELECT * FROM variacoes where produto = '$id' and ativo =
 				$valorvar = $res2[$i2]['valor'];
 				$valorvarF = number_format($valorvar, 2, ',', '.');
 
-				echo '('.$sigla.') R$ '.$valorvarF;
+				echo '<span style="font-size:10px">('.$sigla.') R$ '.$valorvarF;
 				if($i2 < $total_reg2 - 1){
 					echo ' / ';
 				}
+				echo '</span>';
 
 				 } 
 				}else{

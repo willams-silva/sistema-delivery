@@ -21,6 +21,8 @@ $codigo_pix = @$_POST['codigo_pix'];
 $cep = @$_POST['cep'];
 $cidade = @$_POST['cidade'];
 $taxa_entrega = @$_POST['taxa_entrega'];
+$taxa_entrega = str_replace(',', '.', $taxa_entrega);
+$total_pago = str_replace(',', '.', $total_pago);
 
 //verificar pgto pix
 require("verificar_pgto.php");
@@ -30,8 +32,19 @@ if(@$status_api == 'approved'){
   $pago = 'Não';
 }
 
+if ($pagamento == 'Pix' and $pago == 'Não') {
+  echo 'Pagamento nao realizado!!';
+  exit();
+  
+  
+}
+
 if($cupom == ""){
   $cupom = 0;
+}
+
+if($taxa_entrega == ""){
+  $taxa_entrega = 0;
 }
 
 if($tel_cliente != ""){
@@ -88,8 +101,22 @@ if($total_reg > 0){
       $id = $res[$i]['id'];
     $total_item = $res[$i]['total_item'];
     $produto = $res[$i]['produto']; 
+    $quantidade = $res[$i]['quantidade']; 
 
-    $total_carrinho += $total_item;    
+    $total_carrinho += $total_item;
+
+$query2 = $pdo->query("SELECT * FROM produtos where id = '$produto'");
+$res2 = $query2->fetchAll(PDO::FETCH_ASSOC);
+$id_categoria = $res2[0]['categoria'];
+$valor_produto = $res2[0]['valor_venda'];
+$estoque = $res2[0]['estoque'];
+$tem_estoque = $res2[0]['tem_estoque'];   
+
+
+if($tem_estoque == 'Sim'){
+$total_produtos = $estoque - $quantidade;
+$pdo->query("UPDATE produtos SET estoque = '$total_produtos' where id = '$produto'"); 
+} 
     
   }
 }else{
@@ -100,7 +127,8 @@ if($total_reg > 0){
 
 
 
- $total_com_frete = $total_carrinho + $taxa_entrega - $cupom;
+ @$total_com_frete = @$total_carrinho + @$taxa_entrega - @$cupom;
+
   if($total_pago == ""){
     $total_pago = $total_com_frete;
   }
@@ -109,7 +137,7 @@ if($total_reg > 0){
 //recuperar número do pedido
 $query = $pdo->query("SELECT * FROM vendas where data = curDate() order by id desc limit 1");
 $res = $query->fetchAll(PDO::FETCH_ASSOC);
-$num_pedido = $res[0]['pedido'];
+$num_pedido = @$res[0]['pedido'];
 if($num_pedido == ""){
   $num_pedido = 0;
 }
@@ -131,7 +159,11 @@ $pdo->query("UPDATE carrinho SET cliente = '$cliente', pedido = '$id_pedido' whe
 //session_destroy();
 
 $hora_pedido = date('H:i', strtotime("+$previsao_entrega minutes",strtotime(date('H:i'))));
-echo $hora_pedido;
+echo $hora_pedido.'*';
+
+
+
+
 
 if($status_whatsapp == 'Api'){
 $tel_cliente_whats = '55'.preg_replace('/[ ()-]+/' , '' , $tel_cliente);
@@ -146,6 +178,10 @@ $mensagem .= '*Pago:* '.$pago.'%0A';
 $mensagem .= '*Previsão Entrega:* '.$hora_pedido.'%0A';
 $mensagem .= '%0A________________________________%0A%0A';
 $mensagem .= '*_Detalhes do Pedido_* %0A %0A';
+
+
+
+
 
 //ABAIXO É PARA PEGAR OS PRODUTOS COMPRADOS
 $nome_produto2 = '';
@@ -164,8 +200,12 @@ for ($i=0; $i < count($dados); $i++) {
   $quantidade = $dados[$i]['quantidade'];
   $total_item = $dados[$i]['total_item'];
   $obs_item = $dados[$i]['obs'];
-  $item = $dados[$i]['item'];
-    $variacao = $dados[$i]['variacao'];
+  $item = $dados[$i]['item'];    
+  $variacao = $dados[$i]['variacao'];
+  $nome_produto_tab = $dados[$i]['nome_produto'];
+    $sabores = $dados[$i]['sabores'];
+    $borda = $dados[$i]['borda'];
+    $categoria = $dados[$i]['categoria'];
 
 
     $query2 = $pdo->query("SELECT * FROM variacoes where id = '$variacao'");
@@ -182,39 +222,26 @@ for ($i=0; $i < count($dados); $i++) {
       $nome_produto = $res2[0]['nome'];
       $foto_produto = $res2[0]['foto'];
     }else{
-      $nome_produto2 = '';
-      $query33 = $pdo->query("SELECT * FROM carrinho where id_sabor = '$item' and pedido = '$id_pedido' ");
-$res33 = $query33->fetchAll(PDO::FETCH_ASSOC);
-$total_reg33 = @count($res33);
-if($total_reg33 > 0){
-  
-  for($i33=0; $i33 < $total_reg33; $i33++){
-    foreach ($res33[$i33] as $key => $value){}
-    $prod = $res33[$i33]['produto'];
-    $id_car = $res33[$i33]['id'];
-
-    $query2 = $pdo->query("SELECT * FROM produtos where id = '$prod'");
-    $res2 = $query2->fetchAll(PDO::FETCH_ASSOC);
-    if(@count(@$res2) > 0){
-      
-      $foto_produto = $res2[0]['foto'];
-      $cat_produto = $res2[0]['categoria'];
-      if($i33 < $total_reg33 - 1){
-        $nome_prod = $res2[0]['nome']. ' / ';
-      }else{
-        $nome_prod = $res2[0]['nome'];
-      }
-      
-    }   
-
-    $nome_produto2 .= $nome_prod;
-  }
-  
-  $nome_produto = $nome_produto2;
-
-
-}
+      $nome_produto = $nome_produto_tab;
+      $foto_produto = "";
     } 
+
+
+    $tabela_ad = 'adicionais';
+    if($sabores > 0){     
+      $nome_produto = $nome_produto_tab;     
+      $tabela_ad = 'adicionais_cat';
+    }
+
+
+    $query8 =$pdo->query("SELECT * FROM bordas where id = '$borda'");
+    $res8 = $query8->fetchAll(PDO::FETCH_ASSOC);
+    $total_reg8 = @count($res8);
+    if($total_reg8 > 0){
+    $nome_borda = ' - '.$res8[0]['nome'];
+    }else{
+      $nome_borda = '';
+    }
 
 $texto_produtos .= '✅'.$quantidade.' - '.$nome_produto.' '.$sigla_variacao.'%0A';
 
@@ -222,104 +249,9 @@ $texto_produtos .= '✅'.$quantidade.' - '.$nome_produto.' '.$sigla_variacao.'%0
 
 $mensagem .= '%0A'.$texto_produtos;
 
-//INICIAR OS ADICIONAIS PARA PIZZA DOIS SABORES
-$query33 = $pdo->query("SELECT * FROM carrinho where id_sabor = '$item' and pedido = '$id_pedido' and id_sabor > 0");
-$res33 = $query33->fetchAll(PDO::FETCH_ASSOC);
-$total_reg33 = @count($res33);
-if($total_reg33 > 0){
-  
-  for($i33=0; $i33 < $total_reg33; $i33++){
-    foreach ($res33[$i33] as $key => $value){}
-    $prod = $res33[$i33]['produto'];
-    $id_car = $res33[$i33]['id'];
-    $obs_item_2sab = $res33[$i33]['obs'];
-
-    $query2 = $pdo->query("SELECT * FROM produtos where id = '$prod'");
-    $res2 = $query2->fetchAll(PDO::FETCH_ASSOC);
-    if(@count(@$res2) > 0){
-      
-      $nome_prod = $res2[0]['nome'];
-    }
-
-  $query2 =$pdo->query("SELECT * FROM temp where carrinho = '$id_car' and tabela = 'adicionais'");
-  $res2 = $query2->fetchAll(PDO::FETCH_ASSOC);
-  $total_reg2 = @count($res2);
-  if($total_reg2 > 0){
-    if($total_reg2 > 1){
-      $texto_adicional = $nome_prod .' ('.$total_reg2.') Adicionais ';
-    }else{
-      $texto_adicional = $nome_prod .' ('.$total_reg2.') Adicional ';
-    }
-        $mensagem .= ' '.'```'.$texto_adicional.'```';
-        for($i2=0; $i2 < $total_reg2; $i2++){
-          foreach ($res2[$i2] as $key => $value){}
-            $id_temp = $res2[$i2]['id'];        
-          $id_item = $res2[$i2]['id_item'];   
-
-          $query3 =$pdo->query("SELECT * FROM adicionais where id = '$id_item'");
-          $res3 = $query3->fetchAll(PDO::FETCH_ASSOC);
-          $total_reg3 = @count($res3);
-          $nome_adc = $res3[0]['nome'];          
-          if($i2 < ($total_reg2 - 1)){
-           $nome_adc .= ', ';
-          }
-          $mensagem .= '```'.$nome_adc.'```'.'%0A';
-  }
-
-  }
-
-
-
-//ingredientes pizza 2 sab
-$query2 =$pdo->query("SELECT * FROM temp where carrinho = '$id_car' and tabela = 'ingredientes'");
-  $res2 = $query2->fetchAll(PDO::FETCH_ASSOC);
-  $total_reg2 = @count($res2);
-  if($total_reg2 > 0){
-    if($total_reg2 > 1){
-      $texto_adicional = $nome_prod .' ('.$total_reg2.') Retirar Ingredientes ';
-    }else{
-      $texto_adicional = $nome_prod .' ('.$total_reg2.') Retirar Ingrediente ';
-    }
-
-   $mensagem .= ' '.'```'.$texto_adicional.'```';
-
-        for($i2=0; $i2 < $total_reg2; $i2++){
-          foreach ($res2[$i2] as $key => $value){}
-            $id_temp = $res2[$i2]['id'];        
-          $id_item = $res2[$i2]['id_item'];   
-
-          $query3 =$pdo->query("SELECT * FROM ingredientes where id = '$id_item'");
-          $res3 = $query3->fetchAll(PDO::FETCH_ASSOC);
-          $total_reg3 = @count($res3);
-          $nome_adc = $res3[0]['nome'];         
-          if($i2 < ($total_reg2 - 1)){
-           $nome_adc .= ', ';
-          }
-           $mensagem .= '```'.$nome_adc.'```'.'%0A';
-        }
-
-     
-
-
+if($total_reg8 > 0){
+  $mensagem .= $nome_borda.'%0A';
 }
-
-
-
-
-//ond pizza 2 sab
-if($obs_item_2sab != ""){
-   $mensagem .= ' '.'```Observações: '.$obs_item_2sab.'```'.'%0A';
-}
-
-
-
-
-
-}
-
-
-}
-
 
 //COMEÇAR VER OS ADICIONAIS E OUTROS DOS DEMAIS ITENS QUE NAO SAO PIZZA 2 SAB
 $query2 =$pdo->query("SELECT * FROM temp where carrinho = '$id_carrinho' and tabela = 'adicionais'");
@@ -337,21 +269,24 @@ $query2 =$pdo->query("SELECT * FROM temp where carrinho = '$id_carrinho' and tab
             $id_temp = $res2[$i2]['id'];        
           $id_item = $res2[$i2]['id_item'];   
 
-          $query3 =$pdo->query("SELECT * FROM adicionais where id = '$id_item'");
+          $query3 =$pdo->query("SELECT * FROM $tabela_ad where id = '$id_item'");
           $res3 = $query3->fetchAll(PDO::FETCH_ASSOC);
           $total_reg3 = @count($res3);
           $nome_adc = $res3[0]['nome'];          
           if($i2 < ($total_reg2 - 1)){
            $nome_adc .= ', ';
           }
-          $mensagem .= '```'.$nome_adc.'```'.'%0A';
+
+           $mensagem .= '```'.$nome_adc.'```'.'';         
   }
 
+  $mensagem .= '%0A';
+
   }
 
 
 
-//ingredientes pizza 2 sab
+//ingredientes
 $query2 =$pdo->query("SELECT * FROM temp where carrinho = '$id_carrinho' and tabela = 'ingredientes'");
   $res2 = $query2->fetchAll(PDO::FETCH_ASSOC);
   $total_reg2 = @count($res2);
@@ -376,11 +311,11 @@ $query2 =$pdo->query("SELECT * FROM temp where carrinho = '$id_carrinho' and tab
           if($i2 < ($total_reg2 - 1)){
            $nome_adc .= ', ';
           }
-           $mensagem .= '```'.$nome_adc.'```'.'%0A';
+           $mensagem .= '```'.$nome_adc.'```';
         }
 
      
-
+         $mensagem .= '%0A';
 
 }
 
@@ -412,17 +347,17 @@ $query2 =$pdo->query("SELECT * FROM temp where carrinho = '$id_carrinho' and tab
           if($i2 < ($total_reg2 - 1)){
            $nome_adc .= ', ';
           }
-           $mensagem .= '```'.$nome_adc.'```'.'%0A';
+            $mensagem .= '```'.$nome_adc.'```';
         }
 
-     
-
+      $mensagem .= '%0A';
+       
 
 }
 
 
 
-//ond pizza 2 sab
+
 if($obs_item != ""){
    $mensagem .= ' '.'```Observações: '.$obs_item.'```'.'%0A';
 }
@@ -452,6 +387,9 @@ $mensagem .= $url_sistema.'%0A';
 
 $data_mensagem = date('Y-m-d H:i:s');
 require("api2.php");
+
+
 }
 
+echo "Pedido Finalizado*".$id_pedido;
  ?>

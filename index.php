@@ -92,6 +92,8 @@ if ( $start <= $now && $now <= $end ) {
 		</div>
 	</nav>
 
+    <div id="slider" style="margin-top: 50px;" class="ocultar-banner-web">
+
 <?php 
 	if($banner_rotativo == 'Sim'){
 	$query = $pdo->query("SELECT * FROM banner_rotativo");
@@ -100,7 +102,7 @@ if ( $start <= $now && $now <= $end ) {
 		if($total_reg > 0){
  ?>
 
-			<div id="slider" style="margin-top: 50px;" class="ocultar-banner-web">
+		
                 <div class="flexslider">
                   <ul class="slides">
 
@@ -147,11 +149,11 @@ if ( $start <= $now && $now <= $end ) {
 	<?php }  ?>
 		</ul>
     </div>
-</div>
+
 
 <?php } } ?>
 
-
+</div>
 
 	 <!-- Menu Start -->
         <div class="container-xxl py-5 margin_top_web" style="margin-bottom: 15px">
@@ -165,7 +167,7 @@ if ( $start <= $now && $now <= $end ) {
                 	 <ul class="nav nav-pills d-inline-flex justify-content-center border-bottom mb-5" style="width:100%;">
                         <li class="nav-item" style="width:34%;">
                             <a class="d-flex align-items-center text-start mx-3 ms-0 pb-3 active" data-bs-toggle="pill" href="#tab-1">
-                                <img class="icone_mobile" src="img/icone1.png" width="50px" height="50px">
+                                <img class="icone_mobile" src="img/acai.png" width="50px" height="50px">
                                 <div class="ps-1">
                                     <small class="text-body titulo_icones">Categorias</small>
                                     <h6 class="mt-n1 mb-0 subtitulo_icones" style="font-size: 12px">Produtos</h6>
@@ -174,7 +176,7 @@ if ( $start <= $now && $now <= $end ) {
                         </li>
                         <li class="nav-item" style="width:34%;">
                             <a class="d-flex align-items-center text-start mx-3 pb-3" data-bs-toggle="pill" href="#tab-2">
-                                 <img class="icone_mobile" src="img/icone2.png" width="50px" height="50px">
+                                 <img class="icone_mobile" src="img/acai2.png" width="50px" height="50px">
                                 <div class="ps-1">
                                     <small class="text-body titulo_icones">Combos</small>
                                     <h6 class="mt-n1 mb-0 subtitulo_icones" style="font-size: 12px">Diversos</h6>
@@ -209,6 +211,7 @@ if ( $start <= $now && $now <= $end ) {
 				$descricao = $res[$i]['descricao'];
 				$url = $res[$i]['url'];
 				$id = $res[$i]['id'];
+        $mais_sabores = $res[$i]['mais_sabores'];
 
 				$query2 = $pdo->query("SELECT * FROM produtos where categoria = '$id' and ativo = 'Sim'");
 		$res2 = $query2->fetchAll(PDO::FETCH_ASSOC);
@@ -240,7 +243,11 @@ if ( $start <= $now && $now <= $end ) {
 			
 								
                                 <div class="col-md-6">
-                                	<a href="categoria-<?php echo $url ?>">
+                                  <?php if($mais_sabores == 'Sim'){ ?>
+                                	<a href="categoria-sabores-<?php echo $url ?>">
+                                  <?php }else{ ?>
+                                    <a href="categoria-<?php echo $url ?>">
+                                  <?php } ?>
                                     <div class="d-flex align-items-center">
                                         <img class="flex-shrink-0 img-fluid " src="sistema/painel/images/categorias/<?php echo $foto ?>" alt="" style="width: 80px;">
                                         <div class="w-100 d-flex flex-column text-start ps-4">
