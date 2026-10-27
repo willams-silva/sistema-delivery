@@ -263,6 +263,8 @@ $forma_pgto = '%'.$forma_pgto.'%';
 	$taxa_entrega = $res[$i]['taxa_entrega'];
 	$tipo_pgto = $res[$i]['tipo_pgto'];
 	$usuario_baixa = $res[$i]['usuario_baixa'];
+	$mesa = $res[$i]['mesa'];
+	$nome_do_cliente = $res[$i]['nome_cliente'];
 	
 	$valorF = number_format($valor, 2, ',', '.');
 	$total_pagoF = number_format($total_pago, 2, ',', '.');
@@ -290,6 +292,14 @@ $forma_pgto = '%'.$forma_pgto.'%';
 			$nome_cliente = $res2[0]['nome'];
 		}else{
 			$nome_cliente = 'Nenhum!';
+		}
+
+		if($mesa != '0' and $mesa != ''){
+			$nome_cliente = 'Mesa: '.$mesa;
+		}
+
+		if($nome_do_cliente != ""){
+			$nome_cliente = $nome_do_cliente;
 		}
 
 

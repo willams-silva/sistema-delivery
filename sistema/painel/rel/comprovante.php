@@ -58,6 +58,10 @@ if($mesa != '0' and $mesa != ''){
 	$nome_cliente = $nome_cliente_ped;
 }
 
+if($nome_cliente_ped != ""){
+			$nome_cliente = $nome_cliente_ped;
+		}
+
 $telefone_cliente = '';
 $rua_cliente = '';
 $numero_cliente = '';

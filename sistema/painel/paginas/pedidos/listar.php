@@ -185,7 +185,7 @@ echo <<<HTML
 <td class="esc">R$ {$trocoF}</td>
 <td class="esc">{$tipo_pgto}</td>
 <td class="esc">
-<a title="{$titulo_link}" href="#" onclick="ativar('{$id}','{$acao_link}','{$whatsapp_cliente}','{$valorF}','{$tipo_pgto}','{$hora_pedido}','{$entrega}')">
+<a title="{$titulo_link}" href="#" onclick="ativarPedido('{$id}','{$acao_link}','{$whatsapp_cliente}','{$valorF}','{$tipo_pgto}','{$hora_pedido}','{$entrega}')">
 {$status} 
 <i class="fa fa-arrow-right {$cor_icone_link}"></i>
 </a>
@@ -292,7 +292,7 @@ $total_dos_itens_pedidos = @count($res);
 
 <script type="text/javascript">
 	
-function ativar(id, acao, telefone, total, pagamento, hora, entrega){
+function ativarPedido(id, acao, telefone, total, pagamento, hora, entrega){
 	var pedido_whatsapp = "<?=$status_whatsapp?>";
 
 
@@ -318,11 +318,13 @@ function ativar(id, acao, telefone, total, pagamento, hora, entrega){
     $.ajax({
         url: 'paginas/' + pag + "/mudar-status.php",
         method: 'POST',
-        data: {id, acao},
+        data: {id, acao, telefone, total, pagamento, texto},
         dataType: "text",
 
-        success: function (mensagem) {            
-            if (mensagem.trim() == "Alterado com Sucesso") {                
+        success: function (mensagem) {  
+        var split = mensagem.split("***"); 
+
+            if (split[0] == "Alterado com Sucesso") {                
                 listar();     
                 if(acao.trim() === 'Entrega'){
                 	if(pedido_whatsapp == 'Sim'){
@@ -331,7 +333,6 @@ function ativar(id, acao, telefone, total, pagamento, hora, entrega){
 		                a.href= 'http://api.whatsapp.com/send?1=pt_BR&phone='+telefone+'&text= *Atenção*  %0A '+texto+' %0A *Total* R$'+total+' %0A *Tipo Pagamento* '+pagamento+' %0A';
 		                a.click();
            }
-
                 }           
             } else {
                 $('#mensagem-excluir').addClass('text-danger')
