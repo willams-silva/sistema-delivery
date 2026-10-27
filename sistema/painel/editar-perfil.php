@@ -1,6 +1,7 @@
 <?php 
 require_once("../conexao.php");
-
+session_start();
+$id_usuario = $_SESSION['id'];
 $email = $_POST['email'];
 $nome = $_POST['nome'];
 $cpf = $_POST['cpf'];
@@ -74,7 +75,7 @@ if(@$_FILES['foto']['name'] != ""){
 }
 
 
-$query = $pdo->prepare("UPDATE usuarios SET nome = :nome, email = :email, cpf = :cpf, senha = :senha, senha_crip = '$senha_crip', foto = '$foto', telefone = :telefone ");
+$query = $pdo->prepare("UPDATE usuarios SET nome = :nome, email = :email, cpf = :cpf, senha = :senha, senha_crip = '$senha_crip', foto = '$foto', telefone = :telefone where id = '$id_usuario'");
 
 $query->bindValue(":nome", "$nome");
 $query->bindValue(":email", "$email");

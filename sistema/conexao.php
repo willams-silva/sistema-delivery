@@ -55,6 +55,9 @@ $tempo_atualizar = $res[0]['tempo_atualizar'];
 $tipo_chave = $res[0]['tipo_chave'];
 $chave_pix = $res[0]['chave_pix'];
 $cnpj_sistema = $res[0]['cnpj'];
+$dias_apagar = $res[0]['dias_apagar'];
+$impressao_automatica = $res[0]['impressao_automatica'];
+$fonte_comprovante = $res[0]['fonte_comprovante'];
 
 $whatsapp_sistema = '55'.preg_replace('/[ ()-]+/' , '' , $telefone_sistema);
 }

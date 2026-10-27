@@ -33,6 +33,9 @@ $partesInicial = explode('-', $data_atual);
 $dataDiaInicial = $partesInicial[2];
 $dataMesInicial = $partesInicial[1];
 
+if(@$_SESSION['nivel'] != 'Administrador'){
+	require_once("verificar-permissoes.php");
+}
 
 ?>
 <!DOCTYPE HTML>
@@ -166,36 +169,36 @@ $dataMesInicial = $partesInicial[1];
 					<div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
 						<ul class="sidebar-menu">
 							<li class="header">MENU NAVEGAÇÃO</li>
-							<li class="treeview">
+							<li class="treeview <?php echo @$home ?>">
 								<a href="index.php">
 									<i class="fa fa-dashboard"></i> <span>Home</span>
 								</a>
 							</li>
 
-							<li class="treeview">
+							<li class="treeview <?php echo @$pedidos ?>" >
 								<a href="index.php?pagina=pedidos">
 									<i class="fa fa-motorcycle"></i> <span>Pedidos</span>
 								</a>
 							</li>
 
-							<li class="treeview">
+							<li class="treeview <?php echo $menu_pessoas ?>">
 								<a href="#">
 									<i class="fa fa-users"></i>
 									<span>Pessoas</span>
 									<i class="fa fa-angle-left pull-right"></i>
 								</a>
 								<ul class="treeview-menu">
-									<li><a href="index.php?pagina=usuarios"><i class="fa fa-angle-right"></i> Usuários</a></li>
-									<li><a href="index.php?pagina=funcionarios"><i class="fa fa-angle-right"></i> Funcionários</a></li>
+									<li class="<?php echo @$usuarios ?>"><a href="index.php?pagina=usuarios"><i class="fa fa-angle-right"></i> Usuários</a></li>
+									<li class="<?php echo @$funcionarios ?>"><a href="index.php?pagina=funcionarios"><i class="fa fa-angle-right"></i> Funcionários</a></li>
 
-									<li><a href="index.php?pagina=clientes"><i class="fa fa-angle-right"></i> Clientes</a></li>
+									<li class="<?php echo @$clientes ?>"><a href="index.php?pagina=clientes"><i class="fa fa-angle-right"></i> Clientes</a></li>
 
-									<li><a href="index.php?pagina=fornecedores"><i class="fa fa-angle-right"></i> Fornecedores</a></li>
+									<li class="<?php echo @$fornecedores ?>"><a href="index.php?pagina=fornecedores"><i class="fa fa-angle-right"></i> Fornecedores</a></li>
 
 								</ul>
 							</li>
 
-							<li class="treeview">
+							<li class="treeview <?php echo $menu_cadastros ?>">
 								<a href="#">
 									<i class="fa fa-plus"></i>
 									<span>Cadastros</span>
@@ -203,31 +206,35 @@ $dataMesInicial = $partesInicial[1];
 								</a>
 								<ul class="treeview-menu">
 
-									<li><a href="index.php?pagina=bairros"><i class="fa fa-angle-right"></i> Bairros / Locais</a></li>
+									<li class="<?php echo @$bairros ?>"><a href="index.php?pagina=bairros"><i class="fa fa-angle-right"></i> Bairros / Locais</a></li>
 
-									<li><a href="index.php?pagina=cargos"><i class="fa fa-angle-right"></i> Cargos</a></li>
+									<li class="<?php echo @$cargos ?>"><a href="index.php?pagina=cargos"><i class="fa fa-angle-right"></i> Cargos</a></li>
 
-									<li><a href="index.php?pagina=dias"><i class="fa fa-angle-right"></i> Dias Fechados</a></li>
+									<li class="<?php echo @$dias ?>"><a href="index.php?pagina=dias"><i class="fa fa-angle-right"></i> Dias Fechados</a></li>
+
+									<li class="<?php echo @$grupos ?>"><a href="index.php?pagina=grupos"><i class="fa fa-angle-right"></i> Grupo Acessos</a></li>
+
+									<li class="<?php echo @$acessos ?>"><a href="index.php?pagina=acessos"><i class="fa fa-angle-right"></i> Acessos</a></li>
 									
 								</ul>
 							</li>
 
 
 
-							<li class="treeview">
+							<li class="treeview <?php echo $menu_produtos ?>">
 								<a href="#">
 									<i class="fa fa-cutlery"></i>
 									<span>Produtos</span>
 									<i class="fa fa-angle-left pull-right"></i>
 								</a>
 								<ul class="treeview-menu">
-									<li><a href="index.php?pagina=produtos"><i class="fa fa-angle-right"></i> Produtos</a></li>
+									<li class="<?php echo @$produtos ?>"><a href="index.php?pagina=produtos"><i class="fa fa-angle-right"></i> Produtos</a></li>
 
-									<li><a href="index.php?pagina=categorias"><i class="fa fa-angle-right"></i> Categorias</a></li>
+									<li class="<?php echo @$categorias ?>"><a href="index.php?pagina=categorias"><i class="fa fa-angle-right"></i> Categorias</a></li>
 
-									<li><a href="index.php?pagina=estoque"><i class="fa fa-angle-right"></i> Estoque</a></li>
-									<li><a href="index.php?pagina=entradas"><i class="fa fa-angle-right"></i> Entradas</a></li>
-									<li><a href="index.php?pagina=saidas"><i class="fa fa-angle-right"></i> Saídas</a></li>
+									<li class="<?php echo @$estoque ?>"><a href="index.php?pagina=estoque"><i class="fa fa-angle-right"></i> Estoque</a></li>
+									<li class="<?php echo @$entradas ?>"><a href="index.php?pagina=entradas"><i class="fa fa-angle-right"></i> Entradas</a></li>
+									<li class="<?php echo @$saidas ?>"><a href="index.php?pagina=saidas"><i class="fa fa-angle-right"></i> Saídas</a></li>
 									
 								</ul>
 							</li>
@@ -235,7 +242,7 @@ $dataMesInicial = $partesInicial[1];
 
 
 
-							<li class="treeview">
+							<li class="treeview <?php echo $menu_financeiro ?>">
 								<a href="#">
 									<i class="fa fa-dollar"></i>
 									<span>Financeiro</span>
@@ -243,13 +250,13 @@ $dataMesInicial = $partesInicial[1];
 								</a>
 								<ul class="treeview-menu">
 
-									<li><a href="index.php?pagina=vendas"><i class="fa fa-angle-right"></i> Vendas / Pedidos</a></li>
+									<li class="<?php echo @$vendas ?>"><a href="index.php?pagina=vendas"><i class="fa fa-angle-right"></i> Vendas / Pedidos</a></li>
 
-									<li><a href="index.php?pagina=pagar"><i class="fa fa-angle-right"></i> Contas à Pagar</a></li>
+									<li class="<?php echo @$pagar ?>"><a href="index.php?pagina=pagar"><i class="fa fa-angle-right"></i> Contas à Pagar</a></li>
 
-									<li><a href="index.php?pagina=receber"><i class="fa fa-angle-right"></i> Contas à Receber</a></li>
+									<li class="<?php echo @$receber ?>"><a href="index.php?pagina=receber"><i class="fa fa-angle-right"></i> Contas à Receber</a></li>
 
-									<li><a href="index.php?pagina=compras"><i class="fa fa-angle-right"></i> Compras</a></li>
+									<li class="<?php echo @$compras ?>"><a href="index.php?pagina=compras"><i class="fa fa-angle-right"></i> Compras</a></li>
 
 									
 								</ul>
@@ -258,21 +265,21 @@ $dataMesInicial = $partesInicial[1];
 
 
 
-							<li class="treeview">
+							<li class="treeview <?php echo $menu_relatorio ?>">
 								<a href="#">
 									<i class="fa fa-file-pdf-o"></i>
 									<span>Relatórios</span>
 									<i class="fa fa-angle-left pull-right"></i>
 								</a>
 								<ul class="treeview-menu">
-									<li><a href="rel/produtos_class.php" target="_blank"><i class="fa fa-angle-right"></i> Produtos</a></li>
+									<li class="<?php echo @$rel_produtos ?>"><a href="rel/produtos_class.php" target="_blank"><i class="fa fa-angle-right"></i> Produtos</a></li>
 
-									<li><a href="" data-toggle="modal" data-target="#RelCon"><i class="fa fa-angle-right"></i> Relatório de Contas</a></li>
+									<li class="<?php echo @$rel_contas ?>"><a href="" data-toggle="modal" data-target="#RelCon"><i class="fa fa-angle-right"></i> Relatório de Contas</a></li>
 
 
-									<li><a href="" data-toggle="modal" data-target="#RelLucro"><i class="fa fa-angle-right"></i> Demonstrativo de Lucro</a></li>
+									<li class="<?php echo @$rel_lucro ?>"><a href="" data-toggle="modal" data-target="#RelLucro"><i class="fa fa-angle-right"></i> Demonstrativo de Lucro</a></li>
 
-									<li><a href="" data-toggle="modal" data-target="#RelVen"><i class="fa fa-angle-right"></i> Vendas / Pedidos</a></li>
+									<li class="<?php echo @$rel_vendas ?>"><a href="" data-toggle="modal" data-target="#RelVen"><i class="fa fa-angle-right"></i> Vendas / Pedidos</a></li>
 
 									
 									
@@ -722,6 +729,32 @@ $dataMesInicial = $partesInicial[1];
 							<label>Chave Pix</label>
 							<input type="text" name="chave_pix" class="form-control" value="<?php echo @$chave_pix ?>" placeholder="Chave Pix">	
 						</div>
+					
+					</div>
+
+
+
+					<div class="row">
+
+						<div class="col-md-3">							
+							<label>Dias Limpar Banco</label>
+							<input type="number" name="dias_apagar" id="dias_apagar" class="form-control" value="<?php echo @$dias_apagar ?>" placeholder="Limpar Banco de Dados">	
+						</div>
+
+						<div class="col-md-3">							
+							<label>Impressão Automática</label>
+							<select class="form-control" name="impressao_automatica">
+								<option value="Sim" <?php if(@$impressao_automatica == 'Sim'){?> selected <?php } ?> >Sim</option>
+								<option value="Não" <?php if(@$impressao_automatica == 'Não'){?> selected <?php } ?> >Não</option>	
+							</select>	
+						</div>
+
+						<div class="col-md-3">							
+							<label>Fonte Comprovante</label>
+							<input type="number" name="fonte_comprovante" id="fonte_comprovante" class="form-control" value="<?php echo @$fonte_comprovante ?>" placeholder="Tamanho Letra">	
+						</div>
+
+						
 					
 					</div>
 
