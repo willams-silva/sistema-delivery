@@ -3,6 +3,10 @@
 require_once("verificar.php");
 require_once("../conexao.php");
 
+if(@$home == 'ocultar'){
+    echo "<script>window.location='../index.php'</script>";
+    exit();
+}
 
 
 $data_hoje = date('Y-m-d');

@@ -1,4 +1,10 @@
 <?php 
+
+if(@$usuarios == 'ocultar'){
+    echo "<script>window.location='../index.php'</script>";
+    exit();
+}
+
 $pag = 'usuarios';
  ?>
 <a class="btn btn-primary" onclick="inserir()" class="btn btn-primary btn-flat btn-pri"><i class="fa fa-plus" aria-hidden="true"></i> Novo Usuário</a>
@@ -209,6 +215,57 @@ $pag = 'usuarios';
 
 
 
+<!-- Modal -->
+<div class="modal fade" id="modalPermissoes" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+	<div class="modal-dialog modal-lg" role="document">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h4 class="modal-title">
+					Usuário: <span id="nome-usuario"></span>
+
+					<span style="position:absolute; right:35px">
+						<input class="form-check-input" type="checkbox" id="input-todos" onchange="marcarTodos()">
+						<label class="" >Marcar Todos</label>
+					</span>
+
+				</h4>
+
+				
+				<button id="btn-fechar-permissoes" type="button" class="close" data-dismiss="modal" aria-label="Close" style="margin-top: -20px">
+					<span aria-hidden="true">&times;</span>
+				</button>
+			</div>
+			
+			<div class="modal-body">
+
+				<div class="row" id="listar-permissoes">
+
+				</div>
+
+				<div class="row">	
+					<div class="col-md-12">						
+				
+						
+					</div>	
+				</div>	
+
+				<br>
+				<input type="hidden" name="id" id="id-usuario"> 
+				<small><div id="mensagem-permissao" align="center" class="mt-3"></div></small>		
+
+				
+
+				
+
+
+			</div>	
+
+
+			
+
+		</div>
+	</div>
+</div>
 
 
 
@@ -235,4 +292,81 @@ $pag = 'usuarios';
             target.src = "";
         }
     }
+</script>
+
+
+
+
+<script type="text/javascript">
+	function listarPermissoes(id){
+		$.ajax({
+			url: 'paginas/' + pag + "/listar-permissoes.php",
+			method: 'POST',
+			data: {id},
+			dataType: "html",
+
+			success:function(result){
+				$("#listar-permissoes").html(result);
+				$('#mensagem-permissao').text('');
+				//$('#input-todos').prop('checked', false);
+			}
+		});
+	}
+
+
+	function marcarTodos(){
+		let checkbox = document.getElementById('input-todos');
+		var usuario = $('#id-usuario').val();
+		
+		if(checkbox.checked) {
+		    adicionarPermissoes(usuario);		    
+		} else {
+		    limparPermissoes(usuario);
+		}
+	}
+
+
+
+	function adicionarPermissoes(id){
+		$.ajax({
+			url: 'paginas/' + pag + "/add-permissoes.php",
+			method: 'POST',
+			data: {id},
+			dataType: "html",
+
+			success:function(result){
+				listarPermissoes(id)
+			}
+		});	
+	}
+
+
+	function limparPermissoes(id){
+		$.ajax({
+			url: 'paginas/' + pag + "/limpar-permissoes.php",
+			method: 'POST',
+			data: {id},
+			dataType: "html",
+
+			success:function(result){
+				listarPermissoes(id)
+			}
+		});	
+	}
+
+
+	function adicionarPermissao(idpermissao, idusuario){
+		
+		$.ajax({
+			url: 'paginas/' + pag + "/add-permissao.php",
+			method: 'POST',
+			data: {idpermissao, idusuario},
+			dataType: "html",
+
+			success:function(result){
+				listarPermissoes(idusuario)
+			}
+		});	
+	}
+
 </script>

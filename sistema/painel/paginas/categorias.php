@@ -1,4 +1,9 @@
 <?php 
+//verificar se ele tem a permissão de estar nessa página
+if(@$categorias == 'ocultar'){
+    echo "<script>window.location='../index.php'</script>";
+    exit();
+}
 $pag = 'categorias';
  ?>
 <a class="btn btn-primary" onclick="inserir()" class="btn btn-primary btn-flat btn-pri"><i class="fa fa-plus" aria-hidden="true"></i> Nova Categoria</a>
@@ -53,10 +58,20 @@ $pag = 'categorias';
 
 
 					<div class="row">
-						<div class="col-md-12">
+						<div class="col-md-8">
 							<div class="form-group">
 								<label for="exampleInputEmail1">Descrição</label>
 								<input maxlength="255" type="text" class="form-control" id="descricao" name="descricao" placeholder="Pequena Descrição" >    
+							</div> 	
+						</div>
+
+						<div class="col-md-4">
+							<div class="form-group">
+								<label for="exampleInputEmail1">Mais Sabores</label>
+								<select class="form-control" id="mais_sabores" name="mais_sabores">
+									<option value="Não">Não</option>
+									<option value="Sim">Sim</option>
+								</select>   
 							</div> 	
 						</div>
 					

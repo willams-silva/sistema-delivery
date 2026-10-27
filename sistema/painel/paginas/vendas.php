@@ -3,6 +3,11 @@
 require_once("verificar.php");
 require_once("../conexao.php");
 
+if(@$vendas == 'ocultar'){
+    echo "<script>window.location='../index.php'</script>";
+    exit();
+}
+
 $pag = 'vendas';
 
 

@@ -9,24 +9,24 @@ $ult_ped = @$_POST['ult_pedido'];
 $total_vendas = 0;
 
 //TOTAIS DOS PEDIDOS
-$query = $pdo->query("SELECT * FROM $tabela where data = curDate() and status = 'Iniciado'");
+$query = $pdo->query("SELECT * FROM $tabela where status = 'Iniciado'");
 $res = $query->fetchAll(PDO::FETCH_ASSOC);
 $total_ini = @count($res);
 
-$query = $pdo->query("SELECT * FROM $tabela where data = curDate() and status = 'Preparando'");
+$query = $pdo->query("SELECT * FROM $tabela where status = 'Preparando'");
 $res = $query->fetchAll(PDO::FETCH_ASSOC);
 $total_prep = @count($res);
 
-$query = $pdo->query("SELECT * FROM $tabela where data = curDate() and status = 'Entrega'");
+$query = $pdo->query("SELECT * FROM $tabela where status = 'Entrega'");
 $res = $query->fetchAll(PDO::FETCH_ASSOC);
 $total_ent = @count($res);
 
-$query = $pdo->query("SELECT * FROM $tabela where data = curDate() and status != 'Finalizado' and status != 'Cancelado'");
+$query = $pdo->query("SELECT * FROM $tabela where status != 'Finalizado' and status != 'Cancelado'");
 $res = $query->fetchAll(PDO::FETCH_ASSOC);
 $total_pedidos = @count($res);
 
 
-$query = $pdo->query("SELECT * FROM $tabela where data = curDate() and status != 'Finalizado' and status != 'Cancelado' order by id desc limit 1");
+$query = $pdo->query("SELECT * FROM $tabela where status != 'Finalizado' and status != 'Cancelado' order by id desc limit 1");
 $res = $query->fetchAll(PDO::FETCH_ASSOC);
 $id_ult_pedido = @$res[0]['id'];
 
@@ -37,7 +37,7 @@ if($ult_ped < $id_ult_pedido and $ult_ped != ""){
 }
 
 
-$query = $pdo->query("SELECT * FROM $tabela where data = curDate() and status LIKE '$status' and status != 'Finalizado' and status != 'Cancelado' order by hora asc");
+$query = $pdo->query("SELECT * FROM $tabela where status LIKE '$status' and status != 'Finalizado' and status != 'Cancelado' order by hora asc");
 $res = $query->fetchAll(PDO::FETCH_ASSOC);
 $total_reg = @count($res);
 if($total_reg > 0){
@@ -144,9 +144,13 @@ for($i=0; $i < $total_reg; $i++){
 		if($pago == 'Sim'){
 			$classe_excluir = 'ocultar';
 			$visivel = 'ocultar';
+			$classe_pago = 'text-verde';
+			$texto_pago = '(Pago)';
 		}else{
 			$classe_excluir = '';
 			$visivel = '';
+			$classe_pago = '';
+			$texto_pago = '';
 		}
 
 		if($obs != ""){
@@ -169,7 +173,7 @@ echo <<<HTML
 <tr class="">
 <td><i class="fa fa-square {$classe_alerta}"></i> <b>Pedido ({$id})</b> / {$nome_cliente} <span class="{$classe_entrega}"><small>({$entrega})</small></span></td>
 <td class="esc">R$ {$valorF}</td>
-<td class="esc">R$ {$total_pagoF}</td>
+<td class="esc {$classe_pago}">R$ {$total_pagoF} <small>{$texto_pago}</small></td>
 <td class="esc">R$ {$trocoF}</td>
 <td class="esc">{$tipo_pgto}</td>
 <td class="esc">
@@ -181,7 +185,7 @@ echo <<<HTML
 <td class="esc {$classe_hora}">{$hora}</td>
 <td>	
 
-		<big><a href="#" onclick="mostrar('{$nome_cliente}', '{$valorF}', '{$total_pagoF}', '{$trocoF}',  '{$dataF}', '{$hora}', '{$status}', '{$pago}', '{$obs}', '{$taxa_entregaF}', '{$tipo_pgto}', '{$nome_usuario_pgto}')" title="Ver Dados"><i class="fa fa-info-circle {$classe_info}"></i></a></big>
+		<big><a href="#" onclick="mostrar('{$id}', '{$nome_cliente}')" title="Ver Dados"><i class="fa fa-info-circle {$classe_info}"></i></a></big>
 
 
 
@@ -198,22 +202,10 @@ echo <<<HTML
 		</li>
 
 
+<big><a class="{$classe_excluir}" href="#" onclick="baixar('{$id}', '{$nome_cliente}', '{$tipo_pgto}')" title="Confirmar Pgto"><i class="fa fa-check-square text-verde"></i></a></big>
 
 
-			<li class="dropdown head-dpdn2" style="display: inline-block;">
-		<a title="Baixar Venda" href="#" class="dropdown-toggle {$visivel}" data-toggle="dropdown" aria-expanded="false"><big><i class="fa fa-check-square text-verde"></i></big></a>
-
-		<ul class="dropdown-menu" style="margin-left:-230px;">
-		<li>
-		<div class="notification_desc2">
-		<p>Confirmar Pagamento? <a href="#" onclick="baixar('{$id}')"><span class="text-verde {$visivel}">Sim</span></a></p>
-		</div>
-		</li>										
-		</ul>
-		</li>
-
-
-		<big><a href="#" onclick="gerarComprovante('{$id}')" title="Gerar Comprovante"><i class="fa fa-file-pdf-o text-primary"></i></a></big>
+		<big><a  href="#" onclick="gerarComprovante('{$id}')" title="Gerar Comprovante"><i class="fa fa-file-pdf-o text-primary"></i></a></big>
 
 
 		
@@ -263,22 +255,20 @@ HTML;
 
 
 <script type="text/javascript">
-	function mostrar(cliente, valor, total_pago, troco, data, hora, status, pago, obs, taxa_entrega, tipo_pgto, usuario_pgto){
-
-		$('#nome_dados').text(cliente);
-		$('#valor_dados').text(valor);
-		$('#total_pago_dados').text(total_pago);
-		$('#troco_dados').text(troco);
-		$('#data_dados').text(data);
-		$('#hora_dados').text(hora);
-		$('#status_dados').text(status);
-		$('#pago_dados').text(pago);
-		$('#obs_dados').text(obs);
-		$('#taxa_entrega_dados').text(taxa_entrega);
-		$('#tipo_pgto_dados').text(tipo_pgto);
-		$('#usuario_pgto_dados').text(usuario_pgto);		
-	
+	function mostrar(id, cliente){		
+		listarPedido(id);
+		$('#nome_dados').text('Pedido ' + id + ' - Cliente: ' + cliente);
 		$('#modalDados').modal('show');
+	}
+</script>
+
+<script type="text/javascript">
+	function baixar(id, cliente, pgto){		
+		
+		$('#nome_baixar').text('Confirmar Pagamento: Pedido ' + id + ' - Cliente: ' + cliente);
+		$('#pgto').val(pgto).change();
+		$('#id_baixar').val(id);
+		$('#modalBaixar').modal('show');
 	}
 </script>
 
@@ -296,6 +286,17 @@ function ativar(id, acao, telefone, total, pagamento, hora, entrega){
 	}else{
 		var texto = 'Seu Pedido já ficou pronto, pode vir!!';
 	}
+
+	var imp_aut = '<?=$impressao_automatica?>';
+	
+		if(imp_aut == 'Sim' && acao == 'Preparando'){
+		let a= document.createElement('a');
+		                a.target= '_blank';
+		                a.href= 'rel/comprovante.php?id='+ id;
+		                a.click();
+		}
+	
+	
 	
     $.ajax({
         url: 'paginas/' + pag + "/mudar-status.php",
@@ -331,7 +332,7 @@ function ativar(id, acao, telefone, total, pagamento, hora, entrega){
 	function gerarComprovante(id){
 		let a= document.createElement('a');
 		                a.target= '_blank';
-		                a.href= 'rel/comprovante.php?id='+ id;
+		                a.href= 'rel/comprovante.php?id='+ id + '&imp=Não';
 		                a.click();
 	}
 </script>

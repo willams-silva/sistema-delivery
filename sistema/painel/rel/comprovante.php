@@ -47,12 +47,12 @@ $numero_cliente = @$res2[0]['numero'];
 $complemento_cliente = @$res2[0]['complemento'];
 $bairro_cliente = @$res2[0]['bairro'];
 
-if($tipo_pgto == 'Cartão de Crédito'){
-	$tipo_pgto = 'Crédito';
+if($entrega == 'Retirar'){
+	$entrega = 'Retirar no Local';
 }
 
-if($tipo_pgto == 'Cartão de Débito'){
-	$tipo_pgto = 'Débito';
+if($entrega == 'Consumir Local'){
+	$entrega = 'Consumir no Local';
 }
 
 
@@ -60,11 +60,17 @@ if($tipo_pgto == 'Cartão de Débito'){
 
 <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
 
+<?php if(@$_GET['imp'] != 'Não'){ ?>
 <script type="text/javascript">
 	$(document).ready(function() {    		
-		window.print()   
+		window.print();
+		window.close(); 
 	} );
 </script>
+<?php } ?>
+
+<!-- CSS only -->
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-0evHe/X+R7YkIZDRvuzKMRqM+OrBnVFBL6DOitfPri4tjfHxaWutUpFmBp4vmVor" crossorigin="anonymous">
 
 <style type="text/css">
 	*{
@@ -79,11 +85,7 @@ if($tipo_pgto == 'Cartão de Débito'){
 	.text {
 		&-center { text-align: center; }
 	}
-	.ttu { text-transform: uppercase;
-		font-weight: bold;
-		font-size: 1.2em;
-	}
-
+	
 	.printer-ticket {
 		display: table !important;
 		width: 100%;
@@ -98,35 +100,46 @@ if($tipo_pgto == 'Cartão de Débito'){
 		font-family: TimesNewRoman, Geneva, sans-serif; 
 
 		/*tamanho da Fonte do Texto*/
-		font-size: 10px; 
+		font-size: <?php echo $fonte_comprovante ?>px; 
 
 
 
 	}
 	
-	th { 
+	.th { 
 		font-weight: inherit;
-
 		/*Espaçamento entre as uma linha para outra*/
 		padding:5px;
 		text-align: center;
-
 		/*largura dos tracinhos entre as linhas*/
 		border-bottom: 1px dashed #000000;
 	}
 
+	.itens { 
+		font-weight: inherit;
+		/*Espaçamento entre as uma linha para outra*/
+		padding:5px;
+		
+	}
 
-	
+	.valores { 
+		font-weight: inherit;
+		/*Espaçamento entre as uma linha para outra*/
+		padding:2px 5px;
+		
+	}
 
-	
-	
 
 	.cor{
 		color:#000000;
 	}
 	
 	
-	.title { font-size: 1.5em;  }
+	.title { 
+		font-size: 12px;
+		text-transform: uppercase;
+		font-weight: bold;
+	}
 
 	/*margem Superior entre as Linhas*/
 	.margem-superior{
@@ -139,276 +152,382 @@ if($tipo_pgto == 'Cartão de Débito'){
 
 
 
-<table class="printer-ticket">
+<div class="printer-ticket">		
+	<div  class="th title"><?php echo $nome_sistema ?></div>
 
-	<tr>
-		<th class="ttu" class="title" colspan="3"><?php echo $nome_sistema ?></th>
-
-	</tr>
-	<tr>
-		<th colspan="3">
-			<?php echo $endereco_sistema ?> <br />
-			Contato: <?php echo $telefone_sistema ?> 
-			<?php if($cnpj_sistema != ""){echo ' / CNPJ '. @$cnpj_sistema; } ?>  
-		</th>
-	</tr>
-
-	<tr>
-		<th colspan="3">Cliente <?php echo $nome_cliente ?> Tel: <?php echo $telefone_cliente ?>			
-		<br>
-		Venda: <b><?php echo $id ?></b> - Data: <?php echo $dataF ?> Hora: <?php echo $hora ?>
+	<div  class="th">
+		<?php echo $endereco_sistema ?> <br />
+		<small>Contato: <?php echo $telefone_sistema ?> 
+		<?php if($cnpj_sistema != ""){echo ' / CNPJ '. @$cnpj_sistema; } ?>
+	</small>  
+</div>
 
 
-	</th>
-</tr>
 
-<tr>
-	<th class="ttu margem-superior" colspan="3">
-		Comprovante de Venda
+<div  class="th">Cliente <?php echo $nome_cliente ?> Tel: <?php echo $telefone_cliente ?>			
+<br>
+Venda: <b><?php echo $id ?></b> - Data: <?php echo $dataF ?> Hora: <?php echo $hora ?>
+</div>
 
-	</th>
-</tr>
-<tr>
-	<th colspan="3">
-		CUMPOM NÃO FISCAL
+<div  class="th title" >Comprovante de Venda</div>
 
-	</th>
-</tr>
+<div  class="th">CUMPOM NÃO FISCAL</div>
 
-<tbody>
+<?php 
 
-	<?php 
+$nome_produto2 = '';
+$res = $pdo->query("SELECT * from carrinho where pedido = '$id' and id_sabor = 0 order by id asc");
+$dados = $res->fetchAll(PDO::FETCH_ASSOC);
+$linhas = count($dados);
 
-	$res = $pdo->query("SELECT * from carrinho where pedido = '$id' order by id asc");
-	$dados = $res->fetchAll(PDO::FETCH_ASSOC);
-	$linhas = count($dados);
+$sub_tot;
+for ($i=0; $i < count($dados); $i++) { 
+	foreach ($dados[$i] as $key => $value) {
+	}
+	$id_carrinho = $dados[$i]['id']; 
+	$id_produto = $dados[$i]['produto']; 
+	$quantidade = $dados[$i]['quantidade'];
+	$total_item = $dados[$i]['total_item'];
+	$obs_item = $dados[$i]['obs'];
+	$item = $dados[$i]['item'];
+		$variacao = $dados[$i]['variacao'];
 
-	$sub_tot;
-	for ($i=0; $i < count($dados); $i++) { 
-		foreach ($dados[$i] as $key => $value) {
+
+		$query2 = $pdo->query("SELECT * FROM variacoes where id = '$variacao'");
+		$res2 = $query2->fetchAll(PDO::FETCH_ASSOC);
+		if(@count(@$res2) > 0){
+			$sigla_variacao = '('.$res2[0]['sigla'].')';			
+		}else{
+			$sigla_variacao = '';
 		}
-		$id_carrinho = $dados[$i]['id']; 
-		$id_produto = $dados[$i]['produto']; 
-		$quantidade = $dados[$i]['quantidade'];
-		$total_item = $dados[$i]['total_item'];
-		$obs_item = $dados[$i]['obs'];
+
+		$query2 = $pdo->query("SELECT * FROM produtos where id = '$id_produto'");
+		$res2 = $query2->fetchAll(PDO::FETCH_ASSOC);
+		if(@count(@$res2) > 0){
+			$nome_produto = $res2[0]['nome'];
+			$foto_produto = $res2[0]['foto'];
+		}else{
+			$query33 = $pdo->query("SELECT * FROM carrinho where id_sabor = '$item' and pedido = '$id' ");
+$res33 = $query33->fetchAll(PDO::FETCH_ASSOC);
+$total_reg33 = @count($res33);
+if($total_reg33 > 0){
+	
+	for($i33=0; $i33 < $total_reg33; $i33++){
+		foreach ($res33[$i33] as $key => $value){}
+		$prod = $res33[$i33]['produto'];
+		$id_car = $res33[$i33]['id'];
+
+		$query2 = $pdo->query("SELECT * FROM produtos where id = '$prod'");
+		$res2 = $query2->fetchAll(PDO::FETCH_ASSOC);
+		if(@count(@$res2) > 0){
+			
+			$foto_produto = $res2[0]['foto'];
+			$cat_produto = $res2[0]['categoria'];
+			if($i33 < $total_reg33 - 1){
+				$nome_prod = $res2[0]['nome']. ' / ';
+			}else{
+				$nome_prod = $res2[0]['nome'];
+			}
+			
+		}		
+
+		$nome_produto2 .= $nome_prod;
+	}
+	
+	$nome_produto = $nome_produto2;
 
 
-		$res_p = $pdo->query("SELECT * from produtos where id = '$id_produto' ");
-		$dados_p = $res_p->fetchAll(PDO::FETCH_ASSOC);
-		$nome_produto = $dados_p[0]['nome'];  
-		
+}
+		} 
 
-		?>
 
-		<tr>
-			<td colspan="1" width="90%"> <?php echo $quantidade ?> - <?php echo $nome_produto ?></td>
+	?>
 
-		<td colspan="2" align="right">R$ <?php
-		
+	<div class="row itens">
+
+		<div align="left" class="col-9"> <?php echo $quantidade ?> - <?php echo $nome_produto ?> <?php echo $sigla_variacao ?>
+
+	</div>		
+
+	<div align="right" class="col-3">
+		R$ <?php		
 		$total_itemF = number_format($total_item , 2, ',', '.');
 				// $total = number_format( $cp1 , 2, ',', '.');
 		echo $total_itemF ;
-		?></td>
-		</tr>
+		?>
+	</div>
+
 
 
 		<?php 
+
+		$query33 = $pdo->query("SELECT * FROM carrinho where id_sabor = '$item' and pedido = '$id' and id_sabor > 0");
+$res33 = $query33->fetchAll(PDO::FETCH_ASSOC);
+$total_reg33 = @count($res33);
+if($total_reg33 > 0){
+	
+	for($i33=0; $i33 < $total_reg33; $i33++){
+		foreach ($res33[$i33] as $key => $value){}
+		$prod = $res33[$i33]['produto'];
+		$id_car = $res33[$i33]['id'];
+
+		$query2 = $pdo->query("SELECT * FROM produtos where id = '$prod'");
+		$res2 = $query2->fetchAll(PDO::FETCH_ASSOC);
+		if(@count(@$res2) > 0){
 			
-$query2 =$pdo->query("SELECT * FROM temp where carrinho = '$id_carrinho' and tabela = 'adicionais'");
-$res2 = $query2->fetchAll(PDO::FETCH_ASSOC);
-$total_reg2 = @count($res2);
-if($total_reg2 > 0){
+			$nome_prod = $res2[0]['nome'];
+		}
+
+	$query2 =$pdo->query("SELECT * FROM temp where carrinho = '$id_car' and tabela = 'adicionais'");
+	$res2 = $query2->fetchAll(PDO::FETCH_ASSOC);
+	$total_reg2 = @count($res2);
+	if($total_reg2 > 0){
+		if($total_reg2 > 1){
+			$texto_adicional = $nome_prod .' ('.$total_reg2.') Adicionais';
+		}else{
+			$texto_adicional = $nome_prod .' ('.$total_reg2.') Adicional';
+		}
+		?>
+
+		<div align="left" style="margin-left: 15px">
+			<small><b><?php echo $texto_adicional ?> : </b>
+				<?php 
+				for($i2=0; $i2 < $total_reg2; $i2++){
+					foreach ($res2[$i2] as $key => $value){}
+						$id_temp = $res2[$i2]['id'];				
+					$id_item = $res2[$i2]['id_item'];		
+
+					$query3 =$pdo->query("SELECT * FROM adicionais where id = '$id_item'");
+					$res3 = $query3->fetchAll(PDO::FETCH_ASSOC);
+					$total_reg3 = @count($res3);
+					$nome_adc = $res3[0]['nome'];
+					echo $nome_adc;
+					if($i2 < ($total_reg2 - 1)){
+						echo ', ';
+					}
+				}
+				?>
+			</small>
+		</div>
+
+	<?php } ?>
+
+
+
+	<?php 
+
+	$query2 =$pdo->query("SELECT * FROM temp where carrinho = '$id_car' and tabela = 'ingredientes'");
+	$res2 = $query2->fetchAll(PDO::FETCH_ASSOC);
+	$total_reg2 = @count($res2);
+	if($total_reg2 > 0){
+		if($total_reg2 > 1){
+			$texto_adicional = $nome_prod .' ('.$total_reg2.') Retirar Ingredientes';
+		}else{
+			$texto_adicional = $nome_prod .' ('.$total_reg2.') Retirar Ingrediente';
+		}
+		?>
+		<div align="left" style="margin-left: 15px">
+			<small><b><?php echo $texto_adicional ?> : </b>
+				<?php 
+				for($i2=0; $i2 < $total_reg2; $i2++){
+					foreach ($res2[$i2] as $key => $value){}
+						$id_temp = $res2[$i2]['id'];				
+					$id_item = $res2[$i2]['id_item'];		
+
+					$query3 =$pdo->query("SELECT * FROM ingredientes where id = '$id_item'");
+					$res3 = $query3->fetchAll(PDO::FETCH_ASSOC);
+					$total_reg3 = @count($res3);
+					$nome_adc = $res3[0]['nome'];
+					echo $nome_adc;
+					if($i2 < ($total_reg2 - 1)){
+						echo ', ';
+					}
+				}
+				?>
+			</small>
+		</div>
+	<?php } ?>
+
+
+	<?php 
+
+	if($obs_item != ""){
+		?>	
+		<div align="left" style="margin-left: 15px">
+			<small><b>Observação : </b>
+				<?php echo $obs_item ?>
+			</small>		
+		</div>
+	<?php } ?>
+
+
+<?php } } ?>
+
+	<?php 
+
+	$query2 =$pdo->query("SELECT * FROM temp where carrinho = '$id_carrinho' and tabela = 'adicionais'");
+	$res2 = $query2->fetchAll(PDO::FETCH_ASSOC);
+	$total_reg2 = @count($res2);
+	if($total_reg2 > 0){
 		if($total_reg2 > 1){
 			$texto_adicional = '('.$total_reg2.') Adicionais';
 		}else{
 			$texto_adicional = '('.$total_reg2.') Adicional';
 		}
 		?>
-		<tr>
-			<td colspan="2" width="80%" >
-				<small><b>&nbsp;&nbsp;&nbsp;<?php echo $texto_adicional ?> : </b>
-				<?php 
-					for($i2=0; $i2 < $total_reg2; $i2++){
-		foreach ($res2[$i2] as $key => $value){}
-			$id_temp = $res2[$i2]['id'];				
-		$id_item = $res2[$i2]['id_item'];		
 
-		$query3 =$pdo->query("SELECT * FROM adicionais where id = '$id_item'");
-		$res3 = $query3->fetchAll(PDO::FETCH_ASSOC);
-		$total_reg3 = @count($res3);
-		$nome_adc = $res3[0]['nome'];
-		echo $nome_adc;
-		if($i2 < ($total_reg2 - 1)){
-			echo ', ';
-		}
-	}
-				 ?>
-				</small>
-			</td>
-		</tr>
+		<div align="left" style="margin-left: 15px">
+			<small><b><?php echo $texto_adicional ?> : </b>
+				<?php 
+				for($i2=0; $i2 < $total_reg2; $i2++){
+					foreach ($res2[$i2] as $key => $value){}
+						$id_temp = $res2[$i2]['id'];				
+					$id_item = $res2[$i2]['id_item'];		
+
+					$query3 =$pdo->query("SELECT * FROM adicionais where id = '$id_item'");
+					$res3 = $query3->fetchAll(PDO::FETCH_ASSOC);
+					$total_reg3 = @count($res3);
+					$nome_adc = $res3[0]['nome'];
+					echo $nome_adc;
+					if($i2 < ($total_reg2 - 1)){
+						echo ', ';
+					}
+				}
+				?>
+			</small>
+		</div>
+
 	<?php } ?>
 
 
 
 	<?php 
-			
-$query2 =$pdo->query("SELECT * FROM temp where carrinho = '$id_carrinho' and tabela = 'ingredientes'");
-$res2 = $query2->fetchAll(PDO::FETCH_ASSOC);
-$total_reg2 = @count($res2);
-if($total_reg2 > 0){
+
+	$query2 =$pdo->query("SELECT * FROM temp where carrinho = '$id_carrinho' and tabela = 'ingredientes'");
+	$res2 = $query2->fetchAll(PDO::FETCH_ASSOC);
+	$total_reg2 = @count($res2);
+	if($total_reg2 > 0){
 		if($total_reg2 > 1){
 			$texto_adicional = '('.$total_reg2.') Retirar Ingredientes';
 		}else{
 			$texto_adicional = '('.$total_reg2.') Retirar Ingrediente';
 		}
 		?>
-		<tr>
-			<td  colspan="3" width="100%" >
-				<small><b>&nbsp;&nbsp;&nbsp;<?php echo $texto_adicional ?> : </b>
+		<div align="left" style="margin-left: 15px">
+			<small><b><?php echo $texto_adicional ?> : </b>
 				<?php 
-					for($i2=0; $i2 < $total_reg2; $i2++){
-		foreach ($res2[$i2] as $key => $value){}
-			$id_temp = $res2[$i2]['id'];				
-		$id_item = $res2[$i2]['id_item'];		
+				for($i2=0; $i2 < $total_reg2; $i2++){
+					foreach ($res2[$i2] as $key => $value){}
+						$id_temp = $res2[$i2]['id'];				
+					$id_item = $res2[$i2]['id_item'];		
 
-		$query3 =$pdo->query("SELECT * FROM ingredientes where id = '$id_item'");
-		$res3 = $query3->fetchAll(PDO::FETCH_ASSOC);
-		$total_reg3 = @count($res3);
-		$nome_adc = $res3[0]['nome'];
-		echo $nome_adc;
-		if($i2 < ($total_reg2 - 1)){
-			echo ', ';
-		}
-	}
-				 ?>
-				</small>
-			</td>
-		</tr>
+					$query3 =$pdo->query("SELECT * FROM ingredientes where id = '$id_item'");
+					$res3 = $query3->fetchAll(PDO::FETCH_ASSOC);
+					$total_reg3 = @count($res3);
+					$nome_adc = $res3[0]['nome'];
+					echo $nome_adc;
+					if($i2 < ($total_reg2 - 1)){
+						echo ', ';
+					}
+				}
+				?>
+			</small>
+		</div>
 	<?php } ?>
 
 
+	<?php 
 
-
-<?php 
-			
-if($obs_item != ""){
-		?>
-		<tr>
-			<td  colspan="2" width="100%" >
-				<small><b>&nbsp;&nbsp;&nbsp;Observação : </b>
+	if($obs_item != ""){
+		?>	
+		<div align="left" style="margin-left: 15px">
+			<small><b>Observação : </b>
 				<?php echo $obs_item ?>
-				</small>
-			</td>
-		</tr>
+			</small>		
+		</div>
 	<?php } ?>
 
-
-
-<tr ><td></td></tr>
+</div>
 
 
 <?php } ?>
 
+<div class="th" style="margin-bottom: 7px"></div>
 
-</tbody>
-<tfoot>
+<?php if($entrega == "Delivery"){ ?>
+	<div class="row valores">			
+		<div class="col-6">Total</div>
+		<div class="col-6" align="right">R$ <?php echo @$valor_dos_itensF ?></div>
+	</div>			
+<?php } ?>	
 
-	<tfoot>
+<?php if($entrega == "Delivery"){ ?>
+	<div class="row valores">			
+		<div class="col-6">Frete</div>
+		<div class="col-6" align="right">R$ <?php echo @$taxa_entregaF ?></div>	
+	</div>			
+<?php } ?>		
 
-		<tr>
-			<th class="ttu"  colspan="3" class="cor">
-				<!-- _ _	_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ -->
-			</th>
-		</tr>	
-		
-		<?php if($entrega == "Delivery"){ ?>
-		<tr>
-			<td colspan="1" width="60%">Total</td>
-			<td colspan="2" align="right">R$ <?php echo @$valor_dos_itensF ?></td>
-		</tr>
-		<?php } ?>	
-
-		<?php if($entrega == "Delivery"){ ?>
-			<tr>
-				<td colspan="1" width="60%">Frete</td>
-				<td colspan="2" align="right">R$ <?php echo @$taxa_entregaF ?></td>
-			</tr>
-		<?php } ?>		
-
-		
-
-	</tr>
-
-	<tr>
-		<td colspan="1" width="60%">SubTotal</td>
-		<td colspan="2" align="right"><b>R$ <?php echo @$valorF ?></b></td>
-	</tr>	
-
-	<?php if($total_pago != $valor){ ?>
-		<tr>
-			<td colspan="1" width="60%">Valor Recebido</td>
-			<td colspan="2" align="right">R$ <?php echo @$total_pagoF ?></td>
-		</tr>
-	<?php } ?>
-
-	<?php if($troco > 0){ ?>
-		<tr>
-			<td colspan="1" width="60%">Troco</td>
-			<td colspan="2" align="right">R$ <?php echo @$trocoF ?></td>
-		</tr>
-	<?php } ?>	
-
-	<tr>
-		<th class="ttu" colspan="3" class="cor">
-			<!-- _ _	_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ -->
-		</th>
-	</tr>	
-
-	<tr>
-		<td colspan="1" width="50%">Forma de Pagamento</td>
-		<td colspan="2" align="right"><?php echo @$tipo_pgto ?></td>
-	</tr>
-
-	
-	<tr>
-		<td colspan="1" width="50%">Forma de Entrega</td>
-		<td colspan="2" align="right"><?php echo @$entrega ?></td>
-	</tr>	
-
-	<tr>
-		<td colspan="2">Está Pago?</td>
-		<td align="right"><?php echo @$pago ?></td>
-	</tr>
+<div class="row valores">			
+	<div class="col-6">SubTotal</div>
+	<div class="col-6" align="right">R$ <b><?php echo @$valorF ?></b></div>	
+</div>	
 
 
-
-
-<tr>
-			<th class="ttu"  colspan="3" class="cor">
-				<!-- _ _	_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ -->
-			</th>
-		</tr>
-
-
-		<?php if($entrega == "Delivery"){ ?>
-			<tr>
-		<th colspan="3"><b>Endereço	para Entrega</b>		
-		<br>
-		<?php echo $rua_cliente ?> <?php echo $numero_cliente ?> <?php echo $complemento_cliente ?>
-		<?php echo $bairro_cliente ?>
-
-
-	</th>
 </tr>
-		<?php } ?>	
-	
-
-</tfoot>
 
 
+<?php if($total_pago != $valor){ ?>
+	<div class="row valores">			
+		<div class="col-6">Valor Recebido</div>
+		<div class="col-6" align="right">R$ <?php echo @$total_pagoF ?></div>	
+	</div>			
+<?php } ?>
+
+<?php if($troco > 0){ ?>
+	<div class="row valores">			
+		<div class="col-6">Troco</div>
+		<div class="col-6" align="right">R$ <?php echo @$trocoF ?></div>	
+	</div>			
+<?php } ?>	
+
+<div class="th" style="margin-bottom: 7px"></div>
+
+<div class="row valores">			
+	<div class="col-6">Forma de Pagamento</div>
+	<div class="col-6" align="right"><?php echo @$tipo_pgto ?></div>	
+</div>	
+
+<div class="row valores">			
+	<div class="col-6">Forma de Entrega</div>
+	<div class="col-6" align="right"><?php echo @$entrega ?></div>	
+</div>
 
 
-</table>
+<div class="row valores">			
+	<div class="col-6">Está Pago</div>
+	<div class="col-6" align="right"><b><?php echo @$pago ?></b></div>	
+</div>
+
+<div class="th" style="margin-bottom: 10px"></div>
 
 
+<?php if($entrega == "Delivery"){ ?>
+	<div class="valores" align="center">
+		<b>Endereço	para Entrega</b>		
+			<br>
+			<?php echo $rua_cliente ?> <?php echo $numero_cliente ?> <?php echo $complemento_cliente ?>
+			<?php echo $bairro_cliente ?>
+		</div>	
+<div class="th" style="margin-bottom: 10px"></div>
+<?php } ?>	
+
+
+<?php if($obs != ""){ ?>
+	<div class="valores" align="center">
+		<b>Observações do Pedido</b>		
+			<br>			
+			<?php echo $obs ?>
+		</div>	
+<div class="th" style="margin-bottom: 10px"></div>
+<?php } ?>	

@@ -3,7 +3,14 @@
 require_once("verificar.php");
 require_once("../conexao.php");
 
+if(@$pagar == 'ocultar'){
+    echo "<script>window.location='../index.php'</script>";
+    exit();
+}
+
+
 $pag = 'pagar';
+
 
 
 $data_hoje = date('Y-m-d');

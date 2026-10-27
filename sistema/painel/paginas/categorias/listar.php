@@ -15,6 +15,7 @@ echo <<<HTML
 	<th>Nome</th>	
 	<th class="esc">Descrição</th> 	
 	<th class="esc">Cor</th> 	
+	<th class="esc">Mais Sabores</th> 	
 	<th class="esc">Foto</th>		
 	<th>Ações</th>
 	</tr> 
@@ -29,7 +30,8 @@ for($i=0; $i < $total_reg; $i++){
 		$ativo = $res[$i]['ativo'];		
 		$foto = $res[$i]['foto'];
 		$descricao = $res[$i]['descricao'];
-		$cor = $res[$i]['cor'];	
+		$cor = $res[$i]['cor'];
+		$mais_sabores = $res[$i]['mais_sabores'];	
 
 		$descricaoF = mb_strimwidth($descricao, 0, 120, "...");	
 
@@ -50,9 +52,10 @@ echo <<<HTML
 <td>{$nome}</td>
 <td class="esc">{$descricaoF}</td>
 <td class="esc"><div class="divcor {$cor}"></div></td>
+<td class="esc">{$mais_sabores}</td>
 <td class="esc"><img src="images/{$tabela}/{$foto}" width="30px"></td>
 <td>
-	<big><a href="#" onclick="editar('{$id}','{$nome}', '{$descricao}', '{$foto}', '{$cor}')" title="Editar Dados"><i class="fa fa-edit text-primary"></i></a></big>
+	<big><a href="#" onclick="editar('{$id}','{$nome}', '{$descricao}', '{$foto}', '{$cor}', '{$mais_sabores}')" title="Editar Dados"><i class="fa fa-edit text-primary"></i></a></big>
 
 	
 	<li class="dropdown head-dpdn2" style="display: inline-block;">
@@ -107,12 +110,12 @@ HTML;
 
 
 <script type="text/javascript">
-	function editar(id, nome, descricao, foto, cor){
+	function editar(id, nome, descricao, foto, cor, mais_sabores){
 		$('#id').val(id);
 		$('#nome').val(nome);
 		$('#descricao').val(descricao);
-		$('#cor').val(cor).change();;
-			
+		$('#cor').val(cor).change();
+		$('#mais_sabores').val(mais_sabores).change();	
 		
 		$('#titulo_inserir').text('Editar Registro');
 		$('#modalForm').modal('show');

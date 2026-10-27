@@ -1,4 +1,10 @@
 <?php 
+//verificar se ele tem a permissão de estar nessa página
+if(@$funcionarios == 'ocultar'){
+    echo "<script>window.location='../index.php'</script>";
+    exit();
+}
+
 $pag = 'funcionarios';
  ?>
 <a class="btn btn-primary" onclick="inserir()" class="btn btn-primary btn-flat btn-pri"><i class="fa fa-plus" aria-hidden="true"></i> Novo Funcionário</a>

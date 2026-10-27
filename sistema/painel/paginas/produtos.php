@@ -1,4 +1,11 @@
 <?php 
+
+if(@$produtos == 'ocultar'){
+    echo "<script>window.location='../index.php'</script>";
+    exit();
+}
+
+
 $pag = 'produtos';
  ?>
 <a class="btn btn-primary" onclick="inserir()" class="btn btn-primary btn-flat btn-pri"><i class="fa fa-plus" aria-hidden="true"></i> Novo Produto</a>

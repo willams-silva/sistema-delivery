@@ -122,7 +122,7 @@ echo <<<HTML
 		</ul>
 		</li>
 
-		
+		<big><a  href="#" onclick="gerarComprovante('{$id}')" title="Gerar Comprovante"><i class="fa fa-file-pdf-o text-primary"></i></a></big>
 	
 		</td>
 </tr>
@@ -184,3 +184,11 @@ HTML;
 
 
 
+<script type="text/javascript">
+	function gerarComprovante(id){
+		let a= document.createElement('a');
+		                a.target= '_blank';
+		                a.href= 'rel/comprovante.php?id='+ id + '&imp=Não';
+		                a.click();
+	}
+</script>

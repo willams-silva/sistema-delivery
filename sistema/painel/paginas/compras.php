@@ -1,7 +1,13 @@
 <?php 
 @session_start();
-require_once("verificar.php");
+
 require_once("../conexao.php");
+
+//verificar se ele tem a permissão de estar nessa página
+if(@$compras == 'ocultar'){
+    echo "<script>window.location='../index.php'</script>";
+    exit();
+}
 
 $pag = 'compras';
 

@@ -83,6 +83,8 @@ echo <<<HTML
 
 		<big><a href="#" onclick="ativar('{$id}', '{$acao}')" title="{$titulo_link}"><i class="fa {$icone} text-success"></i></a></big>
 
+		<big><a href="#" onclick="permissoes('{$id}', '{$nome}')" title="Definir Permissões"><i class="fa fa-lock " style="color:blue; margin-left:3px"></i></a></big>
+
 
 
 
@@ -164,4 +166,15 @@ HTML;
 		$('#target').attr('src','images/perfil/sem-foto.jpg');
 	}
 
+</script>
+
+
+<script type="text/javascript">
+	function permissoes(id, nome){		
+    $('#id-usuario').val(id);        
+    $('#nome-usuario').text(nome);   
+    $('#modalPermissoes').modal('show');
+    $('#mensagem-permissao').text(''); 
+    listarPermissoes(id);
+}
 </script>

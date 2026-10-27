@@ -3,6 +3,11 @@
 require_once("verificar.php");
 require_once("../conexao.php");
 
+if(@$saidas == 'ocultar'){
+    echo "<script>window.location='../index.php'</script>";
+    exit();
+}
+
 $pag = 'saidas';
 
 //verificar se ele tem a permissão de estar nessa página
