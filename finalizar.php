@@ -14,6 +14,8 @@ if($total_reg == 0){
   exit();
 }else{
   $cliente = $res[0]['cliente'];
+  $nome_cliente_pedido = $res[0]['nome_cliente'];
+  $mesa_pedido = $res[0]['mesa'];
   for($i=0; $i < $total_reg; $i++){
     foreach ($res[$i] as $key => $value){}  
 
@@ -29,12 +31,35 @@ if($total_reg == 0){
 
 $query2 = $pdo->query("SELECT * FROM clientes where id = '$cliente'");
     $res2 = $query2->fetchAll(PDO::FETCH_ASSOC);
+    if(@count($res2) > 0){
     $nome_cliente = $res2[0]['nome'];
     $tel_cliente = $res2[0]['telefone'];
     $rua = $res2[0]['rua'];
     $numero = $res2[0]['numero'];
     $bairro = $res2[0]['bairro'];
     $complemento = $res2[0]['complemento'];
+
+    $esconder_opc_delivery = '';
+    $valor_entrega = '';
+    $clicar_sim = '#collapseTwo';
+    $numero_colapse = '4';
+           
+  }else{
+    if($mesa_pedido != '0' and $mesa_pedido != ''){
+        $nome_cliente = 'Mesa: '.$mesa_pedido;
+        $valor_entrega = 'Consumir Local';       
+      }else{
+        $nome_cliente = $nome_cliente_pedido;
+        $valor_entrega = 'Retirar';
+        
+      }
+    
+    $tel_cliente = 'Mesa: '.$mesa_pedido;
+
+    $esconder_opc_delivery = 'ocultar';
+    $clicar_sim = '#collapse4';
+    $numero_colapse = '2';
+  }
 
 
 $query = $pdo->query("SELECT * FROM bairros where nome = '$bairro'");
@@ -87,13 +112,13 @@ $taxa_entregaF = number_format($taxa_entrega, 2, ',', '.');
 
          <div class="col-6">
 
-          <a class="btn btn-success botao_sim" data-bs-toggle="collapse" data-bs-target="#collapseTwo">SIM</a>
+          <a class="btn btn-success botao_sim" data-bs-toggle="collapse" data-bs-target="<?php echo $clicar_sim ?>">SIM</a>
         </div>
       </div>
     </div>
   </div>
 </div>
-<div class="accordion-item">
+<div class="accordion-item <?php echo $esconder_opc_delivery ?>">
   <h2 class="accordion-header" id="headingTwo">
     <button id="colapse-2" class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
      2 - MODO DE ENTREGA
@@ -104,21 +129,23 @@ $taxa_entregaF = number_format($taxa_entrega, 2, ',', '.');
     <ul class="list-group form-check">
       <li onclick="retirar()" class="list-group-item d-flex justify-content-between align-items-center">
         Retirar no Local
-        <input onchange="retirar()" class="form-check-input" type="radio" name="radio_retirar" id="radio_retirar">
+        <input onchange="retirar()" class="form-check-input" type="radio" name="radio_retirar" id="radio_retirar" >
       </li>
       <li onclick="local()" class="list-group-item d-flex justify-content-between align-items-center">
        Consumir no Local
-       <input onchange="local()" class="form-check-input" type="radio" name="radio_local" id="radio_local">
+       <input onchange="local()" class="form-check-input" type="radio" name="radio_local" id="radio_local" >
      </li>
-     <li onclick="entrega()" class="list-group-item d-flex justify-content-between align-items-center">
+    
+     <li onclick="entrega()" class="list-group-item d-flex justify-content-between align-items-center" >
        Entrega Delivery
        <input onchange="entrega()" class="form-check-input" type="radio" name="radio_entrega" id="radio_entrega">
      </li>
+  
    </ul>
  </div>
 </div>
 </div>
-<div class="accordion-item">
+<div class="accordion-item <?php echo $esconder_opc_delivery ?>">
   <h2 class="accordion-header" id="headingThree">
     <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree" id="colapse-3">
       3 - ENDEREÇO OU UNIDADE DE RETIRADA
@@ -220,7 +247,7 @@ $taxa_entregaF = number_format($taxa_entrega, 2, ',', '.');
 <div class="accordion-item">
   <h2 class="accordion-header" id="heading4">
     <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse4" aria-expanded="false" aria-controls="collapse4">
-      4 - PAGAMENTO
+      <?php echo $numero_colapse ?> - PAGAMENTO
     </button>
   </h2>
   <div id="collapse4" class="accordion-collapse collapse" aria-labelledby="heading4" data-bs-parent="#accordionExample">
@@ -257,7 +284,7 @@ $taxa_entregaF = number_format($taxa_entrega, 2, ',', '.');
 
    <div id="pagar_pix" style="margin-top: 15px">
      <b>Pagar com Pix </b><br>
-     Chave <?php echo $tipo_chave ?> : <?php echo $chave_pix ?> <a class="link-neutro" href="#" onClick="copiar()"><i class="bi bi-clipboard text-primary"></i> <small><small>Copiar Pix</small></small> </a><br>
+     Chave <?php echo $tipo_chave ?> <br> <input type="text" id="chave_pix_copia" value="<?php echo $chave_pix ?>" style="background: transparent; border:none;" readonly> <a class="link-neutro" href="#" onClick="copiar()"><i class="bi bi-clipboard text-primary"></i> <small><small>Copiar Pix</small></small> </a><br>
      <small>Ao efetuar o pagamento nos encaminhar o comprovante no whatsapp <span style="margin-left: 15px"><a target="_blank" href="http://api.whatsapp.com/send?1=pt_BR&phone=<?php echo $whatsapp_sistema ?>" class="link-neutro"><i class="bi bi-whatsapp text-success"></i> <?php echo $telefone_sistema ?></a></span> </small>
    </div>
 
@@ -315,10 +342,10 @@ $taxa_entregaF = number_format($taxa_entrega, 2, ',', '.');
 </div>
 
 
-<input type="hidden" id="entrega">
+<input type="hidden" id="entrega" value="<?php echo $valor_entrega ?>">
 <input type="hidden" id="pagamento">
 <input type="hidden" id="taxa-entrega-input">
-<input type="hidden" id="chave_pix_copia" value="<?php echo $chave_pix ?>">
+
 
 <div class="total-finalizar">
 <div class="total-pedido">
@@ -551,14 +578,28 @@ $taxa_entregaF = number_format($taxa_entrega, 2, ',', '.');
 
         success:function(result){
          
-            alert('Pedido Finalizado!');
-           window.location='index.php';
+            
+           
+            setTimeout(()=>{
+              alert('Pedido Finalizado!');
+            window.location='index.php';
+        },500);
+           
 
            if(pedido_whatsapp == 'Sim'){
               let a= document.createElement('a');
                 //a.target= '_blank';
                 a.href= 'http://api.whatsapp.com/send?1=pt_BR&phone=<?=$whatsapp_sistema?>&text= *Novo Pedido*  %0A Hora: *' + hora + '* %0A Total: R$ *' + total_compra_finalF + '* %0A Entrega: *' + entrega + '* %0A Pagamento: *' + pagamento + '* %0A Cliente: *<?=$nome_cliente?>* %0A Previsão de Entrega: *' + result + '*';
                 a.click();
+           }else if(pedido_whatsapp == 'Api'){
+
+             $.ajax({
+                url: 'https://api.callmebot.com/whatsapp.php?phone=+553171390746&text=*Novo Pedido*  %0A Hora: *' + hora + '* %0A Total: R$ *' + total_compra_finalF + '* %0A Entrega: *' + entrega + '* %0A Pagamento: *' + pagamento + '* %0A Cliente: *<?=$nome_cliente?>* %0A Previsão de Entrega: *' + result + '*&apikey=320525',
+                 method: 'GET',          
+                 
+                });
+           }else{
+
            }
 
           
@@ -599,6 +640,7 @@ $taxa_entregaF = number_format($taxa_entrega, 2, ',', '.');
 <script type="text/javascript">
   function copiar(){
     document.querySelector("#chave_pix_copia").select();
+    document.querySelector("#chave_pix_copia").setSelectionRange(0, 99999); /* Para mobile */
     document.execCommand("copy");
   }
 </script>

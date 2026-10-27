@@ -69,9 +69,11 @@ $mais_sabores = $res[0]['mais_sabores'];
 				$valorF = number_format($valor, 2, ',', '.');
 
 				if($tem_estoque == 'Sim' and $estoque <= 0){
-					$mostrar = 'ocultar';
-				}else{
 					$mostrar = '';
+					$url_produto = '#';					
+				}else{
+					$mostrar = 'ocultar';
+					$url_produto = 'produto-'.$url;
 				}
 
 				
@@ -79,9 +81,10 @@ $mais_sabores = $res[0]['mais_sabores'];
 
 				?>
 
-		<a href="produto-<?php echo $url ?>" class="link-neutro <?php echo $mostrar ?>">
+		<a href="<?php echo $url_produto ?>" class="link-neutro">
 		<li class="list-group-item d-flex justify-content-between align-items-start "> 
 			<div class="me-auto">
+				<img class="<?php echo $mostrar ?>" src="img/esgotado.png" width="65px" height="65px" style="position:absolute; right:0; top:0px">
 				<div class="fw-bold titulo-item"><?php echo $nome ?></div>
 				<span class="valor-item">
 					<?php 

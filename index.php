@@ -73,8 +73,66 @@ if(strtotime($hora_atual) > strtotime($horario_abertura) and strtotime($hora_atu
 		</div>
 	</nav>
 
+<?php 
+	if($banner_rotativo == 'Sim'){
+	$query = $pdo->query("SELECT * FROM banner_rotativo");
+		$res = $query->fetchAll(PDO::FETCH_ASSOC);
+		$total_reg = @count($res);
+		if($total_reg > 0){
+ ?>
 
-	<div class="row cards" style="margin-bottom: 60px">
+	<div id="carouselExampleControls" class="carousel slide ocultar-banner-web" data-ride="carousel" data-interval="4000" style="margin-top: 50px; background: #fcd142">
+  <div class="carousel-inner">
+
+  	<?php 	
+			for($i=0; $i < $total_reg; $i++){
+				foreach ($res[$i] as $key => $value){}
+					$foto = $res[$i]['foto'];
+				$categoria = $res[$i]['categoria'];
+
+
+				$query2 = $pdo->query("SELECT * FROM categorias where id = '$categoria'");
+		$res2 = $query2->fetchAll(PDO::FETCH_ASSOC);
+		$total_reg2 = @count($res2);
+		if($total_reg2 > 0){
+			$url = 'categoria-'.$res2[0]['url'];
+		}else{
+			$url = '#';
+		}
+
+
+
+  if($i == 0){
+    $ativo = 'active';
+  }else{
+    $ativo = '';
+  }
+ 					?>
+ 			
+    <div class="carousel-item <?php echo $ativo ?>">
+    	<a href="<?php echo $url ?>">		
+      <img class="d-block w-100" src="sistema/painel/images/banner_rotativo/<?php echo $foto ?>" alt="First slide" width="100%">
+      </a>
+    </div>
+	
+
+	<?php }  ?>
+  
+  </div>
+  <a class="carousel-control-prev" href="#carouselExampleControls" role="button" data-slide="prev">
+    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+    <span class="sr-only"></span>
+  </a>
+  <a class="carousel-control-next" href="#carouselExampleControls" role="button" data-slide="next">
+    <span class="carousel-control-next-icon" aria-hidden="true"></span>
+    <span class="sr-only"></span>
+  </a>
+</div>
+
+<?php } } ?>
+
+
+	<div class="row cards" style="margin-bottom: 60px; ">
 
 		<?php 
 		$query = $pdo->query("SELECT * FROM categorias where ativo = 'Sim'");
@@ -169,9 +227,6 @@ if(strtotime($hora_atual) > strtotime($horario_abertura) and strtotime($hora_atu
 
 	</body>
 	</html>
-
-
-
 
 
 

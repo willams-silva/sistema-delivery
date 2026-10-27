@@ -1,12 +1,30 @@
 <?php 
+session_start();
 require_once("cabecalho.php");
 $url = $_GET['url'];
 $sabores = @$_GET['sabores'];
+
+$sigla_variacao = "";
 
 if($sabores == 1){
 	$texto_sabor = ' (1º Sabor)';
 }else if($sabores == 2){
 $texto_sabor = ' (2º Sabor)';
+
+$sessao = @$_SESSION['sessao_usuario'];
+$query = $pdo->query("SELECT * FROM carrinho where sessao = '$sessao' order by id desc limit 1");
+$res = $query->fetchAll(PDO::FETCH_ASSOC);
+$total_reg = @count($res);
+
+	if($total_reg > 0){
+		$variacao = $res[0]['variacao'];
+		
+		$query = $pdo->query("SELECT * FROM variacoes where id = '$variacao'");
+		$res = $query->fetchAll(PDO::FETCH_ASSOC);
+		$sigla_variacao = $res[0]['sigla'];
+		
+	}
+
 }else{
 	$texto_sabor = '';
 }
@@ -77,23 +95,33 @@ $total_ing = @count($res);
 				$valorvar = $res[$i]['valor'];
 				$valorvarF = number_format($valorvar, 2, ',', '.');
 
+				if($sigla_variacao != "" and $sigla_variacao != $sigla){
+				$ocultar_item = 'ocultar';
+			}else{
+			$ocultar_item = '';
+				}
+
 				?>
 
 		<?php 
 			if($total_adc > 0 || $total_ing > 0){ ?>
 	<a href="adicionais-<?php echo $url ?>_<?php echo $nome_var ?>&sabores=<?php echo $sabores ?>" class="link-neutro">
-		<?php }else{ ?>
+		<?php }else{ ?>			
+			
 
-	<a href="observacoes-<?php echo $url ?>_<?php echo $nome_var ?>&sabores=<?php echo $sabores ?>" class="link-neutro">
+	<a href="observacoes-<?php echo $url ?>_<?php echo $nome_var ?>&sabores=<?php echo $sabores ?>" class="link-neutro <?php echo $ocultar_item ?>">
 		<?php } ?>
-		
-		<li class="list-group-item d-flex justify-content-between align-items-start"> 
+
+
+		<div class="<?php echo $ocultar_item ?>">
+		<li class="list-group-item d-flex justify-content-between align-items-start "> 
 			<div class="me-auto">
 				<div class="fw-bold titulo-item"><?php echo $nome_var ?> <span class="subtitulo-item">(<?php echo $descricao ?>)</span></div>
 				<span class="valor-item">R$ <?php echo $valorvarF ?></span>
 			</div>
 			
 		</li>
+	</div>
 		</a>
 
 	<?php }
