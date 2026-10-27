@@ -11,6 +11,8 @@ $descricao = $res[0]['descricao'];
 $id = $res[0]['id'];
 $mais_sabores = $res[0]['mais_sabores'];
 
+$pdo->query("DELETE FROM temp where carrinho = 0");
+
 }
 
 
@@ -82,11 +84,15 @@ $mais_sabores = $res[0]['mais_sabores'];
 		$total_reg2 = @count($res2);		
 		if($total_reg2 == 0){
 
+$query3 = $pdo->query("SELECT * FROM guarnicoes where produto = '$id'");
+$res3 = $query3->fetchAll(PDO::FETCH_ASSOC);
+$total_guarn = @count($res3);			
+
 			//verificar se o produto tem adicionais
 $query3 = $pdo->query("SELECT * FROM adicionais where produto = '$id'");
 $res3 = $query3->fetchAll(PDO::FETCH_ASSOC);
 $total_adc = @count($res3);
-			if($total_adc > 0){
+			if($total_adc > 0 || $total_guarn > 0){
 				if($tem_estoque == 'Sim' and $estoque <= 0){
 					$url_produto = '#';
 				}else{

@@ -291,9 +291,9 @@ if($id_usuario != ''){
    </div>   
 
    <div id="pagar_pix" style="margin-top: 15px">
-     <b>Pagar com Pix </b><br>
-     Chave <?php echo $tipo_chave ?> <br> <input type="text" id="chave_pix_copia" value="<?php echo $chave_pix ?>" style="background: transparent; border:none;" readonly> <a class="link-neutro" href="#" onClick="copiar()"><i class="bi bi-clipboard text-primary"></i> <small><small>Copiar Pix</small></small> </a><br>
-     <small>Ao efetuar o pagamento nos encaminhar o comprovante no whatsapp <span style="margin-left: 15px"><a target="_blank" href="http://api.whatsapp.com/send?1=pt_BR&phone=<?php echo $whatsapp_sistema ?>" class="link-neutro"><i class="bi bi-whatsapp text-success"></i> <?php echo $telefone_sistema ?></a></span> </small>
+      <div id="listar_pix">
+        
+      </div>
    </div>
 
 
@@ -331,6 +331,19 @@ if($id_usuario != ''){
 
 </div>
 
+
+
+ <div class="row" style="margin:10px" id="div_cupom">
+  <small><b>Tem Cupom?</b></small> 
+    <div class="col-md-2 col-9">             
+     <input class="form-control" type="text" name="cupom" id="cupom" placeholder="Código do Cupom"> 
+   </div>  
+   <div class="col-md-1 col-3">
+<button onclick="cupom()" class="btn btn-primary" type="button" name="btn_cupom" id="btn_cupom"><i class="bi bi-search"></i></button>
+   </div>
+  </div>
+
+
 <div class="group mt-4 mx-4" id="area-obs">
           <input type="text" class="input" name="obs" id="obs" value="">
           <span class="highlight"></span>
@@ -344,6 +357,9 @@ if($id_usuario != ''){
 </div>
 
 
+
+
+
 </div>
 
 
@@ -354,7 +370,7 @@ if($id_usuario != ''){
 <input type="hidden" id="pagamento">
 <input type="hidden" id="taxa-entrega-input">
 <input type="hidden" id="id_cliente">
-
+<input type="hidden" id="valor-cupom">
 
 
 <div class="total-finalizar">
@@ -459,8 +475,34 @@ if($id_usuario != ''){
 
 
 
-   function pix(){   
-   
+   function pix(){ 
+
+     var total_compra = "<?=$total_carrinho?>";
+     var taxa_entrega = $('#taxa-entrega-input').val();
+     var cupom = $('#valor-cupom').val();
+
+     if(taxa_entrega == ""){
+        taxa_entrega = 0;
+     }
+
+     if(cupom == ""){
+        cupom = 0;
+     }
+
+      var total_compra_final = parseFloat(total_compra) + parseFloat(taxa_entrega) - parseFloat(cupom);
+
+   var valor = total_compra_final.toFixed(2)
+
+   $.ajax({
+         url: 'js/ajax/pix.php',
+        method: 'POST',
+        data: {valor},
+        dataType: "html",
+
+        success:function(result){           
+          $('#listar_pix').html(result);
+        }
+    });
 
    document.getElementById('radio_credito').checked = false;
    document.getElementById('radio_debito').checked = false;
@@ -523,7 +565,7 @@ if($id_usuario != ''){
 
 
   function finalizarPedido(){  
-
+    var codigo_pix = $('#codigo_pix').val();
 
      var nome = $('#nome').val();
    var telefone = $('#telefone').val();    
@@ -560,6 +602,11 @@ if($id_usuario != ''){
    var obs = $('#obs').val();
    var taxa_entrega = $('#taxa-entrega-input').val();
    var pedido_whatsapp = "<?=$status_whatsapp?>";
+   var cupom = $('#valor-cupom').val();
+
+   if(cupom == ""){
+    cupom = 0;
+   }
 
    if(taxa_entrega == ""){
     taxa_entrega = 0;
@@ -572,6 +619,15 @@ if($id_usuario != ''){
   
        
    var total_compra = "<?=$total_carrinho?>";
+   var pedido_minimo = "<?=$pedido_minimo?>";
+
+  
+   if(pedido_minimo > 0){
+    if(parseFloat(total_compra) < parseFloat(pedido_minimo)){
+      alert('Seu pedido precisar ser superior a R$'+pedido_minimo);
+      return;
+    }
+   }
 
     if(entrega == ""){
     alert('Selecione uma forma de entrega');
@@ -610,7 +666,7 @@ if($id_usuario != ''){
     return;
    }
 
-   var total_compra_final = parseFloat(total_compra) + parseFloat(taxa_entrega);
+   var total_compra_final = parseFloat(total_compra) + parseFloat(taxa_entrega) - parseFloat(cupom);
 
    var total_compra_finalF = total_compra_final.toFixed(2)
    
@@ -624,16 +680,25 @@ if($id_usuario != ''){
     $.ajax({
          url: 'js/ajax/inserir-pedido.php',
         method: 'POST',
-        data: {pagamento, entrega, rua, numero, bairro, complemento, troco, obs, nome_cliente, tel_cliente, id_cliente, mesa},
+        data: {pagamento, entrega, rua, numero, bairro, complemento, troco, obs, nome_cliente, tel_cliente, id_cliente, mesa, cupom, codigo_pix},
         dataType: "html",
 
         success:function(result){
          
-            
+            if(result == '0'){
+              alert('Sem Itens no Carrinho!');
+              window.location='index.php';
+              return;
+            }
            
             setTimeout(()=>{
               alert('Pedido Finalizado!');
-            window.location='index.php';
+              if(id_usuario == ""){
+                 window.location='index.php';
+               }else{
+                window.location='sistema/painel/index.php?pagina=novo_pedido';
+               }
+           
         },500);
            
 
@@ -689,11 +754,13 @@ if($id_usuario != ''){
 </script>
 
 
-<script type="text/javascript">
+<script>
   function copiar(){
     document.querySelector("#chave_pix_copia").select();
     document.querySelector("#chave_pix_copia").setSelectionRange(0, 99999); /* Para mobile */
     document.execCommand("copy");
+    $("#chave_pix_copia").hide();
+    alert('Chave Pix Copiada! Use a opção Copie e Cole para Pagar')
   }
 </script>
 
@@ -703,6 +770,8 @@ if($id_usuario != ''){
   function buscarNome(){
 
     var tel = $('#telefone').val(); 
+
+     var nome = $('#nome').val(); 
         
     $.ajax({
       url: 'js/ajax/listar-nome.php',
@@ -714,7 +783,10 @@ if($id_usuario != ''){
 
         var split = result.split("**");    
 
-        $('#nome').val(split[0]); 
+        if(nome == ""){
+          $('#nome').val(split[0]); 
+        }
+        
         $('#rua').val(split[1]); 
         $('#numero').val(split[2]); 
         $('#bairro').val(split[3]).change(); 
@@ -760,5 +832,51 @@ if($id_usuario != ''){
   $('#colapse-2').click();
   }
 
+  }
+
+
+
+
+  function cupom(){
+    var total_compra = "<?=$total_carrinho?>";
+    var taxa_entrega = $('#taxa-entrega-input').val();
+    if(taxa_entrega == ""){
+      taxa_entrega = 0;
+    }
+    var total_final = parseFloat(total_compra) + parseFloat(taxa_entrega);
+    var codigo_cupom = $('#cupom').val();
+    if(codigo_cupom == ""){
+      alert("Preencha o código do cupom");
+      return;
+    }
+
+     $.ajax({
+        url: 'js/ajax/cupom.php',
+        method: 'POST',
+        data: {total_final, codigo_cupom},
+        dataType: "text",
+
+        success: function (mensagem) {  
+        var split = mensagem.split('**')
+
+        if(split[0].trim() == '0'){
+           alert ('Código do Cupom Inválido');
+         }else if(split[0].trim() == '1'){
+           alert ('Este cupom está vencido!');
+         }else if(split[0].trim() == '2'){
+          alert ('Este cupom não é mais válido!');
+         }else if(split[0].trim() == '3'){
+          alert ('Este cupom só é válido para compras acima de R$'+split[1]);
+         }else{
+            
+            $('#total-carrinho-finalizar').text(split[0]);
+            $('#valor-cupom').val(split[1]);
+            $('#div_cupom').hide();
+            alert ('Cupom Inserido!');
+         }
+         
+        },      
+
+    });
   }
 </script>

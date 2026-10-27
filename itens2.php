@@ -18,6 +18,9 @@ if($sabores != "2"){
 	$sabores = 1;
 }
 
+$pdo->query("DELETE FROM temp where carrinho = 0");
+
+
  ?>
 
 <div class="main-container">

@@ -137,7 +137,8 @@ function listarCarrinho(){
         dataType: "html",
 
         success:function(result){
-            $("#listar-itens-carrinho").html(result);
+          
+          $("#listar-itens-carrinho").html(result);
            
         }
     });
