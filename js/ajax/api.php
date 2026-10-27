@@ -1,10 +1,12 @@
 <?php
-  $url = "http://api.enviame.com.br/send-text";
-  $data = array('instance' => '5531971390746',
-                'to' => '5531975275084',
-                'token' => '7Q1MW-2AK-12302',
-                'message' => "Dados do Pedido!");
+  $url = "http://api.wordmensagens.com.br/send-text";
 
+  $data = array('instance' => $instancia,
+                'to' => $tel_cliente_whats,
+                'token' => $token,
+                'message' => $mensagem);
+
+  
 
   $options = array('http' => array(
                  'method' => 'POST',
@@ -13,7 +15,7 @@
 
   $stream = stream_context_create($options);
 
-  $result = file_get_contents($url, false, $stream);
+  $result = @file_get_contents($url, false, $stream);
 
-  echo $result;
+  //echo $result;
 ?>

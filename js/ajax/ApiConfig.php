@@ -1,0 +1,3 @@
+<?php 
+$access_token = '';
+ ?>

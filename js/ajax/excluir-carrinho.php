@@ -3,7 +3,7 @@
 require_once('../../sistema/conexao.php');
 
 $id = $_POST['id'];
-$id_sabor = $_POST['id_sabor'];
+$id_sabor = @$_POST['id_sabor'];
 $sessao = $_SESSION['sessao_usuario'];
 
 $query = $pdo->query("SELECT * FROM carrinho where id = '$id' ");
