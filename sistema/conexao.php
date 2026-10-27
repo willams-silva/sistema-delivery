@@ -66,8 +66,9 @@ $instancia = $res[0]['instancia'];
 $ativo_sistema = $res[0]['ativo'];
 $pedido_minimo = $res[0]['pedido_minimo'];
 $mostrar_aberto = $res[0]['mostrar_aberto'];
-$chave_api_maps = $res[0]['chave_api_maps'];
 $entrega_distancia = $res[0]['entrega_distancia'];
+$chave_api_maps = $res[0]['chave_api_maps'];
+
 
 $latitude_rest = $res[0]['latitude_rest'];
 $longitude_rest = $res[0]['longitude_rest'];
