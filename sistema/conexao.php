@@ -1,18 +1,18 @@
 <?php 
-/*
-//dados locais
-$usuario = 'root';
-$senha = '';
-$banco = 'delivery_interativo';
-$servidor = 'localhost';
-*/
 
+//dados locais
+$usuario = 'u719820352_delivery';
+$senha = 'Ti@v3n3z@22';
+$banco = 'u719820352_db_delivery';
+$servidor = 'localhost';
+
+/*
 //servidor hospedado
 $usuario = 'hugocu75_interativo';
 $senha = 'interativoteste';
 $banco = 'hugocu75_interativo';
 $servidor = 'sh-pro24.hostgator.com.br';
-
+*/
 
 $url_sistema = "http://$_SERVER[HTTP_HOST]/";
 $url = explode("//", $url_sistema);
@@ -69,7 +69,7 @@ $dias_apagar = $res[0]['dias_apagar'];
 $impressao_automatica = $res[0]['impressao_automatica'];
 $fonte_comprovante = $res[0]['fonte_comprovante'];
 $banner_rotativo = $res[0]['banner_rotativo'];
-
+$token_api = 'VCPD3-JC7-11120';
 $whatsapp_sistema = '55'.preg_replace('/[ ()-]+/' , '' , $telefone_sistema);
 }
 
