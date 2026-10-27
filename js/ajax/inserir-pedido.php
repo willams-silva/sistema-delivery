@@ -24,7 +24,7 @@ $taxa_entrega = $res[0]['valor'];
 
 
 $total_carrinho = 0;
-$query = $pdo->query("SELECT * FROM carrinho where sessao = '$sessao'");
+$query = $pdo->query("SELECT * FROM carrinho where sessao = '$sessao' and id_sabor = 0");
 $res = $query->fetchAll(PDO::FETCH_ASSOC);
 $total_reg = @count($res);
 $cliente = $res[0]['cliente'];
