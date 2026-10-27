@@ -3,7 +3,10 @@
 require_once('../../sistema/conexao.php');
 $id = $_POST['id'];
 $valor_item = $_POST['valor'];
+$quant = $_POST['quant'];
 $sessao = @$_SESSION['sessao_usuario'];
+
+
 
 $query =$pdo->query("SELECT * FROM adicionais where produto = '$id' and ativo = 'Sim'");
 $res = $query->fetchAll(PDO::FETCH_ASSOC);
@@ -57,13 +60,19 @@ HTML;
 	}
 $valor_itemF = number_format($valor_item, 2, ',', '.');
 
+$valor_item_quant = $valor_item * $quant;
+$valor_item_quantF = number_format($valor_item_quant, 2, ',', '.');
+
 echo <<<HTML
 
 </ol>
 
 <div class="total">
-	R$ <b>{$valor_itemF}</b>
+	R$ <b><span id="valor_item_quantF">{$valor_item_quantF}</span></b>
 </div>
+
+<input type="hidden" id="total_item_input" value="{$valor_item_quant}">
+<input type="hidden" id="total_item_input_adc" value="{$valor_itemF}">
 
 HTML;
 

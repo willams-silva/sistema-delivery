@@ -21,6 +21,7 @@ if($total_reg > 0){
 		$item = $res[$i]['item'];
 		$variacao = $res[$i]['variacao'];
 		$valor_unit = $total_item / $quantidade;
+		$id_sabor = $res[$i]['id_sabor'];
 
 		$total_carrinho += $total_item;
 
@@ -46,12 +47,15 @@ if($total_reg > 0){
 			$nome_produto2 = '';
 			$query3 = $pdo->query("SELECT * FROM carrinho where id_sabor = '$item' and sessao = '$sessao' ");
 $res3 = $query3->fetchAll(PDO::FETCH_ASSOC);
+
 $total_reg3 = @count($res3);
 if($total_reg3 > 0){
 	
 	for($i3=0; $i3 < $total_reg3; $i3++){
 		foreach ($res3[$i3] as $key => $value){}
 		$prod = $res3[$i3]['produto'];
+		$id = $res3[$i3]['id'];
+		$id_sabor = $res3[$i3]['id_sabor'];
 
 		$query2 = $pdo->query("SELECT * FROM produtos where id = '$prod'");
 		$res2 = $query2->fetchAll(PDO::FETCH_ASSOC);
@@ -83,6 +87,8 @@ if($total_reg3 > 0){
 		}else{
 			$classe_obs = 'text-danger';
 		}
+
+
 
 echo <<<HTML
 
@@ -134,7 +140,7 @@ echo <<<HTML
 			<div class="popup">
 			<div class="row">
 			<div class="col-12">
-			Confirmar Exclusão? <a href="#" onclick="excluirCarrinho('{$id}')" class="text-danger link-neutro">Sim</a>
+			Confirmar Exclusão? <a href="#" onclick="excluirCarrinho('{$id}', '{$id_sabor}')" class="text-danger link-neutro">Sim</a>
 			</div>
 			<div class="col-3">
 			<a class="close" href="#" onclick="fecharExcluir('{$id}')">&times;</a>
@@ -153,7 +159,7 @@ echo <<<HTML
 			</div>
 
 			<div class="itens-carrinho-qtd-adc {$classe_adc}">
-				<a title="Ver Adicionais" class="link-neutro" href="#" onclick="adicionais('{$nome_produto}', '{$id}')"><i class="bi  bi-plus text-primary"></i><small><small>Adicionais</small></small></a>
+				<a title="Ver Adicionais" class="link-neutro" href="#" onclick="adicionais('{$nome_produto}', '{$id}', '{$id_sabor}')"><i class="bi  bi-plus text-primary"></i><small><small>Adicionais</small></small></a>
 			</div>
 
 			<a href="#" onclick="mudarQuant('{$id}', '{$quantidade}', 'menos')" class="link-neutro">
@@ -217,16 +223,16 @@ HTML;
 		}
 
 
-		function excluirCarrinho(id){
+		function excluirCarrinho(id, id_sabor){
 
 			$.ajax({
 				url: 'js/ajax/excluir-carrinho.php',
 				method: 'POST',
-				data: {id},
+				data: {id, id_sabor},
 				dataType: "text",
 
 				success: function (mensagem) {  
-
+					
 					if (mensagem.trim() == "Excluido com Sucesso") {                
 						listarCarrinho();         
 					} 
@@ -259,9 +265,9 @@ HTML;
 		}
 
 
-		function adicionais(nome, id){			
+		function adicionais(nome, id, id_sabor){			
 			$("#nome_item_adc").text(nome)			
-			listarAdicionais(id);
+			listarAdicionais(id, id_sabor);
 
 			var myModal = new bootstrap.Modal(document.getElementById('modalAdc'), {
         		//backdrop: 'static',
@@ -270,12 +276,12 @@ HTML;
 
 		}
 
-		function listarAdicionais(id){
+		function listarAdicionais(id, id_sabor){
 
 			$.ajax({
          url: 'js/ajax/listar-adc-carrinho.php',
         method: 'POST',
-        data: {id},
+        data: {id, id_sabor},
         dataType: "html",
 
         success:function(result){
