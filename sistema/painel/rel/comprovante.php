@@ -53,6 +53,7 @@ $rua_cliente = @$res2[0]['rua'];
 $numero_cliente = @$res2[0]['numero'];
 $complemento_cliente = @$res2[0]['complemento'];
 $bairro_cliente = @$res2[0]['bairro'];
+$cidade_cliente = @$res2[0]['cidade'];
 }else{
 
 if($mesa != '0' and $mesa != ''){
@@ -639,7 +640,7 @@ if($total_reg33 > 0){
 		<b>Endereço	para Entrega</b>		
 			<br>
 			<?php echo $rua_cliente ?> <?php echo $numero_cliente ?> <?php echo $complemento_cliente ?>
-			<?php echo $bairro_cliente ?>
+			<?php echo $bairro_cliente ?> <?php echo $cidade_cliente ?>
 		</div>	
 <div class="th" style="margin-bottom: 10px"></div>
 <?php } ?>	

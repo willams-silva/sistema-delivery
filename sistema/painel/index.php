@@ -178,13 +178,13 @@ if(@$_GET['pagina'] != ""){
 							</li>
 
 							<li class="treeview <?php echo @$pedidos ?>" >
-								<a href="index.php?pagina=pedidos">
+								<a href="pedidos">
 									<i class="fa fa-motorcycle"></i> <span>Pedidos</span>
 								</a>
 							</li>
 
 							<li class="treeview <?php echo @$pedidos_esteira ?>" >
-								<a href="index.php?pagina=pedidos_esteira">
+								<a href="pedidos_esteira">
 									<i class="fa fa-motorcycle"></i> <span>Pedidos Esteira</span>
 								</a>
 							</li>
@@ -196,17 +196,17 @@ if(@$_GET['pagina'] != ""){
 									<i class="fa fa-angle-left pull-right"></i>
 								</a>
 								<ul class="treeview-menu">
-									<li class="<?php echo @$usuarios ?>"><a href="index.php?pagina=usuarios"><i class="fa fa-angle-right"></i> Usuários</a></li>
-									<li class="<?php echo @$funcionarios ?>"><a href="index.php?pagina=funcionarios"><i class="fa fa-angle-right"></i> Funcionários</a></li>
+									<li class="<?php echo @$usuarios ?>"><a href="usuarios"><i class="fa fa-angle-right"></i> Usuários</a></li>
+									<li class="<?php echo @$funcionarios ?>"><a href="funcionarios"><i class="fa fa-angle-right"></i> Funcionários</a></li>
 
-									<li class="<?php echo @$clientes ?>"><a href="index.php?pagina=clientes"><i class="fa fa-angle-right"></i> Clientes</a></li>
+									<li class="<?php echo @$clientes ?>"><a href="clientes"><i class="fa fa-angle-right"></i> Clientes</a></li>
 
-									<li class="<?php echo @$fornecedores ?>"><a href="index.php?pagina=fornecedores"><i class="fa fa-angle-right"></i> Fornecedores</a></li>
+									<li class="<?php echo @$fornecedores ?>"><a href="fornecedores"><i class="fa fa-angle-right"></i> Fornecedores</a></li>
 
 								</ul>
 							</li>
 
-							<li class="treeview <?php echo $menu_cadastros ?>">
+							<li class="treeview <?php echo @$menu_cadastros ?>">
 								<a href="#">
 									<i class="fa fa-plus"></i>
 									<span>Cadastros</span>
@@ -214,41 +214,41 @@ if(@$_GET['pagina'] != ""){
 								</a>
 								<ul class="treeview-menu">
 
-									<li class="<?php echo @$bairros ?>"><a href="index.php?pagina=bairros"><i class="fa fa-angle-right"></i> Bairros / Locais</a></li>
+									<li class="<?php echo @$bairros ?>"><a href="bairros"><i class="fa fa-angle-right"></i> Bairros / Locais</a></li>
 
-									<li class="<?php echo @$cargos ?>"><a href="index.php?pagina=cargos"><i class="fa fa-angle-right"></i> Cargos</a></li>
+									<li class="<?php echo @$cargos ?>"><a href="cargos"><i class="fa fa-angle-right"></i> Cargos</a></li>
 
-									<li class="<?php echo @$dias ?>"><a href="index.php?pagina=dias"><i class="fa fa-angle-right"></i> Dias Fechados</a></li>
+									<li class="<?php echo @$dias ?>"><a href="dias"><i class="fa fa-angle-right"></i> Dias Fechados</a></li>
 
-									<li class="<?php echo @$grupos ?>"><a href="index.php?pagina=grupos"><i class="fa fa-angle-right"></i> Grupo Acessos</a></li>
+									<li class="<?php echo @$grupos ?>"><a href="grupos"><i class="fa fa-angle-right"></i> Grupo Acessos</a></li>
 
-									<li class="<?php echo @$acessos ?>"><a href="index.php?pagina=acessos"><i class="fa fa-angle-right"></i> Acessos</a></li>
+									<li class="<?php echo @$acessos ?>"><a href="acessos"><i class="fa fa-angle-right"></i> Acessos</a></li>
 
-									<li class="<?php echo @$banner_rotativo ?>"><a href="index.php?pagina=banner_rotativo"><i class="fa fa-angle-right"></i> Banner Rotativo</a></li>
+									<li class="<?php echo @$banner_rotativo ?>"><a href="banner_rotativo"><i class="fa fa-angle-right"></i> Banner Rotativo</a></li>
 
-									<li class="<?php echo @$mesas ?>"><a href="index.php?pagina=mesas"><i class="fa fa-angle-right"></i>Mesas</a></li>
+									<li class="<?php echo @$mesas ?>"><a href="mesas"><i class="fa fa-angle-right"></i>Mesas</a></li>
 
-									<li class="<?php echo @$cupons ?>"><a href="index.php?pagina=cupons"><i class="fa fa-angle-right"></i>Cupom de Desconto</a></li>
+									<li class="<?php echo @$cupons ?>"><a href="cupons"><i class="fa fa-angle-right"></i>Cupom de Desconto</a></li>
 									
 								</ul>
 							</li>
 
 
 
-							<li class="treeview <?php echo $menu_produtos ?>">
+							<li class="treeview <?php echo @$menu_produtos ?>">
 								<a href="#">
 									<i class="fa fa-cutlery"></i>
 									<span>Produtos</span>
 									<i class="fa fa-angle-left pull-right"></i>
 								</a>
 								<ul class="treeview-menu">
-									<li class="<?php echo @$produtos ?>"><a href="index.php?pagina=produtos"><i class="fa fa-angle-right"></i> Produtos</a></li>
+									<li class="<?php echo @$produtos ?>"><a href="produtos"><i class="fa fa-angle-right"></i> Produtos</a></li>
 
-									<li class="<?php echo @$categorias ?>"><a href="index.php?pagina=categorias"><i class="fa fa-angle-right"></i> Categorias</a></li>
+									<li class="<?php echo @$categorias ?>"><a href="categorias"><i class="fa fa-angle-right"></i> Categorias</a></li>
 
-									<li class="<?php echo @$estoque ?>"><a href="index.php?pagina=estoque"><i class="fa fa-angle-right"></i> Estoque</a></li>
-									<li class="<?php echo @$entradas ?>"><a href="index.php?pagina=entradas"><i class="fa fa-angle-right"></i> Entradas</a></li>
-									<li class="<?php echo @$saidas ?>"><a href="index.php?pagina=saidas"><i class="fa fa-angle-right"></i> Saídas</a></li>
+									<li class="<?php echo @$estoque ?>"><a href="estoque"><i class="fa fa-angle-right"></i> Estoque</a></li>
+									<li class="<?php echo @$entradas ?>"><a href="entradas"><i class="fa fa-angle-right"></i> Entradas</a></li>
+									<li class="<?php echo @$saidas ?>"><a href="saidas"><i class="fa fa-angle-right"></i> Saídas</a></li>
 									
 								</ul>
 							</li>
@@ -256,7 +256,7 @@ if(@$_GET['pagina'] != ""){
 
 
 
-							<li class="treeview <?php echo $menu_financeiro ?>">
+							<li class="treeview <?php echo @$menu_financeiro ?>">
 								<a href="#">
 									<i class="fa fa-dollar"></i>
 									<span>Financeiro</span>
@@ -264,13 +264,13 @@ if(@$_GET['pagina'] != ""){
 								</a>
 								<ul class="treeview-menu">
 
-									<li class="<?php echo @$vendas ?>"><a href="index.php?pagina=vendas"><i class="fa fa-angle-right"></i> Vendas / Pedidos</a></li>
+									<li class="<?php echo @$vendas ?>"><a href="vendas"><i class="fa fa-angle-right"></i> Vendas / Pedidos</a></li>
 
-									<li class="<?php echo @$pagar ?>"><a href="index.php?pagina=pagar"><i class="fa fa-angle-right"></i> Contas à Pagar</a></li>
+									<li class="<?php echo @$pagar ?>"><a href="pagar"><i class="fa fa-angle-right"></i> Contas à Pagar</a></li>
 
-									<li class="<?php echo @$receber ?>"><a href="index.php?pagina=receber"><i class="fa fa-angle-right"></i> Contas à Receber</a></li>
+									<li class="<?php echo @$receber ?>"><a href="receber"><i class="fa fa-angle-right"></i> Contas à Receber</a></li>
 
-									<li class="<?php echo @$compras ?>"><a href="index.php?pagina=compras"><i class="fa fa-angle-right"></i> Compras</a></li>
+									<li class="<?php echo @$compras ?>"><a href="compras"><i class="fa fa-angle-right"></i> Compras</a></li>
 
 									
 								</ul>
@@ -279,7 +279,7 @@ if(@$_GET['pagina'] != ""){
 
 
 
-							<li class="treeview <?php echo $menu_relatorio ?>">
+							<li class="treeview <?php echo @$menu_relatorio ?>">
 								<a href="#">
 									<i class="fa fa-file-pdf-o"></i>
 									<span>Relatórios</span>
@@ -302,7 +302,7 @@ if(@$_GET['pagina'] != ""){
 
 
 							<li class="treeview <?php echo @$novo_pedido ?>" >
-								<a href="index.php?pagina=novo_pedido">
+								<a href="novo_pedido">
 									<i class="fa fa-columns"></i> <span>Novo Pedido</span>
 								</a>
 							</li>
@@ -801,14 +801,72 @@ if(@$_GET['pagina'] != ""){
 							<input type="text" name="token" id="token" class="form-control" value="<?php echo @$token ?>" placeholder="Token Whatsapp">	
 						</div>
 
-						<div class="col-md-3">						
+						<div class="col-md-4">						
 							<label>Instância Api Whatsapp</label>
 							<input type="text" name="instancia" id="instancia" class="form-control" value="<?php echo @$instancia ?>" placeholder="Instancia Whatsapp">	
 						</div>
 
-						<div class="col-md-3">						
+						<div class="col-md-2">						
 							<label>Pedido Mínimo</label>
 							<input type="text" name="pedido_minimo" id="pedido_minimo" class="form-control" value="<?php echo @$pedido_minimo ?>" placeholder="Valor Mínimo Pedido">	
+						</div>
+
+
+							<div class="col-md-3">							
+							<label>Mostrar Aberto</label>
+							<select class="form-control" name="mostrar_aberto">
+								<option value="Sim" <?php if(@$mostrar_aberto == 'Sim'){?> selected <?php } ?> >Sim</option>
+								<option value="Não" <?php if(@$mostrar_aberto == 'Não'){?> selected <?php } ?> >Não</option>	
+									
+							</select>					
+						</div>
+
+
+
+					</div>
+
+
+					<div class="row">
+
+						<div class="col-md-3">							
+							<label>Tipo de Frete</label>
+							<select class="form-control" name="entrega_distancia">
+								<option value="Sim" <?php if(@$entrega_distancia == 'Sim'){?> selected <?php } ?> >Por Distância</option>
+								<option value="Não" <?php if(@$entrega_distancia == 'Não'){?> selected <?php } ?> >Local / Bairro</option>	
+									
+							</select>					
+						</div>
+
+						<div class="col-md-3">						
+							<label>Chave Api Maps</label>
+							<input type="text" name="chave_api_maps" id="chave_api_maps" class="form-control" value="<?php echo @$chave_api_maps ?>" placeholder="Api Google Maps">	
+						</div>
+
+
+						<div class="col-md-3">						
+							<label>Latitude Restaurante</label>
+							<input type="text" name="latitude_rest" id="latitude_rest" class="form-control" value="<?php echo @$latitude_rest ?>" placeholder="Coordenadas Latitude">	
+						</div>
+
+
+						<div class="col-md-3">						
+							<label>Longitude Restaurante</label>
+							<input type="text" name="longitude_rest" id="longitude_rest" class="form-control" value="<?php echo @$longitude_rest ?>" placeholder="Coordenadas Longitude">	
+						</div>
+
+						
+					</div>
+
+
+					<div class="row">
+						<div class="col-md-4">						
+							<label>Distancia Máxima Entrega KM</label>
+							<input type="number" name="distancia_entrega_km" id="distancia_entrega_km" class="form-control" value="<?php echo @$distancia_entrega_km ?>" placeholder="Entregar até x KM">	
+						</div>
+
+						<div class="col-md-3">						
+							<label>Valor por KM</label>
+							<input type="number" name="valor_km" id="valor_km" class="form-control" value="<?php echo @$valor_km ?>" placeholder="Valor cobrado por KM">	
 						</div>
 					</div>
 

@@ -105,6 +105,7 @@ $rua_cliente = @$res2[0]['rua'];
 $numero_cliente = @$res2[0]['numero'];
 $complemento_cliente = @$res2[0]['complemento'];
 $bairro_cliente = @$res2[0]['bairro'];
+$cidade_cliente = @$res2[0]['cidade'];
 
 if($entrega == 'Retirar'){
 	$entrega = 'Retirar no Local';
@@ -548,7 +549,7 @@ echo <<<HTML
 		<b>Endereço	para Entrega</b>		
 			<br>
 			{$rua_cliente} {$numero_cliente} {$complemento_cliente}
-			{$bairro_cliente}
+			{$bairro_cliente} {$cidade_cliente}
 		</div>	
 <div class="th" style="margin-bottom: 10px"></div>
 HTML;

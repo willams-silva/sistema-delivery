@@ -264,16 +264,16 @@ $dados_meses_vendas =  '';
 
 	
 
-        <div class="row-one widgettable">
+        <div class="row-one widgettable ">
 
-		<div class="col-md-12 content-top-2 card">
+		<div class="col-md-12 content-top-2 card ">
 
-			<div class="agileinfo-cdr">
+			<div class="agileinfo-cdr altura_grafico">
 					<div class="card-header">
                         <h3>Vendas e Gastos</h3>
                     </div>
 					
-						<div id="Linegraph" style="width: 98%; height: 350px">
+						<div id="Linegraph" class="area_grafico" style="width: 98%; height: 350px">
 						</div>
 						
 				</div>

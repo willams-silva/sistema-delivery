@@ -69,6 +69,15 @@ for($i=0; $i < $total_reg; $i++){
 	$nome_cliente_ped = $res[$i]['nome_cliente'];
 	$pedido = $res[$i]['pedido'];
 	$impressao = $res[$i]['impressao'];
+	$codigo_pix = $res[$i]['ref_api'];
+
+	//verificar pgto pix
+	if($codigo_pix != "" and $pago != "Sim"){
+		require("../../../../js/ajax/verificar_pgto.php");		
+		if(@$status_api == 'approved'){
+		  	$pdo->query("UPDATE vendas set pago = 'Sim', tipo_pgto = 'Pix' where id = '$id'");
+		}
+	}
 	
 	$valorF = number_format($valor, 2, ',', '.');
 	$total_pagoF = number_format($total_pago, 2, ',', '.');

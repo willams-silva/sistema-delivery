@@ -111,7 +111,7 @@ $pag = 'produtos';
 						<div class="col-md-2">
 							<div class="form-group">
 								<label for="exampleInputEmail1">Tem Estoque?</label>
-								<select class="form-control sel2" id="tem_estoque" name="tem_estoque" style="width:100%;" > 
+								<select class="form-control" id="tem_estoque" name="tem_estoque" style="width:100%;" > 
 
 								<option value="Sim">Sim</option>
 								<option value="Não">Não</option>										
@@ -131,6 +131,35 @@ $pag = 'produtos';
 
 						
 
+					</div>
+
+
+					<div class="row">
+						<div class="col-md-2">
+							<div class="form-group">
+								<label for="exampleInputEmail1">Promoção?</label>
+								<select class="form-control" id="promocao" name="promocao" style="width:100%;" > 
+
+								<option value="Não">Não</option>	
+								<option value="Sim">Sim</option>
+																	
+
+								</select>   
+							</div> 
+							</div>	
+
+
+							<div class="col-md-2">
+							<div class="form-group">
+								<label for="exampleInputEmail1">Combo?</label>
+								<select class="form-control" id="combo" name="combo" style="width:100%;" > 
+
+								<option value="Não">Não</option>	
+								<option value="Sim">Sim</option>									
+
+								</select>   
+							</div> 
+							</div>	
 					</div>
 
 					
@@ -226,6 +255,25 @@ $pag = 'produtos';
 					<div class="col-md-6">							
 						<span><b>Tem Estoque: </b></span>
 						<span id="tem_estoque_dados"></span>							
+					</div>
+
+					
+						
+
+				</div>
+
+
+
+				<div class="row" style="border-bottom: 1px solid #cac7c7;">
+					
+					<div class="col-md-6">							
+						<span><b>Promoção: </b></span>
+						<span id="promocao_dados"></span>							
+					</div>
+
+					<div class="col-md-6">							
+						<span><b>Combo: </b></span>
+						<span id="combo_dados"></span>							
 					</div>
 
 					

@@ -12,6 +12,8 @@ $descricao = $_POST['descricao'];
 $nivel_estoque = $_POST['nivel_estoque'];
 $tem_estoque = $_POST['tem_estoque'];
 $guarnicoes = $_POST['guarnicoes'];
+$promocao = @$_POST['promocao'];
+$combo = @$_POST['combo'];
 
 $categoria = @$_POST['categoria'];
 
@@ -22,6 +24,7 @@ $url = preg_replace('/[ -]+/' , '-' , $nome_novo);
 $url = str_replace('+', '-', $url);
 $url = str_replace('/', '-', $url);
 $url = str_replace('"', '-', $url);
+
 
 if($categoria == 0 || $categoria == ""){
 	echo 'Cadastre uma Categoria de Produtos para o Produto';
@@ -82,9 +85,9 @@ if(@$_FILES['foto']['name'] != ""){
 
 
 if($id == ""){
-	$query = $pdo->prepare("INSERT INTO $tabela SET nome = :nome, categoria = '$categoria', valor_compra = :valor_compra, valor_venda = :valor_venda, descricao = :descricao, foto = '$foto', nivel_estoque = '$nivel_estoque', tem_estoque = '$tem_estoque', ativo = 'Sim', url = '$url', guarnicoes = '$guarnicoes'");
+	$query = $pdo->prepare("INSERT INTO $tabela SET nome = :nome, categoria = '$categoria', valor_compra = :valor_compra, valor_venda = :valor_venda, descricao = :descricao, foto = '$foto', nivel_estoque = '$nivel_estoque', tem_estoque = '$tem_estoque', ativo = 'Sim', url = '$url', guarnicoes = '$guarnicoes', promocao = '$promocao', combo = '$combo'");
 }else{
-	$query = $pdo->prepare("UPDATE $tabela SET nome = :nome, categoria = '$categoria', valor_compra = :valor_compra, valor_venda = :valor_venda, descricao = :descricao, foto = '$foto', nivel_estoque = '$nivel_estoque', tem_estoque = '$tem_estoque', url = '$url', guarnicoes = '$guarnicoes' WHERE id = '$id'");
+	$query = $pdo->prepare("UPDATE $tabela SET nome = :nome, categoria = '$categoria', valor_compra = :valor_compra, valor_venda = :valor_venda, descricao = :descricao, foto = '$foto', nivel_estoque = '$nivel_estoque', tem_estoque = '$tem_estoque', url = '$url', guarnicoes = '$guarnicoes', promocao = '$promocao', combo = '$combo' WHERE id = '$id'");
 }
 
 $query->bindValue(":nome", "$nome");

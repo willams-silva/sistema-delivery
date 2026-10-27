@@ -57,10 +57,15 @@ $rua_cliente = @$res2[0]['rua'];
 $numero_cliente = @$res2[0]['numero'];
 $complemento_cliente = @$res2[0]['complemento'];
 $bairro_cliente = @$res2[0]['bairro'];
+$cidade_cliente = @$res2[0]['cidade'];
 }
 
 if($status_whatsapp == 'Api'){
-$tel_cliente_whats = '55'.preg_replace('/[ ()-]+/' , '' , $telefone_cliente);
+$query2 = $pdo->query("SELECT * FROM usuarios where id = '$entregador'");
+$res2 = $query2->fetchAll(PDO::FETCH_ASSOC);
+$tel_entregador = $res2[0]['telefone'];
+
+$tel_cliente_whats = '55'.preg_replace('/[ ()-]+/' , '' , $tel_entregador);
 
 
 $mensagem = '*Pedido:* '.$n_pedido.'%0A';
@@ -187,7 +192,7 @@ if($obs != ""){
 
  if($entrega == "Delivery"){
       $mensagem .= '%0A*Endereço do Cliente*%0A';
-      $endereco = $rua_cliente.' '.$numero_cliente.' '.$complemento_cliente.' '.$bairro_cliente;
+      $endereco = $rua_cliente.' '.$numero_cliente.' '.$complemento_cliente.' '.$bairro_cliente.' '.$cidade_cliente;
        $mensagem .= '_'.$endereco.'_';
     
 }
