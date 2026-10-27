@@ -48,6 +48,8 @@ for($i=0; $i < $total_reg; $i++){
 	$taxa_entrega = $res[$i]['taxa_entrega'];
 	$tipo_pgto = $res[$i]['tipo_pgto'];
 	$usuario_baixa = $res[$i]['usuario_baixa'];
+	$mesa = $res[$i]['mesa'];
+	$nome_cliente_ped = $res[$i]['nome_cliente'];
 	
 	$valorF = number_format($valor, 2, ',', '.');
 	$total_pagoF = number_format($total_pago, 2, ',', '.');
@@ -73,8 +75,14 @@ for($i=0; $i < $total_reg; $i++){
 		$total_reg2 = @count($res2);
 		if($total_reg2 > 0){
 			$nome_cliente = $res2[0]['nome'];
+			$telefone_cliente = $res2[0]['telefone'];
 		}else{
-			$nome_cliente = 'Nenhum!';
+			if($mesa != '0' and $mesa != ''){
+				$nome_cliente = 'Mesa: '.$mesa;
+			}else{
+				$nome_cliente = $nome_cliente_ped;
+			}
+			$telefone_cliente = '';
 		}
 
 

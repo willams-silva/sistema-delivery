@@ -25,6 +25,8 @@ $taxa_entrega = $res[0]['taxa_entrega'];
 $tipo_pgto = $res[0]['tipo_pgto'];
 $usuario_baixa = $res[0]['usuario_baixa'];
 $entrega = $res[0]['entrega'];
+$mesa = $res[0]['mesa'];
+$nome_cliente_ped = $res[0]['nome_cliente'];
 
 $valorF = number_format($valor, 2, ',', '.');
 $total_pagoF = number_format($total_pago, 2, ',', '.');
@@ -40,12 +42,28 @@ $hora_pedido = date('H:i', strtotime("+$previsao_entrega minutes",strtotime($hor
 
 $query2 = $pdo->query("SELECT * FROM clientes where id = '$cliente'");
 $res2 = $query2->fetchAll(PDO::FETCH_ASSOC);
-$nome_cliente = @$res2[0]['nome'];
+$total_reg2 = @count($res2);
+if($total_reg2 > 0){
+$nome_cliente = @$res2[0]['nome'].' Tel: '.@$res2[0]['telefone'];
 $telefone_cliente = @$res2[0]['telefone'];
 $rua_cliente = @$res2[0]['rua'];
 $numero_cliente = @$res2[0]['numero'];
 $complemento_cliente = @$res2[0]['complemento'];
 $bairro_cliente = @$res2[0]['bairro'];
+}else{
+
+if($mesa != '0' and $mesa != ''){
+	$nome_cliente = 'Mesa: '.$mesa;
+}else{
+	$nome_cliente = $nome_cliente_ped;
+}
+
+$telefone_cliente = '';
+$rua_cliente = '';
+$numero_cliente = '';
+$complemento_cliente = '';
+$bairro_cliente ='';
+}
 
 if($entrega == 'Retirar'){
 	$entrega = 'Retirar no Local';
@@ -164,7 +182,7 @@ if($entrega == 'Consumir Local'){
 
 
 
-<div  class="th">Cliente <?php echo $nome_cliente ?> Tel: <?php echo $telefone_cliente ?>			
+<div  class="th">Cliente <?php echo $nome_cliente ?>			
 <br>
 Venda: <b><?php echo $id ?></b> - Data: <?php echo $dataF ?> Hora: <?php echo $hora ?>
 </div>
@@ -207,6 +225,7 @@ for ($i=0; $i < count($dados); $i++) {
 			$nome_produto = $res2[0]['nome'];
 			$foto_produto = $res2[0]['foto'];
 		}else{
+			$nome_produto2 = '';
 			$query33 = $pdo->query("SELECT * FROM carrinho where id_sabor = '$item' and pedido = '$id' ");
 $res33 = $query33->fetchAll(PDO::FETCH_ASSOC);
 $total_reg33 = @count($res33);

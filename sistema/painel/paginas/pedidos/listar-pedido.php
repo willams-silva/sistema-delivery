@@ -143,6 +143,7 @@ for ($i=0; $i < count($dados); $i++) {
 			$nome_produto = $res2[0]['nome'];
 			$foto_produto = $res2[0]['foto'];
 		}else{
+			$nome_produto2 = '';
 			$query33 = $pdo->query("SELECT * FROM carrinho where id_sabor = '$item' and pedido = '$id' ");
 $res33 = $query33->fetchAll(PDO::FETCH_ASSOC);
 $total_reg33 = @count($res33);
