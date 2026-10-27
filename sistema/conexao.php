@@ -6,14 +6,6 @@ $senha = 'Ti@v3n3z@22';
 $banco = 'u719820352_db_delivery';
 $servidor = 'localhost';
 
-/*
-//servidor hospedado
-$usuario = 'hugocu75_interativo';
-$senha = 'interativoteste';
-$banco = 'hugocu75_interativo';
-$servidor = 'sh-pro24.hostgator.com.br';
-*/
-
 $url_sistema = "http://$_SERVER[HTTP_HOST]/";
 $url = explode("//", $url_sistema);
 if($url[1] == 'localhost/'){
@@ -69,9 +61,28 @@ $dias_apagar = $res[0]['dias_apagar'];
 $impressao_automatica = $res[0]['impressao_automatica'];
 $fonte_comprovante = $res[0]['fonte_comprovante'];
 $banner_rotativo = $res[0]['banner_rotativo'];
-$token_api = 'VCPD3-JC7-11120';
+$token = $res[0]['token'];
+$instancia = $res[0]['instancia'];
+$ativo_sistema = $res[0]['ativo'];
+$pedido_minimo = $res[0]['pedido_minimo'];
+
 $whatsapp_sistema = '55'.preg_replace('/[ ()-]+/' , '' , $telefone_sistema);
 }
 
 
+if($ativo_sistema != 'Sim' and $ativo_sistema != ''){ ?>
+	<style type="text/css">
+		@media only screen and (max-width: 700px) {
+  .imgsistema_mobile{
+    width:300px;
+  }
+    
+}
+	</style>
+	<div style="text-align: center; margin-top: 100px">
+	<img src="img/bloqueio.png" class="imgsistema_mobile">	
+	</div>
+<?php 
+exit();
+} 
  ?>

@@ -183,6 +183,12 @@ if(@$_GET['pagina'] != ""){
 								</a>
 							</li>
 
+							<li class="treeview <?php echo @$pedidos_esteira ?>" >
+								<a href="index.php?pagina=pedidos_esteira">
+									<i class="fa fa-motorcycle"></i> <span>Pedidos Esteira</span>
+								</a>
+							</li>
+
 							<li class="treeview <?php echo $menu_pessoas ?>">
 								<a href="#">
 									<i class="fa fa-users"></i>
@@ -221,6 +227,8 @@ if(@$_GET['pagina'] != ""){
 									<li class="<?php echo @$banner_rotativo ?>"><a href="index.php?pagina=banner_rotativo"><i class="fa fa-angle-right"></i> Banner Rotativo</a></li>
 
 									<li class="<?php echo @$mesas ?>"><a href="index.php?pagina=mesas"><i class="fa fa-angle-right"></i>Mesas</a></li>
+
+									<li class="<?php echo @$cupons ?>"><a href="index.php?pagina=cupons"><i class="fa fa-angle-right"></i>Cupom de Desconto</a></li>
 									
 								</ul>
 							</li>
@@ -758,7 +766,10 @@ if(@$_GET['pagina'] != ""){
 						<div class="col-md-3">							
 							<label>Impressão Automática</label>
 							<select class="form-control" name="impressao_automatica">
-								<option value="Sim" <?php if(@$impressao_automatica == 'Sim'){?> selected <?php } ?> >Sim</option>
+								<option value="Sim" <?php if(@$impressao_automatica == 'Sim'){?> selected <?php } ?> >Sim (Painél Pedidos)</option>
+
+								<option value="Site" <?php if(@$impressao_automatica == 'Site'){?> selected <?php } ?> >Sim (Pedido Cliente Site)</option>
+
 								<option value="Não" <?php if(@$impressao_automatica == 'Não'){?> selected <?php } ?> >Não</option>	
 							</select>	
 						</div>
@@ -779,6 +790,26 @@ if(@$_GET['pagina'] != ""){
 
 						
 					
+					</div>
+
+
+
+					<div class="row">
+
+						<div class="col-md-3">						
+							<label>Token Api Whatsapp</label>
+							<input type="text" name="token" id="token" class="form-control" value="<?php echo @$token ?>" placeholder="Token Whatsapp">	
+						</div>
+
+						<div class="col-md-3">						
+							<label>Instância Api Whatsapp</label>
+							<input type="text" name="instancia" id="instancia" class="form-control" value="<?php echo @$instancia ?>" placeholder="Instancia Whatsapp">	
+						</div>
+
+						<div class="col-md-3">						
+							<label>Pedido Mínimo</label>
+							<input type="text" name="pedido_minimo" id="pedido_minimo" class="form-control" value="<?php echo @$pedido_minimo ?>" placeholder="Valor Mínimo Pedido">	
+						</div>
 					</div>
 
 
