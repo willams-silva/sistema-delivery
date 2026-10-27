@@ -24,7 +24,7 @@ $pdo->query("DELETE FROM temp where carrinho = 0");
 		<div class="container-fluid">
 			<div class="navbar-brand" >
 				<a href="index"><big><i class="bi bi-arrow-left"></i></big></a>
-				<span style="margin-left: 15px"><?php echo mb_strtoupper($nome) ?></span>
+				<span style="margin-left: 15px; font-size:14px"><?php echo mb_strtoupper($nome) ?></span>
 			</div>
 
 			<?php require_once("icone-carrinho.php") ?>
@@ -70,6 +70,7 @@ $pdo->query("DELETE FROM temp where carrinho = 0");
 				$tem_estoque = $res[$i]['tem_estoque'];
 				$valor = $res[$i]['valor_venda'];
 				$valorF = number_format($valor, 2, ',', '.');
+				$promocao = $res[$i]['promocao'];
 
 				if($tem_estoque == 'Sim' and $estoque <= 0){
 					$mostrar = '';
@@ -77,6 +78,13 @@ $pdo->query("DELETE FROM temp where carrinho = 0");
 				}else{
 					$mostrar = 'ocultar';
 					$url_produto = 'produto-'.$url;
+				}
+
+
+				if($promocao == 'Sim'){
+					$mostrar_promo = '';									
+				}else{
+					$mostrar_promo = 'ocultar';					
 				}
 
 				$query2 = $pdo->query("SELECT * FROM variacoes where produto = '$id' and ativo = 'Sim'");
@@ -117,6 +125,11 @@ $total_adc = @count($res3);
 		<li class="list-group-item d-flex justify-content-between align-items-start "> 
 			
 				<img class="<?php echo $mostrar ?>" src="img/esgotado.png" width="65px" height="65px" style="position:absolute; right:0; top:0px">
+
+				<?php if($mostrar != ""){ ?>
+						<img class="<?php echo $mostrar_promo ?>" src="img/promocao2.png" width="65px" height="65px" style="position:absolute; right:0; top:0px; opacity:80%">
+				<?php } ?>
+
 				<div class="row" style="width:100%">
 					<div class="col-10">
 

@@ -42,6 +42,8 @@ if ( $start <= $now && $now <= $end ) {
         <link rel="stylesheet" href="css/flexslider.css">
         <link rel="stylesheet" href="css/testimonails-slider.css">
 
+        <link rel="stylesheet" href="css/style_cards_index.css">
+
         <script src="js/vendor/modernizr-2.6.1-respond-1.1.0.min.js"></script>
 
         <script src="js/vendor/jquery-1.11.0.min.js"></script>
@@ -98,7 +100,7 @@ if ( $start <= $now && $now <= $end ) {
 		if($total_reg > 0){
  ?>
 
-			<div id="slider" style="margin-top: 50px;" class="">
+			<div id="slider" style="margin-top: 50px;" class="ocultar-banner-web">
                 <div class="flexslider">
                   <ul class="slides">
 
@@ -151,21 +153,50 @@ if ( $start <= $now && $now <= $end ) {
 
 
 
+	 <!-- Menu Start -->
+        <div class="container-xxl py-5 margin_top_web" style="margin-bottom: 15px">
+            <div class="margem_container">
+                <div class="text-center wow fadeInUp ocultar-mobile" data-wow-delay="0.1s"  style="margin-bottom: 15px">
+                    <h5 class="section-title ff-secondary text-center text-primary fw-normal"><span style="color:#FEA116">Nosso Cardápio</span></h5>
+                   
+                </div>
+                <div class="tab-class text-center wow fadeInUp" data-wow-delay="0.1s">
 
-	<div class="row ocultar-mobile" style="margin-top: 25px;">
-                        <div class="col-md-12">
-                            <div class="heading-section">
-                                <h2>Nosso Cardápio</h2>
-                                <img src="images/under-heading.png" alt="" >
-                            </div>
-                        </div>
-                    </div>
-	
+                	 <ul class="nav nav-pills d-inline-flex justify-content-center border-bottom mb-5" style="width:100%;">
+                        <li class="nav-item" style="width:34%;">
+                            <a class="d-flex align-items-center text-start mx-3 ms-0 pb-3 active" data-bs-toggle="pill" href="#tab-1">
+                                <img class="icone_mobile" src="img/icone1.png" width="50px" height="50px">
+                                <div class="ps-1">
+                                    <small class="text-body titulo_icones">Categorias</small>
+                                    <h6 class="mt-n1 mb-0 subtitulo_icones" style="font-size: 12px">Produtos</h6>
+                                </div>
+                            </a>
+                        </li>
+                        <li class="nav-item" style="width:34%;">
+                            <a class="d-flex align-items-center text-start mx-3 pb-3" data-bs-toggle="pill" href="#tab-2">
+                                 <img class="icone_mobile" src="img/icone2.png" width="50px" height="50px">
+                                <div class="ps-1">
+                                    <small class="text-body titulo_icones">Combos</small>
+                                    <h6 class="mt-n1 mb-0 subtitulo_icones" style="font-size: 12px">Diversos</h6>
+                                </div>
+                            </a>
+                        </li>
+                        <li class="nav-item" style="width:32%;">
+                            <a  class="d-flex align-items-center text-start mx-3 me-0 pb-3" data-bs-toggle="pill" href="#tab-3">
+                                <img class="icone_mobile" src="img/icone3.png" width="50px" height="50px">
+                                <div class="ps-1">
+                                    <small class="text-body titulo_icones">Promoções</small>
+                                    <h6 class="mt-n1 mb-0 subtitulo_icones" style="font-size: 12px">Ofertas</h6>
+                                </div>
+                            </a>
+                        </li>
+                    </ul>
+                  
+                    <div class="tab-content">
+                      <div id="tab-1" class="tab-pane fade show p-0 active">
+                            <div class="row g-4">
 
-	 <div class="row" style="margin-bottom: 100px; margin-top: 15px">
-                       
-
-		<?php 
+                            	<?php 
 		$query = $pdo->query("SELECT * FROM categorias where ativo = 'Sim'");
 		$res = $query->fetchAll(PDO::FETCH_ASSOC);
 		$total_reg = @count($res);
@@ -175,6 +206,7 @@ if ( $start <= $now && $now <= $end ) {
 					$cor = $res[$i]['cor'];
 				$foto = $res[$i]['foto'];
 				$nome = $res[$i]['nome'];
+				$descricao = $res[$i]['descricao'];
 				$url = $res[$i]['url'];
 				$id = $res[$i]['id'];
 
@@ -206,44 +238,210 @@ if ( $start <= $now && $now <= $end ) {
 
 				?>
 			
-
-	<div class="col-md-2 col-sm-6 col-6 <?php echo $mostrar ?> ocultar-mobile" style="margin-bottom: 10px">
-                            <div class="timeline-thumb">
-                                <div class="thumb">
-                                    <img src="sistema/painel/images/categorias/<?php echo $foto ?>" alt="">
+								
+                                <div class="col-md-6">
+                                	<a href="categoria-<?php echo $url ?>">
+                                    <div class="d-flex align-items-center">
+                                        <img class="flex-shrink-0 img-fluid " src="sistema/painel/images/categorias/<?php echo $foto ?>" alt="" style="width: 80px;">
+                                        <div class="w-100 d-flex flex-column text-start ps-4">
+                                            <h5 class="d-flex justify-content-between border-bottom pb-2">
+                                                <span class="titulo_itens" style="color:#2d2e2e; "><?php echo $nome ?></span>
+                                                <span class="text-primary"></span>
+                                            </h5>
+                                            <small class="fst-italic subtitulo_itens" style="color:#474747"><?php echo $descricao ?></small>
+                                        </div>
+                                    </div>
+                                     </a>
                                 </div>
-                                <div class="overlay">
-                                    <div class="timeline-caption">
-                                        <a href="categoria-<?php echo $url ?>"><h4><?php echo $nome ?></h4></a>
-                                       
-                                     </div>
-                                 </div>
-                             </div>
+                          		 
+
+                                <?php } } ?>		
+                                
+                            </div>
                         </div>
 
 
+                         <div id="tab-2" class="tab-pane fade show p-0" >
+                         	   <div class="row g-4" >
 
-                        <div class="col-6 <?php echo $mostrar ?> ocultar-banner-web" >
-					<a class="link-card" href="categoria-<?php echo $url ?>">
-						<div class="card <?php echo $cor ?> " <?php if($tipo_miniatura == 'Foto'){ ?> style="background-image: url('sistema/painel/images/categorias/<?php echo $foto ?>'); background-size: cover; border:none" <?php } ?> >
-							<?php if($tipo_miniatura == 'Foto'){ ?>
-								<div class="badge2"><?php echo $nome ?></div>
-							<?php }else{ ?>
-								<h3 class="card-title"><?php echo $nome ?></h3>
-							<?php } ?>
-						</div>
-					</a>
-				</div>
+                              <?php 
+    $query = $pdo->query("SELECT * FROM produtos where ativo = 'Sim' and combo = 'Sim'");
+    $res = $query->fetchAll(PDO::FETCH_ASSOC);
+    $tem_produto = @count($res);
+    $mostrar = 'ocultar';
+    if($tem_produto > 0){
+      for($i=0; $i < $tem_produto; $i++){
+        foreach ($res[$i] as $key => $value){}     
+        $id_prod = $res[$i]['id']; 
+        $foto = $res[$i]['foto'];
+        $nome = $res[$i]['nome'];
+        $descricao = $res[$i]['descricao'];
+        $url = $res[$i]['url'];
+        $estoque = $res[$i]['estoque'];
+        $tem_estoque = $res[$i]['tem_estoque'];
+        $valor = $res[$i]['valor_venda'];
+        $valorF = number_format($valor, 2, ',', '.');
 
-			
-			<?php } } ?>		
+        $descricaoF = mb_strimwidth($descricao, 0, 70, "...");
+
+         if($tem_estoque == 'Sim' and $estoque <= 0){
+         continue;         
+        }else{
+          
+          $url_produto = 'produto-'.$url;
+        }
 
 
+        $query2 = $pdo->query("SELECT * FROM variacoes where produto = '$id_prod' and ativo = 'Sim'");
+    $res2 = $query2->fetchAll(PDO::FETCH_ASSOC);
+    $total_reg2 = @count($res2);    
+    if($total_reg2 == 0){
 
-		
+$query3 = $pdo->query("SELECT * FROM guarnicoes where produto = '$id_prod'");
+$res3 = $query3->fetchAll(PDO::FETCH_ASSOC);
+$total_guarn = @count($res3);     
 
-	</div>
-	
+      //verificar se o produto tem adicionais
+$query3 = $pdo->query("SELECT * FROM adicionais where produto = '$id_prod'");
+$res3 = $query3->fetchAll(PDO::FETCH_ASSOC);
+$total_adc = @count($res3);
+      if($total_adc > 0 || $total_guarn > 0){
+        if($tem_estoque == 'Sim' and $estoque <= 0){
+          $url_produto = '#';
+        }else{
+          $url_produto = 'adicionais-'.$url.'&sabores='.$url;
+        }
+        
+      }else{
+        if($tem_estoque == 'Sim' and $estoque <= 0){
+          $url_produto = '#';
+        }else{
+          $url_produto = 'observacoes-'.$url.'&sabores='.$url;
+        }
+        
+      }
+      
+    }
+         
+   
+        ?>
+      
+                
+                                <div class="col-md-6">
+                                  <a href="<?php echo $url_produto ?>">
+                                    <div class="d-flex align-items-center">
+                                        <img class="flex-shrink-0 img-fluid " src="sistema/painel/images/produtos/<?php echo $foto ?>" alt="" style="width: 70px;">
+                                        <div class="w-100 d-flex flex-column text-start ps-4">
+                                            <span class="d-flex justify-content-between border-bottom pb-2">
+                                                <span class="titulo_itens" style="color:#2d2e2e; "><?php echo $nome ?></span>
+                                                <span class="text-primary valor_itens"><span class="ocultar-mobile">R$ </span><?php echo $valorF ?></span>
+                                            </span>
+                                            <small class="fst-italic subtitulo_itens" style="color:#474747"><?php echo $descricaoF ?></small>
+                                        </div>
+                                    </div>
+                                     </a>
+                                </div>
+                               
+
+                                <?php } } ?>    
+                                
+                            </div>
+                         </div>
+
+
+                          <div id="tab-3" class="tab-pane fade show p-0">
+                         	     <div class="row g-4" >
+
+                              <?php 
+    $query = $pdo->query("SELECT * FROM produtos where ativo = 'Sim' and promocao = 'Sim'");
+    $res = $query->fetchAll(PDO::FETCH_ASSOC);
+    $tem_produto = @count($res);
+    $mostrar = 'ocultar';
+    if($tem_produto > 0){
+      for($i=0; $i < $tem_produto; $i++){
+        foreach ($res[$i] as $key => $value){}     
+        $id_prod = $res[$i]['id']; 
+        $foto = $res[$i]['foto'];
+        $nome = $res[$i]['nome'];
+        $descricao = $res[$i]['descricao'];
+        $url = $res[$i]['url'];
+        $estoque = $res[$i]['estoque'];
+        $tem_estoque = $res[$i]['tem_estoque'];
+        $valor = $res[$i]['valor_venda'];
+        $valorF = number_format($valor, 2, ',', '.');
+
+        $descricaoF = mb_strimwidth($descricao, 0, 70, "...");
+
+       
+        if($tem_estoque == 'Sim' and $estoque <= 0){
+         continue;         
+        }else{
+          
+          $url_produto = 'produto-'.$url;
+        }
+
+
+        $query2 = $pdo->query("SELECT * FROM variacoes where produto = '$id_prod' and ativo = 'Sim'");
+    $res2 = $query2->fetchAll(PDO::FETCH_ASSOC);
+    $total_reg2 = @count($res2);    
+    if($total_reg2 == 0){
+
+$query3 = $pdo->query("SELECT * FROM guarnicoes where produto = '$id_prod'");
+$res3 = $query3->fetchAll(PDO::FETCH_ASSOC);
+$total_guarn = @count($res3);     
+
+      //verificar se o produto tem adicionais
+$query3 = $pdo->query("SELECT * FROM adicionais where produto = '$id_prod'");
+$res3 = $query3->fetchAll(PDO::FETCH_ASSOC);
+$total_adc = @count($res3);
+      if($total_adc > 0 || $total_guarn > 0){
+        if($tem_estoque == 'Sim' and $estoque <= 0){
+          $url_produto = '#';
+        }else{
+          $url_produto = 'adicionais-'.$url.'&sabores='.$url;
+        }
+        
+      }else{
+        if($tem_estoque == 'Sim' and $estoque <= 0){
+          $url_produto = '#';
+        }else{
+          $url_produto = 'observacoes-'.$url.'&sabores='.$url;
+        }
+        
+      }
+      
+    }
+         
+   
+        ?>
+      
+                
+                                <div class="col-md-6">
+                                  <a href="<?php echo $url_produto ?>">
+                                    <div class="d-flex align-items-center">
+                                        <img class="flex-shrink-0 img-fluid " src="sistema/painel/images/produtos/<?php echo $foto ?>" alt="" style="width: 70px;">
+                                        <div class="w-100 d-flex flex-column text-start ps-4">
+                                            <span class="d-flex justify-content-between border-bottom pb-2">
+                                                <span class="titulo_itens" style="color:#2d2e2e; "><?php echo $nome ?></span>
+                                                <span class="text-primary valor_itens"><span class="ocultar-mobile">R$ </span><?php echo $valorF ?></span>
+                                            </span>
+                                            <small class="fst-italic subtitulo_itens" style="color:#474747"><?php echo $descricaoF ?></small>
+                                        </div>
+                                    </div>
+                                     </a>
+                                </div>
+                               
+
+                                <?php } } ?>    
+                                
+                            </div>
+                         </div>
+                     
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Menu End -->
 
 
 	<footer class="rodape">	
@@ -259,13 +457,20 @@ if ( $start <= $now && $now <= $end ) {
 				<span style="margin-left: 15px"><a target="_blank" href="http://api.whatsapp.com/send?1=pt_BR&phone=<?php echo $whatsapp_sistema ?>" class="link-neutro"><i class="bi bi-whatsapp text-success"></i> <?php echo $telefone_sistema ?></a></span> 
 				/
 				<span style="margin-left: 15px"><a target="_blank" href="<?php echo $instagram_sistema ?> " class="link-neutro"><i class="bi bi-instagram" style="color:#d11144"></i> @Instagram</a></span> 
+
+        
+        <span class="ocultar-mobile" style="margin-left: 15px"> / <a href="sistema" class="link-neutro "><i class="bi bi-lock" style="color:red"></i> Painel Sistema</a></span>
 			</div>
 
 
 		</footer>
 
+<?php if($img == "aberto.png" and $mostrar_aberto != "Sim"){ 
 
-<img src="img/<?php echo $img ?>" width="70px" class="img-aberto">
+}else{ ?>
+  <img src="img/<?php echo $img ?>" width="70px" class="img-aberto">
+<?php } ?>
+
 
 	</body>
 	</html>

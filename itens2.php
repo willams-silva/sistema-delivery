@@ -29,7 +29,7 @@ $pdo->query("DELETE FROM temp where carrinho = 0");
 		<div class="container-fluid">
 			<div class="navbar-brand" >
 				<a href="index"><big><i class="bi bi-arrow-left"></i></big></a>
-				<span style="margin-left: 15px"><?php echo mb_strtoupper($nome) ?></span>
+				<span style="margin-left: 15px; font-size:14px"><?php echo mb_strtoupper($nome) ?></span>
 			</div>
 
 			<?php require_once("icone-carrinho.php") ?>
@@ -37,7 +37,7 @@ $pdo->query("DELETE FROM temp where carrinho = 0");
 		</div>
 	</nav>
 
-<?php if($mais_sabores == 'Sim'){ ?>
+<?php if($mais_sabores == 'Sim' and $sabores != '2'){ ?>
 <div class="sabores row" style="margin-top: 65px; margin-bottom: 10px">	
 	<div class="col-6">
 		<a href="categoria-<?php echo $url ?>&sabores=<?php echo $sabores ?>" class="link-neutro">
@@ -58,6 +58,7 @@ $pdo->query("DELETE FROM temp where carrinho = 0");
 <ol class="list-group ">
 <?php }else{ ?>
 	<ol class="list-group " style="margin-top: 65px">
+		<div align="center"><small>Selecionar Segundo Sabor</small></div>
 <?php } ?>
 
 		<?php 
@@ -75,6 +76,7 @@ $pdo->query("DELETE FROM temp where carrinho = 0");
 				$tem_estoque = $res[$i]['tem_estoque'];
 				$valor = $res[$i]['valor_venda'];
 				$valorF = number_format($valor, 2, ',', '.');
+				$promocao = $res[$i]['promocao'];
 
 				if($tem_estoque == 'Sim' and $estoque <= 0){
 					$mostrar = '';
@@ -83,6 +85,13 @@ $pdo->query("DELETE FROM temp where carrinho = 0");
 					$mostrar = 'ocultar';
 					$url_produto = 'produto-'.$url.'&sabores='.$sabores;
 					
+				}
+
+
+				if($promocao == 'Sim'){
+					$mostrar_promo = '';									
+				}else{
+					$mostrar_promo = 'ocultar';					
 				}
 
 				
@@ -94,6 +103,10 @@ $pdo->query("DELETE FROM temp where carrinho = 0");
 		<li class="list-group-item d-flex justify-content-between align-items-start "> 
 
 			<img class="<?php echo $mostrar ?>" src="img/esgotado.png" width="75px" height="75px" style="position:absolute; right:0; top:0px">
+
+			<?php if($mostrar != ""){ ?>
+						<img class="<?php echo $mostrar_promo ?>" src="img/promocao2.png" width="65px" height="65px" style="position:absolute; right:0; top:0px; opacity:80%">
+				<?php } ?>
 
 				<div class="row" style="width:100%">
 					<div class="col-10">

@@ -72,7 +72,7 @@ $total_ing = @count($res);
 			<?php }else{ ?>
 				<a href="categoria-<?php echo $url_cat ?>"><big><i class="bi bi-arrow-left"></i></big></a>
 			<?php } ?>
-				<span style="margin-left: 15px"><?php echo mb_strtoupper($nome) ?><small><small> <?php echo $texto_sabor ?></small></small></span>
+				<span style="margin-left: 15px; font-size:12px"><?php echo mb_strtoupper($nome) ?><small><small> <?php echo $texto_sabor ?></small></small></span>
 			</div>
 
 			<?php require_once("icone-carrinho.php") ?>
@@ -109,11 +109,11 @@ $total_ing = @count($res);
 
 		<?php 
 			if($total_adc > 0 || $total_ing > 0 || $total_guar > 0){ ?>
-	<a href="adicionais-<?php echo $url ?>_<?php echo $nome_var ?>&sabores=<?php echo $sabores ?>" class="link-neutro">
+	<a href="adicionais-<?php echo $url ?>_<?php echo $sigla ?>&sabores=<?php echo $sabores ?>" class="link-neutro">
 		<?php }else{ ?>			
 			
 
-	<a href="observacoes-<?php echo $url ?>_<?php echo $nome_var ?>&sabores=<?php echo $sabores ?>" class="link-neutro <?php echo $ocultar_item ?>">
+	<a href="observacoes-<?php echo $url ?>_<?php echo $sigla ?>&sabores=<?php echo $sabores ?>" class="link-neutro <?php echo $ocultar_item ?>">
 		<?php } ?>
 
 

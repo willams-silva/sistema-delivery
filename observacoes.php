@@ -87,7 +87,7 @@ if($item == ""){
 	$valor_item = $valor;
 	$id_variacao = 0;
 }else{
-	$query = $pdo->query("SELECT * FROM variacoes where produto = '$id_prod' and nome = '$item'");
+	$query = $pdo->query("SELECT * FROM variacoes where produto = '$id_prod' and sigla = '$item'");
 	$res = $query->fetchAll(PDO::FETCH_ASSOC);
 	$valor_item = $res[0]['valor'];
 	$id_variacao = $res[0]['id'];

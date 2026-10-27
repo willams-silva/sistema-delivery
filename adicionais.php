@@ -48,7 +48,7 @@ if($total_reg2 > 0){
 if($item == ""){
 	$valor_item_prod = $valor;
 }else{
-	$query = $pdo->query("SELECT * FROM variacoes where produto = '$id_prod' and nome = '$item'");
+	$query = $pdo->query("SELECT * FROM variacoes where produto = '$id_prod' and sigla = '$item'");
 	$res = $query->fetchAll(PDO::FETCH_ASSOC);
 	$valor_item_prod = $res[0]['valor'];
 
@@ -74,7 +74,7 @@ if($item == ""){
             <?php }else{ ?>
                <a href="categoria-<?php echo $url_cat ?>"><big><i class="bi bi-arrow-left"></i></big></a>
             <?php } ?>
-				<span style="margin-left: 15px"><?php echo $nome ?> <?php echo $item ?> <small><small> <?php echo $texto_sabor ?></small></small></span>
+				<span style="margin-left: 15px; font-size:14px"><?php echo $nome ?> <?php echo $item ?> <small><small> <?php echo $texto_sabor ?></small></small></span>
 			</div>
 
 			<?php require_once("icone-carrinho.php") ?>
@@ -190,7 +190,7 @@ if($item == ""){
     $valor_item = $valor;
     $id_variacao = 0;
 }else{
-    $query = $pdo->query("SELECT * FROM variacoes where produto = '$id_prod' and nome = '$item'");
+    $query = $pdo->query("SELECT * FROM variacoes where produto = '$id_prod' and sigla = '$item'");
     $res = $query->fetchAll(PDO::FETCH_ASSOC);
     $valor_item = $res[0]['valor'];
     $id_variacao = $res[0]['id'];

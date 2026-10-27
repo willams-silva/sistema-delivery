@@ -46,7 +46,7 @@ $complemento = "";
 if($id_usuario != ''){
 
     $valor_entrega = 'Consumir Local';  
-    $tel_cliente = 'Mesa: '.$mesa_pedido;
+    $tel_cliente = 'Mesa: '.@$mesa_pedido;
     $esconder_opc_delivery = 'ocultar';    
     $numero_colapse = '2';
   
@@ -175,6 +175,21 @@ if($id_usuario != ''){
 
    <div id="area-endereco">
 
+     <?php if($entrega_distancia == "Sim" and $chave_api_maps != ""){ ?>
+      <div class="row">
+      <div class="col-4"> 
+        <div class="group">
+          <input type="text" class="input" name="cep" id="cep"  required onblur="calcularFreteDistancia()">
+          <span class="highlight"></span>
+          <span class="bar"></span>
+          <label class="label">CEP*</label>
+        </div>
+      </div>
+
+     
+    </div>
+     <?php } ?>
+
     <div class="row">
       <div class="col-8"> 
         <div class="group">
@@ -207,6 +222,7 @@ if($id_usuario != ''){
         </div>
       </div>
       
+      <?php if($entrega_distancia != "Sim" or $chave_api_maps == ""){ ?>
 
       <div class="col-7"> 
         <div class="group">
@@ -242,6 +258,31 @@ if($id_usuario != ''){
         </div>
 
       </div>
+
+    <?php }else{ ?>
+       <div class="col-7"> 
+        <div class="group">
+          <input type="text" class="input" name="bairro" id="bairro"  required>
+          <span class="highlight"></span>
+          <span class="bar"></span>
+          <label class="label">Bairro*</label>
+        </div>
+      </div>
+
+      <div class="row">
+           <div class="col-12"> 
+            <div class="group">
+              <input type="text" class="input" name="cidade" id="cidade" >
+              <span class="highlight"></span>
+              <span class="bar"></span>
+              <label class="label">Cidade*</label>
+            </div>
+      </div>
+      </div>
+
+      
+    <?php } ?>
+
 
       <div align="center" class="avancar-pgto"><a id="colap-4" href="#" data-bs-toggle="collapse" data-bs-target="#collapse4">Avançar para Pagamento</a></div>
     </div>
@@ -389,7 +430,9 @@ if($id_usuario != ''){
 
 
 <div class="d-grid gap-2 mt-4 abaixo">
-  <a href='#' onclick="finalizarPedido()" class="btn btn-primary botao-carrinho">Concluir Pedido</a>
+  <a href='#' id="botao_finalizar" onclick="finalizarPedido()" class="btn btn-primary botao-carrinho">Concluir Pedido</a>
+
+  <div align="center" id="div_img" style="display:none"><img src="img/loading.gif" width="100%" height="40px"></div>
 </div>
 </div>
 
@@ -467,7 +510,16 @@ if($id_usuario != ''){
    document.getElementById('area-endereco').style.display = "block";
   
   document.getElementById('area-taxa').style.display = "inline-block";
-  calcularFrete()
+
+  var chave_api_maps = "<?=$chave_api_maps?>";
+  var entrega_distancia = "<?=$entrega_distancia?>";
+
+  if(chave_api_maps == "" || entrega_distancia != "Sim"){
+     calcularFrete();
+  }else{
+    calcularFreteDistancia();
+  }
+ 
  
   }
 
@@ -565,6 +617,10 @@ if($id_usuario != ''){
 
 
   function finalizarPedido(){  
+
+    $('#botao_finalizar').hide();
+    $('#div_img').show();
+
     var codigo_pix = $('#codigo_pix').val();
 
      var nome = $('#nome').val();
@@ -574,14 +630,18 @@ if($id_usuario != ''){
 
     if(telefone == "" && id_usuario == ""){
     alert('Preencha seu Telefone'); 
-    $('#telefone').focus();  
+    $('#telefone').focus(); 
+    $('#botao_finalizar').show(); 
+    $('#div_img').hide();
     return;
    }
 
 
     if(nome == ""){
     alert('Preencha seu Nome'); 
-    $('#nome').focus();     
+    $('#nome').focus();    
+    $('#botao_finalizar').show(); 
+    $('#div_img').hide(); 
     return;
    }
   
@@ -604,6 +664,26 @@ if($id_usuario != ''){
    var pedido_whatsapp = "<?=$status_whatsapp?>";
    var cupom = $('#valor-cupom').val();
 
+   var chave_api_maps = "<?=$chave_api_maps?>";
+  var entrega_distancia = "<?=$entrega_distancia?>";
+
+  if(chave_api_maps == "" || entrega_distancia != "Sim"){
+     var cep = "";
+     var cidade = "";
+  }else{
+    var cep = $('#cep').val();
+    var cidade = $('#cidade').val();
+  }
+
+   
+
+    if(taxa_entrega == "" && id_usuario == ""){
+    alert("Digite um CEP válido para receber seu Pedido");
+    $('#botao_finalizar').show(); 
+    $('#div_img').hide();
+    return;
+   }
+
    if(cupom == ""){
     cupom = 0;
    }
@@ -625,6 +705,8 @@ if($id_usuario != ''){
    if(pedido_minimo > 0){
     if(parseFloat(total_compra) < parseFloat(pedido_minimo)){
       alert('Seu pedido precisar ser superior a R$'+pedido_minimo);
+      $('#botao_finalizar').show();
+      $('#div_img').hide(); 
       return;
     }
    }
@@ -632,24 +714,32 @@ if($id_usuario != ''){
     if(entrega == ""){
     alert('Selecione uma forma de entrega');
     $('#colapse-2').click();
+    $('#botao_finalizar').show(); 
+    $('#div_img').hide();
     return;
    }
 
     if(entrega == "Delivery" && rua == ""){
     alert('Preencha o Campo Rua');
     $('#colapse-3').click();
+    $('#botao_finalizar').show(); 
+    $('#div_img').hide();
     return;
    }
 
     if(entrega == "Delivery" && numero == ""){
     alert('Preencha o Campo Número');
     $('#colapse-3').click();
+    $('#botao_finalizar').show(); 
+    $('#div_img').hide();
     return;
    }
 
     if(entrega == "Delivery" && bairro == ""){
     alert('Escolha um Bairro');
     $('#colapse-3').click();
+    $('#botao_finalizar').show(); 
+    $('#div_img').hide();
     return;
    }
 
@@ -657,12 +747,15 @@ if($id_usuario != ''){
 
    if(pagamento == ""){
     alert('Selecione uma forma de pagamento');
+    $('#botao_finalizar').show(); 
+    $('#div_img').hide();
     return;
    }
 
     if(pagamento == "Dinheiro" && troco == ""){
     alert('Digite o total a ser pago para o troco');
-    
+    $('#botao_finalizar').show(); 
+    $('#div_img').hide();
     return;
    }
 
@@ -672,7 +765,8 @@ if($id_usuario != ''){
    
    if(pagamento == "Dinheiro" && troco < total_compra_final){
     alert('Digite um valor acima do total da compra!');
-    
+    $('#botao_finalizar').show(); 
+    $('#div_img').hide();
     return;
    }
 
@@ -680,7 +774,7 @@ if($id_usuario != ''){
     $.ajax({
          url: 'js/ajax/inserir-pedido.php',
         method: 'POST',
-        data: {pagamento, entrega, rua, numero, bairro, complemento, troco, obs, nome_cliente, tel_cliente, id_cliente, mesa, cupom, codigo_pix},
+        data: {pagamento, entrega, rua, numero, bairro, complemento, troco, obs, nome_cliente, tel_cliente, id_cliente, mesa, cupom, codigo_pix, cep, cidade, taxa_entrega},
         dataType: "html",
 
         success:function(result){
@@ -719,7 +813,8 @@ if($id_usuario != ''){
 
            }
 
-          
+          $('#botao_finalizar').show(); 
+          $('#div_img').hide();
                        
         }
     });
@@ -759,7 +854,7 @@ if($id_usuario != ''){
     document.querySelector("#chave_pix_copia").select();
     document.querySelector("#chave_pix_copia").setSelectionRange(0, 99999); /* Para mobile */
     document.execCommand("copy");
-    $("#chave_pix_copia").hide();
+    //$("#chave_pix_copia").hide();
     alert('Chave Pix Copiada! Use a opção Copie e Cole para Pagar')
   }
 </script>
@@ -779,7 +874,8 @@ if($id_usuario != ''){
       data: {tel},
       dataType: "text",
 
-      success:function(result){    
+      success:function(result){  
+      //alert(result)  
 
         var split = result.split("**");    
 
@@ -794,6 +890,8 @@ if($id_usuario != ''){
         $('#taxa-entrega-input').val(split[5]); 
         $('#taxa-entrega').text(split[6]); 
         $('#id_cliente').text(split[7]); 
+        $('#cep').val(split[8]); 
+        $('#cidade').val(split[9]); 
       }
     }); 
   }
@@ -880,3 +978,135 @@ if($id_usuario != ''){
     });
   }
 </script>
+
+
+
+<script>
+    var restaurantCoords = {
+      latitude: "<?=$latitude_rest?>",
+      longitude: "<?=$longitude_rest?>" 
+    };
+
+       
+    document.getElementById('cep').addEventListener('input', function(event) {
+      var cep = event.target.value.replace(/\D/g, '');
+
+      if (cep.length === 8) {
+        fetchAddressData(cep);
+      }
+    });
+
+    function calcularFreteDistancia(){
+
+      var chave_api = "<?=$chave_api_maps?>";
+      var distancia_km = "<?=$distancia_entrega_km?>";
+      
+      event.preventDefault();
+      var cep = document.getElementById('cep').value;
+      var address = document.getElementById('rua').value;
+      var number = document.getElementById('numero').value;
+      var bairro = document.getElementById('bairro').value;
+      var cidade = document.getElementById('cidade').value;
+      var complement = document.getElementById('complemento').value;
+
+      if(cep == ""){
+        return;
+      }
+
+      var encodedAddress = encodeURIComponent(address + ', ' + number + ', ' + bairro + ', ' + cidade + ', ' + complement);
+      //alert(encodedAddress)
+
+      fetch('https://maps.googleapis.com/maps/api/geocode/json?address=' + encodedAddress + '&key=' + chave_api)
+        .then(function(response) {
+          return response.json();
+        })
+        .then(function(data) {
+          if (data.status === 'OK' && data.results.length > 0) {
+           
+            var deliveryCoords = {
+
+              latitude: data.results[0].geometry.location.lat,
+              longitude: data.results[0].geometry.location.lng
+            };
+
+            var distance = calculateDistance(restaurantCoords, deliveryCoords);
+
+            //alert(distance)
+            //document.getElementById('distancia').innerText = distance.toFixed(2) + ' KM';
+
+            if (distance <= distancia_km) {
+              var deliveryCost = calculateDeliveryCost(distance);
+              $('#taxa-entrega').text(deliveryCost.toFixed(2));
+              $('#taxa-entrega-input').val(deliveryCost); 
+
+              var total_compra = "<?=$total_carrinho?>";
+              var total_final_compra = parseFloat(deliveryCost) + parseFloat(total_compra);
+              $('#total-carrinho-finalizar').text(total_final_compra.toLocaleString('pt-br', {minimumFractionDigits: 2})); 
+
+            } else {
+              alert('Endereço fora da área de entrega.');
+              return;
+            }
+          } else {
+            alert('Endereço inválido ou Chave Api Inexistente.');
+            return;
+          }
+        })
+        .catch(function(error) {
+          console.error(error);
+        });
+    }
+
+    function fetchAddressData(cep) {
+      fetch('https://viacep.com.br/ws/' + cep + '/json/')
+        .then(function(response) {
+          return response.json();
+        })
+        .then(function(data) {
+          if (!data.erro) {
+            document.getElementById('rua').value = data.logradouro;
+             document.getElementById('bairro').value = data.bairro;
+            document.getElementById('cidade').value = data.localidade;
+            document.getElementById('numero').focus();
+            
+          }
+        })
+        .catch(function(error) {
+          console.error(error);
+        });
+    }
+
+    function calculateDistance(coord1, coord2) {
+      var lat1 = toRadians(coord1.latitude);
+      var lon1 = toRadians(coord1.longitude);
+      var lat2 = toRadians(coord2.latitude);
+      var lon2 = toRadians(coord2.longitude);
+
+      var R = 6371; // Raio da Terra em quilômetros
+
+      var dLat = lat2 - lat1;
+      var dLon = lon2 - lon1;
+
+      var a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+              Math.cos(lat1) * Math.cos(lat2) *
+              Math.sin(dLon / 2) * Math.sin(dLon / 2);
+      var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+
+      var distance = R * c;
+      return distance;
+    }
+
+    function toRadians(degrees) {
+      return degrees * (Math.PI / 180);
+    }
+
+    function calculateDeliveryCost(distance) {
+      var valor_km = "<?=$valor_km?>";
+      if(valor_km == "" || valor_km <= 0){
+        valor_km = 1;
+      }
+      var roundedDistance = Math.ceil(distance);
+      return roundedDistance * valor_km;
+
+    }
+  </script>

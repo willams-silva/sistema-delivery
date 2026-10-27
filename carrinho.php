@@ -18,7 +18,7 @@ $sessao = $_SESSION['sessao_usuario'];
 		<div class="container-fluid">
 			<div class="navbar-brand" >
 				<a href="index"><big><i class="bi bi-arrow-left"></i></big></a>
-				<span style="margin-left: 15px">RESUMO DO PEDIDO</span>
+				<span style="margin-left: 15px; font-size:14px">RESUMO DO PEDIDO</span>
 
 			</div>
 
