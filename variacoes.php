@@ -1,6 +1,15 @@
 <?php 
 require_once("cabecalho.php");
 $url = $_GET['url'];
+$sabores = @$_GET['sabores'];
+
+if($sabores == 1){
+	$texto_sabor = ' (1º Sabor)';
+}else if($sabores == 2){
+$texto_sabor = ' (2º Sabor)';
+}else{
+	$texto_sabor = '';
+}
 
 $query = $pdo->query("SELECT * FROM produtos where url = '$url'");
 $res = $query->fetchAll(PDO::FETCH_ASSOC);
@@ -36,8 +45,12 @@ $total_ing = @count($res);
 	<nav class="navbar bg-light fixed-top" style="box-shadow: 0px 3px 5px rgba(0, 0, 0, 0.20);">
 		<div class="container-fluid">
 			<div class="navbar-brand" >
+				<?php if($sabores == 2){ ?>
+				<a href="2sabores-<?php echo $url_cat ?>&sabores=<?php echo $sabores ?>"><big><i class="bi bi-arrow-left"></i></big></a>
+			<?php }else{ ?>
 				<a href="categoria-<?php echo $url_cat ?>"><big><i class="bi bi-arrow-left"></i></big></a>
-				<span style="margin-left: 15px"><?php echo mb_strtoupper($nome) ?></span>
+			<?php } ?>
+				<span style="margin-left: 15px"><?php echo mb_strtoupper($nome) ?><small><small> <?php echo $texto_sabor ?></small></small></span>
 			</div>
 
 			<?php require_once("icone-carrinho.php") ?>
@@ -68,10 +81,10 @@ $total_ing = @count($res);
 
 		<?php 
 			if($total_adc > 0 || $total_ing > 0){ ?>
-	<a href="adicionais-<?php echo $url ?>_<?php echo $nome_var ?>" class="link-neutro">
+	<a href="adicionais-<?php echo $url ?>_<?php echo $nome_var ?>&sabores=<?php echo $sabores ?>" class="link-neutro">
 		<?php }else{ ?>
 
-	<a href="observacoes-<?php echo $url ?>_<?php echo $nome_var ?>" class="link-neutro">
+	<a href="observacoes-<?php echo $url ?>_<?php echo $nome_var ?>&sabores=<?php echo $sabores ?>" class="link-neutro">
 		<?php } ?>
 		
 		<li class="list-group-item d-flex justify-content-between align-items-start"> 
@@ -88,10 +101,10 @@ $total_ing = @count($res);
 	
 	<?php 
 			if($total_adc > 0 || $total_ing > 0){ ?>
-	<a href="adicionais-<?php echo $url ?>" class="link-neutro">
+	<a href="adicionais-<?php echo $url ?>&sabores=<?php echo $sabores ?>" class="link-neutro">
 		<?php }else{ ?>
 
-	<a href="observacoes-<?php echo $url ?>" class="link-neutro">
+	<a href="observacoes-<?php echo $url ?>&sabores=<?php echo $sabores ?>" class="link-neutro">
 		<?php } ?>
 
 		<li class="list-group-item">

@@ -2,6 +2,15 @@
 @session_start(); 
 require_once("cabecalho.php");
 $url_completa = $_GET['url'];
+$sabores = @$_GET['sabores'];
+
+if($sabores == 1){
+    $texto_sabor = ' (1º Sabor)';
+}else if($sabores == 2){
+$texto_sabor = ' (2º Sabor)';
+}else{
+    $texto_sabor = '';
+}
 
 $sessao = date('Y-m-d-H:i:s-').rand(0, 1500);;
 
@@ -47,8 +56,8 @@ if($item == ""){
 	<nav class="navbar bg-light fixed-top" style="box-shadow: 0px 3px 5px rgba(0, 0, 0, 0.20);">
 		<div class="container-fluid">
 			<div class="navbar-brand" >
-				<a href="produto-<?php echo $url ?>"><big><i class="bi bi-arrow-left"></i></big></a>
-				<span style="margin-left: 15px"><?php echo $nome ?> <?php echo $item ?></span>
+				<a href="produto-<?php echo $url ?>&sabores=<?php echo $sabores ?>"><big><i class="bi bi-arrow-left"></i></big></a>
+				<span style="margin-left: 15px"><?php echo $nome ?> <?php echo $item ?> <small><small> <?php echo $texto_sabor ?></small></small></span>
 			</div>
 
 			<?php require_once("icone-carrinho.php") ?>
@@ -71,7 +80,7 @@ if($item == ""){
 
 
 	<div class="d-grid gap-2 mt-4">
-		<a href='observacoes-<?php echo $url_completa ?>' class="btn btn-primary">Avançar</a>
+		<a href='observacoes-<?php echo $url_completa ?>&sabores=<?php echo $sabores ?>' class="btn btn-primary">Avançar</a>
 	</div>
 
 

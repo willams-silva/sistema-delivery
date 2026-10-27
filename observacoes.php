@@ -2,6 +2,15 @@
 @session_start(); 
 require_once("cabecalho.php");
 $url_completa = $_GET['url'];
+$sabores = @$_GET['sabores'];
+
+if($sabores == 1){
+    $texto_sabor = ' (1º Sabor)';
+}else if($sabores == 2){
+$texto_sabor = ' (2º Sabor)';
+}else{
+    $texto_sabor = '';
+}
 
 if(@$_SESSION['sessao_usuario'] == ""){
 	$sessao = date('Y-m-d-H:i:s-').rand(0, 1500);;
@@ -40,13 +49,23 @@ if($total_reg > 0){
 	$categoria = $res[0]['categoria'];
 }
 
+$query = $pdo->query("SELECT * FROM categorias where id = '$categoria'");
+$res = $query->fetchAll(PDO::FETCH_ASSOC);
+$total_reg = @count($res);
+if($total_reg > 0){
+	$url_cat = $res[0]['url'];
+}
+
+$url_itens = '2sabores-'.$url_cat.'&sabores=2';
+
 if($item == ""){
 	$valor_item = $valor;
+	$id_variacao = 0;
 }else{
 	$query = $pdo->query("SELECT * FROM variacoes where produto = '$id_prod' and nome = '$item'");
 	$res = $query->fetchAll(PDO::FETCH_ASSOC);
 	$valor_item = $res[0]['valor'];
-
+	$id_variacao = $res[0]['id'];
 }
 
 $query =$pdo->query("SELECT * FROM temp where sessao = '$sessao' and tabela = 'adicionais' and carrinho = '0'");
@@ -130,9 +149,9 @@ $total_ing = @count($res);
 		<div class="container-fluid">
 			<div class="navbar-brand" >
 				<?php if($total_adc > 0 || $total_ing > 0){ ?>
-				<a href="adicionais-<?php echo $url_completa ?>"><big><i class="bi bi-arrow-left"></i></big></a>
+				<a href="adicionais-<?php echo $url_completa ?>&sabores=<?php echo $sabores ?>"><big><i class="bi bi-arrow-left"></i></big></a>
 				<?php }else{ ?>
-				<a href="produto-<?php echo $url ?>"><big><i class="bi bi-arrow-left"></i></big></a>
+				<a href="produto-<?php echo $url ?>&sabores=<?php echo $sabores ?>"><big><i class="bi bi-arrow-left"></i></big></a>
 				<?php } ?>	
 				<span style="margin-left: 15px">Resumo do Item</span>
 			</div>
@@ -145,10 +164,10 @@ $total_ing = @count($res);
 
 
 	<div class="destaque">
-		<b><?php echo mb_strtoupper($nome); ?></b>
+		<b><?php echo mb_strtoupper($nome); ?></b> <small><small> <?php echo $texto_sabor ?></small></small>
 	</div>
 
-
+	<?php if($sabores != 2 and $sabores != 1){ ?>
 	<div class="destaque-qtd">
 		<b>QUANTIDADE</b>
 		<span class="direita">
@@ -159,6 +178,7 @@ $total_ing = @count($res);
 			</big>
 		</span>
 	</div>
+	<?php } ?>
 
 	<input type="hidden" id="quantidade" value="1">
 	<input type="hidden" id="total_item_input" value="<?php echo $valor_item ?>">
@@ -220,6 +240,8 @@ $total_ing = @count($res);
 							</div>
 						</div>
 
+						<?php if($sabores != 1){ ?>
+
 						<div class="row" align="center">								
 							<div class="col-6"> 
 								<a href="#" onclick="comprarMais()" class="btn btn-primary" style="width:100%">Comprar Mais</a>
@@ -230,6 +252,16 @@ $total_ing = @count($res);
 							</div>
 
 						</div>
+
+					<?php }else{ ?>
+
+							<div class="row" align="center">								
+							<div class="col-12"> 
+								<a href="#" onclick="selecionarSegundo()" class="btn btn-primary" style="width:100%">Selecionar Segundo Sabor</a>
+							</div>							
+
+						</div>
+					<?php } ?>
 
 						<br>
 						<div id="mensagem" align="center"></div>
@@ -351,6 +383,23 @@ $total_ing = @count($res);
 		setTimeout(redirecionarCarrinho, 1000);
 	}
 
+
+	function selecionarSegundo(){
+		var telefone = $('#telefone').val();
+		var nome = $('#nome').val();
+		if(telefone == ''){
+			alert('Preencha o Telefone!');
+			return;
+		}
+		if(nome == ''){
+			alert('Preencha o Nome!');
+			return;
+		}
+		addCarrinho();
+		setTimeout(redirecionarCategoria, 1000);
+	}
+
+
 	function redirecionar(){
 		 window.location='index';
 	}
@@ -361,6 +410,12 @@ $total_ing = @count($res);
 	}
 
 
+	function redirecionarCategoria(){
+		var url = "<?=$url_itens?>";
+		 window.location=url;
+	}
+
+
 	function addCarrinho(){
 		var telefone = $('#telefone').val();
 		var nome = $('#nome').val();
@@ -368,11 +423,14 @@ $total_ing = @count($res);
 		var total_item = $('#total_item_input').val();
 		var produto = "<?=$id_prod?>";
 		var obs = $('#obs').val();
+		var sabores = "<?=$sabores?>";
+		var variacao = "<?=$id_variacao?>";
+		
 
 		 $.ajax({
         url: 'js/ajax/add-carrinho.php',
         method: 'POST',
-        data: {telefone, nome, quantidade, total_item, produto, obs},
+        data: {telefone, nome, quantidade, total_item, produto, obs, sabores, variacao},
         dataType: "text",
 
         success: function (mensagem) {  

@@ -9,7 +9,11 @@ if($total_reg > 0){
 $nome = $res[0]['nome'];
 $descricao = $res[0]['descricao'];
 $id = $res[0]['id'];
+$mais_sabores = $res[0]['mais_sabores'];
+
 }
+
+
  ?>
 
 <div class="main-container">
@@ -26,10 +30,27 @@ $id = $res[0]['id'];
 		</div>
 	</nav>
 
-
-
-
+<?php if($mais_sabores == 'Sim'){ ?>
+<div class="sabores row" style="margin-top: 65px; margin-bottom: 10px">	
+	<div class="col-6">
+	<div class="sabores-itens" style="background-color: #e6f8ff">
+	<img src="img/1sabor.png" width="35px"><br>
+ 1 Sabor
+	</div>
+</div>
+	<div class="col-6">
+	<a href="2sabores-<?php echo $url ?>" class="link-neutro">
+	<div class="sabores-itens">
+		<img src="img/2sabor.png" width="35px"><br>
+2 Sabores
+	</div>
+	</a>
+</div>
+</div>
+<ol class="list-group ">
+<?php }else{ ?>
 	<ol class="list-group " style="margin-top: 65px">
+<?php } ?>
 
 		<?php 
 		$query = $pdo->query("SELECT * FROM produtos where categoria = '$id' and ativo = 'Sim'");

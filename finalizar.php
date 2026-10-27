@@ -5,7 +5,7 @@ $sessao = @$_SESSION['sessao_usuario'];
 
 $total_carrinho = 0;
 $total_carrinhoF = 0;
-$query = $pdo->query("SELECT * FROM carrinho where sessao = '$sessao'");
+$query = $pdo->query("SELECT * FROM carrinho where sessao = '$sessao' and id_sabor = 0");
 $res = $query->fetchAll(PDO::FETCH_ASSOC);
 $total_reg = @count($res);
 
@@ -257,7 +257,7 @@ $taxa_entregaF = number_format($taxa_entrega, 2, ',', '.');
 
    <div id="pagar_pix" style="margin-top: 15px">
      <b>Pagar com Pix </b><br>
-     Chave <?php echo $tipo_chave ?> : <?php echo $chave_pix ?><br>
+     Chave <?php echo $tipo_chave ?> : <?php echo $chave_pix ?> <a class="link-neutro" href="#" onClick="copiar()"><i class="bi bi-clipboard text-primary"></i> <small><small>Copiar Pix</small></small> </a><br>
      <small>Ao efetuar o pagamento nos encaminhar o comprovante no whatsapp <span style="margin-left: 15px"><a target="_blank" href="http://api.whatsapp.com/send?1=pt_BR&phone=<?php echo $whatsapp_sistema ?>" class="link-neutro"><i class="bi bi-whatsapp text-success"></i> <?php echo $telefone_sistema ?></a></span> </small>
    </div>
 
@@ -318,6 +318,7 @@ $taxa_entregaF = number_format($taxa_entrega, 2, ',', '.');
 <input type="hidden" id="entrega">
 <input type="hidden" id="pagamento">
 <input type="hidden" id="taxa-entrega-input">
+<input type="hidden" id="chave_pix_copia" value="<?php echo $chave_pix ?>">
 
 <div class="total-finalizar">
 <div class="total-pedido">
@@ -591,5 +592,13 @@ $taxa_entregaF = number_format($taxa_entrega, 2, ',', '.');
 
         }
     });
+  }
+</script>
+
+
+<script type="text/javascript">
+  function copiar(){
+    document.querySelector("#chave_pix_copia").select();
+    document.execCommand("copy");
   }
 </script>
