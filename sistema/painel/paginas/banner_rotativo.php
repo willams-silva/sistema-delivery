@@ -60,7 +60,7 @@ $pag = 'banner_rotativo';
 						<div class="row">
 							<div class="col-md-8">						
 								<div class="form-group"> 
-									<label>Foto <small><small>(1024x470 Tamanho Recomendado)</small></small></label> 
+									<label>Foto <small><small>(1400x600 Tamanho Recomendado)</small></small></label> 
 									<input class="form-control" type="file" name="foto" onChange="carregarImg();" id="foto">
 								</div>						
 							</div>

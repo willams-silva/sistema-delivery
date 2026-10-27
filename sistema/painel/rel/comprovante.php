@@ -27,7 +27,9 @@ $usuario_baixa = $res[0]['usuario_baixa'];
 $entrega = $res[0]['entrega'];
 $mesa = $res[0]['mesa'];
 $nome_cliente_ped = $res[0]['nome_cliente'];
+$cupom = $res[0]['cupom'];
 
+$cupomF = number_format($cupom, 2, ',', '.');
 $valorF = number_format($valor, 2, ',', '.');
 $total_pagoF = number_format($total_pago, 2, ',', '.');
 $trocoF = number_format($troco, 2, ',', '.');
@@ -35,7 +37,7 @@ $taxa_entregaF = number_format($taxa_entrega, 2, ',', '.');
 $dataF = implode('/', array_reverse(explode('-', $data)));
 	//$horaF = date("H:i", strtotime($hora));	
 
-$valor_dos_itens = $valor - $taxa_entrega;
+$valor_dos_itens = $valor - $taxa_entrega + $cupom;
 $valor_dos_itensF = number_format($valor_dos_itens, 2, ',', '.');
 
 $hora_pedido = date('H:i', strtotime("+$previsao_entrega minutes",strtotime($hora)));
@@ -293,6 +295,7 @@ if($total_reg33 > 0){
 		foreach ($res33[$i33] as $key => $value){}
 		$prod = $res33[$i33]['produto'];
 		$id_car = $res33[$i33]['id'];
+		$obs_item2 = $res33[$i33]['obs'];
 
 		$query2 = $pdo->query("SELECT * FROM produtos where id = '$prod'");
 		$res2 = $query2->fetchAll(PDO::FETCH_ASSOC);
@@ -301,6 +304,8 @@ if($total_reg33 > 0){
 			$nome_prod = $res2[0]['nome'];
 		}
 
+	
+	//listar adicionais pizza 2 sab	
 	$query2 =$pdo->query("SELECT * FROM temp where carrinho = '$id_car' and tabela = 'adicionais'");
 	$res2 = $query2->fetchAll(PDO::FETCH_ASSOC);
 	$total_reg2 = @count($res2);
@@ -333,7 +338,51 @@ if($total_reg33 > 0){
 			</small>
 		</div>
 
-	<?php } ?>
+	<?php 
+
+		} ?>
+
+
+		<?php  
+
+		//listar guarnicoes pizza 2 sab	
+	$query2 =$pdo->query("SELECT * FROM temp where carrinho = '$id_car' and tabela = 'guarnicoes'");
+	$res2 = $query2->fetchAll(PDO::FETCH_ASSOC);
+	$total_reg2 = @count($res2);
+	if($total_reg2 > 0){
+		if($total_reg2 > 1){
+			$texto_adicional = $nome_prod .' ('.$total_reg2.') Guarnições';
+		}else{
+			$texto_adicional = $nome_prod .' ('.$total_reg2.') Guarnição';
+		}
+		?>
+
+		<div align="left" style="margin-left: 15px">
+			<small><b><?php echo $texto_adicional ?> : </b>
+				<?php 
+				for($i2=0; $i2 < $total_reg2; $i2++){
+					foreach ($res2[$i2] as $key => $value){}
+						$id_temp = $res2[$i2]['id'];				
+					$id_item = $res2[$i2]['id_item'];		
+
+					$query3 =$pdo->query("SELECT * FROM guarnicoes where id = '$id_item'");
+					$res3 = $query3->fetchAll(PDO::FETCH_ASSOC);
+					$total_reg3 = @count($res3);
+					$nome_adc = $res3[0]['nome'];
+					echo $nome_adc;
+					if($i2 < ($total_reg2 - 1)){
+						echo ', ';
+					}
+				}
+				?>
+			</small>
+		</div>
+
+	<?php 
+
+		} ?>
+
+
 
 
 
@@ -374,11 +423,11 @@ if($total_reg33 > 0){
 
 	<?php 
 
-	if($obs_item != ""){
+	if($obs_item2 != ""){
 		?>	
 		<div align="left" style="margin-left: 15px">
 			<small><b>Observação : </b>
-				<?php echo $obs_item ?>
+				<?php echo $obs_item2 ?>
 			</small>		
 		</div>
 	<?php } ?>
@@ -408,6 +457,45 @@ if($total_reg33 > 0){
 					$id_item = $res2[$i2]['id_item'];		
 
 					$query3 =$pdo->query("SELECT * FROM adicionais where id = '$id_item'");
+					$res3 = $query3->fetchAll(PDO::FETCH_ASSOC);
+					$total_reg3 = @count($res3);
+					$nome_adc = $res3[0]['nome'];
+					echo $nome_adc;
+					if($i2 < ($total_reg2 - 1)){
+						echo ', ';
+					}
+				}
+				?>
+			</small>
+		</div>
+
+	<?php } ?>
+
+
+
+
+	<?php 
+
+	$query2 =$pdo->query("SELECT * FROM temp where carrinho = '$id_carrinho' and tabela = 'guarnicoes'");
+	$res2 = $query2->fetchAll(PDO::FETCH_ASSOC);
+	$total_reg2 = @count($res2);
+	if($total_reg2 > 0){
+		if($total_reg2 > 1){
+			$texto_adicional = '('.$total_reg2.') Guarnições';
+		}else{
+			$texto_adicional = '('.$total_reg2.') Guarnição';
+		}
+		?>
+
+		<div align="left" style="margin-left: 15px">
+			<small><b><?php echo $texto_adicional ?> : </b>
+				<?php 
+				for($i2=0; $i2 < $total_reg2; $i2++){
+					foreach ($res2[$i2] as $key => $value){}
+						$id_temp = $res2[$i2]['id'];				
+					$id_item = $res2[$i2]['id_item'];		
+
+					$query3 =$pdo->query("SELECT * FROM guarnicoes where id = '$id_item'");
 					$res3 = $query3->fetchAll(PDO::FETCH_ASSOC);
 					$total_reg3 = @count($res3);
 					$nome_adc = $res3[0]['nome'];
@@ -477,6 +565,7 @@ if($total_reg33 > 0){
 
 <div class="th" style="margin-bottom: 7px"></div>
 
+
 <?php if($entrega == "Delivery"){ ?>
 	<div class="row valores">			
 		<div class="col-6">Total</div>
@@ -490,6 +579,13 @@ if($total_reg33 > 0){
 		<div class="col-6" align="right">R$ <?php echo @$taxa_entregaF ?></div>	
 	</div>			
 <?php } ?>		
+
+<?php if($cupom > 0){ ?>
+	<div class="row valores">			
+		<div class="col-6">Cupom de Desconto</div>
+		<div class="col-6" align="right">R$ <?php echo @$cupomF ?></div>
+	</div>			
+<?php } ?>	
 
 <div class="row valores">			
 	<div class="col-6">SubTotal</div>

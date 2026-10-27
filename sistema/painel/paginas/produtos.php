@@ -82,7 +82,7 @@ $pag = 'produtos';
 
 					<div class="row">
 
-					<div class="col-md-3">
+					<div class="col-md-2">
 
 							<div class="form-group">
 								<label for="exampleInputEmail1">Valor Compra</label>
@@ -91,7 +91,7 @@ $pag = 'produtos';
 						</div>					
 						
 
-						<div class="col-md-3">
+						<div class="col-md-2">
 
 							<div class="form-group">
 								<label for="exampleInputEmail1">Valor Venda</label>
@@ -108,7 +108,7 @@ $pag = 'produtos';
 							</div> 	
 						</div>	
 
-						<div class="col-md-3">
+						<div class="col-md-2">
 							<div class="form-group">
 								<label for="exampleInputEmail1">Tem Estoque?</label>
 								<select class="form-control sel2" id="tem_estoque" name="tem_estoque" style="width:100%;" > 
@@ -119,6 +119,15 @@ $pag = 'produtos';
 								</select>   
 							</div> 
 							</div>	
+
+
+							<div class="col-md-3">
+
+							<div class="form-group">
+								<label for="exampleInputEmail1">Quantidade Guarnições</label>
+								<input type="number" class="form-control" id="guarnicoes" name="guarnicoes" placeholder="Se Houver" >    
+							</div> 	
+						</div>	
 
 						
 
@@ -218,10 +227,13 @@ $pag = 'produtos';
 						<span><b>Tem Estoque: </b></span>
 						<span id="tem_estoque_dados"></span>							
 					</div>
+
+					
 						
 
 				</div>
 
+				
 
 				<div class="row" style="border-bottom: 1px solid #cac7c7;">
 					<div class="col-md-12">							
@@ -234,7 +246,12 @@ $pag = 'produtos';
 
 				</div>
 
-			
+			<div class="row" style="border-bottom: 1px solid #cac7c7;">
+				<div class="col-md-6">							
+						<span><b>Guarnições: </b></span>
+						<span id="guarnicoes_dados"></span>							
+					</div>
+				</div>
 
 
 				<div class="row">
@@ -432,6 +449,61 @@ $pag = 'produtos';
 	</div>
 </div>
 
+
+
+
+
+
+
+<!-- Modal Guarnições-->
+<div class="modal fade" id="modalGuarnicoes" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+	<div class="modal-dialog" role="document">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h4 class="modal-title" id="exampleModalLabel"><span id="titulo_nome_guar"></span></h4>
+				<button id="btn-fechar-guar" type="button" class="close" data-dismiss="modal" aria-label="Close" style="margin-top: -20px">
+					<span aria-hidden="true" >&times;</span>
+				</button>
+			</div>
+			
+			<div class="modal-body">
+				<form id="form-guar">
+
+
+					<div class="row">					
+
+					<div class="col-md-6">
+							<div class="form-group">
+								<label for="exampleInputEmail1">Nome</label>
+								<input maxlength="35" type="text" class="form-control" id="nome_guar" name="nome" placeholder="Leite em Pó, Nutela ..." required>    
+							</div> 	
+						</div>
+
+						<div class="col-md-3" style="margin-top: 20px">
+							<button type="submit" class="btn btn-primary">Salvar</button>
+						
+						</div>
+						
+						
+					</div>	
+
+							
+				<input type="hidden" id="id_guar" name="id">
+				
+				</form>
+
+				<br>
+					<small><div id="mensagem-guar" align="center"></div></small>
+
+
+					<hr>
+					<div id="listar-guar"></div>
+			</div>
+
+			
+		</div>
+	</div>
+</div>
 
 
 
@@ -702,6 +774,48 @@ $("#form-var").submit(function () {
     });
 
 });
+
+
+
+
+
+$("#form-guar").submit(function () {
+
+	var id_var = $('#id_guar').val()
+
+    event.preventDefault();
+    var formData = new FormData(this);
+
+    $.ajax({
+        url: 'paginas/' + pag + "/inserir-guarnicoes.php",
+        type: 'POST',
+        data: formData,
+
+        success: function (mensagem) {
+            $('#mensagem-guar').text('');
+            $('#mensagem-guar').removeClass()
+            if (mensagem.trim() == "Salvo com Sucesso") {
+
+                //$('#btn-fechar-var').click();
+                listarGuarnicoes(id_var); 
+                limparCamposGuar();         
+
+            } else {
+
+                $('#mensagem-guar').addClass('text-danger')
+                $('#mensagem-guar').text(mensagem)
+            }
+
+
+        },
+
+        cache: false,
+        contentType: false,
+        processData: false,
+
+    });
+
+});
 </script>
 
 
@@ -712,6 +826,12 @@ $("#form-var").submit(function () {
 		$('#valor_var').val('');		
 		$('#sigla').val('');	
 		$('#descricao_var').val('');		
+		
+	}
+
+	function limparCamposGuar(){
+		
+		$('#nome_guar').val('');		
 		
 	}
 
@@ -731,6 +851,21 @@ $("#form-var").submit(function () {
 }
 
 
+
+
+function listarGuarnicoes(id){
+    $.ajax({
+        url: 'paginas/' + pag + "/listar-guarnicoes.php",
+        method: 'POST',
+        data: {id},
+        dataType: "html",
+
+        success:function(result){
+            $("#listar-guar").html(result);
+            $('#mensagem-excluir-guar').text('');
+        }
+    });
+}
 
 
 
@@ -758,6 +893,28 @@ function excluirVar(id){
 
 
 
+function excluirGuar(id){
+	var id_var = $('#id_guar').val()
+    $.ajax({
+        url: 'paginas/' + pag + "/excluir-guarnicoes.php",
+        method: 'POST',
+        data: {id},
+        dataType: "text",
+
+        success: function (mensagem) {            
+            if (mensagem.trim() == "Excluído com Sucesso") {                
+                listarGuarnicoes(id_var);                
+            } else {
+                $('#mensagem-excluir-guar').addClass('text-danger')
+                $('#mensagem-excluir-guar').text(mensagem)
+            }
+
+        },      
+
+    });
+}
+
+
 function ativarVar(id, acao){
 	var id_var = $('#id_var').val()
     $.ajax({
@@ -772,6 +929,29 @@ function ativarVar(id, acao){
             } else {
                 $('#mensagem-excluir-var').addClass('text-danger')
                 $('#mensagem-excluir-var').text(mensagem)
+            }
+
+        },      
+
+    });
+}
+
+
+
+function ativarGuar(id, acao){
+	var id_var = $('#id_guar').val()
+    $.ajax({
+        url: 'paginas/' + pag + "/mudar-status-guar.php",
+        method: 'POST',
+        data: {id, acao},
+        dataType: "text",
+
+        success: function (mensagem) {            
+            if (mensagem.trim() == "Alterado com Sucesso") {                
+                listarGuarnicoes(id_var);                
+            } else {
+                $('#mensagem-excluir-guar').addClass('text-danger')
+                $('#mensagem-excluir-guar').text(mensagem)
             }
 
         },      

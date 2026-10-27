@@ -81,7 +81,9 @@ $taxa_entrega = $res[0]['taxa_entrega'];
 $tipo_pgto = $res[0]['tipo_pgto'];
 $usuario_baixa = $res[0]['usuario_baixa'];
 $entrega = $res[0]['entrega'];
+$cupom = $res[0]['cupom'];
 
+$cupomF = number_format($cupom, 2, ',', '.');
 $valorF = number_format($valor, 2, ',', '.');
 $total_pagoF = number_format($total_pago, 2, ',', '.');
 $trocoF = number_format($troco, 2, ',', '.');
@@ -89,7 +91,7 @@ $taxa_entregaF = number_format($taxa_entrega, 2, ',', '.');
 $dataF = implode('/', array_reverse(explode('-', $data)));
 	//$horaF = date("H:i", strtotime($hora));	
 
-$valor_dos_itens = $valor - $taxa_entrega;
+$valor_dos_itens = $valor - $taxa_entrega + $cupom;
 $valor_dos_itensF = number_format($valor_dos_itens, 2, ',', '.');
 
 $hora_pedido = date('H:i', strtotime("+$previsao_entrega minutes",strtotime($hora)));
@@ -206,6 +208,7 @@ if($total_reg33 > 0){
 		foreach ($res33[$i33] as $key => $value){}
 		$prod = $res33[$i33]['produto'];
 		$id_car = $res33[$i33]['id'];
+		$obs_item2 = $res33[$i33]['obs'];
 
 		$query2 = $pdo->query("SELECT * FROM produtos where id = '$prod'");
 		$res2 = $query2->fetchAll(PDO::FETCH_ASSOC);
@@ -213,8 +216,8 @@ if($total_reg33 > 0){
 				$nome_prod = $res2[0]['nome'];
 			}
 
-		//variacoes do item dois sabores
 
+		//listar adicionais da pizza 2 sabores
 			$query2 =$pdo->query("SELECT * FROM temp where carrinho = '$id_car' and tabela = 'adicionais'");
 	$res2 = $query2->fetchAll(PDO::FETCH_ASSOC);
 	$total_reg2 = @count($res2);
@@ -249,6 +252,47 @@ echo <<<HTML
 HTML;
 }
 
+
+
+
+	//listar guarnicoes da pizza 2 sabores
+			$query2 =$pdo->query("SELECT * FROM temp where carrinho = '$id_car' and tabela = 'guarnicoes'");
+	$res2 = $query2->fetchAll(PDO::FETCH_ASSOC);
+	$total_reg2 = @count($res2);
+	if($total_reg2 > 0){
+		if($total_reg2 > 1){
+			$texto_adicional = $nome_prod .' ('.$total_reg2.') Guarnições';
+		}else{
+			$texto_adicional = $nome_prod .' ('.$total_reg2.') Guarnição';
+		}
+echo <<<HTML
+
+		<div align="left" style="margin-left: 15px">
+			<small><b>{$texto_adicional} : </b>
+HTML;				
+				for($i2=0; $i2 < $total_reg2; $i2++){
+					foreach ($res2[$i2] as $key => $value){}
+						$id_temp = $res2[$i2]['id'];				
+					$id_item = $res2[$i2]['id_item'];		
+
+					$query3 =$pdo->query("SELECT * FROM guarnicoes where id = '$id_item'");
+					$res3 = $query3->fetchAll(PDO::FETCH_ASSOC);
+					$total_reg3 = @count($res3);
+					$nome_adc = $res3[0]['nome'];
+					echo $nome_adc;
+					if($i2 < ($total_reg2 - 1)){
+						echo ', ';
+					}
+				}
+echo <<<HTML
+			</small>
+		</div>
+HTML;
+}
+
+
+
+	//listar ing da pizza 2 sabores
 	$query2 =$pdo->query("SELECT * FROM temp where carrinho = '$id_car' and tabela = 'ingredientes'");
 	$res2 = $query2->fetchAll(PDO::FETCH_ASSOC);
 	$total_reg2 = @count($res2);
@@ -282,11 +326,11 @@ echo <<<HTML
 HTML;
 }
 
-if($obs_item != ""){
+if($obs_item2 != ""){
 echo <<<HTML
 		<div align="left" style="margin-left: 15px">
 			<small><b>Observação : </b>
-				{$obs_item}
+				{$obs_item2}
 			</small>		
 		</div>
 HTML;
@@ -331,6 +375,46 @@ echo <<<HTML
 		</div>
 HTML;
 }
+
+
+
+
+
+	$query2 =$pdo->query("SELECT * FROM temp where carrinho = '$id_carrinho' and tabela = 'guarnicoes'");
+	$res2 = $query2->fetchAll(PDO::FETCH_ASSOC);
+	$total_reg2 = @count($res2);
+	if($total_reg2 > 0){
+		if($total_reg2 > 1){
+			$texto_adicional = '('.$total_reg2.') Guarnições';
+		}else{
+			$texto_adicional = '('.$total_reg2.') Guarnição';
+		}
+echo <<<HTML
+
+		<div align="left" style="margin-left: 15px">
+			<small><b>{$texto_adicional} : </b>
+HTML;				
+				for($i2=0; $i2 < $total_reg2; $i2++){
+					foreach ($res2[$i2] as $key => $value){}
+						$id_temp = $res2[$i2]['id'];				
+					$id_item = $res2[$i2]['id_item'];		
+
+					$query3 =$pdo->query("SELECT * FROM guarnicoes where id = '$id_item'");
+					$res3 = $query3->fetchAll(PDO::FETCH_ASSOC);
+					$total_reg3 = @count($res3);
+					$nome_adc = $res3[0]['nome'];
+					echo $nome_adc;
+					if($i2 < ($total_reg2 - 1)){
+						echo ', ';
+					}
+				}
+echo <<<HTML
+			</small>
+		</div>
+HTML;
+}
+
+
 
 	$query2 =$pdo->query("SELECT * FROM temp where carrinho = '$id_carrinho' and tabela = 'ingredientes'");
 	$res2 = $query2->fetchAll(PDO::FETCH_ASSOC);
@@ -394,10 +478,20 @@ if($entrega == "Delivery"){
 echo <<<HTML
 	<div class="row valores">			
 		<div class="col-md-6">Frete</div>
-		<div class="col-md-6" align="right">R$ {$taxa_entregaF}</div>	
+		<div class="col-md-6 text-verde" align="right"> R$ {$taxa_entregaF}</div>	
 	</div>			
 HTML;
-}		
+}	
+
+if($cupom > 0){
+echo <<<HTML
+	<div class="row valores">			
+		<div class="col-md-6">Cupom Desconto</div>
+		<div class="col-md-6 text-danger" align="right"> R$ {$cupomF}</div>	
+	</div>			
+HTML;
+}	
+
 echo <<<HTML
 <div class="row valores">			
 	<div class="col-md-6">SubTotal</div>

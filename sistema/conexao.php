@@ -59,6 +59,8 @@ $dias_apagar = $res[0]['dias_apagar'];
 $impressao_automatica = $res[0]['impressao_automatica'];
 $fonte_comprovante = $res[0]['fonte_comprovante'];
 $banner_rotativo = $res[0]['banner_rotativo'];
+$token = $res[0]['token'];
+$instancia = $res[0]['instancia'];
 
 $whatsapp_sistema = '55'.preg_replace('/[ ()-]+/' , '' , $telefone_sistema);
 }

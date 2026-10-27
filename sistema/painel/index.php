@@ -221,6 +221,8 @@ if(@$_GET['pagina'] != ""){
 									<li class="<?php echo @$banner_rotativo ?>"><a href="index.php?pagina=banner_rotativo"><i class="fa fa-angle-right"></i> Banner Rotativo</a></li>
 
 									<li class="<?php echo @$mesas ?>"><a href="index.php?pagina=mesas"><i class="fa fa-angle-right"></i>Mesas</a></li>
+
+									<li class="<?php echo @$cupons ?>"><a href="index.php?pagina=cupons"><i class="fa fa-angle-right"></i>Cupom de Desconto</a></li>
 									
 								</ul>
 							</li>
@@ -779,6 +781,21 @@ if(@$_GET['pagina'] != ""){
 
 						
 					
+					</div>
+
+
+
+					<div class="row">
+
+						<div class="col-md-3">						
+							<label>Token Api Whatsapp</label>
+							<input type="text" name="token" id="token" class="form-control" value="<?php echo @$token ?>" placeholder="Token Whatsapp">	
+						</div>
+
+						<div class="col-md-3">						
+							<label>Instância Api Whatsapp</label>
+							<input type="text" name="instancia" id="instancia" class="form-control" value="<?php echo @$instancia ?>" placeholder="Instancia Whatsapp">	
+						</div>
 					</div>
 
 

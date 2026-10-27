@@ -36,6 +36,12 @@ if($ult_ped < $id_ult_pedido and $ult_ped != ""){
 </audio>';
 }
 
+if($ult_ped == "" and $id_ult_pedido != ""){
+	echo '<audio autoplay="true">
+<source src="../../img/audio.mp3" type="audio/mpeg" />
+</audio>';
+}
+
 
 $query = $pdo->query("SELECT * FROM $tabela where status LIKE '$status' and status != 'Finalizado' and status != 'Cancelado' order by hora asc");
 $res = $query->fetchAll(PDO::FETCH_ASSOC);
@@ -297,6 +303,7 @@ function ativarPedido(id, acao, telefone, total, pagamento, hora, entrega){
 
 
 	if(entrega == 'Delivery'){
+		
 		var texto = 'Seu Pedido saiu para entrega';
 	}else if(entrega == 'Retirar'){
 		var texto = 'Seu Pedido ficou pronto, pode vir retirá-lo';
@@ -313,7 +320,10 @@ function ativarPedido(id, acao, telefone, total, pagamento, hora, entrega){
 		                a.click();
 		}
 	
-	
+		if(acao == 'Entrega' && entrega == 'Delivery'){
+			$('#id_entregador').val(id);
+			$('#modalEntregador').modal('show');
+		}
 	
     $.ajax({
         url: 'paginas/' + pag + "/mudar-status.php",

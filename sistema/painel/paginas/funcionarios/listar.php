@@ -57,6 +57,12 @@ for($i=0; $i < $total_reg; $i++){
 			$classe_linha = 'text-muted';
 		}
 
+		if($nivel == "Entregador" || $nivel == "Motoboy"){
+			$classe_nivel = '';
+		}else{
+			$classe_nivel = 'ocultar';
+		}
+
 echo <<<HTML
 <tr class="{$classe_linha}">
 <td>{$nome}</td>
@@ -81,6 +87,9 @@ echo <<<HTML
 		</li>										
 		</ul>
 		</li>
+
+
+			<big><a class="{$classe_nivel}" href="#" onclick="entregas('{$id}', '{$nome}')" title="Ver Entregas Pendentes"><i class="fa fa-usd text-verde"></i></a></big>
 
 
 	
@@ -169,5 +178,17 @@ HTML;
 		$('#chave_pix').val('');
 		$('#target').attr('src','images/perfil/sem-foto.jpg');
 	}
+
+
+	function entregas(id, nome){
+		$('#id_entrega').val(id);
+		$('#nome_entrega').text(nome);
+
+		listarEntregas(id);
+		$('#modalEntregas').modal('show');
+	}
+
+
+	
 
 </script>
