@@ -42,6 +42,12 @@ $valor_produto = $res[0]['valor_venda'];
 $estoque = $res[0]['estoque'];
 $tem_estoque = $res[0]['tem_estoque'];
 
+//ver se possui a quantidade de produtos comprados
+if($quantidade > $estoque and $tem_estoque == 'Sim'){
+	echo 'Quantidade em Estoque insuficiente, possui apenas '.$estoque.' Itens';
+	exit();
+}
+
 $query = $pdo->query("SELECT * FROM variacoes where id = '$variacao'");
 $res = $query->fetchAll(PDO::FETCH_ASSOC);
 if(@count($res) > 0){	

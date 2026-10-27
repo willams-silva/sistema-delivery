@@ -2,6 +2,20 @@
 @session_start();
 require_once('../../sistema/conexao.php');
 $id = $_POST['id'];
+$valor_item = $_POST['valor'];
+$quant = $_POST['quant'];
+
+$query =$pdo->query("SELECT * FROM produtos where id = '$id'");
+$res = $query->fetchAll(PDO::FETCH_ASSOC);
+$valor_produto = $res[0]['valor_venda'];
+
+$query =$pdo->query("SELECT * FROM adicionais where produto = '$id' and ativo = 'Sim' ");
+$res = $query->fetchAll(PDO::FETCH_ASSOC);
+$total_adicionais = @count($res);
+
+$query =$pdo->query("SELECT * FROM guarnicoes where produto = '$id' and ativo = 'Sim' ");
+$res = $query->fetchAll(PDO::FETCH_ASSOC);
+$total_guarnicoes = @count($res);
 
 $sessao = @$_SESSION['sessao_usuario'];
 
@@ -53,12 +67,29 @@ HTML;
 
 	}
 
+$valor_itemF = number_format($valor_item, 2, ',', '.');
+
+$valor_item_quant = $valor_item * $quant;
+$valor_item_quantF = number_format($valor_item_quant, 2, ',', '.');
 
 echo <<<HTML
 
 </ol>
 
 
+
 HTML;
+
+if($total_adicionais == 0 and $total_guarnicoes == 0){
+echo <<<HTML
+<div class="total">
+	R$ <b><span id="valor_item_quantF">{$valor_item_quantF}</span></b>
+</div>
+
+<input type="hidden" id="total_item_input" value="{$valor_item_quant}">
+<input type="hidden" id="total_item_input_adc" value="{$valor_itemF}">
+HTML;
+
+}
 
 }
