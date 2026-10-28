@@ -4,7 +4,7 @@
 $usuario = 'u719820352_delivery';
 $senha = 'Ti@v3n3z@22';
 $banco = 'u719820352_db_delivery';
-$servidor = 'maroon-quail-215556.hostingersite.com';
+$servidor = 'localhost';
 
 $url_sistema = "http://$_SERVER[HTTP_HOST]/";
 $url = explode("//", $url_sistema);
