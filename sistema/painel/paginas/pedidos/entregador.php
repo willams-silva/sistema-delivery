@@ -200,6 +200,6 @@ if($obs != ""){
 
 
 $data_mensagem = date('Y-m-d H:i:s');
-require("../../../../js/ajax/api2.php");
+require("../../../../js/ajax/api_texto.php");
 }
  ?>

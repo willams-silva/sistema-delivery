@@ -87,6 +87,13 @@ for($i=0; $i < $total_reg; $i++){
 			$classe_promo = '';
 		}
 
+		$ocultar_grade = '';
+		$ocultar_var = 'ocultar';
+		if($mais_sabores == 'Sim'){
+			$ocultar_grade = 'ocultar';
+			$ocultar_var = '';
+		}
+
 echo <<<HTML
 <tr class="{$alerta_estoque} {$classe_linha}">
 <td>
@@ -124,13 +131,11 @@ echo <<<HTML
 		<big><a href="#" onclick="entrada('{$id}','{$nome}', '{$estoque}')" title="Entrada de Produto"><i class="fa fa-sign-in text-verde"></i></a></big>
 
 
-		<a href="#" onclick="variacoes('{$id}','{$nome}','{$categoria}')" title="Variações do Produto"><i class="fa fa-list text-primary"></i></a>
+		<a class="{$ocultar_grade}" href="#" onclick="grades('{$id}','{$nome}','{$categoria}')" title="Grade de Produtos"><i class="fa fa-list text-primary"></i></a>
 
-		<a href="#" onclick="ingredientes('{$id}','{$nome}')" title="Ingredientes do Produto"><i class="fa fa-cutlery text-cinza"></i></a>
+		<a class="{$ocultar_var}" href="#" onclick="variacoes('{$id}','{$nome}','{$categoria}')" title="Variações do Produto"><i class="fa fa-list text-primary"></i></a>
 
-		<a class="{$ocultar_ad}" href="#" onclick="adicionais('{$id}','{$nome}')" title="Adicionais do Produto"><i class="fa fa-plus text-verde"></i></a>
-
-		<a href="#" onclick="guarnicoes('{$id}','{$nome}')" title="Guarnições do Produto"><i class="fa fa-plus text-primary"></i></a>
+		
 
 
 </td>
@@ -269,41 +274,17 @@ HTML;
 </script>
 
 
-
 <script type="text/javascript">
-	function guarnicoes(id, nome){
+	function grades(id, nome, cat){
 
-		$('#titulo_nome_guar').text(nome);		
-		$('#id_guar').val(id);		
+		$('#titulo_nome_grades').text(nome);		
+		$('#id_grades').val(id);		
 		
-		listarGuarnicoes(id);
-		$('#modalGuarnicoes').modal('show');
-		limparCamposGuar();
+		listarGrades(id);
+		
+		$('#modalGrades').modal('show');
+		limparCamposGrades();
 	}
 </script>
 
 
-<script type="text/javascript">
-	function ingredientes(id, nome){
-
-		$('#titulo_nome_ing').text(nome);		
-		$('#id_ing').val(id);		
-		
-		listarIngredientes(id);
-		$('#modalIngredientes').modal('show');
-		limparCamposIng();
-	}
-</script>
-
-
-<script type="text/javascript">
-	function adicionais(id, nome){
-
-		$('#titulo_nome_adc').text(nome);		
-		$('#id_adc').val(id);		
-		
-		listarAdicionais(id);
-		$('#modalAdicionais').modal('show');
-		limparCamposAdc();
-	}
-</script>

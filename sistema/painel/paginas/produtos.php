@@ -427,6 +427,7 @@ $pag = 'produtos';
 
 
 
+
 <!-- Modal Variações-->
 <div class="modal fade" id="modalVariacoes" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
 	<div class="modal-dialog" role="document">
@@ -491,51 +492,218 @@ $pag = 'produtos';
 
 
 
-
-
-<!-- Modal Guarnições-->
-<div class="modal fade" id="modalGuarnicoes" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+<!-- Modal Grades-->
+<div class="modal fade" id="modalGrades" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
 	<div class="modal-dialog" role="document">
 		<div class="modal-content">
 			<div class="modal-header">
-				<h4 class="modal-title" id="exampleModalLabel"><span id="titulo_nome_guar"></span></h4>
-				<button id="btn-fechar-guar" type="button" class="close" data-dismiss="modal" aria-label="Close" style="margin-top: -20px">
+				<h4 class="modal-title" id="exampleModalLabel"><span id="titulo_nome_grades"></span></h4>
+				<button id="btn-fechar-grades" type="button" class="close" data-dismiss="modal" aria-label="Close" style="margin-top: -20px">
 					<span aria-hidden="true" >&times;</span>
 				</button>
 			</div>
 			
 			<div class="modal-body">
-				<form id="form-guar">
+				<form id="form-grades">
 
 
-					<div class="row">					
+					<div class="row">
 
-					<div class="col-md-6">
+						<div class="col-md-8">
 							<div class="form-group">
-								<label for="exampleInputEmail1">Nome</label>
-								<input maxlength="35" type="text" class="form-control" id="nome_guar" name="nome" placeholder="Leite em Pó, Nutela ..." required>    
+								<label for="exampleInputEmail1">Descrição na hora da compra <small>(Até 70 Caracteres)</small></label>
+								<input maxlength="70" type="text" class="form-control" id="texto" name="texto" placeholder="Descrição do item" required="">    
 							</div> 	
 						</div>
 
+					<div class="col-md-4">
+							<div class="form-group">
+								<label for="exampleInputEmail1">Tipo Item 
+
+										<li class="dropdown head-dpdn2" style="display: inline-block;">
+		<a href="#" class="dropdown-toggle" data-toggle="dropdown" aria-expanded="false"><big><i class="fa fa-info-circle text-primary"></i></big></a>
+
+		<ul class="dropdown-menu" style="margin-left:-230px;">
+		<li>
+		<div class="notification_desc2">
+		<p>
+			<b>Seletor Único</b><br>
+			<span class="text-muted" style="font-size: 12px">Você poderá selecionar apenas uma opção, exemplo, esse produto acompanha uma bebida, selecione a bebida desejada.</span>
+		</p><br>
+
+			<p>
+			<b>Seletor Múltiplos</b><br>
+			<span class="text-muted" style="font-size: 12px">Você poderá selecionar diversos itens dentro desta grade, exemplo de adicionais, 3 adicionais de bacon, 2 de cheddar, etc.</span>
+		</p><br>
+
+
+		<p>
+			<b>Apenas 1 Item de cada</b><br>
+			<span class="text-muted" style="font-size: 12px">Você pode selecionar várias opções porém só poderá inserir 1 item de cada, exemplo remoção de ingredientes, retirar cebola, retirar tomate, etc, será sempre uma unica seleção por cada item.</span>
+		</p><br>
+
+		<p>
+			<b>Seletor Variação</b><br>
+			<span class="text-muted" style="font-size: 12px">Você poderá selecionar apenas uma opção, exemplo, Tamanho Grande, Médio, etc, será mostrado em locais onde define a variação do produto.</span>
+		</p><br>
+
+		</div>
+		</li>										
+		</ul>
+		</li>
+
+
+								</label>
+								<select class="form-control" id="tipo_item" name="tipo_item" style="width:100%;" > 
+
+								<option value="Único">Seletor Único</option>
+								<option value="Múltiplo">Seletor Múltiplos</option>	
+								<option value="1 de Cada">1 item de Cada</option>	
+								<option value="Variação">Variação Produto</option>
+
+								</select>   
+														 
+							</div> 	
+						</div>	
+
+											
+						
+
+					</div>	
+
+
+					<div class="row">
+						<div class="col-md-12">
+							<div class="form-group">
+								<label for="exampleInputEmail1">Descrição Comprovante <small>(Até 70 Caracteres)</small></label>
+								<input maxlength="70" type="text" class="form-control" id="nome_comprovante" name="nome_comprovante" placeholder="Descrição do item no comprovante" required="">    
+							</div> 	
+						</div>
+					</div>
+
+					<div class="row">
+						<div class="col-md-5">
+							<div class="form-group">
+								<label for="exampleInputEmail1">Tipo Valor</label>
+								<select class="form-control" id="valor_item" name="valor_item" style="width:100%;" > 
+								<option value="Agregado">Valor Agregado</option>	
+								<option value="Único">Valor Único Produto</option>
+								<option value="Produto">Mesmo Valor do Produto</option>
+								<option value="Sem Valor">Sem Valor</option>	
+
+								</select>   
+														 
+							</div> 	
+						</div>	
+
+
+						<div class="col-md-5">
+							<div class="form-group">
+								<label for="exampleInputEmail1">Limite de Seleção Itens</label>
+								<input type="number" class="form-control" id="limite" name="limite" placeholder="Selecionar até x Itens" >    
+							</div> 	
+						</div>
+
+						<div class="col-md-2" style="margin-top: 20px">
+							<button type="submit" class="btn btn-primary">Salvar</button>
+						
+						</div>
+					</div>
+
+			
+				
+				<input type="hidden" id="id_grades" name="id">
+				
+				</form>
+
+				<br>
+					<small><div id="mensagem-grades" align="center"></div></small>
+
+
+					<hr>
+					<div id="listar-grades"></div>
+			</div>
+
+			
+		</div>
+	</div>
+</div>
+
+
+
+
+
+
+
+
+<!-- Modal Itens-->
+<div class="modal fade" id="modalItens" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+	<div class="modal-dialog" role="document">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h4 class="modal-title" id="exampleModalLabel"><span id="titulo_nome_itens"></span></h4>
+				<button id="btn-fechar-var" type="button" class="close" data-dismiss="modal" aria-label="Close" style="margin-top: -20px">
+					<span aria-hidden="true" >&times;</span>
+				</button>
+			</div>
+			
+			<div class="modal-body">
+				<form id="form-itens">
+
+
+					<div class="row">
+
+						<div class="col-md-12">
+							<div class="form-group">
+								<label for="exampleInputEmail1">Nome <small>(Até 70 Caracteres)</small></label>
+								<input maxlength="70" type="text" class="form-control" id="texto_item" name="texto" placeholder="Descrição do item" required="">    
+							</div> 	
+						</div>		
+															
+						
+
+					</div>	
+
+					<div class="row">
+
+							<div class="col-md-4">
+
+							<div class="form-group">
+								<label for="exampleInputEmail1">Valor</label>
+								<input type="text" class="form-control" id="valor_do_item" name="valor" placeholder="Valor Se Houver" >    
+							</div> 	
+						</div>	
+						
+
+
+							<div class="col-md-5">
+							<div class="form-group">
+								<label for="exampleInputEmail1">Limite de Seleção Itens</label>
+								<input type="number" class="form-control" id="limite_itens" name="limite" placeholder="Selecionar até x Itens" >    
+							</div> 	
+						</div>
+
+
+						
 						<div class="col-md-3" style="margin-top: 20px">
 							<button type="submit" class="btn btn-primary">Salvar</button>
 						
 						</div>
-						
-						
-					</div>	
+					</div>
 
-							
-				<input type="hidden" id="id_guar" name="id">
+			
+				
+				<input type="hidden" id="id_item" name="id">
+				<input type="hidden" id="id_item_produto" name="id_item_produto">
 				
 				</form>
 
 				<br>
-					<small><div id="mensagem-guar" align="center"></div></small>
+					<small><div id="mensagem-itens" align="center"></div></small>
 
 
 					<hr>
-					<div id="listar-guar"></div>
+					<div id="listar-itens"></div>
 			</div>
 
 			
@@ -544,116 +712,6 @@ $pag = 'produtos';
 </div>
 
 
-
-
-
-
-
-<!-- Modal Ingredientes-->
-<div class="modal fade" id="modalIngredientes" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-	<div class="modal-dialog" role="document">
-		<div class="modal-content">
-			<div class="modal-header">
-				<h4 class="modal-title" id="exampleModalLabel"><span id="titulo_nome_ing"></span></h4>
-				<button id="btn-fechar-ing" type="button" class="close" data-dismiss="modal" aria-label="Close" style="margin-top: -20px">
-					<span aria-hidden="true" >&times;</span>
-				</button>
-			</div>
-			
-			<div class="modal-body">
-				<form id="form-ing">
-
-
-
-				<div class="row">
-
-						<div class="col-md-8">
-							<div class="form-group">								
-								<input maxlength="50" type="text" class="form-control" id="ingrediente" name="nome" placeholder="Ingrediente" required>    
-							</div> 	
-						</div>
-
-						<div class="col-md-4">
-							<button type="submit" class="btn btn-primary">Salvar</button>
-						
-						</div>
-					</div>	
-				
-				<input type="hidden" id="id_ing" name="id">
-				
-				</form>
-
-				<br>
-					<small><div id="mensagem-ing" align="center"></div></small>
-
-
-					<hr>
-					<div id="listar-ing"></div>
-			</div>
-
-			
-		</div>
-	</div>
-</div>
-
-
-
-
-
-
-
-<!-- Modal Adicionais-->
-<div class="modal fade" id="modalAdicionais" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-	<div class="modal-dialog" role="document">
-		<div class="modal-content">
-			<div class="modal-header">
-				<h4 class="modal-title" id="exampleModalLabel"><span id="titulo_nome_adc"></span></h4>
-				<button id="btn-fechar-adc" type="button" class="close" data-dismiss="modal" aria-label="Close" style="margin-top: -20px">
-					<span aria-hidden="true" >&times;</span>
-				</button>
-			</div>
-			
-			<div class="modal-body">
-				<form id="form-adc">
-
-
-
-				<div class="row">
-
-						<div class="col-md-5">
-							<div class="form-group">								
-								<input maxlength="50" type="text" class="form-control" id="nome_adc" name="nome" placeholder="Nome" required>    
-							</div> 	
-						</div>
-
-						<div class="col-md-4">
-							<div class="form-group">								
-								<input maxlength="50" type="text" class="form-control" id="valor_adc" name="valor" placeholder="Valor" required>    
-							</div> 	
-						</div>
-
-						<div class="col-md-3">
-							<button type="submit" class="btn btn-primary">Salvar</button>
-						
-						</div>
-					</div>	
-				
-				<input type="hidden" id="id_adc" name="id">
-				
-				</form>
-
-				<br>
-					<small><div id="mensagem-adc" align="center"></div></small>
-
-
-					<hr>
-					<div id="listar-adc"></div>
-			</div>
-
-			
-		</div>
-	</div>
-</div>
 
 
 
@@ -772,6 +830,7 @@ $("#form-entrada").submit(function () {
 
 
 
+
  <script type="text/javascript">
 	
 
@@ -814,50 +873,6 @@ $("#form-var").submit(function () {
 });
 
 
-
-
-
-$("#form-guar").submit(function () {
-
-	var id_var = $('#id_guar').val()
-
-    event.preventDefault();
-    var formData = new FormData(this);
-
-    $.ajax({
-        url: 'paginas/' + pag + "/inserir-guarnicoes.php",
-        type: 'POST',
-        data: formData,
-
-        success: function (mensagem) {
-            $('#mensagem-guar').text('');
-            $('#mensagem-guar').removeClass()
-            if (mensagem.trim() == "Salvo com Sucesso") {
-
-                //$('#btn-fechar-var').click();
-                listarGuarnicoes(id_var); 
-                limparCamposGuar();         
-
-            } else {
-
-                $('#mensagem-guar').addClass('text-danger')
-                $('#mensagem-guar').text(mensagem)
-            }
-
-
-        },
-
-        cache: false,
-        contentType: false,
-        processData: false,
-
-    });
-
-});
-</script>
-
-
-<script type="text/javascript">
 	function limparCamposVar(){
 		
 		$('#nome_var').val('');
@@ -867,11 +882,7 @@ $("#form-guar").submit(function () {
 		
 	}
 
-	function limparCamposGuar(){
-		
-		$('#nome_guar').val('');		
-		
-	}
+
 
 
 	function listarVariacoes(id){
@@ -889,24 +900,6 @@ $("#form-guar").submit(function () {
 }
 
 
-
-
-function listarGuarnicoes(id){
-    $.ajax({
-        url: 'paginas/' + pag + "/listar-guarnicoes.php",
-        method: 'POST',
-        data: {id},
-        dataType: "html",
-
-        success:function(result){
-            $("#listar-guar").html(result);
-            $('#mensagem-excluir-guar').text('');
-        }
-    });
-}
-
-
-
 function excluirVar(id){
 	var id_var = $('#id_var').val()
     $.ajax({
@@ -921,30 +914,6 @@ function excluirVar(id){
             } else {
                 $('#mensagem-excluir-var').addClass('text-danger')
                 $('#mensagem-excluir-var').text(mensagem)
-            }
-
-        },      
-
-    });
-}
-
-
-
-
-function excluirGuar(id){
-	var id_var = $('#id_guar').val()
-    $.ajax({
-        url: 'paginas/' + pag + "/excluir-guarnicoes.php",
-        method: 'POST',
-        data: {id},
-        dataType: "text",
-
-        success: function (mensagem) {            
-            if (mensagem.trim() == "Excluído com Sucesso") {                
-                listarGuarnicoes(id_var);                
-            } else {
-                $('#mensagem-excluir-guar').addClass('text-danger')
-                $('#mensagem-excluir-guar').text(mensagem)
             }
 
         },      
@@ -973,29 +942,134 @@ function ativarVar(id, acao){
 
     });
 }
+</script>
 
 
+ <script type="text/javascript">
+	
 
-function ativarGuar(id, acao){
-	var id_var = $('#id_guar').val()
+$("#form-grades").submit(function () {
+
+	var id_var = $('#id_grades').val()
+
+    event.preventDefault();
+    var formData = new FormData(this);
+
     $.ajax({
-        url: 'paginas/' + pag + "/mudar-status-guar.php",
+        url: 'paginas/' + pag + "/inserir-grades.php",
+        type: 'POST',
+        data: formData,
+
+        success: function (mensagem) {
+            $('#mensagem-grades').text('');
+            $('#mensagem-grades').removeClass()
+            if (mensagem.trim() == "Salvo com Sucesso") {
+
+                //$('#btn-fechar-var').click();
+                listarGrades(id_var); 
+                limparCamposGrades();         
+
+            } else {
+
+                $('#mensagem-grades').addClass('text-danger')
+                $('#mensagem-grades').text(mensagem)
+            }
+
+
+        },
+
+        cache: false,
+        contentType: false,
+        processData: false,
+
+    });
+
+});
+
+
+
+
+</script>
+
+
+<script type="text/javascript">
+	function limparCamposGrades(){
+		
+		$('#texto').val('');
+		$('#limite').val('');	
+		$('#nome_comprovante').val('');	
+				
+		
+	}
+
+	
+
+	function listarGrades(id){
+    $.ajax({
+        url: 'paginas/' + pag + "/listar-grades.php",
         method: 'POST',
-        data: {id, acao},
+        data: {id},
+        dataType: "html",
+
+        success:function(result){
+            $("#listar-grades").html(result);
+            $('#mensagem-excluir-grades').text('');
+        }
+    });
+}
+
+
+
+
+
+
+
+function excluirGrades(id){
+	var id_var = $('#id_grades').val()
+    $.ajax({
+        url: 'paginas/' + pag + "/excluir-grade.php",
+        method: 'POST',
+        data: {id},
         dataType: "text",
 
         success: function (mensagem) {            
-            if (mensagem.trim() == "Alterado com Sucesso") {                
-                listarGuarnicoes(id_var);                
+            if (mensagem.trim() == "Excluído com Sucesso") {                
+                listarGrades(id_var);                
             } else {
-                $('#mensagem-excluir-guar').addClass('text-danger')
-                $('#mensagem-excluir-guar').text(mensagem)
+                $('#mensagem-excluir-grades').addClass('text-danger')
+                $('#mensagem-excluir-grades').text(mensagem)
             }
 
         },      
 
     });
 }
+
+
+
+
+function ativarGrades(id, acao){
+	var id_var = $('#id_grades').val()
+    $.ajax({
+        url: 'paginas/' + pag + "/mudar-status-grade.php",
+        method: 'POST',
+        data: {id, acao},
+        dataType: "text",
+
+        success: function (mensagem) {            
+            if (mensagem.trim() == "Alterado com Sucesso") {                
+                listarGrades(id_var);                
+            } else {
+                $('#mensagem-excluir-grades').addClass('text-danger')
+                $('#mensagem-excluir-grades').text(mensagem)
+            }
+
+        },      
+
+    });
+}
+
+
 
 
 </script>
@@ -1013,31 +1087,31 @@ function ativarGuar(id, acao){
  <script type="text/javascript">
 	
 
-$("#form-ing").submit(function () {
+$("#form-itens").submit(function () {
 
-	var id_ing = $('#id_ing').val()
+	var id_var = $('#id_item').val()
 
     event.preventDefault();
     var formData = new FormData(this);
 
     $.ajax({
-        url: 'paginas/' + pag + "/inserir-ingredientes.php",
+        url: 'paginas/' + pag + "/inserir-itens.php",
         type: 'POST',
         data: formData,
 
         success: function (mensagem) {
-            $('#mensagem-ing').text('');
-            $('#mensagem-ing').removeClass()
+            $('#mensagem-itens').text('');
+            $('#mensagem-itens').removeClass()
             if (mensagem.trim() == "Salvo com Sucesso") {
 
                 //$('#btn-fechar-var').click();
-                listarIngredientes(id_ing); 
-                limparCamposIng();         
+                listarItens(id_var); 
+                limparCamposItens();         
 
             } else {
 
-                $('#mensagem-ing').addClass('text-danger')
-                $('#mensagem-ing').text(mensagem)
+                $('#mensagem-itens').addClass('text-danger')
+                $('#mensagem-itens').text(mensagem)
             }
 
 
@@ -1050,156 +1124,34 @@ $("#form-ing").submit(function () {
     });
 
 });
+
+
+
+
 </script>
 
 
 <script type="text/javascript">
-	function limparCamposIng(){
+	function limparCamposItens(){
 		
-		$('#ingrediente').val('');				
+		$('#texto_item').val('');
+		$('#limite_itens').val('');	
+		$('#valor_do_item').val('');			
 		
 	}
 
-
-	function listarIngredientes(id){
-    $.ajax({
-        url: 'paginas/' + pag + "/listar-ingredientes.php",
-        method: 'POST',
-        data: {id},
-        dataType: "html",
-
-        success:function(result){
-            $("#listar-ing").html(result);
-            $('#mensagem-excluir-ing').text('');
-        }
-    });
-}
-
-
-
-
-
-function excluirIng(id){
-	var id_ing = $('#id_ing').val()
-    $.ajax({
-        url: 'paginas/' + pag + "/excluir-ingredientes.php",
-        method: 'POST',
-        data: {id},
-        dataType: "text",
-
-        success: function (mensagem) {            
-            if (mensagem.trim() == "Excluído com Sucesso") {                
-                listarIngredientes(id_ing);                
-            } else {
-                $('#mensagem-excluir-ing').addClass('text-danger')
-                $('#mensagem-excluir-ing').text(mensagem)
-            }
-
-        },      
-
-    });
-}
-
-
-
-
-function ativarIng(id, acao){
-	var id_ing = $('#id_ing').val()
-    $.ajax({
-        url: 'paginas/' + pag + "/mudar-status-ing.php",
-        method: 'POST',
-        data: {id, acao},
-        dataType: "text",
-
-        success: function (mensagem) {            
-            if (mensagem.trim() == "Alterado com Sucesso") {                
-                listarIngredientes(id_ing);                
-            } else {
-                $('#mensagem-excluir-ing').addClass('text-danger')
-                $('#mensagem-excluir-ing').text(mensagem)
-            }
-
-        },      
-
-    });
-}
-
-
-</script>
-
-
-
-
-
-
-
-
-
-
-
-
- <script type="text/javascript">
 	
 
-$("#form-adc").submit(function () {
-
-	var id_adc = $('#id_adc').val()
-
-    event.preventDefault();
-    var formData = new FormData(this);
-
+	function listarItens(id){
     $.ajax({
-        url: 'paginas/' + pag + "/inserir-adicionais.php",
-        type: 'POST',
-        data: formData,
-
-        success: function (mensagem) {
-            $('#mensagem-adc').text('');
-            $('#mensagem-adc').removeClass()
-            if (mensagem.trim() == "Salvo com Sucesso") {
-
-                //$('#btn-fechar-var').click();
-                listarAdicionais(id_adc); 
-                limparCamposAdc();         
-
-            } else {
-
-                $('#mensagem-adc').addClass('text-danger')
-                $('#mensagem-adc').text(mensagem)
-            }
-
-
-        },
-
-        cache: false,
-        contentType: false,
-        processData: false,
-
-    });
-
-});
-</script>
-
-
-<script type="text/javascript">
-	function limparCamposAdc(){
-		
-		$('#nome_adc').val('');
-		$('#valor_adc').val('');				
-		
-	}
-
-
-	function listarAdicionais(id){
-    $.ajax({
-        url: 'paginas/' + pag + "/listar-adicionais.php",
+        url: 'paginas/' + pag + "/listar-itens.php",
         method: 'POST',
         data: {id},
         dataType: "html",
 
         success:function(result){
-            $("#listar-adc").html(result);
-            $('#mensagem-excluir-adc').text('');
+            $("#listar-itens").html(result);
+            $('#mensagem-excluir-itens').text('');
         }
     });
 }
@@ -1208,20 +1160,22 @@ $("#form-adc").submit(function () {
 
 
 
-function excluirAdc(id){
-	var id_adc = $('#id_adc').val()
+
+
+function excluirItens(id){
+	var id_var = $('#id_item').val()
     $.ajax({
-        url: 'paginas/' + pag + "/excluir-adicionais.php",
+        url: 'paginas/' + pag + "/excluir-item.php",
         method: 'POST',
         data: {id},
         dataType: "text",
 
         success: function (mensagem) {            
             if (mensagem.trim() == "Excluído com Sucesso") {                
-                listarAdicionais(id_adc);                
+                listarItens(id_var);                
             } else {
-                $('#mensagem-excluir-adc').addClass('text-danger')
-                $('#mensagem-excluir-adc').text(mensagem)
+                $('#mensagem-excluir-itens').addClass('text-danger')
+                $('#mensagem-excluir-itens').text(mensagem)
             }
 
         },      
@@ -1232,26 +1186,28 @@ function excluirAdc(id){
 
 
 
-function ativarAdc(id, acao){
-	var id_adc = $('#id_adc').val()
+function ativarItens(id, acao){
+	var id_var = $('#id_item').val()
     $.ajax({
-        url: 'paginas/' + pag + "/mudar-status-adc.php",
+        url: 'paginas/' + pag + "/mudar-status-itens.php",
         method: 'POST',
         data: {id, acao},
         dataType: "text",
 
         success: function (mensagem) {            
             if (mensagem.trim() == "Alterado com Sucesso") {                
-                listarAdicionais(id_adc);                
+                listarItens(id_var);                
             } else {
-                $('#mensagem-excluir-adc').addClass('text-danger')
-                $('#mensagem-excluir-adc').text(mensagem)
+                $('#mensagem-excluir-itens').addClass('text-danger')
+                $('#mensagem-excluir-itens').text(mensagem)
             }
 
         },      
 
     });
 }
+
+
 
 
 </script>

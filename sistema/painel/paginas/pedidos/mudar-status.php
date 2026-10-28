@@ -24,7 +24,7 @@ $mensagem .= '*Total:* R$ '.$total.'%0A';
 $mensagem .= '*Pagamento:* '.$pagamento.'%0A';
 $data_mensagem = date('Y-m-d H:i:s');
 $tel_cliente_whats = $telefone;
-require("../../../../js/ajax/api2.php");
+require("../../../../js/ajax/api_texto.php");
 }
 
 ?>
