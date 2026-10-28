@@ -4,7 +4,7 @@
 $usuario = 'u719820352_delivery';
 $senha = 'Ti@v3n3z@22';
 $banco = 'u719820352_db_delivery';
-$servidor = '127.0.0.1';
+$servidor = 'localhost';
 
 $url_sistema = "http://$_SERVER[HTTP_HOST]/";
 $url = explode("//", $url_sistema);
