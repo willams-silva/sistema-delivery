@@ -25,16 +25,23 @@ if($total_reg > 0){
 		$sabores = $res[$i]['sabores'];
 		$borda = $res[$i]['borda'];
 		$categoria = $res[$i]['categoria'];
+		$valor_unit = $res[$i]['valor_unitario'];
 
-		$valor_unit = $total_item / $quantidade;
+		if($valor_unit == ""){
+			if($total_item > 0 and $quantidade > 0){
+			$valor_unit = $total_item / $quantidade;
+			}else{
+				$valor_unit = 0;
+			}	
+		}
 
+		$total_item = $total_item * $quantidade;
 		$total_carrinho += $total_item;
 
 
 		$total_itemF = number_format($total_item, 2, ',', '.');
 		$valor_unitF = number_format($valor_unit, 2, ',', '.');
 		$total_carrinhoF = number_format($total_carrinho, 2, ',', '.');
-
 
 		$query2 = $pdo->query("SELECT * FROM variacoes where id = '$variacao'");
 		$res2 = $query2->fetchAll(PDO::FETCH_ASSOC);
@@ -43,6 +50,7 @@ if($total_reg > 0){
 		}else{
 			$sigla_variacao = '';
 		}
+
 
 		$query2 = $pdo->query("SELECT * FROM produtos where id = '$produto'");
 		$res2 = $query2->fetchAll(PDO::FETCH_ASSOC);

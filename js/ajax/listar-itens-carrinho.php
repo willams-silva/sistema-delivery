@@ -24,13 +24,20 @@ if($total_reg > 0){
 		$sabores = $res[$i]['sabores'];
 		$borda = $res[$i]['borda'];
 		$categoria = $res[$i]['categoria'];
-		if($total_item > 0 and $quantidade > 0){
+		$valor_unit = $res[$i]['valor_unitario'];
+
+		if($valor_unit == ""){
+			if($total_item > 0 and $quantidade > 0){
 			$valor_unit = $total_item / $quantidade;
-		}else{
-			$valor_unit = 0;
+			}else{
+				$valor_unit = 0;
+			}	
 		}
 		
+		
 		$id_sabor = $res[$i]['id_sabor'];
+
+		$total_item = $total_item * $quantidade;
 
 		$total_carrinho += $total_item;
 
@@ -39,7 +46,7 @@ if($total_reg > 0){
 		$valor_unitF = number_format($valor_unit, 2, ',', '.');
 		$total_carrinhoF = number_format($total_carrinho, 2, ',', '.');
 
-		
+
 		$query2 = $pdo->query("SELECT * FROM variacoes where id = '$variacao'");
 		$res2 = $query2->fetchAll(PDO::FETCH_ASSOC);
 		if(@count(@$res2) > 0){
@@ -48,6 +55,8 @@ if($total_reg > 0){
 			$sigla_variacao = '';
 		}
 
+		
+		
 		$query2 = $pdo->query("SELECT * FROM produtos where id = '$produto'");
 		$res2 = $query2->fetchAll(PDO::FETCH_ASSOC);
 		if(@count(@$res2) > 0){
@@ -81,6 +90,21 @@ if($total_reg > 0){
 		}
 
 
+		$query2 = $pdo->query("SELECT * FROM temp where carrinho = '$id' and tabela = 'Variação' order by id asc limit 1");
+		$res2 = $query2->fetchAll(PDO::FETCH_ASSOC);
+		$id_do_item = @$res2[0]['id_item'];
+
+		$query2 = $pdo->query("SELECT * FROM itens_grade where id = '$id_do_item'");
+		$res2 = $query2->fetchAll(PDO::FETCH_ASSOC);
+		if(@$res2[0]['texto'] != ""){
+			$sigla_grade = '<small> ('.@$res2[0]['texto'].')</small>';
+		}else{
+			$sigla_grade = '';
+		}
+		
+
+
+
 
 
 echo <<<HTML
@@ -88,7 +112,7 @@ echo <<<HTML
 		
 		<li class="list-group-item">
 		<img class="" src="sistema/painel/images/produtos/{$foto_produto}" width="30px">		    	
-		<span class="nome-produto"><b>{$nome_produto} {$sigla_variacao}</b></span>
+		<span class="nome-produto"><b>{$nome_produto} {$sigla_variacao} {$sigla_grade}</b></span>
 		<span class="{$classe_borda}" style="font-size:11px; color:#450703"><b> {$nome_borda}</b></span>
 
 HTML;

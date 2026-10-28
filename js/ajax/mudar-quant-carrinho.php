@@ -58,7 +58,7 @@ $pdo->query("UPDATE produtos SET estoque = '$total_produtos' where id = '$produt
 
 
 
-$pdo->query("UPDATE carrinho set quantidade = '$quant', total_item = '$novo_valor' WHERE id = '$id'"); 
+$pdo->query("UPDATE carrinho set quantidade = '$quant' WHERE id = '$id'"); 
 
 echo 'Alterado com Sucesso';
 
