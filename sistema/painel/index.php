@@ -797,20 +797,26 @@ if(@$_GET['pagina'] != ""){
 
 					<div class="row">
 
+						<div class="col-md-2">							
+							<label>Seletor Api</label>
+							<select class="form-control" name="seletor_api">
+								<option value="menuia" <?php if(@$seletor_api == 'menuia'){?> selected <?php } ?> >Menuia</option>
+								<option value="wm" <?php if(@$seletor_api == 'wm'){?> selected <?php } ?> >WordMensagens</option>	
+									
+							</select>					
+						</div>
+
 						<div class="col-md-3">						
-							<label>Token Api Whatsapp</label>
+							<label>Token (appkey)</label>
 							<input type="text" name="token" id="token" class="form-control" value="<?php echo @$token ?>" placeholder="Token Whatsapp">	
 						</div>
 
 						<div class="col-md-4">						
-							<label>Instância Api Whatsapp</label>
+							<label>Instância (authkey)</label>
 							<input type="text" name="instancia" id="instancia" class="form-control" value="<?php echo @$instancia ?>" placeholder="Instancia Whatsapp">	
 						</div>
 
-						<div class="col-md-2">						
-							<label>Pedido Mínimo</label>
-							<input type="text" name="pedido_minimo" id="pedido_minimo" class="form-control" value="<?php echo @$pedido_minimo ?>" placeholder="Valor Mínimo Pedido">	
-						</div>
+						
 
 
 							<div class="col-md-3">							
@@ -860,6 +866,12 @@ if(@$_GET['pagina'] != ""){
 
 
 					<div class="row">
+
+						<div class="col-md-2">						
+							<label>Pedido Mínimo</label>
+							<input type="text" name="pedido_minimo" id="pedido_minimo" class="form-control" value="<?php echo @$pedido_minimo ?>" placeholder="Valor Mínimo Pedido">	
+						</div>
+
 						<div class="col-md-4">						
 							<label>Distancia Máxima Entrega KM</label>
 							<input type="number" name="distancia_entrega_km" id="distancia_entrega_km" class="form-control" value="<?php echo @$distancia_entrega_km ?>" placeholder="Entregar até x KM">	
