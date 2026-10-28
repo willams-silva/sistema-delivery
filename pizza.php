@@ -1,6 +1,7 @@
 <?php 
-require_once("cabecalho.php");
 @session_start(); 
+require_once("cabecalho.php");
+
 $url = $_GET['url'];
 $id_usuario = @$_SESSION['id'];
 
@@ -25,6 +26,14 @@ $mais_sabores = $res[0]['mais_sabores'];
 
 $pdo->query("DELETE FROM temp where carrinho = 0 and sessao = '$sessao'");
 
+if(@$id_usuario == ""){
+
+if($status_estabelecimento == "Fechado"){       
+        echo "<script>window.alert('$texto_fechamento')</script>";
+    echo "<script>window.location='index.php'</script>";
+    exit();
+}
+
 
 $data = date('Y-m-d');
 //verificar se está aberto hoje
@@ -35,26 +44,24 @@ $dia_procurado = $diasemana[$diasemana_numero];
 //percorrer os dias da semana que ele trabalha
 $query = $pdo->query("SELECT * FROM dias where dia = '$dia_procurado'");
 $res = $query->fetchAll(PDO::FETCH_ASSOC);
-if(@count($res) > 0){		
-		echo "<script>window.alert('Estamos Fechados! Não funcionamos Hoje!')</script>";
-	echo "<script>window.location='index.php'</script>";
-	exit();
+if(@count($res) > 0){       
+        echo "<script>window.alert('Estamos Fechados! Não funcionamos Hoje!')</script>";
+    echo "<script>window.location='index.php'</script>";
+    exit();
 }
 
 $hora_atual = date('H:i:s');
-
-//nova verificação de horarios
-$start = strtotime( date('Y-m-d' .$horario_abertura) );
-$end = strtotime( date('Y-m-d' . $horario_fechamento) );
-$now = time();
-
-if($id_usuario == ''){
-if ( $start <= $now && $now <= $end ) {
+//verificar se o delivery está aberto dentro da hora prevista
+if(strtotime($hora_atual) > strtotime($horario_abertura) and strtotime($hora_atual) < strtotime($horario_fechamento)){
     
 }else{
-	echo "<script>window.alert('$texto_fechamento_horario')</script>";
-	echo "<script>window.location='index.php'</script>";
-	exit();
+    if(strtotime($hora_atual) > strtotime($horario_abertura) and strtotime($hora_atual) > strtotime($horario_fechamento)){
+        
+    }else{
+            echo "<script>window.alert('$texto_fechamento_horario')</script>";
+    echo "<script>window.location='index.php'</script>";
+    exit();
+    }
 }
 
 }

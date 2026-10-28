@@ -299,36 +299,29 @@ if ( $start <= $now && $now <= $end ) {
         }
 
 
-        $query2 = $pdo->query("SELECT * FROM variacoes where produto = '$id_prod' and ativo = 'Sim'");
-    $res2 = $query2->fetchAll(PDO::FETCH_ASSOC);
-    $total_reg2 = @count($res2);    
-    if($total_reg2 == 0){
-
-$query3 = $pdo->query("SELECT * FROM guarnicoes where produto = '$id_prod'");
-$res3 = $query3->fetchAll(PDO::FETCH_ASSOC);
-$total_guarn = @count($res3);     
+      
 
       //verificar se o produto tem adicionais
-$query3 = $pdo->query("SELECT * FROM adicionais where produto = '$id_prod'");
+$query3 = $pdo->query("SELECT * FROM grades where produto = '$id_prod'");
 $res3 = $query3->fetchAll(PDO::FETCH_ASSOC);
 $total_adc = @count($res3);
-      if($total_adc > 0 || $total_guarn > 0){
+      if($total_adc > 0){
         if($tem_estoque == 'Sim' and $estoque <= 0){
           $url_produto = '#';
         }else{
-          $url_produto = 'adicionais-'.$url.'&sabores='.$url;
+          $url_produto = 'adicionais-'.$url;
         }
         
       }else{
         if($tem_estoque == 'Sim' and $estoque <= 0){
           $url_produto = '#';
         }else{
-          $url_produto = 'observacoes-'.$url.'&sabores='.$url;
+          $url_produto = 'observacoes-'.$url;
         }
         
       }
       
-    }
+    
          
    
         ?>
@@ -387,37 +380,29 @@ $total_adc = @count($res3);
           $url_produto = 'produto-'.$url;
         }
 
-
-        $query2 = $pdo->query("SELECT * FROM variacoes where produto = '$id_prod' and ativo = 'Sim'");
-    $res2 = $query2->fetchAll(PDO::FETCH_ASSOC);
-    $total_reg2 = @count($res2);    
-    if($total_reg2 == 0){
-
-$query3 = $pdo->query("SELECT * FROM guarnicoes where produto = '$id_prod'");
-$res3 = $query3->fetchAll(PDO::FETCH_ASSOC);
-$total_guarn = @count($res3);     
+ 
 
       //verificar se o produto tem adicionais
-$query3 = $pdo->query("SELECT * FROM adicionais where produto = '$id_prod'");
+$query3 = $pdo->query("SELECT * FROM grades where produto = '$id_prod'");
 $res3 = $query3->fetchAll(PDO::FETCH_ASSOC);
 $total_adc = @count($res3);
-      if($total_adc > 0 || $total_guarn > 0){
+      if($total_adc > 0){
         if($tem_estoque == 'Sim' and $estoque <= 0){
           $url_produto = '#';
         }else{
-          $url_produto = 'adicionais-'.$url.'&sabores='.$url;
+          $url_produto = 'adicionais-'.$url;
         }
         
       }else{
         if($tem_estoque == 'Sim' and $estoque <= 0){
           $url_produto = '#';
         }else{
-          $url_produto = 'observacoes-'.$url.'&sabores='.$url;
+          $url_produto = 'observacoes-'.$url;
         }
         
       }
       
-    }
+    
          
    
         ?>

@@ -5,14 +5,6 @@ $url_completa = $_GET['url'];
 $sabores = @$_GET['sabores'];
 $id_usuario = @$_SESSION['id'];
 
-if($sabores == 1){
-    $texto_sabor = ' (1º Sabor)';
-}else if($sabores == 2){
-$texto_sabor = ' (2º Sabor)';
-}else{
-    $texto_sabor = '';
-}
-
 if(@$_SESSION['sessao_usuario'] == ""){
 	$sessao = date('Y-m-d-H:i:s-').rand(0, 1500);
 	$_SESSION['sessao_usuario'] = $sessao;
@@ -23,16 +15,9 @@ if(@$_SESSION['sessao_usuario'] == ""){
 $texto_botao = 'Adicionar ao Carrinho';
 
 if(@$_SESSION['id'] != ""){
-	$id_usuario = $_SESSION['id'];
-	$texto_botao = 'Adicionar ao Pedido';
-	$nome_funcao = 'finalizarPedidoPainel()';
-	$nome_funcao_segundo = 'selecionarSegundoPedido()';
-	$nome_comprar_mais = 'comprarMaisPainel()';
+	$id_usuario = $_SESSION['id'];	
 }else{
 	$id_usuario = '';
-	$nome_funcao = 'finalizarPedido()';
-	$nome_funcao_segundo = 'selecionarSegundo()';
-	$nome_comprar_mais = 'comprarMais()';
 }
 
 $query = $pdo->query("SELECT * FROM carrinho where sessao = '$sessao'");
@@ -81,34 +66,7 @@ if($total_reg > 0){
 	$url_cat = $res[0]['url'];
 }
 
-$url_itens = '2sabores-'.$url_cat.'&sabores=2';
-
-if($item == ""){
-	$valor_item = $valor;
-	$id_variacao = 0;
-}else{
-	$query = $pdo->query("SELECT * FROM variacoes where produto = '$id_prod' and sigla = '$item'");
-	$res = $query->fetchAll(PDO::FETCH_ASSOC);
-	$valor_item = $res[0]['valor'];
-	$id_variacao = $res[0]['id'];
-}
-
-$query =$pdo->query("SELECT * FROM temp where sessao = '$sessao' and tabela = 'adicionais' and carrinho = '0'");
-$res = $query->fetchAll(PDO::FETCH_ASSOC);
-$total_reg = @count($res);
-if($total_reg > 0){
-	for($i=0; $i < $total_reg; $i++){
-		foreach ($res[$i] as $key => $value){}
-		$id_adc = $res[$i]['id_item'];
-
-		$query2 =$pdo->query("SELECT * FROM adicionais where id = '$id_adc'");
-		$res2 = $query2->fetchAll(PDO::FETCH_ASSOC);
-		$valor_adc = $res2[0]['valor'];
-		$valor_item += $valor_adc;	
-
-}
-}
-
+$valor_item = $valor;
 $valor_itemF = number_format($valor_item, 2, ',', '.');
 
 if($id_usuario == ''){
@@ -117,7 +75,7 @@ if($status_estabelecimento == "Fechado"){
 	echo "<script>window.location='index.php'</script>";
 	exit();
 }
-}
+
 
 $data = date('Y-m-d');
 //verificar se está aberto hoje
@@ -141,7 +99,7 @@ $start = strtotime( date('Y-m-d' .$horario_abertura) );
 $end = strtotime( date('Y-m-d' . $horario_fechamento) );
 $now = time();
 
-if($id_usuario == ''){
+
 if ( $start <= $now && $now <= $end ) {
     
 }else{
@@ -151,20 +109,6 @@ if ( $start <= $now && $now <= $end ) {
 }
 
 }
-
-
-//verificar se o produto tem adicionais ou ingredientes
-$query = $pdo->query("SELECT * FROM adicionais where produto = '$id_prod'");
-$res = $query->fetchAll(PDO::FETCH_ASSOC);
-$total_adc = @count($res);
-
-$query = $pdo->query("SELECT * FROM guarnicoes where produto = '$id_prod'");
-$res = $query->fetchAll(PDO::FETCH_ASSOC);
-$total_guarn = @count($res);
-
-$query = $pdo->query("SELECT * FROM ingredientes where produto = '$id_prod'");
-$res = $query->fetchAll(PDO::FETCH_ASSOC);
-$total_ing = @count($res);
 
 
 ?>
@@ -181,19 +125,10 @@ $total_ing = @count($res);
 	<nav class="navbar bg-light fixed-top" style="box-shadow: 0px 3px 5px rgba(0, 0, 0, 0.20);">
 		<div class="container-fluid">
 			<div class="navbar-brand" >
-				<?php if($total_adc > 0 || $total_ing > 0 || $total_guarn > 0){ ?>
-				<a href="adicionais-<?php echo $url_completa ?>&sabores=<?php echo $sabores ?>"><big><i class="bi bi-arrow-left"></i></big></a>
-				<?php }else{
-					$query =$pdo->query("SELECT * FROM variacoes where produto = '$id_prod' and ativo = 'Sim'");
-					$res = $query->fetchAll(PDO::FETCH_ASSOC);
-					$total_var = @count($res);
-					if($total_var > 0){
-				 ?>
-				<a href="produto-<?php echo $url ?>&sabores=<?php echo $sabores ?>"><big><i class="bi bi-arrow-left"></i></big></a>
-				<?php }else{ ?>
-					<a href="categoria-<?php echo $url_cat ?>"><big><i class="bi bi-arrow-left"></i></big></a>
-				<?php } } ?>	
-				<span style="margin-left: 15px">Resumo do Item</span>
+               
+               <a href="categoria-<?php echo $url_cat ?>"><big><i class="bi bi-arrow-left"></i></big></a>
+            
+				<span style="margin-left: 15px; font-size:14px">Resumo do Item</span>
 			</div>
 
 			<?php require_once("icone-carrinho.php") ?>
@@ -204,7 +139,7 @@ $total_ing = @count($res);
 
 
 	<div class="destaque">
-		<b><?php echo mb_strtoupper($nome); ?></b> <small><small> <?php echo $texto_sabor ?></small></small>
+		<b><?php echo mb_strtoupper($nome); ?></b>
 	</div>
 
 	<?php if($sabores != 2 and $sabores != 1){ ?>
@@ -248,103 +183,6 @@ $total_ing = @count($res);
 </body>
 </html>
 
-
-
-<div id="popup2" class="overlay2">
-	<div class="popup2">
-		<div class="row">
-			<div class="col-12">
-				<div class="card-add-carrinho">
-					<a class="close" href="#">&times;</a>
-
-
-					<form action="carrinho.php" method="post">						     
-						<div class="row">								
-							<div class="col-6"> 
-
-								<?php if($id_usuario == ""){ ?>
-									<div class="group">
-										<input onkeyup="buscarNome()" type="text" class="input" name="telefone" id="telefone" required value="<?php echo @$telefone_cliente ?>">
-										<span class="highlight"></span>
-										<span class="bar"></span>
-										<label class="label">Telefone</label>
-									</div>
-								<?php }else{ ?> 
-									<div class="group">
-											<select class="form-control" id="mesa" name="telefone" style="width:100%;" >
-											<option value="0">Selecione uma Mesa</option> 
-
-									<?php 
-									$query = $pdo->query("SELECT * FROM mesas");
-									$res = $query->fetchAll(PDO::FETCH_ASSOC);
-									$total_reg = @count($res);
-									if($total_reg > 0){
-										for($i=0; $i < $total_reg; $i++){
-										foreach ($res[$i] as $key => $value){}
-										if($mesa_carrinho == $res[$i]['nome']){
-											$selected = 'selected';
-										}else{
-											$selected = '';
-										}	
-										echo '<option value="'.$res[$i]['nome'].'" '.$selected.'>'.$res[$i]['nome'].'</option>';
-										}
-									}
-									 ?>
-									
-
-								</select>   
-										
-									</div>
-								<?php } ?>
-								
-							</div>
-
-
-							<div class="col-6"> 
-								<div class="group">
-									<input onclick="buscarNome()" type="text" class="input" name="nome" id="nome" required value="<?php echo @$nome_cliente ?>">
-									<span class="highlight"></span>
-									<span class="bar"></span>
-									<label class="label">Nome</label>
-								</div>
-							</div>
-						</div>
-
-						<?php if($sabores != 1){ ?>
-
-						<div class="row" align="center">								
-							<div class="col-6"> 
-								<a href="#" onclick="<?php echo $nome_comprar_mais ?>" class="btn btn-primary" style="width:100%">Comprar Mais</a>
-							</div>
-
-							<div class="col-6"> 
-								<a href="#" onclick="<?php echo $nome_funcao ?>" class="btn btn-success" style="width:100%">Finalizar Pedido</a>
-							</div>
-
-						</div>
-
-					<?php }else{ ?>
-
-							<div class="row" align="center">								
-							<div class="col-12"> 
-								<a href="#" onclick="<?php echo $nome_funcao_segundo ?>" class="btn btn-primary" style="width:100%">Selecionar Segundo Sabor</a>
-							</div>							
-
-						</div>
-					<?php } ?>
-
-						<br>
-						<div id="mensagem" align="center"></div>
-
-						
-					</form>
-				</div>
-			</div>
-
-		</div>
-		
-	</div>
-</div>
 
 
 
@@ -401,8 +239,9 @@ $total_ing = @count($res);
 		var total_item = $('#total_item_input').val();
 		var produto = "<?=$id_prod?>";
 		var obs = $('#obs').val();
-		var sabores = "<?=$sabores?>";
-		var variacao = "<?=$id_variacao?>";
+		
+
+		total_item = parseFloat(total_item) / parseFloat(quantidade);
 
 		if(total_item == ""){			
 			return;
@@ -411,7 +250,7 @@ $total_ing = @count($res);
 		 $.ajax({
         url: 'js/ajax/add-carrinho.php',
         method: 'POST',
-        data: {quantidade, total_item, produto, obs, sabores, variacao},
+        data: {quantidade, total_item, produto, obs},
         dataType: "text",
 
         success: function (mensagem) {  

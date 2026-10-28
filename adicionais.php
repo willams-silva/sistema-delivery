@@ -1,16 +1,9 @@
 <?php
 @session_start(); 
+$id_usuario = @$_SESSION['id'];
+
 require_once("cabecalho.php");
 $url_completa = $_GET['url'];
-$sabores = @$_GET['sabores'];
-
-if($sabores == 1){
-    $texto_sabor = ' (1º Sabor)';
-}else if($sabores == 2){
-$texto_sabor = ' (2º Sabor)';
-}else{
-    $texto_sabor = '';
-}
 
 $sessao = date('Y-m-d-H:i:s-').rand(0, 1500);;
 
@@ -22,41 +15,12 @@ $nova_sessao = $_SESSION['sessao_usuario'];
 
 $separar_url = explode("_", $url_completa);
 $url = $separar_url[0]; 
-$item = @$separar_url[1];
 
+$pdo->query("DELETE FROM temp where carrinho = '0' and sessao = '$nova_sessao'");
+
+$tem_variação = 'Não';
 
 $data = date('Y-m-d');
-//verificar se está aberto hoje
-$diasemana = array("Domingo", "Segunda-Feira", "Terça-Feira", "Quarta-Feira", "Quinta-Feira", "Sexta-Feira", "Sábado");
-$diasemana_numero = date('w', strtotime($data));
-$dia_procurado = $diasemana[$diasemana_numero];
-
-//percorrer os dias da semana que ele trabalha
-$query = $pdo->query("SELECT * FROM dias where dia = '$dia_procurado'");
-$res = $query->fetchAll(PDO::FETCH_ASSOC);
-if(@count($res) > 0){       
-        echo "<script>window.alert('Estamos Fechados! Não funcionamos Hoje!')</script>";
-    echo "<script>window.location='index.php'</script>";
-    exit();
-}
-
-$hora_atual = date('H:i:s');
-
-//nova verificação de horarios
-$start = strtotime( date('Y-m-d' .$horario_abertura) );
-$end = strtotime( date('Y-m-d' . $horario_fechamento) );
-$now = time();
-
-if(@$id_usuario == ''){
-if ( $start <= $now && $now <= $end ) {
-    
-}else{
-    echo "<script>window.alert('$texto_fechamento_horario')</script>";
-    echo "<script>window.location='index.php'</script>";
-    exit();
-}
-
-}
 
 
 $query = $pdo->query("SELECT * FROM produtos where url = '$url'");
@@ -79,16 +43,7 @@ if($total_reg2 > 0){
 }
 
 
-if($item == ""){
-	$valor_item_prod = $valor;
-}else{
-	$query = $pdo->query("SELECT * FROM variacoes where produto = '$id_prod' and sigla = '$item'");
-	$res = $query->fetchAll(PDO::FETCH_ASSOC);
-	$valor_item_prod = $res[0]['valor'];
-
-}
-
-
+$valor_total_do_item = $valor;
 
 }
  ?>
@@ -98,17 +53,10 @@ if($item == ""){
 	<nav class="navbar bg-light fixed-top" style="box-shadow: 0px 3px 5px rgba(0, 0, 0, 0.20);">
 		<div class="container-fluid">
 			<div class="navbar-brand" >
-                <?php 
-                $query =$pdo->query("SELECT * FROM variacoes where produto = '$id_prod' and ativo = 'Sim'");
-                    $res = $query->fetchAll(PDO::FETCH_ASSOC);
-                    $total_var = @count($res);
-                    if($total_var > 0){
-                 ?>
-				<a href="produto-<?php echo $url ?>&sabores=<?php echo $sabores ?>"><big><i class="bi bi-arrow-left"></i></big></a>
-            <?php }else{ ?>
+               
                <a href="categoria-<?php echo $url_cat ?>"><big><i class="bi bi-arrow-left"></i></big></a>
-            <?php } ?>
-				<span style="margin-left: 15px; font-size:14px"><?php echo $nome ?> <?php echo $item ?> <small><small> <?php echo $texto_sabor ?></small></small></span>
+            
+				<span style="margin-left: 15px; font-size:14px"><?php echo $nome ?> </span>
 			</div>
 
 			<?php require_once("icone-carrinho.php") ?>
@@ -116,22 +64,106 @@ if($item == ""){
 		</div>
 	</nav>
 
-	<div id="listar-adicionais" style='margin-top: 70px;'>
+	<div id="" style='margin-top: 70px;'>
+        <?php 
+        $query =$pdo->query("SELECT * FROM grades where produto = '$id_prod' and ativo = 'Sim' order by id asc");
+$res = $query->fetchAll(PDO::FETCH_ASSOC);
+$total_reg = @count($res);
+if($total_reg > 0){ 
+        for($i=0; $i < $total_reg; $i++){      
+            $id_grade = $res[$i]['id']; 
+            $tipo_item = $res[$i]['tipo_item']; 
+            $valor_item = $res[$i]['valor_item']; 
+            $texto = $res[$i]['texto']; 
+            $limite = $res[$i]['limite']; 
+
+            if($tipo_item == 'Variação'){
+                $tem_variação = 'Sim';
+            }
 
 
-	
-	</div>
+            ?>
 
-
-    <div id="listar-guarnicoes">
-    
+            <div class="titulo-itens">
+                <input type="hidden" id="qt_<?php echo $id_grade ?>">
+    <?php echo $texto ?>  <?php if($limite > 0){ echo ' <span style="font-size:13px; color:#000">(até '.$limite.' itens!)</span>'; } ?>
     </div>
+    <ol class="list-group">
+
+    <?php 
+    $query2 =$pdo->query("SELECT * FROM itens_grade where grade = '$id_grade' and ativo = 'Sim' order by id asc");
+$res2 = $query2->fetchAll(PDO::FETCH_ASSOC);
+$total_reg2 = @count($res2);
+if($total_reg2 > 0){ 
+        for($i2=0; $i2 < $total_reg2; $i2++){      
+            $id_item = $res2[$i2]['id']; 
+            $texto_item = $res2[$i2]['texto']; 
+            $valor_item_grade = $res2[$i2]['valor']; 
+            $limite_item = $res2[$i2]['limite']; 
+            $valor_item_gradeF = number_format($valor_item_grade, 2, ',', '.');
+
+            $ocultar_valor = 'ocultar';
+            if($valor_item_grade > 0){
+                $ocultar_valor = '';
+            }
+
+   ?>
+
+   
+        <li class="list-group-item">                
+        <?php echo $texto_item ?> <span class="valor-item <?php echo $ocultar_valor ?>">(R$ <?php echo $valor_item_gradeF ?>) </span> <?php if($limite_item > 0){ echo ' <span style="font-size:12px; color:red">(até '.$limite_item.' itens!)</span>'; } ?>
+        <?php if($tipo_item == '1 de Cada'){ ?>
+        <span class="form-switch direita">
+          <input class="form-check-input" type="checkbox" id="<?php echo $id_item ?>" onchange="itens('<?php echo $id_item ?>', '<?php echo $id_grade ?>', '<?php echo $valor_item_grade ?>', '<?php echo $tipo_item ?>', '1', '<?php echo $valor_item ?>', '<?php echo $limite ?>' )">
+         </span> 
+         <?php } ?>    
+
+         <?php if($tipo_item == 'Múltiplo'){ ?>
+       <span class="direita">
+           
+                <span><button onclick="dim('<?php echo $id_grade ?>', '<?php echo $id_item ?>', '<?php echo $valor_item_grade ?>', '<?php echo $tipo_item ?>', '<?php echo $valor_item ?>', '<?php echo $limite_item ?>', '<?php echo $limite ?>')" style="background:transparent; border:none"><i class="bi bi-dash-circle-fill text-danger"></i></button></span>
+                <span> <b><input id="quantidade_item_<?php echo $id_item ?>" value="0" style="background: transparent; border:none; width:20px; text-align: center"></b> </span>
+                <span><button onclick="aum('<?php echo $id_grade ?>', '<?php echo $id_item ?>', '<?php echo $valor_item_grade ?>', '<?php echo $tipo_item ?>', '<?php echo $valor_item ?>', '<?php echo $limite_item ?>', '<?php echo $limite ?>')" style="background:transparent; border:none"><i class="bi bi-plus-circle-fill text-success"></i></button></span>
+            
+        </span>
+
+        
+         <?php } ?>  
 
 
-	<div id="listar-ing">
-	
+           <?php if($tipo_item == 'Único' || $tipo_item == 'Variação'){ ?>
+       <span class="direita">
+           
+               <input class="form-check-input" type="radio" value="Sim" name="<?php echo $id_grade ?>" id="<?php echo $id_grade ?>" onchange="itens('<?php echo $id_item ?>', '<?php echo $id_grade ?>', '<?php echo $valor_item_grade ?>', '<?php echo $tipo_item ?>', '1', '<?php echo $valor_item ?>' )">
+            
+        </span>
+         <?php } ?>  
+
+
+        </li>
+       
+
+<?php } }  
+
+} ?>    
+
+   
 	</div>
+<?php
 
+
+
+
+$valor_total_pedidoF = @number_format($valor_total_do_item, 2, ',', '.');
+ } ?>
+
+
+
+<div class="total">
+    <input type="hidden" id="valor_total_produto" value="<?php echo $valor_total_do_item ?>">
+    <input type="hidden" id="valor_total_input" value="<?php echo $valor_total_do_item ?>">
+    R$ <b><span id="valor_item_quantF"><?php echo $valor_total_pedidoF ?></span></b>
+</div>
 
 
 
@@ -140,15 +172,6 @@ if($item == ""){
 $texto_botao = 'Adicionar ao Carrinho';
 $funcao_botao = 'finalizarItem()';
 
-if($sabores == 1){
-    $texto_sabor = ' (1º Sabor)';
-    $texto_botao = 'Selecionar Segundo Sabor';
-    $funcao_botao = 'selecionarSegundo()';
-}else if($sabores == 2){
-$texto_sabor = ' (2º Sabor)';
-}else{
-    $texto_sabor = '';
-}
 
 if(@$_SESSION['sessao_usuario'] == ""){
     $sessao = date('Y-m-d-H:i:s-').rand(0, 1500);
@@ -160,16 +183,9 @@ if(@$_SESSION['sessao_usuario'] == ""){
 
 
 if(@$_SESSION['id'] != ""){
-    $id_usuario = $_SESSION['id'];
-    $texto_botao = 'Adicionar ao Pedido';
-    $nome_funcao = 'finalizarPedidoPainel()';
-    $nome_funcao_segundo = 'selecionarSegundoPedido()';
-    $nome_comprar_mais = 'comprarMaisPainel()';
+    $id_usuario = $_SESSION['id'];    
 }else{
-    $id_usuario = '';
-    $nome_funcao = 'finalizarPedido()';
-    $nome_funcao_segundo = 'selecionarSegundo()';
-    $nome_comprar_mais = 'comprarMais()';
+    $id_usuario = '';   
 }
 
 $query = $pdo->query("SELECT * FROM carrinho where sessao = '$sessao'");
@@ -195,7 +211,6 @@ if($total_reg > 0){
 
 $separar_url = explode("_", $url_completa);
 $url = $separar_url[0]; 
-$item = @$separar_url[1];
 
 
 $query = $pdo->query("SELECT * FROM produtos where url = '$url'");
@@ -218,36 +233,9 @@ if($total_reg > 0){
     $url_cat = $res[0]['url'];
 }
 
-$url_itens = '2sabores-'.$url_cat.'&sabores=2';
 
-if($item == ""){
-    $valor_item = $valor;
-    $id_variacao = 0;
-}else{
-    $query = $pdo->query("SELECT * FROM variacoes where produto = '$id_prod' and sigla = '$item'");
-    $res = $query->fetchAll(PDO::FETCH_ASSOC);
-    $valor_item = $res[0]['valor'];
-    $id_variacao = $res[0]['id'];
-}
 
-$query =$pdo->query("SELECT * FROM temp where sessao = '$sessao' and tabela = 'adicionais' and carrinho = '0'");
-$res = $query->fetchAll(PDO::FETCH_ASSOC);
-$total_reg = @count($res);
-if($total_reg > 0){
-    for($i=0; $i < $total_reg; $i++){
-        foreach ($res[$i] as $key => $value){}
-        $id_adc = $res[$i]['id_item'];
-
-        $query2 =$pdo->query("SELECT * FROM adicionais where id = '$id_adc'");
-        $res2 = $query2->fetchAll(PDO::FETCH_ASSOC);
-        $valor_adc = $res2[0]['valor'];
-        $valor_item += $valor_adc;  
-
-}
-}
-
-$valor_itemF = number_format($valor_item, 2, ',', '.');
-
+if(@$id_usuario == ""){
 
 if($status_estabelecimento == "Fechado"){       
         echo "<script>window.alert('$texto_fechamento')</script>";
@@ -285,33 +273,25 @@ if(strtotime($hora_atual) > strtotime($horario_abertura) and strtotime($hora_atu
     }
 }
 
-
-//verificar se o produto tem adicionais ou ingredientes
-$query = $pdo->query("SELECT * FROM adicionais where produto = '$id_prod'");
-$res = $query->fetchAll(PDO::FETCH_ASSOC);
-$total_adc = @count($res);
-
-$query = $pdo->query("SELECT * FROM ingredientes where produto = '$id_prod'");
-$res = $query->fetchAll(PDO::FETCH_ASSOC);
-$total_ing = @count($res);
+}
 
 
 ?>
 
 <hr>
 
-<?php if($sabores != 2 and $sabores != 1){ ?>
+
     <div class="destaque-qtd" >
         <b>QUANTIDADE</b>
         <span class="direita">
             <big>
-                <span><a href="#" onclick="diminuirQuant()"><i class="bi bi-dash-circle-fill text-danger"></i></a></span>
+                <span><button style="background:transparent; border:none" onclick="diminuirQuant()"><i class="bi bi-dash-circle-fill text-danger"></i></button></span>
                 <span> <b><span id="quant"></span></b> </span>
-                <span><a href="#" onclick="aumentarQuant()"><i class="bi bi-plus-circle-fill text-success"></i></a></span>
+                <span><button style="background:transparent; border:none" onclick="aumentarQuant()"><i class="bi bi-plus-circle-fill text-success"></i></button></span>
             </big>
         </span>
     </div>
-    <?php } ?>
+    
 
     <input type="hidden" id="quantidade" value="1">
     
@@ -332,7 +312,7 @@ $total_ing = @count($res);
 
 
 <div class="d-grid gap-2 mt-4 ">
-    <a href='#' onclick="<?php echo $funcao_botao ?>" class="btn btn-primary botao-carrinho"><?php echo $texto_botao ?></a>
+    <button onclick="addCarrinho()" class="btn btn-primary botao-carrinho">Adicionar ao Pedido</button>
 </div>
 
 <br>
@@ -343,23 +323,46 @@ $total_ing = @count($res);
 
 <script type="text/javascript">
 
-	$(document).ready(function() {    		
-    listarAdicionais(); 
-     listarIng();   
-     listarGuarnicoes(); 
-} );
+	$(document).ready(function() { 
+        
+    });
 	
-function adicionar(id, acao){
+function itens(id, grade, valor, tipo, quantidade, tipagem, limite_grade){
+
+    
+     var marcado = $("#"+grade).val();
+     var qtd_marcada = $("#qt_"+grade).val();
+     if(qtd_marcada == ""){
+        qtd_marcada = 0;
+     }
+
+     if(tipo == '1 de Cada' && limite_grade > 0){
+         if($('#'+id).is(":checked") == true){
+                qtd_marcada_final = parseFloat(qtd_marcada) + 1;
+            }else{
+                qtd_marcada_final = parseFloat(qtd_marcada) - 1;
+            }            
+
+            if(qtd_marcada_final > limite_grade){
+                alert('O limite para essa escolha é de '+limite_grade+' Itens!');
+                $('#'+id).prop("checked", false);
+                return;
+            }else{
+                $("#qt_"+grade).val(qtd_marcada_final);
+            }
+    }
+
 
     $.ajax({
-        url: 'js/ajax/adicionais.php',
+        url: 'js/ajax/adicionar_item.php',
         method: 'POST',
-        data: {id, acao},
+        data: {id, grade, valor, tipo, marcado, quantidade, tipagem},
         dataType: "text",
 
         success: function (mensagem) {
+           //alert(mensagem)
             if (mensagem.trim() == "Alterado com Sucesso") {                
-                listarAdicionais();                
+                listarItens();                
             } 
 
         },      
@@ -369,111 +372,102 @@ function adicionar(id, acao){
 
 
 
-function adicionarGuar(id, acao){
 
-    $.ajax({
-        url: 'js/ajax/adicionar-guar.php',
-        method: 'POST',
-        data: {id, acao},
-        dataType: "text",
+function listarItens(){
 
-        success: function (mensagem) {  
-                  
-            if (mensagem.trim() == "Alterado com Sucesso") {                
-                listarGuarnicoes();                
-            }else{
-                alert(mensagem)
-            } 
-
-        },      
-
-    });
-}
-
-function adicionarIng(id, acao){	
-
-    $.ajax({
-        url: 'js/ajax/adicionar-ing.php',
-        method: 'POST',
-        data: {id, acao},
-        dataType: "text",
-
-        success: function (mensagem) {  
-                  
-            if (mensagem.trim() == "Alterado com Sucesso") {                
-                listarIng();                
-            } 
-
-        },      
-
-    });
-}
-
-
-function listarAdicionais(){
-
-     var quant = $("#quantidade").val();  
-
+    
 	var id = '<?=$id_prod?>';
-	var valor = '<?=$valor_item_prod?>';
-
-    $.ajax({
-         url: 'js/ajax/listar-adicionais.php',
-        method: 'POST',
-        data: {id, valor, quant},
-        dataType: "html",
-
-        success:function(result){
-            $("#listar-adicionais").html(result);
-           
-        }
-    });
-}
-
-
-
-function listarGuarnicoes(){
-
-     var quant = $("#quantidade").val();  
-
-    var id = '<?=$id_prod?>';
-    var valor = '<?=$valor_item_prod?>';
-
-    $.ajax({
-         url: 'js/ajax/listar-guarnicoes.php',
-        method: 'POST',
-        data: {id, valor, quant},
-        dataType: "html",
-
-        success:function(result){
-            $("#listar-guarnicoes").html(result);
-           
-        }
-    });
-}
-
-
-function listarIng(){
-	var quant = $("#quantidade").val();
-    var id = '<?=$id_prod?>';
-    var valor = '<?=$valor_item_prod?>';
 	
     $.ajax({
-         url: 'js/ajax/listar-ing.php',
+         url: 'js/ajax/listar_itens_grade.php',
         method: 'POST',
-        data: {id, valor, quant},
+        data: {id},
         dataType: "html",
 
         success:function(result){
-            $("#listar-ing").html(result);
-           
+            //alert(result)
+           var split = result.split('*');
+
+            $("#valor_total_input").val(split[0]);
+             $("#valor_item_quantF").text(split[1]);
+            $("#valor_total_produto").val(split[2]);
         }
     });
 }
+
+
 
 </script>
 
 
+
+
+<script type="text/javascript">
+    function aum(grade, item, valor, tipo, tipagem, limite, limite_grade){
+        var quant = $("#quantidade_item_"+item).val();
+        var quantidade = parseFloat(quant) + 1; 
+
+       
+         if(limite > 0){
+            if(quantidade > limite){
+                alert("A quantidade de itens não pode ser maior que "+limite)
+                return;
+            }
+        }  
+
+
+
+
+         var qt_grade = $("#qt_"+grade).val();
+        if(qt_grade == ""){
+            qt_grade = 0;
+        }
+        qt_grade = parseFloat(qt_grade) + 1;
+        
+
+        if(limite_grade > 0){
+            if(qt_grade > limite_grade){
+                alert("A quantidade de itens selecionados não pode ser maior que "+limite_grade)
+                return;
+            }
+        }  
+        $("#qt_"+grade).val(qt_grade);
+
+
+        $("#quantidade_item_"+item).val(quantidade); 
+
+          
+        
+        itens(item, grade, valor, tipo, quantidade, tipagem);
+    }
+
+    function dim(grade, item, valor, tipo, tipagem, limite, limite_grade){
+        var quant = $("#quantidade_item_"+item).val();
+       
+        var quantidade = parseFloat(quant) - 1;
+
+         if(quantidade < 0){
+            alert('Insira um valor igual ou maior que zero');
+            return;
+        } 
+      
+
+        var qt_grade = $("#qt_"+grade).val();
+        if(qt_grade == ""){
+            qt_grade = 0;
+        }
+        qt_grade = parseFloat(qt_grade) - 1;
+        $("#qt_"+grade).val(qt_grade);
+ 
+
+        $("#quantidade_item_"+item).val(quantidade); 
+
+         
+        
+        itens(item, grade, valor, tipo, quantidade, tipagem);
+    }
+
+</script>
 
 
 
@@ -494,7 +488,7 @@ function listarIng(){
 
         
         var total_quant = parseInt(quant) + parseInt(1);
-        var total_inicial = $("#total_item_input_adc").val(); 
+        var total_inicial = $("#valor_total_input").val(); 
         var total_it = parseFloat(total_inicial) * parseFloat(total_quant);
         $("#total_item").text(total_it.toFixed(2));
         $("#total_item_input").val(total_it);
@@ -510,7 +504,7 @@ function listarIng(){
             $("#quantidade").val(novo_valor)
 
         var total_quant = parseInt(quant) - parseInt(1);
-         var total_inicial = $("#total_item_input_adc").val(); 
+         var total_inicial = $("#valor_total_input").val(); 
         var total_it = parseFloat(total_inicial) * parseFloat(total_quant);
         $("#total_item").text(total_it.toFixed(2));
         $("#total_item_input").val(total_it);
@@ -526,71 +520,44 @@ function listarIng(){
 
 
 
+
+
 <script type="text/javascript">  
-
-
-    function finalizarItem(){       
-        addCarrinho();
-        setTimeout(redirecionarCarrinho, 1000);
-    }    
-
-
-    function selecionarSegundo(){
-        addCarrinho();
-        setTimeout(redirecionarCategoria, 1000);
-    }
-
-
-
-    function selecionarSegundoPedido(){       
-        addCarrinho();
-        setTimeout(redirecionarCategoria, 1000);
-    }
-
-
-    function redirecionar(){
-         window.location='index';
-    }
-
-
-    function redirecionarCarrinho(){
-         window.location='carrinho';
-    }
-
-
-    function redirecionarCategoria(){
-        var url = "<?=$url_itens?>";
-         window.location=url;
-    }
-
-
+ 
     function addCarrinho(){
         
         var quantidade = $('#quantidade').val();
-        var total_item = $('#total_item_input').val();
+        var total_item = $('#valor_total_input').val();
         var produto = "<?=$id_prod?>";
         var obs = $('#obs').val();
-        var sabores = "<?=$sabores?>";
-        var variacao = "<?=$id_variacao?>";
+        var tem_var = "<?=$tem_variação?>";
 
-        if(total_item > 0){
-            
-        }else{
-            total_item = "<?=$valor_item_prod?>";
+        var valor_produto = $('#valor_total_produto').val();
+
+        if(total_item <= 0 && valor_produto <= 0 ){
+            alert("O valor do Pedido é zero, selecione as opções!");
+            return;
+        }
+
+        if(valor_produto <= 0 && tem_var == 'Sim'){
+            alert("Selecione a Variação do Item");
+            return;
         }
         
-       //alert(total_item)
-
+               
+       
          $.ajax({
         url: 'js/ajax/add-carrinho.php',
         method: 'POST',
-        data: {quantidade, total_item, produto, obs, sabores, variacao},
+        data: {quantidade, total_item, produto, obs, valor_produto},
         dataType: "text",
 
         success: function (mensagem) {                  
             if (mensagem.trim() == "Inserido com Sucesso") {                
-                          
-            } 
+                 window.location='carrinho';          
+            }else{
+                alert(mensagem)
+            }
 
         },      
 

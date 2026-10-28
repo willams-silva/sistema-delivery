@@ -23,6 +23,9 @@ if($total_reg == 0){
     $total_item = $res[$i]['total_item'];
     $produto = $res[$i]['produto']; 
     $pedido = $res[$i]['pedido'];  
+    $quantidade_it = $res[$i]['quantidade'];
+
+    $total_item = $total_item * $quantidade_it;
 
     $total_carrinho += $total_item;    
     $total_carrinhoF = number_format($total_carrinho, 2, ',', '.');
@@ -76,7 +79,7 @@ if($id_usuario != ''){
 <div class="accordion" id="accordionExample" style="margin-top: 55px; margin-bottom: 130px; overflow: scroll; height:100%; scrollbar-width: thin; z-index: 100">
   <div class="accordion-item">
     <h2 class="accordion-header" id="headingOne">
-      <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+      <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne" style="font-size:14px">
         1 - IDENTIFICAÇÃO
       </button>
     </h2>
@@ -86,7 +89,7 @@ if($id_usuario != ''){
 
        <?php if($id_usuario == ""){ ?>
        <div class="nome_user"> <input onclick="buscarNome()" type="text" class="input" name="nome" id="nome" required value="" placeholder="Seu Nome" style="width:150px; text-align: center; border:0"></div >
-       <input onkeyup="buscarNome()" type="text" class="input telefone_user" name="telefone" id="telefone" required value="" placeholder="(00) 00000-0000" style="width:150px; text-align: center; border:0; margin-top: -15px">
+       <input onkeyup="buscarNome()"  type="text" class="input telefone_user" name="telefone" id="telefone" required value="" placeholder="(00) 00000-0000" style="width:150px; text-align: center; border:0; margin-top: -15px">
      <?php }else{ ?>
        <div class="nome_user"> <input type="text" class="input" id="nome" value="" placeholder="Nome Cliente" style="width:150px; text-align: center; border:0"></div >
        <select class="input telefone_user" name="mesa" id="mesa" style="width:100px; text-align: center; border:0; margin-top: -15px">
@@ -132,7 +135,7 @@ if($id_usuario != ''){
 </div>
 <div class="accordion-item <?php echo $esconder_opc_delivery ?>">
   <h2 class="accordion-header" id="headingTwo">
-    <button id="colapse-2" class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+    <button id="colapse-2" class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo" style="font-size:14px">
      2 - MODO DE ENTREGA
    </button>
  </h2>
@@ -159,7 +162,7 @@ if($id_usuario != ''){
 </div>
 <div class="accordion-item <?php echo $esconder_opc_delivery ?>">
   <h2 class="accordion-header" id="headingThree">
-    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree" id="colapse-3">
+    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree" id="colapse-3" style="font-size:14px">
       3 - ENDEREÇO OU UNIDADE DE RETIRADA
     </button>
   </h2>
@@ -306,16 +309,16 @@ if($id_usuario != ''){
   <div id="collapse4" class="accordion-collapse collapse" aria-labelledby="heading4" data-bs-parent="#accordionExample">
     <div class="accordion-body">
 
-      <div class="row">
+      <div class="row" style="font-size:14px">
 
-        <div class="col-3 form-check" >
+        <div class="col-2 form-check" >
          <small>Pix
           <input onchange="pix()" class="form-check-input" type="radio" name="radio_pix" id="radio_pix">
         </small>
       </div>     
 
       <div class="col-3 form-check">
-       <small> Dinheiro
+       <small>Dinheiro
          <input onchange="dinheiro()" class="form-check-input" type="radio" name="racio_dinheiro" id="radio_dinheiro">
        </small>
      </div>     
@@ -459,7 +462,13 @@ if($id_usuario != ''){
 
 <script type="text/javascript">
 
-  $(document).ready(function() {     
+  $(document).ready(function() {   
+
+     var id_usuario = "<?=$id_usuario?>";
+   if(id_usuario == ""){
+     $('#nome').hide();   
+   } 
+  
   $('#telefone').focus();     
     document.getElementById('area-endereco').style.display = "none";
     document.getElementById('area-obs').style.display = "none";
@@ -775,10 +784,10 @@ if($id_usuario != ''){
    }
 
     if(pagamento == "Dinheiro" && troco == ""){
-    alert('Digite o total a ser pago para o troco');
-    $('#botao_finalizar').show(); 
-    $('#div_img').hide();
-    return;
+    //alert('Digite o total a ser pago para o troco');
+   // $('#botao_finalizar').show(); 
+    //$('#div_img').hide();
+    //return;
    }
 
    var total_compra_final = parseFloat(total_compra) + parseFloat(taxa_entrega) - parseFloat(cupom);
@@ -786,10 +795,10 @@ if($id_usuario != ''){
    var total_compra_finalF = total_compra_final.toFixed(2)
    
    if(pagamento == "Dinheiro" && troco < total_compra_final){
-    alert('Digite um valor acima do total da compra!');
-    $('#botao_finalizar').show(); 
-    $('#div_img').hide();
-    return;
+    //alert('Digite um valor acima do total da compra!');
+    //$('#botao_finalizar').show(); 
+    //$('#div_img').hide();
+    //return;
    }
 
   
@@ -800,7 +809,8 @@ if($id_usuario != ''){
         dataType: "html",
 
 
-      success: function (mensagem) {        
+      success: function (mensagem) {  
+      //alert(mensagem)      
         
          if (mensagem == 'Pagamento nao realizado!!') {
           alert('Realize o Pagamento antes de Prosseguir!!');
@@ -908,6 +918,8 @@ if($id_usuario != ''){
 <script type="text/javascript">
   function buscarNome(){
 
+
+
     var tel = $('#telefone').val(); 
 
      var nome = $('#nome').val(); 
@@ -920,7 +932,7 @@ if($id_usuario != ''){
 
       success:function(result){  
       //alert(result)  
-
+        $('#nome').show();
         var split = result.split("**");    
 
         if(nome == ""){
@@ -946,11 +958,20 @@ if($id_usuario != ''){
 
 <script type="text/javascript">
   function dados(){
-
+    $('#nome').show();
      
    var nome = $('#nome').val();
    var telefone = $('#telefone').val();   
     var id_usuario = "<?=$id_usuario?>";
+
+    if(id_usuario == ""){
+      if(telefone.length < 15){
+      alert("Coloque o número de telefone completo");
+      return;
+      }
+    }
+    
+    
 
     if(telefone == ""){
     alert('Preencha seu Telefone'); 

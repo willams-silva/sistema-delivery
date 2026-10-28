@@ -9,17 +9,12 @@ if($total_reg > 0){
 $nome = $res[0]['nome'];
 $descricao = $res[0]['descricao'];
 $id = $res[0]['id'];
-$mais_sabores = $res[0]['mais_sabores'];
+
 
 @session_start();
 $sessao = @$_SESSION['sessao_usuario'];
 
 $pdo->query("DELETE FROM temp where carrinho = 0 and sessao = '$sessao'");
-
-if($mais_sabores == 'Sim'){
-	echo "<script>window.location='categoria-sabores-$url'</script>";
-}
-
 
 }
 
@@ -76,37 +71,28 @@ if($mais_sabores == 'Sim'){
 					$mostrar_promo = 'ocultar';					
 				}
 
-				$query2 = $pdo->query("SELECT * FROM variacoes where produto = '$id' and ativo = 'Sim'");
-		$res2 = $query2->fetchAll(PDO::FETCH_ASSOC);
-		$total_reg2 = @count($res2);		
-		if($total_reg2 == 0){
 
-$query3 = $pdo->query("SELECT * FROM guarnicoes where produto = '$id'");
-$res3 = $query3->fetchAll(PDO::FETCH_ASSOC);
-$total_guarn = @count($res3);			
-
-			//verificar se o produto tem adicionais
-$query3 = $pdo->query("SELECT * FROM adicionais where produto = '$id'");
+//verificar se o produto tem grade
+$query3 = $pdo->query("SELECT * FROM grades where produto = '$id' and ativo = 'Sim'");
 $res3 = $query3->fetchAll(PDO::FETCH_ASSOC);
 $total_adc = @count($res3);
-			if($total_adc > 0 || $total_guarn > 0){
+			if($total_adc > 0){
 				if($tem_estoque == 'Sim' and $estoque <= 0){
 					$url_produto = '#';
 				}else{
-					$url_produto = 'adicionais-'.$url.'&sabores='.$url;
+					$url_produto = 'adicionais-'.$url;
 				}
 				
 			}else{
 				if($tem_estoque == 'Sim' and $estoque <= 0){
 					$url_produto = '#';
 				}else{
-					$url_produto = 'observacoes-'.$url.'&sabores='.$url;
+					$url_produto = 'observacoes-'.$url;
 				}
 				
 			}
 			
-		}
-
+		
 
 				?>
 
@@ -127,25 +113,40 @@ $total_adc = @count($res3);
 				<div class="subtitulo-item-menor"><?php echo $descricao ?></div>
 				<span class="valor-item-maior">
 					<?php 
-$query2 = $pdo->query("SELECT * FROM variacoes where produto = '$id' and ativo = 'Sim'");
+$query2 = $pdo->query("SELECT * FROM grades where produto = '$id' and tipo_item = 'Variação' and ativo = 'Sim' order by id asc");
 		$res2 = $query2->fetchAll(PDO::FETCH_ASSOC);
 		$total_reg2 = @count($res2);		
-		if($total_reg2 > 0){
-			for($i2=0; $i2 < $total_reg2; $i2++){
-				foreach ($res2[$i2] as $key => $value){}
-					$sigla = $res2[$i2]['sigla'];
-				$valorvar = $res2[$i2]['valor'];
-				$valorvarF = number_format($valorvar, 2, ',', '.');
+		if($total_reg2 > 0){			
+					$id_grade = $res2[0]['id'];
 
-				echo '<span style="font-size:10px">('.$sigla.') R$ '.$valorvarF;
-				if($i2 < $total_reg2 - 1){
-					echo ' / ';
+					$query3 = $pdo->query("SELECT * FROM itens_grade where grade = '$id_grade' and ativo = 'Sim' order by id asc");
+		$res3 = $query3->fetchAll(PDO::FETCH_ASSOC);
+		$total_reg3 = @count($res3);		
+		if($total_reg3 > 0){
+			for($i3=0; $i3 < $total_reg3; $i3++){				
+					$id_item = $res3[$i3]['id'];
+					$nome_item = $res3[$i3]['texto'];
+					$valor_item = $res3[$i3]['valor'];
+					$valor_itemF = number_format($valor_item, 2, ',', '.');
+
+					echo '<span style="font-size:10px">('.$nome_item.') R$ '.$valor_itemF;
+					if($i3 < $total_reg3 - 1){
+						echo ' / ';
+					}
+					echo '</span>';
 				}
-				echo '</span>';
+			}
 
-				 } 
+				
+
+				
+
+				 
 				}else{
-					echo 'R$ '.$valorF;
+					if($valor > 0){
+						echo 'R$ '.$valorF;
+					}
+					
 					
 					}
 				  ?>
