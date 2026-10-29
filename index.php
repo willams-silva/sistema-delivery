@@ -3,6 +3,15 @@
 require_once("cabecalho.php");
 
 $id_mesa = @$_POST['id_mesa'];
+$pedido_balcao = @$_POST['pedido_balcao'];
+
+
+
+if($pedido_balcao != ""){
+  $nome_sistema = 'Pedido Balcão';
+  unset($_SESSION['id_mesa'], $_SESSION['nome_mesa'], $_SESSION['id_ab_mesa'], $_SESSION['sessao_usuario']);
+  $_SESSION['pedido_balcao'] = $pedido_balcao;
+}
 
 
 if($id_mesa != ""){
@@ -11,6 +20,16 @@ if($id_mesa != ""){
 
 if(@$_SESSION['id_mesa'] != ""){
     $id_mesa = $_SESSION['id_mesa'];
+}
+
+
+if($pedido_balcao != ""){
+  $_SESSION['pedido_balcao'] = $pedido_balcao;
+}
+
+if(@$_SESSION['pedido_balcao'] != ""){
+    $pedido_balcao = $_SESSION['pedido_balcao'];
+    $nome_sistema = 'Pedido Balcão';
 }
 
 //buscar os dados da mesa
@@ -33,11 +52,11 @@ $_SESSION['id_ab_mesa'] = $id_ab_mesa;
 
 $img = 'aberto.png';
 
-if($status_estabelecimento == "Fechado" and $id_mesa == ""){		
+if($status_estabelecimento == "Fechado" and $id_mesa == "" and $pedido_balcao == ""){		
 	$img = 'fechado.png';
 }
 
-if($id_mesa == ""){
+if($id_mesa == "" and $pedido_balcao == ""){
 $data = date('Y-m-d');
 //verificar se está aberto hoje
 $diasemana = array("Domingo", "Segunda-Feira", "Terça-Feira", "Quarta-Feira", "Quinta-Feira", "Sexta-Feira", "Sábado");
@@ -271,6 +290,11 @@ if ( $start <= $now && $now <= $end ) {
 				$url = $res[$i]['url'];
 				$id = $res[$i]['id'];
         $mais_sabores = $res[$i]['mais_sabores'];
+        $delivery = $res[$i]['delivery'];
+
+        if($id_mesa == "" and $delivery == 'Não' and $pedido_balcao == ''){
+          continue;
+        }
 
 				$query2 = $pdo->query("SELECT * FROM produtos where categoria = '$id' and ativo = 'Sim'");
 		$res2 = $query2->fetchAll(PDO::FETCH_ASSOC);

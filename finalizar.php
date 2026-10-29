@@ -5,6 +5,7 @@ require_once("js/ajax/ApiConfig.php");
 $sessao = @$_SESSION['sessao_usuario'];
 $id_usuario = @$_SESSION['id'];
 
+$sessao_pedido_balcao = @$_SESSION['pedido_balcao'];
 
 $total_carrinho = 0;
 $total_carrinhoF = 0;
@@ -76,10 +77,12 @@ $complemento = "";
     </h2>
     <div id="collapseOne" class="accordion-collapse collapse show" aria-labelledby="headingOne" data-bs-parent="#accordionExample">
       <div class="accordion-body" align="center">
+         <input onkeyup=""  type="text" class="input telefone_user" name="telefone" id="telefone" required value="" placeholder="(00) 00000-0000" style="width:200px; font-size:20px; text-align: center; border:0; margin-top: -15px">
+
        <img src="img/user.png" width="50px" height="50px" >
 
        <div class="nome_user"> <input onclick="" type="text" class="input" name="nome" id="nome" required value="" placeholder="Seu Nome" style="width:150px; text-align: center; border:0"></div >
-       <input onkeyup=""  type="text" class="input telefone_user" name="telefone" id="telefone" required value="" placeholder="(00) 00000-0000" style="width:150px; text-align: center; border:0; margin-top: -15px">
+      
     
        
        <hr>
@@ -443,11 +446,15 @@ $complemento = "";
 
   $(document).ready(function() {   
 
+    var pedido_balcao = "<?=$sessao_pedido_balcao?>"; 
+
+    if(pedido_balcao != 'Sim'){
     //recuperar variaveis de sesssao
     var nome_cl = localStorage.nome_cli_del;
     var tel_cl = localStorage.telefone_cli_del;
     $('#telefone').val(tel_cl);
     $('#nome').val(nome_cl);
+  }
     
 
      var id_usuario = "";   
@@ -530,6 +537,8 @@ var access_token = "<?=$access_token?>";
 
 
    function pix(){ 
+
+    $('#listar_pix').html('Carregando!!');
 
      var total_compra = "<?=$total_carrinho?>";
      total_compra = total_compra.replace(",", ".");
@@ -624,6 +633,8 @@ var access_token = "<?=$access_token?>";
 
     $('#botao_finalizar').hide();
     $('#div_img').show();
+
+     var pedido_balcao = "<?=$sessao_pedido_balcao?>"; 
 
     var codigo_pix = $('#codigo_pix').val();
 
@@ -830,7 +841,11 @@ var access_token = "<?=$access_token?>";
         $('#mensagem').removeClass()
         if (msg[1].trim() == "Pedido Finalizado") {
 
-          setTimeout(()=>{
+          if(pedido_balcao == 'Sim'){
+            window.close();
+          }else{
+
+              setTimeout(()=>{
               alert('Pedido Finalizado!');
             
 
@@ -842,7 +857,11 @@ var access_token = "<?=$access_token?>";
                 
                  window.location='pedido/'+id;
                           
-        },500);
+            },500);
+
+          }
+
+        
                 
 
 

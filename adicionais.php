@@ -10,6 +10,7 @@ $sessao = date('Y-m-d-H:i:s-').rand(0, 1500);;
 $nome_mesa = @$_SESSION['nome_mesa'];
 $id_ab_mesa = @$_SESSION['id_ab_mesa'];
 $id_mesa = @$_SESSION['id_mesa'];
+$pedido_balcao = @$_SESSION['pedido_balcao'];
 
 if(@$_SESSION['sessao_usuario'] == ""){
 	$_SESSION['sessao_usuario'] = $sessao;
@@ -126,7 +127,7 @@ if($total_reg2 > 0){
        <span class="direita" style="font-size:14px">
            
                 <span><button onclick="dim('<?php echo $id_grade ?>', '<?php echo $id_item ?>', '<?php echo $valor_item_grade ?>', '<?php echo $tipo_item ?>', '<?php echo $valor_item ?>', '<?php echo $limite_item ?>', '<?php echo $limite ?>')" style="background:transparent; border:none"><i class="bi bi-dash-circle-fill text-danger"></i></button></span>
-                <span> <b><input id="quantidade_item_<?php echo $id_item ?>" value="0" style="background: transparent; border:none; width:20px; text-align: center"></b> </span>
+                <span> <b><input id="quantidade_item_<?php echo $id_item ?>" value="0" style="background: transparent; border:none; width:20px; text-align: center" onblur="editar_quant('<?php echo $id_grade ?>', '<?php echo $id_item ?>', '<?php echo $valor_item_grade ?>', '<?php echo $tipo_item ?>', '<?php echo $valor_item ?>', '<?php echo $limite_item ?>', '<?php echo $limite ?>')"></b> </span>
                 <span><button onclick="aum('<?php echo $id_grade ?>', '<?php echo $id_item ?>', '<?php echo $valor_item_grade ?>', '<?php echo $tipo_item ?>', '<?php echo $valor_item ?>', '<?php echo $limite_item ?>', '<?php echo $limite ?>')" style="background:transparent; border:none"><i class="bi bi-plus-circle-fill text-success"></i></button></span>
             
         </span>
@@ -239,7 +240,7 @@ if($total_reg > 0){
 
 
 
-if(@$id_mesa == ""){
+if(@$id_mesa == "" and @$pedido_balcao == ""){
 
 if($status_estabelecimento == "Fechado"){       
         echo "<script>window.alert('$texto_fechamento')</script>";
@@ -586,5 +587,46 @@ function listarItens(){
         },      
 
     });
+    }
+
+
+
+
+     function editar_quant(grade, item, valor, tipo, tipagem, limite, limite_grade){
+        var quant = $("#quantidade_item_"+item).val();
+        var quantidade = quant; 
+
+       
+         if(limite > 0){
+            if(quantidade > limite){
+                alert("A quantidade de itens não pode ser maior que "+limite)
+                return;
+            }
+        }  
+
+
+
+
+         var qt_grade = $("#qt_"+grade).val();
+        if(qt_grade == ""){
+            qt_grade = 0;
+        }
+        qt_grade = parseFloat(qt_grade) + 1;
+        
+
+        if(limite_grade > 0){
+            if(qt_grade > limite_grade){
+                alert("A quantidade de itens selecionados não pode ser maior que "+limite_grade)
+                return;
+            }
+        }  
+        $("#qt_"+grade).val(qt_grade);
+
+
+        $("#quantidade_item_"+item).val(quantidade); 
+
+          
+        
+        itens(item, grade, valor, tipo, quantidade, tipagem);
     }
 </script>

@@ -8,6 +8,7 @@ $id_usuario = @$_SESSION['id'];
 $nome_mesa = @$_SESSION['nome_mesa'];
 $id_mesa = @$_SESSION['id_mesa'];
 $id_ab_mesa = @$_SESSION['id_ab_mesa'];
+$pedido_balcao = @$_SESSION['pedido_balcao'];
 
 if(@$_SESSION['sessao_usuario'] == ""){
 	$sessao = date('Y-m-d-H:i:s-').rand(0, 1500);
@@ -77,7 +78,7 @@ if($total_reg > 0){
 $valor_item = $valor;
 $valor_itemF = number_format($valor_item, 2, ',', '.');
 
-if($nome_mesa == ''){
+if($nome_mesa == '' and @$pedido_balcao == ""){
 if($status_estabelecimento == "Fechado"){		
 		echo "<script>window.alert('$texto_fechamento')</script>";
 	echo "<script>window.location='index.php'</script>";

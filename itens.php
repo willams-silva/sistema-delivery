@@ -56,6 +56,12 @@ $pdo->query("DELETE FROM temp where carrinho = 0 and sessao = '$sessao'");
 				$valor = $res[$i]['valor_venda'];
 				$valorF = number_format($valor, 2, ',', '.');
 				$promocao = $res[$i]['promocao'];
+				$delivery = $res[$i]['delivery'];
+
+				if(@$_SESSION['nome_mesa'] == "" and $delivery == 'Não'){
+         		 	continue;
+        		}
+
 
 				if($tem_estoque == 'Sim' and $estoque <= 0){
 					$mostrar = '';
