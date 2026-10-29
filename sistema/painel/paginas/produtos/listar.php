@@ -282,6 +282,8 @@ HTML;
 		
 		listarGrades(id);
 		
+		$('#id_grade_editar').val('');	
+		$('#btn_grade').text('Salvar');	
 		$('#modalGrades').modal('show');
 		limparCamposGrades();
 	}

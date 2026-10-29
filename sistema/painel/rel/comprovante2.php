@@ -201,7 +201,7 @@ Pedido: <b><?php echo $n_pedido ?></b> - Data: <?php echo $dataF ?> Hora: <?php 
 <?php 
 
 $nome_produto2 = '';
-$res = $pdo->query("SELECT * from carrinho where pedido = '$id' and id_sabor = 0 order by id asc");
+$res = $pdo->query("SELECT * from carrinho where pedido = '$id' order by id asc");
 $dados = $res->fetchAll(PDO::FETCH_ASSOC);
 $linhas = count($dados);
 
@@ -307,9 +307,9 @@ for ($i=0; $i < count($dados); $i++) {
   $total_reg2 = @count($res2);
   if($total_reg2 > 0){
     if($total_reg2 > 1){
-      $texto_adicional = '('.$total_reg2.') Adicionais';
+      $texto_adicional = '('.$total_reg2.') Tipos de Adicionais';
     }else{
-      $texto_adicional = '('.$total_reg2.') Adicional';
+      $texto_adicional = '('.$total_reg2.') Tipo de Adicional';
     }
     ?>
 
@@ -320,12 +320,13 @@ for ($i=0; $i < count($dados); $i++) {
           foreach ($res2[$i2] as $key => $value){}
             $id_temp = $res2[$i2]['id'];        
           $id_item = $res2[$i2]['id_item'];   
+           $quantidade_temp = $res2[$i2]['quantidade'];   
 
           $query3 =$pdo->query("SELECT * FROM $tabela_ad where id = '$id_item'");
           $res3 = $query3->fetchAll(PDO::FETCH_ASSOC);
           $total_reg3 = @count($res3);
           $nome_adc = $res3[0]['nome'];
-          echo $nome_adc;
+          echo '('.$quantidade_temp.') '.$nome_adc;
           if($i2 < ($total_reg2 - 1)){
             echo ', ';
           }

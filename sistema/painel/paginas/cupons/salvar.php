@@ -10,6 +10,7 @@ $data = $_POST['data'];
 $quantidade = $_POST['quantidade'];
 $valor_minimo = $_POST['valor_minimo'];
 $valor_minimo = str_replace(',', '.', $valor_minimo);
+$tipo = $_POST['tipo'];
 
 //validar email
 $query = $pdo->query("SELECT * from $tabela where codigo = '$codigo'");
@@ -21,9 +22,9 @@ if(@count($res) > 0 and $id != $res[0]['id']){
 
 
 if($id == ""){
-	$query = $pdo->prepare("INSERT INTO $tabela SET codigo = :codigo, valor = :valor, data = '$data', quantidade = '$quantidade', valor_minimo = :valor_minimo");
+	$query = $pdo->prepare("INSERT INTO $tabela SET codigo = :codigo, valor = :valor, data = '$data', quantidade = '$quantidade', valor_minimo = :valor_minimo, tipo = '$tipo'");
 }else{
-	$query = $pdo->prepare("UPDATE $tabela SET codigo = :codigo, valor = :valor, data = '$data', quantidade = '$quantidade', valor_minimo = :valor_minimo WHERE id = '$id'");
+	$query = $pdo->prepare("UPDATE $tabela SET codigo = :codigo, valor = :valor, data = '$data', quantidade = '$quantidade', valor_minimo = :valor_minimo, tipo = '$tipo' WHERE id = '$id'");
 }
 
 $query->bindValue(":codigo", "$codigo");

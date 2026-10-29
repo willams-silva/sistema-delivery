@@ -33,7 +33,8 @@ for($i=0; $i < $total_reg; $i++){
 		$limite = $res[$i]['limite'];		
 	$ativo = $res[$i]['ativo'];
 	$produto = $res[$i]['produto'];
-
+	$nome_comprovante = $res[$i]['nome_comprovante'];
+	$adicional = $res[$i]['adicional'];
 		
 
 		if($ativo == 'Sim'){
@@ -80,7 +81,9 @@ echo <<<HTML
 		<big><a href="#" onclick="ativarGrades('{$id}', '{$acao}')" title="{$titulo_link}"><i class="fa {$icone} text-success"></i></a></big>
 
 
-		<big><a href="#" onclick="addItensGrade('{$id}', '{$produto}', '$texto')" title="Adicionar Itens"><i class="fa fa-plus text-verde"></i></a></big>
+		<big><a href="#" onclick="addItensGrade('{$id}', '{$produto}', '$texto', '$adicional')" title="Adicionar Itens"><i class="fa fa-plus text-verde"></i></a></big>
+
+		<big><a href="#" onclick="editarGrade('{$id}', '{$tipo_item}', '$valor_item', '$texto', '$limite', '$nome_comprovante', '$adicional')" title="Editar Grade"><i class="fa fa-edit text-primary"></i></a></big>
 
 
 
@@ -112,15 +115,46 @@ HTML;
 
 
 <script type="text/javascript">
-	function addItensGrade(id, produto, texto){
+	function addItensGrade(id, produto, texto, adicional){
 
 		$('#titulo_nome_itens').text(texto);		
 		$('#id_item').val(id);	
 		$('#id_item_produto').val(produto);		
+		$('#e_adicional').val(adicional);		
 		
 		listarItens(id);
+
+		if(adicional == 'Sim'){
+			$('#div_adicional').show();
+			$('#div_nome').hide();
+		}else{
+			$('#div_adicional').hide();
+			$('#div_nome').show();
+		}
+
+		$('#btn_itens').text('Salvar');
+		$('#adicional_grade').val('');
+		$('#id_item_editar').val('');	
 		
 		$('#modalItens').modal('show');
 		limparCamposItens();
+
+		$('#mensagem-itens').text('');	
+	}
+
+
+		function editarGrade(id, tipo_item, valor_item, texto, limite, nome_comprovante, adicional){
+
+				
+		$('#tipo_item').val(tipo_item);	
+		$('#valor_item').val(valor_item);
+		$('#texto').val(texto);
+		$('#limite').val(limite);
+		$('#nome_comprovante').val(nome_comprovante);	
+		$('#adicional').val(adicional);	
+		$('#id_grade_editar').val(id);	
+		
+		$('#btn_grade').text('Editar');	
+		
 	}
 </script>

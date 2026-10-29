@@ -75,11 +75,14 @@ $mensagem .= '*Valor:* R$ '.$valorF.'%0A';
 $mensagem .= '*Pagamento:* '.$tipo_pgto.'%0A';
 $mensagem .= '*Previsão Entrega:* '.$hora_pedido.'%0A';
 $mensagem .= '%0A________________________________%0A%0A';
-$mensagem .= '*_Detalhes do Pedido_* %0A %0A';
+$mensagem .= '*_Detalhes do Pedido_* %0A';
+
+
+
 
 //ABAIXO É PARA PEGAR OS PRODUTOS COMPRADOS
 $nome_produto2 = '';
-$res = $pdo->query("SELECT * from carrinho where pedido = '$id_pedido' and id_sabor = 0 order by id asc");
+$res = $pdo->query("SELECT * from carrinho where pedido = '$n_pedido' order by id asc");
 $dados = $res->fetchAll(PDO::FETCH_ASSOC);
 $linhas = count($dados);
 
@@ -94,16 +97,35 @@ for ($i=0; $i < count($dados); $i++) {
   $quantidade = $dados[$i]['quantidade'];
   $total_item = $dados[$i]['total_item'];
   $obs_item = $dados[$i]['obs'];
-  $item = $dados[$i]['item'];
-    $variacao = $dados[$i]['variacao'];
+  $item = $dados[$i]['item'];    
+  $variacao = $dados[$i]['variacao'];
+  $nome_produto_tab = $dados[$i]['nome_produto'];
+    $sabores = $dados[$i]['sabores'];
+    $borda = $dados[$i]['borda'];
+    $categoria = $dados[$i]['categoria'];
+    $valor_unitario = $dados[$i]['valor_unitario'];
 
-
-    $query2 = $pdo->query("SELECT * FROM variacoes where id = '$variacao'");
+     $query2 = $pdo->query("SELECT * FROM variacoes where id = '$variacao'");
     $res2 = $query2->fetchAll(PDO::FETCH_ASSOC);
     if(@count(@$res2) > 0){
       $sigla_variacao = '('.$res2[0]['sigla'].')';      
     }else{
       $sigla_variacao = '';
+    }
+
+
+   
+
+    $query2 = $pdo->query("SELECT * FROM temp where carrinho = '$id_carrinho' and tabela = 'Variação' order by id asc limit 1");
+    $res2 = $query2->fetchAll(PDO::FETCH_ASSOC);
+    $id_do_item = @$res2[0]['id_item'];
+
+    $query2 = $pdo->query("SELECT * FROM itens_grade where id = '$id_do_item'");
+    $res2 = $query2->fetchAll(PDO::FETCH_ASSOC);
+    if(@$res2[0]['texto'] != ""){
+      $sigla_grade = @$res2[0]['texto'];
+    }else{
+      $sigla_grade = '';
     }
 
     $query2 = $pdo->query("SELECT * FROM produtos where id = '$id_produto'");
@@ -112,76 +134,130 @@ for ($i=0; $i < count($dados); $i++) {
       $nome_produto = $res2[0]['nome'];
       $foto_produto = $res2[0]['foto'];
     }else{
-      $nome_produto2 = '';
-      $query33 = $pdo->query("SELECT * FROM carrinho where id_sabor = '$item' and pedido = '$id_pedido' ");
-$res33 = $query33->fetchAll(PDO::FETCH_ASSOC);
-$total_reg33 = @count($res33);
-if($total_reg33 > 0){
-  
-  for($i33=0; $i33 < $total_reg33; $i33++){
-    foreach ($res33[$i33] as $key => $value){}
-    $prod = $res33[$i33]['produto'];
-    $id_car = $res33[$i33]['id'];
-
-    $query2 = $pdo->query("SELECT * FROM produtos where id = '$prod'");
-    $res2 = $query2->fetchAll(PDO::FETCH_ASSOC);
-    if(@count(@$res2) > 0){
-      
-      $foto_produto = $res2[0]['foto'];
-      $cat_produto = $res2[0]['categoria'];
-      if($i33 < $total_reg33 - 1){
-        $nome_prod = $res2[0]['nome']. ' / ';
-      }else{
-        $nome_prod = $res2[0]['nome'];
-      }
-      
-    }   
-
-    $nome_produto2 .= $nome_prod;
-  }
-  
-  $nome_produto = $nome_produto2;
-
-
-}
+      $nome_produto = $nome_produto_tab;
+      $foto_produto = "";
     } 
 
-$texto_produtos .= '✅'.$quantidade.' - '.$nome_produto.' '.$sigla_variacao.'%0A';
+
+    $tabela_ad = 'adicionais';
+    if($sabores > 0){     
+      $nome_produto = $nome_produto_tab;     
+      $tabela_ad = 'adicionais_cat';
+    }
+
+
+    $query8 =$pdo->query("SELECT * FROM bordas where id = '$borda'");
+    $res8 = $query8->fetchAll(PDO::FETCH_ASSOC);
+    $total_reg8 = @count($res8);
+    if($total_reg8 > 0){
+    $nome_borda = ' - '.$res8[0]['nome'];
+    }else{
+      $nome_borda = '';
+    }
+
+$texto_produtos .= '✅'.$quantidade.' - '.$nome_produto.' '.$sigla_variacao.' '.$sigla_grade.'%0A';
 
 
 
 $mensagem .= '%0A'.$texto_produtos;
 
-//INICIAR OS ADICIONAIS PARA PIZZA DOIS SABORES
-$query33 = $pdo->query("SELECT * FROM carrinho where id_sabor = '$item' and pedido = '$id_pedido' and id_sabor > 0");
-$res33 = $query33->fetchAll(PDO::FETCH_ASSOC);
-$total_reg33 = @count($res33);
-if($total_reg33 > 0){
-  
-  for($i33=0; $i33 < $total_reg33; $i33++){
-    foreach ($res33[$i33] as $key => $value){}
-    $prod = $res33[$i33]['produto'];
-    $id_car = $res33[$i33]['id'];
-    $obs_item_2sab = $res33[$i33]['obs'];
+if($total_reg8 > 0){
+  $mensagem .= $nome_borda.'%0A';
+}
 
-    $query2 = $pdo->query("SELECT * FROM produtos where id = '$prod'");
-    $res2 = $query2->fetchAll(PDO::FETCH_ASSOC);
-    if(@count(@$res2) > 0){
-      
-      $nome_prod = $res2[0]['nome'];
+//COMEÇAR VER OS ADICIONAIS E OUTROS DOS DEMAIS ITENS QUE NAO SAO PIZZA 2 SAB
+$query2 =$pdo->query("SELECT * FROM temp where carrinho = '$id_carrinho' and tabela = 'adicionais'");
+  $res2 = $query2->fetchAll(PDO::FETCH_ASSOC);
+  $total_reg2 = @count($res2);
+  if($total_reg2 > 0){
+    if($total_reg2 > 1){
+      $texto_adicional = @$total_reg2.' Tipos de Adicionais';
+    }else{
+      $texto_adicional = @$total_reg2.' Tipo de Adicional';
     }
+        $mensagem .= ' *'.$texto_adicional.'* %0A';
+        for($i2=0; $i2 < $total_reg2; $i2++){
+          foreach ($res2[$i2] as $key => $value){}
+            $id_temp = $res2[$i2]['id'];        
+          $id_item = $res2[$i2]['id_item'];
+           $quantidade_temp = $res2[$i2]['quantidade'];   
+
+          $query3 =$pdo->query("SELECT * FROM $tabela_ad where id = '$id_item'");
+          $res3 = $query3->fetchAll(PDO::FETCH_ASSOC);
+          $total_reg3 = @count($res3);
+          $nome_adc = $res3[0]['nome'];          
+          if($i2 < ($total_reg2 - 1)){
+           $nome_adc .= '%0A';
+          }
+
+           $mensagem .= '```('.$quantidade_temp.') '.$nome_adc.'```'.'';         
+  }
+
+  $mensagem .= '%0A';
+
+  }
+
+
+
+
+
+//percorrer as grades do produto
+$query20 =$pdo->query("SELECT * FROM grades where produto = '$id_produto' and tipo_item != 'Variação'");
+  $res20 = $query20->fetchAll(PDO::FETCH_ASSOC);
+  $total_reg20 = @count($res20);
+  if($total_reg20 > 0){  
+     for($i20=0; $i20 < $total_reg20; $i20++){
+      $id_da_grade = $res20[$i20]['id'];
+      $nome_da_grade = $res20[$i20]['nome_comprovante'];
+      $tipo_item_grade = $res20[$i20]['tipo_item'];
+
+
+//buscar os itens selecionados pela grade
+$query2 =$pdo->query("SELECT * FROM temp where carrinho = '$id_carrinho' and grade = '$id_da_grade'");
+  $res2 = $query2->fetchAll(PDO::FETCH_ASSOC);
+  $total_reg2 = @count($res2);
+  if($total_reg2 > 0){   
+
+    $mensagem .= '*'.$nome_da_grade.'* %0A';
+
+        for($i2=0; $i2 < $total_reg2; $i2++){
+          foreach ($res2[$i2] as $key => $value){}
+            $id_temp = $res2[$i2]['id'];        
+          $id_item = $res2[$i2]['id_item']; 
+           $tabela_item = $res2[$i2]['tabela'];   
+            $tipagem_item = $res2[$i2]['tipagem']; 
+            $grade_item = $res2[$i2]['grade']; 
+
+            if($tipo_item_grade == 'Múltiplo'){
+              $quant_item = '('.$res2[$i2]['quantidade'].')'; 
+            }else{
+              $quant_item = '';
+            }
+            
+        
+
+          $query3 =$pdo->query("SELECT * FROM itens_grade where id = '$id_item'");
+          $res3 = $query3->fetchAll(PDO::FETCH_ASSOC);
+          $total_reg3 = @count($res3);
+          $nome_item = $res3[0]['texto'];         
+          if($i2 < ($total_reg2 - 1)){
+           $nome_item .= ', ';
+          }            
+            $mensagem .= '```'.$quant_item.$nome_item.'```%0A';            
+        }
+
+      $mensagem .= '';
+       
+
+  }
+
+}
 
 
 
 }
 
-
 }
-
-
-
-}
-
 
 //ond pizza 2 sab
 if($obs != ""){
@@ -193,7 +269,7 @@ if($obs != ""){
  if($entrega == "Delivery"){
       $mensagem .= '%0A*Endereço do Cliente*%0A';
       $endereco = $rua_cliente.' '.$numero_cliente.' '.$complemento_cliente.' '.$bairro_cliente.' '.$cidade_cliente;
-       $mensagem .= '_'.$endereco.'_';
+       $mensagem .= $endereco;
     
 }
 

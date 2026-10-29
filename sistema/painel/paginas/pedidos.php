@@ -23,10 +23,11 @@ $segundos = $tempo_atualizar * 1000;
 		<div class="col-md-12"  align="center">	
 			<div > 
 				<small >
-					<a title="Todas as Vendas" class="text-muted" href="#" onclick="buscarContas('')"><span>Todos(<span id="todos_pedidos"></span>)</span></a> /
-					<a title="Todas as Vendas" class="text-muted" href="#" onclick="buscarContas('Iniciado')"><i class="fa fa-square text-primary"></i> <span>Iniciado(<span id="ini_pedidos"></span>)</span></a> / 
-					<a title="Vendas Pendentes" class="text-muted" href="#" onclick="buscarContas('Preparando')"><i class="fa fa-square text-danger"></i> <span>Preparando(<span id="prep_pedidos"></span>)</span></a> / 
-					<a title="Vendas Pagas" class="text-muted" href="#" onclick="buscarContas('Entrega')"><i class="fa fa-square text-laranja"></i> <span>Em Rota Entrega(<span id="ent_pedidos"></span>)</span></a>
+					<a title="Todoss" class="text-muted" href="#" onclick="buscarContas('')"><span>Todos(<span id="todos_pedidos"></span>)</span></a> /
+					<a title="Iniciados" class="text-muted" href="#" onclick="buscarContas('Iniciado')"><i class="fa fa-square text-primary"></i> <span>Iniciado(<span id="ini_pedidos"></span>)</span></a> / 
+					<a title="Aceito" class="text-muted" href="#" onclick="buscarContas('Aceito')"><i class="fa fa-square text-success"></i> <span>Aceito(<span id="ace_pedidos"></span>)</span></a> / 
+					<a title="Preparando" class="text-muted" href="#" onclick="buscarContas('Preparando')"><i class="fa fa-square text-danger"></i> <span>Preparando(<span id="prep_pedidos"></span>)</span></a> / 
+					<a title="Entrega" class="text-muted" href="#" onclick="buscarContas('Entrega')"><i class="fa fa-square text-laranja"></i> <span>Em Rota Entrega(<span id="ent_pedidos"></span>)</span></a>
 				</small>
 			</div>
 		</div>

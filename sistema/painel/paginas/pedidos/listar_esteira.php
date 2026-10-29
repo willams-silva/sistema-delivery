@@ -203,10 +203,11 @@ echo <<<HTML
 				</div>
 
 				<div>
-					<span><small><i>Status <b><a title="{$titulo_link}" href="#" onclick="ativarPedido('{$id}','{$acao_link}','{$whatsapp_cliente}','{$valorF}','{$tipo_pgto}','{$hora_pedido}','{$entrega}')">
+					<span id="area_status_{$id}"><small><i>Status <b><a title="{$titulo_link}" href="#" onclick="ativarPedido('{$id}','{$acao_link}','{$whatsapp_cliente}','{$valorF}','{$tipo_pgto}','{$hora_pedido}','{$entrega}')">
 {$status} 
 <i class="fa fa-arrow-right {$cor_icone_link}"></i>
-</a></b></i></small></span>					
+</a></b></i></small></span>		
+<img id="status_link_{$id}" src="../../img/loading.gif" width="80px" style="display:none">			
 				</div>
 
 				<div style="border-bottom: 1px solid #000; padding-bottom: 5px">
@@ -328,6 +329,9 @@ $total_dos_itens_pedidos = @count($res);
 function ativarPedido(id, acao, telefone, total, pagamento, hora, entrega){
 	var pedido_whatsapp = "<?=$status_whatsapp?>";
 
+	$('#status_link_'+id).show();
+	$('#area_status_'+id).hide();
+
 
 	if(entrega == 'Delivery'){
 		
@@ -351,6 +355,9 @@ function ativarPedido(id, acao, telefone, total, pagamento, hora, entrega){
 			$('#id_entregador').val(id);
 			$('#modalEntregador').modal('show');
 		}
+
+		setTimeout(function() { 
+
 	
     $.ajax({
         url: 'paginas/' + pag + "/mudar-status.php",
@@ -376,9 +383,16 @@ function ativarPedido(id, acao, telefone, total, pagamento, hora, entrega){
                 $('#mensagem-excluir').text(mensagem)
             }
 
-        },      
+            $('#status_link_'+id).hide();
+            $('#area_status_'+id).show();
+
+        },  
+
+
 
     });
+
+     }, 1000);
 }
 
 </script>

@@ -18,7 +18,7 @@ $combo = @$_POST['combo'];
 $categoria = @$_POST['categoria'];
 
 $nome_novo = strtolower( preg_replace("[^a-zA-Z0-9-]", "-", 
-        strtr(utf8_decode(trim($nome)), utf8_decode("áàãâéêíóôõúüñçÁÀÃÂÉÊÍÓÔÕÚÜÑÇ"),
+        strtr(@utf8_decode(trim($nome)), @utf8_decode("áàãâéêíóôõúüñçÁÀÃÂÉÊÍÓÔÕÚÜÑÇ"),
         "aaaaeeiooouuncAAAAEEIOOOUUNC-")) );
 $url = preg_replace('/[ -]+/' , '-' , $nome_novo);
 $url = str_replace('+', '-', $url);

@@ -31,17 +31,27 @@ $pag = 'cupons';
 			<div class="modal-body">
 
 					<div class="row">
-						<div class="col-md-6">
+						<div class="col-md-4">
 							<div class="form-group">
 								<label for="exampleInputEmail1">Código</label>
 								<input type="text" class="form-control" id="codigo" name="codigo" placeholder="Código do Cupom" required>    
 							</div> 	
 						</div>
 
-						<div class="col-md-6">
+						<div class="col-md-4">
 							<div class="form-group">
 								<label for="exampleInputEmail1">Valor</label>
 								<input type="text" class="form-control" id="valor" name="valor" placeholder="Valor" required>    
+							</div> 	
+						</div>
+
+						<div class="col-md-4">
+							<div class="form-group">
+								<label for="exampleInputEmail1">Tipo Valor</label>
+								<select class="form-control" id="tipo" name="tipo" > 
+									<option value="R$">Em Reais</option>						
+									<option value="%">Porcentagem</option>
+								</select>   
 							</div> 	
 						</div>
 					

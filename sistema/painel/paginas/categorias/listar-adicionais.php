@@ -66,7 +66,7 @@ echo <<<HTML
 
 		<big><a href="#" onclick="ativarAdc('{$id}', '{$acao}')" title="{$titulo_link}"><i class="fa {$icone} text-success"></i></a></big>
 
-
+		<big><a href="#" onclick="editarAdc('{$id}', '{$nome}', '{$valor}')" title="{$titulo_link}"><i class="fa fa-edit text-primary"></i></a></big>
 
 </td>
 </tr>

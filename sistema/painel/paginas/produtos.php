@@ -573,12 +573,25 @@ $pag = 'produtos';
 
 
 					<div class="row">
-						<div class="col-md-12">
+						<div class="col-md-9">
 							<div class="form-group">
 								<label for="exampleInputEmail1">Descrição Comprovante <small>(Até 70 Caracteres)</small></label>
 								<input maxlength="70" type="text" class="form-control" id="nome_comprovante" name="nome_comprovante" placeholder="Descrição do item no comprovante" required="">    
 							</div> 	
 						</div>
+
+						<div class="col-md-3">
+							<div class="form-group">
+								<label for="exampleInputEmail1">É Adicional?</label>
+								<select class="form-control" id="adicional" name="adicional" style="width:100%;" > 
+
+								<option value="Não">Não</option>
+								<option value="Sim">Sim</option>	
+								
+								</select>       
+							</div> 	
+						</div>
+
 					</div>
 
 					<div class="row">
@@ -605,7 +618,7 @@ $pag = 'produtos';
 						</div>
 
 						<div class="col-md-2" style="margin-top: 20px">
-							<button type="submit" class="btn btn-primary">Salvar</button>
+							<button id="btn_grade" type="submit" class="btn btn-primary">Salvar</button>
 						
 						</div>
 					</div>
@@ -613,6 +626,7 @@ $pag = 'produtos';
 			
 				
 				<input type="hidden" id="id_grades" name="id">
+				<input type="hidden" id="id_grade_editar" name="id_grade_editar">
 				
 				</form>
 
@@ -653,10 +667,36 @@ $pag = 'produtos';
 
 					<div class="row">
 
-						<div class="col-md-12">
+						<div class="col-md-12" id="div_nome">
 							<div class="form-group">
 								<label for="exampleInputEmail1">Nome <small>(Até 70 Caracteres)</small></label>
-								<input maxlength="70" type="text" class="form-control" id="texto_item" name="texto" placeholder="Descrição do item" required="">    
+								<input maxlength="70" type="text" class="form-control" id="texto_item" name="texto" placeholder="Descrição do item" >    
+							</div> 	
+						</div>	
+
+
+						<div class="col-md-12" id="div_adicional">
+							<div class="form-group">
+								<label for="exampleInputEmail1">Escolher Adicional </label>
+								
+								<select class="form-control sel5" id="adicional_grade" name="adicional" style="width:100%;" onchange="alterarValor()"> 
+									<option value="">Selecione um Adicional</option>
+									<?php 
+									$query = $pdo->query("SELECT * FROM adicionais ORDER BY nome asc");
+									$res = $query->fetchAll(PDO::FETCH_ASSOC);
+									$total_reg = @count($res);
+									if($total_reg > 0){
+										for($i=0; $i < $total_reg; $i++){
+										foreach ($res[$i] as $key => $value){}
+										echo '<option value="'.$res[$i]['id'].'">'.$res[$i]['nome'].'</option>';
+										}
+									}else{
+											echo '<option value="">Cadastre os Adicionais</option>';
+										}
+									 ?>
+									
+
+								</select>   
 							</div> 	
 						</div>		
 															
@@ -686,7 +726,7 @@ $pag = 'produtos';
 
 						
 						<div class="col-md-3" style="margin-top: 20px">
-							<button type="submit" class="btn btn-primary">Salvar</button>
+							<button id="btn_itens" type="submit" class="btn btn-primary">Salvar</button>
 						
 						</div>
 					</div>
@@ -695,6 +735,8 @@ $pag = 'produtos';
 				
 				<input type="hidden" id="id_item" name="id">
 				<input type="hidden" id="id_item_produto" name="id_item_produto">
+				<input type="hidden" id="e_adicional" name="e_adicional">
+				<input type="hidden" id="id_item_editar" name="id_item_editar">
 				
 				</form>
 
@@ -1220,6 +1262,10 @@ function ativarItens(id, acao){
     $('.sel2').select2({
     	dropdownParent: $('#modalForm')
     });
+
+    $('.sel5').select2({
+    	dropdownParent: $('#modalItens')
+    });
 });
 </script>
 
@@ -1238,4 +1284,29 @@ function ativarItens(id, acao){
     });
 }
 
+</script>
+
+
+<script type="text/javascript">
+	function alterarValor(){
+		var adicional = $('#adicional_grade').val();
+		var e_adicional = $('#e_adicional').val();
+
+		if(e_adicional == 'Não'){
+			return;
+		}
+
+		 $.ajax({
+        url: 'paginas/' + pag + "/listar_valor_adicional.php",
+        method: 'POST',
+        data: {adicional},
+        dataType: "html",
+
+        success:function(result){
+        	//alert(result)
+            $("#valor_do_item").val(result);           
+        }
+    });
+
+	}
 </script>

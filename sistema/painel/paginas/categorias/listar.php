@@ -164,6 +164,9 @@ HTML;
 
 		$('#titulo_nome_adc').text(nome);		
 		$('#id_adc').val(id);		
+
+		$('#btn_editar_adc').text('Salvar');
+		$('#id_adc_editar').val('');
 		
 		listarAdicionais(id);
 		$('#modalAdicionais').modal('show');

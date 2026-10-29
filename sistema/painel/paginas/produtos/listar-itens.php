@@ -31,6 +31,7 @@ for($i=0; $i < $total_reg; $i++){
 		$limite = $res[$i]['limite'];		
 	$ativo = $res[$i]['ativo'];
 	$produto = $res[$i]['produto'];
+	$adicional = $res[$i]['adicional'];
 
 	$valorF = number_format($valor, 2, ',', '.');
 
@@ -79,7 +80,7 @@ echo <<<HTML
 		<big><a href="#" onclick="ativarItens('{$id}', '{$acao}')" title="{$titulo_link}"><i class="fa {$icone} text-success"></i></a></big>
 
 
-		
+		<big><a href="#" onclick="editarItens('{$id}', '{$texto}', '$valor', '$limite', '$adicional', '$produto')" title="Editar Item"><i class="fa fa-edit text-primary"></i></a></big>
 
 
 </td>
@@ -107,3 +108,25 @@ HTML;
 
  ?>
 
+<script type="text/javascript">
+		function editarItens(id, texto, valor, limite, adicional, produto){
+
+				
+		$('#texto_item').val(texto);	
+		$('#adicional_grade').val(adicional).change();
+		$('#valor_do_item').val(valor);
+		$('#limite_itens').val(limite);
+		$('#id_item_editar').val(id);
+		$('#id_item_produto').val(produto);
+
+		if(adicional > 0){
+			$('#e_adicional').val('Sim');
+		}else{		
+			$('#e_adicional').val('Não');
+		}
+		$('#adicional').val(adicional);	
+				
+		$('#btn_itens').text('Editar');	
+		
+	}
+</script>

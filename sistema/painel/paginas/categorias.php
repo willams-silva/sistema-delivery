@@ -224,12 +224,13 @@ $pag = 'categorias';
 						</div>
 
 						<div class="col-md-3">
-							<button type="submit" class="btn btn-primary">Salvar</button>
+							<button id="btn_editar_adc" type="submit" class="btn btn-primary">Salvar</button>
 						
 						</div>
 					</div>	
 				
 				<input type="hidden" id="id_adc" name="id">
+				<input type="hidden" id="id_adc_editar" name="id_adc_editar">
 				
 				</form>
 
@@ -656,6 +657,17 @@ function ativarBordas(id, acao){
         },      
 
     });
+}
+
+
+
+function editarAdc(id, nome, valor){
+	$('#nome_adc').val(nome);
+	$('#valor_adc').val(valor);
+	$('#id_adc_editar').val(id);
+
+	$('#btn_editar_adc').text('Editar');
+   
 }
 
 

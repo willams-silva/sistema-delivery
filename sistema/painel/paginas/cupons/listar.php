@@ -16,7 +16,7 @@ echo <<<HTML
 	<th>Valor</th>	
 	<th>Data</th>	
 	<th>Quantidade</th>	
-	<th>Valor Mínimo</th>	
+		<th>Valor Mínimo</th>	
 	<th>Ações</th>
 	</tr> 
 	</thead> 
@@ -31,20 +31,28 @@ for($i=0; $i < $total_reg; $i++){
 		$data = $res[$i]['data'];
 		$quantidade = $res[$i]['quantidade'];
 		$valor_minimo = $res[$i]['valor_minimo'];
+		$tipo = $res[$i]['tipo'];
 
 		$dataF = implode('/', array_reverse(explode('-', $data)));
 		$valorF = number_format($valor, 2, ',', '.');
 		$valor_minimoF = number_format($valor_minimo, 2, ',', '.');
+		$valor_p = number_format($valor, 0, ',', '.');
+
+		if($tipo == '%'){
+			$nome_tipo = $valor_p.' %';			
+		}else{
+			$nome_tipo = 'R$ '.$valorF;
+		}
 
 echo <<<HTML
 <tr>
 <td>{$codigo}</td>
-<td>{$valorF}</td>
+<td>{$nome_tipo}</td>
 <td>{$dataF}</td>
 <td>{$quantidade}</td>
 <td>{$valor_minimoF}</td>
 <td>
-	<big><a href="#" onclick="editar('{$id}','{$codigo}','{$valor}','{$data}','{$quantidade}','{$valor_minimo}')" title="Editar Dados"><i class="fa fa-edit text-primary"></i></a></big>
+	<big><a href="#" onclick="editar('{$id}','{$codigo}','{$valor}','{$data}','{$quantidade}','{$valor_minimo}','{$tipo}')" title="Editar Dados"><i class="fa fa-edit text-primary"></i></a></big>
 
 	
 
@@ -97,13 +105,14 @@ HTML;
 
 
 <script type="text/javascript">
-	function editar(id, codigo, valor, data, quantidade, valor_minimo){
+	function editar(id, codigo, valor, data, quantidade, valor_minimo, tipo){
 		$('#id').val(id);
 		$('#codigo').val(codigo);
 		$('#valor').val(valor);
 		$('#data').val(data);
 		$('#quantidade').val(quantidade);
 		$('#valor_minimo').val(valor_minimo);
+		$('#tipo').val(tipo).change();
 		
 		$('#titulo_inserir').text('Editar Registro');
 		$('#modalForm').modal('show');

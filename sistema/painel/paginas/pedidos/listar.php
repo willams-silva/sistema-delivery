@@ -13,6 +13,10 @@ $query = $pdo->query("SELECT * FROM $tabela where status = 'Iniciado'");
 $res = $query->fetchAll(PDO::FETCH_ASSOC);
 $total_ini = @count($res);
 
+$query = $pdo->query("SELECT * FROM $tabela where status = 'Aceito'");
+$res = $query->fetchAll(PDO::FETCH_ASSOC);
+$total_ace = @count($res);
+
 $query = $pdo->query("SELECT * FROM $tabela where status = 'Preparando'");
 $res = $query->fetchAll(PDO::FETCH_ASSOC);
 $total_prep = @count($res);
@@ -128,6 +132,7 @@ for($i=0; $i < $total_reg; $i++){
 		if($total_reg2 > 0){
 			$nome_cliente = $res2[0]['nome'];
 			$telefone_cliente = $res2[0]['telefone'];
+			$telefone_clienteF = '55'.preg_replace('/[ ()-]+/' , '' , $telefone_cliente);
 		}else{
 			if($mesa != '0' and $mesa != ''){
 				$nome_cliente = 'Mesa: '.$mesa;
@@ -144,8 +149,16 @@ for($i=0; $i < $total_reg; $i++){
 		if($status == 'Iniciado'){
 			$classe_alerta = 'text-primary';	
 			$total_vendas += $valor;
-			$titulo_link = 'Mudar para Preparando!';
+			$titulo_link = 'Mudar para Aceito!';
 			$cor_icone_link = 'text-danger';
+			$acao_link = 'Aceito';
+
+
+		}else if($status == 'Aceito'){
+			$classe_alerta = 'text-success';
+			$total_vendas += 0;
+			$titulo_link = 'Mudar para Preparando!';
+			$cor_icone_link = 'text-success';
 			$acao_link = 'Preparando';
 			
 			
@@ -208,10 +221,14 @@ echo <<<HTML
 <td class="esc">R$ {$trocoF}</td>
 <td class="esc">{$tipo_pgto}</td>
 <td class="esc">
-<a title="{$titulo_link}" href="#" onclick="ativarPedido('{$id}','{$acao_link}','{$whatsapp_cliente}','{$valorF}','{$tipo_pgto}','{$hora_pedido}','{$entrega}')">
-{$status} 
+<span id="area_status_{$id}">
+<a  title="{$titulo_link}" href="#" onclick="ativarPedido('{$id}','{$acao_link}','{$whatsapp_cliente}','{$valorF}','{$tipo_pgto}','{$hora_pedido}','{$entrega}')">
+{$status}
 <i class="fa fa-arrow-right {$cor_icone_link}"></i>
 </a>
+</span>
+<img id="status_link_{$id}" src="../../img/loading.gif" width="80px" style="display:none">
+
 </td>
 <td class="esc {$classe_hora}">{$hora}</td>
 <td>	
@@ -234,6 +251,9 @@ echo <<<HTML
 
 
 <big><a class="{$classe_excluir}" href="#" onclick="baixar('{$id}', '{$nome_cliente}', '{$tipo_pgto}')" title="Confirmar Pgto"><i class="fa fa-check-square text-verde"></i></a></big>
+
+
+<big><a class="" target="_blank" href="http://api.whatsapp.com/send?1=pt_BR&phone={$telefone_clienteF}" title="Whatsapp Cliente"><i class="fa fa-whatsapp text-verde"></i></a></big>
 
 
 		<big><a  href="#" onclick="gerarComprovante('{$id}')" title="Gerar Comprovante"><i class="fa fa-file-pdf-o text-primary"></i></a></big>
@@ -299,6 +319,7 @@ $total_dos_itens_pedidos = @count($res);
 	$('#prep_pedidos').text("<?=$total_prep?>");
 	$('#ent_pedidos').text("<?=$total_ent?>");
 	$('#id_pedido').val("<?=$id_ult_pedido?>");
+	$('#ace_pedidos').text("<?=$total_ace?>");
 
 	$('#total-dos-pedidos').text("<?=$total_dos_itens_pedidos?>");
 			
@@ -335,6 +356,11 @@ $total_dos_itens_pedidos = @count($res);
 function ativarPedido(id, acao, telefone, total, pagamento, hora, entrega){
 	var pedido_whatsapp = "<?=$status_whatsapp?>";
 
+	$('#status_link_'+id).show();
+	$('#area_status_'+id).hide();
+
+
+
 
 	if(entrega == 'Delivery'){
 		
@@ -358,6 +384,10 @@ function ativarPedido(id, acao, telefone, total, pagamento, hora, entrega){
 			$('#id_entregador').val(id);
 			$('#modalEntregador').modal('show');
 		}
+
+		setTimeout(function() { 
+		
+	
 	
     $.ajax({
         url: 'paginas/' + pag + "/mudar-status.php",
@@ -369,7 +399,7 @@ function ativarPedido(id, acao, telefone, total, pagamento, hora, entrega){
         var split = mensagem.split("***"); 
 
             if (split[0] == "Alterado com Sucesso") {                
-                listar();     
+                 
                 if(acao.trim() === 'Entrega'){
                 	if(pedido_whatsapp == 'Sim'){
 		              let a= document.createElement('a');
@@ -377,15 +407,24 @@ function ativarPedido(id, acao, telefone, total, pagamento, hora, entrega){
 		                a.href= 'http://api.whatsapp.com/send?1=pt_BR&phone='+telefone+'&text= *Atenção*  %0A '+texto+' %0A *Total* R$'+total+' %0A *Tipo Pagamento* '+pagamento+' %0A';
 		                a.click();
            }
-                }           
+                }
+                listar();
+                $('#status_link_'+id).hide();
+            $('#area_status_'+id).show();           
             } else {
                 $('#mensagem-excluir').addClass('text-danger')
                 $('#mensagem-excluir').text(mensagem)
+
+                 $('#status_link_'+id).hide();
+            $('#area_status_'+id).show();
             }
 
+            
         },      
 
     });
+
+     }, 1000);
 }
 
 </script>
