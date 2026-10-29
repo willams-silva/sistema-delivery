@@ -14,11 +14,34 @@ $res = $query->fetchAll(PDO::FETCH_ASSOC);
 $total_reg = @count($res);
 if($total_reg > 0){
 
-	if(!password_verify($senha, $res[0]['senha_crip'])){
-		echo '<script>window.alert("Dados Incorretos!!")</script>'; 
-		echo '<script>window.location="index.php"</script>';  
-		exit();
-	}
+	$hash = $res[0]['senha_crip'];
+
+$senhaValida = password_verify($senha, $hash);
+
+// Compatibilidade com senhas antigas em MD5
+if (!$senhaValida && preg_match('/^[a-f0-9]{32}$/i', $hash)) {
+    if (hash_equals(strtolower($hash), md5($senha))) {
+        $senhaValida = true;
+
+        // Atualiza para um hash seguro
+        $novoHash = password_hash($senha, PASSWORD_DEFAULT);
+
+        $update = $pdo->prepare(
+            "UPDATE usuarios SET senha_crip = :senha WHERE id = :id"
+        );
+
+        $update->execute([
+            ':senha' => $novoHash,
+            ':id' => $res[0]['id']
+        ]);
+    }
+}
+
+if (!$senhaValida) {
+    echo '<script>alert("Usuário ou senha incorretos!");</script>';
+    echo '<script>window.location="index.php";</script>';
+    exit();
+}
 
 	$_SESSION['id'] = $res[0]['id'];
 	$_SESSION['nome'] = $res[0]['nome'];
