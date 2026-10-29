@@ -17,5 +17,5 @@ $curl = curl_init();
 curl_close($curl);
 //echo $resultado->status;
 $status_api = @$resultado->status;
-//var_dump($resultado);
+$valor_pago_api = $resultado->transaction_amount;
 ?>

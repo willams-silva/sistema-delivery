@@ -35,6 +35,8 @@ if(@$status_api == 'approved'){
   $pago = 'Não';
 }
 
+
+
 if ($pagamento == 'Pix' and $pago == 'Não' and $chave_pix == "") {
   echo 'Pagamento nao realizado!!';
   exit();
@@ -140,6 +142,13 @@ $pdo->query("UPDATE produtos SET estoque = '$total_produtos' where id = '$produt
     $total_pago = $total_com_frete;
   }
  $troco = $total_pago - $total_com_frete;
+
+
+
+ //se o pagamento for feito no pix qrcode colocar o valor pago que vier de lá
+ if(@$status_api == 'approved'){
+  $total_com_frete = $valor_pago_api;
+ }
  
 //recuperar número do pedido
 $query = $pdo->query("SELECT * FROM vendas where data = curDate() order by id desc limit 1");

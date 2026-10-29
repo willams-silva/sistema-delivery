@@ -12,8 +12,10 @@ if(@$_SESSION['id_ab_mesa'] != ""){
 $nome_produto2 = '';
 if($id_mesa == ""){
 	$query = $pdo->query("SELECT * FROM carrinho where sessao = '$sessao'");
+	$ocultar_excluir = '';
 }else{
 	$query = $pdo->query("SELECT * FROM carrinho where mesa = '$id_mesa'");
+	$ocultar_excluir = 'ocultar';
 }
 
 $res = $query->fetchAll(PDO::FETCH_ASSOC);
@@ -171,7 +173,7 @@ echo <<<HTML
 
 
 			
-			<a href="#" onclick="excluir('{$id}')" class="link-neutro"><i class="bi bi-x-lg direita"></i></a>
+			<a class="{$ocultar_excluir}" href="#" onclick="excluir('{$id}')" class="link-neutro"><i class="bi bi-x-lg direita"></i></a>
 
 			<div id="popup-excluir{$id}" class="overlay-excluir">
 			<div class="popup">

@@ -18,6 +18,12 @@ $id_categoria = $res[0]['categoria'];
 $estoque = $res[0]['estoque'];
 $tem_estoque = $res[0]['tem_estoque'];
 $valor_venda = $res[0]['valor_venda'];
+$preparado = $res[0]['preparado'];
+
+$status = '';
+if($preparado == 'Sim' and $mesa != ""){
+	$status = 'Aguardando';
+}
 
 if($valor_produto == ""){
 	$valor_produto = $valor_venda;
@@ -30,7 +36,7 @@ if($quantidade > $estoque and $tem_estoque == 'Sim'){
 }
 
 
-$query = $pdo->prepare("INSERT INTO carrinho SET sessao = '$sessao', cliente = '0', produto = '$produto', quantidade = '$quantidade', total_item = '$total_item', obs = :obs, pedido = '0', data = curDate(), mesa = '$mesa', nome_cliente = '', valor_unitario = '$valor_produto'"); 
+$query = $pdo->prepare("INSERT INTO carrinho SET sessao = '$sessao', cliente = '0', produto = '$produto', quantidade = '$quantidade', total_item = '$total_item', obs = :obs, pedido = '0', data = curDate(), mesa = '$mesa', nome_cliente = '', valor_unitario = '$valor_produto', status = '$status', hora = curTime()"); 
 $query->bindValue(":obs", "$obs");
 $query->execute();
 $id_carrinho = $pdo->lastInsertId();

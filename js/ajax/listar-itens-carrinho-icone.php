@@ -12,8 +12,10 @@ if(@$_SESSION['id_ab_mesa'] != ""){
 $nome_produto2 = '';
 if($id_mesa == ""){
 	$query = $pdo->query("SELECT * FROM carrinho where sessao = '$sessao'");
+	$ocultar_excluir = '';
 }else{
 	$query = $pdo->query("SELECT * FROM carrinho where mesa = '$id_mesa'");
+	$ocultar_excluir = 'ocultar';
 }
 
 
@@ -94,7 +96,7 @@ echo <<<HTML
 		<span class="nome-produto"><b><small>{$quantidade} {$nome_produto} {$sigla_variacao}<span class="text-success">R$ ($total_itemF)</span></small></b></span>
 
 			
-		<a href="#popup1" onclick="excluirCarrinhoIcone('{$id}')" class="link-neutro"><i class="bi bi-x-lg direita" style="margin-top: -10px"></i></a>		
+		<a href="#popup1" onclick="excluirCarrinhoIcone('{$id}')" class="link-neutro {$ocultar_excluir}"><i class="bi bi-x-lg direita" style="margin-top: -10px"></i></a>		
 
 
 			</li>
