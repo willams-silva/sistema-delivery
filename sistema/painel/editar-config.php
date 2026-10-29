@@ -39,6 +39,9 @@ $mais_sabores = $_POST['mais_sabores'];
 $seletor_api = $_POST['seletor_api'];
 $abrir_comprovante = $_POST['abrir_comprovante'];
 
+$comissao_garcon = $_POST['comissao_garcon'];
+$couvert = $_POST['couvert'];
+
 //validar troca da foto logo png
 $query = $pdo->query("SELECT * FROM config");
 $res = $query->fetchAll(PDO::FETCH_ASSOC);
@@ -158,7 +161,7 @@ if(@$_FILES['foto-logo-rel']['name'] != ""){
 
 
 
-$query = $pdo->prepare("UPDATE config SET nome_sistema = :nome_sistema, email_sistema = :email_sistema, telefone_sistema = :telefone_sistema, telefone_fixo = :telefone_fixo, endereco_sistema = :endereco_sistema, instagram_sistema = :instagram_sistema, tipo_rel = '$tipo_rel', tipo_miniatura = '$tipo_miniatura', status_whatsapp = '$status_whatsapp', previsao_entrega = '$previsao_entrega', horario_abertura = '$horario_abertura', horario_fechamento = '$horario_fechamento', texto_fechamento_horario = :texto_fechamento_horario, status_estabelecimento = '$status_estabelecimento', texto_fechamento = :texto_fechamento, logo_sistema = '$logo_sistema', favicon_sistema = '$favicon_sistema', logo_rel = '$logo_rel', tempo_atualizar = '$tempo_atualizar', tipo_chave = '$tipo_chave', chave_pix = :chave_pix, cnpj = :cnpj_sistema, dias_apagar = :dias_apagar, impressao_automatica = :impressao_automatica, fonte_comprovante = :fonte_comprovante, banner_rotativo = '$banner_rotativo', token = :token, instancia = :instancia, pedido_minimo = :pedido_minimo, mostrar_aberto = :mostrar_aberto, chave_api_maps = :chave_api_maps, entrega_distancia = :entrega_distancia, latitude_rest = :latitude_rest, longitude_rest = :longitude_rest, distancia_entrega_km = :distancia_entrega_km, valor_km = :valor_km, mais_sabores = :mais_sabores, seletor_api = '$seletor_api', abrir_comprovante = '$abrir_comprovante' ");
+$query = $pdo->prepare("UPDATE config SET nome_sistema = :nome_sistema, email_sistema = :email_sistema, telefone_sistema = :telefone_sistema, telefone_fixo = :telefone_fixo, endereco_sistema = :endereco_sistema, instagram_sistema = :instagram_sistema, tipo_rel = '$tipo_rel', tipo_miniatura = '$tipo_miniatura', status_whatsapp = '$status_whatsapp', previsao_entrega = '$previsao_entrega', horario_abertura = '$horario_abertura', horario_fechamento = '$horario_fechamento', texto_fechamento_horario = :texto_fechamento_horario, status_estabelecimento = '$status_estabelecimento', texto_fechamento = :texto_fechamento, logo_sistema = '$logo_sistema', favicon_sistema = '$favicon_sistema', logo_rel = '$logo_rel', tempo_atualizar = '$tempo_atualizar', tipo_chave = '$tipo_chave', chave_pix = :chave_pix, cnpj = :cnpj_sistema, dias_apagar = :dias_apagar, impressao_automatica = :impressao_automatica, fonte_comprovante = :fonte_comprovante, banner_rotativo = '$banner_rotativo', token = :token, instancia = :instancia, pedido_minimo = :pedido_minimo, mostrar_aberto = :mostrar_aberto, chave_api_maps = :chave_api_maps, entrega_distancia = :entrega_distancia, latitude_rest = :latitude_rest, longitude_rest = :longitude_rest, distancia_entrega_km = :distancia_entrega_km, valor_km = :valor_km, mais_sabores = :mais_sabores, seletor_api = '$seletor_api', abrir_comprovante = '$abrir_comprovante', comissao_garcon = :comissao_garcon, couvert = :couvert ");
 
 $query->bindValue(":nome_sistema", "$nome_sistema");
 $query->bindValue(":email_sistema", "$email_sistema");
@@ -184,6 +187,8 @@ $query->bindValue(":longitude_rest", "$longitude_rest");
 $query->bindValue(":distancia_entrega_km", "$distancia_entrega_km");
 $query->bindValue(":valor_km", "$valor_km");
 $query->bindValue(":mais_sabores", "$mais_sabores");
+$query->bindValue(":comissao_garcon", "$comissao_garcon");
+$query->bindValue(":couvert", "$couvert");
 $query->execute();
 
 echo 'Editado com Sucesso';

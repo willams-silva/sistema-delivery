@@ -10,7 +10,7 @@ $conf_senha = $_POST['conf_senha'];
 $telefone = $_POST['telefone'];
 $id = $_POST['id_usuario'];
 
-$senha_crip = md5($senha);
+$senha_crip = password_hash($senha, PASSWORD_DEFAULT);
 
 if($senha != $conf_senha){
 	echo 'As senhas não se coincidem!!';
@@ -80,7 +80,7 @@ $query = $pdo->prepare("UPDATE usuarios SET nome = :nome, email = :email, cpf = 
 $query->bindValue(":nome", "$nome");
 $query->bindValue(":email", "$email");
 $query->bindValue(":cpf", "$cpf");
-$query->bindValue(":senha", "$senha");
+$query->bindValue(":senha", "");
 $query->bindValue(":telefone", "$telefone");
 $query->execute();
 

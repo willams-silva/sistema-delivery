@@ -27,6 +27,7 @@ $banner_rotativo = 'ocultar';
 $mesas = 'ocultar';
 $cupons = 'ocultar';
 $adicionais = 'ocultar';
+$formas_pgto = 'ocultar';
 
 //grupo produtos
 $produtos = 'ocultar';
@@ -147,6 +148,11 @@ if($total_reg > 0){
 			$adicionais = '';
 		}
 
+		if($chave == 'formas_pgto'){
+			$formas_pgto = '';
+		}
+
+
 
 
 
@@ -248,7 +254,7 @@ if($usuarios == 'ocultar' and $funcionarios == 'ocultar' and $clientes == 'ocult
 
 
 
-if($bairros == 'ocultar' and $cargos == 'ocultar' and $dias == 'ocultar' and $grupos == 'ocultar' and $acessos == 'ocultar' and $banner_rotativo == 'ocultar' and $mesas == 'ocultar' and $cupons == 'ocultar' and $adicionais == 'ocultar'){
+if($bairros == 'ocultar' and $cargos == 'ocultar' and $dias == 'ocultar' and $grupos == 'ocultar' and $acessos == 'ocultar' and $banner_rotativo == 'ocultar' and $mesas == 'ocultar' and $cupons == 'ocultar' and $adicionais == 'ocultar' and $formas_pgto == 'ocultar'){
 	$menu_cadastros = 'ocultar';
 }else{
 	$menu_cadastros = '';

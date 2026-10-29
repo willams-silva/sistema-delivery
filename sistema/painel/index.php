@@ -216,6 +216,8 @@ if(@$_GET['pagina'] != ""){
 
 									<li class="<?php echo @$bairros ?>"><a href="bairros"><i class="fa fa-angle-right"></i> Bairros / Locais</a></li>
 
+									<li class="<?php echo @$formas_pgto ?>"><a href="formas_pgto"><i class="fa fa-angle-right"></i> Formas de Pagamentos</a></li>
+
 									<li class="<?php echo @$cargos ?>"><a href="cargos"><i class="fa fa-angle-right"></i> Cargos</a></li>
 
 									<li class="<?php echo @$dias ?>"><a href="dias"><i class="fa fa-angle-right"></i> Dias Fechados</a></li>
@@ -904,7 +906,21 @@ if(@$_GET['pagina'] != ""){
 									
 							</select>					
 						</div>
+
+
+						<div class="col-md-3">						
+							<label>Comissão Garcon %</label>
+							<input type="number" name="comissao_garcon" id="comissao_garcon" class="form-control" value="<?php echo @$comissao_garcon ?>" placeholder="Comissão do Garçon">	
+						</div>
+
+						<div class="col-md-3">						
+							<label>Taxa Couvert R$</label>
+							<input type="number" name="couvert" id="couvert" class="form-control" value="<?php echo @$couvert ?>" placeholder="Couvert se Houver">	
+						</div>
+
 					</div>
+
+
 
 
 
