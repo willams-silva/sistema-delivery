@@ -80,13 +80,23 @@ $pag = 'categorias';
 					
 
 						<div class="row">
-							<div class="col-md-8">						
+							<div class="col-md-3">
+							<div class="form-group">
+								<label for="exampleInputEmail1">Delivery</label>
+								<select class="form-control" id="delivery" name="delivery">
+									<option value="Sim">Sim</option>
+									<option value="Não">Não</option>
+									
+								</select>   
+							</div> 	
+						</div>
+							<div class="col-md-6">						
 								<div class="form-group"> 
 									<label>Foto</label> 
 									<input class="form-control" type="file" name="foto" onChange="carregarImg();" id="foto">
 								</div>						
 							</div>
-							<div class="col-md-4">
+							<div class="col-md-3">
 								<div id="divImg">
 									<img src="images/<?php echo $pag ?>/sem-foto.jpg"  width="80px" id="target">									
 								</div>

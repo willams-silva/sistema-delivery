@@ -160,6 +160,29 @@ $pag = 'produtos';
 								</select>   
 							</div> 
 							</div>	
+
+						<div class="col-md-2">
+							<div class="form-group">
+								<label for="exampleInputEmail1">Delivery?</label>
+								<select class="form-control" id="delivery" name="delivery" style="width:100%;" > 
+								<option value="Sim">Sim</option>	
+								<option value="Não">Não</option>
+								</select>   
+							</div> 
+							</div>	
+
+
+							<div class="col-md-3">
+							<div class="form-group">
+								<label for="exampleInputEmail1">Preparado Cozinha?</label>
+								<select class="form-control" id="preparado" name="preparado" style="width:100%;" > 
+								<option value="Sim">Sim</option>	
+								<option value="Não">Não</option>
+								</select>   
+							</div> 
+							</div>	
+
+
 					</div>
 
 					

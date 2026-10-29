@@ -276,6 +276,35 @@ $pag = 'funcionarios';
 
 
 
+
+<!-- Modal Comissoes-->
+<div class="modal fade" id="modalComissoes" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+	<div class="modal-dialog" role="document">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h4 class="modal-title" id="exampleModalLabel"><span id="nome_comissao"></span> / Total: <span class="text-danger" id="total_pagar_comissoes"></span></h4>
+				<button id="btn-fechar-comissao" type="button" class="close" data-dismiss="modal" aria-label="Close" style="margin-top: -20px">
+					<span aria-hidden="true" >&times;</span>
+				</button>
+			</div>
+			
+			<div class="modal-body">			
+
+				<div id="listar_comissoes">
+					
+				</div>
+
+				<input type="hidden" id="id_comissao">
+
+			</div>
+
+			
+		</div>
+	</div>
+</div>
+
+
+
 <script type="text/javascript">var pag = "<?=$pag?>"</script>
 <script src="js/ajax.js"></script>
 
@@ -312,6 +341,22 @@ $pag = 'funcionarios';
 
         success:function(result){
             $("#listar_entregas").html(result);           
+        }
+    });
+	}
+</script>
+
+
+<script type="text/javascript">
+	function listarComissoes(id){
+		$.ajax({
+        url: 'paginas/' + pag + "/listar_comissoes.php",
+        method: 'POST',
+        data: {id},
+        dataType: "html",
+
+        success:function(result){
+            $("#listar_comissoes").html(result);           
         }
     });
 	}

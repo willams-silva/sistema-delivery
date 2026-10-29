@@ -378,6 +378,9 @@ $query2 =$pdo->query("SELECT * FROM temp where carrinho = '$id_carrinho' and gra
 }
 }
 
+
+
+
 if($obs_item != ""){
 echo <<<HTML
 		<div align="left" style="margin-left: 15px">

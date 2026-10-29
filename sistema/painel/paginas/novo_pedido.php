@@ -124,7 +124,7 @@ if(@$novo_pedido == 'ocultar'){
 		<div class="modal-content">
 			<div class="modal-header">
 				<h4 class="modal-title">Mesa <span id="nome_da_mesa_itens"></span> <small><span id="obs_da_mesa_itens"></span></small></h4>
-				<button id="btn-fechar-itens" type="button" class="close" data-dismiss="modal" aria-label="Close" style="margin-top: -20px">
+				<button onclick="listar()" id="btn-fechar-itens" type="button" class="close" data-dismiss="modal" aria-label="Close" style="margin-top: -20px">
 					<span aria-hidden="true" >&times;</span>
 				</button>
 			</div>
@@ -144,7 +144,8 @@ if(@$novo_pedido == 'ocultar'){
 				<div class="modal-footer"> 
 				<form method="POST" action="../../index" target="_blank">
 							<input type="hidden" name="id_mesa" id="id_itens">
-							<input type="hidden" name="id_abertura_mesa" id="id_abertura_mesa">     
+							<input type="hidden" name="id_abertura_mesa" id="id_abertura_mesa">    
+							<input type="hidden" name="pedido_balcao" value="">     
 					<button type="submit" class="btn btn-primary">Adicionar Itens</button>
 
 					</form>
@@ -230,6 +231,14 @@ if(@$novo_pedido == 'ocultar'){
 							</div> 
 						</div>
 
+							<div class="col-md-2">
+							<div class="form-group">
+								<label for="exampleInputEmail1">AV</label>
+								<input style="color:red" readonly="" type="text" class="form-control" id="total_valor_fechamento" name="total_valor_fechamento" placeholder="" >    
+							</div> 
+						</div>
+
+
 						<div class="col-md-3">
 							<div class="form-group">
 								<label for="exampleInputEmail1">Subtotal</label>
@@ -237,9 +246,11 @@ if(@$novo_pedido == 'ocultar'){
 							</div> 
 						</div>
 
+					
 
 
-						<div class="col-md-6">
+
+						<div class="col-md-4">
 							<div class="form-group">
 								<label for="exampleInputEmail1">Forma de Pagamento</label>
 									<select class="form-control" id="forma_pgto" name="forma_pgto" > 
@@ -308,6 +319,123 @@ if(@$novo_pedido == 'ocultar'){
 
 
 
+	<!-- Modal Arquivos -->
+	<div class="modal fade" id="modalValores" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h4 class="modal-title" id="">Lançar Valor - <span id="nome_valor"> </span></h4>
+					<button id="btn-fechar-valor" type="button" class="close" data-dismiss="modal" aria-label="Close" style="margin-top: -20px">
+						<span aria-hidden="true">&times;</span>
+					</button>
+				</div>
+				<form id="form-valor" method="post">
+					<div class="modal-body">
+						<div class="row">
+							<div class="col-md-6">	
+								<div class="form-group"> 
+									<label>Nome</label> 
+									<input class="form-control" type="text" name="nome" id="nome_ad">
+								</div>	
+							</div>
+							<div class="col-md-3">	
+								<div class="form-group"> 
+									<label>Valor</label> 
+									<input class="form-control" type="text" name="valor" id="valor_ad">
+								</div>	
+							</div>
+							
+							<div class="col-md-3" style="margin-top:25px">	
+									<button type="submit" class="btn btn-primary">Inserir</button>			
+							</div>
+
+
+						</div>
+					
+
+						<hr>
+
+						<small><div id="listar-valor"></div></small>
+
+						<br>
+						<small><div align="center" id="mensagem-valor"></div></small>
+
+						<input type="hidden" class="form-control" name="id"  id="id_valor">
+
+					</div>
+				</form>
+			</div>
+		</div>
+</div>
+
+
+
+
+
+
+	<!-- Modal Excluir -->
+	<div class="modal fade" id="modalExcluir" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h4 class="modal-title" id="">Excluir Registro - <span id="nome_modal"> </span></h4>
+					<button id="btn-fechar-excluir" type="button" class="close" data-dismiss="modal" aria-label="Close" style="margin-top: -20px">
+						<span aria-hidden="true">&times;</span>
+					</button>
+				</div>
+				
+					<div class="modal-body">
+
+						<div class="row">
+							<div class="col-md-7">
+								<label for="exampleInputEmail1">Gerente</label>
+								<select class="form-control sel40" id="gerente" name="gerente" style="width:100%;" > 
+									<?php 
+									$query = $pdo->query("SELECT * FROM usuarios where nivel = 'Gerente' or nivel = 'Administrador'");
+									$res = $query->fetchAll(PDO::FETCH_ASSOC);
+									$total_reg = @count($res);
+									
+									echo '<option value="">Selecione um Gerente</option>';
+
+									if($total_reg > 0){
+										for($i=0; $i < $total_reg; $i++){
+											foreach ($res[$i] as $key => $value){}
+												echo '<option value="'.$res[$i]['id'].'">'.$res[$i]['nome'].'</option>';
+										}
+									}
+									?>
+									
+
+								</select>   	
+							</div>
+
+
+							<div class="col-md-3" style="padding:0">
+									<div class="form-group">
+								<label for="exampleInputEmail1">Senha</label>
+								<input type="password" class="form-control" id="senha" name="senha" placeholder="Senha" >    
+							</div> 
+							</div>
+
+							<div class="col-md-2" style="margin-top: 23px">
+								<button class="btn btn-primary" onclick="excluirCarrinho()">Ok</button>
+							</div>
+						</div>
+					
+
+						<br>
+						<small><div align="center" id="mensagem-excluir-modal"></div></small>
+						
+						<input type="hidden" class="form-control" name="id_car_excluir"  id="id_car_excluir">
+
+					</div>
+				
+			</div>
+		</div>
+</div>
+
+
+
 
 
 <script type="text/javascript">var pag = "<?=$pag?>"</script>
@@ -316,8 +444,8 @@ if(@$novo_pedido == 'ocultar'){
 
 <script type="text/javascript">
 	$(document).ready(function() {
-		setInterval(listar, 120000);
-		setInterval(listarCarrinho, 30000);
+		setInterval(listar, 20000);
+		setInterval(listarCarrinho, 20000);
 
     $('.sel2').select2({
     	dropdownParent: $('#modalAbertura')
@@ -326,6 +454,12 @@ if(@$novo_pedido == 'ocultar'){
      $('.sel3').select2({
     	dropdownParent: $('#modalFechamento')
     });
+
+      $('.sel40').select2({
+    	dropdownParent: $('#modalExcluir')
+    });
+
+
 });
 
 function listarCarrinho(){
@@ -347,6 +481,7 @@ function listarCarrinho(){
 function calcular(){
 	var comissao = $('#comissao_fechamento').val();
 	var couvert = $('#couvert_fechamento').val();
+	var total_valor_fechamento = $('#total_valor_fechamento').val();
 	var total_itens = $('#total_itens_fechamento').val();
 
 	if(comissao == ""){
@@ -361,7 +496,11 @@ function calcular(){
 		total_itens = 0;
 	}
 
-	var subtotal = parseFloat(comissao) + parseFloat(couvert) + parseFloat(total_itens);
+	if(total_valor_fechamento == ""){
+		total_valor_fechamento = 0;
+	}
+
+	var subtotal = parseFloat(comissao) + parseFloat(couvert) + parseFloat(total_itens) - total_valor_fechamento;
 	$('#subtotal_fechamento').val(subtotal.toFixed(2));
 }
 
@@ -406,6 +545,62 @@ $("#form_fechamento").submit(function () {
 
 
 
+
+
+
+$("#form-valor").submit(function () {
+
+    event.preventDefault();
+    var formData = new FormData(this);
+
+    $.ajax({
+        url: 'paginas/' + pag + "/salvar_valor.php",
+        type: 'POST',
+        data: formData,
+
+        success: function (mensagem) {
+            $('#mensagem-valor').text('');
+            $('#mensagem-valor').removeClass()
+            if (mensagem.trim() == "Salvo com Sucesso") {
+
+            	$('#nome_ad').val('')
+            	$('#valor_ad').val('')
+
+               	listarValores();         
+
+            } else {
+
+                $('#mensagem-valor').addClass('text-danger')
+                $('#mensagem-valor').text(mensagem)
+            }
+
+
+        },
+
+        cache: false,
+        contentType: false,
+        processData: false,
+
+    });
+
+});
+
+
+
+function listarValores(){
+				var id = $('#id_valor').val();	
+				$.ajax({
+					url: 'paginas/' + pag + "/listar_valores.php",
+					method: 'POST',
+					data: {id},
+					dataType: "text",
+
+					success:function(result){
+						$("#listar-valor").html(result);
+					}
+				});
+
+			}
 
 
 </script>

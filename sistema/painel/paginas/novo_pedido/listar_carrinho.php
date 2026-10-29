@@ -3,6 +3,7 @@ require_once("../../../conexao.php");
 $tabela = 'carrinho';
 
 $id = @$_POST['id'];
+$id_post = @$_POST['id'];
 
 $total_carrinho = 0;
 $query = $pdo->query("SELECT * FROM $tabela where mesa = '$id' order by id desc");
@@ -37,6 +38,22 @@ for($i=0; $i < $total_reg; $i++){
 		$borda = $res[$i]['borda'];
 		$categoria = $res[$i]['categoria'];
 		$valor_unit = $res[$i]['valor_unitario'];
+		$status = $res[$i]['status'];
+
+		if($status == 'Aguardando'){
+			$classe_alerta = 'text-danger';
+			$opacidade = '1';				
+		}else if($status == 'Preparando'){
+			$classe_alerta = 'text-primary';
+			$opacidade = '1';
+		}else if($status == 'Pronto'){
+			$classe_alerta = 'text-verde';	
+			$opacidade = '1';
+		}else{
+			$classe_alerta = 'text-secondary';	
+			$opacidade = '0';		
+						
+		}
 
 		if($valor_unit == ""){
 			if($total_item > 0 and $quantidade > 0){
@@ -84,26 +101,41 @@ for($i=0; $i < $total_reg; $i++){
 			$nome_produto = $nome_produto_tab;
 		}
 
-	
+
+		//totalizar valores pagos
+		$total_valor = 0;
+		$total_valorF = 0;
+$query2 = $pdo->query("SELECT * FROM valor_adiantamento where abertura = '$id_post' order by id desc");
+$res2 = $query2->fetchAll(PDO::FETCH_ASSOC);
+$total_reg2 = @count($res2);
+	if($total_reg2 > 0){
+		
+		for($i2=0; $i2 < $total_reg2; $i2++){
+			$valor2 = $res2[$i2]['valor'];
+
+		$valorF2 = number_format($valor2, 2, ',', '.');
+
+		$total_valor += $valor2;
+		$total_valorF = number_format($total_valor, 2, ',', '.');
+		}
+
+
+}
+$ocultar_pago = 'ocultar';
+if($total_valor > 0){
+			$ocultar_pago = '';
+		}	
 
 echo <<<HTML
 <tr>
 <td><img class="" src="../../sistema/painel/images/produtos/{$foto_produto}" width="25px"></td>
-<td>{$quantidade} / {$nome_produto}</td>
+<td><i class="fa fa-square {$classe_alerta}" style="opacity: {$opacidade}"></i> {$quantidade} / {$nome_produto}</td>
 <td>{$total_itemF}</td>
 <td>
 
-	<li class="dropdown head-dpdn2" style="display: inline-block;">
-		<a href="#" class="dropdown-toggle" data-toggle="dropdown" aria-expanded="false"><big><i class="fa fa-trash-o text-danger"></i></big></a>
+	
 
-		<ul class="dropdown-menu" style="margin-left:-230px;">
-		<li>
-		<div class="notification_desc2">
-		<p>Confirmar Exclusão? <a title="Excluir Item" href="#" onclick="excluirCarrinho('{$id}')"><span class="text-danger">Sim</span></a></p>
-		</div>
-		</li>										
-		</ul>
-		</li>
+		<a class="" href="#" onclick="excluirModal('{$id}', '{$nome_produto}')" title="Excluir Item" class=""><big><i class="fa fa-trash-o text-danger"></i></big></a>
 
 
 
@@ -118,7 +150,10 @@ echo <<<HTML
 	</tbody>
 	<small><div align="center" id="mensagem-excluir"></div>	</small>
 	</table>
-	<div align="right"><b>Itens</b> ({$total_reg}) / <b>Total R$ </b><span style="color:green">{$total_carrinhoF}</span></div>
+	<div align="right">
+	<span class="{$ocultar_pago}"><b>Pago Adiantado</b> <span style="color:red">(R$ {$total_valorF})</span></span>
+	 <span style="margin-left:30px"><b>Itens</b> ({$total_reg}) / <b>Total R$ </b><span style="color:green">{$total_carrinhoF}</span></span>
+	 </div>
 	</small>
 HTML;
 
@@ -133,24 +168,48 @@ HTML;
 
 <script type="text/javascript">
 	
-function excluirCarrinho(id){
+function excluirCarrinho(){
+
+	var id = $('#id_car_excluir').val();
+	var senha = $('#senha').val();
+	var gerente = $('#gerente').val();
+
+	if(senha == "" || gerente == ""){
+		alert('Selecione um Gerente e preencha a senha!');
+		return;
+	}
+
     $.ajax({
         url: 'paginas/' + pag + "/excluir_carrinho.php",
         method: 'POST',
-        data: {id},
+        data: {id, gerente, senha},
         dataType: "text",
 
         success: function (mensagem) {            
             if (mensagem.trim() == "Excluído com Sucesso") {                
                 listar();   
-                listarCarrinho();                 
+                listarCarrinho();  
+                $('#mensagem-excluir-modal').text('')
+                $('#btn-fechar-excluir').click();               
             } else {
-                $('#mensagem-excluir').addClass('text-danger')
-                $('#mensagem-excluir').text(mensagem)
+                $('#mensagem-excluir-modal').addClass('text-danger')
+                $('#mensagem-excluir-modal').text(mensagem)
             }
 
         },      
 
     });
 }
+
+
+
+	function excluirModal(id, nome){	
+			
+			$('#nome_modal').text(nome);			
+			$('#id_car_excluir').val(id);	
+			$('#senha').val('');	
+
+			$('#modalExcluir').modal('show');	
+			
+	}
 </script>

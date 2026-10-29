@@ -2,7 +2,7 @@
 require_once("../../../conexao.php");
 $tabela = 'mesas';
 
-$query = $pdo->query("SELECT * FROM $tabela order by id asc");
+$query = $pdo->query("SELECT * FROM $tabela where ativo = 'Sim' order by id asc");
 $res = $query->fetchAll(PDO::FETCH_ASSOC);
 $total_reg = @count($res);
 if($total_reg > 0){
@@ -101,6 +101,8 @@ for($i=0; $i < $total_reg; $i++){
 		$total_comissao = 0;
 	}
 
+	$total_comissaoC = @number_format($total_comissao, 2);
+
 	$total_comissaoF = @number_format($total_comissao, 2, ',', '.');
 
 
@@ -108,15 +110,36 @@ for($i=0; $i < $total_reg; $i++){
 	$total_couvert = $pessoas * $couvert;
 	$total_couvertF = @number_format($total_couvert, 2, ',', '.');
 
-	$subtotal = $total_mesa + $total_comissao + $total_couvert;
+		//totalizar valores pagos
+		$total_valor = 0;
+		$total_valorF = 0;
+$query2 = $pdo->query("SELECT * FROM valor_adiantamento where abertura = '$id_abertura_mesa' order by id desc");
+$res2 = $query2->fetchAll(PDO::FETCH_ASSOC);
+$total_reg2 = @count($res2);
+	if($total_reg2 > 0){
+		
+		for($i2=0; $i2 < $total_reg2; $i2++){
+			$valor2 = $res2[$i2]['valor'];
+
+		$valorF2 = number_format($valor2, 2, ',', '.');
+
+		$total_valor += $valor2;
+		$total_valorF = number_format($total_valor, 2, ',', '.');
+		}
+
+
+}
+
+	$subtotal = $total_mesa + $total_comissao + $total_couvert - $total_valor;
 	$subtotalF = @number_format($subtotal, 2, ',', '.');
+	$subtotalC = @number_format($subtotal, 2);
 	
 
 echo <<<HTML
 			<div class="col-xs-12 col-md-3 widget cardTarefas " style="margin-right: 5px; margin-bottom: 5px">
         		<div class="r3_counter_box">
 				
-				<a href="#" class="{$mostrar_fechar}" onclick="fecharMesa('{$id}', '{$nome}', '{$obs}', '{$id_abertura_mesa}', '{$total_couvert}', '{$total_comissao}', '{$subtotal}', '{$garcon}', '{$total_mesa}')" title="Fechar Mesa">		
+				<a href="#" class="{$mostrar_fechar}" onclick="fecharMesa('{$id}', '{$nome}', '{$obs}', '{$id_abertura_mesa}', '{$total_couvert}', '{$total_comissaoC}', '{$subtotalC}', '{$garcon}', '{$total_mesa}', '{$total_valor}')" title="Fechar Mesa">		
 					<span aria-hidden="true" style="position:absolute; top:0px; right:2px"><big><big>&times;</big></big></span>				
 				</a>
 
@@ -131,6 +154,8 @@ echo <<<HTML
         			<a class="{$ocultar_botoes}" href="rel/comprovante_mesa.php?id={$id_abertura_mesa}" title="Detalhamento da Mesa" target="_blank"><img class="icon-rounded-vermelho" src="../../img/pdf.png" width="20px" height="20px"></a>
 
         			<a class="" href="#" onclick="abrirMesa('{$id}', '{$status}', '{$nome}', '{$obsF}', '{$id_abertura_mesa}')" title="Adicionar Itens" class=""> <img class="icon-rounded-vermelho" src="../../img/plus.png" width="20px" height="20px"></a>
+
+        			<a class="{$ocultar_botoes}" href="#" onclick="adiantamento('{$id}', '{$nome}', '{$id_abertura_mesa}')" title="Adiantamento" class=""> <img class="icon-rounded-vermelho" src="../../img/valor.png" width="20px" height="20px"></a>
 
         			</h5>       			
 
@@ -206,7 +231,7 @@ HTML;
 		$('#pessoas').val('');
 	}
 
-		function fecharMesa(id, nome, obs, id_abertura_mesa, couvert, comissao, subtotal, garcon, total_itens){
+		function fecharMesa(id, nome, obs, id_abertura_mesa, couvert, comissao, subtotal, garcon, total_itens, total_valor){
 		
 			$('#id_fechamento').val(id);
 			$('#id_ab_fechamento').val(id_abertura_mesa);
@@ -217,9 +242,22 @@ HTML;
 			$('#subtotal_fechamento').val(subtotal);
 			$('#garcon_fechamento').val(garcon).change();
 			$('#total_itens_fechamento').val(total_itens);
+			$('#total_valor_fechamento').val(total_valor);
 			$('#modalFechamento').modal('show');	
 
 		
+	}
+
+	function adiantamento(id, nome, id_abertura_mesa){	
+			
+			$('#nome_valor').text(nome);			
+			$('#modalValores').modal('show');	
+			$('#id_valor').val(id_abertura_mesa);
+
+			setTimeout(function() {
+			  listarValores();
+			}, 300)
+			
 	}
 
 </script>

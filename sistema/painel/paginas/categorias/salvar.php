@@ -7,6 +7,7 @@ $nome = $_POST['nome'];
 $descricao = $_POST['descricao'];
 $cor = $_POST['cor'];
 $mais_sabores = $_POST['mais_sabores'];
+$delivery = $_POST['delivery'];
 
 $nome_novo = strtolower( preg_replace("[^a-zA-Z0-9-]", "-", 
         strtr(utf8_decode(trim($nome)), utf8_decode("áàãâéêíóôõúüñçÁÀÃÂÉÊÍÓÔÕÚÜÑÇ"),
@@ -71,9 +72,9 @@ if(@$_FILES['foto']['name'] != ""){
 
 
 if($id == ""){
-	$query = $pdo->prepare("INSERT INTO $tabela SET nome = :nome, descricao = :descricao, cor = '$cor',  ativo = 'Sim', foto = '$foto', url = '$url', mais_sabores = '$mais_sabores'");
+	$query = $pdo->prepare("INSERT INTO $tabela SET nome = :nome, descricao = :descricao, cor = '$cor',  ativo = 'Sim', foto = '$foto', url = '$url', mais_sabores = '$mais_sabores', delivery = '$delivery'");
 }else{
-	$query = $pdo->prepare("UPDATE $tabela SET nome = :nome, descricao = :descricao, cor = '$cor',  ativo = 'Sim', foto = '$foto', url = '$url', mais_sabores = '$mais_sabores' WHERE id = '$id'");
+	$query = $pdo->prepare("UPDATE $tabela SET nome = :nome, descricao = :descricao, cor = '$cor',  ativo = 'Sim', foto = '$foto', url = '$url', mais_sabores = '$mais_sabores', delivery = '$delivery' WHERE id = '$id'");
 }
 
 $query->bindValue(":nome", "$nome");

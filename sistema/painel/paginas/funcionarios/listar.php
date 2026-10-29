@@ -57,10 +57,16 @@ for($i=0; $i < $total_reg; $i++){
 			$classe_linha = 'text-muted';
 		}
 
-		if($nivel == "Entregador" || $nivel == "Motoboy"){
+		if($nivel == "Entregador" || $nivel == "Motoboy" ){
 			$classe_nivel = '';
 		}else{
 			$classe_nivel = 'ocultar';
+		}
+
+		if($nivel == "Garçon" || $nivel == "Garçonete" || $nivel == "garçon"){
+			$classe_nivel_garcon = '';
+		}else{
+			$classe_nivel_garcon = 'ocultar';
 		}
 
 echo <<<HTML
@@ -91,7 +97,7 @@ echo <<<HTML
 
 			<big><a class="{$classe_nivel}" href="#" onclick="entregas('{$id}', '{$nome}')" title="Ver Entregas Pendentes"><i class="fa fa-usd text-verde"></i></a></big>
 
-
+			<big><a class="{$classe_nivel_garcon}" href="#" onclick="comissoes('{$id}', '{$nome}')" title="Ver Comissões Pendentes"><i class="fa fa-usd text-verde"></i></a></big>
 	
 
 
@@ -188,6 +194,13 @@ HTML;
 		$('#modalEntregas').modal('show');
 	}
 
+	function comissoes(id, nome){
+		$('#id_comissao').val(id);
+		$('#nome_comissao').text(nome);
+
+		listarComissoes(id);
+		$('#modalComissoes').modal('show');
+	}
 
 	
 

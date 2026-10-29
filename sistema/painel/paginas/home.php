@@ -37,7 +37,7 @@ $res = $query->fetchAll(PDO::FETCH_ASSOC);
 $contas_pagar_hoje = @count($res);
 
 
-$query = $pdo->query("SELECT * FROM receber where data_venc = curDate() and pago != 'Sim' ");
+$query = $pdo->query("SELECT * FROM receber where data_venc = curDate() and pago = 'Não' ");
 $res = $query->fetchAll(PDO::FETCH_ASSOC);
 $contas_receber_hoje = @count($res);
 

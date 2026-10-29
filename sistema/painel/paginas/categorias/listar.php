@@ -16,6 +16,7 @@ echo <<<HTML
 	<th class="esc">Descrição</th> 	
 	<th class="esc">Cor</th> 	
 	<th class="esc">Mais Sabores</th> 	
+	<th class="esc">Delivery</th> 	
 	<th class="esc">Foto</th>		
 	<th>Ações</th>
 	</tr> 
@@ -32,6 +33,7 @@ for($i=0; $i < $total_reg; $i++){
 		$descricao = $res[$i]['descricao'];
 		$cor = $res[$i]['cor'];
 		$mais_sabores = $res[$i]['mais_sabores'];
+		$delivery = $res[$i]['delivery'];
 
 		$ocultar_ad = 'ocultar';
 		if($mais_sabores == 'Sim'){
@@ -58,9 +60,10 @@ echo <<<HTML
 <td class="esc">{$descricaoF}</td>
 <td class="esc"><div class="divcor {$cor}"></div></td>
 <td class="esc">{$mais_sabores}</td>
+<td class="esc">{$delivery}</td>
 <td class="esc"><img src="images/{$tabela}/{$foto}" width="30px"></td>
 <td>
-	<big><a href="#" onclick="editar('{$id}','{$nome}', '{$descricao}', '{$foto}', '{$cor}', '{$mais_sabores}')" title="Editar Dados"><i class="fa fa-edit text-primary"></i></a></big>
+	<big><a href="#" onclick="editar('{$id}','{$nome}', '{$descricao}', '{$foto}', '{$cor}', '{$mais_sabores}', '{$delivery}')" title="Editar Dados"><i class="fa fa-edit text-primary"></i></a></big>
 
 	
 	<li class="dropdown head-dpdn2" style="display: inline-block;">
@@ -119,12 +122,13 @@ HTML;
 
 
 <script type="text/javascript">
-	function editar(id, nome, descricao, foto, cor, mais_sabores){
+	function editar(id, nome, descricao, foto, cor, mais_sabores, delivery){
 		$('#id').val(id);
 		$('#nome').val(nome);
 		$('#descricao').val(descricao);
 		$('#cor').val(cor).change();
 		$('#mais_sabores').val(mais_sabores).change();	
+		$('#delivery').val(delivery).change();	
 		
 		$('#titulo_inserir').text('Editar Registro');
 		$('#modalForm').modal('show');
@@ -138,7 +142,8 @@ HTML;
 	function limparCampos(){
 		$('#id').val('');
 		$('#nome').val('');
-		$('#descricao').val('');		
+		$('#descricao').val('');	
+		$('#delivery').val('Sim').change();		
 		$('#foto').val('');
 		$('#target').attr('src','images/categorias/sem-foto.jpg');
 	}

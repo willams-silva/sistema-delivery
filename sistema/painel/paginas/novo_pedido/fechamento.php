@@ -14,14 +14,16 @@ $comissao = $_POST['comissao'];
 $couvert = $_POST['couvert'];
 $subtotal = $_POST['subtotal'];
 $forma_pgto = $_POST['forma_pgto'];
+$total_valor_fechamento = $_POST['total_valor_fechamento'];
 
 $total_itens = str_replace(',', '.', $total_itens);
 $comissao = str_replace(',', '.', $comissao);
 $couvert = str_replace(',', '.', $couvert);
 $subtotal = str_replace(',', '.', $subtotal);
+$total_valor_fechamento = str_replace(',', '.', $total_valor_fechamento);
 
 
-$query = $pdo->prepare("UPDATE $tabela SET garcon = :garcon, total = :total, horario_fechamento = curTime(), status = 'Fechada', obs = :obs, comissao_garcon = :comissao, couvert = :couvert, subtotal = :subtotal, forma_pgto = :forma_pgto WHERE id = '$id_ab'");
+$query = $pdo->prepare("UPDATE $tabela SET garcon = :garcon, total = :total, horario_fechamento = curTime(), status = 'Fechada', obs = :obs, comissao_garcon = :comissao, couvert = :couvert, subtotal = :subtotal, forma_pgto = :forma_pgto, valor_adiantado = '$total_valor_fechamento' WHERE id = '$id_ab'");
 
 
 $query->bindValue(":garcon", "$garcon");
@@ -42,7 +44,7 @@ $query->bindValue(":valor", "$comissao");
 $query->execute();
 
 
-//lançar a comissão do garçon
+//lançar nas contas receber
 $query = $pdo->prepare("INSERT INTO receber SET descricao = 'Venda Mesa', tipo = 'Abertura', valor = :valor, data_lanc = curDate(), data_venc = curDate(), data_pgto = curDate(), usuario_lanc = '$id_usuario', usuario_baixa = '$id_usuario', foto = 'sem-foto.jpg', pessoa = '0', pago = 'Sim', referencia = 'Abertura', id_ref = '$id_ab'");
 $query->bindValue(":valor", "$subtotal");
 $query->execute();

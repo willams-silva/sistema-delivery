@@ -16,7 +16,8 @@ echo <<<HTML
 	<th class="esc">Categoria</th> 	
 	<th class="esc">Valor Compra</th> 
 	<th class="esc">Valor Venda</th>	
-	<th class="esc">Estoque</th>		
+	<th class="esc">Estoque</th>	
+	<th class="esc">Delivery</th>	
 	<th>Ações</th>
 	</tr> 
 	</thead> 
@@ -39,6 +40,8 @@ for($i=0; $i < $total_reg; $i++){
 	$guarnicoes = $res[$i]['guarnicoes'];
 	$combo = $res[$i]['combo'];
 	$promocao = $res[$i]['promocao'];
+	$preparado = $res[$i]['preparado'];
+	$delivery = $res[$i]['delivery'];
 
 	$nomeF = mb_strimwidth($nome, 0, 25, "...");	
 
@@ -104,8 +107,9 @@ echo <<<HTML
 <td class="esc">R$ {$valor_compraF}</td>
 <td class="esc">R$ {$valor_vendaF}</td>
 <td class="esc">{$estoque}</td>
+<td class="esc">{$delivery}</td>
 <td>
-	<big><a href="#" onclick="editar('{$id}','{$nome}', '{$categoria}', '{$descricao}', '{$valor_compra}', '{$valor_venda}', '{$foto}', '{$nivel_estoque}', '{$tem_estoque}', '{$guarnicoes}', '{$combo}', '{$promocao}')" title="Editar Dados"><i class="fa fa-edit text-primary"></i></a></big>
+	<big><a href="#" onclick="editar('{$id}','{$nome}', '{$categoria}', '{$descricao}', '{$valor_compra}', '{$valor_venda}', '{$foto}', '{$nivel_estoque}', '{$tem_estoque}', '{$guarnicoes}', '{$combo}', '{$promocao}', '{$preparado}', '{$delivery}')" title="Editar Dados"><i class="fa fa-edit text-primary"></i></a></big>
 
 		<big><a href="#" onclick="mostrar('{$nome}', '{$nome_cat}', '{$descricao}', '{$valor_compraF}',  '{$valor_vendaF}', '{$estoque}', '{$foto}', '{$nivel_estoque}', '{$tem_estoque}', '{$guarnicoes}', '{$combo}', '{$promocao}')" title="Ver Dados"><i class="fa fa-info-circle text-secondary"></i></a></big>
 
@@ -174,7 +178,7 @@ HTML;
 
 
 <script type="text/javascript">
-	function editar(id, nome, categoria, descricao, valor_compra, valor_venda, foto, nivel_estoque, tem_estoque, guarnicoes, combo, promocao){
+	function editar(id, nome, categoria, descricao, valor_compra, valor_venda, foto, nivel_estoque, tem_estoque, guarnicoes, combo, promocao, preparado, delivery){
 		$('#id').val(id);
 		$('#nome').val(nome);
 		$('#valor_venda').val(valor_venda);
@@ -186,6 +190,8 @@ HTML;
 		$('#guarnicoes').val(guarnicoes);
 		$('#combo').val(combo).change();
 		$('#promocao').val(promocao).change();
+		$('#preparado').val(preparado).change();
+		$('#delivery').val(delivery).change();
 						
 		$('#titulo_inserir').text('Editar Registro');
 		$('#modalForm').modal('show');
@@ -203,6 +209,8 @@ HTML;
 		$('#guarnicoes').val('');
 		$('#combo').val('Não').change();
 		$('#promocao').val('Não').change();
+		$('#preparado').val('Sim').change();
+		$('#delivery').val('Sim').change();
 		$('#target').attr('src','images/produtos/sem-foto.jpg');
 	}
 </script>
