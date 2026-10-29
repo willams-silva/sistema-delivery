@@ -46,7 +46,7 @@ if ($linhas == 0) {
 } else {
 	$nome_sistema = $res[0]['nome'];
 	$email_sistema = $res[0]['email'] ?? '';
-	$telefone_sistema = $res[0]['telefone'];
+	$telefone_sistema = $res[0]['telefone'] ?? '';
 	$endereco_sistema = $res[0]['endereco'];
 	$instagram_sistema = $res[0]['instagram'];
 	$logo_sistema = $res[0]['logo'];
