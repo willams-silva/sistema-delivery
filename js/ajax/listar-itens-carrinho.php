@@ -4,8 +4,18 @@ require_once('../../sistema/conexao.php');
 
 $sessao = @$_SESSION['sessao_usuario'];
 
+$id_mesa = "";
+if(@$_SESSION['id_ab_mesa'] != ""){
+    $id_mesa = $_SESSION['id_ab_mesa'];
+}
+
 $nome_produto2 = '';
-$query = $pdo->query("SELECT * FROM carrinho where sessao = '$sessao'");
+if($id_mesa == ""){
+	$query = $pdo->query("SELECT * FROM carrinho where sessao = '$sessao'");
+}else{
+	$query = $pdo->query("SELECT * FROM carrinho where mesa = '$id_mesa'");
+}
+
 $res = $query->fetchAll(PDO::FETCH_ASSOC);
 $total_reg = @count($res);
 $total_carrinho = 0;

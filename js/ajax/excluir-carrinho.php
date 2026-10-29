@@ -18,7 +18,7 @@ $estoque = @$res[0]['estoque'];
 $tem_estoque = @$res[0]['tem_estoque'];
 
 $pdo->query("DELETE FROM carrinho WHERE id = '$id'"); 
-
+$pdo->query("DELETE from temp where carrinho = '$id'");
 
 
 //abater produto estoque

@@ -3,25 +3,25 @@
 require_once('../../sistema/conexao.php');
 require_once('ApiConfig.php');
 
-$pagamento = $_POST['pagamento'];
-$entrega = $_POST['entrega'];
-$rua = $_POST['rua'];
-$numero = $_POST['numero'];
-$bairro = $_POST['bairro'];
-$complemento = $_POST['complemento'];
-$total_pago = $_POST['troco'];
-$obs = $_POST['obs'];
+$pagamento = filter_var(@$_POST['pagamento'], @FILTER_SANITIZE_STRING);
+$entrega = filter_var(@$_POST['entrega'], @FILTER_SANITIZE_STRING);
+$rua = filter_var(@$_POST['rua'], @FILTER_SANITIZE_STRING);
+$numero = filter_var(@$_POST['numero'], @FILTER_SANITIZE_STRING);
+$bairro = filter_var(@$_POST['bairro'], @FILTER_SANITIZE_STRING);
+$complemento = filter_var(@$_POST['complemento'], @FILTER_SANITIZE_STRING);
+$total_pago = filter_var(@$_POST['troco'], @FILTER_SANITIZE_STRING);
+$obs = filter_var(@$_POST['obs'], @FILTER_SANITIZE_STRING);
 $sessao = @$_SESSION['sessao_usuario'];
 $total_pago = str_replace(',', '.', $total_pago);
-$nome_cliente_ped = @$_POST['nome_cliente'];
-$tel_cliente = @$_POST['tel_cliente'];
-$cliente = @$_POST['id_cliente'];
-$mesa = @$_POST['mesa'];
-$cupom = @$_POST['cupom'];
-$codigo_pix = @$_POST['codigo_pix'];
-$cep = @$_POST['cep'];
-$cidade = @$_POST['cidade'];
-$taxa_entrega = @$_POST['taxa_entrega'];
+$nome_cliente_ped = filter_var(@$_POST['nome_cliente'], @FILTER_SANITIZE_STRING);
+$tel_cliente = filter_var(@$_POST['tel_cliente'], @FILTER_SANITIZE_STRING);
+$cliente = filter_var(@$_POST['id_cliente'], @FILTER_SANITIZE_STRING);
+$mesa = filter_var(@$_POST['mesa'], @FILTER_SANITIZE_STRING);
+$cupom = filter_var(@$_POST['cupom'], @FILTER_SANITIZE_STRING);
+$codigo_pix = filter_var(@$_POST['codigo_pix'], @FILTER_SANITIZE_STRING);
+$cep = filter_var(@$_POST['cep'], @FILTER_SANITIZE_STRING);
+$cidade = filter_var(@$_POST['cidade'], @FILTER_SANITIZE_STRING);
+$taxa_entrega = filter_var(@$_POST['taxa_entrega'], @FILTER_SANITIZE_STRING);
 $taxa_entrega = str_replace(',', '.', $taxa_entrega);
 $total_pago = str_replace(',', '.', $total_pago);
 
@@ -51,7 +51,9 @@ if($taxa_entrega == ""){
 }
 
 if($tel_cliente != ""){
-  $query = $pdo->query("SELECT * FROM clientes where telefone = '$tel_cliente' ");
+  $query = $pdo->prepare("SELECT * FROM clientes where telefone = :telefone ");
+  $query->bindValue(":telefone", "$tel_cliente");
+  $query->execute();
   $res = $query->fetchAll(PDO::FETCH_ASSOC);
   if(@count($res) > 0){ 
     $cliente = $res[0]['id'];

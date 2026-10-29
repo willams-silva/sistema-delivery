@@ -580,14 +580,31 @@ body{
   padding:0px 10px;
 }
 
+
+
+.margin_top_negativa{
+  margin-top: 0px !important;
+}
+
   
 
 }
 
 
 
+ .cardTarefas{
+  margin-bottom: 10px; 
+  margin-left:9px;
+}
+
 
 @media (min-width: 768px) {
+
+ .cardTarefas{
+  margin-bottom: 10px; 
+  margin-left:5px;
+}
+
 .cards {
   margin-left: 100px; 
   margin-right: 100px; 
@@ -607,6 +624,10 @@ body{
 .margin_top_web{
   margin-top: 30px;
 }
+
+
+
+
 }
 
 

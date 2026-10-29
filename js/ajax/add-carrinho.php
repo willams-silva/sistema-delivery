@@ -5,12 +5,12 @@ require_once('../../sistema/conexao.php');
 $produto = $_POST['produto'];
 //$telefone = $_POST['telefone'];
 //$nome = $_POST['nome'];
-$quantidade = $_POST['quantidade'];
-$total_item = $_POST['total_item'];
-$obs = $_POST['obs'];
+$quantidade = filter_var(@$_POST['quantidade'], @FILTER_SANITIZE_STRING);
+$total_item = filter_var(@$_POST['total_item'], @FILTER_SANITIZE_STRING);
+$obs = filter_var(@$_POST['obs'], @FILTER_SANITIZE_STRING);
 $sessao = @$_SESSION['sessao_usuario'];
 $valor_produto = @$_POST['valor_produto'];
-//$mesa = $_POST['mesa'];
+$mesa = $_POST['mesa'];
 
 $query = $pdo->query("SELECT * FROM produtos where id = '$produto'");
 $res = $query->fetchAll(PDO::FETCH_ASSOC);
@@ -30,7 +30,7 @@ if($quantidade > $estoque and $tem_estoque == 'Sim'){
 }
 
 
-$query = $pdo->prepare("INSERT INTO carrinho SET sessao = '$sessao', cliente = '0', produto = '$produto', quantidade = '$quantidade', total_item = '$total_item', obs = :obs, pedido = '0', data = curDate(), mesa = '0', nome_cliente = '', valor_unitario = '$valor_produto'"); 
+$query = $pdo->prepare("INSERT INTO carrinho SET sessao = '$sessao', cliente = '0', produto = '$produto', quantidade = '$quantidade', total_item = '$total_item', obs = :obs, pedido = '0', data = curDate(), mesa = '$mesa', nome_cliente = '', valor_unitario = '$valor_produto'"); 
 $query->bindValue(":obs", "$obs");
 $query->execute();
 $id_carrinho = $pdo->lastInsertId();

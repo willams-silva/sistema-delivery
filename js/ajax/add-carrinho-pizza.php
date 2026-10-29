@@ -6,6 +6,7 @@ $ids = $_POST['ids'];
 $variacao = $_POST['variacao'];
 $obs = $_POST['obs'];
 $borda = $_POST['borda'];
+$mesa = $_POST['mesa'];
 
 if(@$_SESSION['sessao_usuario'] == ""){
 	$sessao = date('Y-m-d-H:i:s-').rand(0, 1500);
@@ -111,7 +112,7 @@ $valor_borda = $res[0]['valor'];
 $valor_produto_final += $valor_borda;
 
 
-$query = $pdo->prepare("INSERT INTO carrinho SET sessao = '$sessao', cliente = '0', produto = '$primeiro_id_produto', quantidade = '1', total_item = '$valor_produto_final', obs = :obs, pedido = '0', id_sabor = '0', data = curDate(), variacao = '$id_variacao', mesa = '0', nome_cliente = '', sabores = '$quantidade_sabores', nome_produto = '$nome_produto', borda = '$borda', categoria = '$categoria'"); 
+$query = $pdo->prepare("INSERT INTO carrinho SET sessao = '$sessao', cliente = '0', produto = '$primeiro_id_produto', quantidade = '1', total_item = '$valor_produto_final', obs = :obs, pedido = '0', id_sabor = '0', data = curDate(), variacao = '$id_variacao', mesa = '$mesa', nome_cliente = '', sabores = '$quantidade_sabores', nome_produto = '$nome_produto', borda = '$borda', categoria = '$categoria'"); 
 $query->bindValue(":obs", "$obs");
 $query->execute();
 $id_carrinho = $pdo->lastInsertId();

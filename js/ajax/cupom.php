@@ -4,11 +4,13 @@ require_once('../../sistema/conexao.php');
 
 $data_atual = date('Y-m-d');
 
-$total_final = $_POST['total_final'];
-$codigo_cupom = $_POST['codigo_cupom'];
+$total_final = filter_var(@$_POST['total_final'], @FILTER_SANITIZE_STRING);
+$codigo_cupom = filter_var(@$_POST['codigo_cupom'], @FILTER_SANITIZE_STRING);
 
 
-$query =$pdo->query("SELECT * FROM cupons where codigo = '$codigo_cupom'");
+$query =$pdo->prepare("SELECT * FROM cupons where codigo = :codigo_cupom");
+$query->bindValue(":codigo_cupom", "$codigo_cupom");
+$query->execute();
 $res = $query->fetchAll(PDO::FETCH_ASSOC);
 $total_cupons = @count($res);
 if($total_cupons == 0 ){
@@ -60,7 +62,9 @@ if($total_cupons == 0 ){
 
 	//abater 1 na quantidade de cupom
 	$nova_quant = $quantidade - 1;
-	$pdo->query("UPDATE cupons SET quantidade = '$nova_quant' where codigo = '$codigo_cupom'");
+	$query = $pdo->prepare("UPDATE cupons SET quantidade = '$nova_quant' where codigo = :codigo_cupom");
+	$query->bindValue(":codigo_cupom", "$codigo_cupom");
+	$query->execute();
 }
 
 ?>
