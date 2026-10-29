@@ -2,7 +2,7 @@
 require_once("conexao.php");
 
 $senha = '123';
-$senha_crip = md5($senha);
+$senha_crip = password_hash($senha, PASSWORD_DEFAULT);
 
 //VERIFICAR SE EXISTE USUÁRIO ADMIN CADASTRADO
 $query = $pdo->query("SELECT * FROM usuarios WHERE nivel = 'Administrador'");
@@ -10,7 +10,7 @@ $res = $query->fetchAll(PDO::FETCH_ASSOC);
 $total_reg = @count($res);
 if($total_reg == 0){
 //CRIAR UM USUÁRIO ADMIN
-$pdo->query("INSERT INTO usuarios SET nome = 'Administrador', email = '$email_sistema', cpf = '000.000.000-00', senha = '$senha', senha_crip = '$senha_crip', nivel = 'Administrador', ativo = 'Sim', data = curDate(), foto = 'sem-foto.jpg', telefone = '$telefone_sistema' ");
+$pdo->query("INSERT INTO usuarios SET nome = 'Administrador', email = '$email_sistema', cpf = '000.000.000-00', senha = '', senha_crip = '$senha_crip', nivel = 'Administrador', ativo = 'Sim', data = curDate(), foto = 'sem-foto.jpg', telefone = '$telefone_sistema' ");
 }
 
 
@@ -21,6 +21,26 @@ $total_reg = @count($res);
 if($total_reg == 0){
 //CRIAR UM USUÁRIO ADMIN
 $pdo->query("INSERT INTO cargos SET nome = 'Administrador'");
+}
+
+
+//VERIFICAR SE EXISTE CARGO Entregador CADASTRADO
+$query = $pdo->query("SELECT * FROM cargos WHERE nome = 'Entregador'");
+$res = $query->fetchAll(PDO::FETCH_ASSOC);
+$total_reg = @count($res);
+if($total_reg == 0){
+//CRIAR UM USUÁRIO ADMIN
+$pdo->query("INSERT INTO cargos SET nome = 'Entregador'");
+}
+
+
+//VERIFICAR SE EXISTE CARGO garcon CADASTRADO
+$query = $pdo->query("SELECT * FROM cargos WHERE nome = 'Garçon'");
+$res = $query->fetchAll(PDO::FETCH_ASSOC);
+$total_reg = @count($res);
+if($total_reg == 0){
+//CRIAR UM USUÁRIO ADMIN
+$pdo->query("INSERT INTO cargos SET nome = 'Garçon'");
 }
 
 
@@ -166,7 +186,7 @@ if($total_reg > 0){
 					//$('#btn-fechar-rec').click();					
 					$('#email-recuperar').val('');
 					$('#mensagem-recuperar').addClass('text-success')
-					$('#mensagem-recuperar').text('Sua Senha foi enviada para o Email')			
+					$('#mensagem-recuperar').text('Sua Senha foi enviada para o Email e para seu whatsapp')			
 
 				} else {
 

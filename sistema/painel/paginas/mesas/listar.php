@@ -22,14 +22,31 @@ HTML;
 for($i=0; $i < $total_reg; $i++){
 	foreach ($res[$i] as $key => $value){}
 	$id = $res[$i]['id'];
-	$nome = $res[$i]['nome'];		
+	$nome = $res[$i]['nome'];	
+	$ativo = $res[$i]['ativo'];
+
+	if($ativo == 'Sim'){
+			$icone = 'fa-check-square';
+			$titulo_link = 'Tornar Indisponível';
+			$acao = 'Não';
+			$classe_linha = '';
+		}else{
+			$icone = 'fa-square-o';
+			$titulo_link = 'Mesa Disponível';
+			$acao = 'Sim';
+			$classe_linha = 'text-muted';
+		}	
 	
 echo <<<HTML
-<tr class="">
+<tr class="{$classe_linha}">
 <td>{$nome}</td>
 
 <td>
 		<big><a href="#" onclick="editar('{$id}','{$nome}')" title="Editar Dados"><i class="fa fa-edit text-primary"></i></a></big>
+
+
+		<big><a href="#" onclick="ativar('{$id}', '{$acao}')" title="{$titulo_link}"><i class="fa {$icone} text-success"></i></a></big>
+
 
 		
 		<li class="dropdown head-dpdn2" style="display: inline-block;">

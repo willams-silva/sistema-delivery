@@ -9,7 +9,7 @@ $telefone = $_POST['telefone'];
 $cpf = $_POST['cpf'];
 $cargo = $_POST['cargo'];
 $senha = '123';
-$senha_crip = md5($senha);
+$senha_crip = password_hash($senha, PASSWORD_DEFAULT);
 $tipo_chave = $_POST['tipo_chave'];
 $chave_pix = $_POST['chave_pix'];
 
@@ -75,7 +75,7 @@ if(@$_FILES['foto']['name'] != ""){
 
 
 if($id == ""){
-	$query = $pdo->prepare("INSERT INTO $tabela SET nome = :nome, email = :email, cpf = :cpf, senha = '$senha', senha_crip = '$senha_crip', nivel = '$cargo', data = curDate(), ativo = 'Sim', telefone = :telefone, foto = '$foto', tipo_chave = '$tipo_chave', chave_pix = :chave_pix");
+	$query = $pdo->prepare("INSERT INTO $tabela SET nome = :nome, email = :email, cpf = :cpf, senha = '', senha_crip = '$senha_crip', nivel = '$cargo', data = curDate(), ativo = 'Sim', telefone = :telefone, foto = '$foto', tipo_chave = '$tipo_chave', chave_pix = :chave_pix");
 }else{
 	$query = $pdo->prepare("UPDATE $tabela SET nome = :nome, email = :email, cpf = :cpf, nivel = '$cargo', telefone = :telefone, foto = '$foto', tipo_chave = '$tipo_chave', chave_pix = :chave_pix WHERE id = '$id'");
 }

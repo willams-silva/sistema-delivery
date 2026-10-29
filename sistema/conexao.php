@@ -86,6 +86,8 @@ $valor_km = $res[0]['valor_km'];
 $mais_sabores = $res[0]['mais_sabores'];
 $seletor_api = $res[0]['seletor_api'];
 $abrir_comprovante = $res[0]['abrir_comprovante'];
+$comissao_garcon = $res[0]['comissao_garcon'];
+$couvert = $res[0]['couvert'];
 
 $whatsapp_sistema = '55'.preg_replace('/[ ()-]+/' , '' , $telefone_sistema);
 }

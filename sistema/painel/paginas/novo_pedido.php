@@ -1,244 +1,413 @@
 <?php 
-
+@session_start();
+require_once("verificar.php");
+require_once("../conexao.php");
+$pag = 'novo_pedido';
 if(@$novo_pedido == 'ocultar'){
     echo "<script>window.location='../index.php'</script>";
     exit();
 }
-
-$img = 'aberto.png';
-
-if($status_estabelecimento == "Fechado"){		
-	$img = 'fechado.png';
-}
-
-
-$data = date('Y-m-d');
-//verificar se está aberto hoje
-$diasemana = array("Domingo", "Segunda-Feira", "Terça-Feira", "Quarta-Feira", "Quinta-Feira", "Sexta-Feira", "Sábado");
-$diasemana_numero = date('w', strtotime($data));
-$dia_procurado = $diasemana[$diasemana_numero];
-
-//percorrer os dias da semana que ele trabalha
-$query = $pdo->query("SELECT * FROM dias where dia = '$dia_procurado'");
-$res = $query->fetchAll(PDO::FETCH_ASSOC);
-if(@count($res) > 0){		
-	$img = 'fechado.png';
-}
-
-$hora_atual = date('H:i:s');
-//verificar se o delivery está aberto dentro da hora prevista
-if(strtotime($hora_atual) > strtotime($horario_abertura) and strtotime($hora_atual) < strtotime($horario_fechamento)){
-	
-}else{
-	if(strtotime($hora_atual) > strtotime($horario_abertura) and strtotime($hora_atual) > strtotime($horario_fechamento)){
-		
-	}else{
-			$img = 'fechado.png';
-	}
-}
-
  ?>
 
- <style type="text/css">
-
-
-.cards{
-	margin-top:25px;
-	justify-content: center;
+<div  style="padding:5px" id="listar">
 	
-}
-
-.card{
-	margin:10px;
-	padding:20px;
-	height:120px;
-	border-radius:10px;
-	box-shadow: 0px 6px 10px rgba(0, 0, 0, 0.25);
-	transition: all 0.2s;
-	width:100%;
-	background: #fafafa;
-}
-
-
-.card:hover {
-  box-shadow: 0px 6px 10px rgba(0, 0, 0, 0.4);
-  transform: scale(1.01);
-}
-
-
-.card-title{
-  grid-row: 2/4;
-  font-weight: 300;
-  color: #fff;
-  text-align:center;
-  position: relative;
-  top: 50%;
-  transform: translateY(-50%);
-}
-
-
-
-.link-card{
-	text-decoration: none;
-}
-
-
-
-.carrinho{
-	margin-right: 10px;
-}
-
-
-/* CARD BACKGROUNDS */
-
-.azul {
-  background: radial-gradient(#1fe4f5, #3fbafe);
-}
-
-.rosa {
-  background: radial-gradient(#fbc1cc, #fa99b2);
-}
-
-.azul-escuro {
-  background: radial-gradient(#76b2fe, #b69efe);
-}
-
-.verde {
-  background: radial-gradient(#60efbc, #58d5c9);
-}
-
-.roxo {
-  background: radial-gradient(#f588d8, #c0a3e5);
-}
-
-.vermelho {
-  background: radial-gradient(#f58888, #e32424);
-}
-
-
-.verde-escuro {
-  background: radial-gradient(#1adb54, #36a867);
-}
-
-
-.laranja {
-  background: radial-gradient(#f5c071, #c98116);
-}
-
-.amarelo {
-  background: radial-gradient(#e4eb6e, #c3cc14);
-}
-
-
-
-.badge2 {
-  position: absolute;
-  display: inline-block;
-  min-width: 10px;
-  padding: 4px 9px;
-  font-size: 14px;
-  font-weight: 700;
-  text-transform: uppercase;
-  color: #f6f2f8;
-  line-height: 1;
-  vertical-align: middle;
-  white-space: nowrap;
-  text-align: center;
-  background-color: #242424;
-  border-radius: 5px;
-    left: 20px;
-    top: 1px;
-    z-index:200;
-    
-   
-    
-}
-
-
-
-.ocultar{
-  display: none;
-}
+</div>
 
 
 
 
- </style>
 
 
+<!-- Modal modalAbertura-->
+<div class="modal fade" id="modalAbertura" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+	<div class="modal-dialog" role="document">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h4 class="modal-title">Abrir Mesa <span id="nome_da_mesa"></span></h4>
+				<button id="btn-fechar" type="button" class="close" data-dismiss="modal" aria-label="Close" style="margin-top: -20px">
+					<span aria-hidden="true" >&times;</span>
+				</button>
+			</div>
+			<form id="form">
+			<div class="modal-body">
 
+					<div class="row">
+						<div class="col-md-6">
+							<div class="form-group">
+								<label for="exampleInputEmail1">Nome Cliente</label>
+								<input type="text" class="form-control" id="nome" name="nome" placeholder="Nome do Cliente" required>    
+							</div> 	
+						</div>
+						<div class="col-md-6">							
+							
+							<div class="form-group">
+								<label for="exampleInputEmail1">Garçon</label>
+								<select class="form-control sel2" id="garcon" name="garcon" style="width:100%;" > 
 
-	<div class="row cards" style="margin-bottom: 60px; ">
+									<?php 
+									$query = $pdo->query("SELECT * FROM usuarios where nivel = 'Garçon' or nivel = 'Atendente' ORDER BY nome asc");
+									$res = $query->fetchAll(PDO::FETCH_ASSOC);
+									$total_reg = @count($res);
+									if($total_reg > 0){
+										for($i=0; $i < $total_reg; $i++){
+										if($res[$i]['id'] == $id_usuario){
+											echo '<option selected value="'.$res[$i]['id'].'">'.$res[$i]['nome'].'</option>';
+										}else{
+											echo '<option value="'.$res[$i]['id'].'">'.$res[$i]['nome'].'</option>';
+										}
+										
+										}
+									}else{
+											echo '<option value="0">Cadastre um Garçon</option>';
+										}
+									 ?>
+									
 
-		<?php 
-		$query = $pdo->query("SELECT * FROM categorias where ativo = 'Sim'");
-		$res = $query->fetchAll(PDO::FETCH_ASSOC);
-		$total_reg = @count($res);
-		if($total_reg > 0){
-			for($i=0; $i < $total_reg; $i++){
-				foreach ($res[$i] as $key => $value){}
-					$cor = $res[$i]['cor'];
-				$foto = $res[$i]['foto'];
-				$nome = $res[$i]['nome'];
-				$url = $res[$i]['url'];
-				$id = $res[$i]['id'];
+								</select>   
+							</div> 	
+						
+						</div>
+					</div>
 
-				$query2 = $pdo->query("SELECT * FROM produtos where categoria = '$id' and ativo = 'Sim'");
-		$res2 = $query2->fetchAll(PDO::FETCH_ASSOC);
-		$tem_produto = @count($res2);
-		$mostrar = 'ocultar';
-		if($tem_produto > 0){
-			for($i2=0; $i2 < $tem_produto; $i2++){
-				foreach ($res2[$i2] as $key => $value){}
-				
-					$estoque = $res2[$i2]['estoque'];
-					$tem_estoque = $res2[$i2]['tem_estoque'];	
-
-					if(($tem_estoque == 'Sim' and $estoque > 0) or ($tem_estoque == 'Não')){
-						$mostrar = '';
-					}
-
-					}
-		
-				}else{
-					$mostrar = 'ocultar';
-				}
 
 			
 
-				
+					
 
+						<div class="row">
 
-				?>
-
-				<div class="col-md-3 <?php echo $mostrar ?>" >
-					<a class="link-card" href="<?php echo $url_sistema ?>categoria-<?php echo $url ?>" target="_blank">
-						<div class="card <?php echo $cor ?> " <?php if($tipo_miniatura == 'Foto'){ ?> style="background-image: url('images/categorias/<?php echo $foto ?>'); background-size: cover; border:none" <?php } ?> >
-							<?php if($tipo_miniatura == 'Foto'){ ?>
-								<div class="badge2"><?php echo $nome ?></div>
-							<?php }else{ ?>
-								<h3 class="card-title"><?php echo $nome ?></h3>
-							<?php } ?>
+							<div class="col-md-3">
+							<div class="form-group">
+								<label for="exampleInputEmail1">Pessoas</label>
+								<input type="number" class="form-control" id="pessoas" name="pessoas" placeholder="Número de Pessoas" >    
+							</div> 	
 						</div>
-					</a>
+
+							<div class="col-md-9">
+							<div class="form-group">
+								<label for="exampleInputEmail1">Observações</label>
+								<input type="text" class="form-control" id="obs" name="obs" placeholder="Observações" >    
+							</div> 	
+						</div>
+
+							
+
+						</div>
+
+
+					
+						<input type="hidden" name="id" id="id_abertura">
+						<input type="hidden" name="id_ab" id="id">
+
+					<br>
+					<small><div id="mensagem" align="center"></div></small>
 				</div>
 
-			<?php } } ?>		
+				<div class="modal-footer">      
+					<button type="submit" class="btn btn-primary">Salvar</button>
+				</div>
+			</form>
+
+			
+		</div>
+	</div>
+</div>
 
 
 
+
+
+
+<!-- Modal Itens-->
+<div class="modal fade" id="modalItens" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+	<div class="modal-dialog" role="document">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h4 class="modal-title">Mesa <span id="nome_da_mesa_itens"></span> <small><span id="obs_da_mesa_itens"></span></small></h4>
+				<button id="btn-fechar-itens" type="button" class="close" data-dismiss="modal" aria-label="Close" style="margin-top: -20px">
+					<span aria-hidden="true" >&times;</span>
+				</button>
+			</div>
+			
+			<div class="modal-body">										
+
+					<div id="listar_carrinho">
+						
+					</div>							
+						
+
+					<br>
+					<small><div id="mensagem_itens" align="center"></div></small>
+				</div>
+
+			
+				<div class="modal-footer"> 
+				<form method="POST" action="../../index" target="_blank">
+							<input type="hidden" name="id_mesa" id="id_itens">
+							<input type="hidden" name="id_abertura_mesa" id="id_abertura_mesa">     
+					<button type="submit" class="btn btn-primary">Adicionar Itens</button>
+
+					</form>
+				</div>
+			
+		</div>
+	</div>
+</div>
+
+
+
+
+
+
+
+
+<!-- Modal Fechamento-->
+<div class="modal fade" id="modalFechamento" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+	<div class="modal-dialog" role="document">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h4 class="modal-title">Fechar Mesa <span id="nome_da_mesa_fechamento"></span></h4>
+				<button id="btn-fechar-fechamento" type="button" class="close" data-dismiss="modal" aria-label="Close" style="margin-top: -20px">
+					<span aria-hidden="true" >&times;</span>
+				</button>
+			</div>
+			<form id="form_fechamento">
+			<div class="modal-body">
+
+					<div class="row">
+						<div class="col-md-6">							
+							
+							<div class="form-group">
+								<label for="exampleInputEmail1">Garçon</label>
+								<select class="form-control sel3" id="garcon_fechamento" name="garcon" style="width:100%;" > 
+
+									<?php 
+									$query = $pdo->query("SELECT * FROM usuarios where nivel = 'Garçon' or nivel = 'Atendente' ORDER BY nome asc");
+									$res = $query->fetchAll(PDO::FETCH_ASSOC);
+									$total_reg = @count($res);
+									if($total_reg > 0){
+										for($i=0; $i < $total_reg; $i++){
+										
+											echo '<option value="'.$res[$i]['id'].'">'.$res[$i]['nome'].'</option>';										
+										
+										}
+									}else{
+											echo '<option value="0">Cadastre um Garçon</option>';
+										}
+									 ?>
+									
+
+								</select>   
+							</div> 	
+						
+						</div>
+
+
+							<div class="col-md-3">
+							<div class="form-group">
+								<label for="exampleInputEmail1">Total Itens</label>
+								<input readonly="true" type="text" class="form-control" id="total_itens_fechamento" name="total_itens" placeholder="Total Itens" >    
+							</div> 	
+								</div>
+
+							<div class="col-md-3">
+							<div class="form-group">
+								<label for="exampleInputEmail1">Comissão R$</label>
+								<input onkeyup="calcular()" type="text" class="form-control" id="comissao_fechamento" name="comissao" placeholder="" >    
+							</div> 
+						</div>
+
+					</div>
+
+
+				
+
+						<div class="row">	
+							<div class="col-md-3">
+							<div class="form-group">
+								<label for="exampleInputEmail1">Couvert</label>
+								<input onkeyup="calcular()" type="text" class="form-control" id="couvert_fechamento" name="couvert" placeholder="" >    
+							</div> 
+						</div>
+
+						<div class="col-md-3">
+							<div class="form-group">
+								<label for="exampleInputEmail1">Subtotal</label>
+								<input type="text" class="form-control" id="subtotal_fechamento" name="subtotal" placeholder="" >    
+							</div> 
+						</div>
+
+
+
+						<div class="col-md-6">
+							<div class="form-group">
+								<label for="exampleInputEmail1">Forma de Pagamento</label>
+									<select class="form-control" id="forma_pgto" name="forma_pgto" > 
+
+									<?php 
+									$query = $pdo->query("SELECT * FROM formas_pgto ORDER BY id asc");
+									$res = $query->fetchAll(PDO::FETCH_ASSOC);
+									$total_reg = @count($res);
+									if($total_reg > 0){
+										for($i=0; $i < $total_reg; $i++){
+										
+											echo '<option value="'.$res[$i]['nome'].'">'.$res[$i]['nome'].'</option>';										
+										
+										}
+									}else{
+											echo '<option value="0">Cadastre uma Forma de Pagamento</option>';
+										}
+									 ?>
+									
+
+								</select> 
+							</div> 
+						</div>
+
+
+						</div>
 
 			
 
+					
+
+						<div class="row">							
+
+							<div class="col-md-12">
+							<div class="form-group">
+								<label for="exampleInputEmail1">Observações</label>
+								<input type="text" class="form-control" id="obs_fechamento" name="obs" placeholder="Observações" >    
+							</div> 	
+						</div>
+
+							
+
+						</div>
 
 
+					
+						<input type="hidden" name="id" id="id_fechamento">
+						<input type="hidden" name="id_ab" id="id_ab_fechamento">
 
+					<br>
+					<small><div id="mensagem_fechamento" align="center"></div></small>
+				</div>
 
+				<div class="modal-footer">      
+					<button type="submit" class="btn btn-primary">Salvar</button>
+				</div>
+			</form>
+
+			
 		</div>
+	</div>
+</div>
 
 
 
 
 
+
+
+
+<script type="text/javascript">var pag = "<?=$pag?>"</script>
+<script src="js/ajax.js"></script>
+
+
+<script type="text/javascript">
+	$(document).ready(function() {
+		setInterval(listar, 120000);
+		setInterval(listarCarrinho, 30000);
+
+    $('.sel2').select2({
+    	dropdownParent: $('#modalAbertura')
+    });
+
+     $('.sel3').select2({
+    	dropdownParent: $('#modalFechamento')
+    });
+});
+
+function listarCarrinho(){
+	 var id = $('#id_abertura_mesa').val();
+	    $.ajax({
+
+        url: 'paginas/' + pag + "/listar_carrinho.php",
+        method: 'POST',
+        data: {id},
+        dataType: "html",
+
+        success:function(result){
+            $("#listar_carrinho").html(result);
+            $('#mensagem_itens').text('');
+        }
+    });
+}
+
+function calcular(){
+	var comissao = $('#comissao_fechamento').val();
+	var couvert = $('#couvert_fechamento').val();
+	var total_itens = $('#total_itens_fechamento').val();
+
+	if(comissao == ""){
+		comissao = 0;
+	}
+
+	if(couvert == ""){
+		couvert = 0;
+	}
+
+	if(total_itens == ""){
+		total_itens = 0;
+	}
+
+	var subtotal = parseFloat(comissao) + parseFloat(couvert) + parseFloat(total_itens);
+	$('#subtotal_fechamento').val(subtotal.toFixed(2));
+}
+
+
+
+
+
+$("#form_fechamento").submit(function () {
+
+    event.preventDefault();
+    var formData = new FormData(this);
+
+    $.ajax({
+        url: 'paginas/' + pag + "/fechamento.php",
+        type: 'POST',
+        data: formData,
+
+        success: function (mensagem) {
+            $('#mensagem_fechamento').text('');
+            $('#mensagem_fechamento').removeClass()
+            if (mensagem.trim() == "Salvo com Sucesso") {
+
+                $('#btn-fechar-fechamento').click();
+                listar();          
+
+            } else {
+
+                $('#mensagem_fechamento').addClass('text-danger')
+                $('#mensagem_fechamento').text(mensagem)
+            }
+
+
+        },
+
+        cache: false,
+        contentType: false,
+        processData: false,
+
+    });
+
+});
+
+
+
+
+
+</script>
 
 
