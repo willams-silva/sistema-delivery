@@ -2,8 +2,10 @@ RewriteEngine On
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME} !-d
 
-
+RewriteRule ^lista_pedidos_mesas(.*)$ index.php?pagina=lista_pedidos_mesas [L]
+RewriteRule ^pedido_balcao(.*)$ index.php?pagina=pedido_balcao [L]
 RewriteRule ^formas_pgto(.*)$ index.php?pagina=formas_pgto [L]
+RewriteRule ^pedidos_mesa(.*)$ index.php?pagina=pedidos_mesa [L]
 RewriteRule ^pedidos_esteira(.*)$ index.php?pagina=pedidos_esteira [L]
 RewriteRule ^pedidos(.*)$ index.php?pagina=pedidos [L]
 

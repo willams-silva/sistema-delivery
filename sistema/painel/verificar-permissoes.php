@@ -9,6 +9,8 @@ $pedidos = 'ocultar';
 $configuracoes = 'ocultar';
 $novo_pedido = 'ocultar';
 $pedidos_esteira = 'ocultar';
+$pedidos_mesa = 'ocultar';
+$pedido_balcao = 'ocultar';
 
 //grupo pessoas
 $usuarios = 'ocultar';
@@ -42,7 +44,7 @@ $vendas = 'ocultar';
 $compras = 'ocultar';
 $pagar = 'ocultar';
 $receber = 'ocultar';
-
+$lista_pedidos_mesas = 'ocultar';
 
 
 //relatorios
@@ -88,6 +90,15 @@ if($total_reg > 0){
 		if($chave == 'pedidos_esteira'){
 			$pedidos_esteira = '';
 		}
+
+		if($chave == 'pedidos_mesa'){
+			$pedidos_mesa = '';
+		}
+
+		if($chave == 'pedido_balcao'){
+			$pedido_balcao = '';
+		}
+
 
 
 
@@ -196,6 +207,10 @@ if($total_reg > 0){
 			$receber = '';
 		}
 
+		if($chave == 'lista_pedidos_mesas'){
+			$lista_pedidos_mesas = '';
+		}
+
 
 
 		if($chave == 'rel_produtos'){
@@ -270,7 +285,7 @@ if($produtos == 'ocultar' and $categorias == 'ocultar' and $estoque == 'ocultar'
 
 
 
-if($compras == 'ocultar' and $vendas == 'ocultar' and $pagar == 'ocultar' and $receber == 'ocultar'){
+if($compras == 'ocultar' and $vendas == 'ocultar' and $pagar == 'ocultar' and $receber == 'ocultar' and $lista_pedidos_mesas == 'ocultar'){
 	$menu_financeiro = 'ocultar';
 }else{
 	$menu_financeiro = '';

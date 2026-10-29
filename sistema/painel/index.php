@@ -189,6 +189,12 @@ if(@$_GET['pagina'] != ""){
 								</a>
 							</li>
 
+								<li class="treeview <?php echo @$pedidos_mesa ?>" >
+								<a href="pedidos_mesa">
+									<i class="fa fa-table"></i> <span>Pedidos Mesa</span>
+								</a>
+							</li>
+
 							<li class="treeview <?php echo $menu_pessoas ?>">
 								<a href="#">
 									<i class="fa fa-users"></i>
@@ -270,6 +276,8 @@ if(@$_GET['pagina'] != ""){
 
 									<li class="<?php echo @$vendas ?>"><a href="vendas"><i class="fa fa-angle-right"></i> Vendas / Pedidos</a></li>
 
+									<li class="<?php echo @$lista_pedidos_mesas ?>"><a href="lista_pedidos_mesas"><i class="fa fa-angle-right"></i> Lista Pedidos Mesas</a></li>
+
 									<li class="<?php echo @$pagar ?>"><a href="pagar"><i class="fa fa-angle-right"></i> Contas à Pagar</a></li>
 
 									<li class="<?php echo @$receber ?>"><a href="receber"><i class="fa fa-angle-right"></i> Contas à Receber</a></li>
@@ -307,9 +315,22 @@ if(@$_GET['pagina'] != ""){
 
 							<li class="treeview <?php echo @$novo_pedido ?>" >
 								<a href="novo_pedido">
-									<i class="fa fa-columns"></i> <span>Novo Pedido</span>
+									<i class="fa fa-columns"></i> <span>Pedido Mesa</span>
 								</a>
 							</li>
+
+
+								<li class="treeview <?php echo @$pedido_balcao ?>" >
+									<form method="POST" action="../../index" target="_blank">
+							<input type="hidden" name="id_mesa" id="">
+							<input type="hidden" name="id_abertura_mesa" id="">     
+							<input type="hidden" name="pedido_balcao" value = 'Sim'>     
+					<button style="background: transparent; color:#d4d4d4; outline: none; border:none; font-size: 14px; margin-left: 14px; margin-top: 8px" type="submit" class=""><i class="fa fa-calculator"></i> <span style="margin-left: 5px">Pedido Balcão</span></button>
+
+					</form>
+								
+							</li>
+
 
 						</ul>
 					</div>
