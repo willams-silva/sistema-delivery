@@ -45,7 +45,7 @@ if ($linhas == 0) {
 	$pdo->query("INSERT INTO config SET nome = '$nome_sistema', email = '$email_sistema', telefone = '$telefone_sistema', logo = 'logo.png', logo_rel = 'logo.jpg', icone = 'icone.png', ativo = 'Sim', multa_atraso = '0', juros_atraso = '0', marca_dagua = 'Sim', assinatura_recibo = 'Não', impressao_automatica = 'Não', api_whatsapp = 'Não', tipo_rel = 'PDF', tipo_miniatura = 'Cores', previsao_entrega = '60', horario_abertura = '18:00', horario_fechamento = '00:00', status_estabelecimento = 'Aberto', tempo_atualizar = '30', dias_apagar = '30', fonte_comprovante = '11', banner_rotativo = 'Sim', mostrar_aberto = 'Sim', abrir_comprovante = 'Não', mensagem_auto = 'Sim', mostrar_acessos = :mostrar_acessos, abertura_caixa = 'Não'");
 } else {
 	$nome_sistema = $res[0]['nome'];
-	$email_sistema = $res[0]['email'];
+	$email_sistema = $res[0]['email'] ?? '';
 	$telefone_sistema = $res[0]['telefone'];
 	$endereco_sistema = $res[0]['endereco'];
 	$instagram_sistema = $res[0]['instagram'];
