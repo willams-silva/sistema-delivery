@@ -14,6 +14,11 @@ if(@$_SESSION['sessao_usuario'] == ""){
 }
 
 
+$nome_mesa = @$_SESSION['nome_mesa'];
+$id_mesa = @$_SESSION['id_mesa'];
+$id_ab_mesa = @$_SESSION['id_ab_mesa'];
+
+
 $query = $pdo->query("SELECT * FROM categorias where url = '$url'");
 $res = $query->fetchAll(PDO::FETCH_ASSOC);
 $total_reg = @count($res);
@@ -96,7 +101,7 @@ if ( $start <= $now && $now <= $end ) {
 		<div class="container-fluid">
 			<div class="navbar-brand" >
 				<a href="index"><big><i class="bi bi-arrow-left"></i></big></a>
-				<span style="margin-left: 15px; font-size:14px"><?php echo mb_strtoupper($nome) ?></span>
+				<span style="margin-left: 15px; font-size:14px"><?php echo mb_strtoupper($nome) ?> <?php echo @$_SESSION['nome_mesa'] ?></span>
 			</div>
 
 			<?php require_once("icone-carrinho.php") ?>
@@ -354,6 +359,7 @@ $query2 = $pdo->query("SELECT * FROM variacoes where produto = '$id_produto' and
 	function addCarrinho(){
 		var variacao = $('#variacao_sel').val();
 		var borda = $('#borda_sel').val();
+		var mesa = "<?=$id_ab_mesa?>";
 
 		if(variacao == ""){
 			alert("Selecione um Tamanho");
@@ -379,7 +385,7 @@ $query2 = $pdo->query("SELECT * FROM variacoes where produto = '$id_produto' and
 		 $.ajax({
         url: 'js/ajax/add-carrinho-pizza.php',
         method: 'POST',
-        data: {variacao, ids, obs, borda},
+        data: {variacao, ids, obs, borda, mesa},
         dataType: "text",
 
         success: function (mensagem) {  

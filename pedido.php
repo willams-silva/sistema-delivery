@@ -124,6 +124,11 @@ if($pago == 'Sim'){
 					$nome_produto = $nome_produto_tab;
 					$foto_produto = "";
 				} 
+
+				if($nome_produto_tab != ""){
+					$nome_produto = $nome_produto_tab;
+					$foto_produto = "";
+				}
 				?>
 
 

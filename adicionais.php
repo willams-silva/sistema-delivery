@@ -7,6 +7,10 @@ $url_completa = $_GET['url'];
 
 $sessao = date('Y-m-d-H:i:s-').rand(0, 1500);;
 
+$nome_mesa = @$_SESSION['nome_mesa'];
+$id_ab_mesa = @$_SESSION['id_ab_mesa'];
+$id_mesa = @$_SESSION['id_mesa'];
+
 if(@$_SESSION['sessao_usuario'] == ""){
 	$_SESSION['sessao_usuario'] = $sessao;
 }
@@ -56,7 +60,7 @@ $valor_total_do_item = $valor;
                
                <a href="categoria-<?php echo $url_cat ?>"><big><i class="bi bi-arrow-left"></i></big></a>
             
-				<span style="margin-left: 15px; font-size:14px"><?php echo $nome ?> </span>
+				<span style="margin-left: 15px; font-size:14px"><?php echo $nome ?> <?php echo $nome_mesa ?></span>
 			</div>
 
 			<?php require_once("icone-carrinho.php") ?>
@@ -235,7 +239,7 @@ if($total_reg > 0){
 
 
 
-if(@$id_usuario == ""){
+if(@$id_mesa == ""){
 
 if($status_estabelecimento == "Fechado"){       
         echo "<script>window.alert('$texto_fechamento')</script>";
@@ -550,6 +554,7 @@ function listarItens(){
         var produto = "<?=$id_prod?>";
         var obs = $('#obs').val();
         var tem_var = "<?=$tem_variação?>";
+        var mesa = "<?=$id_ab_mesa?>";
 
         var valor_produto = $('#valor_total_produto').val();
 
@@ -568,7 +573,7 @@ function listarItens(){
          $.ajax({
         url: 'js/ajax/add-carrinho.php',
         method: 'POST',
-        data: {quantidade, total_item, produto, obs, valor_produto},
+        data: {quantidade, total_item, produto, obs, valor_produto, mesa},
         dataType: "text",
 
         success: function (mensagem) {                  

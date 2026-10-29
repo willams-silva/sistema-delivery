@@ -5,6 +5,10 @@ $url_completa = $_GET['url'];
 $sabores = @$_GET['sabores'];
 $id_usuario = @$_SESSION['id'];
 
+$nome_mesa = @$_SESSION['nome_mesa'];
+$id_mesa = @$_SESSION['id_mesa'];
+$id_ab_mesa = @$_SESSION['id_ab_mesa'];
+
 if(@$_SESSION['sessao_usuario'] == ""){
 	$sessao = date('Y-m-d-H:i:s-').rand(0, 1500);
 	$_SESSION['sessao_usuario'] = $sessao;
@@ -18,6 +22,10 @@ if(@$_SESSION['id'] != ""){
 	$id_usuario = $_SESSION['id'];	
 }else{
 	$id_usuario = '';
+}
+
+if($nome_mesa != ""){
+	$texto_botao = 'Adicionar a Mesa';
 }
 
 $query = $pdo->query("SELECT * FROM carrinho where sessao = '$sessao'");
@@ -69,7 +77,7 @@ if($total_reg > 0){
 $valor_item = $valor;
 $valor_itemF = number_format($valor_item, 2, ',', '.');
 
-if($id_usuario == ''){
+if($nome_mesa == ''){
 if($status_estabelecimento == "Fechado"){		
 		echo "<script>window.alert('$texto_fechamento')</script>";
 	echo "<script>window.location='index.php'</script>";
@@ -93,6 +101,9 @@ if(@count($res) > 0){
 }
 
 
+
+
+
 $hora_atual = date('H:i:s');
 
 //nova verificação de horarios
@@ -101,22 +112,16 @@ $end = strtotime( date('Y-m-d' . $horario_fechamento) );
 $now = time();
 
 if ( $start <= $now && $now <= $end ) {
-
 }else{
-
   if($end < $start){
-
-    if($now > $start){
-     
+    if($now > $start){     
     }else{
-       if($now < $end){
-        
+       if($now < $end){        
        }else{
         echo "<script>window.alert('$texto_fechamento_horario')</script>";
 	echo "<script>window.location='index.php'</script>";
 	exit();
-       }
-     
+       }     
     }
   }else{
     echo "<script>window.alert('$texto_fechamento_horario')</script>";
@@ -148,7 +153,7 @@ if ( $start <= $now && $now <= $end ) {
                
                <a href="categoria-<?php echo $url_cat ?>"><big><i class="bi bi-arrow-left"></i></big></a>
             
-				<span style="margin-left: 15px; font-size:14px">Resumo do Item</span>
+				<span style="margin-left: 15px; font-size:14px">Resumo do Item <?php echo $nome_mesa ?></span>
 			</div>
 
 			<?php require_once("icone-carrinho.php") ?>
@@ -259,6 +264,7 @@ if ( $start <= $now && $now <= $end ) {
 		var total_item = $('#total_item_input').val();
 		var produto = "<?=$id_prod?>";
 		var obs = $('#obs').val();
+		var mesa = "<?=$id_ab_mesa?>";
 		
 
 		total_item = parseFloat(total_item) / parseFloat(quantidade);
@@ -270,7 +276,7 @@ if ( $start <= $now && $now <= $end ) {
 		 $.ajax({
         url: 'js/ajax/add-carrinho.php',
         method: 'POST',
-        data: {quantidade, total_item, produto, obs},
+        data: {quantidade, total_item, produto, obs, mesa},
         dataType: "text",
 
         success: function (mensagem) {  

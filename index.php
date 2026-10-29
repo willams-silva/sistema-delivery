@@ -1,12 +1,43 @@
-<?php require_once("cabecalho.php");
+<?php 
+@session_start();
+require_once("cabecalho.php");
+
+$id_mesa = @$_POST['id_mesa'];
+
+
+if($id_mesa != ""){
+  $_SESSION['id_mesa'] = $id_mesa;
+}
+
+if(@$_SESSION['id_mesa'] != ""){
+    $id_mesa = $_SESSION['id_mesa'];
+}
+
+//buscar os dados da mesa
+$query2 = $pdo->query("SELECT * FROM mesas where id = '$id_mesa' ");
+$res2 = $query2->fetchAll(PDO::FETCH_ASSOC);
+$nome_mesa = 'Mesa: '.@$res2[0]['nome'];
+
+if(@$res2[0]['nome'] == ""){
+  $_SESSION['nome_mesa'] = '';
+}else{
+  $_SESSION['nome_mesa'] = $nome_mesa;
+}
+
+$query2 = $pdo->query("SELECT * FROM abertura_mesa where mesa = '$id_mesa' and status = 'Aberta'");
+$res2 = $query2->fetchAll(PDO::FETCH_ASSOC);
+$id_ab_mesa = @$res2[0]['id'];
+$_SESSION['id_ab_mesa'] = $id_ab_mesa;
+
+
 
 $img = 'aberto.png';
 
-if($status_estabelecimento == "Fechado"){		
+if($status_estabelecimento == "Fechado" and $id_mesa == ""){		
 	$img = 'fechado.png';
 }
 
-
+if($id_mesa == ""){
 $data = date('Y-m-d');
 //verificar se está aberto hoje
 $diasemana = array("Domingo", "Segunda-Feira", "Terça-Feira", "Quarta-Feira", "Quinta-Feira", "Sexta-Feira", "Sábado");
@@ -48,7 +79,7 @@ if ( $start <= $now && $now <= $end ) {
   }
 	
 }
-
+}
 
 
  ?>
@@ -99,7 +130,14 @@ if ( $start <= $now && $now <= $end ) {
 		<div class="container-fluid">
 			<a class="navbar-brand" href="index.php">
 				<img src="img/<?php echo $logo_sistema ?>" alt="" width="30" height="30" class="d-inline-block align-text-top">
-				<?php echo $nome_sistema ?> 
+
+				<?php
+          if($id_mesa == ""){
+            echo $nome_sistema;
+          }else{
+            echo $nome_mesa;
+          }
+          ?> 
 				
 			</a>
 
@@ -108,8 +146,10 @@ if ( $start <= $now && $now <= $end ) {
 		</div>
 	</nav>
 
-    <div id="slider" style="margin-top: 50px;" class="ocultar-banner-web">
+ 
 
+    <div id="slider" style="margin-top: 50px;" class="ocultar-banner-web">
+ <?php if($id_mesa == ""){ ?>
 <?php 
 	if($banner_rotativo == 'Sim'){
 	$query = $pdo->query("SELECT * FROM banner_rotativo");
@@ -168,16 +208,19 @@ if ( $start <= $now && $now <= $end ) {
 
 
 <?php } } ?>
-
+<?php } ?>
 </div>
+
 
 	 <!-- Menu Start -->
         <div class="container-xxl py-5 margin_top_web" style="margin-bottom: 15px">
             <div class="margem_container">
+              <?php if($id_mesa == ""){ ?>
                 <div class="text-center wow fadeInUp ocultar-mobile" data-wow-delay="0.1s"  style="margin-bottom: 15px">
                     <h5 class="section-title ff-secondary text-center text-primary fw-normal"><span style="color:#FEA116">Nosso Cardápio</span></h5>
                    
                 </div>
+              <?php } ?>
                 <div class="tab-class text-center wow fadeInUp" data-wow-delay="0.1s">
 
                 	 <ul class="nav nav-pills d-inline-flex justify-content-center border-bottom mb-5" style="width:100%;">
@@ -451,7 +494,7 @@ $total_adc = @count($res3);
         </div>
         <!-- Menu End -->
 
-
+<?php if($id_mesa == ""){ ?>
 	<footer class="rodape">	
 		<div class="row">
 			<div class="col-md-6">	
@@ -479,7 +522,7 @@ $total_adc = @count($res3);
   <img src="img/<?php echo $img ?>" width="70px" class="img-aberto">
 <?php } ?>
 
-
+<?php } ?>
 	</body>
 	</html>
 

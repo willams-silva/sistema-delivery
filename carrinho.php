@@ -3,6 +3,7 @@
 require_once("cabecalho.php");
 
 $sessao = @$_SESSION['sessao_usuario'];
+$nome_mesa = @$_SESSION['nome_mesa'];
 
 ?>
 
@@ -18,7 +19,7 @@ $sessao = @$_SESSION['sessao_usuario'];
 		<div class="container-fluid">
 			<div class="navbar-brand" >
 				<a href="index"><big><i class="bi bi-arrow-left"></i></big></a>
-				<span style="margin-left: 15px; font-size:14px">RESUMO DO PEDIDO</span>
+				<span style="margin-left: 15px; font-size:14px">RESUMO DO PEDIDO <?php echo $nome_mesa ?></span>
 
 			</div>
 
@@ -59,7 +60,11 @@ $sessao = @$_SESSION['sessao_usuario'];
 
 
 	<div class="d-grid gap-2 mt-4 abaixo">
+     <?php if($nome_mesa == ""){ ?>
 		<a href='finalizar' class="btn btn-primary botao-carrinho">Finalizar Pedido</a>
+    <?php }else{ ?>
+      <a href='' onclick="window.close()" class="btn btn-primary botao-carrinho">Finalizar Pedido</a>
+    <?php } ?>
 	</div>
 </div>
 

@@ -1,4 +1,5 @@
 <?php 
+@session_start();
 require_once("cabecalho.php");
 $url = $_GET['url'];
 
@@ -11,7 +12,7 @@ $descricao = $res[0]['descricao'];
 $id = $res[0]['id'];
 
 
-@session_start();
+
 $sessao = @$_SESSION['sessao_usuario'];
 
 $pdo->query("DELETE FROM temp where carrinho = 0 and sessao = '$sessao'");
@@ -27,7 +28,7 @@ $pdo->query("DELETE FROM temp where carrinho = 0 and sessao = '$sessao'");
 		<div class="container-fluid">
 			<div class="navbar-brand" >
 				<a href="index"><big><i class="bi bi-arrow-left"></i></big></a>
-				<span style="margin-left: 15px; font-size:14px"><?php echo mb_strtoupper($nome) ?></span>
+				<span style="margin-left: 15px; font-size:14px"><?php echo mb_strtoupper($nome) ?> <?php echo @$_SESSION['nome_mesa'] ?></span>
 			</div>
 
 			<?php require_once("icone-carrinho.php") ?>

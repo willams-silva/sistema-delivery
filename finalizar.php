@@ -51,16 +51,6 @@ $bairro = "";
 $complemento = "";
 
 
-if($id_usuario != ''){
-
-    $valor_entrega = 'Consumir Local';  
-    $tel_cliente = 'Mesa: '.@$mesa_pedido;
-    $esconder_opc_delivery = 'ocultar';    
-    $numero_colapse = '2';
-  
-}
-
-
  ?>
 
   <div class="main-container">
@@ -88,34 +78,9 @@ if($id_usuario != ''){
       <div class="accordion-body" align="center">
        <img src="img/user.png" width="50px" height="50px" >
 
-       <?php if($id_usuario == ""){ ?>
        <div class="nome_user"> <input onclick="" type="text" class="input" name="nome" id="nome" required value="" placeholder="Seu Nome" style="width:150px; text-align: center; border:0"></div >
        <input onkeyup=""  type="text" class="input telefone_user" name="telefone" id="telefone" required value="" placeholder="(00) 00000-0000" style="width:150px; text-align: center; border:0; margin-top: -15px">
-     <?php }else{ ?>
-       <div class="nome_user"> <input type="text" class="input" id="nome" value="" placeholder="Nome Cliente" style="width:150px; text-align: center; border:0"></div >
-       <select class="input telefone_user" name="mesa" id="mesa" style="width:100px; text-align: center; border:0; margin-top: -15px">
-        <option value="0">Mesa</option>
-
-        <?php 
-                  $query = $pdo->query("SELECT * FROM mesas");
-                  $res = $query->fetchAll(PDO::FETCH_ASSOC);
-                  $total_reg = @count($res);
-                  if($total_reg > 0){
-                    for($i=0; $i < $total_reg; $i++){
-                    foreach ($res[$i] as $key => $value){}
-                    if($mesa_carrinho == $res[$i]['nome']){
-                      $selected = 'selected';
-                    }else{
-                      $selected = '';
-                    } 
-                    echo '<option value="'.$res[$i]['nome'].'" '.$selected.'>'.$res[$i]['nome'].'</option>';
-                    }
-                  }
-                   ?>
-                  
-
-       </select>
-     <?php } ?>
+    
        
        <hr>
        <div><b>Finalizar seu Pedido?</b></div>
@@ -485,7 +450,7 @@ if($id_usuario != ''){
     $('#nome').val(nome_cl);
     
 
-     var id_usuario = "<?=$id_usuario?>";   
+     var id_usuario = "";   
   
   $('#telefone').focus();     
     document.getElementById('area-endereco').style.display = "none";
@@ -665,12 +630,12 @@ var access_token = "<?=$access_token?>";
      var nome = $('#nome').val();
    var telefone = $('#telefone').val();    
     var mesa = $('#mesa').val();
-   var id_usuario = "<?=$id_usuario?>";
+   var id_usuario = "";
 
    localStorage.setItem('nome_cli_del', nome);
    localStorage.setItem('telefone_cli_del', telefone);
 
-   if(id_usuario == ""){
+  
       if(telefone.length < 15){
       alert("Coloque o número de telefone completo");
       $('#telefone').focus(); 
@@ -679,9 +644,9 @@ var access_token = "<?=$access_token?>";
       $('#btn_ident').click(); 
       return;
       }
-    }
+    
 
-    if(telefone == "" && id_usuario == ""){
+    if(telefone == ""){
     alert('Preencha seu Telefone'); 
     $('#telefone').focus(); 
     $('#botao_finalizar').show(); 
@@ -741,7 +706,7 @@ var access_token = "<?=$access_token?>";
 
    
   
-    if(taxa_entrega == "" && id_usuario == ""){
+    if(taxa_entrega == ""){
     alert("Digite um CEP válido para receber seu Pedido, ou atualize a chave da api do google maps para o calculo de frete por distância!");
     $('#botao_finalizar').show(); 
     $('#div_img').hide();
@@ -867,7 +832,7 @@ var access_token = "<?=$access_token?>";
 
           setTimeout(()=>{
               alert('Pedido Finalizado!');
-              if(id_usuario == ""){
+            
 
                    //chamar o relatorio da reserva 
                 var id = msg[2].trim();   
@@ -876,10 +841,7 @@ var access_token = "<?=$access_token?>";
                 }            
                 
                  window.location='pedido/'+id;
-               }else{
-                window.location='sistema/painel/index.php?pagina=novo_pedido';
-               }
-           
+                          
         },500);
                 
 
@@ -941,6 +903,8 @@ var access_token = "<?=$access_token?>";
 
         }
     });
+
+    setTimeout(pix, 1000);
   }
 </script>
 
@@ -999,14 +963,14 @@ var access_token = "<?=$access_token?>";
      
    var nome = $('#nome').val();
    var telefone = $('#telefone').val();   
-    var id_usuario = "<?=$id_usuario?>";
+    var id_usuario = "";
 
-    if(id_usuario == ""){
+    
       if(telefone.length < 15){
       alert("Coloque o número de telefone completo");
       return;
       }
-    }
+    
     
     
 
@@ -1023,15 +987,8 @@ var access_token = "<?=$access_token?>";
     return;
    }
 
-
-   
-
-   if(id_usuario != ""){    
-    $('#collapse-4').click();
-  }else{
   $('#colapse-2').click();
-  }
-
+  
   }
 
 
