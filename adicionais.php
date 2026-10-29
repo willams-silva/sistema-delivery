@@ -110,8 +110,8 @@ if($total_reg2 > 0){
    ?>
 
    
-        <li class="list-group-item">                
-        <?php echo $texto_item ?> <span class="valor-item <?php echo $ocultar_valor ?>">(R$ <?php echo $valor_item_gradeF ?>) </span> <?php if($limite_item > 0){ echo ' <span style="font-size:12px; color:red">(até '.$limite_item.' itens!)</span>'; } ?>
+        <li class="list-group-item" >                
+        <span style="font-size: 12px"><?php echo $texto_item ?></span> <span class="valor-item <?php echo $ocultar_valor ?>">(R$ <?php echo $valor_item_gradeF ?>) </span> <?php if($limite_item > 0){ echo ' <span style="font-size:11px; color:red">(até '.$limite_item.' itens!)</span>'; } ?>
         <?php if($tipo_item == '1 de Cada'){ ?>
         <span class="form-switch direita">
           <input class="form-check-input" type="checkbox" id="<?php echo $id_item ?>" onchange="itens('<?php echo $id_item ?>', '<?php echo $id_grade ?>', '<?php echo $valor_item_grade ?>', '<?php echo $tipo_item ?>', '1', '<?php echo $valor_item ?>', '<?php echo $limite ?>' )">
@@ -119,7 +119,7 @@ if($total_reg2 > 0){
          <?php } ?>    
 
          <?php if($tipo_item == 'Múltiplo'){ ?>
-       <span class="direita">
+       <span class="direita" style="font-size:14px">
            
                 <span><button onclick="dim('<?php echo $id_grade ?>', '<?php echo $id_item ?>', '<?php echo $valor_item_grade ?>', '<?php echo $tipo_item ?>', '<?php echo $valor_item ?>', '<?php echo $limite_item ?>', '<?php echo $limite ?>')" style="background:transparent; border:none"><i class="bi bi-dash-circle-fill text-danger"></i></button></span>
                 <span> <b><input id="quantidade_item_<?php echo $id_item ?>" value="0" style="background: transparent; border:none; width:20px; text-align: center"></b> </span>
@@ -260,17 +260,36 @@ if(@count($res) > 0){
 }
 
 $hora_atual = date('H:i:s');
-//verificar se o delivery está aberto dentro da hora prevista
-if(strtotime($hora_atual) > strtotime($horario_abertura) and strtotime($hora_atual) < strtotime($horario_fechamento)){
-    
+
+//nova verificação de horarios
+$start = strtotime( date('Y-m-d' .$horario_abertura) );
+$end = strtotime( date('Y-m-d' . $horario_fechamento) );
+$now = time();
+
+if ( $start <= $now && $now <= $end ) {
+
 }else{
-    if(strtotime($hora_atual) > strtotime($horario_abertura) and strtotime($hora_atual) > strtotime($horario_fechamento)){
-        
+
+  if($end < $start){
+
+    if($now > $start){
+     
     }else{
-            echo "<script>window.alert('$texto_fechamento_horario')</script>";
+       if($now < $end){
+        
+       }else{
+         echo "<script>window.alert('$texto_fechamento_horario')</script>";
     echo "<script>window.location='index.php'</script>";
     exit();
+       }
+     
     }
+  }else{
+     echo "<script>window.alert('$texto_fechamento_horario')</script>";
+    echo "<script>window.location='index.php'</script>";
+    exit();
+  }
+    
 }
 
 }

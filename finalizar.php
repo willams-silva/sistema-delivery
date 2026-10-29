@@ -1,13 +1,14 @@
 <?php
 @session_start(); 
 require_once("cabecalho.php");
+require_once("js/ajax/ApiConfig.php");
 $sessao = @$_SESSION['sessao_usuario'];
 $id_usuario = @$_SESSION['id'];
 
 
 $total_carrinho = 0;
 $total_carrinhoF = 0;
-$query = $pdo->query("SELECT * FROM carrinho where sessao = '$sessao' and id_sabor = 0");
+$query = $pdo->query("SELECT * FROM carrinho where sessao = '$sessao'");
 $res = $query->fetchAll(PDO::FETCH_ASSOC);
 $total_reg = @count($res);
 
@@ -79,7 +80,7 @@ if($id_usuario != ''){
 <div class="accordion" id="accordionExample" style="margin-top: 55px; margin-bottom: 130px; overflow: scroll; height:100%; scrollbar-width: thin; z-index: 100">
   <div class="accordion-item">
     <h2 class="accordion-header" id="headingOne">
-      <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne" style="font-size:14px">
+      <button id="btn_ident" class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne" style="font-size:14px">
         1 - IDENTIFICAÇÃO
       </button>
     </h2>
@@ -88,8 +89,8 @@ if($id_usuario != ''){
        <img src="img/user.png" width="50px" height="50px" >
 
        <?php if($id_usuario == ""){ ?>
-       <div class="nome_user"> <input onclick="buscarNome()" type="text" class="input" name="nome" id="nome" required value="" placeholder="Seu Nome" style="width:150px; text-align: center; border:0"></div >
-       <input onkeyup="buscarNome()"  type="text" class="input telefone_user" name="telefone" id="telefone" required value="" placeholder="(00) 00000-0000" style="width:150px; text-align: center; border:0; margin-top: -15px">
+       <div class="nome_user"> <input onclick="" type="text" class="input" name="nome" id="nome" required value="" placeholder="Seu Nome" style="width:150px; text-align: center; border:0"></div >
+       <input onkeyup=""  type="text" class="input telefone_user" name="telefone" id="telefone" required value="" placeholder="(00) 00000-0000" style="width:150px; text-align: center; border:0; margin-top: -15px">
      <?php }else{ ?>
        <div class="nome_user"> <input type="text" class="input" id="nome" value="" placeholder="Nome Cliente" style="width:150px; text-align: center; border:0"></div >
        <select class="input telefone_user" name="mesa" id="mesa" style="width:100px; text-align: center; border:0; margin-top: -15px">
@@ -127,7 +128,7 @@ if($id_usuario != ''){
 
          <div class="col-6">
 
-          <a class="btn btn-success botao_sim" onclick="dados()">SIM</a>
+          <a class="btn btn-success botao_sim" onclick="dados(); buscarNome()">SIM</a>
         </div>
       </div>
     </div>
@@ -198,17 +199,22 @@ if($id_usuario != ''){
      <?php } ?>
 
     <div class="row">
-      <div class="col-8"> 
+      <div class="col-7"> 
         <div class="group">
           <input type="text" class="input" name="rua" id="rua"  required>
+
           <span class="highlight"></span>
           <span class="bar"></span>
-          <label class="label">Rua*</label>
+          <label class="label">Rua* </label>
         </div>
       </div>
 
+       <div class="col-2" style="margin:0px; padding:0px; margin-top: 10px">
+       <span style=""><button style="width:30px; height:30px; background:  #3765d0; color:#FFF; border:none" title="Buscar Localização" class="" onclick="localizacao()"> <i class="bi bi-geo-alt" class="text-primary"></i></button></span> 
+       
+        </div>
 
-      <div class="col-4"> 
+      <div class="col-3"> 
         <div class="group">
           <input type="text" class="input" name="numero" id="numero"  required>
           <span class="highlight"></span>
@@ -291,12 +297,15 @@ if($id_usuario != ''){
     <?php } ?>
 
 
-      <div align="center" class="avancar-pgto"><a id="colap-4" href="#" data-bs-toggle="collapse" data-bs-target="#collapse4">Avançar para Pagamento</a></div>
+      <div align="center" class="avancar-pgto">
+        
+        <span><a id="colap-4" href="#" data-bs-toggle="collapse" data-bs-target="#collapse4">Avançar para Pagamento</a></span>
     </div>
 
 
   </div>
 
+</div>
 </div>
 </div>
 </div>
@@ -429,6 +438,11 @@ if($id_usuario != ''){
  
  </span>
  <br>
+    <div id="desconto_div" style="display:none">
+      <span><b>Desconto do Cupom</b></span>
+      <span class="direita">  <b>R$ <span id="total_cupom"></span></b></span>
+    </div>
+ <br>
   <big>
     <span><b>TOTAL À PAGAR</b></span>
     <span class="direita">  <b>R$ <span id="total-carrinho-finalizar"><?php echo $total_carrinhoF ?></span></b></span>
@@ -464,10 +478,14 @@ if($id_usuario != ''){
 
   $(document).ready(function() {   
 
-     var id_usuario = "<?=$id_usuario?>";
-   if(id_usuario == ""){
-     $('#nome').hide();   
-   } 
+    //recuperar variaveis de sesssao
+    var nome_cl = localStorage.nome_cli_del;
+    var tel_cl = localStorage.telefone_cli_del;
+    $('#telefone').val(tel_cl);
+    $('#nome').val(nome_cl);
+    
+
+     var id_usuario = "<?=$id_usuario?>";   
   
   $('#telefone').focus();     
     document.getElementById('area-endereco').style.display = "none";
@@ -533,8 +551,12 @@ if($id_usuario != ''){
     calcularFreteDistancia();
   }
 
-
- setTimeout(pix, 1000);
+var access_token = "<?=$access_token?>"; 
+  if(access_token != ""){
+    setTimeout(pix, 1000);
+    document.getElementById('radio_pix').checked = true;
+  }
+ 
  
   }
 
@@ -645,6 +667,20 @@ if($id_usuario != ''){
     var mesa = $('#mesa').val();
    var id_usuario = "<?=$id_usuario?>";
 
+   localStorage.setItem('nome_cli_del', nome);
+   localStorage.setItem('telefone_cli_del', telefone);
+
+   if(id_usuario == ""){
+      if(telefone.length < 15){
+      alert("Coloque o número de telefone completo");
+      $('#telefone').focus(); 
+      $('#botao_finalizar').show(); 
+      $('#div_img').hide();
+      $('#btn_ident').click(); 
+      return;
+      }
+    }
+
     if(telefone == "" && id_usuario == ""){
     alert('Preencha seu Telefone'); 
     $('#telefone').focus(); 
@@ -706,7 +742,7 @@ if($id_usuario != ''){
    
   
     if(taxa_entrega == "" && id_usuario == ""){
-    alert("Digite um CEP válido para receber seu Pedido");
+    alert("Digite um CEP válido para receber seu Pedido, ou atualize a chave da api do google maps para o calculo de frete por distância!");
     $('#botao_finalizar').show(); 
     $('#div_img').hide();
     return;
@@ -801,6 +837,9 @@ if($id_usuario != ''){
     //return;
    }
 
+
+   var abrir_comprovante = "<?=$abrir_comprovante?>";
+
   
     $.ajax({
          url: 'js/ajax/inserir-pedido.php',
@@ -831,9 +870,12 @@ if($id_usuario != ''){
               if(id_usuario == ""){
 
                    //chamar o relatorio da reserva 
-                var id = msg[2].trim();                
-                window.open("sistema/painel/rel/comprovante2_class.php?id="+id+"&enviar=sim");
-                 window.location='index.php';
+                var id = msg[2].trim();   
+                if(abrir_comprovante != 'Não'){
+                  window.open("sistema/painel/rel/comprovante2_class.php?id="+id+"&enviar=sim");
+                }            
+                
+                 window.location='pedido/'+id;
                }else{
                 window.location='sistema/painel/index.php?pagina=novo_pedido';
                }
@@ -915,14 +957,12 @@ if($id_usuario != ''){
 
 
 
+
+
 <script type="text/javascript">
   function buscarNome(){
 
-
-
-    var tel = $('#telefone').val(); 
-
-     var nome = $('#nome').val(); 
+    var tel = $('#telefone').val();     
         
     $.ajax({
       url: 'js/ajax/listar-nome.php',
@@ -931,14 +971,9 @@ if($id_usuario != ''){
       dataType: "text",
 
       success:function(result){  
-      //alert(result)  
-        $('#nome').show();
+     
         var split = result.split("**");    
-
-        if(nome == ""){
-          $('#nome').val(split[0]); 
-        }
-        
+      
         $('#rua').val(split[1]); 
         $('#numero').val(split[2]); 
         $('#bairro').val(split[3]).change(); 
@@ -955,9 +990,11 @@ if($id_usuario != ''){
 
 
 
-
 <script type="text/javascript">
   function dados(){
+
+    //buscarNome()
+    
     $('#nome').show();
      
    var nome = $('#nome').val();
@@ -989,7 +1026,7 @@ if($id_usuario != ''){
 
    
 
-   if(id_usuario != ""){
+   if(id_usuario != ""){    
     $('#collapse-4').click();
   }else{
   $('#colapse-2').click();
@@ -1035,6 +1072,11 @@ if($id_usuario != ''){
             $('#total-carrinho-finalizar').text(split[0]);
             $('#valor-cupom').val(split[1]);
             $('#div_cupom').hide();
+
+            $('#desconto_div').show();
+            $('#total_cupom').text(split[2]);
+
+
             alert ('Cupom Inserido!');
          }
          
@@ -1175,3 +1217,101 @@ if($id_usuario != ''){
 
     }
   </script>
+
+
+
+
+  <script src="http://maps.google.com/maps/api/js?sensor=false"></script>
+<script>
+var x=document.getElementById("demo");
+function localizacao()
+  {
+    $("#rua").val('Carregando!!');
+
+  if (navigator.geolocation)
+    {
+    navigator.geolocation.getCurrentPosition(showPosition,showError);
+    }
+  else{x.innerHTML="Geolocalização não é suportada nesse browser.";}
+
+  
+  }
+ 
+function showPosition(position)
+  {
+  lat=position.coords.latitude;
+  lon=position.coords.longitude;
+  
+  geo(lat, lon);
+  }
+ 
+function showError(error)
+  {
+  switch(error.code)
+    {
+    case error.PERMISSION_DENIED:
+      x.innerHTML="Usuário rejeitou a solicitação de Geolocalização."
+      break;
+    case error.POSITION_UNAVAILABLE:
+      x.innerHTML="Localização indisponível."
+      break;
+    case error.TIMEOUT:
+      x.innerHTML="O tempo da requisição expirou."
+      break;
+    case error.UNKNOWN_ERROR:
+      x.innerHTML="Algum erro desconhecido aconteceu."
+      break;
+    }
+  }
+</script>
+
+
+
+<script type="text/javascript">
+         function geo(latitude, longitude){                             
+                            
+          $.getJSON('https://nominatim.openstreetmap.org/reverse?format=json&lat='+latitude+'&lon='+longitude, function(res){
+
+         var entrega_distancia = "<?=$entrega_distancia?>";
+
+          //rua
+          $("#rua").val(res.address.road);
+
+        
+
+         //cidade ver qual
+            var cidade=res.address.city;
+            
+            if (cidade==""||cidade==null){
+                //TENTAR PEGAR POR TOWN
+                var cidade=res.address.town;
+                
+                if (cidade==""||cidade==null){
+                  var cidade=res.address.village;
+                }
+              }
+
+
+           //cep
+          $("#cep").val(res.address.postcode);
+          
+           //cidade
+          $("#cidade").val(cidade);
+
+
+            //bairo
+          if(entrega_distancia == 'Sim'){
+          $("#bairro").val(res.address.suburb);
+          calcularFreteDistancia()
+        }else{
+          $("#bairro").val(res.address.suburb).change();
+        }
+
+            
+                      
+
+          });
+     };
+
+
+</script>

@@ -92,6 +92,7 @@ if(@count($res) > 0){
 	exit();
 }
 
+
 $hora_atual = date('H:i:s');
 
 //nova verificação de horarios
@@ -99,14 +100,33 @@ $start = strtotime( date('Y-m-d' .$horario_abertura) );
 $end = strtotime( date('Y-m-d' . $horario_fechamento) );
 $now = time();
 
-
 if ( $start <= $now && $now <= $end ) {
-    
+
 }else{
-	echo "<script>window.alert('$texto_fechamento_horario')</script>";
+
+  if($end < $start){
+
+    if($now > $start){
+     
+    }else{
+       if($now < $end){
+        
+       }else{
+        echo "<script>window.alert('$texto_fechamento_horario')</script>";
 	echo "<script>window.location='index.php'</script>";
 	exit();
+       }
+     
+    }
+  }else{
+    echo "<script>window.alert('$texto_fechamento_horario')</script>";
+	echo "<script>window.location='index.php'</script>";
+	exit();
+  }
+	
 }
+
+
 
 }
 

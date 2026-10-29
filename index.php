@@ -28,9 +28,25 @@ $end = strtotime( date('Y-m-d' . $horario_fechamento) );
 $now = time();
 
 if ( $start <= $now && $now <= $end ) {
-   
+
 }else{
-	$img = 'fechado.png';
+
+  if($end < $start){
+
+    if($now > $start){
+     
+    }else{
+       if($now < $end){
+        
+       }else{
+         $img = 'fechado.png';
+       }
+     
+    }
+  }else{
+    $img = 'fechado.png';
+  }
+	
 }
 
 

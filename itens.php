@@ -39,7 +39,7 @@ $pdo->query("DELETE FROM temp where carrinho = 0 and sessao = '$sessao'");
 
 
 		<?php 
-		$query = $pdo->query("SELECT * FROM produtos where categoria = '$id' and ativo = 'Sim'");
+		$query = $pdo->query("SELECT * FROM produtos where categoria = '$id' and ativo = 'Sim' order by valor_venda asc");
 		$res = $query->fetchAll(PDO::FETCH_ASSOC);
 		$total_reg = @count($res);
 		if($total_reg > 0){
@@ -110,7 +110,7 @@ $total_adc = @count($res3);
 
 				<div class="me-auto">
 				<div class="fw-bold titulo-item"><?php echo $nome ?></div>
-				<div class="subtitulo-item-menor"><?php echo $descricao ?></div>
+				<div class="subtitulo-item-menor" style="font-size:12px"><?php echo $descricao ?></div>
 				<span class="valor-item-maior">
 					<?php 
 $query2 = $pdo->query("SELECT * FROM grades where produto = '$id' and tipo_item = 'Variação' and ativo = 'Sim' order by id asc");

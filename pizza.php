@@ -51,17 +51,36 @@ if(@count($res) > 0){
 }
 
 $hora_atual = date('H:i:s');
-//verificar se o delivery está aberto dentro da hora prevista
-if(strtotime($hora_atual) > strtotime($horario_abertura) and strtotime($hora_atual) < strtotime($horario_fechamento)){
-    
+
+//nova verificação de horarios
+$start = strtotime( date('Y-m-d' .$horario_abertura) );
+$end = strtotime( date('Y-m-d' . $horario_fechamento) );
+$now = time();
+
+if ( $start <= $now && $now <= $end ) {
+
 }else{
-    if(strtotime($hora_atual) > strtotime($horario_abertura) and strtotime($hora_atual) > strtotime($horario_fechamento)){
-        
+
+  if($end < $start){
+
+    if($now > $start){
+     
     }else{
-            echo "<script>window.alert('$texto_fechamento_horario')</script>";
-    echo "<script>window.location='index.php'</script>";
-    exit();
+       if($now < $end){
+        
+       }else{
+        echo "<script>window.alert('$texto_fechamento_horario')</script>";
+	echo "<script>window.location='index.php'</script>";
+	exit();
+       }
+     
     }
+  }else{
+    echo "<script>window.alert('$texto_fechamento_horario')</script>";
+	echo "<script>window.location='index.php'</script>";
+	exit();
+  }
+	
 }
 
 }
@@ -283,23 +302,16 @@ $query2 = $pdo->query("SELECT * FROM variacoes where produto = '$id_produto' and
 				?>
 
 		
-		<li class="list-group-item d-flex justify-content-between align-items-start " > 	
-				<div class="row" style="width:100%;">
-					<div class="col-10">
+		<li class="list-group-item d-flex  " > 	
+				 <span style="font-size: 12px"><?php echo $nome ?> (R$ <?php echo $valorF ?>) </span>
 
-				<div class="me-auto">
-				<div class="titulo-item">
-				<input class="form-check-input" type="checkbox" value="<?php echo $id_adc ?>" id="adicional_<?php echo $id_adc ?>" style="margin-top: 5px" onchange="func_adicional('<?php echo $id_adc ?>')">	
-				<small><span onclick="selectAdc('<?php echo $id_adc ?>')" style="width:100%"><?php echo $nome ?> / R$ <?php echo $valorF ?></span></small>
-				</div>
-				
-			</div>
-
-			</div>	
-
-	
-
-</div>
+				 <span class="direita" style="font-size:14px">
+           
+                <span><button onclick="dim('<?php echo $id_adc ?>', '<?php echo $sessao ?>')" style="background:transparent; border:none"><i class="bi bi-dash-circle-fill text-danger"></i></button></span>
+                <span> <b><input id="quantidade_item_<?php echo $id_adc ?>" value="0" style="background: transparent; border:none; width:20px; text-align: center"></b> </span>
+                <span><button onclick="aum('<?php echo $id_adc ?>', '<?php echo $sessao ?>')" style="background:transparent; border:none"><i class="bi bi-plus-circle-fill text-success"></i></button></span>
+            
+        </span>
 			
 		</li>
 
@@ -442,16 +454,16 @@ $query2 = $pdo->query("SELECT * FROM variacoes where produto = '$id_produto' and
 
 
 
-	function adicionar(id, acao, cat){
+	function adicionar(id, quantidade){
 
     $.ajax({
         url: 'js/ajax/adicionais.php',
         method: 'POST',
-        data: {id, acao, cat},
+        data: {id, quantidade},
         dataType: "text",
 
         success: function (mensagem) {  
-                  
+        	                  
             if (mensagem.trim() == "Alterado com Sucesso") {                
                                
 		            } 
@@ -503,3 +515,34 @@ $query2 = $pdo->query("SELECT * FROM variacoes where produto = '$id_produto' and
 
 	
 </script>
+
+
+
+<script type="text/javascript">
+    function aum(id, cat){
+        var quant = $("#quantidade_item_"+id).val();
+        var quantidade = parseFloat(quant) + 1;       
+
+        $("#quantidade_item_"+id).val(quantidade);           
+        adicionar(id, quantidade)
+       
+    }
+
+    function dim(id, cat){
+        var quant = $("#quantidade_item_"+id).val();
+        var quantidade = parseFloat(quant) - 1; 
+
+        if(quantidade == -1){
+        	 var quant = $("#quantidade_item_"+id).val('0');
+        	return;
+        }      
+
+        $("#quantidade_item_"+id).val(quantidade);           
+        adicionar(id, quantidade)
+
+
+       
+    }
+
+</script>
+

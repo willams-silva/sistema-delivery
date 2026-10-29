@@ -119,7 +119,27 @@ $sessao = @$_SESSION['sessao_usuario'];
     </div>
   </div>
 </div>
+</div>
 
+
+<!-- Modal -->
+<div class="modal fade" id="modalGrades" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel"><span id="nome_item_grade"></span></h5>
+        <button type="button" id="btn-fechar-grade" class="btn-close" data-dismiss="modal" aria-label="Close"></button>
+      </div>
+      
+      <div class="modal-body">    
+      <div id="listar-grade-carrinho">
+        
+      </div>
+      
+    </div>
+  </div>
+</div>
+</div>
 
 
 <script type="text/javascript">
