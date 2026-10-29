@@ -1,146 +1,186 @@
-<?php 
-require_once("../../../conexao.php");
+<?php
 $tabela = 'fornecedores';
+require_once("../../../conexao.php");
+require_once("../../verificar.php");
 
-$query = $pdo->query("SELECT * FROM $tabela order by id desc");
+$query = $pdo->query("SELECT * from $tabela order by id desc");
 $res = $query->fetchAll(PDO::FETCH_ASSOC);
-$total_reg = @count($res);
-if($total_reg > 0){
-
-echo <<<HTML
-	<small>
-	<table class="table table-hover" id="tabela">
+$linhas = @count($res);
+if ($linhas > 0) {
+	echo <<<HTML
+<small>
+	<table class="table table-striped table-hover table-bordered text-nowrap border-bottom dt-responsive" id="tabela">
 	<thead> 
 	<tr> 
+	<th align="center" width="5%" class="text-center">Selecionar</th>
 	<th>Nome</th>	
-	<th class="esc">Telefone</th> 	
-	<th class="esc">Email</th> 
-	<th class="esc">Cadastro</th>
-	
+	<th>Telefone</th>			
+	<th>Pix</th>
+	<th>CNPJ</th>
 	<th>Ações</th>
 	</tr> 
 	</thead> 
 	<tbody>	
 HTML;
 
-for($i=0; $i < $total_reg; $i++){
-	foreach ($res[$i] as $key => $value){}
+	for ($i = 0; $i < $linhas; $i++) {
 		$id = $res[$i]['id'];
 		$nome = $res[$i]['nome'];
 		$telefone = $res[$i]['telefone'];
 		$email = $res[$i]['email'];
-		$endereco = $res[$i]['endereco'];		
+		$endereco = $res[$i]['endereco'];
 		$data = $res[$i]['data'];
+		$pix = $res[$i]['pix'];
+		$numero = $res[$i]['numero'];
+		$bairro = $res[$i]['bairro'];
+		$cidade = $res[$i]['cidade'];
+		$estado = $res[$i]['estado'];
+		$cep = $res[$i]['cep'];
+		$cnpj = $res[$i]['cnpj'];
+		$complemento = $res[$i]['complemento'];
 		$tipo_chave = $res[$i]['tipo_chave'];
-	$chave_pix = $res[$i]['chave_pix'];
+
+		$dataF = implode('/', array_reverse(@explode('-', $data)));
+
+		if ($pix != '') {
+			$chave_pix_mod = $tipo_chave . ': ' . $pix;
+		} else {
+			$chave_pix_mod = '';
+		}
 
 
-		$dataF = implode('/', array_reverse(explode('-', $data)));
-
-
-		
-
-echo <<<HTML
-<tr class="">
+		echo <<<HTML
+<tr>
+<td align="center">
+<div class="custom-checkbox custom-control">
+<input type="checkbox" class="custom-control-input" id="seletor-{$id}" onchange="selecionar('{$id}')">
+<label for="seletor-{$id}" class="custom-control-label mt-1 text-dark"></label>
+</div>
+</td>
 <td>{$nome}</td>
-<td class="esc">{$telefone}</td>
-<td class="esc">{$email}</td>
-<td class="esc">{$dataF}</td>
-
+<td>{$telefone}</td>
+<td>{$chave_pix_mod}</td>
+<td>{$cnpj}</td>
 <td>
-	<big><a href="#" onclick="editar('{$id}','{$nome}', '{$telefone}', '{$email}', '{$endereco}', '{$tipo_chave}', '{$chave_pix}')" title="Editar Dados"><i class="fa fa-edit text-primary"></i></a></big>
+	<a class="btn btn-info-light btn-sm" href="#" onclick="editar('{$id}','{$nome}','{$email}','{$telefone}','{$endereco}','{$pix}','{$numero}','{$bairro}','{$cidade}','{$estado}','{$cep}','{$cnpj}','{$complemento}', '{$tipo_chave}')" title="Editar Dados"><i class="fa fa-edit"></i></a>
 
-	<big><a href="#" onclick="mostrar('{$nome}', '{$telefone}', '{$email}', '{$endereco}', '{$dataF}', '{$tipo_chave}', '{$chave_pix}')" title="Ver Dados"><i class="fa fa-info-circle text-secondary"></i></a></big>
+<big><a href="#" class="btn btn-danger-light btn-sm" onclick="excluir('{$id}')" title="Excluir"><i class="fa fa-trash-can"></i></a></big>
 
+<a class="btn btn-warning-light btn-sm" href="#" onclick="mostrar('{$nome}','{$email}','{$telefone}','{$endereco}','{$pix}','{$dataF}','{$numero}','{$bairro}','{$cidade}','{$estado}','{$cep}','{$cnpj}','{$complemento}', '{$tipo_chave}')" title="Mostrar Dados"><i class="fa fa-info-circle"></i></a>
 
-	<li class="dropdown head-dpdn2" style="display: inline-block;">
-		<a href="#" class="dropdown-toggle" data-toggle="dropdown" aria-expanded="false"><big><i class="fa fa-trash-o text-danger"></i></big></a>
-
-		<ul class="dropdown-menu" style="margin-left:-230px;">
-		<li>
-		<div class="notification_desc2">
-		<p>Confirmar Exclusão? <a href="#" onclick="excluir('{$id}')"><span class="text-danger">Sim</span></a></p>
-		</div>
-		</li>										
-		</ul>
-		</li>
+<a class="btn btn-dark-light btn-sm" href="#" onclick="arquivo('{$id}', '{$nome}')" title="Inserir / Ver Arquivos"><i class="fa fa-file-o " ></i></a>
 
 
 
 </td>
 </tr>
 HTML;
-
+	}
+} else {
+	echo '<small>Não possui nenhum cadastro!</small>';
 }
+
 
 echo <<<HTML
-	</tbody>
-	<small><div align="center" id="mensagem-excluir"></div></small>
-	</table>
-	</small>
+</tbody>
+<small><div align="center" id="mensagem-excluir"></div></small>
+</table>
 HTML;
+?>
 
-
-}else{
-	echo 'Não possui registros cadastrados!';
-}
-
-
- ?>
 
 
 <script type="text/javascript">
-	$(document).ready( function () {
-    $('#tabela').DataTable({
-    		"ordering": false,
+	$(document).ready(function() {
+		$('#tabela').DataTable({
+			"language": {
+				//"url" : '//cdn.datatables.net/plug-ins/1.13.2/i18n/pt-BR.json'
+			},
+			"ordering": false,
 			"stateSave": true
-    	});
-    $('#tabela_filter label input').focus();
-} );
+		});
+	});
 </script>
 
-
 <script type="text/javascript">
-	function editar(id, nome, telefone, email, endereco, tipo_chave, chave_pix){
+	function editar(id, nome, email, telefone, endereco, pix, numero, bairro, cidade, estado, cep, cnpj, complemento, tipo_chave) {
+		$('#mensagem').text('');
+		$('#titulo_inserir').text('Editar Registro');
+
 		$('#id').val(id);
 		$('#nome').val(nome);
-		$('#telefone').val(telefone);
 		$('#email').val(email);
+		$('#telefone').val(telefone);
 		$('#endereco').val(endereco);
+		$('#pix').val(pix);
+		$('#numero').val(numero);
+		$('#bairro').val(bairro);
+		$('#cidade').val(cidade);
+		$('#estado').val(estado).change();
 		$('#tipo_chave').val(tipo_chave).change();
-		$('#chave_pix').val(chave_pix);
-					
-		$('#titulo_inserir').text('Editar Registro');
+		$('#cep').val(cep);
+		$('#cnpj').val(cnpj);
+		$('#complemento').val(complemento);
+
 		$('#modalForm').modal('show');
-		
 	}
 
 
+	function mostrar(nome, email, telefone, endereco, pix, data, numero, bairro, cidade, estado, cep, cnpj, complemento, tipo_chave) {
 
+		if (pix != '') {
+			$('#pix_dados').text(tipo_chave + ': ' + pix);
+		} else {
+			$('#pix_dados').text(tipo_chave);
+		}
 
-	function mostrar(nome, telefone, email, endereco, data, tipo_chave, chave_pix){
-
-		$('#nome_dados').text(nome);		
+		$('#titulo_dados').text(nome);
+		$('#email_dados').text(email);
+		$('#telefone_dados').text(telefone);
 		$('#endereco_dados').text(endereco);
-		$('#email_dados').text(email);		
-		$('#data_dados').text(data);		
-		$('#telefone_dados').text(telefone);		
-		$('#tipo_chave_dados').text(tipo_chave);
-		$('#chave_pix_dados').text(chave_pix);		
-		
+
+		$('#data_dados').text(data);
+		$('#numero_dados').text(numero);
+		$('#bairro_dados').text(bairro);
+		$('#cidade_dados').text(cidade);
+		$('#estado_dados').text(estado);
+		$('#cep_dados').text(cep);
+		$('#cnpj_dados').text(cnpj);
+		$('#complemento_dados').text(complemento);
+
 		$('#modalDados').modal('show');
 	}
 
-
-	function limparCampos(){
+	function limparCampos() {
 		$('#id').val('');
 		$('#nome').val('');
+		$('#email').val('');
 		$('#telefone').val('');
 		$('#endereco').val('');
-		$('#email').val('');
-		$('#chave_pix').val('');		
-		
-		
+		$('#pix').val('');
+		$('#numero').val('');
+		$('#bairro').val('');
+		$('#cidade').val('');
+		$('#estado').val('').change();
+		$('#cep').val('');
+		$('#cnpj').val('');
+		$('#complemento').val('');
+		$('#tipo_chave').val('').change();
+
+
+		$('#ids').val('');
+		$('#btn-deletar').hide();
 	}
+
+
+	function arquivo(id, nome) {
+		$('#id-arquivo').val(id);
+		$('#nome-arquivo').text(nome);
+		$('#modalArquivos').modal('show');
+		$('#mensagem-arquivo').text('');
+		$('#arquivo_conta').val('');
+		listarArquivos();
+	}
+
 
 </script>

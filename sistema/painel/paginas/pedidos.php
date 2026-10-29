@@ -1,11 +1,31 @@
-<?php 
+<?php
 @session_start();
 require_once("verificar.php");
 require_once("../conexao.php");
 
-if(@$pedidos == 'ocultar'){
-    echo "<script>window.location='../index.php'</script>";
-    exit();
+if (@$pedidos == 'ocultar') {
+	echo "<script>window.location='../index.php'</script>";
+	exit();
+}
+
+$query2 = $pdo->query("SELECT * FROM usuarios where id = '$id_usuario'");
+$res2 = $query2->fetchAll(PDO::FETCH_ASSOC);
+if (@count($res2) > 0) {
+	$nome_usuario = $res2[0]['nivel'];
+}
+
+
+
+//verificar se o caixa está aberto
+$query = $pdo->query("SELECT * from caixas where operador = '$id_usuario' and data_fechamento is null");
+$res = $query->fetchAll(PDO::FETCH_ASSOC);
+$linhas = @count($res);
+if ($linhas > 0) {
+} else {
+	if ($abertura_caixa == 'Sim' and $nome_usuario != 'Administrador') {
+		echo '<script>alert("Não possui caixa Aberto, abra o caixa!")</script>';
+		echo '<script>window.location="caixas"</script>';
+	}
 }
 
 
@@ -15,34 +35,62 @@ $segundos = $tempo_atualizar * 1000;
 
 ?>
 
+<div class="breadcrumb-header justify-content-between">
+	<div class="left-content mt-2">
+
+
+	</div>
+</div>
+
 
 
 <div class="bs-example widget-shadow" style="padding:15px; margin-top: -5px">
 
 	<div class="row">
-		<div class="col-md-12"  align="center">	
-			<div > 
-				<small >
-					<a title="Todoss" class="text-muted" href="#" onclick="buscarContas('')"><span>Todos(<span id="todos_pedidos"></span>)</span></a> /
-					<a title="Iniciados" class="text-muted" href="#" onclick="buscarContas('Iniciado')"><i class="fa fa-square text-primary"></i> <span>Iniciado(<span id="ini_pedidos"></span>)</span></a> / 
-					<a title="Aceito" class="text-muted" href="#" onclick="buscarContas('Aceito')"><i class="fa fa-square text-success"></i> <span>Aceito(<span id="ace_pedidos"></span>)</span></a> / 
-					<a title="Preparando" class="text-muted" href="#" onclick="buscarContas('Preparando')"><i class="fa fa-square text-danger"></i> <span>Preparando(<span id="prep_pedidos"></span>)</span></a> / 
-					<a title="Entrega" class="text-muted" href="#" onclick="buscarContas('Entrega')"><i class="fa fa-square text-laranja"></i> <span>Em Rota Entrega(<span id="ent_pedidos"></span>)</span></a>
-				</small>
-			</div>
-		</div>
+		<div class="col-md-12" align="center">
 
-		<input type="hidden" id="buscar-contas">
-		<input type="hidden" id="id_pedido">
+			<button style="font-size:11px;" type="button" class="btn btn-dark mt-1 mb-1" title="Todas os Pedidos" onclick="buscarContas('')">
+				<span>TODAS</span>
+				<span class="badge bg-light rounded-pill ms-1" id="todos_pedidos">0</span>
+			</button>
+
+
+			<button style="font-size:11px;" type="button" class="btn btn_iniciado mt-1 mb-1" title="Iniciado" onclick="buscarContas('Iniciado')">
+				<span>INCIADOS</span>
+				<span class="badge bg-light rounded-pill ms-1" id="ini_pedidos">0</span>
+			</button>
+
+			<button style="font-size:11px;" type="button" class="btn btn_aceito mt-1 mb-1" title="Aceito" onclick="buscarContas('Aceito')">
+				<span>ACEITOS</span>
+				<span class="badge bg-light rounded-pill ms-1" id="ace_pedidos">0</span>
+			</button>
+
+			<button style="font-size:11px;" type="button" class="btn btn-warning mt-1 mb-1" title="Preparando"
+				onclick="buscarContas('Preparando')">
+				<span>PREPARANDO</span>
+				<span class="badge bg-light rounded-pill ms-1" id="prep_pedidos">0</span>
+			</button>
+
+			<button style="font-size:11px;" type="button" class="btn btn-success mt-1 mb-1" title="Em Rota de Entrega"
+				onclick="buscarContas('Entrega')">
+				<span>EM ROTA</span>
+				<span class="badge bg-light rounded-pill ms-1" id="ent_pedidos">0</span>
+			</button>
+
+
+			<input type="hidden" id="buscar-contas">
+			<input type="hidden" id="id_pedido">
+
+
+		</div>
 
 	</div>
 
-	
 	<hr>
 	<div id="listar">
 
 	</div>
-	
+
 </div>
 
 
@@ -52,22 +100,22 @@ $segundos = $tempo_atualizar * 1000;
 
 
 <!-- Modal Dados-->
-<div class="modal fade" id="modalDados" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+<div class="modal fade" id="modalDados" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+	aria-hidden="true">
 	<div class="modal-dialog" role="document">
 		<div class="modal-content">
-			<div class="modal-header">
+			<div class="modal-header bg-primary text-white">
 				<h4 class="modal-title" id="exampleModalLabel"><span id="nome_dados"></span></h4>
-				<button id="btn-fechar-perfil" type="button" class="close" data-dismiss="modal" aria-label="Close" style="margin-top: -20px">
-					<span aria-hidden="true" >&times;</span>
-				</button>
-			</div>
-			
-			<div class="modal-body" id="listar-pedido">							
-
-
+				<button id="btn-fechar" aria-label="Close" class="btn-close" data-bs-dismiss="modal" type="button"><span
+						class="text-white" aria-hidden="true">&times;</span></button>
 			</div>
 
-			
+			<div class="modal-body" id="listar-pedido">
+
+
+			</div>
+
+
 		</div>
 	</div>
 </div>
@@ -75,41 +123,49 @@ $segundos = $tempo_atualizar * 1000;
 
 
 
-
 <!-- Modal Baixar-->
-<div class="modal fade" id="modalBaixar" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+<div class="modal fade" id="modalBaixar" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+	aria-hidden="true">
 	<div class="modal-dialog" role="document">
 		<div class="modal-content">
-			<div class="modal-header">
+			<div class="modal-header bg-primary text-white">
 				<h4 class="modal-title" id="exampleModalLabel"><span id="nome_baixar"></span></h4>
-				<button id="btn-fechar-baixar" type="button" class="close" data-dismiss="modal" aria-label="Close" style="margin-top: -20px">
-					<span aria-hidden="true" >&times;</span>
-				</button>
+				<button id="btn-fechar-baixar" aria-label="Close" class="btn-close" data-bs-dismiss="modal" type="button"><span
+						class="text-white" aria-hidden="true">&times;</span></button>
 			</div>
-			
+
 			<div class="modal-body">
-			<form id="form-baixar">	
-				<div class="row">
-					<div class="col-md-8">
-						<select class="form-control " id="pgto" name="pgto" style="width:100%;" > 
-							<option value="Pix">Pix</option>
-							<option value="Dinheiro">Dinheiro</option>
-							<option value="Cartão de Débito">Cartão de Débito</option>
-							<option value="Cartão de Crédito">Cartão de Crédito</option>
+				<form id="form-baixar">
+					<div class="row">
+						<div class="col-md-8">
+							<select class="form-select " id="pgto" name="pgto" style="width:100%;">
+								<?php
+								$query = $pdo->query("SELECT * FROM formas_pgto order by id asc");
+								$res = $query->fetchAll(PDO::FETCH_ASSOC);
+								for ($i = 0; $i < @count($res); $i++) {
+									foreach ($res[$i] as $key => $value) {
+									}
 
-						</select>
+								?>
+									<option value="<?php echo $res[$i]['nome'] ?>"><?php echo $res[$i]['nome'] ?></option>
 
-						<input type="hidden" name="id" id="id_baixar">   
+								<?php } ?>
+
+							</select>
+
+							<input type="hidden" name="id" id="id_baixar">
+						</div>
+						<div class="col-md-4">
+							<button type="submit" class="btn btn-primary">Confirmar</button>
+						</div>
+
+
 					</div>
-					<div class="col-md-4">
-						<button type="submit" class="btn btn-primary">Confirmar</button>
-					</div>
+				</form>
 
-
-				</div>
-</form>
-
-<br><small><div align="center" id="mensagem-baixar"></div></small>
+				<br><small>
+					<div align="center" id="mensagem-baixar"></div>
+				</small>
 
 			</div>
 		</div>
@@ -120,48 +176,50 @@ $segundos = $tempo_atualizar * 1000;
 
 
 <!-- Modal Entregador-->
-<div class="modal fade" id="modalEntregador" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true" data-backdrop="static">
+<div class="modal fade" id="modalEntregador" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+	aria-hidden="true" data-backdrop="static">
 	<div class="modal-dialog" role="document">
 		<div class="modal-content">
-
-			<div class="modal-header">
+			<div class="modal-header bg-primary text-white">
 				<h4 class="modal-title" id="exampleModalLabel">Selecionar Entregador</h4>
-				<button id="btn-fechar-entregador" type="button" class="close" data-dismiss="modal" aria-label="Close" style="margin-top: -20px">
-					<span aria-hidden="true" >&times;</span>
-				</button>
+				<button id="btn-fechar-entregador" aria-label="Close" class="btn-close" data-bs-dismiss="modal"
+					type="button"><span class="text-white" aria-hidden="true">&times;</span></button>
 			</div>
-						
+
 			<div class="modal-body">
-			<form id="form-entregador">	
-				<div class="row">
-					<div class="col-md-8">
-						<select class="form-control " id="entregador" name="entregador" style="width:100%;" > 
-							<?php 
-									$query = $pdo->query("SELECT * FROM usuarios WHERE nivel = 'Entregador' or nivel = 'Motoboy' or nivel = 'Motoboys' or nivel = 'Entregadores' ORDER BY id asc");
-									$res = $query->fetchAll(PDO::FETCH_ASSOC);
-									$total_reg = @count($res);
-									if($total_reg > 0){
-										for($i=0; $i < $total_reg; $i++){
-										foreach ($res[$i] as $key => $value){}
-										echo '<option value="'.$res[$i]['id'].'">'.$res[$i]['nome'].'</option>';
+				<form id="form-entregador">
+					<div class="row">
+						<div class="col-md-8">
+							<select class="form-select " id="entregador" name="entregador" style="width:100%;">
+								<?php
+								$query = $pdo->query("SELECT * FROM usuarios WHERE nivel = 'Entregador' or nivel = 'Motoboy' or nivel = 'Motoboys' or nivel = 'Entregadores' ORDER BY id asc");
+								$res = $query->fetchAll(PDO::FETCH_ASSOC);
+								$total_reg = @count($res);
+								if ($total_reg > 0) {
+									for ($i = 0; $i < $total_reg; $i++) {
+										foreach ($res[$i] as $key => $value) {
 										}
-									}else{
-											echo '<option value="0">Cadastre uma Categoria</option>';
-										}
-									 ?>
-						</select>
+										echo '<option value="' . $res[$i]['id'] . '">' . $res[$i]['nome'] . '</option>';
+									}
+								} else {
+									echo '<option value="0">Cadastre uma Categoria</option>';
+								}
+								?>
+							</select>
 
-						<input type="hidden" name="id" id="id_entregador">   
+							<input type="hidden" name="id" id="id_entregador">
+						</div>
+						<div class="col-md-4">
+							<button type="submit" class="btn btn-primary">Selecionar</button>
+						</div>
+
+
 					</div>
-					<div class="col-md-4">
-						<button type="submit" class="btn btn-primary">Selecionar</button>
-					</div>
+				</form>
 
-
-				</div>
-</form>
-
-<br><small><div align="center" id="mensagem-entregador"></div></small>
+				<br><small>
+					<div align="center" id="mensagem-entregador"></div>
+				</small>
 
 			</div>
 		</div>
@@ -170,144 +228,239 @@ $segundos = $tempo_atualizar * 1000;
 
 
 
-	<script type="text/javascript">var pag = "<?=$pag?>"</script>
-	<script src="js/ajax.js"></script>
-
-	<script type="text/javascript">
-		var seg = '<?=$segundos?>';
-		$(document).ready(function() {    
-			setInterval(()=>{
-				listar();
-			}, seg);   
-		} );
-
-	</script>
 
 
+<!-- Modal Desconto-->
+<div class="modal fade" id="modalDesconto" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+	aria-hidden="true" data-backdrop="static">
+	<div class="modal-dialog" role="document">
+		<div class="modal-content">
+			<div class="modal-header bg-primary text-white">
+				<h4 class="modal-title" id="exampleModalLabel">Desconto</h4>
+				<button id="btn-fechar-desconto" aria-label="Close" class="btn-close" data-bs-dismiss="modal"
+					type="button"><span class="text-white" aria-hidden="true">&times;</span></button>
+			</div>
+
+			<div class="modal-body">
+				<form id="form-desconto">
+					<div class="row">
+						<div class="col-md-8">
+							<input class="form-control" type="text" name="valor" id="desconto_valor">
+
+							<input type="hidden" name="id" id="id_desconto">
+						</div>
+						<div class="col-md-4">
+							<button id="btn_desconto" type="submit" class="btn btn-primary">Confirmar</button>
+						</div>
 
 
-	<script type="text/javascript">
-		function listar(){		
+					</div>
+				</form>
 
-			var status = $('#buscar-contas').val();
-			var ult_pedido = $('#id_pedido').val();	
+				<br><small>
+					<div align="center" id="mensagem-desconto"></div>
+				</small>
 
-			$.ajax({
-				url: 'paginas/' + pag + "/listar.php",
-				method: 'POST',
-				data: {status, ult_pedido},
-				dataType: "html",
-
-				success:function(result){
-					$("#listar").html(result);
-					$('#mensagem-excluir').text('');
-				}
-			});
-		}
-	</script>
-
-
-
-	<script type="text/javascript">
-		function listarPedido(id){		
-
-			$.ajax({
-				url: 'paginas/' + pag + "/listar-pedido.php",
-				method: 'POST',
-				data: {id},
-				dataType: "html",
-
-				success:function(result){
-					$("#listar-pedido").html(result);           
-				}
-			});
-		}
-	</script>
+			</div>
+		</div>
+	</div>
+</div>
 
 
 
-	<script type="text/javascript">
-		function buscarContas(status){
-			$('#buscar-contas').val(status);
+<script type="text/javascript">
+	var pag = "<?= $pag ?>"
+</script>
+<script src="js/ajax.js"></script>
+
+<script type="text/javascript">
+	var seg = '<?= $segundos ?>';
+	$(document).ready(function() {
+		setInterval(() => {
 			listar();
-		}
-	</script>
+		}, seg);
+	});
+</script>
 
 
 
 
-	<script type="text/javascript">		
+<script type="text/javascript">
+	function listar() {
 
-$("#form-baixar").submit(function () {
+		var status = $('#buscar-contas').val();
+		var ult_pedido = $('#id_pedido').val();
 
-    event.preventDefault();
-    var formData = new FormData(this);
+		$.ajax({
+			url: 'paginas/' + pag + "/listar.php",
+			method: 'POST',
+			data: {
+				status,
+				ult_pedido
+			},
+			dataType: "html",
 
-    $.ajax({
-       url: 'paginas/' + pag + "/baixar.php",
-        type: 'POST',
-        data: formData,
-
-        success: function (mensagem) {
-            $('#mensagem-baixar').text('');
-            $('#mensagem-baixar').removeClass()
-            if (mensagem.trim() == "Baixado com Sucesso") {
-
-                $('#btn-fechar-baixar').click();
-                listar();          
-
-            } else {
-
-                $('#mensagem-baixar').addClass('text-danger')
-                $('#mensagem-baixar').text(mensagem)
-            }
-
-
-        },
-
-        cache: false,
-        contentType: false,
-        processData: false,
-
-    });
-
-});
+			success: function(result) {
+				$("#listar").html(result);
+				$('#mensagem-excluir').text('');
+			}
+		});
+	}
+</script>
 
 
 
-$("#form-entregador").submit(function () {
+<script type="text/javascript">
+	function listarPedido(id) {
 
-    event.preventDefault();
-    var formData = new FormData(this);
+		$.ajax({
+			url: 'paginas/' + pag + "/listar-pedido.php",
+			method: 'POST',
+			data: {
+				id
+			},
+			dataType: "html",
 
-    $.ajax({
-       url: 'paginas/' + pag + "/entregador.php",
-        type: 'POST',
-        data: formData,
-
-        success: function (mensagem) {
-            $('#mensagem-entregador').text('');
-            $('#mensagem-entregador').removeClass()
-            if (mensagem.trim() == "Salvo com Sucesso") {
-
-                $('#btn-fechar-entregador').click();
-                listar();          
-
-            } else {
-
-                $('#mensagem-entregador').addClass('text-danger')
-                $('#mensagem-entregador').text(mensagem)
-            }
+			success: function(result) {
+				$("#listar-pedido").html(result);
+			}
+		});
+	}
+</script>
 
 
-        },
 
-        cache: false,
-        contentType: false,
-        processData: false,
+<script type="text/javascript">
+	function buscarContas(status) {
+		$('#buscar-contas').val(status);
+		listar();
+	}
+</script>
 
-    });
 
-});
 
-	</script>
+
+<script type="text/javascript">
+	$("#form-baixar").submit(function() {
+
+		event.preventDefault();
+		var formData = new FormData(this);
+
+		$.ajax({
+			url: 'paginas/' + pag + "/baixar.php",
+			type: 'POST',
+			data: formData,
+
+			success: function(mensagem) {
+				$('#mensagem-baixar').text('');
+				$('#mensagem-baixar').removeClass()
+				if (mensagem.trim() == "Baixado com Sucesso") {
+					baixado()
+
+					$('#btn-fechar-baixar').click();
+					listar();
+
+				} else {
+
+					$('#mensagem-baixar').addClass('text-danger')
+					$('#mensagem-baixar').text(mensagem)
+				}
+
+
+			},
+
+			cache: false,
+			contentType: false,
+			processData: false,
+
+		});
+
+	});
+
+
+
+	$("#form-entregador").submit(function() {
+
+		$('#mensagem-entregador').text('Carregando!!');
+		$('#btn_entregador').hide();
+
+		event.preventDefault();
+		var formData = new FormData(this);
+
+		$.ajax({
+			url: 'paginas/' + pag + "/entregador.php",
+			type: 'POST',
+			data: formData,
+
+			success: function(mensagem) {
+				$('#mensagem-entregador').text('');
+				$('#mensagem-entregador').removeClass()
+				if (mensagem.trim() == "Salvo com Sucesso") {
+					$('#btn_entregador').show();
+
+					$('#btn-fechar-entregador').click();
+					listar();
+
+				} else {
+
+					$('#mensagem-entregador').addClass('text-danger')
+					$('#mensagem-entregador').text(mensagem)
+				}
+
+				$('#btn_entregador').show();
+
+
+			},
+
+			cache: false,
+			contentType: false,
+			processData: false,
+
+		});
+
+	});
+
+
+
+
+	$("#form-desconto").submit(function() {
+
+		$('#mensagem-desconto').text('Carregando!!');
+		$('#btn_desconto').hide();
+
+		event.preventDefault();
+		var formData = new FormData(this);
+
+		$.ajax({
+			url: 'paginas/' + pag + "/desconto.php",
+			type: 'POST',
+			data: formData,
+
+			success: function(mensagem) {
+				$('#mensagem-desconto').text('');
+				$('#mensagem-desconto').removeClass()
+				if (mensagem.trim() == "Baixado com Sucesso") {
+					$('#btn_desconto').show();
+					$('#desconto_valor').val('');
+					$('#btn-fechar-desconto').click();
+					listar();
+
+				} else {
+
+					$('#mensagem-desconto').addClass('text-danger')
+					$('#mensagem-desconto').text(mensagem)
+				}
+
+				$('#btn_desconto').show();
+
+
+			},
+
+			cache: false,
+			contentType: false,
+			processData: false,
+
+		});
+
+	});
+</script>

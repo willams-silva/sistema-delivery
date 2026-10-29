@@ -17,16 +17,16 @@ if($total_reg > 0){
 
 echo <<<HTML
 	<small>
-	<table class="table table-hover" id="tabela">
+	<table class="table table-hover table-bordered text-nowrap border-bottom dt-responsive" id="tabela">
 	<thead> 
 	<tr> 
-	<th>Cliente</th>	
-	<th class="esc">Valor</th> 	
-	<th class="esc">Total Pago</th> 
-	<th class="esc">Troco</th>	
-	<th class="esc">Forma PGTO</th> 	
-	<th class="esc">Data</th>	 	
-	<th class="esc">Hora</th>		
+	<th>Cliente</th>
+	<th>Valor</th> 
+	<th>Total Pago</th>
+	<th>Troco</th>
+	<th>Forma PGTO</th>
+	<th>Data</th>
+	<th>Hora</th>
 	<th>Ações</th>
 	</tr> 
 	</thead> 
@@ -90,48 +90,42 @@ for($i=0; $i < $total_reg; $i++){
 		if($status == 'Finalizado'){
 			$classe_alerta = 'text-verde';	
 			$total_vendas += $valor;	
-			$classe_linha = '';	
+			$classe_linha = '';
+			$classe_ativo = '';
+			$classe_ocultar = '';
 		}else if($status == 'Cancelado'){
 			$classe_alerta = 'text-danger';
 			$total_vendas += 0;
-			$classe_linha = 'text-muted';	
-			
+			$classe_linha = 'text-muted';
+			$classe_ativo = '#c4c4c4';
+			$classe_ocultar = 'ocultar';
 		}else{
 			$classe_alerta = 'text-primary';
 			$total_vendas += $valor;
-			$classe_linha = '';			
+			$classe_linha = '';
+			$classe_ativo = '';
+			$classe_ocultar = '';
 		}
 
 
 
 echo <<<HTML
 <tr class="{$classe_linha}">
-<td><i class="fa fa-square {$classe_alerta}"></i> <b>Pedido ({$pedido})</b> / {$nome_cliente}</td>
-<td class="esc">R$ {$valorF}</td>
-<td class="esc">R$ {$total_pagoF}</td>
-<td class="esc">R$ {$trocoF}</td>
-<td class="esc">{$tipo_pgto}</td>
-<td class="esc">{$dataF}</td>
-<td class="esc">{$hora}</td>
+<td style="color:{$classe_ativo}"><i class="fa fa-square {$classe_alerta}"></i> <b>Pedido ({$pedido})</b> / {$nome_cliente}</td>
+<td style="color:{$classe_ativo}">R$ {$valorF}</td>
+<td style="color:{$classe_ativo}">R$ {$total_pagoF}</td>
+<td style="color:{$classe_ativo}">R$ {$trocoF}</td>
+<td style="color:{$classe_ativo}">{$tipo_pgto}</td>
+<td style="color:{$classe_ativo}">{$dataF}</td>
+<td style="color:{$classe_ativo}">{$hora}</td>
 <td>	
 
-		<big><a href="#" onclick="mostrar('{$nome_cliente}', '{$valorF}', '{$total_pagoF}', '{$trocoF}',  '{$dataF}', '{$hora}', '{$status}', '{$pago}', '{$obs}', '{$taxa_entregaF}', '{$tipo_pgto}', '{$nome_usuario_pgto}')" title="Ver Dados"><i class="fa fa-info-circle text-secondary"></i></a></big>
+		<a class="btn btn-primary-light btn-sm" href="#" onclick="mostrar('{$nome_cliente}', '{$valorF}', '{$total_pagoF}', '{$trocoF}',  '{$dataF}', '{$hora}', '{$status}', '{$pago}', '{$obs}', '{$taxa_entregaF}', '{$tipo_pgto}', '{$nome_usuario_pgto}')" title="Ver Dados"><i class="fa fa-info-circle"></i></a>
 
 
+<big><a href="#" class="btn btn-danger-light btn-sm {$classe_ocultar}" onclick="excluir('{$id}')" title="Excluir"><i class="fa fa-trash-can text-danger"></i></a></big>
 
-		<li class="dropdown head-dpdn2" style="display: inline-block;">
-		<a title="Cancelar Venda" href="#" class="dropdown-toggle" data-toggle="dropdown" aria-expanded="false"><big><i class="fa fa-trash-o text-danger"></i></big></a>
-
-		<ul class="dropdown-menu" style="margin-left:-230px;">
-		<li>
-		<div class="notification_desc2">
-		<p>Confirmar Exclusão? <a href="#" onclick="excluir('{$id}')"><span class="text-danger">Sim</span></a></p>
-		</div>
-		</li>										
-		</ul>
-		</li>
-
-		<big><a  href="#" onclick="gerarComprovante('{$id}')" title="Gerar Comprovante"><i class="fa fa-file-pdf-o text-primary"></i></a></big>
+		<a class="btn btn-dark-light btn-sm" href="#" onclick="gerarComprovante('{$id}')" title="Gerar Comprovante"><i class="fa fa-file-pdf-o"></i></a>
 	
 		</td>
 </tr>

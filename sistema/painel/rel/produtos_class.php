@@ -1,9 +1,11 @@
 <?php 
-include('../../conexao.php');
+require_once("../../conexao.php");
+
+
 //ALIMENTAR OS DADOS NO RELATÓRIO
 $html = file_get_contents($url_sistema."sistema/painel/rel/produtos.php");
 
-if($tipo_rel != 'PDF'){
+if ($tipo_rel != 'PDF') {
 	echo $html;
 	exit();
 }
@@ -30,11 +32,14 @@ $pdf->load_html($html);
 
 //RENDERIZAR O PDF
 $pdf->render();
-
 //NOMEAR O PDF GERADO
+
+
 $pdf->stream(
-'produtos.pdf',
-array("Attachment" => false)
+	'produtos.pdf',
+	array("Attachment" => false)
 );
+
+
 
  ?>

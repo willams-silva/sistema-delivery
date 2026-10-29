@@ -1,107 +1,97 @@
-<?php 
-require_once("../../../conexao.php");
+<?php
 $tabela = 'cargos';
+require_once("../../../conexao.php");
 
-$query = $pdo->query("SELECT * FROM $tabela order by id desc");
+
+$query = $pdo->query("SELECT * from $tabela order by id desc");
 $res = $query->fetchAll(PDO::FETCH_ASSOC);
-$total_reg = @count($res);
-if($total_reg > 0){
-
-echo <<<HTML
-	<small>
-	<table class="table table-hover" id="tabela">
+$linhas = @count($res);
+if ($linhas > 0) {
+	echo <<<HTML
+<small>
+	<table class="table table-hover table-bordered text-nowrap border-bottom dt-responsive" id="tabela">
 	<thead> 
 	<tr> 
-	<th>Nome</th>	
-		
+	<th align="center" width="5%" class="text-center">Selecionar</th>
+	<th class="width80">Nome</th>		
 	<th>Ações</th>
 	</tr> 
 	</thead> 
 	<tbody>	
 HTML;
 
-for($i=0; $i < $total_reg; $i++){
-	foreach ($res[$i] as $key => $value){}
+
+	for ($i = 0; $i < $linhas; $i++) {
 		$id = $res[$i]['id'];
 		$nome = $res[$i]['nome'];
-	
 
-echo <<<HTML
+
+		echo <<<HTML
 <tr>
+<td align="center">
+<div class="custom-checkbox custom-control">
+<input type="checkbox" class="custom-control-input" id="seletor-{$id}" onchange="selecionar('{$id}')">
+<label for="seletor-{$id}" class="custom-control-label mt-1 text-dark"></label>
+</div>
+</td>
 <td>{$nome}</td>
+
 <td>
-	<big><a href="#" onclick="editar('{$id}','{$nome}')" title="Editar Dados"><i class="fa fa-edit text-primary"></i></a></big>
+	<big><a class="btn btn-info-light btn-sm" href="#" onclick="editar('{$id}','{$nome}')" title="Editar Dados"><i class="fa fa-edit "></i></a></big>
 
-	
-
-	<li class="dropdown head-dpdn2" style="display: inline-block;">
-		<a href="#" class="dropdown-toggle" data-toggle="dropdown" aria-expanded="false"><big><i class="fa fa-trash-o text-danger"></i></big></a>
-
-		<ul class="dropdown-menu" style="margin-left:-230px;">
-		<li>
-		<div class="notification_desc2">
-		<p>Confirmar Exclusão? <a href="#" onclick="excluir('{$id}')"><span class="text-danger">Sim</span></a></p>
-		</div>
-		</li>										
-		</ul>
-		</li>
-
-
-
-
+<big><a href="#" class="btn btn-danger-light btn-sm" onclick="excluir('{$id}')" title="Excluir"><i class="fa fa-trash-can text-danger"></i></a></big>
 </td>
 </tr>
 HTML;
+	}
 
-}
 
-echo <<<HTML
-	</tbody>
-	<small><div align="center" id="mensagem-excluir"></div></small>
-	</table>
-	</small>
+	echo <<<HTML
+</tbody>
+<small><div align="center" id="mensagem-excluir"></div></small>
+</table>
+</small>
 HTML;
-
-
-}else{
-	echo 'Não possui registros cadastrados!';
+} else {
+	echo '<small>Nenhum Registro Encontrado!</small>';
 }
 
+?>
 
- ?>
 
 
 <script type="text/javascript">
-	$(document).ready( function () {
-    $('#tabela').DataTable({
-    		"ordering": false,
+	$(document).ready(function() {
+		$('#tabela').DataTable({
+			"language": {
+				//"url" : '//cdn.datatables.net/plug-ins/1.13.2/i18n/pt-BR.json'
+			},
+			"ordering": false,
 			"stateSave": true
-    	});
-    $('#tabela_filter label input').focus();
-} );
+		});
+	});
 </script>
 
-
 <script type="text/javascript">
-	function editar(id, nome){
+	function editar(id, nome) {
+		$('#mensagem').text('');
+		$('#titulo_inserir').text('Editar Registro');
+
 		$('#id').val(id);
 		$('#nome').val(nome);
-		
-		
-		
-		$('#titulo_inserir').text('Editar Registro');
+
 		$('#modalForm').modal('show');
-		
 	}
 
 
 
-
-
-
-	function limparCampos(){
+	function limparCampos() {
 		$('#id').val('');
-		$('#nome').val('');	
-	}
+		$('#nome').val('');
 
+
+		$('#ids').val('');
+		$('#btn-deletar').hide();
+	}
 </script>
+

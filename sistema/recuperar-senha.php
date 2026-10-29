@@ -1,46 +1,51 @@
-<?php 
-require_once("conexao.php");
-$email = filter_var(@$_POST['email-rec'], @FILTER_SANITIZE_STRING);
+<?php
+require_once ("conexao.php");
 
-//VERIFICAR SE EXISTE USUÁRIO ADMIN CADASTRADO
-$query = $pdo->prepare("SELECT * FROM usuarios WHERE email = :email and nivel != 'Administrador'");
+//recuperar email
+$email = filter_var(@$_POST['email'], @FILTER_SANITIZE_STRING);
+
+$query = $pdo->prepare("SELECT * from usuarios where email = :email and nivel != 'Administrador'");
 $query->bindValue(":email", "$email");
 $query->execute();
 $res = $query->fetchAll(PDO::FETCH_ASSOC);
 $total_reg = @count($res);
-if($total_reg == 0){
-	echo 'Este email não está cadastrado!';
-	exit();
-}else{
+if ($total_reg > 0) {
+    $telefone = $res[0]['telefone'];
 
-	$telefone = $res[0]['telefone'];
-	
-	$nova_senha = rand(100000, 100000000);
-	$senha_crip = password_hash($nova_senha, PASSWORD_DEFAULT);
-	$query = $pdo->prepare("UPDATE usuarios SET senha_crip = '$senha_crip' where email = :email");
-	$query->bindValue(":email", "$email");
-	$query->execute();
+    $token_email = hash('sha256', time());
 
+    $q = $pdo->prepare("UPDATE usuarios SET token=? WHERE email=?");
+    $q->execute([$token_email, $email]);
+
+    $reset_link = $url_sistema .'sistema/'. 'resetar-senha.php' . '?email=' . $email . '&token=' . $token_email;
+
+
+    //envio do email
+    $destinatario = $email;
+    $assunto = utf8_decode($nome_sistema . ' - Recuperação de Senha');
+    $mensagem = utf8_decode('Clique no Link ao lado para atualizar sua senha:' . $reset_link);
+    $cabecalhos = "From: " . $email_sistema;
+
+    @mail($destinatario, $assunto, $mensagem, $cabecalhos);
+
+    //disparar para o telefone do cliente a recuperação
+    if ($api_whatsapp != 'Não' and $telefone != '') {
+        $telefone_envio = '55' . preg_replace('/[ ()-]+/', '', $telefone);
+
+        $mensagem_whatsapp = '*' . $nome_sistema . '*%0A%0A';
+        $mensagem_whatsapp .= '🤩 _Link para Recuperação de Senha_ %0A%0A';
+        $mensagem_whatsapp .= $reset_link;
+
+        require ("painel/apis/texto.php");
+
+    }
+
+    //echo $reset_link;
+    //exit();
+
+    echo 'Recuperado com Sucesso';
+} else {
+    echo 'Esse email não está Cadastrado!';
 }
 
-//enviar o email com a nova senha
-$destinatario = $email;
-$assunto = $nome_sistema . ' - Recuperação de Senha';
-$mensagem = 'Sua senha é ' .$nova_senha;
-$cabecalhos = "From: ".$email_sistema;
-   
-@mail($destinatario, $assunto, $mensagem, $cabecalhos);
-
-
-	if($status_whatsapp == 'Api' and $telefone != ""){
-		$tel_cliente_whats = '55'.preg_replace('/[ ()-]+/' , '' , @$telefone);
-		$mensagem = '*'.$nome_sistema.'* %0A';
-		$mensagem .= '_Recuperação de Senha_ %0A';		
-		$mensagem .= 'Sua Senha é: *'.$nova_senha.'*';
-		
-		require("../js/ajax/api_texto.php");
-}
-
-echo 'Recuperado com Sucesso';
-
- ?>
+?>

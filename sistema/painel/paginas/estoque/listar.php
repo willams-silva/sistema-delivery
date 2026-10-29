@@ -9,7 +9,7 @@ if($total_reg > 0){
 
 echo <<<HTML
 	<small>
-	<table class="table table-hover" id="tabela">
+	<table class="table table-hover table-bordered text-nowrap border-bottom dt-responsive" id="tabela">
 	<thead> 
 	<tr> 
 	<th>Nome</th>	
@@ -70,7 +70,7 @@ echo <<<HTML
 <td>
 		
 
-		<big><a href="#" onclick="mostrar('{$nome}', '{$nome_cat}', '{$descricao}', '{$valor_compraF}',  '{$valor_vendaF}', '{$estoque}', '{$foto}', '{$nivel_estoque}')" title="Ver Dados"><i class="fa fa-info-circle text-secondary"></i></a></big>
+		<a class="btn btn-primary-light btn-sm" href="#" onclick="mostrar('{$nome}', '{$nome_cat}', '{$descricao}', '{$valor_compraF}',  '{$valor_vendaF}', '{$estoque}', '{$foto}', '{$nivel_estoque}')" title="Ver Dados"><i class="fa fa-info-circle"></i></a>
 
 
 

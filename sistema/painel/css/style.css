@@ -8553,3 +8553,17 @@ h4.asd label {
 .text-laranja{
   color: #e6841c;
 }
+
+/* Aumente o z-index do SweetAlert para garantir que ele apareça acima do modal */
+.swal2-custom-zindex {
+  z-index: 20000 !important;
+  /* Ajuste o valor conforme necessário */
+}
+
+
+.botao-excluir {
+  background: red;
+  border-radius: 5px;
+  color: #ffffff;
+  padding: 3px;
+}

@@ -153,7 +153,7 @@ echo <<<HTML
 			</div>
 
 			<div class="itens-carrinho-qtd-adc {$classe_adc}">
-				<a title="Ver Adicionais" class="link-neutro" href="#" onclick="adicionais('{$nome_produto}', '{$id}')"><i class="bi  bi-plus text-primary"></i><small><small>Adicionais</small></small></a>
+				<a title="Ver Adicionais" class="link-neutro" href="#" onclick="adicionais('{$nome_produto}', '{$id}')"><i class="bi bi-plus-square-fill text-primary"></i><small><small>Adicionais</small></small></a>
 			</div>
 
 			<a href="#" onclick="mudarQuant('{$id}', '{$quantidade}', 'menos')" class="link-neutro">

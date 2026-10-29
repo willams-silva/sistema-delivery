@@ -1,69 +1,69 @@
 <?php 
-require_once("../../../conexao.php");
 $tabela = 'acessos';
+require_once("../../../conexao.php");
 
-$query = $pdo->query("SELECT * FROM $tabela ORDER BY id desc");
+$query = $pdo->query("SELECT * from $tabela order by id desc");
 $res = $query->fetchAll(PDO::FETCH_ASSOC);
-$total_reg = @count($res);
-if($total_reg > 0){	
-
+$linhas = @count($res);
+if($linhas > 0){
 echo <<<HTML
-	<small>
-	<table class="table table-hover" id="tabela">
+<small>
+	<table class="table table-striped table-hover table-bordered text-nowrap border-bottom dt-responsive" id="tabela">
 	<thead> 
 	<tr> 
+	<th align="center" width="5%" class="text-center">Selecionar</th>
 	<th>Nome</th>	
-	<th class="esc">Chave</th> 	
-	<th class="esc">Grupo</th> 		
+	<th>Chave</th>	
+	<th>Grupo</th>
 	<th>Ações</th>
 	</tr> 
 	</thead> 
 	<tbody>	
 HTML;
 
-for($i=0; $i < $total_reg; $i++){
-	foreach ($res[$i] as $key => $value){}
+
+for($i=0; $i<$linhas; $i++){
 	$id = $res[$i]['id'];
-	$nome = $res[$i]['nome'];	
+	$nome = $res[$i]['nome'];
+	$grupo = $res[$i]['grupo'];
 	$chave = $res[$i]['chave'];
-	$grupo = $res[$i]['grupo'];	
-	
-	
-		$query2 = $pdo->query("SELECT * FROM grupo_acessos where id = '$grupo'");
-		$res2 = $query2->fetchAll(PDO::FETCH_ASSOC);
-		$total_reg2 = @count($res2);
-		if($total_reg2 > 0){
-			$nome_cat = $res2[0]['nome'];
-		}else{
-			$nome_cat = 'Nenhum!';
-		}
-	
+	$pagina = $res[$i]['pagina'];
 
+$query2 = $pdo->query("SELECT * from grupo_acessos where id = '$grupo' ");
+$res2 = $query2->fetchAll(PDO::FETCH_ASSOC);
+if(@count($res2) > 0){
+	$nome_grupo = $res2[0]['nome'];
+}else{
+	$nome_grupo = 'Sem Grupo';
+}
 
+		
 echo <<<HTML
-<tr class="">
-<td>
-{$nome}
+<tr>
+<td align="center">
+<div class="custom-checkbox custom-control">
+<input type="checkbox" class="custom-control-input" id="seletor-{$id}" onchange="selecionar('{$id}')">
+<label for="seletor-{$id}" class="custom-control-label mt-1 text-dark"></label>
+</div>
 </td>
+<td>{$nome}</td>
 <td class="esc">{$chave}</td>
-<td class="esc">{$nome_cat}</td>
+<td class="esc">{$nome_grupo}</td>
+
 <td>
-		<big><a href="#" onclick="editar('{$id}','{$nome}', '{$chave}', '{$grupo}')" title="Editar Dados"><i class="fa fa-edit text-primary"></i></a></big>
+	<big><a class="btn btn-info btn-sm" href="#" onclick="editar('{$id}','{$nome}','{$chave}','{$grupo}','{$pagina}')" title="Editar Dados"><i class="fa fa-edit "></i></a></big>
 
-		<li class="dropdown head-dpdn2" style="display: inline-block;">
-		<a href="#" class="dropdown-toggle" data-toggle="dropdown" aria-expanded="false"><big><i class="fa fa-trash-o text-danger"></i></big></a>
-
-		<ul class="dropdown-menu" style="margin-left:-230px;">
-		<li>
-		<div class="notification_desc2">
-		<p>Confirmar Exclusão? <a href="#" onclick="excluir('{$id}')"><span class="text-danger">Sim</span></a></p>
-		</div>
-		</li>										
-		</ul>
-		</li>
+		<div class="dropdown" style="display: inline-block;">                      
+                        <a class="btn btn-danger btn-sm" href="#" aria-expanded="false" aria-haspopup="true" data-bs-toggle="dropdown" class="dropdown"><i class="fa fa-trash"></i> </a>
+                        <div  class="dropdown-menu tx-13">
+                        <div class="dropdown-item-text botao_excluir">
+                        <p>Confirmar Exclusão? <a href="#" onclick="excluir('{$id}')"><span class="text-danger">Sim</span></a></p>
+                        </div>
+                        </div>
+                        </div>
 
 
-		</td>
+</td>
 </tr>
 HTML;
 
@@ -76,41 +76,50 @@ echo <<<HTML
 </small>
 HTML;
 
-
 }else{
-	echo '<small>Não possui nenhum registro Cadastrado!</small>';
+	echo 'Nenhum Registro Encontrado!';
 }
 
 ?>
 
+
+
 <script type="text/javascript">
-	$(document).ready( function () {
+	$(document).ready( function () {		
     $('#tabela').DataTable({
-    		"ordering": false,
-			"stateSave": true
-    	});
-    $('#tabela_filter label input').focus();
+    	"language" : {
+            //"url" : '//cdn.datatables.net/plug-ins/1.13.2/i18n/pt-BR.json'
+        },
+        "ordering": false,
+		"stateSave": true
+    });
 } );
 </script>
 
-
 <script type="text/javascript">
-	function editar(id, nome, chave, grupo){
-		$('#id').val(id);
-		$('#nome').val(nome);
-		$('#chave').val(chave);
-		$('#grupo').val(grupo).change();
-		
-		$('#titulo_inserir').text('Editar Registro');
-		$('#modalForm').modal('show');
+	function editar(id, nome, chave, grupo, pagina){
+		$('#mensagem').text('');
+    	$('#titulo_inserir').text('Editar Registro');
 
-		
+    	$('#id').val(id);
+    	$('#nome').val(nome);
+    	$('#chave').val(chave);
+    	$('#grupo').val(grupo).change();
+    	$('#pagina').val(pagina).change();
+    
+    	$('#modalForm').modal('show');
 	}
+
+
 
 	function limparCampos(){
 		$('#id').val('');
-		$('#nome').val('');
-		$('#chave').val('');	
-	}
-</script>
+    	$('#nome').val('');
+    	$('#chave').val('');
+    	$('#grupo').val('0').change();
 
+    	$('#ids').val('');
+    	$('#btn-deletar').hide();	
+	}
+
+</script>

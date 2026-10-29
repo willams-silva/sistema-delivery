@@ -2,6 +2,7 @@
 
 include('../../conexao.php');
 
+
 $id = $_GET['id'];
 $enviar = $_GET['enviar'];
 
@@ -14,6 +15,7 @@ $html = file_get_contents($url_sistema."sistema/painel/rel/comprovante2.php?id=$
 require_once '../dompdf/autoload.inc.php';
 use Dompdf\Dompdf;
 use Dompdf\Options;
+
 
 header("Content-Transfer-Encoding: binary");
 header("Content-Type: image/png");
@@ -54,11 +56,11 @@ $res = $query->fetchAll(PDO::FETCH_ASSOC);
 $telefone = $res[0]['telefone'];
 
 //enviar relatório para o whatsapp
-if($enviar == 'sim'){
-$tel_cliente_whats = '55'.preg_replace('/[ ()-]+/' , '' , $telefone);
-$mensagem = '';
-$url_envio = $url_sistema."sistema/painel/pdf/comprovantes/comprovante".$id.".pdf";
-require("../../../js/ajax/api3.php");
-}
+// if($enviar == 'sim'){
+// $tel_cliente_whats = '55'.preg_replace('/[ ()-]+/' , '' , $telefone);
+// $mensagem = '';
+// $url_envio = $url_sistema."sistema/painel/pdf/comprovantes/comprovante".$id.".pdf";
+// require("../../../js/ajax/api3.php");
+// }
 
  ?>

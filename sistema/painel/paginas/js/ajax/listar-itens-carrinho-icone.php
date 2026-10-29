@@ -80,15 +80,15 @@ if($total_reg3 > 0){
 echo <<<HTML
 
 		
-		<li class="list-group-item" style="padding:5px">
+		<div class="list-group-item" style="padding:5px">
 		<img src="sistema/painel/images/produtos/{$foto_produto}" width="30px">		    	
-		<span class="nome-produto"><b><small>{$quantidade} {$nome_produto} {$sigla_variacao}<span class="text-success">R$ ($valor_unitF)</span></small></b></span>
-
-			
+		<span class="nome-produto"><b><small>{$quantidade} {$nome_produto} {$sigla_variacao}<span class="text-success">R$ ($valor_unitF)</span></small></b></span>			
 		<a href="#popup1" onclick="excluirCarrinhoIcone('{$id}')" class="link-neutro"><i class="bi bi-x-lg direita"></i></a>		
 
 
-			</li>
+			</div>
+
+
 
 HTML;
 

@@ -18,6 +18,13 @@ if(@$saidas == 'ocultar'){
 
 ?>
 
+<div class="breadcrumb-header justify-content-between">
+    <div class="left-content mt-2">
+
+
+</div>
+</div>
+
 
 <div class="bs-example widget-shadow" style="padding:15px" id="listar">
 	

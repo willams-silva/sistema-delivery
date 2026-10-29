@@ -1,178 +1,180 @@
-<?php 
+<?php
 require_once("../../../conexao.php");
 $tabela = 'categorias';
 
 $query = $pdo->query("SELECT * FROM $tabela order by id desc");
 $res = $query->fetchAll(PDO::FETCH_ASSOC);
 $total_reg = @count($res);
-if($total_reg > 0){
+if ($total_reg > 0) {
 
-echo <<<HTML
+	echo <<<HTML
 	<small>
-	<table class="table table-hover" id="tabela">
+	<table class="table table-hover table-bordered text-nowrap border-bottom dt-responsive" id="tabela">
 	<thead> 
 	<tr> 
+		<th align="center" width="5%" class="text-center">Selecionar</th>
+		<th>Foto</th>
 	<th>Nome</th>	
-	<th class="esc">Descrição</th> 	
-	<th class="esc">Cor</th> 	
-	<th class="esc">Mais Sabores</th> 	
-	<th class="esc">Delivery</th> 	
-	<th class="esc">Foto</th>		
+	<th>Descrição</th> 	
+	<th>Mais Sabores</th> 	
+	<th>Delivery</th> 
+	<th>Produtos</th> 
 	<th>Ações</th>
 	</tr> 
 	</thead> 
 	<tbody>	
 HTML;
 
-for($i=0; $i < $total_reg; $i++){
-	foreach ($res[$i] as $key => $value){}
+	for ($i = 0; $i < $total_reg; $i++) {
+		foreach ($res[$i] as $key => $value) {
+		}
 		$id = $res[$i]['id'];
-		$nome = $res[$i]['nome'];		
-		$ativo = $res[$i]['ativo'];		
+		$nome = $res[$i]['nome'];
+		$ativo = $res[$i]['ativo'];
 		$foto = $res[$i]['foto'];
 		$descricao = $res[$i]['descricao'];
-		$cor = $res[$i]['cor'];
 		$mais_sabores = $res[$i]['mais_sabores'];
 		$delivery = $res[$i]['delivery'];
 
 		$ocultar_ad = 'ocultar';
-		if($mais_sabores == 'Sim'){
+		if ($mais_sabores == 'Sim') {
 			$ocultar_ad = '';
-		}	
+		}
 
-		$descricaoF = mb_strimwidth($descricao, 0, 120, "...");	
+		$descricaoF = mb_strimwidth($descricao, 0, 50, "...");
 
-		if($ativo == 'Sim'){
+		if ($ativo == 'Sim') {
 			$icone = 'fa-check-square';
 			$titulo_link = 'Desativar Item';
 			$acao = 'Não';
 			$classe_linha = '';
-		}else{
+		} else {
 			$icone = 'fa-square-o';
 			$titulo_link = 'Ativar Item';
 			$acao = 'Sim';
-			$classe_linha = 'text-muted';
+			$classe_linha = '#c4c4c4';
 		}
 
-echo <<<HTML
+		$query2 = $pdo->query("SELECT * from produtos where categoria = '$id'");
+		$res2 = $query2->fetchAll(PDO::FETCH_ASSOC);
+		$produtos = @count($res2);
+
+
+		echo <<<HTML
 <tr class="{$classe_linha}">
-<td>{$nome}</td>
-<td class="esc">{$descricaoF}</td>
-<td class="esc"><div class="divcor {$cor}"></div></td>
-<td class="esc">{$mais_sabores}</td>
-<td class="esc">{$delivery}</td>
-<td class="esc"><img src="images/{$tabela}/{$foto}" width="30px"></td>
+	<td align="center">
+<div class="custom-checkbox custom-control">
+<input type="checkbox" class="custom-control-input" id="seletor-{$id}" onchange="selecionar('{$id}')">
+<label for="seletor-{$id}" class="custom-control-label mt-1 text-dark"></label>
+</div>
+</td>
+	<td class="text-center" style="color:{$classe_linha}">
+	<img alt="avatar" class="rounded-circle" src="images/{$tabela}/{$foto}" width="30px" height="30px">
+	</td>
+<td style="color:{$classe_linha}">{$nome}</td>
+<td style="color:{$classe_linha}">{$descricaoF}</td>
+<td style="color:{$classe_linha}">{$mais_sabores}</td>
+<td style="color:{$classe_linha}">{$delivery}</td>
+<td align="center" style="color:{$classe_linha}">{$produtos}</td>
 <td>
-	<big><a href="#" onclick="editar('{$id}','{$nome}', '{$descricao}', '{$foto}', '{$cor}', '{$mais_sabores}', '{$delivery}')" title="Editar Dados"><i class="fa fa-edit text-primary"></i></a></big>
+	<a class="btn btn-info-light btn-sm" href="#" onclick="editar('{$id}','{$nome}', '{$descricao}', '{$foto}', '{$mais_sabores}', '{$delivery}')" title="Editar Dados"><i class="fa fa-edit"></i></a>
 
 	
-	<li class="dropdown head-dpdn2" style="display: inline-block;">
-		<a href="#" class="dropdown-toggle" data-toggle="dropdown" aria-expanded="false"><big><i class="fa fa-trash-o text-danger"></i></big></a>
-
-		<ul class="dropdown-menu" style="margin-left:-230px;">
-		<li>
-		<div class="notification_desc2">
-		<p>Confirmar Exclusão? <a href="#" onclick="excluir('{$id}')"><span class="text-danger">Sim</span></a></p>
-		</div>
-		</li>										
-		</ul>
-		</li>
+<big><a href="#" class="btn btn-danger-light btn-sm" onclick="excluir('{$id}')" title="Excluir"><i class="fa fa-trash-can text-danger"></i></a></big>
 
 
-		<big><a href="#" onclick="ativar('{$id}', '{$acao}')" title="{$titulo_link}"><i class="fa {$icone} text-success"></i></a></big>
+		<a class="btn btn-success-light btn-sm" href="#" onclick="ativar('{$id}', '{$acao}')" title="{$titulo_link}"><i class="fa {$icone}"></i></a>
 
-		<a class="$ocultar_ad" href="#" onclick="variacoes('{$id}','{$nome}')" title="Variações do Produto"><i class="fa fa-list text-primary"></i></a>
+		<a class="$ocultar_ad btn btn-primary-light btn-sm" href="#" onclick="variacoes('{$id}','{$nome}')" title="Variações do Produto"><i class="fa fa-list"></i></a>
 
-		<a class="{$ocultar_ad}" href="#" onclick="adicionais('{$id}','{$nome}')" title="Adicionais da Categoria"><i class="fa fa-plus text-verde"></i></a>
+		<a class="{$ocultar_ad} btn btn-success-light btn-sm" href="#" onclick="adicionais('{$id}','{$nome}')" title="Adicionais da Categoria"><i class="fa fa-plus "></i></a>
 
-		<a class="{$ocultar_ad}" href="#" onclick="bordas('{$id}','{$nome}')" title="Opções de Bordas"><i class="fa fa-plus-circle text-primary"></i></a>
+		<a class="{$ocultar_ad} btn btn-warning-light btn-sm" href="#" onclick="bordas('{$id}','{$nome}')" title="Opções de Bordas"><i class="fa fa-plus-circle"></i></a>
 
 
 </td>
 </tr>
 HTML;
+	}
 
-}
-
-echo <<<HTML
+	echo <<<HTML
 	</tbody>
 	<small><div align="center" id="mensagem-excluir"></div></small>
 	</table>
 	</small>
 HTML;
-
-
-}else{
+} else {
 	echo 'Não possui registros cadastrados!';
 }
 
 
- ?>
+?>
 
 
 <script type="text/javascript">
-	$(document).ready( function () {
-    $('#tabela').DataTable({
-    		"ordering": false,
+	$(document).ready(function() {
+		$('#tabela').DataTable({
+			"ordering": false,
 			"stateSave": true
-    	});
-    $('#tabela_filter label input').focus();
-} );
+		});
+		$('#tabela_filter label input').focus();
+	});
 </script>
 
 
 <script type="text/javascript">
-	function editar(id, nome, descricao, foto, cor, mais_sabores, delivery){
+	function editar(id, nome, descricao, foto, mais_sabores, delivery) {
 		$('#id').val(id);
 		$('#nome').val(nome);
 		$('#descricao').val(descricao);
-		$('#cor').val(cor).change();
-		$('#mais_sabores').val(mais_sabores).change();	
-		$('#delivery').val(delivery).change();	
-		
+		$('#mais_sabores').val(mais_sabores).change();
+		$('#delivery').val(delivery).change();
+
 		$('#titulo_inserir').text('Editar Registro');
 		$('#modalForm').modal('show');
 		$('#foto').val('');
-		$('#target').attr('src','images/categorias/' + foto);
+		$('#target').attr('src', 'images/categorias/' + foto);
 	}
 
 
 
 
-	function limparCampos(){
+	function limparCampos() {
 		$('#id').val('');
 		$('#nome').val('');
-		$('#descricao').val('');	
-		$('#delivery').val('Sim').change();		
+		$('#descricao').val('');
 		$('#foto').val('');
-		$('#target').attr('src','images/categorias/sem-foto.jpg');
+		$('#delivery').val('Sim').change()
+		$('#target').attr('src', 'images/categorias/sem-foto.jpg');
 	}
-
 </script>
 
 
 <script type="text/javascript">
-	function variacoes(id, nome){
+	function variacoes(id, nome) {
 
-		$('#titulo_nome_var').text(nome);		
-		$('#id_var').val(id);		
-		
+		$('#titulo_nome_var').text(nome);
+		$('#id_var').val(id);
+
 		listarVariacoes(id);
 		$('#modalVariacoes').modal('show');
+		$('#btn_var').text('Salvar');
+		$('#id_var_editar').val('');
 		limparCamposVar();
 	}
 </script>
 
 
 <script type="text/javascript">
-	function adicionais(id, nome){
+	function adicionais(id, nome) {
 
-		$('#titulo_nome_adc').text(nome);		
-		$('#id_adc').val(id);		
+		$('#titulo_nome_adc').text(nome);
+		$('#id_adc').val(id);
 
 		$('#btn_editar_adc').text('Salvar');
 		$('#id_adc_editar').val('');
-		
+		limparCamposVar()
+
 		listarAdicionais(id);
 		$('#modalAdicionais').modal('show');
 		limparCamposAdc();
@@ -181,13 +183,14 @@ HTML;
 
 
 <script type="text/javascript">
-	function bordas(id, nome){
+	function bordas(id, nome) {
 
-		$('#titulo_nome_bordas').text(nome);		
-		$('#id_bordas').val(id);		
-		
+		$('#titulo_nome_bordas').text(nome);
+		$('#id_bordas').val(id);
+
 		listarBordas(id);
 		$('#modalBordas').modal('show');
 		limparCamposBordas();
 	}
 </script>
+

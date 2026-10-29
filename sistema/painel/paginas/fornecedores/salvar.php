@@ -1,36 +1,77 @@
 <?php 
-require_once("../../../conexao.php");
 $tabela = 'fornecedores';
+require_once("../../../conexao.php");
 
-$id = $_POST['id'];
 $nome = $_POST['nome'];
-$endereco = $_POST['endereco'];
-$telefone = $_POST['telefone'];
 $email = $_POST['email'];
-$tipo_chave = $_POST['tipo_chave'];
-$chave_pix = $_POST['chave_pix'];
+$telefone = $_POST['telefone'];
+$endereco = $_POST['endereco'];
+$pix = $_POST['pix'];
+$id = $_POST['id'];
+$numero =@ $_POST['numero'];
+$bairro = @$_POST['bairro'];
+$cidade = @$_POST['cidade'];
+$estado = @$_POST['estado'];
+$cep = @$_POST['cep'];
+$cnpj = @$_POST['cnpj'];
+$complemento = @$_POST['complemento'];
+$tipo_chave = @$_POST['tipo_chave'];
 
-//validar email
+
+// Validação da Chave Pix
+if($pix == '' and $tipo_chave != ''){
+	echo 'Preencher o campo Pix';
+	exit();
+}
+
+if ($pix != '' and $tipo_chave == '') {
+	echo 'Escola o Tipo de Chave';
+	exit();
+}
+
+
+
+//validacao email
+if($email != ""){
+	$query = $pdo->query("SELECT * from $tabela where email = '$email'");
+	$res = $query->fetchAll(PDO::FETCH_ASSOC);
+	if(@count($res) > 0 and $id != $res[0]['id']){
+		echo 'Email já Cadastrado, escolha outro!!';
+		exit();
+	}
+}
+
+
+//validacao telefone
 $query = $pdo->query("SELECT * from $tabela where telefone = '$telefone'");
 $res = $query->fetchAll(PDO::FETCH_ASSOC);
-if(@count($res) > 0 and $id != $res[0]['id']){
-	echo 'Telefone já Cadastrado, escolha outro!!';
+$id_reg = @$res[0]['id'];
+if(@count($res) > 0 and $id != $id_reg){
+	echo 'Telefone já Cadastrado!';
 	exit();
 }
 
 if($id == ""){
-	$query = $pdo->prepare("INSERT INTO $tabela SET nome = :nome, telefone = :telefone, endereco = :endereco, email = :email, data = curDate(), tipo_chave = '$tipo_chave', chave_pix = :chave_pix");
+$query = $pdo->prepare("INSERT INTO $tabela SET nome = :nome, email = :email, telefone = :telefone, data = curDate(), endereco = :endereco, pix = :pix, numero = :numero, bairro = :bairro, cidade = :cidade, estado = :estado, cep = :cep, cnpj = :cnpj, complemento = :complemento, tipo_chave = '$tipo_chave' ");
+	
 }else{
-	$query = $pdo->prepare("UPDATE $tabela SET nome = :nome, telefone = :telefone, endereco = :endereco, email = :email, tipo_chave = '$tipo_chave', chave_pix = :chave_pix WHERE id = '$id'");
+$query = $pdo->prepare("UPDATE $tabela SET nome = :nome, email = :email, telefone = :telefone, endereco = :endereco, pix = :pix, numero = :numero, bairro = :bairro, cidade = :cidade, estado = :estado, cep = :cep, cnpj = :cnpj, complemento = :complemento, tipo_chave = '$tipo_chave' where id = '$id'");
 }
-
 $query->bindValue(":nome", "$nome");
-$query->bindValue(":endereco", "$endereco");
 $query->bindValue(":email", "$email");
 $query->bindValue(":telefone", "$telefone");
-$query->bindValue(":chave_pix", "$chave_pix");
+$query->bindValue(":endereco", "$endereco");
+$query->bindValue(":pix", "$pix");
+$query->bindValue(":numero", "$numero");
+$query->bindValue(":bairro", "$bairro");
+$query->bindValue(":cidade", "$cidade");
+$query->bindValue(":estado", "$estado");
+$query->bindValue(":cep", "$cep");
+$query->bindValue(":cnpj", "$cnpj");
+$query->bindValue(":complemento", "$complemento");
 $query->execute();
 
 echo 'Salvo com Sucesso';
 
-?>
+
+ ?>

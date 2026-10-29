@@ -1,5 +1,5 @@
-<?php 
-require_once("../../../conexao.php");
+<?php
+require_once ("../../../conexao.php");
 $tabela = 'itens_grade';
 
 $id = $_POST['id'];
@@ -7,89 +7,90 @@ $id = $_POST['id'];
 $query = $pdo->query("SELECT * FROM $tabela where grade = '$id' order by id desc");
 $res = $query->fetchAll(PDO::FETCH_ASSOC);
 $total_reg = @count($res);
-if($total_reg > 0){
+if ($total_reg > 0) {
 
-echo <<<HTML
+	echo <<<HTML
 	<small>
-	<table class="table table-hover">
+	<table class="table table-hover table-bordered text-nowrap border-bottom dt-responsive">
 	<thead> 
 	<tr> 
 	<th>Nome</th>	
-	<th class="esc">Valor Item</th> 	
-	<th class="esc">Limite</th> 		
+	<th>Valor Item</th> 	
+	<th>Limite</th> 		
 	<th>Ações</th>
 	</tr> 
 	</thead> 
 	<tbody>	
 HTML;
 
-for($i=0; $i < $total_reg; $i++){
-	foreach ($res[$i] as $key => $value){}
+	for ($i = 0; $i < $total_reg; $i++) {
+		foreach ($res[$i] as $key => $value) {
+		}
 		$id = $res[$i]['id'];
-		$texto = $res[$i]['texto'];		
-		$valor = $res[$i]['valor'];	
-		$limite = $res[$i]['limite'];		
-	$ativo = $res[$i]['ativo'];
-	$produto = $res[$i]['produto'];
-	$adicional = $res[$i]['adicional'];
+		$texto = $res[$i]['texto'];
+		$valor = $res[$i]['valor'];
+		$limite = $res[$i]['limite'];
+		$ativo = $res[$i]['ativo'];
+		$produto = $res[$i]['produto'];
+		$adicional = $res[$i]['adicional'];
 
-	$valorF = number_format($valor, 2, ',', '.');
+		$valorF = number_format($valor, 2, ',', '.');
 
-		
+		$textoF = mb_strimwidth($texto, 0, 20, "...");
 
-		if($ativo == 'Sim'){
+
+
+		if ($ativo == 'Sim') {
 			$icone = 'fa-check-square';
 			$titulo_link = 'Desativar Item';
 			$acao = 'Não';
 			$classe_linha = '';
-		}else{
+		} else {
 			$icone = 'fa-square-o';
 			$titulo_link = 'Ativar Item';
 			$acao = 'Sim';
-			$classe_linha = 'text-muted';
+			$classe_linha = '#c4c4c4';
 		}
 
-		if($limite == 0){
+		if ($limite == 0) {
 			$limite = 'ilimitado';
 		}
 
 
-		
-echo <<<HTML
-<tr class="{$classe_linha}">
-<td>
-{$texto}
-</td>
-<td class="esc">R$ {$valorF}</td>
-<td class="esc">{$limite}</td>
+
+		echo <<<HTML
+<tr>
+<td style="color:{$classe_linha}">{$textoF}</td>
+<td style="color:{$classe_linha}">R$ {$valorF}</td>
+<td style="color:{$classe_linha}">{$limite}</td>
 <td>
 	
-	<li class="dropdown head-dpdn2" style="display: inline-block;">
-		<a href="#" class="dropdown-toggle" data-toggle="dropdown" aria-expanded="false"><big><i class="fa fa-trash-o text-danger"></i></big></a>
 
-		<ul class="dropdown-menu" style="margin-left:-230px;">
-		<li>
-		<div class="notification_desc2">
-		<p>Confirmar Exclusão? <a href="#" onclick="excluirItens('{$id}')"><span class="text-danger">Sim</span></a></p>
+<div class="dropdown" style="display: inline-block;">                      
+	<a href="#" aria-expanded="false" aria-haspopup="true" data-bs-toggle="dropdown" class="dropdown btn btn-danger-light btn-sm"><i class="fe fe-trash-2 text-danger"></i> 
+	</a>
+		<div  class="dropdown-menu tx-13">
+			<div class="dropdown-item-text botao_excluir_listar">
+			<p>Confirmar Exclusão? <a href="#" onclick="excluirItens('{$id}')"><span class="botao_excluir_listar_sim">Sim</span></a></p>
+			</div>
 		</div>
-		</li>										
-		</ul>
-		</li>
+</div>
 
 
-		<big><a href="#" onclick="ativarItens('{$id}', '{$acao}')" title="{$titulo_link}"><i class="fa {$icone} text-success"></i></a></big>
+
+		<a class="btn btn-success-light btn-sm" href="#" onclick="ativarItens('{$id}', '{$acao}')" title="{$titulo_link}"><i class="fa {$icone}"></i></a>
 
 
-		<big><a href="#" onclick="editarItens('{$id}', '{$texto}', '$valor', '$limite', '$adicional', '$produto')" title="Editar Item"><i class="fa fa-edit text-primary"></i></a></big>
+		<a class="btn btn-info-light btn-sm" href="#" onclick="editarItens('{$id}', '{$texto}', '$valor', '$limite', '$adicional', '$produto')" title="Editar Item"><i class="fa fa-edit"></i></a>
 
 
 </td>
 </tr>
 HTML;
 
-}
+	}
 
-echo <<<HTML
+	echo <<<HTML
 	</tbody>
 	<small><div align="center" id="mensagem-excluir-itens"></div></small>
 	</table>
@@ -97,36 +98,32 @@ echo <<<HTML
 HTML;
 
 
-}else{
+} else {
 	echo '<small>Não possui nenhuma variação cadastrada!</small>';
 }
 
 
-
-
-
-
- ?>
+?>
 
 <script type="text/javascript">
-		function editarItens(id, texto, valor, limite, adicional, produto){
+	function editarItens(id, texto, valor, limite, adicional, produto) {
 
-				
-		$('#texto_item').val(texto);	
+
+		$('#texto_item').val(texto);
 		$('#adicional_grade').val(adicional).change();
 		$('#valor_do_item').val(valor);
 		$('#limite_itens').val(limite);
 		$('#id_item_editar').val(id);
 		$('#id_item_produto').val(produto);
 
-		if(adicional > 0){
+		if (adicional > 0) {
 			$('#e_adicional').val('Sim');
-		}else{		
+		} else {
 			$('#e_adicional').val('Não');
 		}
-		$('#adicional').val(adicional);	
-				
-		$('#btn_itens').text('Editar');	
-		
+		$('#adicional').val(adicional);
+
+		$('#btn_itens').text('Editar');
+
 	}
 </script>

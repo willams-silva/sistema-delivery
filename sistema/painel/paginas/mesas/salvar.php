@@ -16,7 +16,7 @@ if(@count($res) > 0 and $id != $res[0]['id']){
 
 
 if($id == ""){
-	$query = $pdo->prepare("INSERT INTO $tabela SET nome = :nome, ativo = 'Sim'");
+	$query = $pdo->prepare("INSERT INTO $tabela SET nome = :nome, ativo = 'Sim', status = 'Fechada'");
 }else{
 	$query = $pdo->prepare("UPDATE $tabela SET nome = :nome WHERE id = '$id'");
 }

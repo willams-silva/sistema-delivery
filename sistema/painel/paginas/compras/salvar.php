@@ -13,6 +13,9 @@ $data_venc = $_POST['data_venc'];
 $data_pgto = $_POST['data_pgto'];
 $quantidade = $_POST['quantidade'];
 
+$obs = $_POST['obs'];
+$forma_pgto = $_POST['saida'];
+
 if($produto == 0){
 	echo 'Cadastre um Produto e Depois selecione!';
 	exit();
@@ -77,12 +80,22 @@ if(@$_FILES['foto']['name'] != ""){
 }
 
 
+//verificar caixa aberto
+$query1 = $pdo->query("SELECT * from caixas where operador = '$id_usuario' and data_fechamento is null order by id desc limit 1");
+$res1 = $query1->fetchAll(PDO::FETCH_ASSOC);
+if (@count($res1) > 0) {
+	$id_caixa = @$res1[0]['id'];
+} else {
+	$id_caixa = 0;
+}
 
 
 if($id == ""){
-	$query = $pdo->prepare("INSERT INTO $tabela SET descricao = :descricao, tipo = 'Compra', valor = :valor, data_lanc = curDate(), data_venc = '$data_venc', data_pgto = '$data_pgto', usuario_lanc = '$id_usuario', usuario_baixa = '$usuario_pgto', foto = '$foto', pessoa = '$pessoa', pago = '$pago', produto = '$produto', quantidade = '$quantidade'");
+	$query = $pdo->prepare("INSERT INTO $tabela SET descricao = :descricao, tipo = 'Compra', valor = :valor, data_lanc = curDate(), vencimento = '$data_venc', data_pgto = '$data_pgto', usuario_lanc = '$id_usuario', usuario_pgto = '$usuario_pgto', foto = '$foto', arquivo = '$foto', pessoa = '$pessoa', pago = '$pago', produto = '$produto', quantidade = '$quantidade', forma_pgto = '$forma_pgto', obs = '$obs', referencia = 'Compra', caixa = '$id_caixa', subtotal = :valor");
+
+
 }else{
-	$query = $pdo->prepare("UPDATE $tabela SET descricao = :descricao, valor = :valor, data_venc = '$data_venc', data_pgto = '$data_pgto', foto = '$foto', pessoa = '$pessoa', produto = '$produto', quantidade = '$quantidade' WHERE id = '$id'");
+	$query = $pdo->prepare("UPDATE $tabela SET descricao = :descricao, valor = :valor, vencimento = '$data_venc', data_pgto = '$data_pgto', foto = '$foto', arquivo = '$foto', pessoa = '$pessoa', produto = '$produto', quantidade = '$quantidade', forma_pgto = '$forma_pgto', obs = '$obs' WHERE id = '$id'");
 }
 
 $query->bindValue(":descricao", "$descricao");

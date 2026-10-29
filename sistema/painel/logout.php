@@ -1,5 +1,6 @@
 <?php 
 @session_start();
-@session_destroy();
-echo "<script>window.location='../index.php'</script>";
- ?>
+unset($_SESSION['id'], $_SESSION['nome'], $_SESSION['nivel'], $_SESSION['pedido_balcao'], $_SESSION['id_mesa']);
+$_SESSION['msg'] = "Deslogado com sucesso";
+echo "<script>localStorage.setItem('id_usu', '')</script>";
+echo '<script>window.location="../"</script>';

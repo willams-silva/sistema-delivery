@@ -1,398 +1,740 @@
-<?php 
-@session_start();
-require_once("verificar.php");
-require_once("../conexao.php");
-
-if(@$home == 'ocultar'){
-    echo "<script>window.location='../index.php'</script>";
-    exit();
-}
+<?php
+$pag = 'home';
 
 
-$data_hoje = date('Y-m-d');
-$data_ontem = date('Y-m-d', strtotime("-1 days",strtotime($data_hoje)));
+$sql_usuario = " ";
+$sql_usuario_lanc = " ";
 
-$mes_atual = Date('m');
-$ano_atual = Date('Y');
-$data_inicio_mes = $ano_atual."-".$mes_atual."-01";
+//total clientes
 
-if($mes_atual == '4' || $mes_atual == '6' || $mes_atual == '9' || $mes_atual == '11'){
-    $dia_final_mes = '30';
-}else if($mes_atual == '2'){
-    $dia_final_mes = '28';
-}else{
-    $dia_final_mes = '31';
-}
-
-$data_final_mes = $ano_atual."-".$mes_atual."-".$dia_final_mes;
-
-
-
-$query = $pdo->query("SELECT * FROM clientes ");
+$query = $pdo->query("SELECT * from clientes");
 $res = $query->fetchAll(PDO::FETCH_ASSOC);
 $total_clientes = @count($res);
 
-$query = $pdo->query("SELECT * FROM pagar where data_venc = curDate() and pago != 'Sim' ");
+//total clientes mes
+$query = $pdo->query("SELECT * from clientes where data_cad >= '$data_inicio_mes' and data_cad <= '$data_final_mes' $sql_usuario");
 $res = $query->fetchAll(PDO::FETCH_ASSOC);
-$contas_pagar_hoje = @count($res);
+$total_clientes_mes = @count($res);
 
-
-$query = $pdo->query("SELECT * FROM receber where data_venc = curDate() and pago = 'Não' ");
+$total_pagar_vencidas = 0;
+$query = $pdo->query("SELECT * from pagar where vencimento < curDate() and pago != 'Sim' $sql_usuario_lanc");
 $res = $query->fetchAll(PDO::FETCH_ASSOC);
-$contas_receber_hoje = @count($res);
+$contas_pagar_vencidas = @count($res);
+for ($i = 0; $i < $contas_pagar_vencidas; $i++) {
+	$valor_1 = $res[$i]['valor'];
+	$total_pagar_vencidas += $valor_1;
+}
+$total_pagar_vencidasF = @number_format($total_pagar_vencidas, 2, ',', '.');
 
 
-$query = $pdo->query("SELECT * FROM produtos where tem_estoque = 'Sim'");
+
+$total_receber_vencidas = 0;
+$query = $pdo->query("SELECT * from receber where vencimento < curDate() and pago != 'Sim' $sql_usuario_lanc");
 $res = $query->fetchAll(PDO::FETCH_ASSOC);
-$total_reg = @count($res);
-$estoque_baixo = 0;
-if($total_reg > 0){
-    for($i=0; $i < $total_reg; $i++){
-    foreach ($res[$i] as $key => $value){}
-        $estoque = $res[$i]['estoque'];
-        $nivel_estoque = $res[$i]['nivel_estoque'];
+$contas_receber_vencidas = @count($res);
+for ($i = 0; $i < $contas_receber_vencidas; $i++) {
+	$valor_2 = $res[$i]['valor'];
+	$total_receber_vencidas += $valor_2;
+}
+$total_receber_vencidasF = @number_format($total_receber_vencidas, 2, ',', '.');
 
-        if($nivel_estoque >= $estoque){
-            $estoque_baixo += 1;
-        }
-    }
+
+//total recebidas mes
+$total_recebidas_mes = 0;
+$query = $pdo->query("SELECT * from receber where data_pgto >= '$data_inicio_mes' and data_pgto <= '$data_final_mes' and pago = 'Sim' $sql_usuario_lanc");
+$res = $query->fetchAll(PDO::FETCH_ASSOC);
+$contas_recebidas_mes = @count($res);
+for ($i = 0; $i < $contas_recebidas_mes; $i++) {
+	$valor_3 = $res[$i]['valor'];
+	$total_recebidas_mes += $valor_3;
+}
+$total_recebidas_mesF = @number_format($total_recebidas_mes, 2, ',', '.');
+
+//total contas pagas mes
+$total_pagas_mes = 0;
+$query = $pdo->query("SELECT * from pagar where data_pgto >= '$data_inicio_mes' and data_pgto <= '$data_final_mes' and pago = 'Sim' $sql_usuario_lanc");
+$res = $query->fetchAll(PDO::FETCH_ASSOC);
+$contas_pagas_mes = @count($res);
+for ($i = 0; $i < $contas_pagas_mes; $i++) {
+	$valor_4 = $res[$i]['valor'];
+	$total_pagas_mes += $valor_4;
+}
+$total_pagas_mesF = @number_format($total_pagas_mes, 2, ',', '.');
+
+
+$total_saldo_mes = $total_recebidas_mes - $total_pagas_mes;
+$total_saldo_mesF = @number_format($total_saldo_mes, 2, ',', '.');
+if ($total_saldo_mes >= 0) {
+	$classe_saldo = 'iconSusses';
+	$classe_saldo2 = 'iconBgSusses';
+	$classe_icon_dia = 'fa fa-caret-up text-success';
+} else {
+	$classe_saldo = 'iconDanger';
+	$classe_saldo2 = 'iconBgDanger';
+	$classe_icon_dia = 'fa fa-caret-down text-danger';
 }
 
 
 
 
-//TOTALIZAR CONTAS DO DIA
-$total_debitos_dia = 0;
-$query = $pdo->query("SELECT * FROM pagar where data_pgto = curDate()");
+//total recebidas dia
+$total_recebidas_dia = 0;
+$query = $pdo->query("SELECT * from receber where data_pgto = curDate() and pago = 'Sim' $sql_usuario_lanc");
 $res = $query->fetchAll(PDO::FETCH_ASSOC);
-if(@count($res) > 0){
-for($i=0; $i < @count($res); $i++){
-    foreach ($res[$i] as $key => $value){}
-        $total_debitos_dia += $res[$i]['valor'];
-    }
+$contas_recebidas_dia = @count($res);
+for ($i = 0; $i < $contas_recebidas_dia; $i++) {
+	$valor_3 = $res[$i]['valor'];
+	$total_recebidas_dia += $valor_3;
 }
+$total_recebidas_diaF = @number_format($total_recebidas_dia, 2, ',', '.');
 
-$total_ganhos_dia = 0;
-$query = $pdo->query("SELECT * FROM receber where data_pgto = curDate() ");
+//total contas pagas dia
+$total_pagas_dia = 0;
+$query = $pdo->query("SELECT * from pagar where data_pgto = curDate() and pago = 'Sim' $sql_usuario_lanc");
 $res = $query->fetchAll(PDO::FETCH_ASSOC);
-if(@count($res) > 0){
-for($i=0; $i < @count($res); $i++){
-    foreach ($res[$i] as $key => $value){}
-        $total_ganhos_dia += $res[$i]['valor'];
-    }
+$contas_pagas_dia = @count($res);
+for ($i = 0; $i < $contas_pagas_dia; $i++) {
+	$valor_4 = $res[$i]['valor'];
+	$total_pagas_dia += $valor_4;
 }
+$total_pagas_diaF = @number_format($total_pagas_dia, 2, ',', '.');
 
-//totalizar os vendas 
-$total_vendas_dia = 0;
-    $query = $pdo->query("SELECT * FROM vendas where data = CurDate() and pago = 'Sim' and status != 'Cancelado'");
-    $res = $query->fetchAll(PDO::FETCH_ASSOC);
-    $total_reg = @count($res);  
-    for($i=0; $i < $total_reg; $i++){
-    foreach ($res[$i] as $key => $value){}
 
-        $total_vendas_dia += $res[$i]['valor'];
-
-    }
-
-$saldo_total_dia = $total_vendas_dia + $total_ganhos_dia - $total_debitos_dia;
-$saldo_total_diaF = number_format($saldo_total_dia, 2, ',', '.');
-
-if($saldo_total_dia < 0){
-    $classe_saldo_dia = 'user1';
-}else{
-    $classe_saldo_dia = 'dollar2';
+$total_saldo_dia = $total_recebidas_dia - $total_pagas_dia;
+$total_saldo_diaF = @number_format($total_saldo_dia, 2, ',', '.');
+if ($total_saldo_dia >= 0) {
+	$classe_saldo_dia = 'bg-success';
+} else {
+	$classe_saldo_dia = 'bg-danger';
 }
 
 
 
 
+//valores para o grafico de linhas (ano atual, despesas e recebimentos)
+$total_meses_pagar_grafico = '';
+$total_meses_receber_grafico = '';
 
-//dados para o gráfico
-$dados_meses_despesas =  '';
-$dados_meses_vendas =  '';
-        //ALIMENTAR DADOS PARA O GRÁFICO
-        for($i=1; $i <= 12; $i++){
-
-            if($i < 10){
-                $mes_atual = '0'.$i;
-            }else{
-                $mes_atual = $i;
-            }
-
-        if($mes_atual == '4' || $mes_atual == '6' || $mes_atual == '9' || $mes_atual == '11'){
-            $dia_final_mes = '30';
-        }else if($mes_atual == '2'){
-            $dia_final_mes = '28';
-        }else{
-            $dia_final_mes = '31';
-        }
+for ($i = 1; $i <= 12; $i++) {
+	if ($i < 10) {
+		$mes_verificado = '0' . $i;
+	} else {
+		$mes_verificado = $i;
+	}
 
 
-        $data_mes_inicio_grafico = $ano_atual."-".$mes_atual."-01";
-        $data_mes_final_grafico = $ano_atual."-".$mes_atual."-".$dia_final_mes;
+	$data_inicio_mes_grafico = $ano_atual . "-" . $mes_verificado . "-01";
 
-
-        //DESPESAS
-        $total_mes_despesa = 0;
-        $query = $pdo->query("SELECT * FROM pagar where pago = 'Sim' and data_pgto >= '$data_mes_inicio_grafico' and data_pgto <= '$data_mes_final_grafico' ORDER BY id asc");
-        $res = $query->fetchAll(PDO::FETCH_ASSOC);
-        $total_reg = @count($res);
-        if($total_reg > 0){
-            for($i2=0; $i2 < $total_reg; $i2++){
-                foreach ($res[$i2] as $key => $value){}
-            $total_mes_despesa +=  $res[$i2]['valor'];
-        }
-        }
-
-        $dados_meses_despesas = $dados_meses_despesas. $total_mes_despesa. '-';
+	if ($mes_verificado == '04' || $mes_verificado == '06' || $mes_verificado == '09' || $mes_verificado == '11') {
+		$data_final_mes_grafico = $ano_atual . '-' . $mes_verificado . '-30';
+	} else if ($mes_verificado == '02') {
+		$bissexto = date('L', @mktime(0, 0, 0, 1, 1, $mes_verificado));
+		if ($bissexto == 1) {
+			$data_final_mes_grafico = $ano_atual . '-' . $mes_verificado . '-29';
+		} else {
+			$data_final_mes_grafico = $ano_atual . '-' . $mes_verificado . '-28';
+		}
+	} else {
+		$data_final_mes_grafico = $ano_atual . '-' . $mes_verificado . '-31';
+	}
 
 
 
 
-
-         //VENDAS
-        $total_mes_vendas = 0;
-        $query = $pdo->query("SELECT * FROM vendas where pago = 'Sim' and status != 'Cancelado' and data >= '$data_mes_inicio_grafico' and data <= '$data_mes_final_grafico'");
-        $res = $query->fetchAll(PDO::FETCH_ASSOC);
-        $total_reg = @count($res);
-        if($total_reg > 0){
-            for($i2=0; $i2 < $total_reg; $i2++){
-                foreach ($res[$i2] as $key => $value){}
-            $total_mes_vendas +=  $res[$i2]['valor'];
-        }
-        }
-
-        $dados_meses_vendas = $dados_meses_vendas. $total_mes_vendas. '-';
+	//total recebidas mes
+	$total_recebidas_mes_grafico = 0;
+	$query2 = $pdo->query("SELECT * from receber where data_pgto >= '$data_inicio_mes_grafico' and data_pgto <= '$data_final_mes_grafico' and pago = 'Sim' $sql_usuario_lanc");
+	$res2 = $query2->fetchAll(PDO::FETCH_ASSOC);
+	$contas_recebidas_mes_grafico = @count($res2);
+	for ($i2 = 0; $i2 < $contas_recebidas_mes_grafico; $i2++) {
+		$valor_3 = $res2[$i2]['valor'];
+		$total_recebidas_mes_grafico += $valor_3;
+	}
 
 
-    }
+	//total contas pagas mes
+	$total_pagas_mes_grafico = 0;
+	$query2 = $pdo->query("SELECT * from pagar where data_pgto >= '$data_inicio_mes_grafico' and data_pgto <= '$data_final_mes_grafico' and pago = 'Sim' $sql_usuario_lanc");
+	$res2 = $query2->fetchAll(PDO::FETCH_ASSOC);
+	$contas_pagas_mes_grafico = @count($res2);
+	for ($i2 = 0; $i2 < $contas_pagas_mes_grafico; $i2++) {
+		$valor_4 = $res2[$i2]['valor'];
+		$total_pagas_mes_grafico += $valor_4;
+	}
+
+
+	$total_meses_pagar_grafico .= $total_pagas_mes_grafico . '-';
+	$total_meses_receber_grafico .= $total_recebidas_mes_grafico . '-';
+}
 
 
 
- ?>
-
-  <input type="hidden" id="dados_grafico_despesa">
-   <input type="hidden" id="dados_grafico_venda">
-  
-<div class="main-page">
-
-    <?php if($ativo_sistema == ''){ ?>
-<div style="background: #ffc341; color:#3e3e3e; padding:10px; font-size:14px; margin-bottom:10px">
-<div><i class="fa fa-info-circle"></i> <b>Aviso: </b> Prezado Cliente, não identificamos o pagamento de sua última mensalidade, entre em contato conosco o mais rápido possivel para regularizar o pagamento, caso contário seu acesso ao sistema será desativado.</div>
-</div>
-<?php } ?>
 
 
-	<div class="col_3">
+//tarefas
+$query = $pdo->query("SELECT * from tarefas where usuario = '$id_usuario' and status = 'Agendada' and data <= curDate() and hora < curTime() order by id desc");
+$res = $query->fetchAll(PDO::FETCH_ASSOC);
+$tarefas_atrasadas = @count($res);
 
-        <a href="index.php?pagina=clientes">
-		<div class="col-md-3 widget widget1">
-			<div class="r3_counter_box">
-				<i class="pull-left fa fa-users icon-rounded"></i>
-				<div class="stats">
-                        <h5><strong><big><big><?php echo $total_clientes ?></big></big></strong></h5>
+$query = $pdo->query("SELECT * from tarefas where usuario = '$id_usuario' and status = 'Agendada' order by id desc");
+$res = $query->fetchAll(PDO::FETCH_ASSOC);
+$total_tarefas = @count($res);
 
-                    </div>
-                    <hr style="margin-top:10px">
-                    <div align="center"><span>Total de Clientes</span></div>
+
+$query = $pdo->query("SELECT * from tarefas where usuario = '$id_usuario' and status = 'Agendada' and data = curDate() order by id desc");
+$res = $query->fetchAll(PDO::FETCH_ASSOC);
+$tarefas_agendadas_hoje = @count($res);
+
+#####ANOTAÇÕES#####################################
+$query = $pdo->query("SELECT * from anotacoes");
+$res = $query->fetchAll(PDO::FETCH_ASSOC);
+$linhas = @count($res);
+for ($i5 = 0; $i5 < $linhas; $i5++) {
+	$msg = $res[$i5]['msg'];
+	$titulo = $res[$i5]['titulo'];
+}
+
+
+//verificar se ele tem a permissão de estar nessa página
+if (@$home == 'ocultar') {
+	echo "<script>window.location='index'</script>";
+	exit();
+}
+
+
+#####PUXAR TOTAL DE DELIVERY############################################
+$valor_delivery = 0;
+$query = $pdo->query("SELECT * from vendas where entrega = 'Delivery'");
+$res = $query->fetchAll(PDO::FETCH_ASSOC);
+$linhas1 = @count($res);
+for ($i6 = 0; $i6 < $linhas1; $i6++) {
+	$valor_delivery += $res[$i6]['valor'];
+}
+$valor_deliveryF = @number_format($valor_delivery, 2, ',', '.');
+$porcent_deli = $linhas1 / 100;
+
+
+
+#####PUXAR TOTAL DE CONSUMIR LOCAL############################################
+$valor_local = 0;
+$query = $pdo->query("SELECT * from vendas where entrega = 'Consumir Local'");
+$res = $query->fetchAll(PDO::FETCH_ASSOC);
+$linhas2 = @count($res);
+for ($i6 = 0; $i6 < $linhas2; $i6++) {
+	$valor_local += $res[$i6]['valor'];
+}
+$valor_localF = @number_format($valor_local, 2, ',', '.');
+$porcent_local = $linhas2 / 100;
+
+
+#####PUXAR TOTAL DE CRETIRADA############################################
+$valor_retirada = 0;
+$query = $pdo->query("SELECT * from vendas where entrega = 'Retirar'");
+$res = $query->fetchAll(PDO::FETCH_ASSOC);
+$linhas3 = @count($res);
+for ($i6 = 0; $i6 < $linhas3; $i6++) {
+	$valor_retirada += $res[$i6]['valor'];
+}
+$valor_retiradaF = @number_format($valor_retirada, 2, ',', '.');
+$porcent_retirada = $linhas3 / 100;
+
+
+##### PUXAR TOTAL DA MESA ############################################
+$valor_mesa = 0;
+$query = $pdo->query("SELECT * from abertura_mesa");
+$res = $query->fetchAll(PDO::FETCH_ASSOC);
+$linhas4 = @count($res);
+for ($i6 = 0; $i6 < $linhas4; $i6++) {
+	$valor_mesa += $res[$i6]['total'];
+}
+$valor_mesaF = @number_format($valor_mesa, 2, ',', '.');
+$porcent_mesa = $linhas4 / 100;
+
+
+
+?>
+
+
+<div class="mt-4 justify-content-between">
+
+
+	<?php if ($ativo_sistema == '') { ?>
+
+		<div style="background: #ffc341; color:#3e3e3e; padding:10px; font-size:14px; margin-bottom:10px">
+
+			<div><i class="fa fa-info-circle"></i> <b>Aviso: </b> Prezado Cliente, não identificamos o pagamento de sua última
+				mensalidade, entre em contato conosco o mais rápido possivel para regularizar o pagamento, caso contário seu
+				acesso ao sistema será desativado.</div>
+
+		</div>
+
+	<?php } ?>
+
+
+
+
+	<div class="row">
+
+		<div class="col-xl-3 col-lg-12 col-md-6 col-xs-12">
+			<div class="card sales-card"
+				style="box-shadow: 2px 2px 0px 0px rgba(0, 0, 0, 0.1); height:130px; border-radius: 10px;">
+				<a href="clientes">
+					<div class="row">
+						<div class="col-8">
+							<div class="ps-4 pt-4 pe-3 pb-4">
+								<div class="">
+									<p class="mb-1">Clientes Cadastrados</p>
+								</div>
+								<div class="pb-0 mt-0">
+									<div class="d-flex">
+										<h4 class="tx-20 font-weight-semibold mb-2"><?php echo $total_clientes ?></h4>
+									</div>
+									<p class="mb-0 tx-12 text-muted">Este Mês<i class="fa fa-caret-up mx-1 text-success"></i>
+										<span class="iconSusses tx-11"><?php echo $total_clientes_mes ?></span>
+									</p>
+								</div>
+							</div>
+						</div>
+						<div class="col-4">
+
+							<div class=" zoom circle-icon iconBgSusses text-center align-self-center overflow-hidden">
+								<i class="fe fe-user tx-16 text-white"></i>
+							</div>
+
+						</div>
+					</div>
+				</a>
 			</div>
 		</div>
-        </a>
-
-	
-
-         <a href="index.php?pagina=pagar">
-        <div class="col-md-3 widget widget1">
-            <div class="r3_counter_box">
-                <i class="pull-left fa fa-money user1 icon-rounded"></i>
-                <div class="stats">
-                        <h5><strong><big><big><?php echo $contas_pagar_hoje ?></big></big></strong></h5>
-
-                    </div>
-                    <hr style="margin-top:10px">
-                    <div align="center"><span>Contas à Pagar Hoje</span></div>
-            </div>
-        </div>
-        </a>
 
 
-		   <a href="index.php?pagina=receber">
-        <div class="col-md-3 widget widget1">
-            <div class="r3_counter_box">
-                <i class="pull-left fa fa-money dollar2 icon-rounded"></i>
-                <div class="stats">
-                        <h5><strong><big><big><?php echo $contas_receber_hoje ?></big></big></strong></h5>
+		<div class="col-xl-3 col-lg-12 col-md-6 col-xs-12">
+			<div class="card sales-card"
+				style="box-shadow: 2px 2px 0px 0px rgba(0, 0, 0, 0.1); height:130px; border-radius: 10px">
+				<a href="pagar">
+					<div class="row">
+						<div class="col-8">
+							<div class="ps-4 pt-4 pe-3 pb-4">
+								<div class="">
+									<p class=" mb-1">Despesas Vencidas</p>
+								</div>
+								<div class="pb-0 mt-0">
+									<div class="d-flex">
+										<h4 class="tx-20 font-weight-semibold mb-2">R$ <?php echo $total_pagar_vencidasF ?></h4>
+									</div>
+									<p class="mb-0 tx-12 text-muted">Pagar Vencidas<i class="fa fa-caret-down mx-1 text-danger"></i>
+										<span class="iconDanger tx-11"><?php echo $contas_pagar_vencidas ?></span>
+									</p>
+								</div>
+							</div>
+						</div>
+						<div class="col-4">
 
-                    </div>
-                    <hr style="margin-top:10px">
-                    <div align="center"><span>Contas à Receber Hoje</span></div>
-            </div>
-        </div>
-        </a>
+							<div class="zoom circle-icon iconBgDanger text-center align-self-center overflow-hidden">
+								<i class="bi bi-currency-dollar tx-16 text-white"></i>
+							</div>
 
-         <a href="index.php?pagina=estoque">
-		<div class="col-md-3 widget widget1">
-			<div class="r3_counter_box">
-				<i class="pull-left fa fa-pie-chart dollar1 icon-rounded"></i>
-				<div class="stats">
-                        <h5><strong><big><big><?php echo $estoque_baixo ?></big></big></strong></h5>
-
-                    </div>
-                    <hr style="margin-top:10px">
-                    <div align="center"><span>Produtos Estoque Baixo</span></div>
+						</div>
+					</div>
+				</a>
 			</div>
 		</div>
-    </a>
+		<div class="col-xl-3 col-lg-12 col-md-6 col-xs-12">
+			<div class="card sales-card"
+				style="box-shadow: 2px 2px 0px 0px rgba(0, 0, 0, 0.1); height:130px; border-radius: 10px">
+				<a href="receber">
+					<div class="row">
+						<div class="col-8">
+							<div class="ps-4 pt-4 pe-3 pb-4">
+								<div class="">
+									<p class=" mb-1">Receber Vencidas</p>
+								</div>
+								<div class="pb-0 mt-0">
+									<div class="d-flex">
+										<h4 class="tx-20 font-weight-semibold mb-2">R$ <?php echo $total_receber_vencidasF ?></h4>
+									</div>
+									<p class="mb-0 tx-12 text-muted">Receb. Vencidas<i class="fa fa-caret-up mx-1 text-success"></i>
+										<span class="iconSusses tx-11"><?php echo $contas_receber_vencidas ?></span>
+									</p>
 
+								</div>
+							</div>
+						</div>
+						<div class="col-4">
 
+							<div class=" zoom circle-icon iconBgSusses text-center align-self-center overflow-hidden">
+								<i class="bi bi-currency-dollar tx-16 text-white"></i>
+							</div>
 
-		<div class="col-md-3 widget">
-			<div class="r3_counter_box">
-				<i class="pull-left fa fa-usd <?php echo $classe_saldo_dia ?> icon-rounded"></i>
-				<div class="stats">
-                        <h5><strong><big><?php echo @$saldo_total_diaF ?></big></strong></h5>
-
-                    </div>
-                    <hr style="margin-top:10px">
-                    <div align="center"><span>R$ Saldo do Dia</span></div>
+						</div>
+					</div>
+				</a>
 			</div>
 		</div>
-		<div class="clearfix"> </div>
+
+		<div class="col-xl-3 col-lg-12 col-md-6 col-xs-12">
+			<div class="card sales-card"
+				style="box-shadow: 2px 2px 0px 0px rgba(0, 0, 0, 0.1); height:130px; border-radius: 10px">
+				<a href="receber">
+					<div class="row">
+						<div class="col-8">
+							<div class="ps-4 pt-4 pe-3 pb-4">
+								<div class="">
+									<p class=" mb-1">Saldo no Mês</p>
+								</div>
+								<div class="pb-0 mt-0">
+									<div class="d-flex">
+										<h4 class="tx-20 font-weight-semibold mb-2 <?php echo $classe_saldo ?>">R$
+											<?php echo $total_saldo_mesF ?>
+										</h4>
+									</div>
+									<p class="mb-0 tx-12 text-muted">Saldo Hoje<i class="mx-1 <?php echo $classe_icon_dia ?>"></i>
+										<span class="iconHome tx-11 <?php echo $classe_saldo ?> tx-11">R$
+											<?php echo $total_saldo_diaF ?></span>
+									</p>
+
+								</div>
+							</div>
+						</div>
+						<div class="col-4">
+
+							<div class=" zoom circle-icon text-center align-self-center overflow-hidden <?php echo $classe_saldo2 ?>">
+								<i class="bi bi-currency-dollar tx-16 text-white"></i>
+							</div>
+
+						</div>
+					</div>
+				</a>
+			</div>
+		</div>
 	</div>
 
 
+	<div id="statistics2"></div>
 
+
+
+	<!-- ################################ FIM PAINEL DE INFORMAÇÕES ###################################### -->
+	<?php
+
+	$query = $pdo->query("SELECT * from anotacoes where mostrar_home = 'Sim' order by id desc");
+	$res = $query->fetchAll(PDO::FETCH_ASSOC);
+	$linhas = @count($res);
+	if ($linhas > 0) {
+
+		echo <<<HTML
+<small>
+
+<div class='row'>
 	
+	<thead style="margin-bottom: 50px"> 
+		
+		
+			<div class="col-xl-12" style="margin-bottom: -17px">
+			<div class="card sales-card border border-dark" style="box-shadow: 2px 2px 0px 0px rgba(0, 0, 0, 0.2);">
+			
 
-        <div class="row-one widgettable ">
+<div  style="text-align:center; font-size: 20px; padding: 4px"><strong>PAINEL DE INFORMAÇÕES</strong> </div>
+				
+			</div>
 
-		<div class="col-md-12 content-top-2 card ">
 
-			<div class="agileinfo-cdr altura_grafico">
-					<div class="card-header">
-                        <h3>Vendas e Gastos</h3>
-                    </div>
-					
-						<div id="Linegraph" class="area_grafico" style="width: 98%; height: 350px">
+	</div>
+
+
+	</thead> 
+	<tbody>	
+
+
+		
+HTML;
+
+		for ($i = 0; $i < $linhas; $i++) {
+			$id = $res[$i]['id'];
+			$titulo = $res[$i]['titulo'];
+			$msg = $res[$i]['msg'];
+			$usuario = $res[$i]['usuario'];
+			$data = $res[$i]['data'];
+
+
+			$query2 = $pdo->query("SELECT * FROM usuarios where id = '$usuario'");
+			$res2 = $query2->fetchAll(PDO::FETCH_ASSOC);
+			if (@count($res2) > 0) {
+				$nome_usuario = $res2[0]['nome'];
+			} else {
+				$nome_usuario = 'Sem Usuário';
+			}
+
+			$dataF = implode('/', array_reverse(@explode('-', $data)));
+
+
+			$msgF = mb_strimwidth($msg, 0, 250, "...");
+
+
+			echo <<<HTML
+<tr>
+
+			<div class="col-xl-12" style="margin-bottom: -18px;">
+			<div class="card sales-card border border-white" style="box-shadow: 2px 2px 0px 0px rgba(0, 0, 0, 0.1);">
+			
+
+<div style="font-size: 12px; padding: 4px"><b>{$titulo}:</b> {$msgF}</div>
+				
+			</div>
+
+
+	</div>
+
+
+</tr>
+HTML;
+		}
+	}
+
+
+
+
+	echo <<<HTML
+</tbody>
+</div>
+
+HTML;
+	?>
+
+
+	<!-- ################################ FIM PAINEL DE INFORMAÇÕES ###################################### -->
+
+
+
+
+
+
+
+	<div class="card custom-card overflow-hidden ocultar_mobile">
+		<div class="card-header border-bottom-0">
+			<div>
+				<h3 class="card-title mb-2 ">Recebimentos / Despesas <?php echo $ano_atual ?></h3> <span
+					class="d-block tx-12 mb-0 text-muted"></span>
+			</div>
+		</div>
+		<div class="card-body">
+			<div id="statistics1"></div>
+		</div>
+	</div>
+
+
+</div>
+
+
+
+
+<div class="row">
+
+
+	<div class="col-xl-6 col-lg-12 col-md-6 col-xs-12">
+		<a href="tarefas">
+			<div class="card sales-card " style="box-shadow: 2px 2px 0px 0px rgba(0, 0, 0, 0.1);">
+				<div class="row">
+
+					<div class="col-8">
+						<div class="ps-4 pt-4 pe-3 pb-4">
+							<div class="">
+								<h6 class="mb-2 tx-12 ">Total de Tarefas Pendentes</h6>
+							</div>
+							<div class="pb-0 mt-0">
+								<div class="d-flex">
+									<h4 class="tx-20 font-weight-semibold mb-2 text-danger"><?php echo $total_tarefas ?></h4>
+								</div>
+								<p class="mb-0 tx-12 text-muted">Pendentes Hoje<i class="fa fa-caret-up mx-2 text-success"></i>
+									<span class="text-success font-weight-semibold"> <?php echo $tarefas_agendadas_hoje ?></span>
+
+									<span style="margin-left: 20px">Tarefas Atrasadas<i class="fa fa-caret-down mx-2 text-danger"></i>
+										<span class="text-danger font-weight-semibold"> <?php echo $tarefas_atrasadas ?></span></span>
+								</p>
+
+							</div>
 						</div>
-						
+					</div>
+
+					<div class="col-4">
+						<div class="circle-icon bg-primary-transparent text-center align-self-center overflow-hidden">
+							<i class="bi bi-card-checklist tx-16 text-primary"></i>
+						</div>
+					</div>
+				</div>
+			</div>
+		</a>
+	</div>
+
+	<div class="col-sm-12 col-lg-12 col-xl-6 col-xxl-12">
+		<div class="card">
+			<div class="card-header pb-3">
+				<h3 class="card-title mb-2">Vendas / DELIVERY</h3>
+			</div>
+			<div class="card-body p-0 customers mt-1">
+				<div class="country-card pt-0">
+					<div class="mb-4">
+
+						<div class="d-flex">
+							<span class="tx-13 font-weight-semibold">Delivery</span>
+							<div class="ms-auto"><span class="text-info mx-1"><i class="fa-solid fa-dollar-sign"></i></span><span
+									class="number-font"><b> R$ <?php echo $valor_deliveryF ?></b></span> (<?php echo $porcent_deli ?>%)</div>
+						</div>
+						<div class="progress ht-8 br-5 mt-2">
+							<div class="progress-bar progress-bar-striped progress-bar-animated bg-primary" style="width: <?php echo $porcent_deli ?>%"></div>
+						</div>
+					</div>
+					<div class="mb-4">
+						<div class="d-flex mb-1">
+							<span class="tx-13 font-weight-semibold">Consumir Local</span>
+							<div class="ms-auto"><span class="text-info mx-1"><i class="fa-solid fa-dollar-sign"></i></span><span
+									class="number-font"><b> R$ <?php echo $valor_localF ?></b></span> (<?php echo $porcent_local ?>%)</div>
+						</div>
+						<div class="progress ht-8 br-5 mt-2">
+							<div class="progress-bar progress-bar-striped progress-bar-animated bg-info" style="width: <?php echo $porcent_local ?>%"></div>
+						</div>
+					</div>
+					<div class="mb-4">
+						<div class="d-flex">
+							<span class="tx-13 font-weight-semibold">Retirada</span>
+							<div class="ms-auto"><span class="text-info mx-1"><i class="fa-solid fa-dollar-sign"></i></span><span
+									class="number-font"><b> R$ <?php echo $valor_retiradaF ?></b></span> (<?php echo $porcent_retirada ?>%)</div>
+						</div>
+						<div class="progress ht-8 br-5 mt-2">
+							<div class="progress-bar progress-bar-striped progress-bar-animated bg-secondary" style="width: <?php echo $porcent_retirada ?>%">
+							</div>
+						</div>
+					</div>
+					<div class="mb-4">
+						<div class="d-flex">
+							<span class="tx-13 font-weight-semibold">Mesa</span>
+							<div class="ms-auto"><span class="text-info mx-1"><i class="fa-solid fa-dollar-sign"></i></span><span
+									class="number-font"><b> R$ <?php echo $valor_mesaF ?></b></span> (<?php echo $porcent_mesa ?>%)</div>
+						</div>
+						<div class="progress ht-8 br-5 mt-2">
+							<div class="progress-bar progress-bar-striped progress-bar-animated bg-warning" style="width: <?php echo $porcent_mesa ?>%"></div>
+						</div>
+					</div>
+
 				</div>
 
+			</div>
 		</div>
-
-
-
-
-		<div class="clearfix"> </div>
 	</div>
 
 
-	
-	<!-- for amcharts js -->
-	<script src="js/amcharts.js"></script>
-	<script src="js/serial.js"></script>
-	<script src="js/export.min.js"></script>
-	<link rel="stylesheet" href="css/export.css" type="text/css" media="all" />
-	<script src="js/light.js"></script>
-	<!-- for amcharts js -->
-
-	<script  src="js/index1.js"></script>
-	
-
-</div>
-<div class="clearfix"> </div>
-</div>
-<div class="clearfix"> </div>
-
-</div>
-
 </div>
 
 
 
 
 
-
-
-<!-- for index page weekly sales java script -->
-	<script src="js/SimpleChart.js"></script>
-    <script>
-        $('#dados_grafico_despesa').val('<?=$dados_meses_despesas?>'); 
-        var dados = $('#dados_grafico_despesa').val();
-        saldo_mes = dados.split('-'); 
-
-         $('#dados_grafico_venda').val('<?=$dados_meses_vendas?>'); 
-        var dados_venda = $('#dados_grafico_venda').val();
-        saldo_mes_venda = dados_venda.split('-'); 
-       
+<div class="row row-sm">
 
 
 
-        var graphdata1 = {
-            linecolor: "#e32424",
-            title: "Despesas",
-            values: [
-            { X: "Janeiro", Y: parseFloat(saldo_mes[0]) },
-            { X: "Fevereiro", Y: parseFloat(saldo_mes[1]) },
-            { X: "Março", Y: parseFloat(saldo_mes[2]) },
-            { X: "Abril", Y: parseFloat(saldo_mes[3]) },
-            { X: "Maio", Y: parseFloat(saldo_mes[4]) },
-            { X: "Junho", Y: parseFloat(saldo_mes[5]) },
-            { X: "Julho", Y: parseFloat(saldo_mes[6]) },
-            { X: "Agosto", Y: parseFloat(saldo_mes[7]) },
-            { X: "Setembro", Y: parseFloat(saldo_mes[8]) },
-            { X: "Outubro", Y: parseFloat(saldo_mes[9]) },
-            { X: "Novembro", Y: parseFloat(saldo_mes[10]) },
-            { X: "Dezembro", Y: parseFloat(saldo_mes[11]) },
-            
-            ]
-        };
 
-        var graphdata2 = {
-            linecolor: "#109447",
-            title: "Vendas",
-            values: [
-            { X: "Janeiro", Y: parseFloat(saldo_mes_venda[0]) },
-            { X: "Fevereiro", Y: parseFloat(saldo_mes_venda[1]) },
-            { X: "Março", Y: parseFloat(saldo_mes_venda[2]) },
-            { X: "Abril", Y: parseFloat(saldo_mes_venda[3]) },
-            { X: "Maio", Y: parseFloat(saldo_mes_venda[4]) },
-            { X: "Junho", Y: parseFloat(saldo_mes_venda[5]) },
-            { X: "Julho", Y: parseFloat(saldo_mes_venda[6]) },
-            { X: "Agosto", Y: parseFloat(saldo_mes_venda[7]) },
-            { X: "Setembro", Y: parseFloat(saldo_mes_venda[8]) },
-            { X: "Outubro", Y: parseFloat(saldo_mes_venda[9]) },
-            { X: "Novembro", Y: parseFloat(saldo_mes_venda[10]) },
-            { X: "Dezembro", Y: parseFloat(saldo_mes_venda[11]) },
-            
-            ]
-        };
+</div>
 
-              
 
-      
-       
-        $(function () {          
-           
-           
-            $("#Linegraph").SimpleChart({
-                ChartType: "Line",
-                toolwidth: "50",
-                toolheight: "25",
-                axiscolor: "#E6E6E6",
-                textcolor: "#6E6E6E",
-                showlegends: true,
-                data: [graphdata2, graphdata1],
-                legendsize: "30",
-                legendposition: 'bottom',
-                xaxislabel: 'Meses',
-                title: '',
-                yaxislabel: 'Totais R$',
 
-            });
-           
-        });
+<script type="text/javascript">
+	// GRAFICO DE BARRAS
+	function statistics1() {
+		var total_pagar = "<?= $total_meses_pagar_grafico ?>";
+		var total_receber = "<?= $total_meses_receber_grafico ?>";
 
-    </script>
-	<!-- //for index page weekly sales java script -->
-	
+		var split_pagar = total_pagar.split("-");
+		var split_receber = total_receber.split("-");
+
+
+		setTimeout(() => {
+			var options1 = {
+				series: [{
+					name: 'Contas à Receber',
+					data: [split_receber[0], split_receber[1], split_receber[2], split_receber[3], split_receber[4], split_receber[5], split_receber[6], split_receber[7], split_receber[8], split_receber[9], split_receber[10], split_receber[11]],
+				}, {
+					name: 'Contas à Pagar',
+					data: [split_pagar[0], split_pagar[1], split_pagar[2], split_pagar[3], split_pagar[4], split_pagar[5], split_pagar[6], split_pagar[7], split_pagar[8], split_pagar[9], split_pagar[10], split_pagar[11]],
+				}],
+				chart: {
+					type: 'bar',
+					height: 280
+				},
+				grid: {
+					borderColor: '#f2f6f7',
+				},
+				colors: ["#098522", "#bf281d"],
+				plotOptions: {
+					bar: {
+						colors: {
+							ranges: [{
+								from: -100,
+								to: -46,
+								color: '#098522'
+							}, {
+								from: -45,
+								to: 0,
+								color: '#bf281d'
+							}]
+						},
+						columnWidth: '40%',
+					}
+				},
+				dataLabels: {
+					enabled: false,
+				},
+				stroke: {
+					show: true,
+					width: 4,
+					colors: ['transparent']
+				},
+				legend: {
+					show: true,
+					position: 'top',
+				},
+				yaxis: {
+					title: {
+						text: 'Valores',
+						style: {
+							color: '#adb5be',
+							fontSize: '14px',
+							fontFamily: 'poppins, sans-serif',
+							fontWeight: 600,
+							cssClass: 'apexcharts-yaxis-label',
+						},
+					},
+					labels: {
+						formatter: function(y) {
+							return y.toFixed(0) + "";
+						}
+					}
+				},
+				xaxis: {
+					type: 'month',
+					categories: ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'],
+					axisBorder: {
+						show: true,
+						color: 'rgba(119, 119, 142, 0.05)',
+						offsetX: 0,
+						offsetY: 0,
+					},
+					axisTicks: {
+						show: true,
+						borderType: 'solid',
+						color: 'rgba(119, 119, 142, 0.05)',
+						width: 6,
+						offsetX: 0,
+						offsetY: 0
+					},
+					labels: {
+						rotate: -90
+					}
+				}
+			};
+			document.getElementById('statistics1').innerHTML = '';
+			var chart1 = new ApexCharts(document.querySelector("#statistics1"), options1);
+			chart1.render();
+		}, 300);
+	}
+</script>

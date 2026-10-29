@@ -14,18 +14,26 @@ $valor = str_replace(',', '.', $valor);
 $descricao = $res[0]['descricao'];
 $produto = $_POST['id'];
 
+$id_editar = $_POST['id_item'];
+
 $sigla = str_replace(' ', '', $sigla);
 
-//validar sigla
-$query = $pdo->query("SELECT * from $tabela where sigla = '$sigla' and produto = '$produto'");
-$res = $query->fetchAll(PDO::FETCH_ASSOC);
-if(@count($res) > 0){
-	echo 'Valor Já Cadastrado para essa variação';
-	exit();
+if($id_editar == ""){
+	//validar sigla
+	$query = $pdo->query("SELECT * from $tabela where sigla = '$sigla' and produto = '$produto'");
+	$res = $query->fetchAll(PDO::FETCH_ASSOC);
+	if(@count($res) > 0){
+		echo 'Valor Já Cadastrado para essa variação';
+		exit();
+	}
 }
 
+if($id_editar == ""){
+	$query = $pdo->prepare("INSERT INTO $tabela SET nome = :nome, produto = '$produto', sigla = :sigla, valor = :valor, descricao = :descricao, ativo = 'Sim'");
+}else{
+	$query = $pdo->prepare("UPDATE $tabela SET nome = :nome, produto = '$produto', sigla = :sigla, valor = :valor, descricao = :descricao WHERE id = '$id_editar'");
+}
 
-$query = $pdo->prepare("INSERT INTO $tabela SET nome = :nome, produto = '$produto', sigla = :sigla, valor = :valor, descricao = :descricao, ativo = 'Sim'");
 
 
 $query->bindValue(":nome", "$nome");

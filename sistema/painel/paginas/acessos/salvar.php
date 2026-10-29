@@ -1,37 +1,34 @@
 <?php 
-require_once("../../../conexao.php");
 $tabela = 'acessos';
+require_once("../../../conexao.php");
 
-$id = $_POST['id'];
+
 $nome = $_POST['nome'];
 $chave = $_POST['chave'];
 $grupo = $_POST['grupo'];
+$id = $_POST['id'];
+$pagina = $_POST['pagina'];
 
-//validar nome
-$query = $pdo->query("SELECT * from $tabela where nome = '$nome' and grupo = '$grupo'");
+//validacao nome
+$query = $pdo->query("SELECT * from $tabela where nome = '$nome'");
 $res = $query->fetchAll(PDO::FETCH_ASSOC);
-if(@count($res) > 0 and $id != $res[0]['id']){
-	echo 'Nome já Cadastrado, escolha outro!!';
+$id_reg = @$res[0]['id'];
+if(@count($res) > 0 and $id != $id_reg){
+	echo 'Nome já Cadastrado!';
 	exit();
 }
 
-
-//validar nome
-$query = $pdo->query("SELECT * from $tabela where chave = '$chave' and grupo = '$grupo'");
-$res = $query->fetchAll(PDO::FETCH_ASSOC);
-if(@count($res) > 0 and $id != $res[0]['id']){
-	echo 'Chave já Cadastrada, escolha outra!!';
-	exit();
-}
 
 if($id == ""){
-	$query = $pdo->prepare("INSERT INTO $tabela SET nome = :nome, grupo = '$grupo', chave = :chave");
+$query = $pdo->prepare("INSERT INTO $tabela SET nome = :nome, chave = :chave, grupo = :grupo, pagina = :pagina ");
+	
 }else{
-	$query = $pdo->prepare("UPDATE $tabela SET nome = :nome, grupo = '$grupo', chave = :chave WHERE id = '$id'");
+$query = $pdo->prepare("UPDATE $tabela SET nome = :nome, chave = :chave, grupo = :grupo, pagina = :pagina where id = '$id'");
 }
-
 $query->bindValue(":nome", "$nome");
 $query->bindValue(":chave", "$chave");
+$query->bindValue(":grupo", "$grupo");
+$query->bindValue(":pagina", "$pagina");
 $query->execute();
 
 echo 'Salvo com Sucesso';

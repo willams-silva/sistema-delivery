@@ -1,16 +1,17 @@
 <?php 
-require_once("../../conexao.php");
+include('../../conexao.php');
 
-$id = $_GET['id'];
+$id = $_POST['id'];
+
+
 
 //ALIMENTAR OS DADOS NO RELATÓRIO
 $html = file_get_contents($url_sistema."sistema/painel/rel/recibo_conta.php?id=$id");
 
-if($tipo_rel != 'PDF'){
-	echo $html;
-	exit();
+if ($tipo_rel != 'PDF') {
+  echo $html;
+  exit();
 }
-
 
 //CARREGAR DOMPDF
 require_once '../dompdf/autoload.inc.php';

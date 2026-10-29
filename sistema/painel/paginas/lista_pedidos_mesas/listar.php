@@ -7,6 +7,7 @@ $dataInicial = @$_POST['dataInicial'];
 $dataFinal = @$_POST['dataFinal'];
 $status = '%'.@$_POST['status'].'%';
 
+$nome_forma_pgto = '';
 
 $total_vendas = 0;
 
@@ -17,18 +18,19 @@ if($total_reg > 0){
 
 echo <<<HTML
 	<small>
-	<table class="table table-hover" id="tabela">
+	<table class="table table-hover table-bordered text-nowrap border-bottom dt-responsive" id="tabela">
 	<thead> 
 	<tr> 
 	<th>Mesa</th>	
-	<th class="esc">Garçon</th> 
-	<th class="esc">Fehamento</th>		
-	<th class="esc">Consumo</th> 
-	<th class="esc">Comissão</th> 
-	<th class="esc">Couvert</th> 	
-	<th class="esc">Subtotal</th> 
-	<th class="esc">Forma Pgto</th>	 	
-	<th class="esc">Data</th>		
+	<th>Garçon</th> 
+	<th>Fehamento</th>		
+	<th>Consumo</th> 
+	<th>Comissão</th> 
+	<th>Couvert</th>	
+	<th>Adiantado</th>	
+	<th>Subtotal</th>
+	<th>Forma Pgto</th>	 	
+	<th>Data</th>		
 	<th>Detalhamento</th>
 	</tr> 
 	</thead> 
@@ -52,11 +54,20 @@ for($i=0; $i < $total_reg; $i++){
 		$couvert = $res[$i]['couvert'];
 		$subtotal = $res[$i]['subtotal'];
 		$forma_pgto = $res[$i]['forma_pgto'];
+		$valor_adiantado = $res[$i]['valor_adiantado'];
+
+
+		$query2 = $pdo->query("SELECT * FROM formas_pgto WHERE id = '$forma_pgto'");
+		$res2 = $query2->fetchAll(PDO::FETCH_ASSOC);
+		if (@count($res2) > 0) {
+			$nome_forma_pgto = $res2[0]['nome'];
+		}
 
 		$totalF = @number_format($total, 2, ',', '.');
 		$comissaoF = @number_format($comissao, 2, ',', '.');
 		$couvertF = @number_format($couvert, 2, ',', '.');
 		$subtotalF = @number_format($subtotal, 2, ',', '.');
+		$valor_adiantadoF = @number_format($valor_adiantado, 2, ',', '.');
 	
 		$dataF = implode('/', array_reverse(@explode('-', $data)));
 
@@ -74,19 +85,20 @@ for($i=0; $i < $total_reg; $i++){
 		$total_vendas += $subtotal;
 
 echo <<<HTML
-<tr class="">
-<td class="esc">{$nome_mesa}</td>
-<td class="esc">{$nome_garcon}</td>
-<td class="esc">{$horario_fechamentoF}</td>
-<td class="esc">R$ {$totalF}</td>
-<td class="esc">R$ {$comissaoF}</td>
-<td class="esc">R$ {$couvertF}</td>
-<td class="esc">R$ {$subtotalF}</td>
-<td class="esc">{$forma_pgto}</td>
-<td class="esc">{$dataF}</td>
+<tr>
+<td>{$nome_mesa}</td>
+<td>{$horario_fechamentoF}</td>
+<td>{$nome_garcon}</td>
+<td>R$ {$totalF}</td>
+<td>R$ {$comissaoF}</td>
+<td>R$ {$couvertF}</td>
+<td>R$ {$valor_adiantadoF}</td>
+<td>R$ {$subtotalF}</td>
+<td>{$nome_forma_pgto}</td>
+<td>{$dataF}</td>
 <td>	
 		
-		<big><a  href="#" onclick="gerarComprovante('{$id}')" title="Gerar Comprovante"><i class="fa fa-file-pdf-o text-primary"></i></a></big>
+	<a class="btn btn-dark-light btn-sm" href="#" onclick="gerarComprovante('{$id}')" title="Gerar Comprovante"><i class="fa fa-file-pdf-o"></i></a>
 	
 		</td>
 </tr>

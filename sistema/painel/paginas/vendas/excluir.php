@@ -27,4 +27,3 @@ for($i=0; $i < $total_reg; $i++){
 $pdo->query("UPDATE $tabela SET status = 'Cancelado' where id = '$id'");
 echo 'Excluído com Sucesso';
 
- ?>

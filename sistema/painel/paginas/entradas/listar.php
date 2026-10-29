@@ -9,7 +9,7 @@ if($total_reg > 0){
 
 echo <<<HTML
 	<small>
-	<table class="table table-hover" id="tabela">
+	<table class="table table-hover table-bordered text-nowrap border-bottom dt-responsive" id="tabela">
 	<thead> 
 	<tr> 
 	<th>Produto</th>	

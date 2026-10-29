@@ -5,7 +5,6 @@ $tabela = 'categorias';
 $id = $_POST['id'];
 $nome = $_POST['nome'];
 $descricao = $_POST['descricao'];
-$cor = $_POST['cor'];
 $mais_sabores = $_POST['mais_sabores'];
 $delivery = $_POST['delivery'];
 
@@ -27,10 +26,6 @@ if(@count($res) > 0 and $id != $res[0]['id']){
 
 
 
-
-
-
-
 //validar troca da foto
 $query = $pdo->query("SELECT * FROM $tabela where id = '$id'");
 $res = $query->fetchAll(PDO::FETCH_ASSOC);
@@ -42,27 +37,36 @@ if($total_reg > 0){
 }
 
 
+
+
 //SCRIPT PARA SUBIR FOTO NO SERVIDOR
-$nome_img = date('d-m-Y H:i:s') .'-'.@$_FILES['foto']['name'];
-$nome_img = preg_replace('/[ :]+/' , '-' , $nome_img);
+$nome_img = date('d-m-Y H:i:s') . '-' . @$_FILES['foto']['name'];
+$nome_img = preg_replace('/[ :]+/', '-', $nome_img);
 
-$caminho = '../../images/categorias/' .$nome_img;
+$caminho = '../../images/categorias/' . $nome_img;
 
-$imagem_temp = @$_FILES['foto']['tmp_name']; 
+$imagem_temp = @$_FILES['foto']['tmp_name'];
 
-if(@$_FILES['foto']['name'] != ""){
-	$ext = pathinfo($nome_img, PATHINFO_EXTENSION);   
-	if($ext == 'png' or $ext == 'jpg' or $ext == 'jpeg' or $ext == 'gif'){ 
-	
-			//EXCLUO A FOTO ANTERIOR
-			if($foto != "sem-foto.jpg"){
-				@unlink('../../images/categorias/'.$foto);
-			}
+if (@$_FILES['foto']['name'] != "") {
+	$ext = pathinfo($nome_img, PATHINFO_EXTENSION);
+	if ($ext == 'png' or $ext == 'jpg' or $ext == 'jpeg' or $ext == 'gif' or $ext == 'pdf' or $ext == 'rar' or $ext == 'zip' or $ext == 'doc' or $ext == 'docx' or $ext == 'webp' or $ext == 'PNG' or $ext == 'JPG' or $ext == 'JPEG' or $ext == 'GIF' or $ext == 'PDF' or $ext == 'RAR' or $ext == 'ZIP' or $ext == 'DOC' or $ext == 'DOCX' or $ext == 'WEBP' or $ext == 'xlsx' or $ext == 'xlsm' or $ext == 'xls' or $ext == 'xml') {
 
-			$foto = $nome_img;
-		
-		move_uploaded_file($imagem_temp, $caminho);
-	}else{
+		//EXCLUO A FOTO ANTERIOR
+		if ($foto != "sem-foto.jpg") {
+			@unlink('../../images/categorias/' . $foto);
+		}
+
+		$foto = $nome_img;
+
+		//pegar o tamanho da imagem
+		list($largura, $altura) = getimagesize($imagem_temp);
+		if ($largura > 1400) {
+			echo 'Diminua a imagem para um tamanho de no máximo 1400px de largura!';
+			exit();
+		} else {
+			move_uploaded_file($imagem_temp, $caminho);
+		}
+	} else {
 		echo 'Extensão de Imagem não permitida!';
 		exit();
 	}
@@ -72,9 +76,9 @@ if(@$_FILES['foto']['name'] != ""){
 
 
 if($id == ""){
-	$query = $pdo->prepare("INSERT INTO $tabela SET nome = :nome, descricao = :descricao, cor = '$cor',  ativo = 'Sim', foto = '$foto', url = '$url', mais_sabores = '$mais_sabores', delivery = '$delivery'");
+	$query = $pdo->prepare("INSERT INTO $tabela SET nome = :nome, descricao = :descricao,  ativo = 'Sim', foto = '$foto', url = '$url', mais_sabores = '$mais_sabores', delivery = '$delivery'");
 }else{
-	$query = $pdo->prepare("UPDATE $tabela SET nome = :nome, descricao = :descricao, cor = '$cor',  ativo = 'Sim', foto = '$foto', url = '$url', mais_sabores = '$mais_sabores', delivery = '$delivery' WHERE id = '$id'");
+	$query = $pdo->prepare("UPDATE $tabela SET nome = :nome, descricao = :descricao,  ativo = 'Sim', foto = '$foto', url = '$url', mais_sabores = '$mais_sabores', delivery = '$delivery' WHERE id = '$id'");
 }
 
 $query->bindValue(":nome", "$nome");
