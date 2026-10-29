@@ -21,8 +21,8 @@ $valor_venda = $res[0]['valor_venda'];
 $preparado = $res[0]['preparado'];
 
 $status = '';
-if($preparado == 'Sim' and $mesa != ""){
-	$status = 'Aguardando';
+if($preparado === 'Sim' and $mesa != ""){
+    $status = 'Aguardando';
 }
 
 if($valor_produto == ""){
@@ -36,7 +36,21 @@ if($quantidade > $estoque and $tem_estoque == 'Sim'){
 }
 
 
-$query = $pdo->prepare("INSERT INTO carrinho SET sessao = '$sessao', cliente = '0', produto = '$produto', quantidade = '$quantidade', total_item = '$total_item', obs = :obs, pedido = '0', data = curDate(), mesa = '$mesa', nome_cliente = '', valor_unitario = '$valor_produto', status = '$status', hora = curTime()"); 
+$id_edicao = 0;
+if (@$_SESSION['id_edicao'] != "") {
+	$id_edicao = $_SESSION['id_edicao'];
+
+	//adicionar o total item na tabela de vendas
+	$query = $pdo->query("SELECT * FROM vendas where id = '$id_edicao'");
+	$res = $query->fetchAll(PDO::FETCH_ASSOC);
+	$valor_venda = $res[0]['valor'];
+
+	$total_venda = $valor_venda + ($total_item * $quantidade);
+	$pdo->query("UPDATE vendas SET valor = '$total_venda' where id = '$id_edicao'");
+}
+
+
+$query = $pdo->prepare("INSERT INTO carrinho SET sessao = '$sessao', cliente = '0', produto = '$produto', quantidade = '$quantidade', total_item = '$total_item', obs = :obs, pedido = '$id_edicao', data = curDate(), mesa = '$mesa', nome_cliente = '', valor_unitario = '$valor_produto', status = '$status', hora = curTime()");
 $query->bindValue(":obs", "$obs");
 $query->execute();
 $id_carrinho = $pdo->lastInsertId();
@@ -46,6 +60,3 @@ echo 'Inserido com Sucesso';
 //limpar os ingredientes e adicionais
 $pdo->query("UPDATE temp SET carrinho = '$id_carrinho' where sessao = '$sessao' and carrinho = '0'"); 
 
-
-
- ?>

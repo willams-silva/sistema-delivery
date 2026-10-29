@@ -30,10 +30,6 @@ if($total_item > 0 and $quantidade > 0){
 
 $novo_valor = $quant * $valor_unit;
 
-
-
-
-
 $query = $pdo->query("SELECT * FROM produtos where id = '$produto'");
 $res = $query->fetchAll(PDO::FETCH_ASSOC);
 $id_categoria = @$res[0]['categoria'];
@@ -64,6 +60,24 @@ $pdo->query("UPDATE produtos SET estoque = '$total_produtos' where id = '$produt
 
 
 $pdo->query("UPDATE carrinho set quantidade = '$quant' WHERE id = '$id'"); 
+
+$id_edicao = 0;
+if (@$_SESSION['id_edicao'] != "") {
+	$id_edicao = $_SESSION['id_edicao'];
+
+	//adicionar o total item na tabela de vendas
+	$query = $pdo->query("SELECT * FROM vendas where id = '$id_edicao'");
+	$res = $query->fetchAll(PDO::FETCH_ASSOC);
+	$valor_venda = $res[0]['valor'];
+
+	if($acao == 'menos'){
+	  $total_venda = $valor_venda - $total_item;
+	}else{
+		$total_venda = $valor_venda + $total_item;    
+	}
+	
+	$pdo->query("UPDATE vendas SET valor = '$total_venda' where id = '$id_edicao'");
+}
 
 echo 'Alterado com Sucesso';
 

@@ -31,5 +31,3 @@ if($total_reg > 0){
 
 
 echo 'Alterado com Sucesso';
-
- ?>

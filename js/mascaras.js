@@ -13,3 +13,4 @@ $(document).ready(function () {
      $('#telefone_rodape').mask('(00) 00000-0000');
      $('#troco').mask('#.##0,00', {reverse: true});
 });
+

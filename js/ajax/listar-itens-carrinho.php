@@ -4,19 +4,28 @@ require_once('../../sistema/conexao.php');
 
 $sessao = @$_SESSION['sessao_usuario'];
 
+
 $id_mesa = "";
-if(@$_SESSION['id_ab_mesa'] != ""){
-    $id_mesa = $_SESSION['id_ab_mesa'];
+if (@$_SESSION['id_ab_mesa'] != "") {
+	$id_mesa = $_SESSION['id_ab_mesa'];
 }
 
 $nome_produto2 = '';
-if($id_mesa == ""){
+if ($id_mesa == "") {
 	$query = $pdo->query("SELECT * FROM carrinho where sessao = '$sessao'");
-	$ocultar_excluir = '';
-}else{
+} else {
 	$query = $pdo->query("SELECT * FROM carrinho where mesa = '$id_mesa'");
-	$ocultar_excluir = 'ocultar';
 }
+
+$id_edicao = "";
+if (@$_SESSION['id_edicao'] != "") {
+	$id_edicao = $_SESSION['id_edicao'];
+}
+
+if($id_edicao != ""){
+	$query = $pdo->query("SELECT * FROM carrinho where pedido = '$id_edicao'");
+}
+
 
 $res = $query->fetchAll(PDO::FETCH_ASSOC);
 $total_reg = @count($res);
@@ -113,6 +122,13 @@ if($total_reg > 0){
 		}else{
 			$sigla_grade = '';
 		}
+
+
+		if($id_mesa > 0){
+			$ocultar_excluir = 'ocultar';
+		}else{
+			$ocultar_excluir = '';
+		}
 		
 
 
@@ -122,7 +138,7 @@ if($total_reg > 0){
 echo <<<HTML
 
 		
-		<li class="list-group-item">
+		<li class="list-group-item mb-1" style="border:  solid 1px #ababab; border-radius: 10px; box-shadow: 0px 3px 5px rgba(0, 0, 0, 0.20);">
 		<img class="" src="sistema/painel/images/produtos/{$foto_produto}" width="30px">		    	
 		<span class="nome-produto"><b>{$nome_produto} {$sigla_variacao} {$sigla_grade}</b></span>
 		<span class="{$classe_borda}" style="font-size:11px; color:#450703"><b> {$nome_borda}</b></span>
@@ -173,7 +189,7 @@ echo <<<HTML
 
 
 			
-			<a class="{$ocultar_excluir}" href="#" onclick="excluir('{$id}')" class="link-neutro"><i class="bi bi-x-lg direita"></i></a>
+			<a href="#" onclick="excluir('{$id}')" class="link-neutro {$ocultar_excluir}"><i class="bi bi-x-lg direita"></i></a>
 
 			<div id="popup-excluir{$id}" class="overlay-excluir">
 			<div class="popup">

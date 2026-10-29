@@ -59,5 +59,3 @@ $pdo->query("INSERT INTO temp SET sessao = '$sessao', tabela = '$tipo', id_item 
 
 
 echo 'Alterado com Sucesso';
-
- ?>
