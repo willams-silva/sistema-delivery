@@ -1,8 +1,9 @@
-<?php 
+<?php
 require_once("sistema/conexao.php");
- ?>
+?>
 <!DOCTYPE html>
 <html>
+
 <head>
 	<title><?php echo $nome_sistema ?></title>
 	<meta charset="utf-8" />
@@ -14,7 +15,22 @@ require_once("sistema/conexao.php");
 	<meta name="description" content="Temos sanduíches de qualidade.." />
 	<meta name="author" content="Hugo Vasconcelos" />
 
-	<link rel="shortcut icon" href="img/<?php echo $favicon_sistema ?>" type="image/x-icon">
+	<link rel="shortcut icon" href="sistema/img/icone.png" type="image/x-icon">
+
+
+	<!-- CSS here -->
+	<link rel="stylesheet" href="assets/css/bootstrap.min.css">
+	<link rel="stylesheet" href="assets/css/animate.css">
+	<link rel="stylesheet" href="assets/css/swiper-bundle.css">
+	<link rel="stylesheet" href="assets/css/slick.css">
+	<link rel="stylesheet" href="assets/css/magnific-popup.css">
+	<link rel="stylesheet" href="assets/css/spacing.css">
+	<link rel="stylesheet" href="assets/css/meanmenu.css">
+	<link rel="stylesheet" href="assets/css/nice-select.css">
+	<link rel="stylesheet" href="assets/css/fontawesome.min.css">
+	<link rel="stylesheet" href="assets/css/icon-dukamarket.css">
+	<link rel="stylesheet" href="assets/css/main.css">
+	<link rel="stylesheet" href="assets/css/style.css">
 
 
 	<!-- CSS only -->
@@ -29,12 +45,19 @@ require_once("sistema/conexao.php");
 
 	<script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
 
-	
+
 	<script src="https://cdn.jsdelivr.net/npm/popper.js@1.12.9/dist/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
 	<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
 
 
-	
+
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+	<!-- SweetAlert2 JS -->
+	<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+
+
 
 </head>
+
 <body>

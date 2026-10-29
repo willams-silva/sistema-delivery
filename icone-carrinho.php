@@ -1,66 +1,68 @@
-<a class="text-dark" href="#popup1">
-					<div class="d-flex carrinho">
-						<big><span class="bi bi-cart-fill">
-							<small><small><small><span class="position-absolute top-3 start-90 translate-middle badge rounded-pill bg-danger">
-								<span id="total-itens-carrinho"></span>			
-							</span></small></small></small></span>
-						</big>
-					</div>
-				</a>
-
-
-
-<div id="popup1" class="overlay">
-	<div class="popup">
-		<div class="row">
-			<div class="col-9">
-				<h3 class="titulo-popup">SUB TOTAL <b>R$ <span id="total-carrinho-icone"></span></b></h3>
-			</div>
-			<div class="col-3">
-				<a class="close" href="#">&times;</a>
-			</div>
-		</div>
-		<hr class="linha">
-		<div class="conteudo-popup">
-				<ol class="list-group" style="margin-top: 10px; margin-bottom: 10px; overflow: scroll; height:100%; scrollbar-width: thin;" id="listar-itens-carrinho-icone">
-
-		
-
-	</ol>
-
-	
-	<hr style="margin:5px">
-	<div class="" align="center">
-		<i class="bi bi-cart text-primary"></i><a href='carrinho' class="text-primary" style="text-decoration: none"> Ver Carrinho</a>
-	</div>
-
-
-		</div>
-	</div>
+<!-- BOTÃO DO CARRINHO -->
+<div class="col-xl-3 mr-5">
+  <div class="header__info d-flex align-items-center">
+    <div class="header__info-cart tpcolor__oasis ml-10 tp-cart-toggle">
+      <button><i><img src="img/icon/cart-1.svg" alt=""></i>
+        <span id="total-itens-carrinho"></span>
+      </button>
+    </div>
+  </div>
 </div>
 
 
 
+<!-- header-cart-start -->
+<div class="tpcartinfo tp-cart-info-area p-relative">
+  <button class="tpcart__close"><i class="icon-x"></i></button>
+  <div class="tpcart">
+    <h4 class="tpcart__title">CARRINHO</h4>
+    <div class="tpcart__product">
+      <div class="tpcart__product-list">
+        <ul id="listar-itens-carrinho-icone" style="margin-left: -40px;">
+
+        </ul>
+      </div>
+      <div class="tpcart__checkout">
+        <div class="tpcart__total-price d-flex justify-content-between align-items-center">
+          <span> Subtotal:</span>
+          <span class="heilight-price">R$ <span id="total-carrinho-icone"></span></span>
+        </div>
+        <div class="tpcart__checkout-btn">
+          <a class="tpcheck-btn link-neutro2" href="carrinho">VER CARRINHO</a>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+
+<!-- JS here -->
+
+<script src="assets/js/bootstrap.bundle.min.js"></script>
+<script src="assets/js/nice-select.js"></script>
+<script src="assets/js/main.js"></script>
+
+
+
 <script type="text/javascript">
+  $(document).ready(function() {
+    listarCarrinhoIcone()
+  });
 
-	$(document).ready(function() {    		
-    listarCarrinhoIcone()    
-} );
-	
-function listarCarrinhoIcone(){
-	
+  function listarCarrinhoIcone() {
+
     $.ajax({
-         url: 'js/ajax/listar-itens-carrinho-icone.php',
-        method: 'POST',
-        data: {},
-        dataType: "html",
+      url: 'js/ajax/listar-itens-carrinho-icone.php',
+      method: 'POST',
+      data: {},
+      dataType: "html",
 
-        success:function(result){
-        	//alert(result)
-            $("#listar-itens-carrinho-icone").html(result);
-           
-        }
+      success: function(result) {
+        //alert(result)
+        $("#listar-itens-carrinho-icone").html(result);
+
+      }
     });
-}
-
+  }
 </script>

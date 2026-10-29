@@ -1,9 +1,11 @@
 <?php
-@session_start(); 
+@session_start();
 require_once("cabecalho.php");
 require_once("js/ajax/ApiConfig.php");
 
 $id = @$_GET['id'];
+
+
 
 //BUSCAR AS INFORMAÇÕES DO PEDIDO
 $query = $pdo->query("SELECT * from vendas where id = '$id' ");
@@ -33,16 +35,16 @@ $total_pagoF = number_format($total_pago, 2, ',', '.');
 $trocoF = number_format($troco, 2, ',', '.');
 $taxa_entregaF = number_format($taxa_entrega, 2, ',', '.');
 $dataF = implode('/', array_reverse(explode('-', $data)));
-	//$horaF = date("H:i", strtotime($hora));	
+//$horaF = date("H:i", strtotime($hora));	
 
 $valor_dos_itens = $valor - $taxa_entrega + $cupom;
 $valor_dos_itensF = number_format($valor_dos_itens, 2, ',', '.');
 
-$hora_pedido = date('H:i', strtotime("+$previsao_entrega minutes",strtotime($hora)));
+$hora_pedido = date('H:i', strtotime("+$previsao_entrega minutes", strtotime($hora)));
 
-if($pago == 'Sim'){
+if ($pago == 'Sim') {
 	$cor_pago = 'green';
-}else{
+} else {
 	$cor_pago = 'red';
 }
 
@@ -57,13 +59,13 @@ if($pago == 'Sim'){
 		<span style="font-size: 12px; margin-top: -5px">Ficamos gratos por realizar essa compra!</span>
 		<hr style="margin:7px">
 		<p>
-			<span style="font-size: 13px;"><b>Pagamento: </b> <span><?php echo $tipo_pgto ?></span></span> / 
+			<span style="font-size: 13px;"><b>Pagamento: </b> <span><?php echo $tipo_pgto ?></span></span> /
 			<span style="font-size: 13px;"><b>Pago: </b> <span style="color:<?php echo $cor_pago ?>"><?php echo $pago ?></span></span>
 			<br>
 			<span style="font-size: 13px;"><b>Opção de Entrega: </b> <span><?php echo $entrega ?></span></span><br>
-			<span style="font-size: 13px;"><b>Pagamento:  <span style="color:<?php echo $cor_pago ?>; font-size: 15px">R$ <?php echo $valorF ?></span></b></span><br>
-			<?php if($access_token == ""){ ?>
-				<span style="font-size: 13px;"><b>Chave Pix:</b>  <span style="font-size: 13px"><?php echo $tipo_chave ?> <?php echo $chave_pix ?></span></span><br>
+			<span style="font-size: 13px;"><b>Pagamento: <span style="color:<?php echo $cor_pago ?>; font-size: 15px">R$ <?php echo $valorF ?></span></b></span><br>
+			<?php if ($access_token == "") { ?>
+				<span style="font-size: 13px;"><b>Chave Pix:</b> <span style="font-size: 13px"><?php echo $tipo_chave ?> <?php echo $chave_pix ?></span></span><br>
 			<?php } ?>
 		</p>
 
@@ -73,17 +75,17 @@ if($pago == 'Sim'){
 
 
 		<div class="row itens" style="font-size:12px">
-			<?php 
+			<?php
 			$res = $pdo->query("SELECT * from carrinho where pedido = '$id' order by id asc");
 			$dados = $res->fetchAll(PDO::FETCH_ASSOC);
 			$linhas = count($dados);
 
 			$sub_tot;
-			for ($i=0; $i < count($dados); $i++) { 
+			for ($i = 0; $i < count($dados); $i++) {
 				foreach ($dados[$i] as $key => $value) {
-				}	
-				$id_carrinho = $dados[$i]['id']; 
-				$id_produto = $dados[$i]['produto']; 
+				}
+				$id_carrinho = $dados[$i]['id'];
+				$id_produto = $dados[$i]['produto'];
 				$quantidade = $dados[$i]['quantidade'];
 				$total_item = $dados[$i]['total_item'];
 				$obs_item = $dados[$i]['obs'];
@@ -97,9 +99,9 @@ if($pago == 'Sim'){
 
 				$query2 = $pdo->query("SELECT * FROM variacoes where id = '$variacao'");
 				$res2 = $query2->fetchAll(PDO::FETCH_ASSOC);
-				if(@count(@$res2) > 0){
-					$sigla_variacao = '('.$res2[0]['sigla'].')';			
-				}else{
+				if (@count(@$res2) > 0) {
+					$sigla_variacao = '(' . $res2[0]['sigla'] . ')';
+				} else {
 					$sigla_variacao = '';
 				}
 
@@ -109,82 +111,78 @@ if($pago == 'Sim'){
 
 				$query2 = $pdo->query("SELECT * FROM itens_grade where id = '$id_do_item'");
 				$res2 = $query2->fetchAll(PDO::FETCH_ASSOC);
-				if(@$res2[0]['texto'] != ""){
+				if (@$res2[0]['texto'] != "") {
 					$sigla_grade = @$res2[0]['texto'];
-				}else{
+				} else {
 					$sigla_grade = '';
 				}
 
 				$query2 = $pdo->query("SELECT * FROM produtos where id = '$id_produto'");
 				$res2 = $query2->fetchAll(PDO::FETCH_ASSOC);
-				if(@count(@$res2) > 0){
+				if (@count(@$res2) > 0) {
 					$nome_produto = $res2[0]['nome'];
 					$foto_produto = $res2[0]['foto'];
-				}else{
-					$nome_produto = $nome_produto_tab;
-					$foto_produto = "";
-				} 
-
-				if($nome_produto_tab != ""){
+				} else {
 					$nome_produto = $nome_produto_tab;
 					$foto_produto = "";
 				}
-				?>
+			?>
 
 
 
 				<div align="left" class="col-9"> <?php echo $quantidade ?> - <?php echo $nome_produto ?> <?php echo $sigla_variacao ?> <?php echo $sigla_grade ?>
 
-			</div>		
+				</div>
 
-			<div align="right" class="col-3">
-				R$ <?php		
-				$total_itemF = number_format($total_item , 2, ',', '.');
-				// $total = number_format( $cp1 , 2, ',', '.');
-				echo $total_itemF ;
-				?>
-			</div>
+				<div align="right" class="col-3">
+					R$ <?php
+							$total_itemF = number_format($total_item, 2, ',', '.');
+							// $total = number_format( $cp1 , 2, ',', '.');
+							echo $total_itemF;
+							?>
+				</div>
 
-			<hr style="margin:2px">
+				<hr style="margin:2px">
 
-		<?php } ?>
-	</div>
-
-
-
-	<div style="font-size: 12px; margin-top: 15px" align="left" id="listar_st">
-		
+			<?php } ?>
+		</div>
 
 
-	</div>
+
+		<div style="font-size: 12px; margin-top: 15px" align="left" id="listar_st">
 
 
-	<div style="margin-top: 25px">
-		<a href="http://api.whatsapp.com/send?1=pt_BR&phone=<?php echo $whatsapp_sistema ?>" target="_blank"><img src="<?php echo $url_sistema ?>img/whats.png" width="80%"></a>
-	</div>
+
+		</div>
+
+
+		<div style="margin-top: 25px">
+			<a href="http://api.whatsapp.com/send?1=pt_BR&phone=<?php echo $tel_whats ?>" target="_blank"><img src="<?php echo $url_sistema ?>img/whats.png" width="80%"></a>
+		</div>
 
 </body>
 
 
 <script type="text/javascript">
-
 	listarStatus();
-	
 
-	function listarStatus(){
-	var id = "<?=$id?>";	
-	var url_sistema = "<?=$url_sistema?>";	
-		
+
+	function listarStatus() {
+		var id = "<?= $id ?>";
+		var url_sistema = "<?= $url_sistema ?>";
+
 		$.ajax({
-	         url: url_sistema+'js/ajax/listar_status.php',
-	        method: 'POST',
-	        data: {id},
-	        dataType: "html",
+			url: url_sistema + 'js/ajax/listar_status.php',
+			method: 'POST',
+			data: {
+				id
+			},
+			dataType: "html",
 
-	        success:function(result){
-	          $('#listar_st').html(result);
-	        }
-    	});
+			success: function(result) {
+				$('#listar_st').html(result);
+			}
+		});
 	}
 
 	setInterval(listarStatus, 15000);
