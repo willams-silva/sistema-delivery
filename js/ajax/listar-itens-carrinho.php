@@ -148,6 +148,15 @@ $query5 = $pdo->query("SELECT * FROM temp where carrinho = '$id' and tabela = 'a
 			$classe_adc = 'ocultar';
 		}
 
+$query5 = $pdo->query("SELECT * FROM temp where carrinho = '$id' and tabela != 'adicionais'");
+		$res5 = $query5->fetchAll(PDO::FETCH_ASSOC);
+		$total_reg5 = @count($res5);
+		if($total_reg5 > 0){
+			$classe_grade = '';
+		}else{
+			$classe_grade = 'ocultar';
+		}
+
 echo <<<HTML
 
 
@@ -177,7 +186,11 @@ echo <<<HTML
 			</div>
 
 			<div class="itens-carrinho-qtd-adc {$classe_adc}">
-				<a title="Ver Adicionais" class="link-neutro" href="#" onclick="adicionais('{$nome_produto}', '{$id}', '{$id_sabor}', '{$categoria}')"><i class="bi  bi-plus text-primary"></i><small><small>Adicionais</small></small></a>
+				<a title="Ver Adicionais" class="link-neutro" href="#" onclick="adicionais('{$nome_produto}', '{$id}', '{$id_sabor}', '{$categoria}')"><i class="bi  bi-plus text-primary"></i><small><small>Adc</small></small></a>
+			</div>
+
+			<div class="itens-carrinho-qtd-adc {$classe_grade}">
+				<a title="Ver Opcionais" class="link-neutro" href="#" onclick="grades('{$nome_produto}', '{$id}', '{$produto}')"><i class="bi  bi-plus text-primary"></i><small><small>Opções</small></small></a>
 			</div>
 
 			<a href="#" onclick="mudarQuant('{$id}', '{$quantidade}', 'menos')" class="link-neutro">
@@ -318,6 +331,38 @@ HTML;
 
 		}
 
+
+
+		function grades(nome, id, produto){			
+			$("#nome_item_grade").text(nome)			
+			listarGrades(id, produto);
+
+			var myModal = new bootstrap.Modal(document.getElementById('modalGrades'), {
+        		//backdrop: 'static',
+    		});
+   			 myModal.show();			 
+
+		}
+
+
+
+		function listarGrades(id, produto){
+
+			$.ajax({
+         url: 'js/ajax/listar-grades-carrinho.php',
+        method: 'POST',
+        data: {id, produto},
+        dataType: "html",
+
+        success:function(result){
+            $("#listar-grade-carrinho").html(result);
+           
+        }
+    });
+
+			
+
+		}
 
 
 	</script>

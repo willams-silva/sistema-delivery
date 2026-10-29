@@ -26,7 +26,8 @@ if($total_reg > 0){
 	for($i=0; $i < $total_reg; $i++){
 		foreach ($res[$i] as $key => $value){}
 			$id_temp = $res[$i]['id'];				
-		$id_item = $res[$i]['id_item'];		
+		$id_item = $res[$i]['id_item'];	
+		$quantidade_temp = $res[$i]['quantidade'];	
 
 		if($categoria > 0){
 			$query2 =$pdo->query("SELECT * FROM adicionais_cat where id = '$id_item'");
@@ -37,14 +38,15 @@ if($total_reg > 0){
 		$res2 = $query2->fetchAll(PDO::FETCH_ASSOC);
 		$total_reg2 = @count($res2);
 		$nome_adc = $res2[0]['nome'];
-		$valor_adc = $res2[0]['valor'] * $quantidade;
+		
+		$valor_adc = ($res2[0]['valor'] * $quantidade_temp) * $quantidade;
 		
 		$valor_adcF = number_format($valor_adc, 2, ',', '.');	
 
 echo <<<HTML
 
 		<i class="bi bi-check-lg text-success"></i>
-		{$nome_adc} <span class="text-danger">(R$ {$valor_adcF})</span>
+		{$quantidade_temp} {$nome_adc} <span class="text-danger">(R$ {$valor_adcF})</span>
 		<a href="#" onclick="excluirAdc('{$id_temp}', '{$id}', '{$valor_adc}', '{$id_sabor}', '{$item}', '{$categoria}')"><i class="bi bi-trash text-danger"></i></a>
 		<hr>
 

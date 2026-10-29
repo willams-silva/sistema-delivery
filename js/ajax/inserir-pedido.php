@@ -1,6 +1,7 @@
 <?php 
 @session_start();
 require_once('../../sistema/conexao.php');
+require_once('ApiConfig.php');
 
 $pagamento = $_POST['pagamento'];
 $entrega = $_POST['entrega'];
@@ -24,6 +25,8 @@ $taxa_entrega = @$_POST['taxa_entrega'];
 $taxa_entrega = str_replace(',', '.', $taxa_entrega);
 $total_pago = str_replace(',', '.', $total_pago);
 
+
+
 //verificar pgto pix
 require("verificar_pgto.php");
 if(@$status_api == 'approved'){
@@ -32,7 +35,7 @@ if(@$status_api == 'approved'){
   $pago = 'Não';
 }
 
-if ($pagamento == 'Pix' and $pago == 'Não') {
+if ($pagamento == 'Pix' and $pago == 'Não' and $chave_pix == "") {
   echo 'Pagamento nao realizado!!';
   exit();
   
@@ -91,7 +94,7 @@ $total_carrinho = 0;
 
 
 $total_carrinho = 0;
-$query = $pdo->query("SELECT * FROM carrinho where sessao = '$sessao' and id_sabor = 0");
+$query = $pdo->query("SELECT * FROM carrinho where sessao = '$sessao'");
 $res = $query->fetchAll(PDO::FETCH_ASSOC);
 $total_reg = @count($res);
 if($total_reg > 0){
@@ -187,7 +190,7 @@ $mensagem .= '*_Detalhes do Pedido_* %0A %0A';
 
 //ABAIXO É PARA PEGAR OS PRODUTOS COMPRADOS
 $nome_produto2 = '';
-$res = $pdo->query("SELECT * from carrinho where pedido = '$id_pedido' and id_sabor = 0 order by id asc");
+$res = $pdo->query("SELECT * from carrinho where pedido = '$id_pedido' order by id asc");
 $dados = $res->fetchAll(PDO::FETCH_ASSOC);
 $linhas = count($dados);
 
@@ -276,25 +279,26 @@ $query2 =$pdo->query("SELECT * FROM temp where carrinho = '$id_carrinho' and tab
   $total_reg2 = @count($res2);
   if($total_reg2 > 0){
     if($total_reg2 > 1){
-      $texto_adicional = @$nome_prod .' ('.$total_reg2.') Adicionais ';
+      $texto_adicional = @$total_reg2.' Tipos de Adicionais';
     }else{
-      $texto_adicional = @$nome_prod .' ('.$total_reg2.') Adicional ';
+      $texto_adicional = @$total_reg2.' Tipo de Adicional';
     }
-        $mensagem .= ' '.'```'.$texto_adicional.'```';
+        $mensagem .= ' *'.$texto_adicional.'* %0A';
         for($i2=0; $i2 < $total_reg2; $i2++){
           foreach ($res2[$i2] as $key => $value){}
             $id_temp = $res2[$i2]['id'];        
-          $id_item = $res2[$i2]['id_item'];   
+          $id_item = $res2[$i2]['id_item'];
+           $quantidade_temp = $res2[$i2]['quantidade'];   
 
           $query3 =$pdo->query("SELECT * FROM $tabela_ad where id = '$id_item'");
           $res3 = $query3->fetchAll(PDO::FETCH_ASSOC);
           $total_reg3 = @count($res3);
           $nome_adc = $res3[0]['nome'];          
           if($i2 < ($total_reg2 - 1)){
-           $nome_adc .= ', ';
+           $nome_adc .= '%0A';
           }
 
-           $mensagem .= '```'.$nome_adc.'```'.'';         
+           $mensagem .= '```('.$quantidade_temp.') '.$nome_adc.'```'.'';         
   }
 
   $mensagem .= '%0A';
@@ -322,7 +326,7 @@ $query2 =$pdo->query("SELECT * FROM temp where carrinho = '$id_carrinho' and gra
   $total_reg2 = @count($res2);
   if($total_reg2 > 0){   
 
-    $mensagem .= ' '.'```'.$nome_da_grade.'```'.' ';;
+    $mensagem .= '*'.$nome_da_grade.'* %0A';
 
         for($i2=0; $i2 < $total_reg2; $i2++){
           foreach ($res2[$i2] as $key => $value){}
@@ -347,7 +351,7 @@ $query2 =$pdo->query("SELECT * FROM temp where carrinho = '$id_carrinho' and gra
           if($i2 < ($total_reg2 - 1)){
            $nome_item .= ', ';
           }            
-            $mensagem .= '```'.$quant_item.$nome_item.'```';            
+            $mensagem .= '```'.$quant_item.$nome_item.'```%0A';            
         }
 
       $mensagem .= '%0A';

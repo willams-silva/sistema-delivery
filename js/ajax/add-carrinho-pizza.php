@@ -86,12 +86,13 @@ if($total_reg > 0){
 		foreach ($res[$i] as $key => $value){}
 			$id_temp = $res[$i]['id'];				
 			$id_item = $res[$i]['id_item'];	
+			$quantidade_temp = $res[$i]['quantidade'];	
 
 			$query2 =$pdo->query("SELECT * FROM adicionais_cat where id = '$id_item'");
 			$res2 = $query2->fetchAll(PDO::FETCH_ASSOC);
 			$total_reg2 = @count($res2);
 			$nome_adc = $res2[0]['nome'];
-			$valor_adc = $res2[0]['valor'];	
+			$valor_adc = $res2[0]['valor'] * $quantidade_temp;	
 			$total_adicionais += $valor_adc;
 }
 }

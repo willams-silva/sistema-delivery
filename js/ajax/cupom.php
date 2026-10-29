@@ -19,6 +19,9 @@ if($total_cupons == 0 ){
 	$data = $res[0]['data'];
 	$quantidade = $res[0]['quantidade'];
 	$valor_minimo = $res[0]['valor_minimo'];
+	$tipo = $res[0]['tipo'];
+
+
 
 	if($data != "" and $data != "0000-00-00"){
 		if(strtotime($data) < strtotime($data_atual)){
@@ -39,10 +42,18 @@ if($total_cupons == 0 ){
 		}
 	}
 
-	$valor_total = $total_final - $valor_cupom;
+	if($tipo == '%'){
+		$valor_cupom = $valor_cupom * $total_final / 100;
+		$valor_total = $total_final - $valor_cupom;
+
+	}else{
+		$valor_total = $total_final - $valor_cupom;
+	}
+	
 
 	$valor_totalF = number_format($valor_total, 2, ',', '.');
-	echo $valor_totalF.'**'.$valor_cupom;
+	$valor_cupomF = number_format($valor_cupom, 2, ',', '.');
+	echo $valor_totalF.'**'.$valor_cupom.'**'.$valor_cupomF;
 
 	//deletar o cupom
 	//$pdo->query("DELETE FROM cupons where codigo = '$codigo_cupom'");

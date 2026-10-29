@@ -2,7 +2,7 @@
 require_once('../../sistema/conexao.php');
 require_once('../../js/ajax/ApiConfig.php');
 
-if($access_token == ""){
+if($chave_pix != ""){
 	echo '<b>Chave Pix</b><br>';
     echo '<b>'.$tipo_chave.'</b> : '.$chave_pix;
 	exit();
