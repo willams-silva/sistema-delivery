@@ -37,3 +37,5 @@ RewriteRule ^receber(.*)$ index.php?pagina=receber [L]
 RewriteRule ^compras(.*)$ index.php?pagina=compras [L]
 
 RewriteRule ^novo_pedido(.*)$ index.php?pagina=novo_pedido [L]
+
+RewriteRule ^adicionais(.*)$ index.php?pagina=adicionais [L]

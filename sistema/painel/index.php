@@ -229,6 +229,8 @@ if(@$_GET['pagina'] != ""){
 									<li class="<?php echo @$mesas ?>"><a href="mesas"><i class="fa fa-angle-right"></i>Mesas</a></li>
 
 									<li class="<?php echo @$cupons ?>"><a href="cupons"><i class="fa fa-angle-right"></i>Cupom de Desconto</a></li>
+
+									<li class="<?php echo @$adicionais ?>"><a href="adicionais"><i class="fa fa-angle-right"></i>Adicionais</a></li>
 									
 								</ul>
 							</li>
@@ -887,6 +889,18 @@ if(@$_GET['pagina'] != ""){
 							<select class="form-control" name="mais_sabores">
 								<option value="Média" <?php if(@$mais_sabores == 'Média'){?> selected <?php } ?> >Média dos Valores</option>
 								<option value="Maior Valor" <?php if(@$mais_sabores == 'Maior Valor'){?> selected <?php } ?> >Maior Valor</option>	
+									
+							</select>					
+						</div>
+					</div>
+
+
+					<div class="row">
+						<div class="col-md-3">							
+							<label>Abrir Comprovante</label>
+							<select class="form-control" name="abrir_comprovante">
+								<option value="Sim" <?php if(@$abrir_comprovante == 'Sim'){?> selected <?php } ?> >Sim</option>
+								<option value="Não" <?php if(@$abrir_comprovante == 'Não'){?> selected <?php } ?> >Não</option>	
 									
 							</select>					
 						</div>
