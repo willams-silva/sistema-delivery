@@ -25,10 +25,12 @@ if ($id_usu != "") {
 		} else {
 			echo '<script>window.location="painel/' . $pagina . '"</script>';
 		}
+		exit;
 
 	} else {
 		echo "<script>localStorage.setItem('id_usu', '')</script>";
 		echo '<script>window.location="index.php"</script>';
+		exit;
 	}
 }
 
@@ -54,6 +56,7 @@ if ($linhas > 0) {
 	if ($res[0]['ativo'] != 'Sim') {
 		$_SESSION['msg'] = 'Seu Acesso foi desativado!';
 		echo '<script>window.location="index.php"</script>';
+		exit;
 	}
 
 	$_SESSION['nome'] = $res[0]['nome'];
