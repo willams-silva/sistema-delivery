@@ -31,7 +31,7 @@ if($api_whatsapp == 'menuia'){
 	//echo $response;
 
 	$responseData = json_decode($response, true);
- 	@$hash = $responseData['id'];  
+ 	@$hash = @$responseData['id'];  
 	
 }
 

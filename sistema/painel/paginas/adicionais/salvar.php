@@ -20,7 +20,7 @@ if($id == ""){
 	$query = $pdo->prepare("INSERT INTO $tabela SET nome = :nome, valor = :valor, ativo = 'Sim'");
 }else{
 	$query = $pdo->prepare("UPDATE $tabela SET nome = :nome, valor = :valor WHERE id = '$id'");
-	$pdo->query("UPDATE itens_grade SET valor = '$valor' where adicional = '$id'");
+	$pdo->query("UPDATE itens_grade SET valor = '$valor', texto = '$nome' where adicional = '$id'");
 }
 
 $query->bindValue(":nome", "$nome");

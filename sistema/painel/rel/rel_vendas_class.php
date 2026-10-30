@@ -4,11 +4,21 @@ include('../../conexao.php');
 
 $dataInicial = $_POST['dataInicial'];
 $dataFinal = $_POST['dataFinal'];
+$horaInicial = $_POST['horaInicial'];
+$horaFinal = $_POST['horaFinal'];
 $status = urlencode($_POST['status']);
 $forma_pgto = urlencode($_POST['forma_pgto']);
+$tipo = urlencode($_POST['tipo']);
+$impressao = urlencode($_POST['impressao']);
+
+if($impressao == 'Sim'){
+	$html = file_get_contents($url_sistema."sistema/painel/rel/imprimir_vendas.php?status=$status&dataInicial=$dataInicial&dataFinal=$dataFinal&forma_pgto=$forma_pgto&tipo=$tipo&horaInicial=$horaInicial&horaFinal=$horaFinal");
+	echo $html;
+	exit();
+}
 
 //ALIMENTAR OS DADOS NO RELATÓRIO
-$html = file_get_contents($url_sistema."sistema/painel/rel/rel_vendas.php?status=$status&dataInicial=$dataInicial&dataFinal=$dataFinal&forma_pgto=$forma_pgto");
+$html = file_get_contents($url_sistema."sistema/painel/rel/rel_vendas.php?status=$status&dataInicial=$dataInicial&dataFinal=$dataFinal&forma_pgto=$forma_pgto&tipo=$tipo&horaInicial=$horaInicial&horaFinal=$horaFinal");
 
 if($tipo_rel != 'PDF'){
 	echo $html;

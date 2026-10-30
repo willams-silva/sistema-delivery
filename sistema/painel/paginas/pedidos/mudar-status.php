@@ -57,11 +57,7 @@ if($pago != 'Sim'){
 	$pdo->query("UPDATE $tabela SET status = '$acao' where id = '$id'");
 }
 
-
-
-
-echo 'Alterado com Sucesso***';
-
+$telefone = '55' . preg_replace('/[ ()-]+/', '', $telefone);
 
 if ($api_whatsapp != 'Não' and $acao == 'Entrega') {
 	$mensagem = '*----------ATENÇÃO----------* %0A%0A';
@@ -73,5 +69,33 @@ if ($api_whatsapp != 'Não' and $acao == 'Entrega') {
 	$telefone_envio = $telefone;
 	require ("../../../../js/ajax/api_texto.php");
 }
+
+
+if ($api_whatsapp != 'Não' and $acao == 'Aceito') {
+	$mensagem = '*----------ATENÇÃO----------* %0A%0A';
+
+	$mensagem .= 'Seu Pedido foi aceito, em breve iremos preparar!! %0A';
+	$mensagem .= '*Total:* R$ ' . $total . '%0A';
+	$mensagem .= '*Pagamento:* ' . $pagamento . '%0A';
+	$data_mensagem = date('Y-m-d H:i:s');
+	$telefone_envio = $telefone;
+	require ("../../../../js/ajax/api_texto.php");
+}
+
+
+if ($api_whatsapp != 'Não' and $acao == 'Preparando') {
+	$mensagem = '*----------ATENÇÃO----------* %0A%0A';
+
+	$mensagem .= 'Seu Pedido entrou em preparo!!';	
+	$data_mensagem = date('Y-m-d H:i:s');
+	$telefone_envio = $telefone;
+	require ("../../../../js/ajax/api_texto.php");
+}
+
+
+echo 'Alterado com Sucesso***';
+
+
+
 
 ?>

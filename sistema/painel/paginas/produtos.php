@@ -55,7 +55,7 @@ $pag = 'produtos';
 				<button id="btn-fechar" aria-label="Close" class="btn-close" data-bs-dismiss="modal" type="button"><span
 						class="text-white" aria-hidden="true">&times;</span></button>
 			</div>
-			<form id="form">
+			<form id="form_produtos">
 				<div class="modal-body">
 
 					<div class="row">
@@ -911,7 +911,7 @@ $pag = 'produtos';
 				if (mensagem.trim() == "Salvo com Sucesso") {
 
 					$('#btn-fechar-saida').click();
-					listar();
+					buscar();
 
 				} else {
 
@@ -952,7 +952,7 @@ $pag = 'produtos';
 				if (mensagem.trim() == "Salvo com Sucesso") {
 
 					$('#btn-fechar-entrada').click();
-					listar();
+					buscar();
 
 				} else {
 
@@ -1429,4 +1429,55 @@ $pag = 'produtos';
 		var busca = $('#busca').val();
 		listar(busca)
 	}
+</script>
+
+
+
+<script type="text/javascript">
+	
+$("#form_produtos").submit(function () {
+
+    event.preventDefault();
+    var formData = new FormData(this);
+
+    $('#mensagem').text('Salvando...')
+    $('#btn_salvar').hide();
+    $('#btn_carregando').show();
+
+    $.ajax({
+        url: 'paginas/' + pag + "/salvar.php",
+        type: 'POST',
+        data: formData,
+
+        success: function (mensagem) {
+            $('#mensagem').text('');
+            $('#mensagem').removeClass()
+            if (mensagem.trim() == "Salvo com Sucesso") {
+
+                $('#btn-fechar').click();
+                sucesso();
+                buscar();
+
+                $('#mensagem').text('')          
+
+            } else {
+
+                $('#mensagem').addClass('text-danger')
+                $('#mensagem').text(mensagem)
+            }
+
+            $('#btn_salvar').show();
+            $('#btn_carregando').hide();
+
+        },
+
+        cache: false,
+        contentType: false,
+        processData: false,
+
+    });
+
+});
+
+
 </script>

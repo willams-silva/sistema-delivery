@@ -128,7 +128,7 @@ if ($entrega == 'Consumir Local') {
 
 		/*tamanho da Fonte do Texto*/
 		font-size:
-			<?php echo $fonte_comprovante ?> px;
+			<?php echo $fonte_comprovante ?>px;
 
 
 

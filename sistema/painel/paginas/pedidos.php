@@ -156,7 +156,7 @@ $segundos = $tempo_atualizar * 1000;
 							<input type="hidden" name="id" id="id_baixar">
 						</div>
 						<div class="col-md-4">
-							<button type="submit" class="btn btn-primary">Confirmar</button>
+							<button id="btn_confirmar" type="submit" class="btn btn-primary">Confirmar</button>
 						</div>
 
 
@@ -346,6 +346,9 @@ $segundos = $tempo_atualizar * 1000;
 		event.preventDefault();
 		var formData = new FormData(this);
 
+		$('#mensagem-baixar').text('Carregando!!');
+		$('#btn_confirmar').hide();
+
 		$.ajax({
 			url: 'paginas/' + pag + "/baixar.php",
 			type: 'POST',
@@ -365,6 +368,9 @@ $segundos = $tempo_atualizar * 1000;
 					$('#mensagem-baixar').addClass('text-danger')
 					$('#mensagem-baixar').text(mensagem)
 				}
+
+				$('#mensagem-baixar').text('');
+				$('#btn_confirmar').show();
 
 
 			},

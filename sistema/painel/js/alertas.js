@@ -5,7 +5,10 @@ function sucesso() {
 		title: 'Salvo com Sucesso!',
 		text: 'Fecharei em 1 segundo.',
 		icon: "success",
-		timer: 1000
+		timer: 1000,
+		customClass: {
+            container: 'swal-whatsapp-container'
+        }
 	})?.then(
 		function () {
 		},
@@ -28,7 +31,10 @@ function excluido() {
 		title: 'Excluido com Sucesso!',
 		text: 'Fecharei em 1 segundo.',
 		icon: "success",
-		timer: 1000
+		timer: 1000,
+		customClass: {
+            container: 'swal-whatsapp-container'
+        }
 	})?.then(
 		function () {
 		},
@@ -50,7 +56,10 @@ function alertcobrar() {
 		title: 'Cobrança Efetuada!',
 		text: 'Fecharei em 1 segundo.',
 		icon: "success",
-		timer: 1000
+		timer: 1000,
+		customClass: {
+            container: 'swal-whatsapp-container'
+        }
 	})?.then(
 		function () {
 		},
@@ -70,7 +79,10 @@ function finalizado() {
 		title: 'Pedido Finalizado com Sucesso!',
 		text: 'Redirecionando!!!',
 		icon: "success",
-		timer: 2000
+		timer: 2000,
+		customClass: {
+            container: 'swal-whatsapp-container'
+        }
 	})?.then(
 		function () {
 		},
@@ -90,7 +102,10 @@ function baixado() {
 		title: 'Baixa Efeturada com Sucesso!',
 		text: 'Fecharei em 1 segundo.',
 		icon: "success",
-		timer: 2000
+		timer: 2000,
+		customClass: {
+            container: 'swal-whatsapp-container'
+        }
 	})?.then(
 		function () {
 		},

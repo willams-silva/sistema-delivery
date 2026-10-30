@@ -35,6 +35,7 @@ $url = preg_replace('/[ -]+/' , '-' , $nome_novo);
 $url = str_replace('+', '-', $url);
 $url = str_replace('/', '-', $url);
 $url = str_replace('"', '-', $url);
+$url = str_replace('%', '', $url);
 
 
 if($categoria == 0 || $categoria == ""){

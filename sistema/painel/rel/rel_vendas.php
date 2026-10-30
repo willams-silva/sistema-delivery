@@ -6,6 +6,30 @@ $dataInicial = $_GET['dataInicial'];
 $dataFinal = $_GET['dataFinal'];
 $status = $_GET['status'];
 $forma_pgto = $_GET['forma_pgto'];
+$tipo = $_GET['tipo'];
+
+$horaInicial = $_GET['horaInicial'];
+$horaFinal = $_GET['horaFinal'];
+
+if($tipo == ""){
+	$sql_tipo = ' ';
+}else{
+	if($tipo == "Delivery"){
+		$tipo = '';
+	}
+	$sql_tipo = " and tipo_pedido = '$tipo' ";
+}
+
+if($horaInicial == "" || $horaFinal == ""){
+	$sql_hora = ' ';
+}else{	
+	if($dataInicial == $dataFinal){
+		$sql_hora = " AND hora >= '$horaInicial' AND hora <= '$horaFinal' ";
+	}else{
+		$sql_hora = " AND ( (data = '$dataInicial' AND hora >= '$horaInicial')  OR (data = '$dataFinal' AND hora <= '$horaFinal')) ";
+	}
+	
+}
 
 
 $dataInicialF = implode('/', array_reverse(explode('-', $dataInicial)));
@@ -136,7 +160,13 @@ $forma_pgto = '%' . $forma_pgto . '%';
 		$total_vendasF = 0;
 		$total_canceladas = 0;
 		$total_canceladasF = 0;
-		$query = $pdo->query("SELECT * from vendas where (data >= '$dataInicial' and data <= '$dataFinal') and pago = 'Sim' and status LIKE '$status' and tipo_pgto LIKE '$forma_pgto' order by data asc, hora asc ");
+		$total_delivery = 0;
+		$total_deliveryF = 0;
+		$total_mesas = 0;
+		$total_mesasF = 0;
+		$total_balcao = 0;
+		$total_balcaoF = 0;
+		$query = $pdo->query("SELECT * from vendas where (data >= '$dataInicial' and data <= '$dataFinal') and pago = 'Sim' and status LIKE '$status' and tipo_pgto LIKE '$forma_pgto' $sql_tipo $sql_hora order by data asc, hora asc ");
 		$res = $query->fetchAll(PDO::FETCH_ASSOC);
 		$total_reg = count($res);
 		if ($total_reg > 0) {
@@ -148,13 +178,12 @@ $forma_pgto = '%' . $forma_pgto . '%';
 				<thead>
 
 					<tr id="cabeca" style="margin-left: 0px; background-color:#CCC">
-						<td style="width:25%">CLIENTE</td>
-						<td style="width:7%">R$ VALOR</td>
-						<td style="width:10%">R$ TOTAL PAGO</td>
-						<td style="width:9%">R$ TROCO</td>
-						<td style="width:11%">FORMA PGTO</td>
-						<td style="width:9%">DATA</td>
-						<td style="width:7%">HORA</td>
+						<td style="width:30%">CLIENTE</td>	
+						<td style="width:17%">REFERÊNCIA</td>						
+						<td style="width:12%">R$ TOTAL PAGO</td>						
+						<td style="width:21%">FORMA PGTO</td>
+						<td style="width:11%">DATA</td>
+						<td style="width:9%">HORA</td>
 
 					</tr>
 				</thead>
@@ -203,6 +232,7 @@ $forma_pgto = '%' . $forma_pgto . '%';
 					$usuario_baixa = $res[$i]['usuario_baixa'];
 					$mesa = $res[$i]['mesa'];
 					$nome_do_cliente = $res[$i]['nome_cliente'];
+					$tipo_pedido = $res[$i]['tipo_pedido'];
 
 					$valorF = number_format($valor, 2, ',', '.');
 					$total_pagoF = number_format($total_pago, 2, ',', '.');
@@ -269,22 +299,38 @@ $forma_pgto = '%' . $forma_pgto . '%';
 					$total_canceladasF = number_format($total_canceladas, 2, ',', '.');
 
 
+					if($tipo_pedido == ""){
+						$total_delivery += $total_pago;
+					}
+
+					if($tipo_pedido == "Balcão"){
+						$total_balcao += $total_pago;
+					}
+
+
+					if($tipo_pedido == "Mesa"){
+						$total_mesas += $total_pago;
+					}
+
+					$total_deliveryF = number_format($total_delivery, 2, ',', '.');
+					$total_balcaoF = number_format($total_balcao, 2, ',', '.');
+					$total_mesasF = number_format($total_mesas, 2, ',', '.');
+
+
+
 				?>
 
 					<tr class="">
-						<td style="width:25%" align="left">
+						<td style="width:30%" align="left">
 							<img src="<?php echo $url_sistema ?>/img/<?php echo $imagem ?>" width="11px" height="11px"
-								style="margin-top:3px">
-							<b>Pedido (<?php echo $id ?>)</b> /
+								style="margin-top:3px">					
 							<?php echo $nome_cliente ?>
-						</td>
-
-						<td style="width:9%">R$ <?php echo $valorF ?></td>
-						<td style="width:7%">R$ <?php echo $total_pagoF ?></td>
-						<td style="width:9%">R$ <?php echo $trocoF ?></td>
-						<td style="width:11%"><?php echo $tipo_pgto ?></td>
-						<td style="width:9%;"><?php echo $dataF ?> </td>
-						<td style="width:7%;"><?php echo $hora ?> </td>
+						</td>		
+						<td style="width:17%"><?php echo $tipo_pedido ?></td>				
+						<td style="width:12%">R$ <?php echo $total_pagoF ?></td>					
+						<td style="width:21%"><?php echo $tipo_pgto ?></td>
+						<td style="width:11%;"><?php echo $dataF ?> </td>
+						<td style="width:9%;"><?php echo $hora ?> </td>
 
 					</tr>
 
@@ -303,19 +349,22 @@ $forma_pgto = '%' . $forma_pgto . '%';
 		<tbody>
 
 
-			<tr>
+				<tr>
 
-				<td style="font-size: 10px; width:350px; text-align: right;"></td>
-
-
+				<td style="font-size: 10px; width:180px; text-align: right;"></td>
 
 
-				<td style="font-size: 10px; width:180px; text-align: right;"><b>VENDAS CANCELADAS: <span style="color:red">R$ <?php echo $total_canceladasF ?></span></td>
+				<td style="font-size: 10px; width:180px; text-align: right;"><b>TOTAL DELIVERY: <span style="color:green">R$ <?php echo $total_deliveryF ?></span></td>
 
-				<td style="font-size: 10px; width:180px; text-align: right;"><b>VENDAS RECEBIDAS: <span style="color:green">R$ <?php echo $total_vendasF ?></span></td>
+				<td style="font-size: 10px; width:180px; text-align: right;"><b>TOTAL BALCÃO: <span style="color:green">R$ <?php echo $total_balcaoF ?></span></td>
+
+				<td style="font-size: 10px; width:180px; text-align: right;"><b>TOTAL MESAS: <span style="color:green">R$ <?php echo $total_mesasF ?></span></td>
 
 
 			</tr>
+
+
+
 
 
 

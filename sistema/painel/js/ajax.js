@@ -86,7 +86,7 @@ function excluir(id) {
         confirmButtonColor: '#d33', // Cor do botão de confirmação (vermelho)
         cancelButtonColor: '#3085d6', // Cor do botão de cancelamento (azul)
         confirmButtonText: "Sim, Excluir!",
-        cancelButtonText: "Cancel",
+        cancelButtonText: "Cancelar",
         reverseButtons: true
     }).then((result) => {
         if (result.isConfirmed) {
@@ -335,3 +335,35 @@ function deletarSel(id) {
 };
 
 
+// ALERT SALVAR FINAL ##############
+function alertInformativoFechar(mensagem) {
+    $('body').removeClass('timer-alert');
+    Swal.fire({
+        title: mensagem,
+        text: 'Fecharei em 3 segundo.',
+        icon: "error",
+        timer: 3000,
+        timerProgressBar: true,
+        confirmButtonText: 'OK',
+         customClass: {
+            container: 'swal-whatsapp-container'
+        }
+    })
+}
+
+
+// ALERT SALVAR FINAL ##############
+function alertInformativo(mensagem) {
+    $('body').removeClass('timer-alert');
+    Swal.fire({
+        title: mensagem,
+        text: '',
+        icon: "error",
+      
+        timerProgressBar: true,
+        confirmButtonText: 'OK',
+         customClass: {
+            container: 'swal-whatsapp-container'
+        }
+    })
+}

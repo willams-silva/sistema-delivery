@@ -45,6 +45,7 @@ HTML;
 		$data_cad = $res[$i]['data_cad'];
 		$data_nasc = $res[$i]['data_nasc'];
 		$complemento = $res[$i]['complemento'];
+		$marketing = $res[$i]['marketing'];
 
 		$data_cadF = implode('/', array_reverse(@explode('-', $data_cad)));
 		$data_nascF = implode('/', array_reverse(@explode('-', $data_nasc)));
@@ -67,6 +68,12 @@ HTML;
 			$ocultar_whats = 'ocultar';
 		} else {
 			$ocultar_whats = '';
+		}
+
+		if ($marketing == 'Não') {
+			$ocultar_mark = 'ocultar';
+		} else {
+			$ocultar_mark = '';
 		}
 
 		echo <<<HTML
@@ -92,6 +99,8 @@ HTML;
 <a class="btn btn-success-light btn-sm" href="#" onclick="mostrarContas('{$nome}','{$id}')" title="Mostrar Contas"><i class="fa fa-money"></i></a>
 
 <a class="btn btn-success-light btn-sm {$ocultar_whats}" href="http://api.whatsapp.com/send?1=pt_BR&phone={$tel_whatsF}" title="Whatsapp" target="_blank"><i class="fa-brands fa-whatsapp"></i></a>
+
+<big><a class="btn btn-danger-light btn-sm {$ocultar_mark}" href="#" onclick="excluirMarketing('{$id}')" title="Remover do Marketing Whatsapp"><i class="fa fa-ban text-danger"></i></a></big>
 
 </td>
 </tr>
@@ -220,4 +229,61 @@ HTML;
 			}
 		});
 	}
+
+
+
+
+
+function excluirMarketing(id) {
+    //$('#mensagem-excluir').text('Excluindo...')
+
+    $('body').removeClass('timer-alert');
+    Swal.fire({
+        title: "Excluir do Marketing?",
+        text: "Ele não receberá mais mensagens!",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#d33', // Cor do botão de confirmação (vermelho)
+        cancelButtonColor: '#3085d6', // Cor do botão de cancelamento (azul)
+        confirmButtonText: "Sim, Excluir!",
+        cancelButtonText: "Cancelar",
+        reverseButtons: true
+    }).then((result) => {
+        if (result.isConfirmed) {
+
+
+            $.ajax({
+                url: 'paginas/' + pag + "/excluir_marketing.php",
+                method: 'POST',
+                data: { id },
+                dataType: "html",
+
+                success: function (mensagem) {
+                    if (mensagem.trim() == "Excluído com Sucesso") {
+
+                        // Ação de exclusão aqui
+                        Swal.fire({
+                            title: 'Excluido com Sucesso!',
+                            text: 'Fecharei em 1 segundo.',
+                            icon: "success",
+                            timer: 1000
+                        })
+                        //excluido();
+                        listar();
+                        limparCampos();
+
+
+                    } else {
+                        $('#mensagem-excluir').addClass('text-danger')
+                        $('#mensagem-excluir').text(mensagem)
+                    }
+                }
+            });
+
+        }
+    });
+
+
+};
+
 </script>

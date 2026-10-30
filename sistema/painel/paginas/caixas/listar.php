@@ -161,11 +161,16 @@ HTML;
 		}
 
 
+		//pegar a forma de pagamento dinheiro
+		$query2 = $pdo->query("SELECT * FROM formas_pgto where nome LIKE '%Dinheiro%'");
+		$res2 = $query2->fetchAll(PDO::FETCH_ASSOC);
+		$pgto_dinheiro = $res2[0]['id'];
+
 
 		//buscar total movimentado pelo caixa
 		//totalizar recebimentos
 		$total_recebido = 0;
-		$query2 = $pdo->query("SELECT * FROM receber where usuario_pgto = '$operador' and data_pgto >= '$data_abertura' and data_pgto <= '$data_fechamento_consulta' and caixa = '$id'");
+		$query2 = $pdo->query("SELECT * FROM receber where usuario_pgto = '$operador' and data_pgto >= '$data_abertura' and data_pgto <= '$data_fechamento_consulta' and caixa = '$id' and forma_pgto = '$pgto_dinheiro'");
 		$res2 = $query2->fetchAll(PDO::FETCH_ASSOC);
 		if (@count($res2) > 0) {
 			for ($i2 = 0; $i2 < @count($res2); $i2++) {
@@ -177,7 +182,7 @@ HTML;
 
 		//totalizar saidas
 		$total_saidas = 0;
-		$query2 = $pdo->query("SELECT * FROM pagar where usuario_pgto = '$operador' and data_pgto >= '$data_abertura' and data_pgto <= '$data_fechamento_consulta' and caixa = '$id'");
+		$query2 = $pdo->query("SELECT * FROM pagar where usuario_pgto = '$operador' and data_pgto >= '$data_abertura' and data_pgto <= '$data_fechamento_consulta' and caixa = '$id' and forma_pgto = '$pgto_dinheiro'");
 		$res2 = $query2->fetchAll(PDO::FETCH_ASSOC);
 		if (@count($res2) > 0) {
 			for ($i2 = 0; $i2 < @count($res2); $i2++) {

@@ -4,8 +4,14 @@ $tabela = 'vendas';
 @session_start();
 $id_usuario = $_SESSION['id'];
 
+if($id_usuario == ""){
+    echo 'Sua sessão expirou, Faça Login novamente no sistema para dar baixa!';
+    exit();
+}
 
-$id = $_POST['id'];
+
+
+$id = @$_POST['id'];
 $pgto = $_POST['pgto'];
 
 $query = $pdo->query("SELECT * FROM vendas where id = '$id'");

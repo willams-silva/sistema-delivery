@@ -85,7 +85,7 @@ if ($total_reg > 0) {
 
     $query2 = $pdo->query("SELECT * FROM mesas where id = '$mesa'");
     $res2 = $query2->fetchAll(PDO::FETCH_ASSOC);
-    $nome_mesa = $res2[0]['nome'];
+    $nome_mesa = @$res2[0]['nome'];
 
 
     $query2 = $pdo->query("SELECT * FROM usuarios where id = '$garcon'");

@@ -147,7 +147,7 @@ if ($total_reg > 0) {
 
 
 		echo <<<HTML
-			<div class="col-xs-12 col-md-3 widget cardTarefas " style="margin-right: 5px; margin-bottom: 5px; display: inline-block">
+			<div class="col-xs-12 col-md-3  widget cardTarefas " style="margin-right: 5px; margin-bottom: 5px; display: inline-block; width:100%">
         		<div class="r3_counter_box">
 
 				<span  class="{$mostrar_fechar}" style="position:absolute; top:5px; right:8px">
