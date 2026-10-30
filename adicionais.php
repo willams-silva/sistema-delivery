@@ -182,8 +182,16 @@ if ($total_reg > 0) {
     $foto = $res[0]['foto'];
     $id_prod = $res[0]['id'];
     $valor = $res[0]['valor_venda'];
-    $valorF = number_format($valor, 2, ',', '.');
+    
     $categoria = $res[0]['categoria'];
+    $val_promocional = $res[0]['val_promocional'];
+    $promocao = $res[0]['promocao'];
+
+    if($promocao == 'Sim'){
+         $valor = $val_promocional;
+    }
+
+    $valorF = number_format($valor, 2, ',', '.');
 
 
     $query2 = $pdo->query("SELECT * FROM categorias where id = '$categoria'");

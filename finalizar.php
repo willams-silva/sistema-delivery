@@ -673,7 +673,7 @@ $complemento = "";
   function verficarpgto() {
 
     var pgto = $('#pagamento').val();
-    alert(pgto);
+    
 
     setInterval(function() {
 
@@ -1183,6 +1183,7 @@ $complemento = "";
   function cupom() {
     var total_compra = "<?= $total_carrinho ?>";
     var taxa_entrega = $('#taxa-entrega-input').val();
+    var telefone_cliente = $('#telefone').val();
     if (taxa_entrega == "") {
       taxa_entrega = 0;
     }
@@ -1198,7 +1199,8 @@ $complemento = "";
       method: 'POST',
       data: {
         total_final,
-        codigo_cupom
+        codigo_cupom,
+        telefone_cliente
       },
       dataType: "text",
 
@@ -1225,6 +1227,7 @@ $complemento = "";
 
 
           alert('Cupom Inserido!');
+          pix();
         }
 
       },

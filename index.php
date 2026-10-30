@@ -11,6 +11,8 @@ $url_instagram = 'https://www.instagram.com/' . $instagram_sistema . '/';
 if ($pedido_balcao != "") {
   unset($_SESSION['id_mesa'], $_SESSION['nome_mesa'], $_SESSION['id_ab_mesa'], $_SESSION['sessao_usuario'], $_SESSION['id_edicao']);
   $_SESSION['pedido_balcao'] = $pedido_balcao;
+
+  
 }
 
 @$sessão_balcao = $_SESSION['pedido_balcao'];
@@ -316,6 +318,22 @@ if ($id_mesa == "" and $sessão_balcao == "") {
   <!-- Menu End -->
 
 
+<div style=" display:flex; align-items:center; margin-bottom:20px; " class="padding_input">
+  <input 
+    onkeyup = "buscarProduto()"
+    placeholder="Digite o nome do Produto" 
+    type="text" 
+    name="buscar" 
+    id="buscar" 
+    style="flex-grow:1; margin-right:10px; border:none; border-bottom:1px solid #b3b3b3; outline:none; margin-top:-10px"
+  >
+  <i class="icon-search"></i>
+</div>
+
+
+<div id="area_busca" style="display:none; margin-top:-30px">
+  
+</div>
 
   <?php
   $query = $pdo->query("SELECT * FROM categorias where ativo = 'Sim'");
@@ -834,6 +852,15 @@ if ($id_mesa == "" and $sessão_balcao == "") {
                 $valor = $res[$i]['valor_venda'];
                 $valorF = number_format($valor, 2, ',', '.');
 
+                $promocao = $res[$i]['promocao'];
+                $val_promocional = $res[$i]['val_promocional'];
+
+          $val_promocionalF = @number_format($val_promocional, 2, ',', '.');
+
+          if($val_promocional != 0 and $promocao != 'Não'){
+            $valorF = $val_promocionalF;
+          }
+
                 $descricaoF = mb_strimwidth($descricao, 0, 70, "...");
 
                 if ($tem_estoque == 'Sim' and $estoque <= 0) {
@@ -912,7 +939,7 @@ if ($id_mesa == "" and $sessão_balcao == "") {
 
 
 <?php if ($tem_produto >= 0 and $total_cat2 >= 0 and $total_cat >= 0) {
-  echo 'Nenhum Produtos Disponível!';
+  
 }
 ?>
 
@@ -981,3 +1008,36 @@ if ($id_mesa == "" and $sessão_balcao == "") {
 </body>
 
 </html>
+
+
+<script type="text/javascript">
+  function buscarProduto(){
+    var buscar = $('#buscar').val();
+    if(buscar == ""){
+      $('#area_busca').hide();
+    }else{
+      $('#area_busca').show();
+
+      $.ajax({
+      url: 'js/ajax/buscar_produtos.php',
+      method: 'POST',
+      data: {
+        buscar
+      },
+      dataType: "text",
+
+      success: function(mensagem) {       
+       
+       $('#area_busca').html(mensagem);
+
+      },
+
+    });
+
+    }
+
+
+
+
+  }
+</script>
