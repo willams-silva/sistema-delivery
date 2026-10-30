@@ -49,3 +49,6 @@ RewriteRule ^lista_pedidos_mesas(.*)$ index.php?pagina=lista_pedidos_mesas [L]
 
 RewriteRule ^comissoes(.*)$ index.php?pagina=comissoes [L]
 RewriteRule ^minhas_comissoes(.*)$ index.php?pagina=minhas_comissoes [L]
+
+RewriteRule ^marketing(.*)$ index.php?pagina=marketing [L]
+RewriteRule ^dispositivos(.*)$ index.php?pagina=dispositivos [L]

@@ -51,6 +51,11 @@ $couvert = $_POST['couvert'];
 $mostrar_acessos = $_POST['mostrar_acessos'];
 $abertura_caixa = $_POST['abertura_caixa'];
 $mais_sabores = $_POST['mais_sabores'];
+$dias_retorno = $_POST['dias_retorno'];
+$link_retorno = $_POST['link_retorno'];
+$mensagem_retorno = $_POST['mensagem_retorno'];
+$total_cartoes = $_POST['total_cartoes'];
+$valor_cupom = $_POST['valor_cupom'];
 
 
 $multa_atraso = str_replace(',', '.', $multa_atraso);
@@ -139,7 +144,7 @@ if(@$_FILES['foto-painel']['name'] != ""){
 }
 
 
-$query = $pdo->prepare("UPDATE $tabela SET nome = :nome, email = :email, telefone = :telefone, endereco = :endereco, instagram = :instagram, multa_atraso = :multa_atraso, juros_atraso = :juros_atraso, marca_dagua = :marca_dagua, marca_dagua = :marca_dagua, assinatura_recibo = :assinatura_recibo, impressao_automatica = :impressao_automatica, cnpj = :cnpj_sistema, entrar_automatico = :entrar_automatico, mostrar_preloader = :mostrar_preloader, ocultar_mobile = :ocultar_mobile, api_whatsapp = '$api_whatsapp', token_whatsapp = :token_whatsapp, instancia_whatsapp = :instancia_whatsapp, dados_pagamento = :dados_pagamento, telefone_fixo = :telefone_fixo, tipo_rel = :tipo_rel, tipo_miniatura = :tipo_miniatura, previsao_entrega = :previsao_entrega, horario_abertura = :horario_abertura, horario_fechamento = :horario_fechamento, texto_fechamento_horario = :texto_fechamento_horario, texto_fechamento = :texto_fechamento, status_estabelecimento = :status_estabelecimento, tempo_atualizar = :tempo_atualizar, tipo_chave = :tipo_chave, dias_apagar = :dias_apagar, banner_rotativo = :banner_rotativo, pedido_minimo = :pedido_minimo, mostrar_aberto = :mostrar_aberto, entrega_distancia = :entrega_distancia, chave_api_maps = :chave_api_maps, latitude_rest = :latitude_rest, longitude_rest = :longitude_rest, distancia_entrega_km = :distancia_entrega_km, valor_km = :valor_km, abrir_comprovante = '$abrir_comprovante', fonte_comprovante = :fonte_comprovante, mensagem_auto = '$mensagem_auto', api_merc = :api_merc, comissao_garcon = :comissao_garcon, couvert = :couvert, mostrar_acessos = '$mostrar_acessos', abertura_caixa = '$abertura_caixa', mais_sabores = :mais_sabores where id = 1");
+$query = $pdo->prepare("UPDATE $tabela SET nome = :nome, email = :email, telefone = :telefone, endereco = :endereco, instagram = :instagram, multa_atraso = :multa_atraso, juros_atraso = :juros_atraso, marca_dagua = :marca_dagua, marca_dagua = :marca_dagua, assinatura_recibo = :assinatura_recibo, impressao_automatica = :impressao_automatica, cnpj = :cnpj_sistema, entrar_automatico = :entrar_automatico, mostrar_preloader = :mostrar_preloader, ocultar_mobile = :ocultar_mobile, api_whatsapp = '$api_whatsapp', token_whatsapp = :token_whatsapp, instancia_whatsapp = :instancia_whatsapp, dados_pagamento = :dados_pagamento, telefone_fixo = :telefone_fixo, tipo_rel = :tipo_rel, tipo_miniatura = :tipo_miniatura, previsao_entrega = :previsao_entrega, horario_abertura = :horario_abertura, horario_fechamento = :horario_fechamento, texto_fechamento_horario = :texto_fechamento_horario, texto_fechamento = :texto_fechamento, status_estabelecimento = :status_estabelecimento, tempo_atualizar = :tempo_atualizar, tipo_chave = :tipo_chave, dias_apagar = :dias_apagar, banner_rotativo = :banner_rotativo, pedido_minimo = :pedido_minimo, mostrar_aberto = :mostrar_aberto, entrega_distancia = :entrega_distancia, chave_api_maps = :chave_api_maps, latitude_rest = :latitude_rest, longitude_rest = :longitude_rest, distancia_entrega_km = :distancia_entrega_km, valor_km = :valor_km, abrir_comprovante = '$abrir_comprovante', fonte_comprovante = :fonte_comprovante, mensagem_auto = '$mensagem_auto', api_merc = :api_merc, comissao_garcon = :comissao_garcon, couvert = :couvert, mostrar_acessos = '$mostrar_acessos', abertura_caixa = '$abertura_caixa', mais_sabores = :mais_sabores, link_retorno = :link_retorno, dias_retorno = :dias_retorno, mensagem_retorno = :mensagem_retorno, total_cartoes = :total_cartoes, valor_cupom = :valor_cupom where id = 1");
 
 $query->bindValue(":nome", "$nome");
 $query->bindValue(":email", "$email");
@@ -184,6 +189,11 @@ $query->bindValue(":api_merc", "$api_merc");
 $query->bindValue(":comissao_garcon", "$comissao_garcon");
 $query->bindValue(":couvert", "$couvert");
 $query->bindValue(":mais_sabores", "$mais_sabores");
+$query->bindValue(":link_retorno", "$link_retorno");
+$query->bindValue(":dias_retorno", "$dias_retorno");
+$query->bindValue(":mensagem_retorno", "$mensagem_retorno");
+$query->bindValue(":total_cartoes", "$total_cartoes");
+$query->bindValue(":valor_cupom", "$valor_cupom");
 
 $query->execute();
 $query->execute();

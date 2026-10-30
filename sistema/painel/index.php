@@ -70,8 +70,10 @@ if ($linhas > 0) {
 $query1 = $pdo->query("SELECT * from caixas where operador = '$id_usuario' and data_fechamento is null order by id desc limit 1");
 $res1 = $query1->fetchAll(PDO::FETCH_ASSOC);
 if (@count($res1) > 0) {
+	$caixa_esta_aberto = 'Sim';
 	$texto_caixa = '<small><span style="color:green"> (Aberto)</span></small>';
 } else {
+	$caixa_esta_aberto = 'Não';
 	$texto_caixa = '<small><span style="color:red"> (Fechado)</span></small>';
 }
 
@@ -726,6 +728,19 @@ if (@count($res1) > 0) {
 
 								
 
+
+										<li class="slide <?php echo @$marketing ?>" >
+									<a class="side-menu__item" href="marketing">
+										<i class="fa fa-phone text-white"></i>
+										<span class="side-menu__label" style="margin-left: 15px">Marketing</span></a>
+								</li>
+
+
+								<li class="slide <?php echo @$dispositivos ?>" >
+									<a class="side-menu__item" href="dispositivos">
+										<i class="fa fa-phone text-white"></i>
+										<span class="side-menu__label" style="margin-left: 15px">Dispositivos</span></a>
+								</li>
 
 
 						</ul>
@@ -1483,9 +1498,46 @@ if (@count($res1) > 0) {
 								value="<?php echo @$api_merc ?>" <?php if ($nivel_usuario == 'Administrador') {
 																									} else { ?> readonly <?php } ?>>
 						</div>
+
+						<div class="col-md-2">
+							<label>Dias Retorno</label>
+							<input type="number" class="form-control" id="dias_retorno" name="dias_retorno" placeholder="Mensagem retorno cliente"
+								value="<?php echo @$dias_retorno ?>">
+						</div>
+
+						<div class="col-md-3">
+							<label>Link Mensagem Retorno</label>
+							<input type="text" class="form-control" id="link_retorno" name="link_retorno" placeholder="Link na mensagem de retorno cliente"
+								value="<?php echo @$link_retorno ?>" >
+						</div>
+					</div>
+
+					<div class="row">
+						<div class="col-md-12">
+							<label>Mensagem Retorno Cliente <small>(Já virá no inicio um texto Olá (nome cliente), )</small></label>
+							<input type="text" class="form-control" id="mensagem_retorno" name="mensagem_retorno" placeholder="Texto mensagem de retorno cliente"
+								value="<?php echo @$mensagem_retorno ?>" >
+						</div>
+					</div>
+
+					<div class="row">
+						<div class="col-md-3">
+							<label>Total Cartões Troca</label>
+							<input type="number" name="total_cartoes" id="total_cartoes" class="form-control"
+								value="<?php echo @$total_cartoes_config ?>" placeholder="Cartões para o cupom">
+						</div>
+
+						<div class="col-md-3">
+							<label>Valor Cupom Troca</label>
+							<input type="number" name="valor_cupom" id="valor_cupom" class="form-control"
+								value="<?php echo @$valor_cupom_config ?>" placeholder="Valor do cupom">
+						</div>
+
 					</div>
 
 
+
+					<hr>
 
 					<div class="row mb-3">
 						<div class="col-md-4">
@@ -1918,7 +1970,7 @@ if (@count($res1) > 0) {
 
 <!-- Modal Rel Vendas -->
 <div class="modal fade" id="RelVen" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-	<div class="modal-dialog" role="document">
+	<div class="modal-dialog modal-lg" role="document">
 		<div class="modal-content">
 			<div class="modal-header bg-primary text-white">
 				<h4 class="modal-title" id="exampleModalLabel">Relatório de Vendas
@@ -1945,18 +1997,34 @@ if (@count($res1) > 0) {
 				<div class="modal-body">
 
 					<div class="row">
-						<div class="col-md-6">
+						<div class="col-md-3">
 							<div class="form-group">
 								<label>Data Inicial</label>
 								<input type="date" class="form-control" name="dataInicial" id="dataInicialRel-Ven"
 									value="<?php echo $data_atual ?>" required>
 							</div>
 						</div>
-						<div class="col-md-6">
+						<div class="col-md-3">
 							<div class="form-group">
 								<label>Data Final</label>
 								<input type="date" class="form-control" name="dataFinal" id="dataFinalRel-Ven"
 									value="<?php echo $data_atual ?>" required>
+							</div>
+						</div>
+
+
+						<div class="col-md-3">
+							<div class="form-group">
+								<label>Hora Inicial</label>
+								<input type="time" class="form-control" name="horaInicial" id=""
+									value="" >
+							</div>
+						</div>
+						<div class="col-md-3">
+							<div class="form-group">
+								<label>Hora Final</label>
+								<input type="time" class="form-control" name="horaFinal" id=""
+									value="" >
 							</div>
 						</div>
 
@@ -1967,7 +2035,18 @@ if (@count($res1) > 0) {
 
 
 					<div class="row">
-						<div class="col-md-6">
+						<div class="col-md-4">
+							<div class="form-group">
+								<label>Tipo</label>
+								<select class="form-select" name="tipo" style="width:100%;">
+									<option value="">Todas</option>
+									<option value="Delivery">Delivery</option>
+									<option value="Balcão">Balcão</option>
+									<option value="Mesa">Mesa</option>
+								</select>
+							</div>
+						</div>
+						<div class="col-md-4">
 							<div class="form-group">
 								<label>Status</label>
 								<select class="form-select" name="status" style="width:100%;">
@@ -1978,7 +2057,7 @@ if (@count($res1) > 0) {
 								</select>
 							</div>
 						</div>
-						<div class="col-md-6">
+						<div class="col-md-4">
 							<div class="form-group">
 								<label>Forma PGTO</label>
 								<select class="form-select" name="forma_pgto" style="width:100%;">
@@ -1995,13 +2074,15 @@ if (@count($res1) > 0) {
 
 					</div>
 
-
+					<input type="hidden" name="impressao" id="impressao">
 
 
 				</div>
 
 				<div class="modal-footer">
-					<button type="submit" class="btn btn-primary">Gerar Relatório<i class="fa fa-check ms-2"></i></button>
+					<button onclick="$('#impressao').val('');" type="submit" class="btn btn-success">Gerar PDF<i class="fa fa-file-pdf-o ms-2"></i></button>
+
+					<button onclick="$('#impressao').val('Sim');" type="submit" class="btn btn-primary">Impressora Térmica<i class="fa fa-print ms-2"></i></button>
 				</div>
 			</form>
 
@@ -2033,6 +2114,14 @@ if (@count($res1) > 0) {
 <!-- CHAMAR O FORMULÁRIO DOS PEDIDOS DO BALCÃO -->
 <script>
 	function enviarFormulario() {
+		var caixa_aberto = "<?= $caixa_esta_aberto ?>";
+		var obrigatorio_caixa = "<?= $abertura_caixa ?>";
+		var nivel_usuario = "<?= $nivel_usuario ?>";
+		if(caixa_aberto != 'Sim' && obrigatorio_caixa == 'Sim' && nivel_usuario != 'Administrador'){
+			alert("Não possui caixa Aberto, abra o caixa!");
+			window.location="caixas";
+			return;
+		}
 		document.getElementById("meuFormulario").submit();
 	}
 </script>

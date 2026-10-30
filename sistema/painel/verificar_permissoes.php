@@ -16,7 +16,8 @@ $configuracoes = 'ocultar';
 $pedidos_mesa = 'ocultar';
 $pedido_site = 'ocultar';
 $minhas_comissoes = 'ocultar';
-
+$marketing = 'ocultar';
+$dispositivos = 'ocultar';
 
 //grupo pessoas
 $usuarios = 'ocultar';
@@ -120,6 +121,18 @@ if($total_reg > 0){
 		if ($chave == 'minhas_comissoes') {
 			$minhas_comissoes = '';
 		}
+
+		if ($chave == 'marketing') {
+			$marketing = '';
+		}
+
+		if ($chave == 'dispositivos') {
+			$dispositivos = '';
+		}
+
+
+
+
 
 
 
