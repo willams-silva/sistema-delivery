@@ -6,9 +6,29 @@ $data_atual = date('Y-m-d');
 
 $total_final = filter_var(@$_POST['total_final'], @FILTER_SANITIZE_STRING);
 $codigo_cupom = filter_var(@$_POST['codigo_cupom'], @FILTER_SANITIZE_STRING);
+$telefone_cliente = filter_var(@$_POST['telefone_cliente'], @FILTER_SANITIZE_STRING);
 
 
-$query = $pdo->prepare("SELECT * FROM cupons where codigo = :codigo_cupom");
+$query = $pdo->prepare("SELECT * FROM clientes where telefone = :telefone_cliente");
+$query->bindValue(":telefone_cliente", "$telefone_cliente");
+$query->execute();
+$res = $query->fetchAll(PDO::FETCH_ASSOC);
+$cartoes = @$res[0]['cartoes'];
+
+if($codigo_cupom == 'cartao' || $codigo_cupom == 'cartão' || $codigo_cupom == 'Cartao' || $codigo_cupom == 'Cartão'){
+	if($cartoes >= $total_cartoes_config){
+		$valor_total = $total_final - $valor_cupom_config;
+		$valor_totalF = number_format($valor_total, 2, ',', '.');
+		$valor_cupomF = number_format($valor_cupom_config, 2, ',', '.');
+		echo $valor_totalF . '**' . $valor_cupom_config . '**' . $valor_cupomF;
+
+	}else{
+		echo '0';
+	}
+}else{
+
+
+	$query = $pdo->prepare("SELECT * FROM cupons where codigo = :codigo_cupom");
 $query->bindValue(":codigo_cupom", "$codigo_cupom");
 $query->execute();
 $res = $query->fetchAll(PDO::FETCH_ASSOC);
@@ -66,5 +86,9 @@ if ($total_cupons == 0) {
 	$query->bindValue(":codigo_cupom", "$codigo_cupom");
 	$query->execute();
 }
+
+}
+
+
 
 ?>

@@ -4,7 +4,7 @@ require_once('../../sistema/conexao.php');
 $id = $_POST['id'];
 $query = $pdo->query("SELECT * from vendas where id = '$id' ");
 $res = $query->fetchAll(PDO::FETCH_ASSOC);
-$status = $res[0]['status'];
+$status = @$res[0]['status'];
 
 $imagem_iniciado = 'no_check.png';
 if($status == 'Iniciado'){

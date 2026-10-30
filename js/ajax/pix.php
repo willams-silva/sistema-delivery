@@ -17,9 +17,9 @@ $dados["description"] = "Venda Delivery";
 $dados["external_reference"] = "2";
 $dados["payment_method_id"] = "pix";
 $dados["notification_url"] = "https://google.com";
-$dados["payer"]["email"] = "teste@hotmail.com";
-$dados["payer"]["first_name"] = "User";
-$dados["payer"]["last_name"] = "Teste";
+$dados["payer"]["email"] = "deliverye@hotmail.com";
+$dados["payer"]["first_name"] = "Delivery";
+$dados["payer"]["last_name"] = "Pagamento";
 
 $dados["payer"]["identification"]["type"] = "CPF";
 $dados["payer"]["identification"]["number"] = "34152426764";

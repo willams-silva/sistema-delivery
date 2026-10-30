@@ -11,6 +11,9 @@ if($sessao_pedido_balcao == 'BALCÃO'){
   $tipo_pedido = 'Balcão';
 }
 
+$data_atual = date('Y-m-d');
+$data_dias_retorno = date('Y-m-d', strtotime("+$dias_retorno days",strtotime($data_atual)));
+
 
 $pagamento = filter_var(@$_POST['pagamento'], @FILTER_SANITIZE_STRING);
 $entrega = filter_var(@$_POST['entrega'], @FILTER_SANITIZE_STRING);
@@ -60,6 +63,7 @@ if ($taxa_entrega == "") {
 }
 
 $cliente = 0;
+$total_cartoes_cliente = 0;
 
 if ($tel_cliente != "") {
   $query = $pdo->prepare("SELECT * FROM clientes where telefone = :telefone ");
@@ -68,10 +72,21 @@ if ($tel_cliente != "") {
   $res = $query->fetchAll(PDO::FETCH_ASSOC);
   if (@count($res) > 0) {
     $cliente = $res[0]['id'];
+    $total_cartoes_cliente = $res[0]['cartoes'];
+    if($total_cartoes_cliente == ""){
+      $total_cartoes_cliente = 0;
+    }
+    if($total_cartoes_cliente < $total_cartoes_config){
+      $total_cartoes_cliente = $total_cartoes_cliente + 1;
+    }
 
+    if($total_cartoes_cliente == $total_cartoes_config and $cupom == $valor_cupom_config){
+      $total_cartoes_cliente = 0;
+    }
+    
 
     //atualiza os dados do cliente
-    $query = $pdo->prepare("UPDATE clientes SET nome = :nome, endereco = :rua, numero = :numero, complemento = :complemento, bairro = :bairro, cep = :cep, cidade = :cidade where id = '$cliente'");
+    $query = $pdo->prepare("UPDATE clientes SET nome = :nome, endereco = :rua, numero = :numero, complemento = :complemento, bairro = :bairro, cep = :cep, cidade = :cidade, data_mensagem = '$data_dias_retorno', retorno_enviado = 'Não', cartoes = '$total_cartoes_cliente' where id = '$cliente'");
     $query->bindValue(":nome", "$nome_cliente_ped");
     $query->bindValue(":rua", "$rua");
     $query->bindValue(":numero", "$numero");
@@ -83,7 +98,7 @@ if ($tel_cliente != "") {
     $query->execute();
 
   } else {
-    $query = $pdo->prepare("INSERT INTO clientes SET nome = :nome, telefone = :telefone, endereco = :rua, numero = :numero, bairro = :bairro, complemento = :complemento, data_cad = curDate(), cep = :cep, cidade = :cidade");
+    $query = $pdo->prepare("INSERT INTO clientes SET nome = :nome, telefone = :telefone, endereco = :rua, numero = :numero, bairro = :bairro, complemento = :complemento, data_cad = curDate(), cep = :cep, cidade = :cidade, data_mensagem = '$data_dias_retorno', retorno_enviado = 'Não', cartoes = '1'");
     $query->bindValue(":nome", "$nome_cliente_ped");
     $query->bindValue(":telefone", "$tel_cliente");
     $query->bindValue(":rua", "$rua");
@@ -391,6 +406,17 @@ if ($api_whatsapp != 'Não') {
     $endereco = $rua . ' ' . $numero . ' ' . $complemento . ' ' . $bairro . ' ' . $cidade;
     $mensagem .= '_' . $endereco . '_';
 
+  }
+
+
+  if($total_cartoes_config > 0 and $total_cartoes_cliente > 0){
+    $mensagem .= '%0A%0A' . 'Você ganhou mais um cartão Fidelidade' . '%0A';
+    $mensagem .= 'Você agora possui *'.$total_cartoes_cliente . '* cartões!';
+  }
+
+   if($total_cartoes_config == $total_cartoes_cliente){
+    $mensagem .= '%0A%0A' . '*Você já completou seus cartões Fidelidade*' . '%0A';
+    $mensagem .= 'Na sua próxima compra use o codigo de cupom (cartao) para ter um desconto de '.$valor_cupom_config.' reais!';
   }
 
 

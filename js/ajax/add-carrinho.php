@@ -43,7 +43,7 @@ if (@$_SESSION['id_edicao'] != "") {
 	//adicionar o total item na tabela de vendas
 	$query = $pdo->query("SELECT * FROM vendas where id = '$id_edicao'");
 	$res = $query->fetchAll(PDO::FETCH_ASSOC);
-	$valor_venda = $res[0]['valor'];
+	$valor_venda = @$res[0]['valor'];
 
 	$total_venda = $valor_venda + ($total_item * $quantidade);
 	$pdo->query("UPDATE vendas SET valor = '$total_venda' where id = '$id_edicao'");

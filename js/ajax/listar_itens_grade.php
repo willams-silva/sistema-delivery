@@ -12,6 +12,13 @@ if($total_reg > 0){
 	$descricao = $res[0]['descricao'];
 	$foto = $res[0]['foto'];	
 	$valor_produto = $res[0]['valor_venda'];
+
+	$val_promocional = $res[0]['val_promocional'];
+    $promocao = $res[0]['promocao'];
+
+    if($promocao == 'Sim'){
+         $valor_produto = $val_promocional;
+    }
 }else{
 	exit();
 }

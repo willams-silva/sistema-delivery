@@ -709,6 +709,11 @@ input:valid~label {
   display: inline;
 }
 
+.padding_input{
+      padding-left:30%; 
+      padding-right:30%;
+    }
+
 @media (max-width: 760px) {
   .ocultar_img {
     display: inline;
@@ -721,6 +726,11 @@ input:valid~label {
   
     .ocultar_mobile {
       display: none;
+    }
+
+    .padding_input{
+      padding-left:30px; 
+      padding-right:30px;
     }
   
 }
