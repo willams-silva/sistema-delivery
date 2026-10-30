@@ -42,7 +42,7 @@ $query = $pdo->query("SELECT * from config");
 $res = $query->fetchAll(PDO::FETCH_ASSOC);
 $linhas = @count($res);
 if ($linhas == 0) {
-	$pdo->query("INSERT INTO config SET nome = '$nome_sistema', email = '$email_sistema', telefone = '$telefone_sistema', logo = 'logo.png', logo_rel = 'logo.jpg', icone = 'icone.png', ativo = 'Sim', multa_atraso = '0', juros_atraso = '0', marca_dagua = 'Sim', assinatura_recibo = 'Não', impressao_automatica = 'Não', api_whatsapp = 'Não', tipo_rel = 'PDF', tipo_miniatura = 'Cores', previsao_entrega = '60', horario_abertura = '18:00', horario_fechamento = '00:00', status_estabelecimento = 'Aberto', tempo_atualizar = '30', dias_apagar = '30', fonte_comprovante = '11', banner_rotativo = 'Sim', mostrar_aberto = 'Sim', abrir_comprovante = 'Não', mensagem_auto = 'Sim', mostrar_acessos = :mostrar_acessos, abertura_caixa = 'Não'");
+	$pdo->query("INSERT INTO config SET nome = '$nome_sistema', email = '$email_sistema', telefone = '$telefone_sistema', logo = 'logo.png', logo_rel = 'logo.jpg', icone = 'icone.png', ativo = 'Sim', multa_atraso = '0', juros_atraso = '0', marca_dagua = 'Sim', assinatura_recibo = 'Não', impressao_automatica = 'Não', api_whatsapp = 'Não', tipo_rel = 'PDF', tipo_miniatura = 'Cores', previsao_entrega = '60', horario_abertura = '18:00', horario_fechamento = '00:00', status_estabelecimento = 'Aberto', tempo_atualizar = '30', dias_apagar = '30', fonte_comprovante = '11', banner_rotativo = 'Sim', mostrar_aberto = 'Sim', abrir_comprovante = 'Não', mensagem_auto = 'Sim', mostrar_acessos = :mostrar_acessos, abertura_caixa = 'Não', total_cartoes = '5', valor_cupom = '15'");
 } else {
 	$nome_sistema = $res[0]['nome'];
 	$email_sistema = $res[0]['email'];
@@ -97,6 +97,11 @@ if ($linhas == 0) {
 	$couvert = $res[0]['couvert'];
 	$mostrar_acessos = $res[0]['mostrar_acessos'];
 	$abertura_caixa = $res[0]['abertura_caixa'];
+	$dias_retorno = $res[0]['dias_retorno'];
+	$link_retorno = $res[0]['link_retorno'];
+	$mensagem_retorno = $res[0]['mensagem_retorno'];
+	$total_cartoes_config = $res[0]['total_cartoes'];
+	$valor_cupom_config = $res[0]['valor_cupom'];
 
 	$tel_whats = '55' . preg_replace('/[ ()-]+/', '', $telefone_sistema);
 
