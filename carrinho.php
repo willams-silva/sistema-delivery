@@ -23,6 +23,7 @@ if (@$_SESSION['id_edicao'] != "") {
 }
 
 
+if($id_edicao == ""){
 // VERFICAR SE ESTÁ ABERTO O ESTABELICMENTO
 
 if ($nome_mesa == '' and $pedido_balcao == "") {
@@ -161,6 +162,8 @@ if ($nome_mesa == '' and $pedido_balcao == "") {
   }
 }
 
+
+}
 
 ?>
 

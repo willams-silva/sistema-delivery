@@ -331,7 +331,7 @@ if ($total_reg > 0) {
             $valor_total_pedidoF = @number_format($valor_total_do_item, 2, ',', '.');
         } ?>
 
-<div class="destaque-qtd" style="border:  solid 1px #ababab; border-radius: 10px;">
+<div class="destaque-qtd" style="border:  solid 1px #ababab; border-radius: 10px; display:none">
     <b>QUANTIDADE</b>
     <span class="direita">
         <big>

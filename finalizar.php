@@ -58,6 +58,17 @@ $complemento = "";
 
 
 ?>
+<style>
+  .telefone_user::placeholder {
+    font-size: 20px;
+    color: #999;
+  }
+
+  #nome::placeholder {
+    font-size: 20px;
+    color: #888; /* opcional, muda a cor do placeholder */
+  }
+</style>
 
 <div class="main-container">
 
@@ -87,11 +98,15 @@ $complemento = "";
       <div id="collapseOne" class="accordion-collapse collapse show" aria-labelledby="headingOne"
         data-bs-parent="#accordionExample">
         <div class="accordion-body" align="center">
-          <input onkeyup="" type="tel" class="input telefone_user" name="telefone" id="telefone" required value=""
-            placeholder="(00) 00000-0000" style="width:200px; text-align: center; border:0; margin-top: -15px; font-size: 19px">
+
+         <div style="display: flex; align-items: center; justify-content: center;">
+          <i class="fas fa-phone" style="font-size: 22px; margin-right: 5px;"></i>
+          <input onkeyup="" type="tel" class="input telefone_user" name="telefone" id="telefone" required value="" placeholder="(00) 00000-0000" style="width: 250px; text-align: center; border: 0; margin-top: -15px; font-size: 22px;">
+        </div>
+
           <img src="img/user.jpg" width="50px" height="50px">
 
-          <div class="nome_user"> <input onclick="" type="text" class="input" name="nome" id="nome" required value="" placeholder="Seu Nome" style="width:200px; text-align: center; border:0"></div>
+          <div class="nome_user"> <input onclick="" type="text" class="input" name="nome" id="nome" required value="" placeholder="Seu Nome" style="width:200px; text-align: center; border:0; font-size: 17px"></div>
           
 
 
@@ -235,42 +250,47 @@ $complemento = "";
 
               <?php if ($entrega_distancia != "Sim" or $chave_api_maps == "") { ?>
 
-                <div class="col-7">
-                  <div class="group">
-                    <select class="input" name="bairro" id="bairro" required style="background: transparent;"
-                      onchange="calcularFrete()">
-                      <option value="">Selecione um Bairro</option>
-                      <?php
-                      $query = $pdo->query("SELECT * FROM bairros ORDER BY id asc");
-                      $res = $query->fetchAll(PDO::FETCH_ASSOC);
-                      $total_reg = @count($res);
-                      if ($total_reg > 0) {
-                        for ($i = 0; $i < $total_reg; $i++) {
-                          foreach ($res[$i] as $key => $value) {
-                          }
-                          $valor = $res[$i]['valor'];
-                          $valorF = 'R$ ' . number_format($valor, 2, ',', '.');
+         <div class="col-7" style="margin-top:3px">
+  <div class="group">
+    <select class="input" name="bairro" id="bairro" required style="background: transparent; border: none;" onchange="calcularFrete()">
+      <option value="">Selecione um Bairro</option>
+      <?php
+      $query = $pdo->query("SELECT * FROM bairros ORDER BY id asc");
+      $res = $query->fetchAll(PDO::FETCH_ASSOC);
+      $total_reg = @count($res);
+      if ($total_reg > 0) {
+        for ($i = 0; $i < $total_reg; $i++) {
+          $valor = $res[$i]['valor'];
+          $valorF = 'R$ ' . number_format($valor, 2, ',', '.');
 
-                          if ($res[$i]['nome'] == $bairro) {
-                            $classe_bairro = 'selected';
-                          } else {
-                            $classe_bairro = '';
-                          }
+          if ($res[$i]['nome'] == $bairro) {
+            $classe_bairro = 'selected';
+          } else {
+            $classe_bairro = '';
+          }
+
+          echo '<option value="' . $res[$i]['nome'] . '" ' . $classe_bairro . '>' . $res[$i]['nome'] . ' - ' . $valorF . '</option>';
+        }
+      } else {
+        echo '<option value="">Cadastre um Bairro</option>';
+      }
+      ?>
+    </select>
+    <span class="highlight"></span>
+    <span class="bar"></span>
+  </div>
+</div>
 
 
-                          echo '<option value="' . $res[$i]['nome'] . '" ' . $classe_bairro . '>' . $res[$i]['nome'] . ' - ' . $valorF . '</option>';
-                        }
-                      } else {
-                        echo '<option value="">Cadastre um Bairro</option>';
-                      }
-                      ?>
-                    </select>
-                    <span class="highlight"></span>
-                    <span class="bar"></span>
 
-                  </div>
-
+              <div class="col-12">
+                <div class="group">
+                  <input type="text" class="input" name="referencia" id="referencia" >
+                  <span class="highlight"></span>
+                  <span class="bar"></span>
+                  <label class="label">Ponto de Referência</label>
                 </div>
+              </div>
 
               <?php } else { ?>
                 <div class="col-7">
@@ -815,6 +835,7 @@ $complemento = "";
     var taxa_entrega = $('#taxa-entrega-input').val();
     var pedido_whatsapp = "<?= $api_whatsapp ?>";
     var cupom = $('#valor-cupom').val();
+    var referencia = $('#referencia').val();
 
     var esta_pago = $('#esta_pago').val();
 
@@ -969,7 +990,8 @@ $complemento = "";
         cep,
         cidade,
         taxa_entrega,
-        esta_pago
+        esta_pago,
+        referencia
       },
       dataType: "html",
 
@@ -1130,6 +1152,7 @@ $complemento = "";
         $('#id_cliente').text(split[7]);
         $('#cep').val(split[8]);
         $('#cidade').val(split[9]);
+        $('#referencia').val(split[10]);
       }
     });
   }
@@ -1365,7 +1388,17 @@ $complemento = "";
       valor_km = 1;
     }
     var roundedDistance = Math.ceil(distance);
-    return roundedDistance * valor_km;
+
+    //aqui entra a verificação solicitada
+    if(roundedDistance <= 3){
+      return 5;
+    }else if (roundedDistance > 3 && roundedDistance <= 6){
+      return 7;
+    }else if (roundedDistance > 6 && roundedDistance <= 9){
+      return 10;
+    }
+
+    //return roundedDistance * valor_km;
 
   }
 </script>
@@ -1453,7 +1486,7 @@ $complemento = "";
         $("#bairro").val(res.address.suburb);
         calcularFreteDistancia()
       } else {
-        $("#bairro").val(res.address.suburb).change();
+        //$("#bairro").val(res.address.suburb).change();
       }
 
 
@@ -1466,3 +1499,48 @@ $complemento = "";
 
 
 
+<!-- Link para o CSS do Select2 -->
+<link href="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/css/select2.min.css" rel="stylesheet" />
+<script src="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/js/select2.min.js"></script>
+
+<!-- Inicialização do Select2 -->
+<script>
+  $(document).ready(function() {
+    $('#bairro').select2({
+      placeholder: "Selecione um Bairro", // Placeholder
+      allowClear: true, // Permite limpar a seleção
+      width: '100%' // Para garantir que ocupe toda a largura disponível
+    });
+  });
+</script>
+
+<!-- CSS Customizado para o Select2 -->
+<style>
+  /* Remover borda extra do Select2 e adicionar borda inferior */
+  .select2-container--default .select2-selection--single {
+    border: none !important;
+    border-bottom: 1px solid #000 !important; /* Linha simples abaixo do input */
+    height: 38px !important; /* Ajusta a altura do campo */
+  }
+
+  /* Ajustar a altura do input para ficar alinhado */
+  .select2-container--default .select2-selection--single .select2-selection__rendered {
+    line-height: 38px !important; /* Ajuste a altura para ficar igual ao seu input */
+    font-size: 17px !important; /* Ajuste o tamanho da fonte conforme necessário */
+  }
+
+  /* Estilo do dropdown do Select2 */
+  .select2-container--default .select2-selection--single .select2-selection__arrow {
+    top: 10px; /* Posiciona a seta corretamente */
+  }
+
+  /* Estilo do campo do select quando estiver em foco */
+  .select2-container--default .select2-selection--single:focus {
+    border-color: #000 !important; /* Caso precise adicionar um foco */
+  }
+
+  .select2-container--default .select2-selection--single {
+  border-radius: 0 !important;
+}
+
+</style>

@@ -377,7 +377,7 @@ if ($total_reg > 0) {
 			dataType: "text",
 
 			success: function(mensagem) {
-				//alert(mensagem)                
+				alert(mensagem)                
 				if (mensagem.trim() == "Inserido com Sucesso") {
 					window.location = 'carrinho';
 				}

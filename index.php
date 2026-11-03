@@ -67,49 +67,51 @@ $_SESSION['id_ab_mesa'] = $id_ab_mesa;
 $img = 'aberto.png';
 
 
+if($id_edicao == ""){
 
-
-if ($status_estabelecimento == "Fechado" and $id_mesa == "" and $sessão_balcao == "") {
-  $img = 'fechado.png';
-}
-
-if ($id_mesa == "" and $sessão_balcao == "") {
-  $data = date('Y-m-d');
-  //verificar se está aberto hoje
-  $diasemana = array("Domingo", "Segunda-Feira", "Terça-Feira", "Quarta-Feira", "Quinta-Feira", "Sexta-Feira", "Sábado");
-  $diasemana_numero = date('w', strtotime($data));
-  $dia_procurado = $diasemana[$diasemana_numero];
-
-  //percorrer os dias da semana que ele trabalha
-  $query = $pdo->query("SELECT * FROM dias where dia = '$dia_procurado'");
-  $res = $query->fetchAll(PDO::FETCH_ASSOC);
-  if (@count($res) > 0) {
+  if ($status_estabelecimento == "Fechado" and $id_mesa == "" and $sessão_balcao == "") {
     $img = 'fechado.png';
   }
 
-  $hora_atual = date('H:i:s');
+  if ($id_mesa == "" and $sessão_balcao == "") {
+    $data = date('Y-m-d');
+    //verificar se está aberto hoje
+    $diasemana = array("Domingo", "Segunda-Feira", "Terça-Feira", "Quarta-Feira", "Quinta-Feira", "Sexta-Feira", "Sábado");
+    $diasemana_numero = date('w', strtotime($data));
+    $dia_procurado = $diasemana[$diasemana_numero];
 
-  //nova verificação de horarios
-  $start = strtotime(date('Y-m-d' . $horario_abertura));
-  $end = strtotime(date('Y-m-d' . $horario_fechamento));
-  $now = time();
-
-  if ($start <= $now && $now <= $end) {
-  } else {
-
-    if ($end < $start) {
-
-      if ($now > $start) {
-      } else {
-        if ($now < $end) {
-        } else {
-          $img = 'fechado.png';
-        }
-      }
-    } else {
+    //percorrer os dias da semana que ele trabalha
+    $query = $pdo->query("SELECT * FROM dias where dia = '$dia_procurado'");
+    $res = $query->fetchAll(PDO::FETCH_ASSOC);
+    if (@count($res) > 0) {
       $img = 'fechado.png';
     }
+
+    $hora_atual = date('H:i:s');
+
+    //nova verificação de horarios
+    $start = strtotime(date('Y-m-d' . $horario_abertura));
+    $end = strtotime(date('Y-m-d' . $horario_fechamento));
+    $now = time();
+
+    if ($start <= $now && $now <= $end) {
+    } else {
+
+      if ($end < $start) {
+
+        if ($now > $start) {
+        } else {
+          if ($now < $end) {
+          } else {
+            $img = 'fechado.png';
+          }
+        }
+      } else {
+        $img = 'fechado.png';
+      }
+    }
   }
+
 }
 
 ?>
@@ -157,6 +159,12 @@ if ($id_mesa == "" and $sessão_balcao == "") {
       width: 70px;
     }
   }
+
+  @media (max-width: 350px) {
+    .ocultar_mobile_menor{
+      display:none;
+    }
+  }
 </style>
 
 
@@ -169,7 +177,7 @@ if ($id_mesa == "" and $sessão_balcao == "") {
         <small>
           <?php
           if ($id_mesa == "") {
-            echo $nome_sistema;
+            echo '<span class="ocultar_mobile_menor">'.$nome_sistema.'<span>';
           } else {
             echo $nome_mesa;
           }
@@ -418,7 +426,8 @@ if ($id_mesa == "" and $sessão_balcao == "") {
                   <div class="category__item mb-30" style="height: 200px; background: #f5f5f5; box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px">
                     <div class="quadrado">
                       <div class="fix">
-                        <img src="sistema/painel/images/categorias/<?php echo $foto ?>" alt="category-thumb" class="imagem">
+                        <img src="sistema/painel/images/categorias/<?php echo $foto ?>" alt="category-thumb" class="img-fluid w-100 h-100 object-fit-contain">
+
                       </div>
 
 
@@ -902,13 +911,13 @@ if ($id_mesa == "" and $sessão_balcao == "") {
 
 
 
-                        <div class="img_combo" style="height: 220px; width: 100%">
+                        <div class="img_combo" style="height: 220px; width: 100%;">
                           <a href="<?php echo $url_produto ?>">
-                            <img src="sistema/painel/images/produtos/<?php echo $foto ?>" alt="" class="imag_combo">
-
+                            <img src="sistema/painel/images/produtos/<?php echo $foto ?>" alt="" 
+                                 style="width: 100%; height: 100%; object-fit: cover; display: block;">
                           </a>
                         </div>
-
+                        <br><hr>
                         <span><b><?php echo $nome ?></b></span><br>
                         <span style="font-size: 12px; color: #939393"><b><?php echo $descricaoF ?></b></span>
                         <div class="tpproduct__price mb-10">
