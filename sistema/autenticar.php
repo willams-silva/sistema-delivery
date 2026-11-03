@@ -1,4 +1,8 @@
 <?php
+// Evita que o navegador reutilize uma versão antiga da tela de login.
+header('Cache-Control: no-store, no-cache, must-revalidate, max-age=0');
+header('Pragma: no-cache');
+header('Expires: 0');
 @session_set_cookie_params(['httponly' => true]);
 @session_start();
 @session_regenerate_id(true);
@@ -58,6 +62,7 @@ if ($linhas > 0) {
 	if ($res[0]['ativo'] != 'Sim') {
 		$_SESSION['msg'] = 'Seu Acesso foi desativado!';
 		echo '<script>window.location="index.php"</script>';
+		exit();
 	}
 
 	$_SESSION['nome'] = $res[0]['nome'];
