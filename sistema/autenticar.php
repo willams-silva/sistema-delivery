@@ -32,6 +32,8 @@ if ($id_usu != "") {
 		echo "<script>localStorage.setItem('id_usu', '')</script>";
 		echo '<script>window.location="index.php"</script>';
 	}
+
+		exit();
 }
 
 $usuario = filter_var(@$_POST['usuario'], @FILTER_SANITIZE_STRING);
