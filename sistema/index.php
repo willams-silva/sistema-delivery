@@ -1,4 +1,8 @@
 <?php
+// Evita que o navegador reutilize uma versão antiga da tela de login.
+header('Cache-Control: no-store, no-cache, must-revalidate, max-age=0');
+header('Pragma: no-cache');
+header('Expires: 0');
 @session_start();
 require_once ("conexao.php");
 
