@@ -39,6 +39,7 @@ for($i=0; $i<$total_ids; $i++){
 		$categoria = $res[0]['categoria'];
 
 
+
 		if($i>0){
 			$nome_p = str_replace('Pizza', '', $nome_p);
 			$nome_p = str_replace('pizza', '', $nome_p);
@@ -126,8 +127,19 @@ if (@$_SESSION['id_edicao'] != "") {
 	$res = $query->fetchAll(PDO::FETCH_ASSOC);
 	$valor_venda = $res[0]['valor'];
 
-	$total_venda = $valor_venda + ($valor_produto_final * $quantidade);
-	$pdo->query("UPDATE vendas SET valor = '$total_venda' where id = '$id_edicao'");
+	$total_pago = @$res[0]['total_pago'];
+
+	$total_venda = $valor_venda + ($valor_produto_final);
+
+	if($total_pago > $valor_venda){
+		$troco = $total_pago - $total_venda;		
+	}else{
+		$troco = 0;
+		$total_pago = $total_venda;
+	}
+
+	
+	$pdo->query("UPDATE vendas SET valor = '$total_venda', total_pago = '$total_pago', troco = '$troco' where id = '$id_edicao'");
 }
 
 $query = $pdo->prepare("INSERT INTO carrinho SET sessao = '$sessao', cliente = '0', produto = '$primeiro_id_produto', quantidade = '1', total_item = '$valor_produto_final', obs = :obs, pedido = '$id_edicao', id_sabor = '0', data = curDate(), variacao = '$id_variacao', mesa = '$mesa', nome_cliente = '', sabores = '$quantidade_sabores', nome_produto = '$nome_produto', borda = '$borda', categoria = '$categoria', status = '$status', hora = curTime()");

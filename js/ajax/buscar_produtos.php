@@ -11,7 +11,7 @@ echo <<<HTML
 
 
 HTML;
-			$query = $pdo->query("SELECT * FROM produtos where nome like '%$buscar%' order by valor_venda asc");
+			$query = $pdo->query("SELECT * FROM produtos where nome like '%$buscar%' and ativo = 'Sim' order by valor_venda asc");
 			$res = $query->fetchAll(PDO::FETCH_ASSOC);
 			$total_reg = @count($res);
 			if ($total_reg > 0) {
@@ -36,6 +36,11 @@ HTML;
 					$res3 = $query3->fetchAll(PDO::FETCH_ASSOC);
 					$url_cat = $res3[0]['url'];
 					$mais_sabores = $res3[0]['mais_sabores'];
+					$ativo = $res3[0]['ativo'];
+
+					if($ativo != 'Sim'){
+						continue;
+					}
 
 
 

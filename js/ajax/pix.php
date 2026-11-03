@@ -2,7 +2,7 @@
 require_once('../../sistema/conexao.php');
 require_once('../../js/ajax/ApiConfig.php');
 
-if ($dados_pagamento != "") {
+if ($dados_pagamento != "" || $api_merc == '') {
     echo '<b>Chave Pix</b><br>';
     echo '<b>' . $tipo_chave . '</b> : ' . $dados_pagamento;
     exit();

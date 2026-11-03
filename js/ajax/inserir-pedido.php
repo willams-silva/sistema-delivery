@@ -21,6 +21,7 @@ $rua = filter_var(@$_POST['rua'], @FILTER_SANITIZE_STRING);
 $numero = filter_var(@$_POST['numero'], @FILTER_SANITIZE_STRING);
 $bairro = filter_var(@$_POST['bairro'], @FILTER_SANITIZE_STRING);
 $complemento = filter_var(@$_POST['complemento'], @FILTER_SANITIZE_STRING);
+$referencia = filter_var(@$_POST['referencia'], @FILTER_SANITIZE_STRING);
 $total_pago = filter_var(@$_POST['troco'], @FILTER_SANITIZE_STRING);
 $obs = filter_var(@$_POST['obs'], @FILTER_SANITIZE_STRING);
 $sessao = @$_SESSION['sessao_usuario'];
@@ -36,6 +37,7 @@ $cidade = filter_var(@$_POST['cidade'], @FILTER_SANITIZE_STRING);
 $taxa_entrega = filter_var(@$_POST['taxa_entrega'], @FILTER_SANITIZE_STRING);
 $taxa_entrega = str_replace(',', '.', $taxa_entrega);
 $total_pago = str_replace(',', '.', $total_pago);
+
 
 $esta_pago = filter_var(@$_POST['esta_pago'], @FILTER_SANITIZE_STRING);
 
@@ -86,7 +88,7 @@ if ($tel_cliente != "") {
     
 
     //atualiza os dados do cliente
-    $query = $pdo->prepare("UPDATE clientes SET nome = :nome, endereco = :rua, numero = :numero, complemento = :complemento, bairro = :bairro, cep = :cep, cidade = :cidade, data_mensagem = '$data_dias_retorno', retorno_enviado = 'Não', cartoes = '$total_cartoes_cliente' where id = '$cliente'");
+    $query = $pdo->prepare("UPDATE clientes SET nome = :nome, endereco = :rua, numero = :numero, complemento = :complemento, bairro = :bairro, cep = :cep, cidade = :cidade, data_mensagem = '$data_dias_retorno', retorno_enviado = 'Não', cartoes = '$total_cartoes_cliente', referencia = :referencia where id = '$cliente'");
     $query->bindValue(":nome", "$nome_cliente_ped");
     $query->bindValue(":rua", "$rua");
     $query->bindValue(":numero", "$numero");
@@ -94,11 +96,11 @@ if ($tel_cliente != "") {
     $query->bindValue(":bairro", "$bairro");
     $query->bindValue(":cep", "$cep");
     $query->bindValue(":cidade", "$cidade");
-
+    $query->bindValue(":referencia", "$referencia");
     $query->execute();
 
   } else {
-    $query = $pdo->prepare("INSERT INTO clientes SET nome = :nome, telefone = :telefone, endereco = :rua, numero = :numero, bairro = :bairro, complemento = :complemento, data_cad = curDate(), cep = :cep, cidade = :cidade, data_mensagem = '$data_dias_retorno', retorno_enviado = 'Não', cartoes = '1'");
+    $query = $pdo->prepare("INSERT INTO clientes SET nome = :nome, telefone = :telefone, endereco = :rua, numero = :numero, bairro = :bairro, complemento = :complemento, data_cad = curDate(), cep = :cep, cidade = :cidade, data_mensagem = '$data_dias_retorno', retorno_enviado = 'Não', cartoes = '1', referencia = :referencia");
     $query->bindValue(":nome", "$nome_cliente_ped");
     $query->bindValue(":telefone", "$tel_cliente");
     $query->bindValue(":rua", "$rua");
@@ -107,6 +109,7 @@ if ($tel_cliente != "") {
     $query->bindValue(":complemento", "$complemento");
     $query->bindValue(":cep", "$cep");
     $query->bindValue(":cidade", "$cidade");
+    $query->bindValue(":referencia", "$referencia");
     $query->execute();
     $cliente = $pdo->lastInsertId();
   }
@@ -404,8 +407,10 @@ if ($api_whatsapp != 'Não') {
   if ($entrega == "Delivery") {
     $mensagem .= '%0A*Endereço do Cliente*%0A';
     $endereco = $rua . ' ' . $numero . ' ' . $complemento . ' ' . $bairro . ' ' . $cidade;
-    $mensagem .= '_' . $endereco . '_';
-
+    $mensagem .= ''. $endereco.'';
+    if($referencia != ""){
+      $mensagem .= '%0APonto de Referência: *' . $referencia . '*';
+    }
   }
 
 

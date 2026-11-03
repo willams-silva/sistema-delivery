@@ -44,9 +44,19 @@ if (@$_SESSION['id_edicao'] != "") {
 	$query = $pdo->query("SELECT * FROM vendas where id = '$id_edicao'");
 	$res = $query->fetchAll(PDO::FETCH_ASSOC);
 	$valor_venda = @$res[0]['valor'];
+	$total_pago = @$res[0]['total_pago'];
 
 	$total_venda = $valor_venda + ($total_item * $quantidade);
-	$pdo->query("UPDATE vendas SET valor = '$total_venda' where id = '$id_edicao'");
+
+	if($total_pago > $valor_venda){
+		$troco = $total_pago - $total_venda;		
+	}else{
+		$troco = 0;
+		$total_pago = $total_venda;
+	}
+
+	
+	$pdo->query("UPDATE vendas SET valor = '$total_venda', total_pago = '$total_pago', troco = '$troco' where id = '$id_edicao'");
 }
 
 

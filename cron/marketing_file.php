@@ -19,6 +19,7 @@ if ($api_whatsapp == 'menuia') {
     'to' => $telefone_envio,
     'message' => $mensagem,
     'file' => $url_envio,
+    'licence' => 'hugocursos',
     'sandbox' => 'false'
     ),
   ));

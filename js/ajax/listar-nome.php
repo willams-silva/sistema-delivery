@@ -21,6 +21,7 @@ if (@count($res) > 0) {
   $complemento = $res[0]['complemento'];
   $cep = $res[0]['cep'];
   $cidade = $res[0]['cidade'];
+  $referencia = $res[0]['referencia'];
 
 
   $query = $pdo->query("SELECT * FROM bairros where nome = '$bairro'");
@@ -37,6 +38,6 @@ if (@count($res) > 0) {
 
 }
 
-echo @$nome . '**' . @$rua . '**' . @$numero . '**' . @$bairro . '**' . @$complemento . '**' . $taxa_entrega . '**' . $taxa_entregaF . '**' . @$id_cliente . '**' . @$cep . '**' . @$cidade;
+echo @$nome . '**' . @$rua . '**' . @$numero . '**' . @$bairro . '**' . @$complemento . '**' . $taxa_entrega . '**' . $taxa_entregaF . '**' . @$id_cliente . '**' . @$cep . '**' . @$cidade. '**' . @$referencia;
 
 ?>
