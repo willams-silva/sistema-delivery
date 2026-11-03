@@ -26,6 +26,8 @@ if ($id_usu != "") {
 			echo '<script>window.location="painel/' . $pagina . '"</script>';
 		}
 
+		exit();
+
 	} else {
 		echo "<script>localStorage.setItem('id_usu', '')</script>";
 		echo '<script>window.location="index.php"</script>';
