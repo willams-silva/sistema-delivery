@@ -375,12 +375,14 @@ if (@$mensagem_auto == 'Sim' and strtotime($data_cobranca) != strtotime($data_at
 
 		var redirecionar = "<?= $entrar_automatico ?>";
 
-// DESATIVAR LOGIN AUTOMÁTICO
-if (id_usuario != "" && id_usuario != undefined && redirecionar == 'Sim') {
-    $('#pagina').show();
-} else {
-    $('#pagina').show();
-}
+		if (id_usuario != "" && id_usuario != undefined && redirecionar == 'Sim') {
+			$('#pagina').hide();
+			$('#id_usua').val(id_usuario);
+			$('#pagina_salva').val(pagina);
+			$('#btn_auto').click();
+		} else {
+			$('#pagina').show();
+		}
 
 		if (email_usuario != "" && email_usuario != undefined) {
 			$('#salvar_acesso').prop('checked', true);
