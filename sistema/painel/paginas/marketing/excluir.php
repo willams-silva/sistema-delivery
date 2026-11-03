@@ -11,13 +11,13 @@ $foto = $res[0]['arquivo'];
 $audio = $res[0]['audio'];
 $doc = $res[0]['documento'];
 
-if($foto != "sem-foto.jpg"){
+if($foto != "sem-foto.png"){
 	@unlink('../../images/marketing/'.$foto);
 }
 
 @unlink('../../images/marketing/'.$audio);
 
-if($doc != "sem-foto.jpg"){
+if($doc != "sem-foto.png"){
 	@unlink('../../images/marketing/'.$doc);
 }
 

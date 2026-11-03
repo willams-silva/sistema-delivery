@@ -2,6 +2,12 @@
 $tabela = 'usuarios';
 require_once("../../../conexao.php");
 
+if($modo_teste == 'Sim'){
+	echo 'Esse recurso está desativado no modo teste!';
+	exit();
+}
+
+
 $nome = $_POST['nome'];
 $email = $_POST['email'];
 $telefone = $_POST['telefone'];

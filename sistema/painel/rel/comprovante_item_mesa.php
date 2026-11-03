@@ -24,29 +24,47 @@ $res = $query->fetchAll(PDO::FETCH_ASSOC);
     $hora = $res[0]['hora'];
     $ab_mesa = $res[0]['mesa'];
     $obs_item = $res[0]['obs'];
-
+    $pedido = $res[0]['pedido'];
 
 
 $horaF = date("H:i", strtotime($hora));
 
-    $query2 = $pdo->query("SELECT * FROM abertura_mesa where id = '$ab_mesa'");
+     $query2 = $pdo->query("SELECT * FROM abertura_mesa where id = '$ab_mesa'");
     $res2 = $query2->fetchAll(PDO::FETCH_ASSOC);
     $total_reg2 = @count($res2);
-    $garcon = $res2[0]['garcon'];
-    $mesa = $res2[0]['mesa'];
+    if($total_reg2 > 0){
+      $garcon = $res2[0]['garcon'];
+      $mesa = $res2[0]['mesa'];
+    }else{
+      $garcon = 0;
+      $mesa = 0;
+    }
+
+     $query2 = $pdo->query("SELECT * FROM vendas where id = '$pedido'");
+    $res2 = $query2->fetchAll(PDO::FETCH_ASSOC);
+    $total_reg2 = @count($res2);
+    if ($total_reg2 > 0) {
+      $id_pedido = $res2[0]['pedido'];
+    } else {
+      $id_pedido = '';
+    }
+
 
     $query2 = $pdo->query("SELECT * FROM mesas where id = '$mesa'");
     $res2 = $query2->fetchAll(PDO::FETCH_ASSOC);
-    $nome_mesa = $res2[0]['nome'];
-
-
+    if(@count($res2) > 0){
+      $nome_mesa = 'Mesa '.@$res2[0]['nome'];
+    }else{
+      $nome_mesa = 'Pedido '.$id_pedido;
+    }
+    
 
 
     $query2 = $pdo->query("SELECT * FROM usuarios where id = '$garcon'");
     $res2 = $query2->fetchAll(PDO::FETCH_ASSOC);
     $total_reg2 = @count($res2);
     if ($total_reg2 > 0) {
-      $nome_garcon = $res2[0]['nome'];
+      $nome_garcon = '<b>Garçon: </b>'.$res2[0]['nome'];
     } else {
       $nome_garcon = '';
     }
@@ -247,7 +265,7 @@ $horaF = date("H:i", strtotime($hora));
 	</div>
 
 	<div class="th">		
-		<b>Mesa:</b> <?php echo $nome_mesa ?>
+		<b></b> <?php echo $nome_mesa ?>
 			
 		</small>
 	</div>
@@ -255,10 +273,11 @@ $horaF = date("H:i", strtotime($hora));
 
 
 	<div class="th">
-		<b>Garçon:</b> <?php echo $nome_garcon ?>
+		<?php echo $nome_garcon ?>
 		
 		<br>
-		Pedido: <b><?php echo $id ?></b> -  Hora: <?php echo $hora ?>
+		<?php if($mesa > 0){ ?>
+		Pedido: <b><?php echo $id ?></b> - <?php } ?>  Hora: <?php echo $hora ?>
 		<br>
 		Status: <b><?php echo $status ?></b> 
 	</div>

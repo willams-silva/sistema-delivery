@@ -2,6 +2,11 @@
 $tabela = 'config';
 require_once("../conexao.php");
 
+if($modo_teste == 'Sim'){
+	echo 'Esse recurso está desativado no modo teste!';
+	exit();
+}
+
 
 $nome = $_POST['nome_sistema'];
 $email = $_POST['email_sistema'];
@@ -56,7 +61,15 @@ $link_retorno = $_POST['link_retorno'];
 $mensagem_retorno = $_POST['mensagem_retorno'];
 $total_cartoes = $_POST['total_cartoes'];
 $valor_cupom = $_POST['valor_cupom'];
+$taxa_extra = $_POST['taxa_extra'];
+$titulo_taxa = $_POST['titulo_taxa'];
+$retirar_local = $_POST['retirar_local'];
+$consumir_local = $_POST['consumir_local'];
+$entrega_delivery = $_POST['entrega_delivery'];
+$delivery_monitor = $_POST['delivery_monitor'];
 
+$taxa_extra = str_replace(',', '.', $taxa_extra);
+$taxa_extra = str_replace('%', '', $taxa_extra);
 
 $multa_atraso = str_replace(',', '.', $multa_atraso);
 $multa_atraso = str_replace('%', '', $multa_atraso);
@@ -98,6 +111,8 @@ if(@$_FILES['foto-logo-rel']['name'] != ""){
 
 //foto icone
 $caminho = '../img/icone.png';
+$caminho_192 = '../img/icone_192.png';
+$caminho_512 = '../img/icone_512.png';
 $imagem_temp = @$_FILES['foto-icone']['tmp_name']; 
 
 if(@$_FILES['foto-icone']['name'] != ""){
@@ -105,6 +120,35 @@ if(@$_FILES['foto-icone']['name'] != ""){
 	if($ext == 'png' || $ext == 'png'){ 	
 			
 		move_uploaded_file($imagem_temp, $caminho);
+
+
+		 // Cria as duas versões redimensionadas
+        $img = @imagecreatefrompng($caminho);
+
+        // Função para redimensionar e salvar imagem
+        function redimensionar_png($origem, $largura, $altura, $destino) {
+            $largura_original = imagesx($origem);
+            $altura_original = imagesy($origem);
+
+            $nova = imagecreatetruecolor($largura, $altura);
+
+            // Preserva transparência
+            imagealphablending($nova, false);
+            imagesavealpha($nova, true);
+            $transparente = imagecolorallocatealpha($nova, 0, 0, 0, 127);
+            imagefilledrectangle($nova, 0, 0, $largura, $altura, $transparente);
+
+            imagecopyresampled($nova, $origem, 0, 0, 0, 0, $largura, $altura, $largura_original, $altura_original);
+            imagepng($nova, $destino);
+            imagedestroy($nova);
+        }
+
+        redimensionar_png($img, 192, 192, $caminho_192);
+        redimensionar_png($img, 512, 512, $caminho_512);
+
+        imagedestroy($img);
+
+
 	}else{
 		echo 'Extensão de Imagem não permitida!';
 		exit();
@@ -144,7 +188,7 @@ if(@$_FILES['foto-painel']['name'] != ""){
 }
 
 
-$query = $pdo->prepare("UPDATE $tabela SET nome = :nome, email = :email, telefone = :telefone, endereco = :endereco, instagram = :instagram, multa_atraso = :multa_atraso, juros_atraso = :juros_atraso, marca_dagua = :marca_dagua, marca_dagua = :marca_dagua, assinatura_recibo = :assinatura_recibo, impressao_automatica = :impressao_automatica, cnpj = :cnpj_sistema, entrar_automatico = :entrar_automatico, mostrar_preloader = :mostrar_preloader, ocultar_mobile = :ocultar_mobile, api_whatsapp = '$api_whatsapp', token_whatsapp = :token_whatsapp, instancia_whatsapp = :instancia_whatsapp, dados_pagamento = :dados_pagamento, telefone_fixo = :telefone_fixo, tipo_rel = :tipo_rel, tipo_miniatura = :tipo_miniatura, previsao_entrega = :previsao_entrega, horario_abertura = :horario_abertura, horario_fechamento = :horario_fechamento, texto_fechamento_horario = :texto_fechamento_horario, texto_fechamento = :texto_fechamento, status_estabelecimento = :status_estabelecimento, tempo_atualizar = :tempo_atualizar, tipo_chave = :tipo_chave, dias_apagar = :dias_apagar, banner_rotativo = :banner_rotativo, pedido_minimo = :pedido_minimo, mostrar_aberto = :mostrar_aberto, entrega_distancia = :entrega_distancia, chave_api_maps = :chave_api_maps, latitude_rest = :latitude_rest, longitude_rest = :longitude_rest, distancia_entrega_km = :distancia_entrega_km, valor_km = :valor_km, abrir_comprovante = '$abrir_comprovante', fonte_comprovante = :fonte_comprovante, mensagem_auto = '$mensagem_auto', api_merc = :api_merc, comissao_garcon = :comissao_garcon, couvert = :couvert, mostrar_acessos = '$mostrar_acessos', abertura_caixa = '$abertura_caixa', mais_sabores = :mais_sabores, link_retorno = :link_retorno, dias_retorno = :dias_retorno, mensagem_retorno = :mensagem_retorno, total_cartoes = :total_cartoes, valor_cupom = :valor_cupom where id = 1");
+$query = $pdo->prepare("UPDATE $tabela SET nome = :nome, email = :email, telefone = :telefone, endereco = :endereco, instagram = :instagram, multa_atraso = :multa_atraso, juros_atraso = :juros_atraso, marca_dagua = :marca_dagua, marca_dagua = :marca_dagua, assinatura_recibo = :assinatura_recibo, impressao_automatica = :impressao_automatica, cnpj = :cnpj_sistema, entrar_automatico = :entrar_automatico, mostrar_preloader = :mostrar_preloader, ocultar_mobile = :ocultar_mobile, api_whatsapp = '$api_whatsapp', token_whatsapp = :token_whatsapp, instancia_whatsapp = :instancia_whatsapp, dados_pagamento = :dados_pagamento, telefone_fixo = :telefone_fixo, tipo_rel = :tipo_rel, tipo_miniatura = :tipo_miniatura, previsao_entrega = :previsao_entrega, horario_abertura = :horario_abertura, horario_fechamento = :horario_fechamento, texto_fechamento_horario = :texto_fechamento_horario, texto_fechamento = :texto_fechamento, status_estabelecimento = :status_estabelecimento, tempo_atualizar = :tempo_atualizar, tipo_chave = :tipo_chave, dias_apagar = :dias_apagar, banner_rotativo = :banner_rotativo, pedido_minimo = :pedido_minimo, mostrar_aberto = :mostrar_aberto, entrega_distancia = :entrega_distancia, chave_api_maps = :chave_api_maps, latitude_rest = :latitude_rest, longitude_rest = :longitude_rest, distancia_entrega_km = :distancia_entrega_km, valor_km = :valor_km, abrir_comprovante = '$abrir_comprovante', fonte_comprovante = :fonte_comprovante, mensagem_auto = '$mensagem_auto', api_merc = :api_merc, comissao_garcon = :comissao_garcon, couvert = :couvert, mostrar_acessos = '$mostrar_acessos', abertura_caixa = '$abertura_caixa', mais_sabores = :mais_sabores, link_retorno = :link_retorno, dias_retorno = :dias_retorno, mensagem_retorno = :mensagem_retorno, total_cartoes = :total_cartoes, valor_cupom = :valor_cupom, taxa_extra = :taxa_extra, titulo_taxa = :titulo_taxa, retirar_local = :retirar_local, consumir_local = :consumir_local, entrega_delivery = :entrega_delivery, delivery_monitor = :delivery_monitor where id = 1");
 
 $query->bindValue(":nome", "$nome");
 $query->bindValue(":email", "$email");
@@ -194,7 +238,12 @@ $query->bindValue(":dias_retorno", "$dias_retorno");
 $query->bindValue(":mensagem_retorno", "$mensagem_retorno");
 $query->bindValue(":total_cartoes", "$total_cartoes");
 $query->bindValue(":valor_cupom", "$valor_cupom");
-
+$query->bindValue(":taxa_extra", "$taxa_extra");
+$query->bindValue(":titulo_taxa", "$titulo_taxa");
+$query->bindValue(":retirar_local", "$retirar_local");
+$query->bindValue(":consumir_local", "$consumir_local");
+$query->bindValue(":entrega_delivery", "$entrega_delivery");
+$query->bindValue(":delivery_monitor", "$delivery_monitor");
 $query->execute();
 $query->execute();
 

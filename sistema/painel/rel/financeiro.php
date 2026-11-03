@@ -1,16 +1,5 @@
 <?php 
-
-include('../../conexao.php');
 include('data_formatada.php');
-
-$filtro_data = $_GET['filtro_data'];
-$dataInicial = $_GET['dataInicial'];
-$dataFinal = $_GET['dataFinal'];
-$filtro_tipo = $_GET['filtro_tipo'];
-$filtro_lancamento = $_GET['filtro_lancamento'];
-$filtro_pendentes = $_GET['filtro_pendentes'];
-
-$id_usuario = $_GET['id_usuario'];
 
 $dataInicialF = implode('/', array_reverse(@explode('-', $dataInicial)));
 $dataFinalF = implode('/', array_reverse(@explode('-', $dataFinal)));	

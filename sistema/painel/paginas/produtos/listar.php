@@ -62,6 +62,10 @@ HTML;
 		$val_promocionalF = @number_format($val_promocional, 2, ',', '.');
 
 
+		$nomeF2 = rawurlencode($nome);
+		$descricaoF2 = rawurlencode($descricao);
+
+
 		if ($ativo == 'Sim') {
 			$icone = 'fa-check-square';
 			$titulo_link = 'Desativar Item';
@@ -127,7 +131,7 @@ HTML;
 		}
 
 		echo <<<HTML
-		<input type="text" id="descricao_{$id}" value="{$descricao}" style="display:none">
+		
 
 <tr style="background: {$cor}" class="{$alerta_estoque}">
 <td align="center">
@@ -146,11 +150,11 @@ HTML;
 <td style="color:{$classe_linha}">{$delivery}</td>
 <td style="color:{$classe_linha}">{$preparado}</td>
 <td>
-	<a class="btn btn-info-light btn-sm" href="#" onclick="editar('{$id}','{$nome}', '{$categoria}', '{$valor_compra}', '{$valor_venda}', '{$foto}', '{$nivel_estoque}', '{$tem_estoque}', '{$combo}', '{$promocao}', '{$preparado}', '{$delivery}', '{$val_promocional}')" title="Editar Dados"><i class="fa fa-edit"></i></a>
+	<a class="btn btn-info-light btn-sm" href="#" onclick="editar('{$id}','{$nomeF2}','{$descricaoF2}', '{$categoria}', '{$valor_compra}', '{$valor_venda}', '{$foto}', '{$nivel_estoque}', '{$tem_estoque}', '{$combo}', '{$promocao}', '{$preparado}', '{$delivery}', '{$val_promocional}')" title="Editar Dados"><i class="fa fa-edit"></i></a>
 
 		<a class="btn btn-primary-light btn-sm" href="#" onclick="mostrar('{$id}','{$nome}', '{$nome_cat}', '{$valor_compraF}',  '{$valor_vendaF}', '{$estoque}', '{$foto}', '{$nivel_estoque}', '{$tem_estoque}', '{$combo}', '{$promocao}', '{$preparado}', '{$delivery}', '{$val_promocionalF}')" title="Ver Dados"><i class="fa fa-info-circle"></i></a>
 
-<big><a href="#" class="btn btn-danger-light btn-sm" onclick="excluir('{$id}')" title="Excluir"><i class="fa fa-trash-can text-danger"></i></a></big>
+<big><a href="#" class="btn btn-danger-light btn-sm" onclick="excluirProduto('{$id}')" title="Excluir"><i class="fa fa-trash-can text-danger"></i></a></big>
 
 
 
@@ -202,13 +206,13 @@ HTML;
 
 
 <script type="text/javascript">
-	function editar(id, nome, categoria, valor_compra, valor_venda, foto, nivel_estoque, tem_estoque, combo, promocao, preparado, delivery, val_promocional) {
+	function editar(id, nome, descricao, categoria, valor_compra, valor_venda, foto, nivel_estoque, tem_estoque, combo, promocao, preparado, delivery, val_promocional) {
 
-		var descricao = $('#descricao_' + id).val();
-		$('#descricao').val(descricao);
+		
 
 		$('#id').val(id);
-		$('#nome').val(nome);
+		$('#nome').val(decodeURIComponent(nome));
+		$('#descricao').val(decodeURIComponent(descricao));
 		$('#valor_venda').val(valor_venda);
 		$('#valor_compra').val(valor_compra);
 		$('#categoria').val(categoria).change();
@@ -333,5 +337,75 @@ HTML;
 		$('#modalGrades').modal('show');
 		limparCamposGrades();
 	}
+
+
+	function excluirMultiplosProdutos(id) {
+    //$('#mensagem-excluir').text('Excluindo...')
+
+    $.ajax({
+        url: 'paginas/' + pag + "/excluir.php",
+        method: 'POST',
+        data: { id },
+        dataType: "html",
+
+        success: function (mensagem) {
+            if (mensagem.trim() == "Excluído com Sucesso") {
+                //buscar();
+                limparCampos()
+            } else {
+                $('#mensagem-excluir').addClass('text-danger')
+                $('#mensagem-excluir').text(mensagem)
+            }
+        }
+    });
+}
+
+
+
+function deletarSelProdutos(id) {
+    //$('#mensagem-excluir').text('Excluindo...')
+
+    $('body').removeClass('timer-alert');
+    Swal.fire({
+        title: "Deseja Excluir?",
+        text: "Você não conseguirá recuperá-lo novamente!",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#d33', // Cor do botão de confirmação (vermelho)
+        cancelButtonColor: '#3085d6', // Cor do botão de cancelamento (azul)
+        confirmButtonText: "Sim, Excluir!",
+        cancelButtonText: "Cancel",
+        reverseButtons: true
+    }).then((result) => {
+        if (result.isConfirmed) {
+            var ids = $('#ids').val();
+            var id = ids.split("-");
+
+            for (i = 0; i < id.length - 1; i++) {
+                excluirMultiplosProdutos(id[i]);
+            }
+
+            setTimeout(() => {
+                // Ação de exclusão aqui
+                Swal.fire({
+                    title: 'Excluido com Sucesso!',
+                    text: 'Fecharei em 1 segundo.',
+                    icon: "success",
+                    timer: 1000
+                })
+
+                buscar();
+            }, 1000);
+
+            limparCampos();
+
+
+        }
+    });
+
+
+};
+
+
 </script>
 

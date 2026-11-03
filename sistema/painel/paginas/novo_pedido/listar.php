@@ -176,6 +176,7 @@ if ($total_reg > 0) {
 							<a class="{$ocultar_botoes}" href="#" onclick="adiantamento('{$id}', '{$nome}', '{$id_abertura_mesa}')" title="Adiantamento" class=""> <img class="icon-rounded-vermelho" src="../../img/valor.png" width="20px" height="20px"></a>
 							
 
+							<a class="{$ocultar_botoes}" href="#" onclick="trocarMesa('{$id}', '{$nome}', '{$id_abertura_mesa}')" title="Trocar Mesa" class=""> <img class="icon-rounded-vermelho" src="../../img/troca.png" width="20px" height="20px"></a>
         			</h5>       			
 
         		</div>
@@ -288,6 +289,16 @@ HTML;
 		setTimeout(function() {
 			listarValores();
 		}, 300)
+
+	}
+
+
+	function trocarMesa(id_mesa, nome, id_abertura_mesa) {
+
+		$('#nome_troca').text(nome);
+		$('#modalTroca').modal('show');
+		$('#id_abertura_troca').val(id_abertura_mesa);
+		$('#id_mesa_troca').val(id_mesa);		
 
 	}
 </script>

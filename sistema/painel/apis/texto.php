@@ -19,6 +19,7 @@ if ($api_whatsapp == 'menuia') {
 			'authkey' => $instancia_whatsapp,
 			'to' => $telefone_envio,
 			'message' => $mensagem_whatsapp,
+			'licence' => 'hugocursos',
 			'sandbox' => 'false'
 		),
 	));

@@ -496,6 +496,83 @@ if ($linhas > 0) {
 
 
 
+
+
+
+<!-- Modal Troca-->
+<div class="modal fade" id="modalTroca" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+	aria-hidden="true" data-bs-backdrop="static">
+	<div class="modal-dialog" role="document" style="box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;">
+		<div class="modal-content">
+			<div class="modal-header bg-primary text-white">
+				<h4 class="modal-title">Trocar Mesa - <span id="nome_troca"> </span></h4>
+				<button id="btn-fechar-troca" aria-label="Close" class="btn-close" data-bs-dismiss="modal" type="button"><span class="text-white" aria-hidden="true">&times;</span></button>
+			</div>
+
+			<form id="form_troca">
+			<div class="modal-body">
+				
+				<div class="row">
+					<div class="col-md-6">
+						<label for="exampleInputEmail1">Mesa</label>
+						<select class="form-select" id="mesa_troca" name="mesa_troca" style="width:100%;">
+							<?php
+							$query = $pdo->query("SELECT * FROM mesas where ativo = 'Sim' and status = 'Fechada'");
+							$res = $query->fetchAll(PDO::FETCH_ASSOC);
+							$total_reg = @count($res);							
+
+							if ($total_reg > 0) {
+								for ($i = 0; $i < $total_reg; $i++) {
+									foreach ($res[$i] as $key => $value) {
+									}
+									echo '<option value="' . $res[$i]['id'] . '">' . $res[$i]['nome'] . '</option>';
+								}
+							}
+							?>
+
+
+						</select>
+					</div>
+					
+
+					<div class="col-md-4" style="margin-top: 23px">
+						<button class="btn btn-primary" type="submit">Trocar</button>
+					</div>
+				</div>
+
+
+				<br>
+				<small>
+					<div align="center" id="mensagem_troca"></div>
+				</small>
+
+				<input type="hidden" class="form-control" name="id_abertura_troca" id="id_abertura_troca">
+				<input type="hidden" class="form-control" name="id_mesa_troca" id="id_mesa_troca">
+				<input type="hidden" class="form-control" name="nome_mesa" id="nome_mesa">
+
+			</div>
+		</form>
+
+		</div>
+	</div>
+</div>
+
+
+<script type="text/javascript">
+	window.addEventListener("focus", function() {    
+    listarCarrinho();
+    listarValores();
+});
+
+	document.addEventListener("visibilitychange", function() {
+    if (!document.hidden) {
+        listarCarrinho();
+        listarValores();
+    }
+});
+</script>
+
+
 <script type="text/javascript">
 	var pag = "<?= $pag ?>"
 </script>
@@ -662,4 +739,43 @@ if ($linhas > 0) {
 		});
 
 	}
+
+
+
+
+
+	$("#form_troca").submit(function() {
+
+		event.preventDefault();
+		var formData = new FormData(this);
+
+		$.ajax({
+			url: 'paginas/' + pag + "/troca_mesa.php",
+			type: 'POST',
+			data: formData,
+
+			success: function(mensagem) {
+				$('#mensagem_troca').text('');
+				$('#mensagem_troca').removeClass()
+				if (mensagem.trim() == "Salvo com Sucesso") {
+
+					$('#btn-fechar-troca').click();
+					listar();
+
+				} else {
+
+					$('#mensagem_troca').addClass('text-danger')
+					$('#mensagem_troca').text(mensagem)
+				}
+
+
+			},
+
+			cache: false,
+			contentType: false,
+			processData: false,
+
+		});
+
+	});
 </script>

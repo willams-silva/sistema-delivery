@@ -53,7 +53,7 @@ $hora_pedido = date('H:i', strtotime("+$previsao_entrega minutes", strtotime($ho
 $query2 = $pdo->query("SELECT * FROM clientes where id = '$cliente'");
 $res2 = $query2->fetchAll(PDO::FETCH_ASSOC);
 $total_reg2 = @count($res2);
-if ($total_reg2 > 0) {
+
   $nome_cliente = @$res2[0]['nome'];
   $telefone_cliente = @$res2[0]['telefone'];
   $rua_cliente = @$res2[0]['endereco'];
@@ -61,7 +61,7 @@ if ($total_reg2 > 0) {
   $complemento_cliente = @$res2[0]['complemento'];
   $bairro_cliente = @$res2[0]['bairro'];
   $cidade_cliente = @$res2[0]['cidade'];
-}
+
 
 if ($api_whatsapp != 'Não') {
   $query2 = $pdo->query("SELECT * FROM usuarios where id = '$entregador'");

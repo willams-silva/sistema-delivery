@@ -7,6 +7,11 @@ $id = $_GET['id'];
 //BUSCAR AS INFORMAÇÕES DO PEDIDO
 $query = $pdo->query("SELECT * from abertura_mesa where id = '$id' ");
 $res2 = $query->fetchAll(PDO::FETCH_ASSOC);
+if (@count($res2) == 0) {
+	echo 'Essa abertura de mesa foi excluída!';
+	exit();
+}
+
 
 $total = $res2[0]['total'];
 $cliente = $res2[0]['cliente'];

@@ -1,17 +1,18 @@
 <?php 
-
-
+@session_start();
 $pag = 'dispositivos';
 
 if(@$dispositivos == 'ocultar')
-{
-	echo "<script>window.location='../index.php'</script>";
+{	
+    echo "<script>localStorage.setItem('id_usu', '')</script>";
+    unset($_SESSION['id'], $_SESSION['nome'], $_SESSION['nivel']);
+    echo "<script>window.location='../index.php'</script>";
     exit();
 }
 
 require_once("../conexao.php");
 
-$query = $pdo->prepare("SELECT * FROM dispositivos where status_api IS NOT NULL ");
+$query = $pdo->prepare("SELECT * FROM dispositivos where status_api IS NOT NULL and empresa = 0");
 $query->execute();
 $res = $query->fetchAll(PDO::FETCH_ASSOC);
 $total_dispositivos = @count($res);
@@ -155,11 +156,6 @@ $total = $ativo + $bloqueado;
 </div>
 
 
-<p style="border:1px solid #000; padding:10px">
-    <i class="fa fa-info-circle text-info"></i> <b>ATENÇÃO: </b> <span style="font-weight: 500">Para conectar seu whatsapp ao sistema através dessa opção você precisa primeiro ter um plano na Menuia que é uma das empresas que prestam esse serviço, se já tem o plano basta pegar o Authkey lá e colocar ele no campo (Instancia / AuthKey) que fica nas configurações, após isso clique em + Adicionar Dispositivo e ele já tem que dar a possibilidade de fazer a leitura do QRCode para conectar seu dispositivo.</span>
-</p>
-
-
 <script type="text/javascript">var pag = "<?=$pag?>"</script>
 <script src="js/ajax.js"></script>
 
@@ -169,13 +165,13 @@ function add(appkey = '') {
     var authkey = '<?= $instancia_whatsapp; ?>';
 
      if(authkey == 'v9t7zpp51nsSCMeqqJWfI4lj8iGG12tyMqW8PwvBH3CojiUaHM' || authkey == ''){
-        alertInformativo('Insira nas configurações a sua Instancia / Authkey da Menuia!');
+        alert('Insira nas configurações a sua Instancia / Authkey da Menuia!');
         return;
      }
 
     var total_dispositivos = '<?= $total_dispositivos; ?>';    
     if(total_dispositivos >= 1){
-        alertInformativo('Você já tem 1 dispositivo conectado, remova ele para conectar outro!');
+        alert('Você já tem 1 dispositivo conectado, remova ele para conectar outro!');
         return;
     }
 
@@ -301,7 +297,8 @@ function qrCode(appkey)
             authkey: authkey,
             message: appkey,
             licence: 'hugocursos',
-            conecteQR: 'true'
+            conecteQR: 'true',
+            webhook:  '<?= $url_sistema; ?>webhook/menuia.php'
         },
         success: function (response) 
         {
@@ -329,9 +326,9 @@ function qrCode(appkey)
             }
             else
             {
-                console.log(error);
+                var falha = error.responseJSON.message ?? 'Ocorreu um erro desconhecido';
                 $('#loadingIndicator').hide();
-                $('#statusMessage').html('Ocorreu um erro na requisição do Qr Code.').show();
+                $('#statusMessage').html(falha).show();
                 
             }
            

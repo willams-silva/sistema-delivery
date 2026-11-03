@@ -26,16 +26,18 @@ $mesa = $res[0]['mesa'];
 $nome_cliente_ped = $res[0]['nome_cliente'];
 $cupom = $res[0]['cupom'];
 $n_pedido = $res[0]['pedido'];
+$taxa_extra_pedido = $res[0]['taxa_extra_pedido'];
 
 $cupomF = number_format($cupom, 2, ',', '.');
 $valorF = number_format($valor, 2, ',', '.');
 $total_pagoF = number_format($total_pago, 2, ',', '.');
 $trocoF = number_format($troco, 2, ',', '.');
 $taxa_entregaF = number_format($taxa_entrega, 2, ',', '.');
+$taxa_extra_pedidoF = number_format($taxa_extra_pedido, 2, ',', '.');
 $dataF = implode('/', array_reverse(explode('-', $data)));
 //$horaF = date("H:i", strtotime($hora));	
 
-$valor_dos_itens = $valor - $taxa_entrega + $cupom;
+$valor_dos_itens = $valor - $taxa_entrega + $cupom - $taxa_extra_pedido;
 $valor_dos_itensF = number_format($valor_dos_itens, 2, ',', '.');
 
 $hora_pedido = date('H:i', strtotime("+$previsao_entrega minutes", strtotime($hora)));
@@ -49,6 +51,7 @@ if ($total_reg2 > 0) {
 	$rua_cliente = @$res2[0]['endereco'];
 	$numero_cliente = @$res2[0]['numero'];
 	$complemento_cliente = @$res2[0]['complemento'];
+	$referencia_cliente = @$res2[0]['referencia'];
 	$bairro_cliente = @$res2[0]['bairro'];
 	$cidade_cliente = @$res2[0]['cidade'];
 } else {
@@ -67,6 +70,7 @@ if ($total_reg2 > 0) {
 	$rua_cliente = '';
 	$numero_cliente = '';
 	$complemento_cliente = '';
+	$referencia_cliente = '';
 	$bairro_cliente = '';
 }
 
@@ -367,7 +371,7 @@ if ($entrega == 'Consumir Local') {
 			<?php
 
 			//percorrer as grades do produto
-			$query20 = $pdo->query("SELECT * FROM grades where produto = '$id_produto' and tipo_item != 'Variação'");
+			$query20 = $pdo->query("SELECT * FROM grades where produto = '$id_produto' and tipo_item != 'Variação' order by posicao asc");
 			$res20 = $query20->fetchAll(PDO::FETCH_ASSOC);
 			$total_reg20 = @count($res20);
 			if ($total_reg20 > 0) {
@@ -402,7 +406,7 @@ if ($entrega == 'Consumir Local') {
 
 
 
-							$query3 = $pdo->query("SELECT * FROM itens_grade where id = '$id_item'");
+							$query3 = $pdo->query("SELECT * FROM itens_grade where id = '$id_item' order by posicao asc");
 							$res3 = $query3->fetchAll(PDO::FETCH_ASSOC);
 							$total_reg3 = @count($res3);
 							$nome_item = $res3[0]['texto'];
@@ -453,6 +457,14 @@ if ($entrega == 'Consumir Local') {
 		</div>
 	<?php } ?>
 
+
+	<?php if ($taxa_extra_pedido > 0) { ?>
+		<div class="row valores">
+			<div class="col-6"><?php echo $titulo_taxa ?></div>
+			<div class="col-6" align="right">R$ <?php echo @$taxa_extra_pedidoF ?></div>
+		</div>
+	<?php } ?>
+
 	<?php if ($cupom > 0) { ?>
 		<div class="row valores">
 			<div class="col-6">Desconto</div>
@@ -469,7 +481,7 @@ if ($entrega == 'Consumir Local') {
 	</tr>
 
 
-	<?php if ($pago == 'Sim') { ?>
+	<?php if ($total_pago != $valor and $tipo_pgto == 'Dinheiro') { ?>
 		<div class="row valores">
 			<div class="col-6">Valor Recebido</div>
 			<div class="col-6" align="right">R$ <?php echo @$total_pagoF ?></div>
@@ -510,6 +522,8 @@ if ($entrega == 'Consumir Local') {
 			<br>
 			<?php echo $rua_cliente ?>, <?php echo $numero_cliente ?> <?php echo $complemento_cliente ?>
 			<?php echo $bairro_cliente ?> <?php echo $cidade_cliente ?>
+			<br>
+			Ponto de Referencia: <b><?php echo $referencia_cliente ?></b>
 		</div>
 		<div class="th" style="margin-bottom: 10px"></div>
 	<?php } ?>

@@ -108,10 +108,17 @@ for($i=0; $i < $total_reg; $i++){
 		}
 
 
+		if($pedido == 0){
+			$pedido = '';
+		}else{
+			$pedido = 'Pedido ('.$pedido.') / ';
+		}
+
+
 
 echo <<<HTML
 <tr class="{$classe_linha}">
-<td style="color:{$classe_ativo}"><i class="fa fa-square {$classe_alerta}"></i> <b>Pedido ({$pedido})</b> / {$nome_cliente}</td>
+<td style="color:{$classe_ativo}"><i class="fa fa-square {$classe_alerta}"></i> <b>{$pedido}</b> {$nome_cliente}</td>
 <td style="color:{$classe_ativo}">R$ {$valorF}</td>
 <td style="color:{$classe_ativo}">R$ {$total_pagoF}</td>
 <td style="color:{$classe_ativo}">R$ {$trocoF}</td>

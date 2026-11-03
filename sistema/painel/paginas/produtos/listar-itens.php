@@ -14,6 +14,7 @@ if ($total_reg > 0) {
 	<table class="table table-hover table-bordered text-nowrap border-bottom dt-responsive">
 	<thead> 
 	<tr> 
+	<th>Posição</th>
 	<th>Nome</th>	
 	<th>Valor Item</th> 	
 	<th>Limite</th> 		
@@ -33,6 +34,7 @@ HTML;
 		$ativo = $res[$i]['ativo'];
 		$produto = $res[$i]['produto'];
 		$adicional = $res[$i]['adicional'];
+		$posicao = $res[$i]['posicao'];
 
 		$valorF = number_format($valor, 2, ',', '.');
 
@@ -60,6 +62,8 @@ HTML;
 
 		echo <<<HTML
 <tr>
+<td><input value="{$posicao}" onblur="editarPosicaoItens('{$id}')" type="text" name="posicao" id="posicao_itens_{$id}" style="width:35px; border:none; border-bottom:1px solid #000; outline:none; background:transparent;"></td>
+
 <td style="color:{$classe_linha}">{$textoF}</td>
 <td style="color:{$classe_linha}">R$ {$valorF}</td>
 <td style="color:{$classe_linha}">{$limite}</td>
@@ -125,5 +129,28 @@ HTML;
 
 		$('#btn_itens').text('Editar');
 
+	}
+
+
+	function editarPosicaoItens(id) {
+		var posicao = $('#posicao_itens_'+id).val();
+
+		$.ajax({
+			url: 'paginas/' + pag + "/editar_posicao_itens.php",
+			method: 'POST',
+			data: {
+				id, posicao
+			},
+			dataType: "html",
+
+			success: function(result) {
+				if(result.trim() == "Editado com Sucesso"){
+					//listarGrades();
+				}else{
+					alert(result)
+				}
+				
+			}
+		});
 	}
 </script>

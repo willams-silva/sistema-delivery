@@ -115,6 +115,7 @@ if ($total_reg > 0) {
 		if ($total_reg2 > 0) {
 			$nome_cliente = $res2[0]['nome'];
 			$telefone_cliente = $res2[0]['telefone'];
+			$telefone_clienteF = '55' . preg_replace('/[ ()-]+/', '', $telefone_cliente);
 		} else {
 			if ($mesa != '0' and $mesa != '') {
 				$nome_cliente = 'Mesa: ' . $mesa;
@@ -122,6 +123,7 @@ if ($total_reg > 0) {
 				$nome_cliente = $nome_cliente_ped;
 			}
 			$telefone_cliente = '';
+			$telefone_clienteF = '';
 		}
 
 
@@ -203,6 +205,15 @@ if ($total_reg > 0) {
 
 		$tel_whatsF = '55' . preg_replace('/[ ()-]+/', '', $telefone_cliente);
 
+
+		if ($api_whatsapp != 'Não') {
+			$ocultar_modal_whats = '';
+			$ocultar_icone_whats = 'ocultar';
+		}else{
+			$ocultar_modal_whats = 'ocultar';
+			$ocultar_icone_whats = '';
+		}
+
 		echo <<<HTML
 <div class="col-md-3 widget " style="display: inline-block;">
 			<div class="" style="padding:4px; min-height: 100px; background: {$classe_pago2};">
@@ -216,7 +227,7 @@ if ($total_reg > 0) {
 				</div>
 
 				<div>
-					<span id="area_status_{$id}"><small><i>Status <b><a class="btn {$class_btn} btn-rounded mb-1" style="font-size: 9px; padding: 5px" title="{$titulo_link}" href="#" onclick="ativarPedido('{$id}','{$acao_link}','{$whatsapp_cliente}','{$valorF}','{$tipo_pgto}','{$hora_pedido}','{$entrega}')">
+					<span id="area_status_{$id}"><small><i>Status <b><a class="btn {$class_btn} btn-rounded mb-1" style="font-size: 9px; padding: 5px" title="{$titulo_link}" href="#" onclick="ativarPedido('{$id}','{$acao_link}','{$telefone_cliente}','{$valorF}','{$tipo_pgto}','{$hora_pedido}','{$entrega}')">
 					{$status} 
 					<i class="fa fa-arrow-right"></i>
 					</a></b></i></small></span>		
@@ -243,7 +254,11 @@ if ($total_reg > 0) {
 
 		<a class="btn btn-dark-light btn-sm" href="#" onclick="gerarComprovante('{$id}')" title="Gerar Comprovante"><i class="fa fa-file-pdf-o"></i></a>
 
-		<a class="btn btn-success-light btn-sm {$ocultar_whats}" href="http://api.whatsapp.com/send?1=pt_BR&phone={$tel_whatsF}" title="Whatsapp" target="_blank"><i class="fa-brands fa-whatsapp"></i></a>
+	<a href="#" class="btn btn-success-light btn-sm  {$ocultar_modal_whats}" onclick="modalWhats('{$cliente}','Cliente')" title="Enviar Mensagem para o Cliente"><i class="fa-brands fa-whatsapp"></i></a>
+
+<a class="btn btn-success-light btn-sm {$ocultar_icone_whats}" target="_blank" href="http://api.whatsapp.com/send?1=pt_BR&phone={$telefone_clienteF}" title="Whatsapp Cliente">
+	<i class="fa-brands fa-whatsapp"></i></a>
+
 
 
 
@@ -297,10 +312,7 @@ $total_dos_itens_pedidos = @count($res);
 
 		$('#total-dos-pedidos').text("<?= $total_dos_itens_pedidos ?>");
 
-		$('#tabela').DataTable({
-			"ordering": false,
-			"stateSave": true
-		});
+		
 		$('#tabela_filter label input').focus();
 	});
 </script>
@@ -358,9 +370,8 @@ $total_dos_itens_pedidos = @count($res);
 
 		setTimeout(function() {
 
-
 			$.ajax({
-				url: 'paginas/' + pag + "/mudar-status.php",
+				url: 'paginas/pedidos/mudar-status.php',
 				method: 'POST',
 				data: {
 					id,
@@ -375,28 +386,31 @@ $total_dos_itens_pedidos = @count($res);
 				success: function(mensagem) {
 					var split = mensagem.split("***");
 
+					var msg = split[0];
 
-					if (split[0] == "Alterado com Sucesso") {
-						listar();
+					if (msg == "Alterado com Sucesso") {
+
 						if (acao.trim() === 'Entrega') {
 							if (pedido_whatsapp != 'Não') {
-								// let a = document.createElement('a');
-								// a.target = '_blank';
-								// a.href = 'http://api.whatsapp.com/send?1=pt_BR&phone=' + telefone + '&text= *Atenção*  %0A ' + texto + ' %0A *Total* R$' + total + ' %0A *Tipo Pagamento* ' + pagamento + ' %0A';
+								//let a= document.createElement('a');
+								// a.target= '_blank';
+								// a.href= 'http://api.whatsapp.com/send?1=pt_BR&phone='+telefone+'&text= *Atençãoooo*  %0A '+texto+' %0A *Total* R$'+total+' %0A *Tipo Pagamento* '+pagamento;
 								// a.click();
 							}
 						}
+						listar();
+						$('#status_link_' + id).hide();
+						$('#area_status_' + id).show();
 					} else {
 						$('#mensagem-excluir').addClass('text-danger')
 						$('#mensagem-excluir').text(mensagem)
+
+						$('#status_link_' + id).hide();
+						$('#area_status_' + id).show();
 					}
 
-					$('#status_link_' + id).hide();
-					$('#area_status_' + id).show();
 
 				},
-
-
 
 			});
 
@@ -414,3 +428,14 @@ $total_dos_itens_pedidos = @count($res);
 		a.click();
 	}
 </script>
+
+
+	<script type="text/javascript">
+		function modalWhats(id, tipo) {
+		$('#id_whats').val(id);
+		$('#tipo_whats').val(tipo);
+		$('#mensagem_whatsapp').val('');
+		$('#modalWhats').modal('show');
+	}
+
+	</script>

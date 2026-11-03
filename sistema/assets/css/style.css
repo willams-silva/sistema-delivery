@@ -79997,3 +79997,8 @@ a.text-dark:focus {
     border-top-left-radius: 0;
     border-top-right-radius: 0;
 }
+
+
+.swal-whatsapp-container {
+    z-index: 9999999999 !important; /* Maior que o z-index padrão das modais Bootstrap (1050) */
+}

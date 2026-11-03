@@ -84,16 +84,18 @@ $usuario_baixa = $res[0]['usuario_baixa'];
 $entrega = $res[0]['entrega'];
 $cupom = $res[0]['cupom'];
 $pedido = $res[0]['pedido'];
+$taxa_extra_pedido = $res[0]['taxa_extra_pedido'];
 
 $cupomF = number_format($cupom, 2, ',', '.');
 $valorF = number_format($valor, 2, ',', '.');
 $total_pagoF = number_format($total_pago, 2, ',', '.');
 $trocoF = number_format($troco, 2, ',', '.');
 $taxa_entregaF = number_format($taxa_entrega, 2, ',', '.');
+$taxa_extra_pedidoF = number_format($taxa_extra_pedido, 2, ',', '.');
 $dataF = implode('/', array_reverse(explode('-', $data)));
 //$horaF = date("H:i", strtotime($hora));	
 
-$valor_dos_itens = $valor - $taxa_entrega + $cupom;
+$valor_dos_itens = $valor - $taxa_entrega + $cupom - $taxa_extra_pedido;
 $valor_dos_itensF = number_format($valor_dos_itens, 2, ',', '.');
 
 $hora_pedido = date('H:i', strtotime("+$previsao_entrega minutes", strtotime($hora)));
@@ -102,9 +104,10 @@ $query2 = $pdo->query("SELECT * FROM clientes where id = '$cliente'");
 $res2 = $query2->fetchAll(PDO::FETCH_ASSOC);
 $nome_cliente = @$res2[0]['nome'];
 $telefone_cliente = @$res2[0]['telefone'];
-$rua_cliente = @$res2[0]['rua'];
+$rua_cliente = @$res2[0]['endereco'];
 $numero_cliente = @$res2[0]['numero'];
 $complemento_cliente = @$res2[0]['complemento'];
+$referencia_cliente = @$res2[0]['referencia'];
 $bairro_cliente = @$res2[0]['bairro'];
 $cidade_cliente = @$res2[0]['cidade'];
 
@@ -413,6 +416,16 @@ if ($entrega == "Delivery") {
 HTML;
 }
 
+
+if ($taxa_extra_pedido > 0) {
+	echo <<<HTML
+	<div class="row valores">			
+		<div class="col-md-6">{$titulo_taxa}</div>
+		<div class="col-md-6 text-verde" align="right"> R$ {$taxa_extra_pedidoF}</div>	
+	</div>			
+HTML;
+}
+
 if ($cupom > 0) {
 	echo <<<HTML
 	<div class="row valores">			
@@ -432,7 +445,7 @@ echo <<<HTML
 </tr>
 
 HTML;
-if ($total_pago != $valor) {
+if ($total_pago != $valor and $tipo_pgto == 'Dinheiro') {
 	echo <<<HTML
 	<div class="row valores">			
 		<div class="col-md-6">Valor Recebido</div>
@@ -473,11 +486,13 @@ echo <<<HTML
 HTML;
 if ($entrega == "Delivery") {
 	echo <<<HTML
-	<div class="valores" align="center">
+	<div class="valores" align="center" style="font-weight: normal">
 		<b>Endereço	para Entrega</b>		
 			<br>
 			{$rua_cliente} {$numero_cliente} {$complemento_cliente}
 			{$bairro_cliente} {$cidade_cliente}
+			<br>
+			Ponto de Referencia: <b>{$referencia_cliente}</b>
 		</div>	
 <div class="th" style="margin-bottom: 10px"></div>
 HTML;

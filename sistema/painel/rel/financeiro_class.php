@@ -12,7 +12,9 @@ $filtro_tipo = urlencode($_POST['filtro_tipo']);
 $filtro_lancamento = urlencode($_POST['filtro_lancamento']);
 $filtro_pendentes = $_POST['filtro_pendentes'];
 
-$html = file_get_contents($url_sistema."sistema/painel/rel/financeiro.php?filtro_data=$filtro_data&dataInicial=$dataInicial&dataFinal=$dataFinal&filtro_tipo=$filtro_tipo&filtro_lancamento=$filtro_lancamento&filtro_pendentes=$filtro_pendentes&id_usuario=$id_usuario");
+ob_start();
+include("financeiro.php");
+$html = ob_get_clean();
 
 if ($tipo_rel != 'PDF') {
 	echo $html;

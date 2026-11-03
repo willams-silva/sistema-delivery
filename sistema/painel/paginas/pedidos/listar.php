@@ -214,6 +214,20 @@ HTML;
 		}
 
 
+		if($pago == 'Não'){
+			$total_pagoF = 'Pendente';
+		}
+
+
+		if ($api_whatsapp != 'Não') {
+			$ocultar_modal_whats = '';
+			$ocultar_icone_whats = 'ocultar';
+		}else{
+			$ocultar_modal_whats = 'ocultar';
+			$ocultar_icone_whats = '';
+		}
+
+
 		echo <<<HTML
 <tr style="background: {$classe_pago2}">
 <td><sapn style="color:{$classe_alerta}"><i class="fa fa-square"></i></sapn> <b>Pedido ({$pedido})</b> / {$nome_cliente} <span class="{$classe_entrega}"><small>({$entrega}) </small></span>
@@ -259,7 +273,10 @@ HTML;
 <i class="fa fa-check-square"></i></a>
 
 
-<a class="btn btn-success-light btn-sm" target="_blank" href="http://api.whatsapp.com/send?1=pt_BR&phone={$telefone_clienteF}" title="Whatsapp Cliente">
+
+<a href="#" class="btn btn-success-light btn-sm  {$ocultar_modal_whats}" onclick="modalWhats('{$cliente}','Cliente')" title="Enviar Mensagem para o Cliente"><i class="fa-brands fa-whatsapp"></i></a>
+
+<a class="btn btn-success-light btn-sm {$ocultar_icone_whats}" target="_blank" href="http://api.whatsapp.com/send?1=pt_BR&phone={$telefone_clienteF}" title="Whatsapp Cliente">
 	<i class="fa-brands fa-whatsapp"></i></a>
 
 
@@ -323,6 +340,10 @@ $total_dos_itens_pedidos = @count($res);
 		$('#ace_pedidos').text("<?= $total_ace ?>");
 
 		$('#total-dos-pedidos').text("<?= $total_dos_itens_pedidos ?>");
+
+		if ($.fn.DataTable.isDataTable('#tabela')) {
+        $('#tabela').DataTable().destroy();
+    }
 
 		$('#tabela').DataTable({
 			"ordering": false,
@@ -417,6 +438,7 @@ $total_dos_itens_pedidos = @count($res);
 						$('#status_link_' + id).hide();
 						$('#area_status_' + id).show();
 					} else {
+						alertInformativoFechar(mensagem)
 						$('#mensagem-excluir').addClass('text-danger')
 						$('#mensagem-excluir').text(mensagem)
 
@@ -449,3 +471,16 @@ $total_dos_itens_pedidos = @count($res);
 		$('#modalDesconto').modal('show');
 	}
 </script>
+
+
+
+	<script type="text/javascript">
+		function modalWhats(id, tipo) {
+		$('#id_whats').val(id);
+		$('#tipo_whats').val(tipo);		
+		
+		$('#mensagem_whatsapp').val('');
+		$('#modalWhats').modal('show');
+	}
+
+	</script>

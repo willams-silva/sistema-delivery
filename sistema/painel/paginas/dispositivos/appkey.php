@@ -9,7 +9,7 @@ $appkey = $_POST['appkey'];
 
 if (empty($appkey)) 
 {
-    $result = $pdo->query("SELECT * FROM dispositivos WHERE status_api IS NULL LIMIT 1");
+    $result = $pdo->query("SELECT * FROM dispositivos WHERE status_api IS NULL and empresa = 0 LIMIT 1");
     $dispositivo = $result->fetch(PDO::FETCH_ASSOC);
 
     if (!$dispositivo) 
@@ -17,7 +17,7 @@ if (empty($appkey))
         $nucleo = rand(1, 4);
         $versao = 2;
         $appkey = uniqid('appkey_', true);
-        $stmt = $pdo->prepare("INSERT INTO dispositivos SET appkey = :appkey");
+        $stmt = $pdo->prepare("INSERT INTO dispositivos SET appkey = :appkey, empresa = 0");
         $stmt->bindParam(':appkey', $appkey);
         
         if($stmt->execute())

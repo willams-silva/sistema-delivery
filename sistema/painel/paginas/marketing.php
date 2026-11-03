@@ -1,12 +1,10 @@
 <?php 
 @session_start();
-require_once("verificar.php");
-require_once("../conexao.php");
 
 $pag = 'marketing';
 
 //verificar se ele tem a permissão de estar nessa página
-if(@$marketing == 'ocultar'){
+if(@$pag == 'ocultar'){
     echo "<script>window.location='../index.php'</script>";
     exit();
 }
@@ -17,10 +15,10 @@ if(@$marketing == 'ocultar'){
 <div class="justify-content-between breadcrumb-header">
 	<div class="left-content mt-2">
 		<a class="btn ripple btn-primary text-white" onclick="inserir()" type="button"><i class="fe fe-plus me-1"></i> Nova Campanha</a>
+	</div>
 
-
-		<a class="btn btn-danger" href="#" onclick="deletarSel()" title="Excluir" id="btn-deletar" style="display:none"><i class="fe fe-trash-2"></i> Deletar</a>
-
+	<div class="">
+		<a class="btn ripple btn-success text-white" onclick="$('#btn_rel').click()" type="button"><i class="fa fa-file-pdf-o me-1"></i> Relatório</a>
 	</div>
 </div>
 
@@ -29,376 +27,351 @@ if(@$marketing == 'ocultar'){
 
 <div class="bs-example widget-shadow" style="padding:15px" id="listar">
 
+
+
 </div>
 
 
-<p style="border:1px solid #000; padding:10px">
-	<i class="fa fa-info-circle text-info"></i> <b>Cuidado: </b> <span style="font-weight: 500">Ao usar essa opção de disparos em marketing com frequência o whatsapp pode dar banimento em seu número, verifique bem a quantidade de clientes no qual está enviando e a frequência desses disparos para eles, o sistema vai fazer os envios de 1 em 1 minuto que é um prazo bem seguro, mas ainda assim se abusar do uso desse recurso o whatsapp pode banir seu número.</span>
-</p>
+<!-- Aviso sobre o uso de disparos em massa (revitalizado) -->
+<div class="alert mt-4 border-0 shadow-sm" style="background: #fff1e3">
+    <div class="d-flex">
+        <div class="me-3">
+            <i class="fa fa-exclamation-triangle fa-2x text-warning"></i>
+        </div>
+        <div style="color:#525252">
+            <h5 class="alert-heading">Atenção ao usar disparos em massa</h5>
+            <p class="mb-0">O WhatsApp pode banir seu número se detectar envios automatizados em excesso. 
+            O sistema realiza envios a cada 1 minuto para minimizar riscos, mas recomendamos:</p>
+            
+            <ul class="mt-2 mb-0">
+                <li>Enviar para grupos menores de contatos</li>
+                <li>Evitar mensagens idênticas para muitos destinatários</li>
+                <li>Não realizar disparos com muita frequência</li>
+                <li>Personalizar mensagens quando possível</li>
+            </ul>
+			<p class="mt-2">Deixamos dois campos para mensagens: mensagem principal e secundária. O sistema irá alternar entre as duas para evitar bainimentos e altere algumas palavras entre as duas mensagens.</p>
+
+        </div>
+    </div>
+</div>
+
+
 
 
 
 
 
 <!-- Modal Inserir-->
-<div class="modal fade" id="modalForm" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-	<div class="modal-dialog modal-lg" role="document">
+<div class="modal fade" id="modalForm" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true" data-bs-backdrop="static">
+	<div class="modal-dialog modal-xl" role="document">
 		<div class="modal-content">
-			
 			<div class="modal-header bg-primary text-white">
-				<h4 class="modal-title"><span id="titulo_inserir"></span></h4>
+				<h4 class="modal-title"><span id="titulo_inserir">Nova Campanha</span></h4>
 				<button id="btn-fechar" aria-label="Close" class="btn-close" data-bs-dismiss="modal" type="button"><span class="text-white" aria-hidden="true">&times;</span></button>
 			</div>
 			<form id="form">
 			<div class="modal-body">
 
-					<div class="row">
-						<div class="col-md-12">
-							<div class="form-group">
-								<label for="exampleInputEmail1">Título</label>
-								<input maxlength="100" type="text" class="form-control" id="titulo" name="titulo" placeholder="Título da Campanha" >    
-							</div> 	
-						</div>
+				<div class="row bg-light">
+					<div class="col-md-9">
 
-						<div class="col-md-12">
+						<!-- Seção do Nome da Campanha -->
+					<div class="p-4 border-bottom bg-light">
+						<div class="form-floating mb-0">
+							<input type="text" class="form-control form-control-lg" id="titulo" name="titulo"
+								placeholder="Nome da campanha" required>
+							<label for="nomeCampanha">
+								<i class="fe fe-tag me-1 text-primary"></i>
+								Nome da Campanha
+							</label>
+							<div class="invalid-feedback">Por favor, informe um nome para a campanha.</div>
+						</div>
+					</div>
+						
+					</div>
+					<div class="col-md-3" style="margin-top: 15px">	
+
+
+								<label>Dispositivo Cobrança</label>
+								<select class="form-select" name="dispositivo" id="dispositivo">							
+								<option value="">Dispositivo Padrão</option>	
+								<?php 
+									$query = $pdo->query("SELECT * from dispositivos where status_api = 'conectado' order by id asc");
+									$res = $query->fetchAll(PDO::FETCH_ASSOC);
+									$linhas = @count($res);
+									if($linhas > 0){
+									for($i=0; $i<$linhas; $i++){
+
+									$telefone = $res[$i]['telefone'];
+									$tel = preg_replace('/\D/', '', $res[$i]['telefone']); // Remove tudo que não for número
+
+									if (substr($tel, 0, 2) === '55') {
+									    $tel = substr($tel, 2); // Remove DDI
+									}
+
+									if (strlen($tel) === 11) {
+									    // Celular com 9 na frente
+									    $tel = "(".substr($tel, 0, 2).") ".substr($tel, 2, 5)."-".substr($tel, 7, 4);
+									} elseif (strlen($tel) === 10) {
+									    // Fixo ou celular sem 9
+									    $tel = "(".substr($tel, 0, 2).") ".substr($tel, 2, 4)."-".substr($tel, 6, 4);
+									} else {
+									    $tel = 'Número inválido';
+									}
+
+								 ?>
+								  <option value="<?php echo $res[$i]['telefone'] ?>"><?php echo $tel ?></option>
+
+								<?php } } ?>
+									
+								</select>	
+						</div>
+				</div>
+			
+
+
+					<!-- Navegação por Abas -->
+					<ul class="nav nav-tabs nav-fill" id="campanhaTab" role="tablist">
+						<li class="nav-item" role="presentation">
+							<button class="nav-link active py-3" id="mensagem-tab" data-bs-toggle="tab"
+								data-bs-target="#mensagem-conteudo" type="button" role="tab"
+								aria-controls="mensagem-conteudo" aria-selected="true">
+								<i class="bi bi-chat-text me-2"></i>Mensagem Principal
+							</button>
+						</li>
+						<li class="nav-item" role="presentation">
+							<button class="nav-link py-3" id="secundaria-tab" data-bs-toggle="tab"
+								data-bs-target="#secundaria-conteudo" type="button" role="tab"
+								aria-controls="secundaria-conteudo" aria-selected="false">
+								<i class="bi bi-chat-square-text me-2"></i>Mensagem Secundária
+							</button>
+						</li>
+						<li class="nav-item" role="presentation">
+							<button class="nav-link py-3" id="anexos-tab" data-bs-toggle="tab"
+								data-bs-target="#anexos-conteudo" type="button" role="tab"
+								aria-controls="anexos-conteudo" aria-selected="false">
+								<i class="bi bi-paperclip me-2"></i>Anexos
+							</button>
+						</li>
+					</ul>
+
+
+					<!-- Conteúdo das Abas -->
+					<div class="tab-content" id="campanhaTabContent">
+						<!-- Aba da Mensagem Principal -->
+						<div class="tab-pane fade show active" id="mensagem-conteudo" role="tabpanel"
+							aria-labelledby="mensagem-tab">
+							<div class="row p-3 mt-5">
+
+					<div class="col-md-6">
+					 <div class="d-flex align-items-center justify-content-between mb-2">
+						<span class="text-muted">💬 Mensagem:</span>
+						<div class="btn-group btn-group-sm me-2" style="box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
+							<button type="button" class="btn btn-light border" onclick="formatarTexto('bold', 'msg')" title="Negrito" style="transition: background-color 0.2s ease;">
+							<i class="fa fa-bold"></i>
+							</button>
+							<button type="button" class="btn btn-light border" onclick="formatarTexto('italic', 'msg')" title="Itálico" style="transition: background-color 0.2s ease;">
+							<i class="fa fa-italic"></i>
+							</button>
+							<button type="button" class="btn btn-light border" onclick="formatarTexto('strike', 'msg')" title="Tachado" style="transition: background-color 0.2s ease;">
+							<i class="fa fa-strikethrough"></i>
+							</button>
+							<button type="button" class="btn btn-light border" onclick="formatarTexto('mono', 'msg')" title="Monospace" style="transition: background-color 0.2s ease;">
+							<i class="fa fa-code"></i>
+							</button>
+							<button type="button" class="btn btn-light border" onclick="inserirEmoji('{cliente}', 'msg')" title="Nome Cliente" style="transition: background-color 0.2s ease;">
+							<i class="fa fa-user"></i>
+							</button>
+						</div>
+						<div class="btn-group">
 							
-							<div class="form-group">
-								<label for="exampleInputEmail1">Mensagem <small>(Até 500 Caracteres)</small></label>
-							<input maxlength="500" type="text" class="form-control" id="mensagem_input" name="mensagem" placeholder="Mensagem que vai ser mostrada abaixo do título da campanha" >   
-							</div> 	
+								<button type="button" class="btn btn-outline-success btn-sm" onclick="inserirEmoji('👋', 'msg')" title="Olá">👋</button>
+								<button type="button" class="btn btn-outline-success btn-sm" onclick="inserirEmoji('😊', 'msg')" title="Sorriso">😊</button>
+								<button type="button" class="btn btn-outline-success btn-sm" onclick="inserirEmoji('👍', 'msg')" title="Like">👍</button>
+								<button type="button" class="btn btn-outline-success btn-sm" onclick="inserirEmoji('🔥', 'msg')" title="Fogo">🔥</button>
+							<button type="button" class="btn btn-outline-success btn-sm" onclick="inserirEmoji('✅', 'msg')" title="Like">✅</button>
+							<button type="button" class="btn btn-outline-success btn-sm" onclick="inserirEmoji('✔️', 'msg')" title="Like">✔️</button>
+							<button type="button" class="btn btn-outline-success btn-sm" onclick="inserirEmoji('🎯', 'msg')" title="Alvo">🎯</button>
 						</div>
-						
 					</div>
-
-
-					<div class="row">
-						<div class="col-md-4">
-							<div class="form-group">
-								<label for="exampleInputEmail1">Item 1 </label>
-								<input maxlength="100" type="text" class="form-control" id="item1" name="item1" placeholder="Item 1 se Houver" >    
-							</div> 	
-						</div>
-
-						<div class="col-md-4">
-							<div class="form-group">
-								<label for="exampleInputEmail1">Item 2 </label>
-								<input maxlength="100" type="text" class="form-control" id="item2" name="item2" placeholder="Item 2 se Houver" >    
-							</div> 	
-						</div>
-
-						<div class="col-md-4">
-							<div class="form-group">
-								<label for="exampleInputEmail1">Item 3 </label>
-								<input maxlength="100" type="text" class="form-control" id="item3" name="item3" placeholder="Item 3 se Houver" >    
-							</div> 	
-						</div>
-
-						
+						<textarea class="form-control" id="msg" name="msg" rows="13" placeholder="Digite a mensagem" onblur="$('#msg2').val($('#msg').val()), atualizarPreview2()" onclick="atualizarPreview2()"
+							style="background-image: url('images/whatsapp.jpg'); background-size: cover; background-position: center; background-repeat: no-repeat; opacity: 0.95;"></textarea>
 					</div>
-
-
-						<div class="row">
-						
-						
-						<div class="col-md-4">
-							<div class="form-group">
-								<label for="exampleInputEmail1">Item 4 </label>
-								<input maxlength="100" type="text" class="form-control" id="item4" name="item4" placeholder="Item 4 se Houver" >    
-							</div> 	
-						</div>
-
-						<div class="col-md-4">
-							<div class="form-group">
-								<label for="exampleInputEmail1">Item 5 </label>
-								<input maxlength="100" type="text" class="form-control" id="item5" name="item5" placeholder="Item 5 se Houver" >    
-							</div> 	
-						</div>
-
-						<div class="col-md-4">
-							<div class="form-group">
-								<label for="exampleInputEmail1">Item 6 </label>
-								<input maxlength="100" type="text" class="form-control" id="item6" name="item6" placeholder="Item 6 se Houver" >    
-							</div> 	
-						</div>
-						
+					<div class="col-md-6">
+						<div class="card h-100">
+						<div class="card-header bg-light py-2">
+									<span class="text-muted fw-bold">🔍 Pré-visualização</span>
+								</div>
+						<div class="border p-3 bg-light ounded-3 h-100" id="preview" style="min-height: 50px; white-space: pre-wrap; font-weight: normal; background-image: url('images/whatsapp.jpg'); background-size: cover; background-position: center; background-repeat: no-repeat; opacity: 0.95;"></div>
 					</div>
-
-
-
-
-
-					<div class="row">
-						<div class="col-md-4">
-							<div class="form-group">
-								<label for="exampleInputEmail1">Item 7 </label>
-								<input maxlength="100" type="text" class="form-control" id="item7" name="item7" placeholder="Item 7 se Houver" >    
-							</div> 	
-						</div>
-
-						
-						<div class="col-md-4">
-							<div class="form-group">
-								<label for="exampleInputEmail1">Item 8 </label>
-								<input maxlength="100" type="text" class="form-control" id="item8" name="item8" placeholder="Item 8 se Houver" >    
-							</div> 	
-						</div>
-
-
-						<div class="col-md-4">
-							<div class="form-group">
-								<label for="exampleInputEmail1">Item 9 </label>
-								<input maxlength="100" type="text" class="form-control" id="item9" name="item9" placeholder="Item 9 se Houver" >    
-							</div> 	
-						</div>
-						
 					</div>
-
-
-
-						<div class="row">
-						<div class="col-md-4">
-							<div class="form-group">
-								<label for="exampleInputEmail1">Item 10 </label>
-								<input maxlength="100" type="text" class="form-control" id="item10" name="item10" placeholder="Item 10 se Houver" >    
-							</div> 	
+				</div>
 						</div>
 
-						
-						<div class="col-md-4">
-							<div class="form-group">
-								<label for="exampleInputEmail1">Item 11 </label>
-								<input maxlength="100" type="text" class="form-control" id="item11" name="item11" placeholder="Item 11 se Houver" >    
-							</div> 	
+						<!-- Aba da Mensagem Secundária -->
+						<div class="tab-pane fade" id="secundaria-conteudo" role="tabpanel"
+							aria-labelledby="secundaria-tab">
+							<div class="row p-3 mt-5">
+
+					<div class="col-md-6">
+					 <div class="d-flex align-items-center justify-content-between mb-2">
+						<span class="text-muted">💬 Mensagem Sec:</span>
+						 <!-- Grupo de botões de formatação de texto -->
+						<div class="btn-group btn-group-sm me-2" style="box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
+							<button type="button" class="btn btn-light border" onclick="formatarTexto('bold', 'msg2')" title="Negrito" style="transition: background-color 0.2s ease;">
+							<i class="fa fa-bold"></i>
+							</button>
+							<button type="button" class="btn btn-light border" onclick="formatarTexto('italic', 'msg2')" title="Itálico" style="transition: background-color 0.2s ease;">
+							<i class="fa fa-italic"></i>
+							</button>
+							<button type="button" class="btn btn-light border" onclick="formatarTexto('strike', 'msg2')" title="Tachado" style="transition: background-color 0.2s ease;">
+							<i class="fa fa-strikethrough"></i>
+							</button>
+							<button type="button" class="btn btn-light border" onclick="formatarTexto('mono', 'msg2')" title="Monospace" style="transition: background-color 0.2s ease;">
+							<i class="fa fa-code"></i>
+							</button>
 						</div>
-
-
-						<div class="col-md-4">
-							<div class="form-group">
-								<label for="exampleInputEmail1">Item 12 </label>
-								<input maxlength="100" type="text" class="form-control" id="item12" name="item12" placeholder="Item 12 se Houver" >    
-							</div> 	
-						</div>
-						
-					</div>
-
-
-
-
-					<div class="row">
-						<div class="col-md-4">
-							<div class="form-group">
-								<label for="exampleInputEmail1">Item 13 </label>
-								<input maxlength="100" type="text" class="form-control" id="item13" name="item13" placeholder="Item 13 se Houver" >    
-							</div> 	
-						</div>
-
-						
-						<div class="col-md-4">
-							<div class="form-group">
-								<label for="exampleInputEmail1">Item 14 </label>
-								<input maxlength="100" type="text" class="form-control" id="item14" name="item14" placeholder="Item 14 se Houver" >    
-							</div> 	
-						</div>
-
-
-						<div class="col-md-4">
-							<div class="form-group">
-								<label for="exampleInputEmail1">Item 15 </label>
-								<input maxlength="100" type="text" class="form-control" id="item15" name="item15" placeholder="Item 15 se Houver" >    
-							</div> 	
-						</div>
-						
-					</div>
-
-
-
-					<div class="row">
-						<div class="col-md-4">
-							<div class="form-group">
-								<label for="exampleInputEmail1">Item 16 </label>
-								<input maxlength="100" type="text" class="form-control" id="item16" name="item16" placeholder="Item 16 se Houver" >    
-							</div> 	
-						</div>
-
-						
-						<div class="col-md-4">
-							<div class="form-group">
-								<label for="exampleInputEmail1">Item 17 </label>
-								<input maxlength="100" type="text" class="form-control" id="item17" name="item17" placeholder="Item 17 se Houver" >    
-							</div> 	
-						</div>
-
-
-						<div class="col-md-4">
-							<div class="form-group">
-								<label for="exampleInputEmail1">Item 18 </label>
-								<input maxlength="100" type="text" class="form-control" id="item18" name="item18" placeholder="Item 18 se Houver" >    
-							</div> 	
-						</div>
-						
-					</div>
-
-
-					<div class="row">
-						<div class="col-md-4">
-							<div class="form-group">
-								<label for="exampleInputEmail1">Item 19 </label>
-								<input maxlength="100" type="text" class="form-control" id="item19" name="item19" placeholder="Item 19 se Houver" >    
-							</div> 	
-						</div>
-
-						
-						<div class="col-md-4">
-							<div class="form-group">
-								<label for="exampleInputEmail1">Item 20 </label>
-								<input maxlength="100" type="text" class="form-control" id="item20" name="item20" placeholder="Item 20 se Houver" >    
-							</div> 	
-						</div>				
-						
-					</div>
-
-
-
-					<div class="row">				
-						<div class="col-md-6">
-							<div class="form-group">
-								<label for="exampleInputEmail1">Link se Tiver<small> Colar ele Completo https://....</small></label>
-							<input maxlength="255" type="text" class="form-control" id="link" name="link" placeholder="https://hugocurso...." >   
-							</div> 	
-						</div>
-						<div class="col-md-6">
-							<div class="form-group">
-								<label for="exampleInputEmail1">Vídeo se tiver<small> Colar link dele</small></label>
-							<input maxlength="255" type="text" class="form-control" id="video" name="video" placeholder="Link normal, copiar e colar do youtube" >   
-							</div> 	
-						</div>
-
-					</div>
-
-
-					<div class="row">
-				
-						<div class="col-md-12">
+						<div class="btn-group">
 							
-							<div class="form-group">
-								<label for="exampleInputEmail1">Mensagem Acima do Link <small>(Até 500 Caracteres)</small></label>
-							<input maxlength="500" type="text" class="form-control" id="conclusao" name="conclusao" placeholder="Mensagem que vai ser mostrada abaixo dos itens ou caso não tenha itens será mostrada abaixo da outra descrição" >   
-							</div> 	
-						</div>		
-
-						<div class="col-md-12">
-							
-							<div class="form-group">
-								<label for="exampleInputEmail1">Mensagem Abaixo link e acima video <small>(Até 500 Caracteres)</small></label>
-							<input maxlength="500" type="text" class="form-control" id="conclusao2" name="conclusao2" placeholder="Mensagem que vai ser mostrada abaixo dos itens ou caso não tenha itens será mostrada abaixo da outra descrição" >   
-							</div> 	
+								<button type="button" class="btn btn-outline-success btn-sm" onclick="inserirEmoji('👋', 'msg2')" title="Olá">👋</button>
+								<button type="button" class="btn btn-outline-success btn-sm" onclick="inserirEmoji('😊', 'msg2')" title="Sorriso">😊</button>
+								<button type="button" class="btn btn-outline-success btn-sm" onclick="inserirEmoji('👍', 'msg2')" title="Like">👍</button>
+								<button type="button" class="btn btn-outline-success btn-sm" onclick="inserirEmoji('🔥', 'msg2')" title="Fogo">🔥</button>
+							<button type="button" class="btn btn-outline-success btn-sm" onclick="inserirEmoji('✅', 'msg2')" title="Like">✅</button>
+							<button type="button" class="btn btn-outline-success btn-sm" onclick="inserirEmoji('✔️', 'msg2')" title="Like">✔️</button>
+							<button type="button" class="btn btn-outline-success btn-sm" onclick="inserirEmoji('🎯', 'msg2')" title="Alvo">🎯</button>
+						</div>
+					</div>
+						<textarea class="form-control" id="msg2" name="msg2" rows="13" placeholder="Digite a mensagem"
+							style="background-image: url('images/whatsapp.jpg'); background-size: cover; background-position: center; background-repeat: no-repeat; opacity: 0.95;"></textarea>
+					</div>
+					<div class="col-md-6">
+						<div class="card h-100">
+						<div class="card-header bg-light py-2">
+									<span class="text-muted fw-bold">🔍 Pré-visualização</span>
+								</div>
+						<div class="border p-3 bg-light ounded-3 h-100" id="preview2" style="min-height: 50px; white-space: pre-wrap; font-weight: normal; background-image: url('images/whatsapp.jpg'); background-size: cover; background-position: center; background-repeat: no-repeat; opacity: 0.95;"></div>
+					</div>
+					</div>
+				</div>
 						</div>
 
-					</div>
+						<!-- Aba dos Anexos -->
+						<div class="tab-pane fade" id="anexos-conteudo" role="tabpanel" aria-labelledby="anexos-tab">
+							<div class="p-4">
+								<div class="row">
+									<!-- Imagem -->
+									<div class="col-md-4 mb-4">
+										<div class="card border-0 shadow-sm h-100">
+											<div class="card-header bg-white py-3">
+												<h6 class="mb-0 text-primary">
+													<i class="bi bi-image me-2"></i>Imagem
+												</h6>
+											</div>
+											<div class="card-body text-center">
+												<div class="mb-3 anexo-preview">
+													<img src="images/marketing/sem-foto.png" class="img-fluid rounded"
+														id="target" style="max-height: 150px; width: auto;">
+												</div>
+												<div class="input-group">
+													<input type="file" class="form-control" id="foto" name="foto"
+														accept="image/*" onchange="carregarImg();">
+													<button class="btn btn-outline-danger" type="button"
+														onclick="limparImagem()">
+														<i class="bi bi-x-lg"></i>
+													</button>
+												</div>
+												<small class="form-text text-muted mt-2">
+													Formato recomendado:  PNG ou JPG (máx. 2MB)
+												</small>
+											</div>
+										</div>
+									</div>
 
+									<!-- Áudio -->
+									<div class="col-md-4 mb-4">
+										<div class="card border-0 shadow-sm h-100">
+											<div class="card-header bg-white py-3">
+												<h6 class="mb-0 text-primary">
+													<i class="bi bi-music-note-beamed me-2"></i>Áudio
+												</h6>
+											</div>
+											<div class="card-body text-center d-flex flex-column">
+												<div
+													class="flex-grow-1 d-flex align-items-center justify-content-center mb-3">
+													<div id="audio-preview">
+														<i class="bi bi-file-earmark-music display-4 text-muted"></i>
+														<p class="text-muted" id="audio-info">Áudio
+														</p>
+													</div>
+												</div>
+												<div class="input-group mt-auto">
+													<input type="file" class="form-control" id="audio" name="audio"
+														accept="audio/*" onchange="atualizarInfoAudio();">
+													<button class="btn btn-outline-danger" type="button"
+														onclick="limparAudio()">
+														<i class="bi bi-x-lg"></i>
+													</button>
+												</div>
+												<small class="form-text text-muted mt-2">
+													Formato Recomendados: OGG ou MP3 (máx. 5MB)
+												</small>
+											</div>
+										</div>
+									</div>
 
-							<div class="row">
-							
-
-						<div class="col-md-6">
-							
-							<div class="form-group">
-								<label for="exampleInputEmail1">Mensagem Acima do Link 2 <small>(Até 500 Caracteres)</small></label>
-							<input maxlength="500" type="text" class="form-control" id="conclusao5" name="conclusao5" placeholder="Mensagem mostrada no final de todo texto, antes do link 2 caso exista" >   
-							</div> 	
-						</div>	
-
-						<div class="col-md-6">							
-							<div class="form-group">
-								<label for="exampleInputEmail1">Link2 <small>(Outro Link se Tiver)</small></label>
-							<input maxlength="255" type="text" class="form-control" id="link2" name="link2" placeholder="Link de Teste Sistema" >   
-							</div> 	
-						</div>	
-					</div>
-
-					
-					<div class="row">
-
-						<div class="col-md-12">
-							
-							<div class="form-group">
-								<label for="exampleInputEmail1">Mensagem de Conclusão <small>(Até 500 Caracteres)</small></label>
-							<input maxlength="500" type="text" class="form-control" id="conclusao3" name="conclusao3" placeholder="Mensagem que vai ser mostrada abaixo dos itens ou caso não tenha itens será mostrada abaixo da outra descrição" >   
-							</div> 	
-						</div>		
-
-					</div>
-
-					<div class="row">
-
-						<div class="col-md-12">
-							
-							<div class="form-group">
-								<label for="exampleInputEmail1">Mensagem de Conclusão2 <small>(Até 500 Caracteres)</small></label>
-							<input maxlength="500" type="text" class="form-control" id="conclusao4" name="conclusao4" placeholder="Mensagem que vai ser mostrada abaixo dos itens ou caso não tenha itens será mostrada abaixo da outra descrição" >   
-							</div> 	
-						</div>				
-						
-					</div>
-					
-				
-
-
-				
-					
-
-						<div class="row">
-							<div class="col-md-4">						
-								<div class="form-group"> 
-									<label>Imagem (Formato PNG)</label> 
-									<input class="form-control" type="file" name="foto" onChange="carregarImg();" id="foto">
-								</div>						
-							</div>
-							<div class="col-md-4">
-								<div id="divImg">
-									<img src="images/marketing/sem-foto.jpg"  width="80px" id="target">									
+									<!-- Documento -->
+									<div class="col-md-4 mb-4">
+										<div class="card border-0 shadow-sm h-100">
+											<div class="card-header bg-white py-3">
+												<h6 class="mb-0 text-primary">
+													<i class="bi bi-file-earmark-pdf me-2"></i>Documento
+												</h6>
+											</div>
+											<div class="card-body text-center d-flex flex-column">
+												<div
+													class="flex-grow-1 d-flex align-items-center justify-content-center mb-3">
+													<img src="images/marketing/sem-foto.png" class="img-fluid" id="target_documento" style="max-height: 150px; width: auto;">
+												</div>
+												<div class="input-group mt-auto">
+													<input type="file" class="form-control" id="documento" name="documento" accept=".pdf,.zip,.rar" onchange="carregarImgArquivo();">
+													<button class="btn btn-outline-danger" type="button" onclick="limparDocumento()">
+														<i class="bi bi-x-lg"></i>
+													</button>
+												</div>
+												<small class="form-text text-muted mt-2">
+													Formatos aceitos: PDF, ZIP, RAR (máx. 10MB)
+												</small>
+											</div>
+										</div>
+									</div>
 								</div>
 							</div>
-
-
-							<div class="col-md-4">						
-								<div class="form-group"> 
-									<label>Áudio (Formato OGG)</label> 
-									<input class="form-control" type="file" name="audio"  id="audio">
-								</div>						
-							</div>
-
 						</div>
-
-						<div class="row">
-							<div class="col-md-4">						
-								<div class="form-group"> 
-									<label>Arquivo (Formato PDF)</label> 
-									<input class="form-control" type="file" name="documento" onChange="carregarImgArquivo();" id="documento">
-								</div>						
-							</div>
-							<div class="col-md-4">
-								<div>
-									<img src="images/marketing/sem-foto.jpg"  width="80px" id="target_documento">									
-								</div>
-							</div>
-
-						</div>
+					</div>
 
 
-					
+
+					<div class="alert alert-dismissible fade show m-3" role="alert" id="mensagem-form" style="display: none;">
+						<i class="bi bi-info-circle me-2"></i>
+						<span id="texto-mensagem"></span>
+						<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Fechar"></button>
+					</div>
+
+
+
+
 						<input type="hidden" name="id" id="id">
-
 					<br>
 					<small><div id="mensagem" align="center"></div></small>
 				</div>
-
 				<div class="modal-footer">      
-					<button type="submit" class="btn btn-primary">Salvar</button>
+					<button type="submit" id="btn_salvar" class="btn btn-primary"><i class="fe fe-check-circle me-2"></i>Salvar</button>
+					<button class="btn btn-primary" type="button" id="btn_carregando" style="display: none;">
+						<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Carregando...
+					</button>
 				</div>
 			</form>
-
-			
 		</div>
 	</div>
 </div>
@@ -407,303 +380,325 @@ if(@$marketing == 'ocultar'){
 
 
 
-<!-- Modal Dados-->
-<div class="modal fade" id="modalDados" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-	<div class="modal-dialog" role="document">
+<!-- Modal Visualizar Detalhes -->
+<div class="modal fade" id="modalDados" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+	aria-hidden="true">
+	<div class="modal-dialog modal-lg" role="document">
 		<div class="modal-content">
-			
-
 			<div class="modal-header bg-primary text-white">
 				<h4 class="modal-title"><span id="nome_dados"></span></h4>
-				<button id="btn-fechar-perfil" aria-label="Close" class="btn-close" data-bs-dismiss="modal" type="button"><span class="text-white" aria-hidden="true">&times;</span></button>
+				<button id="btn-fechar-perfil" aria-label="Close" class="btn-close" data-bs-dismiss="modal"
+					type="button"><span class="text-white" aria-hidden="true">&times;</span></button>
 			</div>
-			
-			<div class="modal-body">
 
+			<div class="modal-body">
 				<div class="row" style="border-bottom: 1px solid #cac7c7;">
-					<div class="col-md-6">							
+					<div class="col-md-6">
 						<span><b>Criada Em: </b></span>
-						<span id="data_dados"></span>							
+						<span id="data_dados"></span>
 					</div>
-					<div class="col-md-6">							
-						<span><b>Útimo Envio: </b></span>
+					<div class="col-md-6">
+						<span><b>Último Envio: </b></span>
 						<span id="data_envio_dados"></span>
-					</div>					
-
-				</div>
-
-
-			
-
-				<div class="row" style="border-bottom: 1px solid #cac7c7;">
-					<div class="col-md-6">							
-						<span><b>Envios: </b></span>
-						<span id="envios_dados"></span>
 					</div>
-
 				</div>
-
-				<div class="" style="margin-top: 20px;" align="center">
-
-					<div style="margin-top: 10px; text-align:center;" align="center"> 
-						<div style="margin-bottom: 10px">
-						<b><u><small>Demonstração da Mensagem</small></u></b>
-						</div>
-
-						<div style="margin-top: 10px; width:350px; border:1px solid #acacad; margin:0 auto; text-align: left; padding:5px" >
-							<small>
-								<b><span id="titulo_dados"></span></b><br>
-							<i><span id="mensagem_dados"></span><br><br></i>
-
-							
-							<div id="item1_dad">✅<span id="item1_dados"></span><br></div>
-							<div id="item2_dad">✅<span id="item2_dados"></span><br></div>
-							<div id="item3_dad">✅<span id="item3_dados"></span><br></div>
-							<div id="item4_dad">✅<span id="item4_dados"></span><br></div>
-							<div id="item5_dad">✅<span id="item5_dados"></span><br></div>
-							<div id="item6_dad">✅<span id="item6_dados"></span><br></div>
-							<div id="item7_dad">✅<span id="item7_dados"></span><br></div>
-							<div id="item8_dad">✅<span id="item8_dados"></span><br>
-							</div>
-
-							<div id="item9_dad">✅<span id="item9_dados"></span><br>
-							</div>
-							<div id="item10_dad">✅<span id="item10_dados"></span><br>
-							</div>
-							<div id="item11_dad">✅<span id="item11_dados"></span><br>
-							</div>
-							<div id="item12_dad">✅<span id="item12_dados"></span><br>
-							</div>
-							<div id="item13_dad">✅<span id="item13_dados"></span><br>
-							</div>
-							<div id="item14_dad">✅<span id="item14_dados"></span><br>
-							</div>
-							<div id="item15_dad">✅<span id="item15_dados"></span><br>
-							</div>
-							<div id="item16_dad">✅<span id="item16_dados"></span><br>
-							</div>
-							<div id="item17_dad">✅<span id="item17_dados"></span><br>
-							</div>
-							<div id="item18_dad">✅<span id="item18_dados"></span><br>
-							</div>
-							<div id="item19_dad">✅<span id="item19_dados"></span><br>
-							</div>
-							<div id="item20_dad">✅<span id="item20_dados"></span><br>
-							</div>
-
-							<br>
-
-							<div id="area_link_dados">
-								<i><span id="conclusao_dados"></span></i><br>
-								<span id="link_dados"></span><br><br>
-							</div>
-
-							<div id="area_video_dados">
-								<i><span id="conclusao2_dados"></span></i><br>
-								<span id="video_dados"></span><br><br>
-							</div>	
-
-							<div id="area_conclusao5">
-								<i><span id="conclusao5_dados"></span></i><br>
-								<span id="link2_dados"></span><br><br>
-							</div>
-
-							<div id="area_conclusao3">
-								<i><span id="conclusao3_dados"></span></i><br><br>
-							</div>
-
-							<div id="area_conclusao4">
-								<i><span id="conclusao4_dados"></span></i><br><br>
-							</div>
-
-							
-							<div id="target_dados_div">
-							<img src="" id="target_dados" width="70%"><br><br>
-							</div>
-
-							<div id="audio_dados_div">
-							<audio  controls="controls" class="" style="height:25px; width:180px"  id="audio_dados">
-							
-
-							<source class="form-control" src="" type="audio/mp3" />
-						</audio>
-						<br>
-						</div>
-
-						<div id="target_documento_dados_div">
-						<img src="" id="target_documento_dados" width="40%"><br>
-						</div>
-
-						</small>
-
-						</div>
+				<div class="row py-2" style="border-bottom: 1px solid #cac7c7;">
+					<div class="col-md-6">
+						<span><b>Total de Envios: </b></span>
+						<span id="envios_dados" class="badge bg-success"></span>
 					</div>
-					
 				</div>
 
-				
+				<!-- Demonstração da Mensagem -->
+				<div class="mt-4" align="center">
+					<!-- Demonstração das Mensagens -->
+				<h5 class="text-center mb-3"><u>Pré-visualização das Mensagens</u></h5>
 
-
-			</div>
-
-			
-		</div>
-	</div>
-</div>
-
-
-
-
-
-
-
-<!-- Modal Disparar-->
-<div class="modal fade" id="modalEntrada" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-	<div class="modal-dialog" role="document">
-		<div class="modal-content">
-			
-			<div class="modal-header bg-primary text-white">
-				<h4 class="modal-title"><span id="nome_entrada"></span> - <span id="total_clientes"></span> Clientes</h4>
-				<button id="btn-fechar-entrada" aria-label="Close" class="btn-close" data-bs-dismiss="modal" type="button"><span class="text-white" aria-hidden="true">&times;</span></button>
-			</div>
-			
-			<div class="modal-body">
-				<form id="form-entrada">
 
 				<div class="row">
-						<div class="col-md-9">
-							<div class="form-group">
-								<label for="exampleInputEmail1">Clientes</label>
-								<select name="clientes" id="clientes" class="form-select" onchange="selecionarClientes()">
-									<option value="Teste">Teste (Administrador)</option>
-									<option value="Todos">Todos</option>	
-									<option value="Clientes Semana">Clientes Cadastrados Semana</option>
-									<option value="Clientes Mês">Clientes Cadastrados Mês</option>
-									<option value="Retorno">Clientes Pendentes de Retorno</option>
-								</select>
-							</div> 	
-						</div>
-
-						
-
-						<div class="col-md-3" style="margin-top: 22px">
-							<button id="btn_disparar" type="submit" class="btn btn-primary">Disparar</button>
-						
-						</div>
-
-
-					</div>	
-
-				
-				<input type="hidden" id="id_entrada" name="id">
-				
-
-				</form>
-
-				<br>
-					<small><div id="mensagem-entrada" align="center"></div></small>
-
-
-					<div style="margin-top: 10px; text-align:center;" align="center"> 
-						<div style="margin-bottom: 10px">
-						<b><u><small>Demonstração da Mensagem</small></u></b>
-						</div>
-
-						<div style="margin-top: 10px; width:350px; border:1px solid #acacad; margin:0 auto; text-align: left; padding:5px" >
-							<small>
-								<b><span id="titulo_disparar"></span></b><br>
-							<i><span id="mensagem_disparar"></span><br><br></i>
-
-							<div id="item1_dis">✅<span id="item1_disparar"></span><br></div>
-							<div id="item2_dis">✅<span id="item2_disparar"></span><br></div>
-							<div id="item3_dis">✅<span id="item3_disparar"></span><br></div>
-							<div id="item4_dis">✅<span id="item4_disparar"></span><br></div>
-							<div id="item5_dis">✅<span id="item5_disparar"></span><br></div>
-							<div id="item6_dis">✅<span id="item6_disparar"></span><br></div>
-							<div id="item7_dis">✅<span id="item7_disparar"></span><br></div>
-							<div id="item8_dis">✅<span id="item8_disparar"></span><br></div>
-
-							<div id="item9_dis">✅<span id="item9_disparar"></span><br>
+					<!-- Mensagem Principal -->
+					<div class="col-md-6 mb-3">
+						<div class="card h-100">
+							<div class="card-header bg-light py-1">
+								<h6 class="mb-0 text-muted">Mensagem Principal</h6>
 							</div>
-							<div id="item10_dis">✅<span id="item10_disparar"></span><br>
+							<div class="card-body p-3"style="text-align: left; background-image: url('images/whatsapp.jpg'); background-size: cover; background-position: center; background-repeat: no-repeat; opacity: 0.95;">
+								<div class="message-text">
+										<span id="mensagem_dados"></span>
+									</div>
 							</div>
-							<div id="item11_dis">✅<span id="item11_disparar"></span><br>
-							</div>
-							<div id="item12_dis">✅<span id="item12_disparar"></span><br>
-							</div>
-							<div id="item13_dis">✅<span id="item13_disparar"></span><br>
-							</div>
-							<div id="item14_dis">✅<span id="item14_disparar"></span><br>
-							</div>
-							<div id="item15_dis">✅<span id="item15_disparar"></span><br>
-							</div>
-							<div id="item16_dis">✅<span id="item16_disparar"></span><br>
-							</div>
-							<div id="item17_dis">✅<span id="item17_disparar"></span><br>
-							</div>
-							<div id="item18_dis">✅<span id="item18_disparar"></span><br>
-							</div>
-							<div id="item19_dis">✅<span id="item19_disparar"></span><br>
-							</div>
-							<div id="item20_dis">✅<span id="item20_disparar"></span><br>
-							</div>
-
-							<br>
-
-							<div id="area_link_disparar">
-								<i><span id="conclusao_disparar"></span></i><br>
-								<span id="link_disparar"></span><br><br>
-							</div>
-
-							<div id="area_video_disparar">
-								<i><span id="conclusao2_disparar"></span></i><br>
-								<span id="video_disparar"></span><br><br>
-							</div>	
-
-								<div id="area_conclusao5_disparar">
-								<i><span id="conclusao5_disparar"></span></i><br>
-								<span id="link2_disparar"></span><br><br>
-							</div>
-
-							<div id="area_conclusao3_disparar">
-								<i><span id="conclusao3_disparar"></span></i><br><br>
-							</div>
-
-							<div id="area_conclusao4_disparar">
-								<i><span id="conclusao4_disparar"></span></i><br><br>
-							</div>
-
-							
-							<div id="target_disparar_div">
-								<img src="" id="target_disparar" width="70%"><br><br>
-							</div>
-
-							<div id="audio_disparar_div">
-							<audio  controls="controls" class="" style="height:25px; width:180px"  id="audio_disparar">							
-							<source class="form-control" src="" type="audio/mp3" />
-						</audio>
-						<br>
-						</div>
-
-
-						<div id="target_documento_disparar_div">	
-						<img src="" id="target_documento_disparar" width="40%"><br>
-						</div>
-
-						</small>
-
 						</div>
 					</div>
-			</div>
 
-			
+					<!-- Mensagem Secundária -->
+					<div class="col-md-6 mb-3">
+						<div class="card h-100">
+							<div class="card-header bg-light py-1">
+								<h6 class="mb-0 text-muted">Mensagem Secundária</h6>
+							</div>
+							<div class="card-body p-3" style="text-align: left; background-image: url('images/whatsapp.jpg'); background-size: cover; background-position: center; background-repeat: no-repeat; opacity: 0.95;">
+								<div class="message-text">
+										<span id="mensagem2_dados"></span>
+									</div>
+							</div>
+						</div>
+					</div>
+				</div>
+
+
+				
+
+					<div class="message-preview"
+						style="max-width:400px; border:1px solid #acacad; margin:0 auto; text-align: left; padding:15px; border-radius:10px; box-shadow: 0 2px 5px rgba(0,0,0,0.1);">
+
+						<div class="message-body">
+
+							<!-- Arquivos anexados -->
+							<div class="attachments">
+								<div id="target_dados_div" class="mb-3">
+									<img src="" id="target_dados" class="img-fluid rounded" style="max-width:100%">
+								</div>
+
+								<div id="audio_dados_div" class="mb-3">
+									<audio controls class="w-100" style="height:40px;" id="audio_dados">
+										<source src="" type="audio/mp3">
+									</audio>
+								</div>
+
+								<div id="target_documento_dados_div">
+									<div class="d-flex align-items-center">
+										<img src="" id="target_documento_dados" width="40px">
+										<span class="ms-2">Documento anexado</span>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
 		</div>
 	</div>
 </div>
 
 
 
-<script type="text/javascript">var pag = "<?=$pag?>"</script>
+
+
+
+<!-- Modal Disparar Campanha -->
+<div class="modal fade" id="modalEntrada" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+	aria-hidden="true">
+	<div class="modal-dialog modal-lg" role="document">
+		<div class="modal-content">
+			<div class="modal-header bg-primary text-white">
+				<h4 class="modal-title"><span id="nome_entrada"></span> - <span id="total_clientes"
+						class="badge bg-light text-dark"></span> Clientes</h4>
+				<button id="btn-fechar-entrada" aria-label="Close" class="btn-close" data-bs-dismiss="modal"
+					type="button"><span class="text-white" aria-hidden="true">&times;</span></button>
+			</div>
+
+			<div class="modal-body">
+				<form id="form-disparar">
+					<div class="row">
+						<div class="col-md-6">
+							<div class="form-group">
+								<label>Selecionar Destinatários</label>
+								<select name="clientes" id="clientes" class="sel_disparos"
+									onchange="selecionarClientes()" style="width:100%">
+									<option value="Teste">Teste (Apenas Administrador)</option>
+									<option value="Todos">Todos os Clientes</option>
+									<option value="Clientes Semana">Clientes Cadastrados na Última Semana</option>
+									<option value="Clientes Mês">Clientes Cadastrados no Último Mês</option>
+									
+									
+									<?php 
+									$query = $pdo->query("SELECT * FROM grupos_disparos order by id desc");
+										$res = $query->fetchAll(PDO::FETCH_ASSOC);
+										for($i=0; $i < @count($res); $i++){
+											foreach ($res[$i] as $key => $value){}
+
+											echo '<option value="'.$res[$i]['id'].'">'.$res[$i]['nome'].'</option>';
+
+										}
+								 ?>
+
+								</select>
+							</div>
+						</div>
+						<div class="col-md-3">
+							<label>Programar Disparo para</label>
+							<input type="date" name="data_disparo" id="data_disparo" value="<?php echo date('Y-m-d'); ?>" class="form-control" required>
+							
+						</div>
+						<div class="col-md-3">
+										<div class="form-group">
+											<label class="text-muted">Horário do Disparo
+												<div class="icones_mobile dropdown" style="display: inline-block;">
+													<a title="Clique para ver as opções das tags" href="#" aria-expanded="false"
+														aria-haspopup="true" data-bs-toggle="dropdown" class="dropdown">
+														<i class="fa fa-info-circle text-info" style="font-size: 14px;"></i>
+													</a>
+													<div class="dropdown-menu tx-13">
+														<div data-bs-toggle="tooltip" data-bs-placement="top" class="dropdown-item-text " style="width: 400px;">
+															<p class="mt-1">Escolha uma Hora de Inicio e o sistema vai começar a disparar as mensagens automaticamente nesse horario. Os minutos o sistema vai alternar entre 00 e 59 para evitar uma sobrecarga no Servidor<br>
+															</p>
+														</div>
+													</div>
+												</div>
+											</label>
+											<select class="form-select" id="hora_disparo" name="hora_disparo" required>
+												<option value="agora">Imediatamente</option>
+												<?php
+												for ($i = 0; $i < 24; $i++) {
+													$hora = str_pad($i, 2, "0", STR_PAD_LEFT);
+													$selected = (@$res_edit['hora_disparo'] == $hora . ':00') ? 'selected' : ($hora == '09' ? 'selected' : '');
+													echo "<option value='{$hora}:00' {$selected}>{$hora}:00</option>";
+												}
+												?>
+											</select>
+									</div>
+								</div>
+					</div>
+
+					<div class="row">
+						<div class="col-md-5 mb-2">
+							<label>Arquivo Excel .Xls <small>(Cabelalho nome e telefone)</small> <a href="images/marketing/modelo_excel.xlsx" target="_blank" title="Baixar Modelo"><i class="fas fa-file-excel" style="color: green; font-size: 15px"></i></a></label>
+							<input type="file" class="form-control" id="arquivo_excel" name="arquivo_excel" onchange="carregarImgArquivoExcel()">
+						</div>
+						<div class="col-md-1" style="margin-top: 20px">
+							<img width="80px" id="target_arquivo_excel">
+						</div>
+
+						<div class="col-md-5 mb-2">
+							<label>Arquivo Texto .txt <small>(Separar por virgula ;)</small> <a href="images/marketing/modelo_txt.txt" target="_blank" title="Baixar Modelo"><i class="fas fa-file" style="color: gray; font-size: 15px"></i></a></label>
+							<input type="file" class="form-control" id="arquivo_texto" name="arquivo_texto" onchange="carregarImgArquivoTexto()">
+						</div>
+						<div class="col-md-1" style="margin-top: 20px">
+							<img width="80px" id="target_arquivo_texto">
+						</div>
+
+						
+					</div>
+
+
+					<div class="row">
+
+						<div class="col-md-3  mb-2">
+							<label>Frequência</label>
+							<select name="frequencia" id="frequencia" class="form-select">
+							<option value="0">Nenhuma</option>
+								<?php
+								$query = $pdo->query("SELECT * from frequencias order by id asc");
+								$res = $query->fetchAll(PDO::FETCH_ASSOC);
+								$linhas = @count($res);
+								if ($linhas > 0) {
+									for ($i = 0; $i < $linhas; $i++) {
+										echo '<option value="' . $res[$i]['dias'] . '">' . $res[$i]['frequencia'] . '</option>';
+									}
+								} else {
+									echo '<option value="0">Cadastre uma Forma de Pagamento</option>';
+								}
+								?>
+							</select>
+						</div>
+
+
+						<div class="col-md-2 mb-2">
+							<label>Quantidade</label>
+							<input type="number" name="quantidade" id="quantidade" placeholder="Vezes" class="form-select">
+						</div>
+
+
+						<div class="col-md-2 mb-2">
+							<label>Intervalo Horas</label>
+							<input type="number" value="1" name="intervalo_horas" id="intervalo_horas" placeholder="Horas" class="form-select">
+						</div>
+
+						
+						<div class="col-md-2" style="margin-top: 25px">
+							<button id="btn_disparar" type="submit" class="btn btn-primary"><i
+									class="fe fe-send me-2"></i>Disparar</button>
+							<button class="btn btn-primary" type="button" id="btn_carregando_disparo"
+								style="display:none">
+								<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+								Processando...
+							</button>
+						</div>
+					</div>
+
+					<input type="hidden" id="id_entrada" name="id">
+				</form>
+
+				<div id="mensagem-entrada" class="alert mt-3" style="display:none;"></div>
+
+				<!-- Pré-visualização da mensagem -->
+				<div class="mt-4 border-top pt-3">
+					<h5 class="text-center mb-3"><u>Pré-visualização da Mensagem</u></h5>
+
+					<div class="row">
+					<!-- Mensagem Principal -->
+					<div class="col-md-6 mb-3">
+						<div class="card h-100">
+							<div class="card-header bg-light py-1">
+								<h6 class="mb-0 text-muted">Mensagem Principal</h6>
+							</div>
+							<div class="card-body p-3"style="text-align: left; background-image: url('images/whatsapp.jpg'); background-size: cover; background-position: center; background-repeat: no-repeat; opacity: 0.95;">
+								<div class="message-text">
+										<span id="mensagem_disparar"></span>
+									</div>
+							</div>
+						</div>
+					</div>
+
+					<!-- Mensagem Secundária -->
+					<div class="col-md-6 mb-3">
+						<div class="card h-100">
+							<div class="card-header bg-light py-1">
+								<h6 class="mb-0 text-muted">Mensagem Secundária</h6>
+							</div>
+							<div class="card-body p-3" style="text-align: left; background-image: url('images/whatsapp.jpg'); background-size: cover; background-position: center; background-repeat: no-repeat; opacity: 0.95;">
+								<div class="message-text">
+										<span id="mensagem2_disparar"></span>
+									</div>
+							</div>
+						</div>
+					</div>
+				</div>
+
+					<div class="message-preview"
+						style="max-width:400px; border:1px solid #acacad; margin:0 auto; text-align: left; padding:15px; border-radius:10px; box-shadow: 0 2px 5px rgba(0,0,0,0.1);">
+
+
+						<div class="message-body">
+							<!-- Anexos -->
+							<div class="attachments">
+								<div id="target_disparar_div" class="mb-3 text-center" style="display:none;">
+									<img src="" id="target_disparar" class="img-fluid rounded" style="max-width:100%">
+								</div>
+
+								<div id="audio_disparar_div" class="mb-3" style="display:none;">
+									<audio controls class="w-100" style="height:40px;" id="audio_disparar">
+										<source src="" type="audio/mp3">
+									</audio>
+								</div>
+
+								<div id="target_documento_disparar_div" style="display:none;">
+									<div class="d-flex align-items-center">
+										<img src="" id="target_documento_disparar" width="40px">
+										<span class="ms-2">Documento anexado</span>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+
+<script type="text/javascript">var pag = "<?= $pag ?>"</script>
 <script src="js/ajax.js"></script>
 
 
@@ -714,6 +709,19 @@ if(@$marketing == 'ocultar'){
     $('.sel2').select2({
     	dropdownParent: $('#modalForm')
     });
+
+    $('.sel_disparos').select2({
+    	dropdownParent: $('#modalEntrada')
+    });
+
+
+	// Inicializa as pré-visualizações
+    atualizarPreview();
+    atualizarPreview2();
+    
+    // Adiciona listeners para os textareas
+    $('#msg').on('input', atualizarPreview);
+    $('#msg2').on('input', atualizarPreview2);
 });
 </script>
 
@@ -786,10 +794,15 @@ $("#form-saida").submit(function () {
  <script type="text/javascript">
 	
 
-$("#form-entrada").submit(function () {		
+$("#form-disparar").submit(function () {		
 
     event.preventDefault();
     var formData = new FormData(this);
+
+	$('#btn_carregando_disparo').show();
+	$('#btn_disparar').hide();
+
+	
 
     var ultimo_registro = $('#ultimo_registro').val();
 	
@@ -802,30 +815,22 @@ $("#form-entrada").submit(function () {
 		}
 	}
 
-	$('#btn_disparar').hide();
-	$('#mensagem-entrada').text('Enviando!!');
-
     $.ajax({
         url: 'paginas/' + pag + "/disparar.php",
         type: 'POST',
         data: formData,
 
         success: function (mensagem) {
-        	 
-            $('#mensagem-entrada').text('');
-            $('#mensagem-entrada').removeClass()
             if (mensagem.trim() == "Salvo com Sucesso") {
+				alertsucesso('Disparo agendado com sucesso!');
 				$('#btn-fechar-entrada').click();
                 listar(); 
-
             } else {
-
-                $('#mensagem-entrada').addClass('text-danger')
-                $('#mensagem-entrada').text(mensagem)
+				alertErro(mensagem);
             }
 
             $('#btn_disparar').show();
-
+			$('#btn_carregando_disparo').hide();
         },
 
         cache: false,
@@ -917,3 +922,290 @@ $("#form-entrada").submit(function () {
 				}
 			}
 		</script>
+
+
+
+
+
+
+
+
+<script>
+	 // Formata o texto no textarea especificado (msg ou msg2)
+        function formatarTexto(tipo, textareaId) {
+            let textarea = document.getElementById(textareaId);
+            let inicio = textarea.selectionStart;
+            let fim = textarea.selectionEnd;
+            let texto = textarea.value;
+
+            let marcador;
+            switch (tipo) {
+                case 'bold':
+                    marcador = '*';
+                    break;
+                case 'italic':
+                    marcador = '_';
+                    break;
+                case 'strike':
+                    marcador = '~';
+                    break;
+                case 'mono':
+                    marcador = '`';
+                    break;
+            }
+
+            let selecionado = texto.substring(inicio, fim);
+            let novoTexto;
+            let novaPosicaoCursor;
+
+            if (selecionado.length > 0) {
+                // Se há texto selecionado
+                if (tipo === 'mono') {
+                    novoTexto = texto.substring(0, inicio) + '```' + selecionado + '```' + texto.substring(fim);
+                    novaPosicaoCursor = fim + 6; // 3 caracteres no início + 3 no fim
+                } else {
+                    novoTexto = texto.substring(0, inicio) + marcador + selecionado + marcador + texto.substring(fim);
+                    novaPosicaoCursor = fim + 2; // 1 caractere no início + 1 no fim
+                }
+            } else {
+                // Se não há texto selecionado
+                if (tipo === 'mono') {
+                    novoTexto = texto.substring(0, inicio) + '```' + '```' + texto.substring(inicio);
+                    novaPosicaoCursor = inicio + 3;
+                } else {
+                    novoTexto = texto.substring(0, inicio) + marcador + marcador + texto.substring(inicio);
+                    novaPosicaoCursor = inicio + 1;
+                }
+            }
+
+            textarea.value = novoTexto;
+            textarea.selectionStart = novaPosicaoCursor;
+            textarea.selectionEnd = novaPosicaoCursor;
+            textarea.focus();
+
+            // Atualiza a pré-visualização correspondente
+            if (textareaId === 'msg') {
+                atualizarPreview();
+            } else if (textareaId === 'msg2') {
+                atualizarPreview2();
+            }
+        }
+
+	 // Insere emoji no textarea especificado
+        function inserirEmoji(emoji, textareaId) {
+            let textarea = document.getElementById(textareaId);
+            let posicaoAtual = textarea.selectionStart;
+            let texto = textarea.value;
+
+            // Insere o emoji na posição atual do cursor
+            textarea.value = texto.slice(0, posicaoAtual) + emoji + texto.slice(posicaoAtual);
+
+            // Move o cursor para depois do emoji
+            let novaPosicao = posicaoAtual + emoji.length;
+            textarea.selectionStart = novaPosicao;
+            textarea.selectionEnd = novaPosicao;
+
+            textarea.focus();
+
+            // Atualiza a pré-visualização correspondente
+            if (textareaId === 'msg') {
+                atualizarPreview();
+            } else if (textareaId === 'msg2') {
+                atualizarPreview2();
+            }
+        }
+
+	// Atualiza a pré-visualização da mensagem
+	function atualizarPreview() {
+		let mensagem = document.getElementById("msg").value;
+		let preview = document.getElementById("preview");
+
+		// Aplica as formatações do WhatsApp
+		let mensagemFormatada = mensagem
+			.replace(/\*(.*?)\*/g, '<strong>$1</strong>') // Negrito
+			.replace(/_(.*?)_/g, '<em>$1</em>')          // Itálico
+			.replace(/~(.*?)~/g, '<del>$1</del>')        // Tachado
+			.replace(/```(.*?)```/g, '<code>$1</code>')  // Monospace
+			.replace(/\n/g, '<br>');                     // Quebras de linha
+
+		preview.innerHTML = mensagemFormatada || '...';
+	}
+
+	// Atualiza a pré-visualização da mensagem
+	function atualizarPreview2() {
+		let mensagem = document.getElementById("msg2").value;
+		let preview = document.getElementById("preview2");
+
+		// Aplica as formatações do WhatsApp
+		let mensagemFormatada = mensagem
+			.replace(/\*(.*?)\*/g, '<strong>$1</strong>') // Negrito
+			.replace(/_(.*?)_/g, '<em>$1</em>')          // Itálico
+			.replace(/~(.*?)~/g, '<del>$1</del>')        // Tachado
+			.replace(/```(.*?)```/g, '<code>$1</code>')  // Monospace
+			.replace(/\n/g, '<br>');                     // Quebras de linha
+
+		preview.innerHTML = mensagemFormatada || '...';
+	}
+
+	// Remove o event listener anterior para evitar duplicação
+	document.getElementById("msg").removeEventListener("input", atualizarPreview);
+	document.getElementById("msg2").removeEventListener("input", atualizarPreview2);
+	// Adiciona o novo event listener
+	document.getElementById("msg").addEventListener("input", atualizarPreview);
+	document.getElementById("msg2").addEventListener("input", atualizarPreview2);
+
+	// Inicializa a pré-visualização
+	atualizarPreview();
+	atualizarPreview2();
+</script>
+
+
+<script type="text/javascript">
+ // Formata texto conforme regras do WhatsApp
+        function formatarMensagemWhatsApp(mensagem) {
+            if (!mensagem) return '';
+
+            return mensagem
+                .replace(/\*(.*?)\*/g, '<strong>$1</strong>') // Negrito
+                .replace(/_(.*?)_/g, '<em>$1</em>')          // Itálico
+                .replace(/~(.*?)~/g, '<del>$1</del>')        // Tachado
+                .replace(/```(.*?)```/g, '<code>$1</code>')  // Monospace
+                .replace(/\n/g, '<br>');                     // Quebras de linha
+        }
+
+		// Formata mensagem para exibição nos modais
+        function formatarMensagemModal(mensagem) {
+            return formatarMensagemWhatsApp(mensagem);
+        }
+
+</script>
+
+<script>
+	  // Atualiza a pré-visualização da mensagem principal
+        function atualizarPreview() {
+            let mensagem = document.getElementById("msg").value;
+            let preview = document.getElementById("preview");
+
+            // Aplica as formatações do WhatsApp
+            let mensagemFormatada = formatarMensagemWhatsApp(mensagem);
+            preview.innerHTML = mensagemFormatada || '<span class="text-muted">Pré-visualização da mensagem principal...</span>';
+        }
+
+        // Atualiza a pré-visualização da mensagem secundária
+        function atualizarPreview2() {
+            let mensagem = document.getElementById("msg2").value;
+            let preview = document.getElementById("preview2");
+
+            // Aplica as formatações do WhatsApp
+            let mensagemFormatada = formatarMensagemWhatsApp(mensagem);
+            preview.innerHTML = mensagemFormatada || '<span class="text-muted">Pré-visualização da mensagem secundária...</span>';
+        }
+</script>
+
+
+<script>
+	
+/**
+ * Função para limpar a imagem selecionada e restaurar a imagem padrão
+ */
+function limparImagem() {
+    // Redefine a imagem para a padrão "sem-foto"
+    document.getElementById('target').src = 'images/marketing/sem-foto.png';
+    
+    // Limpa o input de arquivo
+    document.getElementById('foto').value = '';
+}
+
+
+/**
+ * Função para limpar o áudio selecionado
+ */
+function limparAudio() {
+    // Limpa o input de arquivo
+    document.getElementById('audio').value = '';
+    
+    // Redefine a informação de áudio para o padrão
+    document.getElementById('audio-info').textContent = 'Áudio';
+}
+
+/**
+ * Função para limpar o documento selecionado
+ */
+function limparDocumento() {
+    // Redefine a imagem para a padrão "sem-foto"
+    document.getElementById('target_documento').src = 'images/marketing/sem-foto.png';
+    
+    // Limpa o input de arquivo
+    document.getElementById('documento').value = '';
+}
+</script>
+
+<script type="text/javascript">var pag = "<?= $pag ?>"</script>
+
+
+
+<script type="text/javascript">
+			function carregarImgArquivoTexto() {
+				var target = document.getElementById('target_arquivo_texto');
+				var file = document.querySelector("#arquivo_texto").files[0];
+
+				var arquivo = file['name'];
+				resultado = arquivo.split(".", 2);
+
+				if(resultado[1] === 'txt'){
+					$('#target_arquivo_texto').attr('src', "images/marketing/txt.png");
+					return;
+				}
+			
+				var reader = new FileReader();
+
+				reader.onloadend = function () {
+					target.src = reader.result;
+				};
+
+				if (file) {
+					reader.readAsDataURL(file);
+
+				} else {
+					target.src = "";
+				}
+			}
+		</script>
+
+
+
+<script type="text/javascript">
+			function carregarImgArquivoExcel() {
+				var target = document.getElementById('target_arquivo_excel');
+				var file = document.querySelector("#arquivo_excel").files[0];
+
+				var arquivo = file['name'];
+				resultado = arquivo.split(".", 2);
+
+				if (resultado[1] === 'xlsx' || resultado[1] === 'xlsm' || resultado[1] === 'xls') {
+					$('#target_arquivo_excel').attr('src', "images/marketing/excel.png");
+					return;
+				}
+			
+				var reader = new FileReader();
+
+				reader.onloadend = function () {
+					target.src = reader.result;
+				};
+
+				if (file) {
+					reader.readAsDataURL(file);
+
+				} else {
+					target.src = "";
+				}
+			}
+		</script>
+
+
+<script type="text/javascript">
+	function buscar(){
+		var filtro_busca = $('#filtro_busca').val();
+		listar(filtro_busca)
+	}
+</script>

@@ -102,6 +102,17 @@ if ($linhas == 0) {
 	$mensagem_retorno = $res[0]['mensagem_retorno'];
 	$total_cartoes_config = $res[0]['total_cartoes'];
 	$valor_cupom_config = $res[0]['valor_cupom'];
+	$taxa_extra = $res[0]['taxa_extra'];
+	$titulo_taxa = $res[0]['titulo_taxa'];
+	$retirar_local = $res[0]['retirar_local'];
+	$consumir_local = $res[0]['consumir_local'];
+	$entrega_delivery = $res[0]['entrega_delivery'];
+	$delivery_monitor = $res[0]['delivery_monitor'];
+
+
+	if($taxa_extra == ""){
+		$taxa_extra = 0;
+	}
 
 	$tel_whats = '55' . preg_replace('/[ ()-]+/', '', $telefone_sistema);
 

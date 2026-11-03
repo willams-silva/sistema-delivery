@@ -24,6 +24,23 @@ for($i=0; $i < $total_reg; $i++){
 	}
 }
 
+
+$query5 = $pdo->query("SELECT * FROM $tabela where id = '$id'");
+$res5 = $query5->fetchAll(PDO::FETCH_ASSOC);
+$cliente = $res5[0]['cliente'];
+
+//remover cartão
+	$query2 = $pdo->query("SELECT * FROM clientes where id = '$cliente'");
+	$res2 = $query2->fetchAll(PDO::FETCH_ASSOC);
+	$total_reg2 = @count($res2);
+	if($total_reg2 > 0){
+		$cartao = $res2[0]['cartoes'];
+		$total_cartao = $cartao - 1;
+
+		$pdo->query("UPDATE clientes SET cartoes = '$total_cartao' where id = '$cliente'");
+	}
+
+
 $pdo->query("DELETE from $tabela where id = '$id'");
 echo 'Excluído com Sucesso';
  ?>

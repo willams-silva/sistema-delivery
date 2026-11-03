@@ -25,6 +25,12 @@ if ($total_reg > 0) {
 	$pago = $res[0]['pago'];
 }
 
+if($acao == 'Finalizado'){
+	if($pago == 'Não'){
+		echo 'O pedido ainda está pendente de pagamento, dê a baixa no pagamento antes!';
+		exit();
+	}
+}
 
 
 //verificar caixa aberto
@@ -80,6 +86,11 @@ if ($api_whatsapp != 'Não' and $acao == 'Aceito') {
 	$data_mensagem = date('Y-m-d H:i:s');
 	$telefone_envio = $telefone;
 	require ("../../../../js/ajax/api_texto.php");
+
+	if($delivery_monitor == 'Sim'){
+		//atualizar status dos campos do carrinho
+		$pdo->query("UPDATE carrinho SET status = 'Aguardando' where pedido = '$id'");
+	}
 }
 
 

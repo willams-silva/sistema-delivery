@@ -12,6 +12,10 @@ $stmt = $pdo->prepare("UPDATE $tabela SET status = :status, status_api = :status
 
 if($stmt->execute([':status' => 'Ativo', ':status_api' => 'conectado', ':appkey' => $appkey ]))
 {
+    $stmt = $pdo->prepare("UPDATE config SET token_whatsapp = :token");
+    $stmt->execute([':token' => $appkey]);
+    
+    
     $response = json_encode(['status' => 200]);
 }
 else

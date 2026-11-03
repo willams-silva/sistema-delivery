@@ -10,6 +10,8 @@ $limite = $_POST['limite'];
 $grade = $_POST['id'];
 $id_item_editar = $_POST['id_item_editar'];
 
+$valor = str_replace(',', '.', $valor);
+
 $adicional = @$_POST['adicional'];
 $e_adicional = $_POST['e_adicional'];
 

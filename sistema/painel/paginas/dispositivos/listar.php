@@ -10,7 +10,7 @@ require_once("../../../conexao.php");
 $data_atual = date('Y-m-d');
 
 $dataAtual = date("Y-m-d");
-$query = $pdo->prepare("SELECT * FROM $tabela where status_api IS NOT NULL");
+$query = $pdo->prepare("SELECT * FROM $tabela where status_api IS NOT NULL and (empresa is null or empresa = 0)");
 $query->execute();
 $res = $query->fetchAll(PDO::FETCH_ASSOC);
 
@@ -54,13 +54,16 @@ $nucleo = $dispositivos['nucleo'] ?? '';
     <td class="esc"><?=$status;?></td>
     <td class="esc">
     	
-            <big><a href="#" class="btn btn-danger-light btn-sm" onclick="excluirDisp('<?= $id; ?>')" title="Excluir"><i class="fa fa-trash-can"></i></a></big>
+           <big><a href="#" class="btn btn-danger-light btn-sm" onclick="excluirDisp('<?= $id; ?>')" title="Excluir"><i class="fa fa-trash"></i></a></big>
+
 
         <big>
             <a href="#" onclick="add('<?= $appkey; ?>'); $('#modaldispositivo').modal('show');" title="Reconectar Dispositivo">
                 <i class="fa fa-wifi" style="color:#3d1002"></i>
             </a>
         </big>
+
+         <big><a class="btn btn-success-light btn-sm" href="#" onclick="testarApi()" title="Testar Api"><i class="bi bi-whatsapp "></i></a></big>
 
     </td>
 </tr>
@@ -148,4 +151,30 @@ HTML;
 
 
 
+
+
+<script type="text/javascript">
+    function testarApi() {
+        var seletor_api = 'menuia';
+        var token = "<?=$token_whatsapp?>";
+        var instancia = "<?=$instancia_whatsapp?>";
+        var telefone_sistema = "<?=$telefone_sistema?>";
+
+        $.ajax({
+            url: 'apis/teste_whatsapp.php',
+            method: 'POST',
+            data: {
+                seletor_api,
+                token,
+                instancia,
+                telefone_sistema
+            },
+            dataType: "html",
+
+            success: function(result) {
+                alertWarning(result)
+            }
+        });
+    }
+</script>
 

@@ -1,726 +1,551 @@
-<?php 
-require_once("../../../conexao.php");
+<?php
+@session_start();
+$id_empresa = @$_SESSION['empresa'];
 $tabela = 'marketing';
 
-$query = $pdo->query("SELECT * FROM clientes where telefone != '' and telefone is not null");
-$res = $query->fetchAll(PDO::FETCH_ASSOC);
-$total_clientes = @count($res);
+$id_usuario = @$_SESSION['id'];
+require_once("../../../conexao.php");
 
-$query = $pdo->query("SELECT * FROM $tabela ORDER BY id desc");
-$res = $query->fetchAll(PDO::FETCH_ASSOC);
-$total_reg = @count($res);
-if($total_reg > 0){
-
-echo <<<HTML
-	<small>
-	<table class="table table-hover table-bordered text-nowrap border-bottom dt-responsive" id="tabela">
-	<thead> 
-	<tr> 
-	<th>Título</th>	
-	<th class="esc">Útimo Envio</th> 
-	<th class="esc">Tipo Envio</th> 	
-	<th class="esc">Envios Pendentes</th> 	
-	<th class="esc">Imagem</th> 
-	<th class="esc">Áudio</th>	
-	<th class="esc">Arquivo</th>	
-	<th>Ações</th>
-	</tr> 
-	</thead> 
-	<tbody>	
-HTML;
-
-for($i=0; $i < $total_reg; $i++){
-	foreach ($res[$i] as $key => $value){}
-	$id = $res[$i]['id'];
-	$titulo = $res[$i]['titulo'];	
-	$mensagem = $res[$i]['mensagem'];
-	$item1 = $res[$i]['item1'];
-	$item2 = $res[$i]['item2'];
-	$item3 = $res[$i]['item3'];
-	$item4 = $res[$i]['item4'];
-	$item5 = $res[$i]['item5'];
-	$item6 = $res[$i]['item6'];
-	$item7 = $res[$i]['item7'];
-	$item8 = $res[$i]['item8'];
-
-	$item9 = $res[$i]['item9'];
-	$item10 = $res[$i]['item10'];
-	$item11 = $res[$i]['item11'];
-	$item12 = $res[$i]['item12'];
-	$item13 = $res[$i]['item13'];
-	$item14 = $res[$i]['item14'];
-	$item15 = $res[$i]['item15'];
-	$item16 = $res[$i]['item16'];
-	$item17 = $res[$i]['item17'];
-	$item18 = $res[$i]['item18'];
-	$item19 = $res[$i]['item19'];
-	$item20 = $res[$i]['item20'];
-
-	$conclusao = $res[$i]['conclusao'];
-	$conclusao2 = $res[$i]['conclusao2'];
-	$conclusao3 = $res[$i]['conclusao3'];
-	$conclusao4 = $res[$i]['conclusao4'];
-	$arquivo = $res[$i]['arquivo'];
-	$audio = $res[$i]['audio'];
-	$data_envio = $res[$i]['data_envio'];
-	$data = $res[$i]['data'];
-	$envios = $res[$i]['envios'];
-	$forma_envio = $res[$i]['forma_envio'];	
-
-	$link = $res[$i]['link'];
-	$video = $res[$i]['video'];
-
-	$link2 = $res[$i]['link2'];
-	$conclusao5 = $res[$i]['conclusao5'];
-
-	$documento = $res[$i]['documento'];
-
-
-	$data_envioF = implode('/', array_reverse(@explode('-', $data_envio)));
-	$dataF = implode('/', array_reverse(@explode('-', $data)));
-
-	$ocultar_audio = 'ocultar';
-	if($audio != ""){
-		$ocultar_audio = '';
-	}
-
-	$ocultar_foto = 'ocultar';
-	if($arquivo != "sem-foto.jpg"){
-		$ocultar_foto = '';
-	}
-
-	if($forma_envio == ""){
-		$forma_envio = "Todos";
-	}
-
-	$ocultar_doc = 'ocultar';
-	if($documento != "sem-foto.jpg"){
-		$ocultar_doc = '';
-	}
-
-	$ocultar_reg = '';
-	 $tituloF = mb_strimwidth($titulo, 0, 18, "...");
-
-
-		//extensão do arquivo
-$ext = pathinfo($documento, PATHINFO_EXTENSION);
-if($ext == 'pdf'){
-	$tumb_arquivo = 'pdf.png';
-}else if($ext == 'rar' || $ext == 'zip'){
-	$tumb_arquivo = 'rar.png';
+$filtro_busca = @$_POST['p1'];
+if($filtro_busca != ""){
+	$sql_busca = " and total_disparos > 0 ";
+	$ativo_disparos = 'active';
+	$ativo_todas = '';
 }else{
-	$tumb_arquivo = $documento;
+	$sql_busca = " ";
+	$ativo_disparos = '';
+	$ativo_todas = 'active';
 }
 
+$query = $pdo->query("SELECT * from $tabela where id > 0 $sql_busca order by id desc");
+$res = $query->fetchAll(PDO::FETCH_ASSOC);
+$linhas = @count($res);
+if ($linhas > 0) {
+	?>
 
-$query2 = $pdo->query("SELECT * FROM disparos where campanha = '$id' ORDER BY id desc");
-$res2 = $query2->fetchAll(PDO::FETCH_ASSOC);
-$total_envios = @count($res2);
-
-
-$query2 = $pdo->query("SELECT * FROM disparos where campanha = '$id' ORDER BY id desc limit 1");
-$res2 = $query2->fetchAll(PDO::FETCH_ASSOC);
-$hora_ultimo_envio = @$res2[0]['hora'];
-
-echo <<<HTML
-<tr class="{}">
-<td>
-{$tituloF}
-</td>
-<td class="esc">{$hora_ultimo_envio} <span class="{$ocultar_reg} text-primary"><small></small></span></td>
-<td class="esc">{$forma_envio}</td>
-<td class="esc">{$total_envios}</td>
-<td class="esc"><img class="{$ocultar_foto}" src="images/marketing/{$arquivo}" width="27px" height="27px" class="mr-2">
-
-<div class="dropdown" style="display: inline-block;">                      
-	<a class="{$ocultar_foto}" title="Excluir Imagem" href="#" class="dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false"><big><i class="fa fa-close text-danger"></i></big></a>
-
-		<div  class="dropdown-menu tx-13">
-			<div class="dropdown-item-text botao_excluir_listar">
-			<p>Confirmar Exclusão da Foto? <a href="#" onclick="excluirImagem('{$id}')"><span class="text-danger">Sim</span></a></p>
+	<!-- Barra de Filtros e Pesquisa -->
+	<div class="row mb-4">
+		<div class="col-md-8">
+			<div class="input-group">
+				<span class="input-group-text bg-primary text-white"><i class="fa fa-search"></i></span>
+				<form action="rel/marketing_class.php" target="_blank" method="post">
+				<input type="text" class="form-control" id="pesquisar" name="pesquisar" placeholder="Buscar campanhas...">
+				<input type="hidden" id="filtro_busca" name="filtro_busca">
+				<button id="btn_rel" type="submit" style="display:none"></button>
+				</form>
 			</div>
 		</div>
-</div>
+	</div>
 
-</td>
-<td class="esc">
+	<ul class="nav nav-tabs" id="myTab" role="tablist">
+  <li class="nav-item" role="presentation">
+    <button onclick="$('#filtro_busca').val(''); buscar()" class="nav-link <?php echo $ativo_todas ?>" id="home-tab" data-bs-toggle="tab" data-bs-target="#home" type="button" role="tab" aria-controls="home" aria-selected="true">Todas</button>
+  </li>
+  <li class="nav-item " role="presentation">
+    <button onclick="$('#filtro_busca').val('Disparos'); buscar()" class="nav-link <?php echo $ativo_disparos ?>" id="profile-tab" data-bs-toggle="tab" data-bs-target="#profile" type="button" role="tab" aria-controls="profile" aria-selected="false">Em Disparos</button>
+  </li> 
+</ul>
 
-<audio controls="controls" class="{$ocultar_audio}" style="height:25px; width:180px">
-<source src="images/marketing/{$audio}" type="audio/mp3" />
-</audio>
+	<!-- Grid de Cards -->
+	<div class="row row-cards" id="contenedor-cards">
+		<?php
+		for ($i = 0; $i < $linhas; $i++) {
+			$id = $res[$i]['id'];
+			$arquivo = $res[$i]['arquivo'];
+			$audio = $res[$i]['audio'];
+			$data_envio = $res[$i]['data_envio'];
+			$data = $res[$i]['data'];
+			$envios = $res[$i]['envios'];
+			$forma_envio = $res[$i]['forma_envio'];
+			$documento = $res[$i]['documento'];
+			$dispositivo = $res[$i]['dispositivo'];
+			$total_disparos = $res[$i]['total_disparos'];
 
-<div class="dropdown" style="display: inline-block;">                      
-	<a class="{$ocultar_audio}" title="Excluir Audio" href="#" class="dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false"><big><i class="fa fa-close text-danger"></i></big></a>
+			if($total_disparos == ""){
+				$total_disparos = 0;
+			}
 
-		<div  class="dropdown-menu tx-13">
-			<div class="dropdown-item-text botao_excluir_listar">
-			<p>Confirmar Exclusão do áudio? <a href="#" onclick="excluirAudio('{$id}')"><span class="text-danger">Sim</span></a></p>
+
+			// Obter dados brutos e decodificar as entidades HTML
+			$titulo = html_entity_decode($res[$i]['titulo'], ENT_QUOTES, 'UTF-8');
+			$msg = html_entity_decode($res[$i]['mensagem'], ENT_QUOTES, 'UTF-8');
+			$msg2 = html_entity_decode($res[$i]['mensagem2'], ENT_QUOTES, 'UTF-8');
+
+			// Codificar a mensagem para ser enviada via URL
+			$msgF = rawurlencode($msg);
+			$msg2F = rawurlencode($msg2);
+
+			$data_envioF = implode('/', array_reverse(@explode('-', $data_envio)));
+			$dataF = implode('/', array_reverse(@explode('-', $data)));
+
+			if ($forma_envio == "") {
+				$forma_envio = "Todos";
+			}
+
+			$tituloF = mb_strimwidth($titulo, 0, 40, "...");
+
+
+			$ocultar_audio = 'ocultar';
+			if ($audio != "") {
+				$ocultar_audio = '';
+			}
+
+			$ocultar_foto = 'ocultar';
+			if ($arquivo != "sem-foto.png") {
+				$ocultar_foto = '';
+			}
+
+			if ($forma_envio == "") {
+				$forma_envio = "Todos";
+			}
+
+			$ocultar_doc = 'ocultar';
+			if ($documento != "sem-foto.png") {
+				$ocultar_doc = '';
+			}
+
+			$ocultar_reg = '';
+
+			//extensão do arquivo
+			$ext = pathinfo($documento, PATHINFO_EXTENSION);
+			if ($ext == 'pdf') {
+				$tumb_arquivo = 'pdf.png';
+			} else if ($ext == 'rar' || $ext == 'zip') {
+				$tumb_arquivo = 'rar.png';
+			} else {
+				$tumb_arquivo = $documento;
+			}
+
+			$query2 = $pdo->query("SELECT * FROM disparos where campanha = '$id' ORDER BY id desc");
+			$res2 = $query2->fetchAll(PDO::FETCH_ASSOC);
+			$total_envios = @count($res2);
+
+			if($total_envios == 0){
+				$pdo->query("UPDATE marketing set total_disparos = 0 where id = '$id'");
+			}
+
+			$query2 = $pdo->query("SELECT * FROM disparos where campanha = '$id' ORDER BY data_disparo desc limit 1");
+			$res2 = $query2->fetchAll(PDO::FETCH_ASSOC);
+			$hora_ultimo_envio = @$res2[0]['hora'];
+
+			$ocultar_parar = '';
+			if($total_envios == 0){
+				$ocultar_parar = 'ocultar';
+			}
+			?>
+
+			<!-- Card de Campanha -->
+			<div class="col-lg-4 col-md-6 col-sm-12 mb-4 card-campanha">
+				<div class="card card-sm h-100 shadow-sm hover-shadow">
+					<!-- Cabeçalho do Card -->
+					<div class="card-header bg-transparent border-bottom-0 d-flex justify-content-between align-items-center">
+						<h5 class="card-title mb-0 text-primary">
+							<?= $tituloF ?>
+						</h5>
+						
+					</div>
+
+					<!-- Corpo do Card -->
+					<div class="card-body pt-0">
+						<!-- Informações da Campanha -->
+						<div class="row g-3 mb-3">
+							<!-- Tipo de Envio -->
+							<div class="col-6">
+								<small class="text-muted d-block">Tipo de Envio</small>
+								<span class="badge bg-info-transparent text-info rounded-pill">
+									<i class="bi bi-send me-1"></i>
+									<?= $forma_envio ?>
+								</span>
+							</div>
+
+							<!-- Último Envio -->
+							<div class="col-6">
+								<small class="text-muted d-block">Último Envio</small>
+								<?php if($hora_ultimo_envio != ""): ?>
+								<span class="badge bg-secondary-transparent text-secondary rounded-pill">
+									<i class="fa fa-clock me-1"></i>
+									<?= $hora_ultimo_envio ?>
+								</span>
+								<?php else: ?>
+									<span class="badge bg-secondary-transparent text-secondary rounded-pill">
+										<i class="fa fa-clock me-1"></i>
+										Aguardando Disparo
+									</span>
+								<?php endif; ?>
+							</div>
+						</div>
+
+						<!-- Barra de Progresso para Envios Pendentes -->
+						<div class="mb-3">
+							<div class="d-flex justify-content-between align-items-center mb-1">
+								<small class="text-muted">Envios Pendentes</small>
+								<span class="badge bg-primary-transparent text-primary" style="font-size: 12px"><?= $total_envios ?> / <?= $total_disparos ?></span>
+							</div>
+							<div class="progress" style="height: 6px;">
+								<?php
+								// Calculando a porcentagem para barra de progresso (exemplo)
+								if($total_envios > 0 and $total_disparos > 0){
+									$porcentagem = min(100, (($total_disparos - $total_envios) / $total_disparos) * 100);  // Apenas um exemplo
+								}else{
+									$porcentagem = 0;
+								}
+								
+								?>
+								<div class="progress-bar bg-primary" style="width: <?= $porcentagem ?>%" role="progressbar"
+									aria-valuenow="<?= $porcentagem ?>" aria-valuemin="0" aria-valuemax="100"></div>
+							</div>
+						</div>
+
+
+							<!-- Elementos de Mídia -->
+							<div class="d-flex gap-2 mb-3">
+								<?php if ($arquivo != "sem-foto.png"): ?>
+									<div class="position-relative">
+    								<img src="images/marketing/<?= $arquivo ?>" class="rounded shadow-sm" width="40" height="40"
+											data-bs-toggle="tooltip" title="Imagem">
+										<div class="dropdown" style="display: inline-block" title="Excluir Imagem" data-bs-toggle="tooltip">
+											<a title="Excluir Imagem" href="#" data-bs-toggle="dropdown" aria-expanded="false">
+												<i class="fa fa-close text-danger"></i>
+											</a>
+											<ul class="dropdown-menu p-2" style="width: 180px; box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px !important; background-color: #ffe4e4;">
+												<li>Excluir Imagem? <a href="#" onclick="excluirImagem(<?= $id ?>)"><span class="text-danger">Sim</span></a></li>
+											</ul>
+										</div>
+									</div>
+									
+
+								<?php endif; ?>
+
+								<?php if ($audio != ""): ?>
+									<div class="position-relative">
+										<span class="d-inline-block rounded shadow-sm p-2 bg-light" data-bs-toggle="tooltip" title="Áudio">
+											<i class="fa fa-music text-warning"></i>
+										</span>
+										<div class="dropdown" style="display: inline-block" title="Excluir Imagem" data-bs-toggle="tooltip">
+											<a class="<?= $ocultar_audio ?>" title="Excluir Imagem" href="#" data-bs-toggle="dropdown" aria-expanded="false">
+												<i class="fa fa-close text-danger"></i>
+											</a>
+											<ul class="dropdown-menu p-2" style="width: 180px; box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px !important; background-color: #ffe4e4;">
+												<li>Excluir Imagem? <a href="#" onclick="excluirAudio(<?= $id ?>)"><span class="text-danger">Sim</span></a></li>
+											</ul>
+										</div>
+									</div>
+								<?php endif; ?>
+
+								<?php if ($documento != "sem-foto.png"): ?>
+									<div class="position-relative">
+										<a href="images/marketing/<?= $documento ?>" target="_blank" class="d-inline-block">
+											<img src="images/marketing/<?= $tumb_arquivo ?>" class="rounded shadow-sm" width="40" height="40"
+												data-bs-toggle="tooltip" title="Documento">
+										</a>
+										<div class="dropdown" style="display: inline-block" title="Excluir Imagem" data-bs-toggle="tooltip">
+											<a  title="Excluir Imagem" href="#" data-bs-toggle="dropdown" aria-expanded="false">
+												<i class="fa fa-close text-danger"></i>
+											</a>
+											<ul class="dropdown-menu p-2" style="width: 180px; box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px !important; background-color: #ffe4e4;">
+												<li>Excluir Imagem? <a href="#" onclick="excluirDoc(<?= $id ?>)"><span class="text-danger">Sim</span></a></li>
+											</ul>
+										</div>
+									</div>
+								<?php endif; ?>
+							</div>
+					</div>
+
+					<!-- Rodapé do Card -->
+					<div class="card-footer bg-transparent border-top d-flex justify-content-between align-items-center">
+						<small class="text-muted">Criado em: <?= $dataF ?></small>
+
+						<!-- Botões Principais (os mais usados) -->
+						<div class="btn-group">
+							<button class="btn btn-sm btn-outline-info" data-bs-toggle="tooltip" title="Editar Campanha"
+								onclick="editar('<?= $id ?>','<?= $titulo ?>', '<?= $msgF ?>', '<?= $msg2F ?>', '<?= $arquivo ?>', '<?= $audio ?>', '<?= $documento ?>', '<?= $dispositivo ?>')">
+								<i class="fa fa-edit"></i>
+							</button>
+							<button class="btn btn-sm btn-outline-warning" data-bs-toggle="tooltip" title="Visuaizar Campanha"
+								onclick="mostrar('<?= $id ?>','<?= $titulo ?>', '<?= $msgF ?>', '<?= $msg2F ?>', '<?= $arquivo ?>', '<?= $audio ?>', '<?= $documento ?>', '<?= $dataF ?>', '<?= $data_envioF ?>', '<?= $arquivo ?>', '<?= $tumb_arquivo ?>')">
+								<i class="fa fa-eye"></i>
+							</button>
+							<button class="btn btn-sm btn-outline-success" data-bs-toggle="tooltip" title="Disparar Campanha"
+								onclick="disparar('<?= $id ?>','<?= $titulo ?>', '<?= $msgF ?>', '<?= $msg2F ?>', '<?= $arquivo ?>', '<?= $audio ?>', '<?= $tumb_arquivo ?>')">
+								<i class="fa fa-paper-plane"></i>
+							</button>
+							<button class="btn btn-sm btn-outline-danger <?= $ocultar_parar ?>" data-bs-toggle="tooltip" title="Parar Campanha"
+								onclick="pararModal('<?= $id ?>')">
+								<i class="fa fa-ban"></i>
+							</button>
+							<button class="btn btn-sm btn-outline-danger" data-bs-toggle="tooltip" title="Excluir Campanha"
+								onclick="excluir('<?= $id ?>')">
+								<i class="fa fa-trash"></i>
+							</button>
+							
+
+						</div>
+					</div>
+				</div>
 			</div>
+		<?php } ?>
+	</div>
+
+	<div class="text-center mt-4" id="sem-registros" style="display: none;">
+		<div class="alert alert-warning">
+			<i class="fa fa-exclamation-triangle me-2"></i>
+			Nenhuma campanha encontrada!
 		</div>
-</div>
+	</div>
 
-
-</td>
-
-
-<td class="esc"><a class="{$ocultar_doc}" href="images/marketing/{$documento}" target="_blank"><img src="images/marketing/{$tumb_arquivo}" width="25"></a>
-
-
-<div class="dropdown" style="display: inline-block;">                      
-	<a class="{$ocultar_doc}" title="Excluir Arquivo" href="#" class="dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false"><big><i class="fa fa-close text-danger"></i></big></a>
-
-		<div  class="dropdown-menu tx-13">
-			<div class="dropdown-item-text botao_excluir_listar">
-			<p>Confirmar Exclusão do arquivo? <a href="#" onclick="excluirDoc('{$id}')"><span class="text-danger">Sim</span></a></p>
-			</div>
-		</div>
-</div>
-
-
-</td>
-
-<td>
-		<big><a class="btn btn-info-light btn-sm" href="#" onclick="editar('{$id}','{$titulo}', '{$mensagem}', '{$item1}', '{$item2}', '{$item3}', '{$item4}', '{$item5}', '{$item6}', '{$item7}', '{$item8}', '{$conclusao}', '{$arquivo}', '{$audio}', '{$item9}', '{$item10}', '{$item11}', '{$item12}', '{$item13}', '{$item14}', '{$item15}', '{$item16}', '{$item17}', '{$item18}', '{$item19}', '{$item20}', '{$link}', '{$video}', '{$conclusao2}', '{$conclusao3}', '{$conclusao4}', '{$link2}', '{$conclusao5}' , '{$tumb_arquivo}')" title="Editar Dados"><i class="fa fa-edit "></i></a></big>
-
-		<big><a class="btn btn-secondary-light btn-sm" href="#" onclick="mostrar('{$titulo}', '{$mensagem}', '{$item1}', '{$item2}', '{$item3}', '{$item4}', '{$item5}', '{$item6}', '{$item7}', '{$item8}', '{$conclusao}', '{$arquivo}', '{$audio}', '{$dataF}', '{$data_envioF}', '{$envios}', '{$item9}', '{$item10}', '{$item11}', '{$item12}', '{$item13}', '{$item14}', '{$item15}', '{$item16}', '{$item17}', '{$item18}', '{$item19}', '{$item20}', '{$link}', '{$video}', '{$conclusao2}', '{$conclusao3}', '{$conclusao4}', '{$link2}', '{$conclusao5}', '{$tumb_arquivo}')" title="Ver Dados"><i class="fa fa-info-circle "></i></a></big>
-
-
-
-	<big><a href="#" class="btn btn-danger-light btn-sm" onclick="excluir('{$id}')" title="Excluir"><i class="fa fa-trash-can text-danger"></i></a></big>
-
-
-		<big><a class="btn btn-success-light btn-sm" href="#" onclick="disparar('{$id}','{$titulo}', '{$mensagem}', '{$item1}', '{$item2}', '{$item3}', '{$item4}', '{$item5}', '{$item6}', '{$item7}', '{$item8}', '{$conclusao}', '{$arquivo}', '{$audio}', '{$item9}', '{$item10}', '{$item11}', '{$item12}', '{$item13}', '{$item14}', '{$item15}', '{$item16}', '{$item17}', '{$item18}', '{$item19}', '{$item20}', '{$link}', '{$video}', '{$conclusao2}', '{$conclusao3}', '{$conclusao4}', '{$link2}', '{$conclusao5}', '{$tumb_arquivo}')" title="Enviar Disparos"><i class="fa fa-sign-out"></i></a></big>
-
-		
-		
-
-
-		<big><a href="#" class="btn btn-danger-light btn-sm" onclick="pararModal('{$id}')" title="Para Campanha"><i class="fa fa-ban text-danger"></i></a></big>
-
-		
-	
-		</td>
-</tr>
-HTML;
-
+	<?php
+} else {
+	?>
+	<div class="alert alert-info">
+		<i class="fa fa-info-circle me-2"></i>
+		Você ainda não possui nenhuma campanha de marketing cadastrada.
+		<button type="button" class="btn btn-sm btn-primary float-end" onclick="$('#modalForm').modal('show');">
+			<i class="fa fa-plus me-1"></i> Criar Campanha
+		</button>
+	</div>
+	<?php
 }
-
-echo <<<HTML
-</tbody>
-<small><div align="center" id="mensagem-excluir"></div></small>
-</table>
-</small>
-HTML;
-
-
-}else{
-	echo '<small>Não possui nenhum registro Cadastrado!</small>';
-}
-
 ?>
 
+<style>
+
+</style>
+
 <script type="text/javascript">
-	$(document).ready( function () {
-    $('#tabela').DataTable({
-    		"ordering": false,
-			"stateSave": true
-    	});
-    $('#tabela_filter label input').focus();
-} );
+// Script para funcionalidades adicionais na listagem de marketing
+
+$(document).ready(function() {
+    // Ativar tooltips
+    var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
+    var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+        return new bootstrap.Tooltip(tooltipTriggerEl)
+    });
+    
+    // Função de pesquisa para cards
+    $("#pesquisar").on("keyup", function() {
+        var value = $(this).val().toLowerCase();
+        var found = false;
+        
+        $(".card-campanha").filter(function() {
+            var matches = $(this).text().toLowerCase().indexOf(value) > -1;
+            $(this).toggle(matches);
+            if (matches) found = true;
+        });
+        
+        // Mostrar mensagem quando nenhum resultado for encontrado
+        if (!found && value.length > 0) {
+            $("#sem-registros").show();
+        } else {
+            $("#sem-registros").hide();
+        }
+    });
+    
+    // Adicionar classe para exibir animação quando um novo card é adicionado
+    function refreshCardAnimations() {
+        $(".card-campanha").each(function(index) {
+            var $card = $(this);
+            setTimeout(function() {
+                $card.addClass("show");
+            }, index * 100);
+        });
+    }
+    
+    refreshCardAnimations();
+});
+
+// Funções para os botões principais (reutilizando as funções existentes)
+function formatarMensagemModal(msg) {
+    // Essa função pode ser mantida conforme estava no código original
+    // Ajuste conforme necessário para formatar a mensagem corretamente
+    return msg.replace(/\n/g, '<br>');
+}
+
+
+
+
+
+function pararModal(id) {
+    const swalWithBootstrapButtons = Swal.mixin({
+        customClass: {
+            confirmButton: "btn btn-success", // Adiciona margem à direita do botão "Sim, Excluir!"
+            cancelButton: "btn btn-danger me-1",
+            container: 'swal-whatsapp-container'
+        },
+        buttonsStyling: false
+    });
+
+    swalWithBootstrapButtons.fire({
+        title: "Parar os Disparos?",
+        text: "Você irá parar todos os disparos dessa campanha!",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonText: "Sim, Parar!",
+        cancelButtonText: "Não, Cancelar!",
+        reverseButtons: true
+    }).then((result) => {
+        if (result.isConfirmed) {
+            pararDisparo(id);
+        } else if (result.dismiss === Swal.DismissReason.cancel) {
+            swalWithBootstrapButtons.fire({
+                title: "Cancelado",
+                text: "Fecharei em 1 segundo.",
+                icon: "error",
+                timer: 1000,
+                timerProgressBar: true,
+            });
+        }
+    });
+}
+
+// Sobrescrever a função de parar para usar a versão com Sweet Alert
+function pararDisparo(id) {
+    $.ajax({
+        url: 'paginas/' + pag + "/parar_envios.php",
+        method: 'POST',
+        data: {id: id},
+        dataType: "text",
+        success: function (mensagem) {
+            if (mensagem.trim() == "Parado com Sucesso") {
+                Swal.fire({
+                    title: 'Parado!',
+                    text: 'Os envios foram interrompidos com sucesso.',
+                    icon: 'success',
+                    timer: 1500,
+                    timerProgressBar: true,
+                });
+                
+                // Atualizar a listagem
+                listar();
+            } else {
+                Swal.fire({
+                    title: 'Erro!',
+                    text: mensagem,
+                    icon: 'error'
+                });
+            }
+        }
+    });
+}
 </script>
 
 
-
 <script type="text/javascript">
-	function editar(id, titulo, mensagem, item1, item2, item3, item4, item5, item6, item7, item8, conclusao, arquivo, audio, item9, item10, item11, item12, item13, item14, item15, item16, item17, item18, item19, item20, link, video, conclusao2, conclusao3, conclusao4, link2, conclusao5, documento){
+	function editar(id, titulo, msg, msg2, arquivo, audio, documento, dispositivo) {
+
+		// Antes de definir o src, verifique a extensão
+var ext = documento.split('.').pop().toLowerCase();
+if (ext == 'pdf') {
+  $('#target_documento').attr('src','images/marketing/pdf.png');
+} else if (ext == 'rar' || ext == 'zip') {
+  $('#target_documento').attr('src','images/marketing/rar.png');
+} else {
+  $('#target_documento').attr('src','images/marketing/' + documento);
+}
+		
+		
+		msg = decodeURIComponent(msg);
+		msg2 = decodeURIComponent(msg2);
+		
+
+		// Atualiza os campos do formulário
+		$('#titulo_inserir').text('Editar Registro');
 		$('#id').val(id);
 		$('#titulo').val(titulo);
-		$('#mensagem_input').val(mensagem);
-		$('#item1').val(item1);		
-		$('#item2').val(item2);
-		$('#item3').val(item3);
-		$('#item4').val(item4);
-		$('#item5').val(item5);
-		$('#item6').val(item6);
-		$('#item7').val(item7);
-		$('#item8').val(item8);
+		$('#msg').val(msg);  // Alterado de .html() para .val()
+		$('#msg2').val(msg2);
+		$('#dispositivo').val(dispositivo).change();
 
-		$('#item9').val(item9);
-		$('#item10').val(item10);
-		$('#item11').val(item11);
-		$('#item12').val(item12);
-		$('#item13').val(item13);
-		$('#item14').val(item14);
-		$('#item15').val(item15);
-		$('#item16').val(item16);
-		$('#item17').val(item17);
-		$('#item18').val(item18);
-		$('#item19').val(item19);
-		$('#item20').val(item20);
-
-		$('#link').val(link);
-		$('#video').val(video);
-
-		$('#link2').val(link2);
-		$('#conclusao5').val(conclusao5);
-
-		$('#conclusao').val(conclusao);
-		$('#conclusao2').val(conclusao2);
-		$('#conclusao3').val(conclusao3);
-		$('#conclusao4').val(conclusao4);
-		
-		$('#audio').val('');
-
-						
-		$('#titulo_inserir').text('Editar Registro');
-		$('#modalForm').modal('show');
+		$('#titulo_inserir').text('Editar Campanha');
 		$('#foto').val('');
 		$('#target').attr('src','images/marketing/' + arquivo);
-		$('#target_documento').attr('src','images/marketing/' + documento);
+		
+
+
+		// Atualiza o preview após preencher o campo msg
+		atualizarPreview();
+		atualizarPreview2();
+
+		// Mostra a aba de edição
+		$('#modalForm').modal('show');
 	}
 
-	function limparCampos(){
+
+
+
+function mostrar(id, titulo, msg, msg2, arquivo, audio, documento, dataF, data_envioF, arquivo, tumb_arquivo) {
+    msg = decodeURIComponent(msg);  // Decodifica a mensagem URL-encoded
+	msg2 = decodeURIComponent(msg2);
+
+    $('#id_dados').text(id);
+    $('#titulo_dados').text(titulo);
+	$('#data_envio_dados').text(data_envioF);
+	$('#data_dados').text(dataF);
+    $('#mensagem_dados').html(formatarMensagemModal(msg));
+    $('#mensagem2_dados').html(formatarMensagemModal(msg2));
+
+
+	$('#target_dados').attr('src','images/marketing/' + arquivo);
+		$('#audio_dados').attr('src','images/marketing/' + audio);
+		$('#target_documento_dados').attr('src','images/marketing/' + tumb_arquivo);
+
+    $('#modalDados').modal('show');
+}
+
+	function limparCampos() {
 		$('#id').val('');
 		$('#titulo').val('');
-		$('#mensagem_input').val('');
-		$('#item1').val('');
-		$('#item2').val('');
-		$('#item3').val('');
-		$('#item4').val('');
-		$('#item5').val('');
-		$('#item6').val('');
-		$('#item7').val('');
-		$('#item8').val('');
+		$('#preview').text('');
+		$('#msg').val('');
+		$('#msg2').val('');
+		$('#ids').val('');
+		$('#btn-deletar').hide();
+		$('#dispositivo').val('').change();
 
-		$('#item9').val('');
-		$('#item10').val('');
-		$('#item11').val('');
-		$('#item12').val('');
-		$('#item13').val('');
-		$('#item14').val('');
-		$('#item15').val('');
-		$('#item16').val('');
-		$('#item17').val('');
-		$('#item18').val('');
-		$('#item19').val('');
-		$('#item20').val('');
 
-		$('#link').val('');
-		$('#video').val('');
-
-		$('#link2').val('');
-		$('#conclusao5').val('');
-
-		$('#conclusao').val('');
-		$('#conclusao2').val('');
-		$('#conclusao3').val('');
-		$('#conclusao4').val('');		
 		$('#foto').val('');
 		$('#audio').val('');
-		$('#target').attr('src','images/marketing/sem-foto.jpg');
-		$('#target_documento').attr('src','images/marketing/sem-foto.jpg');
+		$('#documento').val('');
+		$('#target').attr('src','images/marketing/sem-foto.png');
+		$('#target_documento').attr('src','images/marketing/sem-foto.png');
+
+		atualizarPreview();
+		atualizarPreview2();
 	}
 </script>
 
 
-<script type="text/javascript">
-	function mostrar(titulo, mensagem, item1, item2, item3, item4, item5, item6, item7, item8, conclusao, arquivo, audio, dataF, data_envioF, envios, item9, item10, item11, item12, item13, item14, item15, item16, item17, item18, item19, item20, link, video, conclusao2, conclusao3, conclusao4, link2, conclusao5, documento){
-
-		$('#item1_dad').show();
-		$('#item2_dad').show();
-		$('#item3_dad').show();
-		$('#item4_dad').show();
-		$('#item5_dad').show();
-		$('#item6_dad').show();
-		$('#item7_dad').show();
-		$('#item8_dad').show();
-		$('#item9_dad').show();
-		$('#item10_dad').show();
-		$('#item11_dad').show();
-		$('#item12_dad').show();
-		$('#item13_dad').show();
-		$('#item14_dad').show();
-		$('#item15_dad').show();
-		$('#item16_dad').show();
-		$('#item17_dad').show();
-		$('#item18_dad').show();
-		$('#item19_dad').show();
-		$('#item20_dad').show();
-
-		$('#area_link_dados').show();
-		$('#area_video_dados').show();
-		$('#area_conclusao3').show();
-		$('#area_conclusao4').show();
-		$('#area_conclusao5').show();
-
-		if(conclusao == "" && link == ""){
-			$('#area_link_dados').hide();
-		}
-
-		if(conclusao2 == "" && video == ""){
-			$('#area_video_dados').hide();
-		}
-
-		if(conclusao3 == ""){
-			$('#area_conclusao3').hide();
-		}
-
-		if(conclusao4 == ""){
-			$('#area_conclusao4').hide();
-		}
-
-		if(conclusao5 == "" && link2 == ""){
-			$('#area_conclusao5').hide();
-		}
-
-
-		if(item1 == ""){
-			$('#item1_dad').hide();
-		}
-
-		if(item2 == ""){
-			$('#item2_dad').hide();
-		}
-
-		if(item3 == ""){
-			$('#item3_dad').hide();
-		}
-
-		if(item4 == ""){
-			$('#item4_dad').hide();
-		}
-
-		if(item5 == ""){
-			$('#item5_dad').hide();
-		}
-
-		if(item6 == ""){
-			$('#item6_dad').hide();
-		}
-
-		if(item7 == ""){
-			$('#item7_dad').hide();
-		}
-
-		if(item8 == ""){
-			$('#item8_dad').hide();
-		}
-
-		if(item9 == ""){
-			$('#item9_dad').hide();
-		}
-
-		if(item10 == ""){
-			$('#item10_dad').hide();
-		}
-
-		if(item11 == ""){
-			$('#item11_dad').hide();
-		}
-
-		if(item12 == ""){
-			$('#item12_dad').hide();
-		}
-
-		if(item13 == ""){
-			$('#item13_dad').hide();
-		}
-
-		if(item14 == ""){
-			$('#item14_dad').hide();
-		}
-
-		if(item15 == ""){
-			$('#item15_dad').hide();
-		}
-
-		if(item16 == ""){
-			$('#item16_dad').hide();
-		}
-
-		if(item17 == ""){
-			$('#item17_dad').hide();
-		}
-
-		if(item18 == ""){
-			$('#item18_dad').hide();
-		}
-
-		if(item19 == ""){
-			$('#item19_dad').hide();
-		}
-
-		if(item20 == ""){
-			$('#item20_dad').hide();
-		}
-
-
-
-		$('#nome_dados').text(titulo);
-
-		$('#titulo_dados').text(titulo);
-		$('#mensagem_dados').text(mensagem);
-		$('#item1_dados').text(item1);
-		$('#item2_dados').text(item2);
-		$('#item3_dados').text(item3);
-		$('#item4_dados').text(item4);
-		$('#item5_dados').text(item5);
-		$('#item6_dados').text(item6);
-		$('#item7_dados').text(item7);
-		$('#item8_dados').text(item8);
-
-		$('#item9_dados').text(item9);
-		$('#item10_dados').text(item10);
-		$('#item11_dados').text(item11);
-		$('#item12_dados').text(item12);
-		$('#item13_dados').text(item13);
-		$('#item14_dados').text(item14);
-		$('#item15_dados').text(item15);
-		$('#item16_dados').text(item16);
-		$('#item17_dados').text(item17);
-		$('#item18_dados').text(item18);
-		$('#item19_dados').text(item19);
-		$('#item20_dados').text(item20);
-
-		$('#link_dados').text(link);
-		$('#video_dados').text(video);
-
-		$('#link2_dados').text(link2);
-		$('#conclusao5_dados').text(conclusao5);
-
-		$('#conclusao_dados').text(conclusao);	
-		$('#conclusao2_dados').text(conclusao2);	
-		$('#conclusao3_dados').text(conclusao3);	
-		$('#conclusao4_dados').text(conclusao4);	
-
-		$('#data_dados').text(dataF);
-		$('#data_envio_dados').text(data_envioF);
-		$('#envios').text(envios);	
-				
-		$('#target_dados').attr('src','images/marketing/' + arquivo);
-		$('#audio_dados').attr('src','images/marketing/' + audio);
-		$('#target_documento_dados').attr('src','images/marketing/' + documento);
-
-		if(arquivo == 'sem-foto.jpg'){
-			$('#target_dados_div').hide();
-		}else{
-			$('#target_dados_div').show();
-		}
-
-		if(audio == ''){
-			$('#audio_dados_div').hide();
-		}else{
-			$('#audio_dados_div').show();
-		}
-
-		if(documento == 'sem-foto.jpg'){
-			$('#target_documento_dados_div').hide();
-		}else{
-			$('#target_documento_dados_div').show();
-		}
-
-		$('#modalDados').modal('show');
-	}
-</script>
-
-
-
-<script type="text/javascript">
-	function disparar(id, titulo, mensagem, item1, item2, item3, item4, item5, item6, item7, item8, conclusao, arquivo, audio, item9, item10, item11, item12, item13, item14, item15, item16, item17, item18, item19, item20, link, video, conclusao2, conclusao3, conclusao4, link2, conclusao5, documento){
-
-
-		$('#item1_dis').show();
-		$('#item2_dis').show();
-		$('#item3_dis').show();
-		$('#item4_dis').show();
-		$('#item5_dis').show();
-		$('#item6_dis').show();
-		$('#item7_dis').show();
-		$('#item8_dis').show();
-
-		$('#item9_dis').show();
-		$('#item10_dis').show();
-		$('#item11_dis').show();
-		$('#item12_dis').show();
-		$('#item13_dis').show();
-		$('#item14_dis').show();
-		$('#item15_dis').show();
-		$('#item16_dis').show();
-		$('#item17_dis').show();
-		$('#item18_dis').show();
-		$('#item19_dis').show();
-		$('#item20_dis').show();
-
-		$('#area_link_disparar').show();
-		$('#area_video_disparar').show();
-		$('#area_conclusao3_disparar').show();
-		$('#area_conclusao4_disparar').show();
-		$('#area_conclusao5_disparar').show();
-
-		if(conclusao == "" && link == ""){
-			$('#area_link_disparar').hide();
-		}
-
-		if(conclusao2 == "" && video == ""){
-			$('#area_video_disparar').hide();
-		}
-
-		if(conclusao3 == ""){
-			$('#area_conclusao3_disparar').hide();
-		}
-
-		if(conclusao4 == ""){
-			$('#area_conclusao4_disparar').hide();
-		}
-
-		if(conclusao5 == "" && link2 == ""){
-			$('#area_conclusao5_disparar').hide();
-		}
-
-
-		if(item1 == ""){
-			$('#item1_dis').hide();
-		}
-
-		if(item2 == ""){
-			$('#item2_dis').hide();
-		}
-
-		if(item3 == ""){
-			$('#item3_dis').hide();
-		}
-
-		if(item4 == ""){
-			$('#item4_dis').hide();
-		}
-
-		if(item5 == ""){
-			$('#item5_dis').hide();
-		}
-
-		if(item6 == ""){
-			$('#item6_dis').hide();
-		}
-
-		if(item7 == ""){
-			$('#item7_dis').hide();
-		}
-
-		if(item8 == ""){
-			$('#item8_dis').hide();
-		}
-
-
-		if(item9 == ""){
-			$('#item9_dis').hide();
-		}
-
-		if(item10 == ""){
-			$('#item10_dis').hide();
-		}
-
-		if(item11 == ""){
-			$('#item11_dis').hide();
-		}
-
-		if(item12 == ""){
-			$('#item12_dis').hide();
-		}
-
-		if(item13 == ""){
-			$('#item13_dis').hide();
-		}
-
-		if(item14 == ""){
-			$('#item14_dis').hide();
-		}
-
-		if(item15 == ""){
-			$('#item15_dis').hide();
-		}
-
-		if(item16 == ""){
-			$('#item16_dis').hide();
-		}
-
-		if(item17 == ""){
-			$('#item17_dis').hide();
-		}
-
-		if(item18 == ""){
-			$('#item18_dis').hide();
-		}
-
-		if(item19 == ""){
-			$('#item19_dis').hide();
-		}
-
-		if(item20 == ""){
-			$('#item20_dis').hide();
-		}
-
-
+<script>
+	
+	function disparar(id, titulo, msg, msg2, arquivo, audio, documento){
+
+ msg = decodeURIComponent(msg);  // Decodifica a mensagem URL-encoded
+	msg2 = decodeURIComponent(msg2);
 
 		$('#nome_entrada').text(titulo);		
 		$('#id_entrada').val(id);	
+		$('#arquivo_excel').val('');	
+		$('#arquivo_texto').val('');
+		$('#quantidade').val('');
+		$('#intervalo_horas').val('1');
+		$('#frequencia').val('0').change();
+		
 
 		$('#total_clientes').text("Alterar Opção de Teste: 0");	
 
-		if(item1 == ""){
-			$('#itens_disparar').hide();
-		}else{
-			$('#itens_disparar').show();
-		}
-
-
-		
-
-
-
 		$('#titulo_disparar').text(titulo);
-		$('#mensagem_disparar').text(mensagem);
-		$('#item1_disparar').text(item1);
-		$('#item2_disparar').text(item2);
-		$('#item3_disparar').text(item3);
-		$('#item4_disparar').text(item4);
-		$('#item5_disparar').text(item5);
-		$('#item6_disparar').text(item6);
-		$('#item7_disparar').text(item7);
-		$('#item8_disparar').text(item8);
 
-		$('#item9_disparar').text(item9);
-		$('#item10_disparar').text(item10);
-		$('#item11_disparar').text(item11);
-		$('#item12_disparar').text(item12);
-		$('#item13_disparar').text(item13);
-		$('#item14_disparar').text(item14);
-		$('#item15_disparar').text(item15);
-		$('#item16_disparar').text(item16);
-		$('#item17_disparar').text(item17);
-		$('#item18_disparar').text(item18);
-		$('#item19_disparar').text(item19);
-		$('#item20_disparar').text(item20);
+		$('#mensagem_disparar').html(formatarMensagemModal(msg));
+		$('#mensagem2_disparar').html(formatarMensagemModal(msg2));
 
-		$('#link_disparar').text(link);
-		$('#video_disparar').text(video);
+		$('#clientes').val('Teste').change();	
 
-		$('#link2_disparar').text(link2);
-		$('#conclusao5_disparar').text(conclusao5);
-
-		$('#conclusao_disparar').text(conclusao);	
-		$('#conclusao2_disparar').text(conclusao2);	
-		$('#conclusao3_disparar').text(conclusao3);	
-		$('#conclusao4_disparar').text(conclusao4);	
-
-
-		$('#clientes').val('Teste');	
-		
-				
 		$('#target_disparar').attr('src','images/marketing/' + arquivo);
 		$('#audio_disparar').attr('src','images/marketing/' + audio);
 		$('#target_documento_disparar').attr('src','images/marketing/' + documento);
+		$('#target_arquivo_excel').attr('src','images/marketing/sem-foto.jpg');
+		$('#target_arquivo_texto').attr('src','images/marketing/sem-foto.jpg');
 
-		if(arquivo == 'sem-foto.jpg'){
+		if(arquivo == 'sem-foto.png'){
 			$('#target_disparar_div').hide();
 		}else{
 			$('#target_disparar_div').show();
@@ -732,7 +557,7 @@ HTML;
 			$('#audio_disparar_div').show();
 		}
 
-		if(documento == 'sem-foto.jpg'){
+		if(documento == 'sem-foto.png'){
 			$('#target_documento_disparar_div').hide();
 		}else{
 			$('#target_documento_disparar_div').show();
@@ -741,6 +566,8 @@ HTML;
 		$('#modalEntrada').modal('show');
 	}
 </script>
+
+
 
 
 <script type="text/javascript">
@@ -755,11 +582,11 @@ HTML;
 
         success: function (mensagem) {            
             if (mensagem.trim() == "Excluído com Sucesso") {                
+				alertsucesso('Imagem excluída com sucesso!');        
                 listar();                
             } else {
-                    $('#mensagem-excluir').addClass('text-danger')
-                    $('#mensagem-excluir').text(mensagem)
-                }
+				alertError('Erro ao excluir imagem: ' + mensagem);
+            }
 
         },      
 
@@ -773,13 +600,13 @@ function excluirAudio(id){
         data: {id},
         dataType: "text",
 
-        success: function (mensagem) {            
-            if (mensagem.trim() == "Excluído com Sucesso") {                
+        success: function (mensagem) {    
+            if (mensagem.trim() == "Excluído com Sucesso") {        
+				alertsucesso('Áudio excluído com sucesso!');        
                 listar();                
             } else {
-                    $('#mensagem-excluir').addClass('text-danger')
-                    $('#mensagem-excluir').text(mensagem)
-                }
+				alertError('Erro ao excluir áudio: ' + mensagem);
+            }
 
         },      
 
@@ -795,11 +622,11 @@ function excluirDoc(id){
         dataType: "text",
 
         success: function (mensagem) {            
-            if (mensagem.trim() == "Excluído com Sucesso") {                
+            if (mensagem.trim() == "Excluído com Sucesso") {  
+				alertsucesso('Documento excluído com sucesso!');              
                 listar();                
             } else {
-                    $('#mensagem-excluir').addClass('text-danger')
-                    $('#mensagem-excluir').text(mensagem)
+					alertError('Erro ao excluir documento: ' + mensagem);
                 }
 
         },      
@@ -809,31 +636,4 @@ function excluirDoc(id){
 
 
 
-function pararModal(id) {
-    //$('#mensagem-excluir').text('Excluindo...')
-
-    $('body').removeClass('timer-alert');
-    Swal.fire({
-        title: "Parar os Disparos?",
-        text: "Você irá parar todos os disparos dessa campanha!",
-        icon: 'warning',
-        showCancelButton: true,
-        confirmButtonColor: '#d33', // Cor do botão de confirmação (vermelho)
-        cancelButtonColor: '#3085d6', // Cor do botão de cancelamento (azul)
-        confirmButtonText: "Sim, Parar!",
-        cancelButtonText: "Cancelar",
-        reverseButtons: true
-    }).then((result) => {
-        if (result.isConfirmed) {
-            pararDisparo(id);			
-
-        }
-    });
-
-
-};
-
-
 </script>
-
-

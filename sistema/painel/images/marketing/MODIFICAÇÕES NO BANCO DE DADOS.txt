@@ -1,0 +1,14 @@
+TABELA CONFIG	
+assinatura varchar 100 null
+recursos varchar 35 null
+cobrar_automatico varchar 5 null
+access_token varchar 255 null
+public_key varchar 255 null
+
+TABELA RECEBER
+hora_alerta time null
+alerta varchar 5 null
+cobrar_sempre varchar 5 null
+data_alerta date null
+
+IMPORTAR A TABELA dispositivos que está nos recursos enviados

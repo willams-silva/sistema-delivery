@@ -76,6 +76,9 @@ HTML;
 			$ocultar_mark = '';
 		}
 
+		$nomeF = rawurlencode($nome);
+		$enderecoF = rawurlencode($endereco);
+
 		echo <<<HTML
 <tr class="{$debito2}">
 <td align="center">
@@ -88,7 +91,7 @@ HTML;
 <td>{$telefone}</td>
 <td>{$email}</td>
 <td>
-<a class="btn btn-info-light btn-sm" href="#" onclick="editar('{$id}','{$nome}','{$email}','{$telefone}','{$endereco}','{$cpf}','{$data_nasc}','{$numero}','{$bairro}','{$cidade}','{$estado}','{$cep}','{$complemento}')" title="Editar Dados"><i class="fa fa-edit"></i></a>
+<a class="btn btn-info-light btn-sm" href="#" onclick="editar('{$id}','{$nomeF}','{$email}','{$telefone}','{$enderecoF}','{$cpf}','{$data_nasc}','{$numero}','{$bairro}','{$cidade}','{$estado}','{$cep}','{$complemento}')" title="Editar Dados"><i class="fa fa-edit"></i></a>
 
 <big><a class="btn btn-danger-light btn-sm" href="#" onclick="excluir('{$id}')" title="Excluir"><i class="fa fa-trash-can text-danger"></i></a></big>
 
@@ -136,10 +139,10 @@ HTML;
 		$('#titulo_inserir').text('Editar Registro');
 
 		$('#id').val(id);
-		$('#nome').val(nome);
+		$('#nome').val(decodeURIComponent(nome));
 		$('#email').val(email);
 		$('#telefone').val(telefone);
-		$('#endereco').val(endereco);
+		$('#endereco').val(decodeURIComponent(endereco));
 		$('#cpf').val(cpf);
 		$('#data_nasc').val(data_nasc);
 		$('#numero').val(numero);
@@ -154,10 +157,10 @@ HTML;
 
 	function mostrar(nome, email, telefone, endereco, data_cad, cpf, data_nasc, numero, bairro, cidade, estado, cep, complemento) {
 
-		$('#titulo_dados').text(nome);
+		$('#titulo_dados').text(decodeURIComponent(nome));
 		$('#email_dados').text(email);
 		$('#telefone_dados').text(telefone);
-		$('#endereco_dados').text(endereco);
+		$('#endereco_dados').text(decodeURIComponent(endereco));
 		$('#cpf_dados').text(cpf);
 		$('#data_dados').text(data_cad);
 		$('#data_nasc_dados').text(data_nasc);

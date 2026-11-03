@@ -119,3 +119,81 @@ function baixado() {
 }
 
 
+
+
+//############### ALERTAS #########################################
+
+// ALERT SALVAR FINAL ##############
+function alertsucesso(mensagem) {
+    $('body').removeClass('timer-alert');
+    Swal.fire({
+        title: mensagem,
+        text: 'Fecharei em 1 segundo.',
+        icon: "success",
+        timer: 1000,
+        timerProgressBar: true,
+        confirmButtonText: 'OK',
+         customClass: {
+            container: 'swal-whatsapp-container'
+        }
+    })
+}
+
+function alertCobrar(mensagem) {
+    $('body').removeClass('timer-alert');
+    Swal.fire({
+        title: mensagem,
+        icon: "success",
+        confirmButtonText: 'OK',
+         customClass: {
+            container: 'swal-whatsapp-container'
+        }
+    })
+}
+
+//ALERTA MENSAGEM EXCLUIDO ###################
+function alertexcluido(mensagem) {
+    $('body').removeClass('timer-alert');
+    Swal.fire({
+        title: mensagem,
+        text: 'Fecharei em 1 segundo.',
+        icon: "success",
+        timer: 1000,
+        timerProgressBar: true,
+        confirmButtonText: 'OK',
+         customClass: {
+            container: 'swal-whatsapp-container'
+        }
+    })
+}
+
+
+
+// ALERT ERRO ##############
+function alertErro(mensagem) {
+    $('body').removeClass('timer-alert');
+    Swal.fire({
+        title: 'Opss...',
+        text: mensagem,
+        icon: "error",
+        confirmButtonText: 'OK',
+        customClass: {
+            container: 'swal-whatsapp-container'
+        },
+        // Adicione a opção `target` se necessário
+        target: document.body // ou um seletor específico se necessário
+    });
+}
+
+
+function alertWarning(result) {
+    Swal.fire({
+        title: 'Alerta!',
+        text: result,
+        icon: "warning",
+        confirmButtonText: 'OK',
+        customClass: {
+            container: 'swal-whatsapp-container'
+        }
+    })
+}

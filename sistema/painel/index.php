@@ -610,6 +610,9 @@ if (@count($res1) > 0) {
 									<li class="<?php echo @$adicionais ?> "><a class="slide-item" href="adicionais"> Adicionais</a></li>
 
 
+									<li class="<?php echo @$grupos_disparos ?> "><a class="slide-item" href="grupos_disparos"> Grupos de Disparos</a></li>
+
+
 									<?php if ($mostrar_acessos == 'Sim') { ?>
 										<li class="<?php echo @$grupo_acessos ?>"><a class="slide-item" href="grupo_acessos"> Grupos de
 												Acessos</a></li>
@@ -1521,18 +1524,69 @@ if (@count($res1) > 0) {
 					</div>
 
 					<div class="row">
-						<div class="col-md-3">
+						<div class="col-md-2">
 							<label>Total Cartões Troca</label>
 							<input type="number" name="total_cartoes" id="total_cartoes" class="form-control"
 								value="<?php echo @$total_cartoes_config ?>" placeholder="Cartões para o cupom">
 						</div>
 
-						<div class="col-md-3">
+						<div class="col-md-2">
 							<label>Valor Cupom Troca</label>
 							<input type="number" name="valor_cupom" id="valor_cupom" class="form-control"
 								value="<?php echo @$valor_cupom_config ?>" placeholder="Valor do cupom">
 						</div>
 
+
+						<div class="col-md-2">
+							<label>Taxa Extra R$</label>
+							<input type="text" name="taxa_extra" id="taxa_extra" class="form-control"
+								value="<?php echo @$taxa_extra ?>" placeholder="Valor da Taxa se Houver">
+						</div>
+
+
+						<div class="col-md-3">
+							<label>Descrição Taxa</label>
+							<input type="text" maxlength="100" name="titulo_taxa" id="titulo_taxa" class="form-control"
+								value="<?php echo @$titulo_taxa ?>" placeholder="Ex: Embalagem, etc">
+						</div>
+
+						<div class="col-md-3">
+							<label>Pedidos Delivery Monitor Cozinha </label>
+							<select class="form-select" name="delivery_monitor">
+								<option value="Não" <?php if (@$delivery_monitor == 'Não') { ?> selected <?php } ?>>Não</option>
+								<option value="Sim" <?php if (@$delivery_monitor == 'Sim') { ?> selected <?php } ?>>Sim</option>
+								
+							</select>
+						</div>
+
+					</div>
+
+
+
+					<div class="row">
+						<div class="col-md-2">
+							<label>Entrega Delivery</label>
+							<select class="form-select" name="entrega_delivery">
+								<option value="Sim" <?php if (@$entrega_delivery == 'Sim') { ?> selected <?php } ?>>Sim</option>
+								<option value="Não" <?php if (@$entrega_delivery == 'Não') { ?> selected <?php } ?>>Não</option>
+							</select>
+						</div>
+
+						<div class="col-md-2">
+							<label>Retirar Local</label>
+							<select class="form-select" name="retirar_local">
+								<option value="Sim" <?php if (@$retirar_local == 'Sim') { ?> selected <?php } ?>>Sim</option>
+								<option value="Não" <?php if (@$retirar_local == 'Não') { ?> selected <?php } ?>>Não</option>
+							</select>
+						</div>
+
+						<div class="col-md-2">
+							<label>Consumir Local</label>
+							<select class="form-select" name="consumir_local">
+								<option value="Sim" <?php if (@$consumir_local == 'Sim') { ?> selected <?php } ?>>Sim</option>
+								<option value="Não" <?php if (@$consumir_local == 'Não') { ?> selected <?php } ?>>Não</option>
+							</select>
+						</div>
 					</div>
 
 

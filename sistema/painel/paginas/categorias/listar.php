@@ -13,6 +13,7 @@ if ($total_reg > 0) {
 	<thead> 
 	<tr> 
 		<th align="center" width="5%" class="text-center">Selecionar</th>
+		<th>Posição</th>
 		<th>Foto</th>
 	<th>Nome</th>	
 	<th>Descrição</th> 	
@@ -35,6 +36,7 @@ HTML;
 		$descricao = $res[$i]['descricao'];
 		$mais_sabores = $res[$i]['mais_sabores'];
 		$delivery = $res[$i]['delivery'];
+		$posicao = $res[$i]['posicao'];
 
 		$ocultar_ad = 'ocultar';
 		if ($mais_sabores == 'Sim') {
@@ -59,6 +61,8 @@ HTML;
 		$res2 = $query2->fetchAll(PDO::FETCH_ASSOC);
 		$produtos = @count($res2);
 
+		$nomeF = rawurlencode($nome);
+
 
 		echo <<<HTML
 <tr class="{$classe_linha}">
@@ -68,6 +72,7 @@ HTML;
 <label for="seletor-{$id}" class="custom-control-label mt-1 text-dark"></label>
 </div>
 </td>
+	<td><input value="{$posicao}" onblur="editarPosicao('{$id}')" type="text" name="posicao" id="posicao_{$id}" style="width:35px; border:none; border-bottom:1px solid #000; outline:none; background:transparent;"></td>
 	<td class="text-center" style="color:{$classe_linha}">
 	<img alt="avatar" class="rounded-circle" src="images/{$tabela}/{$foto}" width="30px" height="30px">
 	</td>
@@ -77,7 +82,7 @@ HTML;
 <td style="color:{$classe_linha}">{$delivery}</td>
 <td align="center" style="color:{$classe_linha}">{$produtos}</td>
 <td>
-	<a class="btn btn-info-light btn-sm" href="#" onclick="editar('{$id}','{$nome}', '{$descricao}', '{$foto}', '{$mais_sabores}', '{$delivery}')" title="Editar Dados"><i class="fa fa-edit"></i></a>
+	<a class="btn btn-info-light btn-sm" href="#" onclick="editar('{$id}','{$nomeF}', '{$descricao}', '{$foto}', '{$mais_sabores}', '{$delivery}')" title="Editar Dados"><i class="fa fa-edit"></i></a>
 
 	
 <big><a href="#" class="btn btn-danger-light btn-sm" onclick="excluir('{$id}')" title="Excluir"><i class="fa fa-trash-can text-danger"></i></a></big>
@@ -125,7 +130,7 @@ HTML;
 <script type="text/javascript">
 	function editar(id, nome, descricao, foto, mais_sabores, delivery) {
 		$('#id').val(id);
-		$('#nome').val(nome);
+		$('#nome').val(decodeURIComponent(nome));
 		$('#descricao').val(descricao);
 		$('#mais_sabores').val(mais_sabores).change();
 		$('#delivery').val(delivery).change();
@@ -191,6 +196,28 @@ HTML;
 		listarBordas(id);
 		$('#modalBordas').modal('show');
 		limparCamposBordas();
+	}
+
+	function editarPosicao(id) {
+		var posicao = $('#posicao_'+id).val();
+
+		$.ajax({
+			url: 'paginas/' + pag + "/editar_posicao.php",
+			method: 'POST',
+			data: {
+				id, posicao
+			},
+			dataType: "html",
+
+			success: function(result) {
+				if(result.trim() == "Editado com Sucesso"){
+					listar();
+				}else{
+					alert(result)
+				}
+				
+			}
+		});
 	}
 </script>
 

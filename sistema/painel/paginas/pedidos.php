@@ -268,6 +268,76 @@ $segundos = $tempo_atualizar * 1000;
 
 
 
+
+<!-- Modal Whats -->
+<div class="modal fade" id="modalWhats" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header bg-primary text-white">
+				<h4 class="modal-title" id="exampleModalLabel">Enviar Mensagem no WhatsApp</h4>
+				<button id="btn-fechar-whats" aria-label="Close" class="btn-close" data-bs-dismiss="modal"
+					type="button"><span class="text-white" aria-hidden="true">&times;</span></button>
+			</div>
+
+			<div class="modal-body">
+				<label class="form-label mt-2">Mensagem <i class="fa-brands fa-whatsapp"></i></label>
+
+				<!-- Botões de mensagens rápidas -->
+				<div class="btn-group mb-2 w-100" role="group">
+					<button type="button" class="btn btn-outline-success btn-sm" onclick="cancelarPedido()">
+						<i class="fa fa-ban"></i> Cancelar Pedido
+					</button>
+				
+					<button type="button" class="btn btn-outline-success btn-sm" onclick="avaliarPedido()">
+						<i class="fa fa-star"></i> Avaliar
+					</button>
+					<button type="button" class="btn btn-outline-success btn-sm" onclick="confirmarPedido()">
+ 					 <i class="fa fa-check-circle"></i> Confirmar Pedido
+					</button>
+				</div>
+
+				<textarea id="mensagem_whatsapp" name="mensagem_whatsapp" class="form-control" rows="4"
+					placeholder="Digite sua mensagem..." style="background-image: url('images/whatsapp.jpg'); 
+							   background-size: cover;
+							   background-position: center;
+							   background-repeat: no-repeat;
+							   opacity: 0.9;"></textarea>
+			</div>
+
+
+			<div class="modal-footer">
+				<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">❌ Fechar</button>
+				<button type="button" class="btn btn-success" id="btn_enviar_whats" onclick="enviarWhats()">Enviar<i
+						class="fa fa-paper-plane ms-2"></i></button>
+				<button type="button" class="btn btn-success" id="btn_carregando_whats" style="display: none">
+					<span class="spinner-border spinner-border-sm" role="status"
+						aria-hidden="true"></span>Enviando...</button>
+			</div>
+			<input type="hidden" class="form-control" id="id_whats" name="id_whats">
+			<input type="hidden" class="form-control" id="tipo_whats" name="tipo_whats">			
+			<input type="hidden" class="form-control" id="email_whats" name="email_whats">
+		</div>
+	</div>
+</div>
+
+
+
+
+
+<script type="text/javascript">
+	document.addEventListener("visibilitychange", function() {
+    if (!document.hidden) {
+        listar(); // Chama a função AJAX ao voltar para a aba
+    }
+});
+
+
+	window.addEventListener("focus", function() {
+    listar(); // Chama a função AJAX ao voltar para a aba
+});
+	
+</script>
+
 <script type="text/javascript">
 	var pag = "<?= $pag ?>"
 </script>
@@ -470,3 +540,109 @@ $segundos = $tempo_atualizar * 1000;
 
 	});
 </script>
+
+
+
+
+<script>
+	function inserirSaudacao() {
+		var hora = new Date().getHours();
+		var saudacao = "";
+
+		if (hora >= 5 && hora < 12) {
+			saudacao = "Bom dia";
+		} else if (hora >= 12 && hora < 18) {
+			saudacao = "Boa tarde";
+		} else {
+			saudacao = "Boa noite";
+		}
+
+		var mensagem = `${saudacao}! 😊\nComo posso ajudar?`;
+		inserirTexto(mensagem);
+	}
+
+	function confirmarPedido() {
+		var mensagem = "✅ *PEDIDO CONFIRMADO* ✅\n\n" +
+			"Olá! Seu pedido foi confirmado com sucesso e já está sendo preparado. Em breve você receberá mais atualizações. 😉";
+		inserirTexto(mensagem);
+	}
+
+		function avaliarPedido() {
+	var mensagem = "⭐ *AVALIAÇÃO DO PEDIDO* ⭐\n\n" +
+		"Olá! Seu pedido foi finalizado e gostaríamos muito de saber como foi sua experiência. 😊\n\n" +
+		"Se possível, deixe sua avaliação. Ela é muito importante para continuarmos melhorando!";
+	inserirTexto(mensagem);
+}
+
+
+function cancelarPedido() {
+	var mensagem = "❌ *PEDIDO CANCELADO* ❌\n\n" +
+		"Olá! Informamos que o seu pedido foi cancelado.\n\n" +
+		"Se tiver alguma dúvida ou precisar de ajuda, estamos à disposição para esclarecer.";
+	inserirTexto(mensagem);
+}
+
+
+
+	function inserirTexto(novoTexto) {
+		var textarea = document.getElementById('mensagem_whatsapp');
+		var textoAtual = textarea.value;
+
+		if (textoAtual) {
+			textarea.value = textoAtual + "\n\n" + novoTexto;
+		} else {
+			textarea.value = novoTexto;
+		}
+	}
+</script>
+
+
+<script type="text/javascript">
+		function enviarWhats() {
+		let mensagem = document.getElementById('mensagem_whatsapp').value;
+		let id = document.getElementById('id_whats').value;
+		let tipo = document.getElementById('tipo_whats').value;
+
+		if (mensagem.trim() === '') {
+			alertWarning('Por favor, insira uma mensagem para enviar!');
+			return;
+		}
+
+		$('#btn_enviar_whats').hide();
+		$('#btn_carregando_whats').show();
+
+		$.ajax({
+			url: 'apis/enviar_whatsapp.php',
+			method: 'POST',
+			data: {
+				id: id,
+				mensagem: mensagem,
+				tipo: tipo
+			},
+			success: function (response) {
+				$('#btn_enviar_whats').show();
+				$('#btn_carregando_whats').hide();
+
+				if (response == 'Mensagem enviada com sucesso!') {
+					alertsucesso(response);
+					$('#mensagem_whatsapp').val('');
+					$('#btn-fechar-whats').click();
+					
+				} else {
+					alertErro(response);
+				}
+			},
+			error: function (xhr, status, error) {
+				$('#btn_enviar_whats').show();
+				$('#btn_carregando_whats').hide();
+				alertErro('Erro ao enviar mensagem: ' + error);
+			},
+			complete: function () {
+				$('#mensagem_whatsapp').val(''); // Limpa o campo de mensagem
+			}
+		});
+	}
+</script>
+
+
+

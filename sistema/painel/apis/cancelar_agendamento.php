@@ -17,6 +17,7 @@ curl_setopt_array($curl, array(
   'authkey' => $instancia_whatsapp,
   'message' => $hash,
   'cancelarAgendamento' => 'true',
+  'licence' => 'hugocursos',
   ),
 ));
 

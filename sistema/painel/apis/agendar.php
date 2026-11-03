@@ -20,6 +20,7 @@ if($api_whatsapp == 'menuia'){
 	  'to' => $telefone_envio,
 	  'message' => $mensagem_whatsapp,
 	  'agendamento' => $data_agd,
+	  'licence' => 'hugocursos',
 	  'file' => '',
 	  'nomearquivo' => '',
 	  ),

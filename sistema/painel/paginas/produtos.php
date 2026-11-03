@@ -14,7 +14,7 @@ $pag = 'produtos';
 			Adicionar <?php echo ucfirst($pag); ?></a>
 
 		<!-- EXCLUIR MULTIPLO -->
-		<a class="btn btn-danger" href="#" onclick="deletarSel()" title="Excluir" id="btn-deletar" style="display:none"><i class="fe fe-trash-2"></i> Deletar</a>
+		<a class="btn btn-danger" href="#" onclick="deletarSelProdutos()" title="Excluir" id="btn-deletar" style="display:none"><i class="fe fe-trash-2"></i> Deletar</a>
 
 		<select class="form-select sel7" name="categoria" id="busca" style="width:350px" onchange="buscar()">
 			<option value="">Buscasr por Categoria</option>
@@ -745,7 +745,7 @@ $pag = 'produtos';
 <!-- Modal Itens-->
 <div class="modal fade" id="modalItens" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
 	aria-hidden="true">
-	<div class="modal-dialog" role="document" style="box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;">
+	<div class="modal-dialog modal-lg" role="document" style="box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;">
 		<div class="modal-content">
 			<div class="modal-header bg-primary text-white">
 				<h4 class="modal-title" id="exampleModalLabel"><span id="titulo_nome_itens"></span></h4>
@@ -1480,4 +1480,62 @@ $("#form_produtos").submit(function () {
 });
 
 
+</script>
+
+
+
+<script type="text/javascript">
+	
+
+function excluirProduto(id) {
+    //$('#mensagem-excluir').text('Excluindo...')
+
+    $('body').removeClass('timer-alert');
+    Swal.fire({
+        title: "Deseja Excluir?",
+        text: "Você não conseguirá recuperá-lo novamente!",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#d33', // Cor do botão de confirmação (vermelho)
+        cancelButtonColor: '#3085d6', // Cor do botão de cancelamento (azul)
+        confirmButtonText: "Sim, Excluir!",
+        cancelButtonText: "Cancelar",
+        reverseButtons: true
+    }).then((result) => {
+        if (result.isConfirmed) {
+
+
+            $.ajax({
+                url: 'paginas/' + pag + "/excluir.php",
+                method: 'POST',
+                data: { id },
+                dataType: "html",
+
+                success: function (mensagem) {
+                    if (mensagem.trim() == "Excluído com Sucesso") {
+
+                        // Ação de exclusão aqui
+                        Swal.fire({
+                            title: 'Excluido com Sucesso!',
+                            text: 'Fecharei em 1 segundo.',
+                            icon: "success",
+                            timer: 1000
+                        })
+                        //excluido();
+                        buscar();
+                        limparCampos();
+
+
+                    } else {
+                        $('#mensagem-excluir').addClass('text-danger')
+                        $('#mensagem-excluir').text(mensagem)
+                    }
+                }
+            });
+
+        }
+    });
+
+
+};
 </script>

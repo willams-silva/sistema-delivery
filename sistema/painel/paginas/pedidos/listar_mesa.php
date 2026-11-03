@@ -8,24 +8,30 @@ $ult_ped = @$_POST['ult_pedido'];
 
 $total_vendas = 0;
 
+if($delivery_monitor != 'Sim'){
+  $sql_mesa = " and mesa > 0 ";
+}else{
+  $sql_mesa = " ";
+}
+
 //TOTAIS DOS PEDIDOS
-$query = $pdo->query("SELECT * FROM $tabela where status = 'Aguardando' and mesa > 0 ");
+$query = $pdo->query("SELECT * FROM $tabela where status = 'Aguardando' $sql_mesa ");
 $res = $query->fetchAll(PDO::FETCH_ASSOC);
 $total_ini = @count($res);
 
-$query = $pdo->query("SELECT * FROM $tabela where status = 'Preparando' and mesa > 0");
+$query = $pdo->query("SELECT * FROM $tabela where status = 'Preparando' $sql_mesa");
 $res = $query->fetchAll(PDO::FETCH_ASSOC);
 $total_prep = @count($res);
 
-$query = $pdo->query("SELECT * FROM $tabela where status = 'Pronto' and mesa > 0");
+$query = $pdo->query("SELECT * FROM $tabela where status = 'Pronto' $sql_mesa");
 $res = $query->fetchAll(PDO::FETCH_ASSOC);
 $total_ent = @count($res);
 
-$query = $pdo->query("SELECT * FROM $tabela where (status = 'Aguardando' or status = 'Preparando' or status = 'Pronto') and mesa > 0");
+$query = $pdo->query("SELECT * FROM $tabela where (status = 'Aguardando' or status = 'Preparando' or status = 'Pronto') $sql_mesa");
 $res = $query->fetchAll(PDO::FETCH_ASSOC);
 $total_pedidos = @count($res);
 
-$query = $pdo->query("SELECT * FROM $tabela where status != 'Finalizado' and status != 'Cancelado' and mesa > 0 order by id desc limit 1");
+$query = $pdo->query("SELECT * FROM $tabela where status != 'Finalizado' and status != 'Cancelado' $sql_mesa order by id desc limit 1");
 $res = $query->fetchAll(PDO::FETCH_ASSOC);
 $id_ult_pedido = @$res[0]['id'];
 
@@ -43,7 +49,7 @@ if ($ult_ped == "" and $id_ult_pedido != "") {
 }
 
 $ids = '';
-$query = $pdo->query("SELECT * FROM $tabela where status LIKE '$status' and status != 'Finalizado' and status != 'Cancelado' order by hora asc");
+$query = $pdo->query("SELECT * FROM $tabela where status LIKE '$status' and status != 'Finalizado' and status != 'Cancelado' $sql_mesa order by hora asc");
 $res = $query->fetchAll(PDO::FETCH_ASSOC);
 $total_reg = @count($res);
 if ($total_reg > 0) {
@@ -68,24 +74,46 @@ if ($total_reg > 0) {
     $hora = $res[$i]['hora'];
     $ab_mesa = $res[$i]['mesa'];
     $obs_item = $res[$i]['obs'];
+    $pedido = $res[$i]['pedido'];
 
 
     if ($status == "") {
       continue;
     }
 
+
     $horaF = date("H:i", strtotime($hora));
 
     $query2 = $pdo->query("SELECT * FROM abertura_mesa where id = '$ab_mesa'");
     $res2 = $query2->fetchAll(PDO::FETCH_ASSOC);
     $total_reg2 = @count($res2);
-    $garcon = $res2[0]['garcon'];
-    $mesa = $res2[0]['mesa'];
+    if($total_reg2 > 0){
+      $garcon = $res2[0]['garcon'];
+      $mesa = $res2[0]['mesa'];
+    }else{
+      $garcon = 0;
+      $mesa = 0;
+    }
+    
+
+    $query2 = $pdo->query("SELECT * FROM vendas where id = '$pedido'");
+    $res2 = $query2->fetchAll(PDO::FETCH_ASSOC);
+    $total_reg2 = @count($res2);
+    if ($total_reg2 > 0) {
+      $id_pedido = $res2[0]['pedido'];
+    } else {
+      $id_pedido = '';
+    }
 
 
     $query2 = $pdo->query("SELECT * FROM mesas where id = '$mesa'");
     $res2 = $query2->fetchAll(PDO::FETCH_ASSOC);
-    $nome_mesa = @$res2[0]['nome'];
+    if(@count($res2) > 0){
+      $nome_mesa = 'Mesa '.@$res2[0]['nome'];
+    }else{
+      $nome_mesa = 'Pedido '.$id_pedido;
+    }
+    
 
 
     $query2 = $pdo->query("SELECT * FROM usuarios where id = '$garcon'");
@@ -98,7 +126,7 @@ if ($total_reg > 0) {
     }
 
 
-
+    
 
 
     if ($status == 'Aguardando') {
@@ -187,7 +215,7 @@ if ($total_reg > 0) {
 <div class="col-md-4 widget d-inline-block" style="width: 30%">
 			<div class="" style="padding:4px; min-height: 100px; height: 200px; overflow: scroll; scrollbar-width: thin; background: #ffffff;">
 				<div style="border-bottom: 1px solid #000">
-					<span style="color:{$classe_alerta}"> <i class="fa fa-square"></i></span> Mesa <b>{$nome_mesa}</b> 
+					<span style="color:{$classe_alerta}"> <i class="fa fa-square"></i></span> <b>{$nome_mesa}</b> 
 					<span style="position:absolute; right:20px"><i>{$horaF}</i></span>
 				</div>
 
@@ -459,11 +487,7 @@ $total_dos_itens_pedidos = @count($res);
 
     $('#total-dos-pedidos').text("<?= $total_dos_itens_pedidos ?>");
 
-    $('#tabela').DataTable({
-      "ordering": false,
-      "stateSave": true
-    });
-    $('#tabela_filter label input').focus();
+    
   });
 </script>
 

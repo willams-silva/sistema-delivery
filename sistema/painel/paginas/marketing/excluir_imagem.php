@@ -9,10 +9,10 @@ $res = $query->fetchAll(PDO::FETCH_ASSOC);
 $total_reg = @count($res);
 $foto = $res[0]['arquivo'];
 
-if($foto != "sem-foto.jpg"){
+if($foto != "sem-foto.png"){
 	@unlink('../../images/marketing/'.$foto);
 }
 
-$pdo->query("UPDATE $tabela SET arquivo = 'sem-foto.jpg' where id = '$id'");
+$pdo->query("UPDATE $tabela SET arquivo = 'sem-foto.png' where id = '$id'");
 echo 'Excluído com Sucesso';
  ?>
