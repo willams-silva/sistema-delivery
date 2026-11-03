@@ -1,6 +1,7 @@
 <?php
-require_once ("conexao.php");
 @session_start();
+require_once ("conexao.php");
+
 
 
 ################# CRIAR UM ADM CASO NÃO TENHA NENHUM ############################################
@@ -358,6 +359,14 @@ if (@$mensagem_auto == 'Sim' and strtotime($data_cobranca) != strtotime($data_at
 
 <script type="text/javascript">
 	$(document).ready(function () {
+
+		var modo_teste = "<?= $modo_teste ?>";
+		if(modo_teste == 'Sim'){
+			setTimeout(function() {
+	 	    $('#usuario').val('contato@hugocursos.com.br');
+			$('#password-field').val('123');
+	        }, 1000)
+		}
 
 		var email_usuario = localStorage.email_usu;
 		var senha_usuario = localStorage.senha_usu;
