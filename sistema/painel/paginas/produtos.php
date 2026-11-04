@@ -213,13 +213,28 @@ $pag = 'produtos';
 
 					<div class="row">
 
-						<div class="col-md-9">
+						<div class="col-md-3 mb-2 col-6">							
+							<label>Unidade de Medida</label>
+							<select class="form-select" name="unidade" id="unidade">
+								<option value="0">Escolher Unidade</option>
+								<?php 
+								$query3 = $pdo->query("SELECT * from unidade_medida order by id asc");
+								$res3 = $query3->fetchAll(PDO::FETCH_ASSOC);
+								$linhas = @count($res3);
+								if($linhas > 0){
+									for($i=0; $i<$linhas; $i++){ ?>
+										<option value="<?php echo $res3[$i]['id'] ?>"><?php echo $res3[$i]['nome'] ?></option>
+									<?php } } ?>
+								</select>			
+							</div>
+
+						<div class="col-md-7">
 							<div class="form-group">
 								<label>Foto</label>
 								<input class="form-control" type="file" name="foto" onChange="carregarImg();" id="foto">
 							</div>
 						</div>
-						<div class="col-md-3">
+						<div class="col-md-2">
 							<div id="divImg">
 								<img src="images/produtos/sem-foto.jpg" width="80px" id="target">
 							</div>

@@ -52,6 +52,7 @@ HTML;
 		$promocao = $res[$i]['promocao'];
 		$preparado = $res[$i]['preparado'];
 		$delivery = $res[$i]['delivery'];
+		$unidade = $res[$i]['unidade'];
 	
 		$val_promocional = $res[$i]['val_promocional'];
 
@@ -150,7 +151,7 @@ HTML;
 <td style="color:{$classe_linha}">{$delivery}</td>
 <td style="color:{$classe_linha}">{$preparado}</td>
 <td>
-	<a class="btn btn-info-light btn-sm" href="#" onclick="editar('{$id}','{$nomeF2}','{$descricaoF2}', '{$categoria}', '{$valor_compra}', '{$valor_venda}', '{$foto}', '{$nivel_estoque}', '{$tem_estoque}', '{$combo}', '{$promocao}', '{$preparado}', '{$delivery}', '{$val_promocional}')" title="Editar Dados"><i class="fa fa-edit"></i></a>
+	<a class="btn btn-info-light btn-sm" href="#" onclick="editar('{$id}','{$nomeF2}','{$descricaoF2}', '{$categoria}', '{$valor_compra}', '{$valor_venda}', '{$foto}', '{$nivel_estoque}', '{$tem_estoque}', '{$combo}', '{$promocao}', '{$preparado}', '{$delivery}', '{$val_promocional}', '{$unidade}')" title="Editar Dados"><i class="fa fa-edit"></i></a>
 
 		<a class="btn btn-primary-light btn-sm" href="#" onclick="mostrar('{$id}','{$nome}', '{$nome_cat}', '{$valor_compraF}',  '{$valor_vendaF}', '{$estoque}', '{$foto}', '{$nivel_estoque}', '{$tem_estoque}', '{$combo}', '{$promocao}', '{$preparado}', '{$delivery}', '{$val_promocionalF}')" title="Ver Dados"><i class="fa fa-info-circle"></i></a>
 
@@ -206,7 +207,7 @@ HTML;
 
 
 <script type="text/javascript">
-	function editar(id, nome, descricao, categoria, valor_compra, valor_venda, foto, nivel_estoque, tem_estoque, combo, promocao, preparado, delivery, val_promocional) {
+	function editar(id, nome, descricao, categoria, valor_compra, valor_venda, foto, nivel_estoque, tem_estoque, combo, promocao, preparado, delivery, val_promocional, unidade) {
 
 		
 
@@ -223,6 +224,7 @@ HTML;
 		$('#preparado').val(preparado).change();
 		$('#delivery').val(delivery).change();
 		$('#val_promocional').val(val_promocional);
+		$('#unidade').val(unidade).change();
 
 		$('#titulo_inserir').text('Editar Registro');
 		$('#modalForm').modal('show');
@@ -244,6 +246,7 @@ HTML;
 		$('#promocao').val('Não').change();
 		$('#preparado').val('Sim').change();
 		$('#delivery').val('Sim').change();
+		$('#unidade').val('0').change();
 		$('#target').attr('src', 'images/produtos/sem-foto.jpg');
 		$('#id_it_var').val('');
 	}

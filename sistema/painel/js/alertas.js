@@ -197,3 +197,71 @@ function alertWarning(result) {
         }
     })
 }
+
+
+
+function inserido(){
+        $('body').removeClass('timer-alert');
+        Swal.fire({
+            title: 'Produto Inserido',
+            text: '',
+            icon: "success",
+            timer: 700,
+            customClass: {
+            container: 'swal-whatsapp-container'
+        }
+        })?.then(
+            function () {
+            },
+            // lidando com a rejeição da promessa
+            function (dismiss) {
+                if (dismiss === 'timer') {
+                    console.log('')
+                }
+            }
+        )
+    }
+
+
+    
+    function alertSucesso(mensagem){
+        $('body').removeClass('timer-alert');
+        Swal.fire({
+            title: mensagem,
+            text: 'Fecharei em 1 segundo.',
+            icon: "success",
+            timer: 1000,
+            customClass: {
+            container: 'swal-whatsapp-container'
+        }
+        })?.then(
+            function () {
+            },
+            // lidando com a rejeição da promessa
+            function (dismiss) {
+                if (dismiss === 'timer') {
+                    console.log('Eu estava fechado pelo cronômetro')
+                }
+            }
+        )
+    }
+
+
+
+
+
+// ALERT SALVAR FINAL ##############
+function alertInformativo(mensagem) {
+    $('body').removeClass('timer-alert');
+    Swal.fire({
+        title: mensagem,
+        text: 'Fecharei em 3 segundo.',
+        icon: "error",
+        timer: 3000,
+        timerProgressBar: true,
+        confirmButtonText: 'OK',
+         customClass: {
+            container: 'swal-whatsapp-container'
+        }
+    })
+}

@@ -180,15 +180,58 @@ if ($total_reg > 0) {
       $sigla_grade = '';
     }
 
-    $query2 = $pdo->query("SELECT * FROM produtos where id = '$produto'");
-    $res2 = $query2->fetchAll(PDO::FETCH_ASSOC);
-    if (@count(@$res2) > 0) {
+   $query2 = $pdo->query("SELECT * FROM produtos where id = '$produto'");
+  $res2 = $query2->fetchAll(PDO::FETCH_ASSOC);
+  if (@count(@$res2) > 0) {
       $nome_produto = $res2[0]['nome'];
       $foto_produto = $res2[0]['foto'];
+      $unidade = $res2[0]['unidade'];
+      $preparado = $res2[0]['preparado'];
     } else {
       $nome_produto = $nome_produto_tab;
       $foto_produto = "";
+      $unidade = "";
+      $preparado = "";
     }
+
+    if($preparado == 'Não'){
+      continue;
+    }
+
+
+    $query3 = $pdo->query("SELECT * FROM unidade_medida where id = '$unidade'");
+      $res3 = $query3->fetchAll(PDO::FETCH_ASSOC);
+      if(@count($res3) > 0){
+        $nome_unidade = $res3[0]['nome'];
+      }else{
+        $nome_unidade = 'Sem Unidade';
+      }
+
+
+    $ocultar_quantidades = '';
+      $sigla_unidade = '';
+      if($nome_unidade == 'Quilogramas' or $nome_unidade == 'Quilo' or $nome_unidade == 'Quilograma' or $nome_unidade == 'KG'){
+        $sigla_unidade = ' (KG)';
+        $ocultar_quantidades = 'ocultar';
+      }
+
+      if($nome_unidade == 'Metros' or $nome_unidade == 'Metro' or $nome_unidade == 'M' or $nome_unidade == 'm'){
+        $sigla_unidade = ' (m)';
+        $ocultar_quantidades = 'ocultar';
+      }
+
+      if($nome_unidade == 'Litro' or $nome_unidade == 'Litros' or $nome_unidade == 'L'){
+        $sigla_unidade = ' (L)';
+        $ocultar_quantidades = 'ocultar';
+      }
+
+      //tratamento separa string
+      $qt = explode(".", $quantidade);
+      if($qt[1] > 0){
+        $quantidadeF = $quantidade;   
+      }else{
+        $quantidadeF = $qt[0];
+      }
 
 
     $tabela_ad = 'adicionais';
@@ -213,27 +256,27 @@ if ($total_reg > 0) {
 
     echo <<<HTML
 <div class="col-md-4 widget d-inline-block" style="width: 30%">
-			<div class="" style="padding:4px; min-height: 100px; height: 200px; overflow: scroll; scrollbar-width: thin; background: #ffffff;">
-				<div style="border-bottom: 1px solid #000">
-					<span style="color:{$classe_alerta}"> <i class="fa fa-square"></i></span> <b>{$nome_mesa}</b> 
-					<span style="position:absolute; right:20px"><i>{$horaF}</i></span>
-				</div>
+      <div class="" style="padding:4px; min-height: 100px; height: 200px; overflow: scroll; scrollbar-width: thin; background: #ffffff;">
+        <div style="border-bottom: 1px solid #000">
+          <span style="color:{$classe_alerta}"> <i class="fa fa-square"></i></span> <b>{$nome_mesa}</b> 
+          <span style="position:absolute; right:20px"><i>{$horaF}</i></span>
+        </div>
 
-				<div style="margin-top: 5px">
-					<span><small><i><span style="color:#000">{$nome_garcon} </span></i></small></span>	
-          <a style="position:absolute; right:20px" class="btn btn-dark-light btn-sm" href="#" onclick="gerarComprovante('{$id}')" title="Gerar Comprovante"><i class="fa fa-file-pdf-o"></i></a>				
-				</div>
+        <div style="margin-top: 5px">
+          <span><small><i><span style="color:#000">{$nome_garcon} </span></i></small></span>  
+          <a style="position:absolute; right:20px" class="btn btn-dark-light btn-sm" href="#" onclick="gerarComprovante('{$id}')" title="Gerar Comprovante"><i class="fa fa-file-pdf-o"></i></a>        
+        </div>
 
-				<div style="border-bottom: 1px solid #000">
-					<span id="area_status_{$id}"><small><i>Status <b>
+        <div style="border-bottom: 1px solid #000">
+          <span id="area_status_{$id}"><small><i>Status <b>
             <a title="{$titulo_link}" href="#" onclick="ativarPedido('{$id}','{$acao_link}')" class="btn {$class_btn} btn-rounded mb-1" style="font-size: 9px; padding: 5px">{$status}<i class="fa fa-arrow-right {$cor_icone_link}"></i>
-          </a></b></i></small></span>		
-<img id="status_link_{$id}" src="../../img/loading.gif" width="80px" style="display:none">			
-				</div>
+          </a></b></i></small></span>   
+<img id="status_link_{$id}" src="../../img/loading.gif" width="80px" style="display:none">      
+        </div>
 
-					<div style=" padding-bottom: 5px; margin-top: 5px">
-				<small>
-					<span> <b><big>{$quantidade} - {$nome_produto} {$sigla_variacao} {$sigla_grade}</big></b></span><br>
+          <div style=" padding-bottom: 5px; margin-top: 5px">
+        <small>
+          <span> <b><big>{$quantidadeF} {$sigla_unidade} - {$nome_produto} {$sigla_variacao} {$sigla_grade}</big></b></span><br>
 HTML;
 
 
@@ -257,8 +300,8 @@ HTML;
       }
       echo <<<HTML
 
-		<div align="left" style="margin-left: 15px">
-			<b>{$texto_adicional} : </b>
+    <div align="left" style="margin-left: 15px">
+      <b>{$texto_adicional} : </b>
 HTML;
       for ($i2 = 0; $i2 < $total_reg2; $i2++) {
         foreach ($res2[$i2] as $key => $value) {
@@ -277,8 +320,8 @@ HTML;
         }
       }
       echo <<<HTML
-			
-		</div>
+      
+    </div>
 HTML;
     }
 
@@ -299,8 +342,8 @@ HTML;
       }
       echo <<<HTML
 
-		<div align="left" style="margin-left: 15px">
-			<small><b>{$texto_adicional} : </b>
+    <div align="left" style="margin-left: 15px">
+      <small><b>{$texto_adicional} : </b>
 HTML;
       for ($i2 = 0; $i2 < $total_reg2; $i2++) {
         foreach ($res2[$i2] as $key => $value) {
@@ -318,8 +361,8 @@ HTML;
         }
       }
       echo <<<HTML
-			</small>
-		</div>
+      </small>
+    </div>
 HTML;
     }
 
@@ -336,8 +379,8 @@ HTML;
         $texto_adicional = '(' . $total_reg2 . ') Retirar Ingrediente';
       }
       echo <<<HTML
-		<div align="left" style="margin-left: 15px">
-			<small><b>{$texto_adicional} : </b>
+    <div align="left" style="margin-left: 15px">
+      <small><b>{$texto_adicional} : </b>
 HTML;
       for ($i2 = 0; $i2 < $total_reg2; $i2++) {
         foreach ($res2[$i2] as $key => $value) {
@@ -355,8 +398,8 @@ HTML;
         }
       }
       echo <<<HTML
-			</small>
-		</div>
+      </small>
+    </div>
 HTML;
     }
 
@@ -420,11 +463,11 @@ HTML;
 
     if ($obs_item != "") {
       echo <<<HTML
-		<div align="left" style="margin-left: 15px; color:blue">
-			<b>Observação : </b>
-				{$obs_item}
-					
-		</div>
+    <div align="left" style="margin-left: 15px; color:blue">
+      <b>Observação : </b>
+        {$obs_item}
+          
+    </div>
 HTML;
     }
 
@@ -439,13 +482,13 @@ HTML;
 
     echo <<<HTML
 
-</small>		
-				</div>
+</small>    
+        </div>
 
-			
-				
-			</div>
-		</div>	
+      
+        
+      </div>
+    </div>  
 HTML;
   }
 } else {

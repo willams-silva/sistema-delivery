@@ -75,6 +75,7 @@ if ($total_reg > 0) {
 		$pedido = $res[$i]['pedido'];
 		$impressao = $res[$i]['impressao'];
 		$codigo_pix = $res[$i]['ref_api'];
+		$tipo_pedido = $res[$i]['tipo_pedido'];
 
 		//verificar pgto pix
 		if ($codigo_pix != "" and $pago != "Sim") {
@@ -252,7 +253,7 @@ if ($total_reg > 0) {
 	<a class="btn btn-success-light btn-sm {$classe_excluir}" href="#" onclick="baixar('{$id}', '{$nome_cliente}', '{$tipo_pgto}')" title="Confirmar Pgto"><i class="fa fa-check-square"></i></a>
 
 
-		<a class="btn btn-dark-light btn-sm" href="#" onclick="gerarComprovante('{$id}')" title="Gerar Comprovante"><i class="fa fa-file-pdf-o"></i></a>
+		<a class="btn btn-dark-light btn-sm" href="#" onclick="gerarComprovante('{$id}', '{$tipo_pedido}')" title="Gerar Comprovante"><i class="fa fa-file-pdf-o"></i></a>
 
 	<a href="#" class="btn btn-success-light btn-sm  {$ocultar_modal_whats}" onclick="modalWhats('{$cliente}','Cliente')" title="Enviar Mensagem para o Cliente"><i class="fa-brands fa-whatsapp"></i></a>
 
@@ -402,6 +403,7 @@ $total_dos_itens_pedidos = @count($res);
 						$('#status_link_' + id).hide();
 						$('#area_status_' + id).show();
 					} else {
+						alertInformativoFechar(mensagem)
 						$('#mensagem-excluir').addClass('text-danger')
 						$('#mensagem-excluir').text(mensagem)
 
@@ -418,15 +420,22 @@ $total_dos_itens_pedidos = @count($res);
 	}
 </script>
 
+
 <script type="text/javascript">
-	function gerarComprovante(id) {
+	function gerarComprovante(id, tipo_pedido) {
 
 
 		let a = document.createElement('a');
 		a.target = '_blank';
-		a.href = 'rel/comprovante.php?id=' + id;
+		if(tipo_pedido == "Balcão"){
+			a.href = 'rel/comprovante_balcao.php?id=' + id;
+		}else{
+			a.href = 'rel/comprovante.php?id=' + id;
+		}
+		
 		a.click();
 	}
+
 </script>
 
 

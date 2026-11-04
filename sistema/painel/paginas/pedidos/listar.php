@@ -93,7 +93,7 @@ HTML;
 		$pedido = $res[$i]['pedido'];
 		$impressao = $res[$i]['impressao'];
 		$codigo_pix = $res[$i]['ref_api'];
-
+		$tipo_pedido = $res[$i]['tipo_pedido'];
 
 
 
@@ -281,7 +281,7 @@ HTML;
 
 
 
-			<a class="btn btn-dark-light btn-sm" href="#" onclick="gerarComprovante('{$id}')" title="Gerar Comprovante"><i class="fa fa-file-pdf-o"></i></a>		
+			<a class="btn btn-dark-light btn-sm" href="#" onclick="gerarComprovante('{$id}', '{$tipo_pedido}')" title="Gerar Comprovante"><i class="fa fa-file-pdf-o"></i></a>		
 			
 		
 	
@@ -456,12 +456,17 @@ $total_dos_itens_pedidos = @count($res);
 </script>
 
 <script type="text/javascript">
-	function gerarComprovante(id) {
+	function gerarComprovante(id, tipo_pedido) {
 
 
 		let a = document.createElement('a');
 		a.target = '_blank';
-		a.href = 'rel/comprovante.php?id=' + id;
+		if(tipo_pedido == "Balcão"){
+			a.href = 'rel/comprovante_balcao.php?id=' + id;
+		}else{
+			a.href = 'rel/comprovante.php?id=' + id;
+		}
+		
 		a.click();
 	}
 

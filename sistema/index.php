@@ -1,8 +1,4 @@
 <?php
-// Evita que o navegador reutilize uma versão antiga da tela de login.
-header('Cache-Control: no-store, no-cache, must-revalidate, max-age=0');
-header('Pragma: no-cache');
-header('Expires: 0');
 @session_start();
 require_once ("conexao.php");
 
@@ -379,8 +375,14 @@ if (@$mensagem_auto == 'Sim' and strtotime($data_cobranca) != strtotime($data_at
 
 		var redirecionar = "<?= $entrar_automatico ?>";
 
-		// Login automático desativado para impedir redirecionamentos em loop.
-		$('#pagina').show();
+		if (id_usuario != "" && id_usuario != undefined && redirecionar == 'Sim') {
+			$('#pagina').hide();
+			$('#id_usua').val(id_usuario);
+			$('#pagina_salva').val(pagina);
+			$('#btn_auto').click();
+		} else {
+			$('#pagina').show();
+		}
 
 		if (email_usuario != "" && email_usuario != undefined) {
 			$('#salvar_acesso').prop('checked', true);

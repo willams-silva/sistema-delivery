@@ -38,6 +38,7 @@ $mesas = 'ocultar';
 $cupons = 'ocultar';
 $adicionais = 'ocultar';
 $grupos_disparos = 'ocultar';
+$unidade_medida = 'ocultar';
 
 //grupo produtos
 $produtos = 'ocultar';
@@ -245,6 +246,10 @@ if($total_reg > 0){
 			$grupos_disparos = '';
 		}
 
+		if($chave == 'unidade_medida'){
+			$unidade_medida = '';
+		}
+
 
 
 		if($chave == 'receber'){
@@ -353,7 +358,7 @@ if($usuarios == 'ocultar' and $funcionarios == 'ocultar' and $fornecedores == 'o
 }
 
 
-if($bairros == 'ocultar' and $cargos == 'ocultar' and $dias == 'ocultar' and $grupo_acessos == 'ocultar' and $acessos == 'ocultar' and $cargos == 'ocultar' and $frequencias == 'ocultar' and $formas_pgto == 'ocultar' and $banner_rotativo == 'ocultar' and $mesas == 'ocultar' and $cupons == 'ocultar' and $adicionais == 'ocultar' and $grupos_disparos == 'ocultar'){
+if($bairros == 'ocultar' and $cargos == 'ocultar' and $dias == 'ocultar' and $grupo_acessos == 'ocultar' and $acessos == 'ocultar' and $cargos == 'ocultar' and $frequencias == 'ocultar' and $formas_pgto == 'ocultar' and $banner_rotativo == 'ocultar' and $mesas == 'ocultar' and $cupons == 'ocultar' and $adicionais == 'ocultar' and $grupos_disparos == 'ocultar' and $unidade_medida == 'ocultar'){
 	$menu_cadastros = 'ocultar';
 }else{
 	$menu_cadastros = '';

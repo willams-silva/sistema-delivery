@@ -18,7 +18,7 @@ $delivery = @$_POST['delivery'];
 $categoria = @$_POST['categoria'];
 $val_promocional = @$_POST['val_promocional'];
 $val_promocional = str_replace(',', '.', $val_promocional);
-
+$unidade = @$_POST['unidade'];
 
 
 if($promocao == 'Sim' and $val_promocional <= 0){
@@ -104,9 +104,9 @@ if(@$_FILES['foto']['name'] != ""){
 
 
 if($id == ""){
-	$query = $pdo->prepare("INSERT INTO $tabela SET nome = :nome, categoria = '$categoria', valor_compra = :valor_compra, valor_venda = :valor_venda, descricao = :descricao, foto = '$foto', nivel_estoque = '$nivel_estoque', tem_estoque = '$tem_estoque', ativo = 'Sim', url = '$url', promocao = '$promocao', combo = '$combo', preparado = '$preparado', delivery = '$delivery', val_promocional = :val_promocional");
+	$query = $pdo->prepare("INSERT INTO $tabela SET nome = :nome, categoria = '$categoria', valor_compra = :valor_compra, valor_venda = :valor_venda, descricao = :descricao, foto = '$foto', nivel_estoque = '$nivel_estoque', tem_estoque = '$tem_estoque', ativo = 'Sim', url = '$url', promocao = '$promocao', combo = '$combo', preparado = '$preparado', delivery = '$delivery', val_promocional = :val_promocional, unidade = :unidade");
 }else{
-	$query = $pdo->prepare("UPDATE $tabela SET nome = :nome, categoria = '$categoria', valor_compra = :valor_compra, valor_venda = :valor_venda, descricao = :descricao, foto = '$foto', nivel_estoque = '$nivel_estoque', tem_estoque = '$tem_estoque', url = '$url', promocao = '$promocao', combo = '$combo', preparado = '$preparado', delivery = '$delivery', val_promocional = :val_promocional WHERE id = '$id'");
+	$query = $pdo->prepare("UPDATE $tabela SET nome = :nome, categoria = '$categoria', valor_compra = :valor_compra, valor_venda = :valor_venda, descricao = :descricao, foto = '$foto', nivel_estoque = '$nivel_estoque', tem_estoque = '$tem_estoque', url = '$url', promocao = '$promocao', combo = '$combo', preparado = '$preparado', delivery = '$delivery', val_promocional = :val_promocional, unidade = :unidade WHERE id = '$id'");
 }
 
 $query->bindValue(":nome", "$nome");
@@ -114,6 +114,7 @@ $query->bindValue(":valor_venda", "$valor_venda");
 $query->bindValue(":valor_compra", "$valor_compra");
 $query->bindValue(":descricao", "$descricao");
 $query->bindValue(":val_promocional", "$val_promocional");
+$query->bindValue(":unidade", "$unidade");
 $query->execute();
 
 echo 'Salvo com Sucesso';

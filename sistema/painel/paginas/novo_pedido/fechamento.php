@@ -58,13 +58,13 @@ $res1 = $query1->fetchAll(PDO::FETCH_ASSOC);
 $nome_cliente_ab = $res1[0]['cliente'];
 
 //lançar a comissão do garçon
-$query = $pdo->prepare("INSERT INTO pagar SET descricao = 'Comissão Garçon', tipo = 'Comissão', valor = :valor, data_lanc = curDate(), vencimento = curDate(), usuario_lanc = '$id_usuario', foto = 'sem-foto.png', arquivo = 'sem-foto.jpg', pessoa = '0', pago = 'Não', funcionario = '$garcon', referencia = 'Comissão', id_ref = '$id_ab', caixa = '$id_caixa',  comissao = 'Garçon' ");
+$query = $pdo->prepare("INSERT INTO pagar SET descricao = 'Comissão Garçon', tipo = 'Comissão', valor = :valor, data_lanc = curDate(), vencimento = curDate(), usuario_lanc = '$id_usuario', foto = 'sem-foto.png', arquivo = 'sem-foto.jpg', pessoa = '0', pago = 'Não', funcionario = '$garcon', referencia = 'Comissão', id_ref = '$id_ab', caixa = '$id_caixa',  comissao = 'Garçon', hora = curTime() ");
 $query->bindValue(":valor", "$comissao");
 $query->execute();
 
 
 #######LANÇAR AS VENDAS###########################################
-$query = $pdo->prepare("INSERT INTO receber SET descricao = 'Venda Mesa', tipo = 'Venda', valor = :valor, data_lanc = curDate(), vencimento = curDate(), data_pgto = curDate(), usuario_lanc = '$id_usuario', usuario_pgto = '$id_usuario', foto = 'sem-foto.png', arquivo = 'sem-foto.jpg', pessoa = '0', pago = 'Sim', referencia = 'Venda', id_ref = '$id_ab', caixa = '$id_caixa', forma_pgto = '$forma_pgto', subtotal = '$subtotal'");
+$query = $pdo->prepare("INSERT INTO receber SET descricao = 'Venda Mesa', tipo = 'Venda', valor = :valor, data_lanc = curDate(), vencimento = curDate(), data_pgto = curDate(), usuario_lanc = '$id_usuario', usuario_pgto = '$id_usuario', foto = 'sem-foto.png', arquivo = 'sem-foto.jpg', pessoa = '0', pago = 'Sim', referencia = 'Venda', id_ref = '$id_ab', caixa = '$id_caixa', forma_pgto = '$forma_pgto', subtotal = '$subtotal', hora = curTime()");
 $query->bindValue(":valor", "$subtotal");
 $query->execute();
 

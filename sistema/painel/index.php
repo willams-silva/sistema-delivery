@@ -40,6 +40,25 @@ if (@$_GET['pagina'] != "") {
 	$pagina = $pag_inicial;
 }
 
+
+
+//verificar se já existe as unidades de medidas padrão
+$query = $pdo->query("SELECT * from unidade_medida where nome = 'Quilogramas' or nome = 'Quilograma' or nome = 'Quilo' or nome = 'KG'");
+$res = $query->fetchAll(PDO::FETCH_ASSOC);
+$linhas = @count($res);
+if($linhas == 0){
+	$pdo->query("INSERT INTO unidade_medida SET nome = 'Quilogramas', unidade = 'KG' ");
+}
+
+
+
+$query = $pdo->query("SELECT * from unidade_medida where nome = 'Litro' or nome = 'Litros' or nome = 'L'");
+$res = $query->fetchAll(PDO::FETCH_ASSOC);
+$linhas = @count($res);
+if($linhas == 0){
+	$pdo->query("INSERT INTO unidade_medida SET nome = 'Litros', unidade = 'L' ");
+}
+
 $id_usuario = @$_SESSION['id'];
 $query = $pdo->query("SELECT * from usuarios where id = '$id_usuario'");
 $res = $query->fetchAll(PDO::FETCH_ASSOC);
@@ -146,14 +165,14 @@ if (@count($res1) > 0) {
 
 						<div class="responsive-logo logo_painel">
 							<a href="index.php" class="header-logo">
-								<img src="../img/foto-painel.png" class="obile-logo dark-logo-1 logo_painel" alt="logo"
-									style="margin-left: -120px !important">
+								<img src="../img/foto-painel.png" class="mobile-logo logo-1" alt="logo" style="width:40% !important; margin-left: 50px !important">
+										<img src="../img/foto-painel.png" class="mobile-logo dark-logo-1" alt="logo" style="width:40% !important; margin-left: 50px !important">
 							</a>
 						</div>
 
 
 						<div class="app-sidebar__toggle" data-bs-toggle="sidebar">
-							<a class="open-toggle" href="javascript:void(0);"><i class="header-icon fe fe-align-left"></i></a>
+							<a id="btn_ocultar_menu" class="open-toggle" href="javascript:void(0);"><i class="header-icon fe fe-align-left"></i></a>
 							<a class="close-toggle" href="javascript:void(0);"><i class="header-icon fe fe-x"></i></a>
 						</div>
 						<div class="logo-horizontal">
@@ -488,7 +507,7 @@ if (@count($res1) > 0) {
 			</div> <!-- /APP-HEADER -->
 
 			<!--APP-SIDEBAR-->
-			<div class="sticky">
+			<div class="sticky" style="z-index: 1000 !important">
 				<aside class="app-sidebar">
 					<div class="main-sidebar-header active">
 						<a class="header-logo active" href="index.php">
@@ -540,15 +559,10 @@ if (@count($res1) > 0) {
 
 
 
-							<li class="slide <?php echo @$pedido_site ?>">
-								<form id="meuFormulario" method="POST" action="../../index" target="_blank">
-									<input type="hidden" name="id_mesa" id="">
-									<input type="hidden" name="id_abertura_mesa" id="">
-									<input type="hidden" name="pedido_balcao" value='BALCÃO'>
-								</form>
-								<a class="side-menu__item" href="#" onclick="enviarFormulario()">
+							<li class="slide <?php echo @$pedido_site ?>">								
+								<a class="side-menu__item" href="pdv">
 									<i class="fa-solid fa-cart-plus text-white mt-1"></i>
-									<span class="side-menu__label" style="margin-left: 15px">Pedido Balcão</span>
+									<span class="side-menu__label" style="margin-left: 15px">PDV</span>
 								</a>
 							</li>
 
@@ -605,6 +619,8 @@ if (@count($res1) > 0) {
 									</li>
 
 									<li class="<?php echo @$cargos ?> "><a class="slide-item" href="cargos"> Cargos</a></li>
+
+									<li class="<?php echo @$unidade_medida ?> "><a class="slide-item" href="unidade_medida"> Unidade de Medidas</a></li>
 
 
 									<li class="<?php echo @$adicionais ?> "><a class="slide-item" href="adicionais"> Adicionais</a></li>

@@ -180,7 +180,7 @@ if ($linhas > 0) {
 
 
 			<div class="modal-footer">
-				<form method="POST" action="../../index" target="_blank">
+				<form method="POST" action="pdv" target="_blank">
 					<input type="hidden" name="id_mesa" id="id_itens">
 					<input type="hidden" name="id_abertura_mesa" id="id_abertura_mesa">
 					<button type="submit" class="btn btn-primary">Adicionar Itens<i class="fa fa-check ms-2"></i></button>

@@ -306,6 +306,15 @@ $horaF = date("H:i", strtotime($hora));
 		$borda = $dados[$i]['borda'];
 		$categoria = $dados[$i]['categoria'];
 
+		
+		//tratamento separa string
+	$qt = explode(".", $quantidade);
+	if($qt[1] > 0){
+		$quantidadeF = $quantidade;		
+	}else{
+		$quantidadeF = $qt[0];
+	}
+
 
 		$query2 = $pdo->query("SELECT * FROM variacoes where id = '$variacao'");
 		$res2 = $query2->fetchAll(PDO::FETCH_ASSOC);
@@ -332,6 +341,35 @@ $horaF = date("H:i", strtotime($hora));
 		if (@count(@$res2) > 0) {
 			$nome_produto = $res2[0]['nome'];
 			$foto_produto = $res2[0]['foto'];
+			$unidade = $res2[0]['unidade'];
+
+			$ocultar_quantidades = '';
+	$sigla_unidade = '';
+
+	$query3 = $pdo->query("SELECT * FROM unidade_medida where id = '$unidade'");
+	$res3 = $query3->fetchAll(PDO::FETCH_ASSOC);
+	if(@count($res3) > 0){
+		$nome_unidade = $res3[0]['nome'];
+	}else{
+		$nome_unidade = 'Sem Unidade';
+	}
+
+	
+	if($nome_unidade == 'Quilogramas' or $nome_unidade == 'Quilo' or $nome_unidade == 'Quilograma' or $nome_unidade == 'KG'){
+		$sigla_unidade = ' (KG)';
+		$ocultar_quantidades = 'ocultar';
+	}
+
+	if($nome_unidade == 'Metros' or $nome_unidade == 'Metro' or $nome_unidade == 'M' or $nome_unidade == 'm'){
+		$sigla_unidade = ' (m)';
+		$ocultar_quantidades = 'ocultar';
+	}
+
+	if($nome_unidade == 'Litro' or $nome_unidade == 'Litros' or $nome_unidade == 'L'){
+		$sigla_unidade = ' (L)';
+		$ocultar_quantidades = 'ocultar';
+	}
+
 		} else {
 			$nome_produto = $nome_produto_tab;
 			$foto_produto = "";
@@ -365,10 +403,11 @@ $horaF = date("H:i", strtotime($hora));
 
 		<div class="row itens">
 
-			<div align="left" class="col-9"> <?php echo $quantidade ?> - <?php echo $nome_produto ?>
+			<div align="left" class="col-9"> <?php echo $quantidadeF ?> <?php echo $sigla_unidade ?> - <?php echo $nome_produto ?>
 				<?php echo $sigla_variacao ?> <?php echo $sigla_grade ?>
 
 			</div>
+
 
 			<div align="right" class="col-3">
 				R$ <?php
