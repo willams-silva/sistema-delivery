@@ -16,6 +16,7 @@ require_once("sistema/conexao.php");
 	<meta name="author" content="Hugo Vasconcelos" />
 
 	<link rel="shortcut icon" href="sistema/img/icone.png" type="image/x-icon">
+	<link rel="manifest" href="manifest.php">
 
 
 	<!-- CSS here -->

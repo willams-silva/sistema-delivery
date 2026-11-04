@@ -34,10 +34,12 @@ if ($total_reg == 0) {
     $total_item = $total_item * $quantidade_it;
 
     $total_carrinho += $total_item;
-    $total_carrinhoF = number_format($total_carrinho, 2, ',', '.');
+    
   }
 }
 
+$total_carrinho += $taxa_extra;
+$total_carrinhoF = number_format($total_carrinho, 2, ',', '.');
 
 $esconder_opc_delivery = '';
 $valor_entrega = '';
@@ -54,8 +56,21 @@ $numero = "";
 $bairro = "";
 $complemento = "";
 
+$ocultar_retirar = '';
+$ocultar_consumir = '';
+$ocultar_delivery = '';
 
+if($retirar_local == "Não"){
+  $ocultar_retirar = 'none';
+}
 
+if($entrega_delivery == "Não"){
+  $ocultar_delivery = 'none';
+}
+
+if($consumir_local == "Não"){
+  $ocultar_consumir = 'none';
+}
 
 ?>
 <style>
@@ -142,20 +157,23 @@ $complemento = "";
         <div class="accordion-body">
 
           <ul class="list-group form-check">
-            <li onclick="retirar()" class="list-group-item d-flex justify-content-between align-items-center">
+
+           
+            <li style="display:<?php echo $ocultar_retirar ?> !important" onclick="retirar()" class="list-group-item d-flex justify-content-between align-items-center">
               Retirar no Local
               <input onchange="retirar()" class="form-check-input" type="radio" name="radio_retirar" id="radio_retirar">
             </li>
-
-            <li onclick="local()" class="list-group-item d-flex justify-content-between align-items-center">
+          
+            <li style="display:<?php echo $ocultar_consumir ?> !important" onclick="local()" class="list-group-item d-flex justify-content-between align-items-center">
               Consumir no Local
               <input onchange="local()" class="form-check-input" type="radio" name="radio_local" id="radio_local">
             </li>
-
-            <li onclick="entrega()" class="list-group-item d-flex justify-content-between align-items-center">
+         
+            <li style="display:<?php echo $ocultar_delivery ?> !important" onclick="entrega()" class="list-group-item d-flex justify-content-between align-items-center">
               Entrega Delivery
               <input onchange="entrega()" class="form-check-input" type="radio" name="radio_entrega" id="radio_entrega">
             </li>
+            
 
           </ul>
 
@@ -474,6 +492,10 @@ $complemento = "";
 
 <div class="total-finalizar">
   <div class="total-pedido" style="border: solid 1px #ababab; border-radius: 10px;">
+
+   
+
+
     <span id="area-taxa">
       <span class="previsao_entrega">Taxa de Entrega: <span class="text-danger">R$ <span id="taxa-entrega"></span>
         </span></span>
@@ -481,6 +503,17 @@ $complemento = "";
 
     </span>
     <br>
+
+
+     <?php if($taxa_extra > 0){ ?>
+    <span id="area-taxa">
+      <span class="previsao_entrega"><?php echo $titulo_taxa ?>: <span class="text-danger">R$ <?php echo $taxa_extra ?> 
+    </span>
+    <br>
+  <?php } ?>
+
+      
+
     <div id="desconto_div" style="display:none; ">
       <span><b>Desconto do Cupom</b></span>
       <span class="direita"> <b>R$ <span id="total_cupom"></span></b></span>
@@ -538,7 +571,7 @@ $complemento = "";
     document.querySelector("#chave_pix_copia").setSelectionRange(0, 99999); /* Para mobile */
     document.execCommand("copy");
     //$("#chave_pix_copia").hide();
-    alert('Chave Pix Copiada! Use a opção Copie e Cole para Pagar')
+    alertWarning('Chave Pix Copiada! Use a opção Copie e Cole para Pagar')
   }
 </script>
 
@@ -643,11 +676,28 @@ $complemento = "";
   function pix() {
 
 
+    var bairro = $('#bairro').val();
+    if(bairro === ""){
+      return;
+    }
+
+
     var total_compra = "<?= $total_carrinho ?>";
     total_compra = total_compra.replace(",", ".");
     var taxa_entrega = $('#taxa-entrega-input').val();
     taxa_entrega = taxa_entrega.replace(",", ".");
     var cupom = $('#valor-cupom').val();
+
+    var total_compra_semF = "<?= $total_carrinho ?>";
+    var pedido_minimo = "<?= $pedido_minimo ?>";
+    if (pedido_minimo > 0) {
+      if (parseFloat(total_compra_semF) < parseFloat(pedido_minimo)) {
+        alertWarning('Seu pedido precisar ser superior a R$' + pedido_minimo);
+        $('#botao_finalizar').show();
+        $('#div_img').hide();
+        return;
+      }
+    }
 
     if (taxa_entrega == "") {
       taxa_entrega = 0;
@@ -705,7 +755,7 @@ $complemento = "";
         
 
       },
-      180000);
+      90000);
 
   }
 
@@ -783,7 +833,7 @@ $complemento = "";
     if(pedido_balcao == ""){
 
     if (telefone.length < 15) {
-      alert("Coloque o número de telefone completo");
+      alertWarning("Coloque o número de telefone completo");
       $('#telefone').focus();
       $('#botao_finalizar').show();
       $('#div_img').hide();
@@ -792,7 +842,7 @@ $complemento = "";
 
 
     if (telefone == "") {
-      alert('Preencha seu Telefone');
+      alertWarning('Preencha seu Telefone');
       $('#telefone').focus();
       $('#botao_finalizar').show();
       $('#div_img').hide();
@@ -801,7 +851,7 @@ $complemento = "";
 
 
     if (nome == "") {
-      alert('Preencha seu Nome');
+      alertWarning('Preencha seu Nome');
       $('#nome').focus();
       $('#botao_finalizar').show();
       $('#div_img').hide();
@@ -813,7 +863,7 @@ $complemento = "";
     var modo = $('#radio_retirar').val();
 
     if (modo == "") {
-      alert('Escolha um modo de entrega');
+      alertWarning('Escolha um modo de entrega');
       $('#botao_finalizar').show();
       $('#div_img').hide();
       return;
@@ -855,7 +905,7 @@ $complemento = "";
 
     if (entrega == "Delivery" && entrega_distancia == 'Sim') {
       if (cep == "") {
-        alert("Preencha o CEP");
+        alertWarning("Preencha o CEP");
         $('#cep').focus();
         $('#botao_finalizar').show();
         $('#div_img').hide();
@@ -866,7 +916,7 @@ $complemento = "";
 
 
     if (taxa_entrega == "") {
-      alert("Digite um CEP válido para receber seu Pedido, ou atualize a chave da api do google maps para o calculo de frete por distância!");
+      alertWarning("Digite um CEP válido para receber seu Pedido, ou atualize a chave da api do google maps para o calculo de frete por distância!");
       $('#botao_finalizar').show();
       $('#div_img').hide();
       $('#colapse-').click();
@@ -895,7 +945,7 @@ $complemento = "";
 
     if (pedido_minimo > 0) {
       if (parseFloat(total_compra) < parseFloat(pedido_minimo)) {
-        alert('Seu pedido precisar ser superior a R$' + pedido_minimo);
+        alertWarning('Seu pedido precisar ser superior a R$' + pedido_minimo);
         $('#botao_finalizar').show();
         $('#div_img').hide();
         return;
@@ -903,7 +953,7 @@ $complemento = "";
     }
 
     if (entrega == "") {
-      alert('Selecione uma forma de entrega');
+      alertWarning('Selecione uma forma de entrega');
       $('#colapse-2').click();
       $('#botao_finalizar').show();
       $('#div_img').hide();
@@ -913,7 +963,7 @@ $complemento = "";
 
 
     if (entrega == "Delivery" && rua == "") {
-      alert('Preencha o Campo Rua');
+      alertWarning('Preencha o Campo Rua');
       $('#colapse-3').click();
       $('#botao_finalizar').show();
       $('#div_img').hide();
@@ -922,7 +972,7 @@ $complemento = "";
     }
 
     if (entrega == "Delivery" && numero == "") {
-      alert('Preencha o Campo Número');
+      alertWarning('Preencha o Campo Número');
       $('#colapse-3').click();
       $('#botao_finalizar').show();
       $('#div_img').hide();
@@ -930,7 +980,7 @@ $complemento = "";
     }
 
     if (entrega == "Delivery" && bairro == "") {
-      alert('Escolha um Bairro');
+      alertWarning('Escolha um Bairro');
       $('#colapse-3').click();
       $('#botao_finalizar').show();
       $('#div_img').hide();
@@ -940,7 +990,7 @@ $complemento = "";
 
 
     if (pagamento == "") {
-      alert('Selecione uma forma de pagamento');
+      alertWarning('Selecione uma forma de pagamento');
       $('#botao_finalizar').show();
       $('#div_img').hide();
       $('#collapse-4').click();
@@ -959,7 +1009,7 @@ $complemento = "";
     var total_compra_finalF = total_compra_final.toFixed(2)
 
     if (pagamento == "Dinheiro" && troco < total_compra_final && troco != "") {
-      alert('Digite um valor maior que o total da compra!');
+      alertWarning('Digite um valor maior que o total da compra!');
       $('#botao_finalizar').show();
       $('#div_img').hide();
       return;
@@ -1003,7 +1053,7 @@ $complemento = "";
         if (mensagem == 'Pagamento nao realizado!!') {
 
           if (pedidoauto != 'Sim') {
-            alert('Realize o Pagamento antes de Prosseguir!!');
+            alertWarning('Realize o Pagamento antes de Prosseguir!!');
           }
 
           $('#botao_finalizar').show();
@@ -1116,6 +1166,9 @@ $complemento = "";
 
       }
     });
+
+
+    setTimeout(pix, 1000);
   }
 </script>
 
@@ -1176,19 +1229,19 @@ $complemento = "";
     if(pedido_balcao == ""){
 
       if (telefone.length < 15) {
-        alert("Coloque o número de telefone completo");
+        alertWarning("Coloque o número de telefone completo");
         return;
       }
 
       if (telefone == "") {
-        alert('Preencha seu Telefone');
+        alertWarning('Preencha seu Telefone');
         $('#telefone').focus();
         return;
       }
 
 
       if (nome == "") {
-        alert('Preencha seu Nome');
+        alertWarning('Preencha seu Nome');
         $('#telefone').focus();
         return;
       }
@@ -1213,7 +1266,7 @@ $complemento = "";
     var total_final = parseFloat(total_compra) + parseFloat(taxa_entrega);
     var codigo_cupom = $('#cupom').val();
     if (codigo_cupom == "") {
-      alert("Preencha o código do cupom");
+      alertWarning("Preencha o código do cupom");
       return;
     }
 
@@ -1232,13 +1285,13 @@ $complemento = "";
 
 
         if (split[0].trim() == '0') {
-          alert('Código do Cupom Inválido');
+          alertWarning('Código do Cupom Inválido');
         } else if (split[0].trim() == '1') {
-          alert('Este cupom está vencido!');
+          alertWarning('Este cupom está vencido!');
         } else if (split[0].trim() == '2') {
-          alert('Este cupom não é mais válido!');
+          alertWarning('Este cupom não é mais válido!');
         } else if (split[0].trim() == '3') {
-          alert('Este cupom só é válido para compras acima de R$' + split[1]);
+          alertWarning('Este cupom só é válido para compras acima de R$' + split[1]);
         } else {
 
           $('#total-carrinho-finalizar').text(split[0]);
@@ -1249,7 +1302,7 @@ $complemento = "";
           $('#total_cupom').text(split[2]);
 
 
-          alert('Cupom Inserido!');
+          alertWarning('Cupom Inserido!');
           pix();
         }
 
@@ -1326,11 +1379,11 @@ $complemento = "";
             }));
 
           } else {
-            alert('Endereço fora da área de entrega.');
+            alertWarning('Endereço fora da área de entrega.');
             return;
           }
         } else {
-          alert('Endereço inválido ou Chave Api Inexistente.');
+          alertWarning('Endereço inválido ou Chave Api Inexistente.');
           return;
         }
       })

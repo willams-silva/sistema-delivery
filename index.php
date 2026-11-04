@@ -344,7 +344,7 @@ if($id_edicao == ""){
 </div>
 
   <?php
-  $query = $pdo->query("SELECT * FROM categorias where ativo = 'Sim'");
+  $query = $pdo->query("SELECT * FROM categorias where ativo = 'Sim' order by posicao asc");
   $res = $query->fetchAll(PDO::FETCH_ASSOC);
   $total_cat = @count($res);
 
@@ -365,7 +365,7 @@ if($id_edicao == ""){
         <div class="swiper-wrapper">
 
           <?php
-          $query = $pdo->query("SELECT * FROM categorias where ativo = 'Sim'");
+          $query = $pdo->query("SELECT * FROM categorias where ativo = 'Sim' order by posicao asc");
           $res = $query->fetchAll(PDO::FETCH_ASSOC);
           $total_reg = @count($res);
           if ($total_reg > 0) {
@@ -560,7 +560,7 @@ if($id_edicao == ""){
 
 
   <?php
-  $query = $pdo->query("SELECT * FROM categorias where ativo = 'Sim'");
+  $query = $pdo->query("SELECT * FROM categorias where ativo = 'Sim' order by posicao asc");
   $res = $query->fetchAll(PDO::FETCH_ASSOC);
   $total_cat2 = @count($res);
 
@@ -581,7 +581,7 @@ if($id_edicao == ""){
           <div class="row">
 
             <?php
-            $query = $pdo->query("SELECT * FROM categorias where ativo = 'Sim'");
+            $query = $pdo->query("SELECT * FROM categorias where ativo = 'Sim' order by posicao asc");
             $res = $query->fetchAll(PDO::FETCH_ASSOC);
             $total_reg = @count($res);
             if ($total_reg > 0) {
@@ -953,6 +953,7 @@ if($id_edicao == ""){
 ?>
 
 
+<button id="botao-instalar" style="display: none; position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); padding: 12px 20px; background: #007bff; color: #fff; border: none; border-radius: 8px; z-index: 9999;">Instalar App</button>
 
 
 <!-- Font Awesome -->
@@ -1050,3 +1051,74 @@ if($id_edicao == ""){
 
   }
 </script>
+
+
+
+
+
+
+
+
+
+<script>
+  let deferredPrompt;
+
+  window.addEventListener('beforeinstallprompt', (e) => {
+    e.preventDefault();
+    deferredPrompt = e;
+    document.getElementById('botao-instalar').style.display = 'block';
+
+    document.getElementById('botao-instalar').addEventListener('click', async () => {
+      deferredPrompt.prompt();
+      const { outcome } = await deferredPrompt.userChoice;
+      console.log('Resultado da instalação:', outcome);
+      deferredPrompt = null;
+    });
+  });
+
+  window.addEventListener('appinstalled', () => {
+    console.log('✅ App instalado!');
+  });
+</script>
+
+
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+      
+
+    // Registrar Service Worker
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('sw.js')
+        .then(reg => console.log('✅ SW registrado:', reg.scope))
+        .catch(err => console.error('❌ Erro ao registrar SW:', err));
+    }
+
+    // Gerenciar instalação do PWA
+    let deferredPrompt;
+    window.addEventListener('beforeinstallprompt', (e) => {
+      e.preventDefault();
+      deferredPrompt = e;
+      const btn = document.getElementById('botao-instalar');
+      if (btn) {
+        btn.style.display = 'block';
+
+        btn.addEventListener('click', () => {
+          btn.style.display = 'none';
+          deferredPrompt.prompt();
+          deferredPrompt.userChoice.then((result) => {
+            console.log('Resultado da instalação:', result.outcome);
+            deferredPrompt = null;
+          });
+        });
+      }
+    });
+
+    window.addEventListener('appinstalled', () => {
+      console.log('✅ App instalado!');
+    });
+  });
+</script>
+
+ 
+<script src="app_assets/js/custom.js"></script>
+

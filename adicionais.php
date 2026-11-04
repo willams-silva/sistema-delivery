@@ -236,7 +236,7 @@ if ($total_reg > 0) {
 
     <div id="" style='margin-top: 15px'>
         <?php
-        $query = $pdo->query("SELECT * FROM grades where produto = '$id_prod' and ativo = 'Sim' order by id asc");
+        $query = $pdo->query("SELECT * FROM grades where produto = '$id_prod' and ativo = 'Sim' order by posicao asc");
         $res = $query->fetchAll(PDO::FETCH_ASSOC);
         $total_reg = @count($res);
         if ($total_reg > 0) {
@@ -263,7 +263,7 @@ if ($total_reg > 0) {
                 <ol class="list-group">
 
                     <?php
-                    $query2 = $pdo->query("SELECT * FROM itens_grade where grade = '$id_grade' and ativo = 'Sim' order by id asc");
+                    $query2 = $pdo->query("SELECT * FROM itens_grade where grade = '$id_grade' and ativo = 'Sim' order by posicao asc");
                     $res2 = $query2->fetchAll(PDO::FETCH_ASSOC);
                     $total_reg2 = @count($res2);
                     if ($total_reg2 > 0) {
