@@ -157,7 +157,7 @@ if ($total_reg > 0) {
 
 
 
-@$total_com_frete = @$total_carrinho + @$taxa_entrega - @$cupom;
+@$total_com_frete = @$total_carrinho + @$taxa_entrega - @$cupom + $taxa_extra;
 
 if ($total_pago == "") {
   $total_pago = $total_com_frete;
@@ -173,7 +173,7 @@ if ($num_pedido == "") {
 }
 $pedido = $num_pedido + 1;
 
-$query = $pdo->prepare("INSERT INTO vendas SET cliente = '$cliente', valor = '$total_com_frete', total_pago = '$total_pago', troco = '$troco', data = curDate(), hora = curTime(), status = 'Iniciado', pago = '$pago', obs = :obs, taxa_entrega = '$taxa_entrega', tipo_pgto = '$pagamento', usuario_baixa = '0', entrega = '$entrega', mesa = '$mesa', nome_cliente = '$nome_cliente_ped', cupom = '$cupom', pago_entregador = 'Não', pedido = '$pedido', ref_api = '$codigo_pix', tipo_pedido = '$tipo_pedido'");
+$query = $pdo->prepare("INSERT INTO vendas SET cliente = '$cliente', valor = '$total_com_frete', total_pago = '$total_pago', troco = '$troco', data = curDate(), hora = curTime(), status = 'Iniciado', pago = '$pago', obs = :obs, taxa_entrega = '$taxa_entrega', tipo_pgto = '$pagamento', usuario_baixa = '0', entrega = '$entrega', mesa = '$mesa', nome_cliente = '$nome_cliente_ped', cupom = '$cupom', pago_entregador = 'Não', pedido = '$pedido', ref_api = '$codigo_pix', tipo_pedido = '$tipo_pedido', taxa_extra_pedido = '$taxa_extra'");
 $query->bindValue(":obs", "$obs");
 $query->execute();
 $id_pedido = $pdo->lastInsertId();
@@ -199,15 +199,17 @@ if ($api_whatsapp != 'Não') {
   $telefone_envio = '55' . preg_replace('/[ ()-]+/', '', $tel_cliente);
   $total_com_freteF = number_format($total_com_frete, 2, ',', '.');
 
-  $mensagem = '*Pedido:* ' . $pedido . '%0A';
-  $mensagem .= '*Cliente:* ' . $nome_cliente_ped . '%0A';
-  $mensagem .= '*Telefone:* ' . $tel_cliente . '%0A';
-  $mensagem .= '*Valor:* R$ ' . $total_com_freteF . '%0A';
-  $mensagem .= '*Pagamento:* ' . $pagamento . '%0A';
-  $mensagem .= '*Pago:* ' . $pago . '%0A';
-  $mensagem .= '*Previsão Entrega:* ' . $hora_pedido . '%0A';
-  $mensagem .= '%0A________________________________%0A%0A';
-  $mensagem .= '*_Detalhes do Pedido_* %0A%0A';
+ $mensagem = '📦 *Pedido:* ' . $pedido . '%0A';
+$mensagem .= '👤 *Cliente:* ' . $nome_cliente_ped . '%0A';
+$mensagem .= '📞 *Telefone:* ' . $tel_cliente . '%0A';
+$mensagem .= '💰 *Valor:* R$ ' . $total_com_freteF . '%0A';
+$mensagem .= '💳 *Pagamento:* ' . $pagamento . '%0A';
+$mensagem .= '✅ *Pago:* ' . $pago . '%0A';
+$mensagem .= '📅 *Previsão de Entrega:* ' . $hora_pedido . '%0A';
+
+$mensagem .= '%0A━━━━━━━━━━━━━━━━━━━━━━%0A'; // separador visual
+
+$mensagem .= '🧾 *_Detalhes do Pedido_* %0A%0A';
 
 
 
@@ -259,15 +261,53 @@ if ($api_whatsapp != 'Não') {
       $sigla_grade = '';
     }
 
-    $query2 = $pdo->query("SELECT * FROM produtos where id = '$id_produto'");
+   $query2 = $pdo->query("SELECT * FROM produtos where id = '$id_produto'");
     $res2 = $query2->fetchAll(PDO::FETCH_ASSOC);
     if (@count(@$res2) > 0) {
       $nome_produto = $res2[0]['nome'];
       $foto_produto = $res2[0]['foto'];
+      $unidade = $res2[0]['unidade'];
     } else {
       $nome_produto = $nome_produto_tab;
       $foto_produto = "";
+      $unidade = "";
     }
+
+
+
+    $query3 = $pdo->query("SELECT * FROM unidade_medida where id = '$unidade'");
+      $res3 = $query3->fetchAll(PDO::FETCH_ASSOC);
+      if(@count($res3) > 0){
+        $nome_unidade = $res3[0]['nome'];
+      }else{
+        $nome_unidade = 'Sem Unidade';
+      }
+
+
+    $ocultar_quantidades = '';
+      $sigla_unidade = '';
+      if($nome_unidade == 'Quilogramas' or $nome_unidade == 'Quilo' or $nome_unidade == 'Quilograma' or $nome_unidade == 'KG'){
+        $sigla_unidade = ' (KG)';
+        $ocultar_quantidades = 'ocultar';
+      }
+
+      if($nome_unidade == 'Metros' or $nome_unidade == 'Metro' or $nome_unidade == 'M' or $nome_unidade == 'm'){
+        $sigla_unidade = ' (m)';
+        $ocultar_quantidades = 'ocultar';
+      }
+
+      if($nome_unidade == 'Litro' or $nome_unidade == 'Litros' or $nome_unidade == 'L'){
+        $sigla_unidade = ' (L)';
+        $ocultar_quantidades = 'ocultar';
+      }
+
+      //tratamento separa string
+      $qt = explode(".", $quantidade);
+      if($qt[1] > 0){
+        $quantidadeF = $quantidade;   
+      }else{
+        $quantidadeF = $qt[0];
+      }
 
 
     $tabela_ad = 'adicionais';
@@ -286,7 +326,7 @@ if ($api_whatsapp != 'Não') {
       $nome_borda = '';
     }
 
-    $texto_produtos .= '✅' . $quantidade . ' - ' . $nome_produto . ' ' . $sigla_variacao . ' ' . $sigla_grade . '%0A';
+    $texto_produtos .= '✅' . $quantidadeF . ' - ' . $nome_produto . ' ' . $sigla_variacao . ' ' . $sigla_grade . '%0A';
 
 
 
@@ -334,7 +374,7 @@ if ($api_whatsapp != 'Não') {
 
 
     //percorrer as grades do produto
-    $query20 = $pdo->query("SELECT * FROM grades where produto = '$id_produto' and tipo_item != 'Variação'");
+    $query20 = $pdo->query("SELECT * FROM grades where produto = '$id_produto' and tipo_item != 'Variação' order by posicao asc");
     $res20 = $query20->fetchAll(PDO::FETCH_ASSOC);
     $total_reg20 = @count($res20);
     if ($total_reg20 > 0) {
@@ -369,7 +409,7 @@ if ($api_whatsapp != 'Não') {
 
 
 
-            $query3 = $pdo->query("SELECT * FROM itens_grade where id = '$id_item'");
+            $query3 = $pdo->query("SELECT * FROM itens_grade where id = '$id_item' order by posicao asc");
             $res3 = $query3->fetchAll(PDO::FETCH_ASSOC);
             $total_reg3 = @count($res3);
             $nome_item = $res3[0]['texto'];

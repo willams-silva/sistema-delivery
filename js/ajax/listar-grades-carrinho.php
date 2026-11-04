@@ -7,7 +7,7 @@ $id_produto = $_POST['produto'];
 $id_carrinho = $_POST['id'];
 
 //percorrer as grades do produto
-$query20 =$pdo->query("SELECT * FROM grades where produto = '$id_produto' and tipo_item != 'Variação'");
+$query20 =$pdo->query("SELECT * FROM grades where produto = '$id_produto' and tipo_item != 'Variação' order by posicao asc");
   $res20 = $query20->fetchAll(PDO::FETCH_ASSOC);
   $total_reg20 = @count($res20);
   if($total_reg20 > 0){  

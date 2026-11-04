@@ -55,7 +55,7 @@ if($tipo == 'Único' || $tipo == 'Variação'){
 }
 
 
-$pdo->query("INSERT INTO temp SET sessao = '$sessao', tabela = '$tipo', id_item = '$id', carrinho = '0', data = curDate(), grade = '$grade', valor_item = '$valor', quantidade = '$quantidade', tipagem = '$tipagem'"); 
+$pdo->query("INSERT INTO temp SET sessao = '$sessao', tabela = '$tipo', id_item = '$id', carrinho = '0', data = curDate(), grade = '$grade', valor_item = '$valor', quantidade = '$quantidade', tipagem = '$tipagem', pedido = 0"); 
 
 
 echo 'Alterado com Sucesso';
