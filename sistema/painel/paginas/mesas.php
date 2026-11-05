@@ -86,6 +86,27 @@ if (@count($res2) > 0) {
 
 
 
+
+<div class="modal fade" id="modalQRCode" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+	aria-hidden="true">
+	<div class="modal-dialog" role="document">
+		<div class="modal-content">
+			<div class="modal-header bg-primary text-white">
+				<h4 class="modal-title">Mesa <span id="titulo_qrcode"></span></h4>
+				<button id="btn-fechar" aria-label="Close" class="btn-close" data-bs-dismiss="modal" type="button"><span class="text-white" aria-hidden="true">&times;</span></button>
+			</div>
+			
+				<div class="modal-body" id="gerar_qrcode" align="center">
+					
+				</div>
+			
+
+
+		</div>
+	</div>
+</div>
+
+
 <script type="text/javascript">
 	var pag = "<?= $pag ?>"
 </script>

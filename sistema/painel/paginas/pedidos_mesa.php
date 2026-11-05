@@ -3,7 +3,7 @@
 require_once("verificar.php");
 require_once("../conexao.php");
 
-if (@$pedidos == 'ocultar') {
+if (@$pedidos_mesa == 'ocultar') {
 	echo "<script>window.location='../index.php'</script>";
 	exit();
 }
@@ -63,7 +63,7 @@ $segundos = $tempo_atualizar * 1000;
 			<button style="font-size:11px;" type="button" class="btn btn-info mt-1 mb-1"
 				<button style="font-size:11px;" type="button" href="#" class="btn btn-info" title="Pedidos em Preparo" onclick="buscarContas('Preparando')">
 				<span>PREPARANDO</span>
-				<span class="badge bg-light rounded-pill ms-1" id="ini_pprep_pedidosedidos">0</span>
+				<span class="badge bg-light rounded-pill ms-1" id="prep_pedidos">0</span>
 			</button>
 
 			<button style="font-size:11px;" type="button" class="btn btn-success mt-1 mb-1"

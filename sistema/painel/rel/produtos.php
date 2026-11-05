@@ -134,6 +134,12 @@ include('data_formatada.php');
 				$produtos_inativos = 0;
 				$estoque_baixo = 0;
 
+				$total_compra = 0;
+				$total_venda = 0;
+
+				$total_compraF = 0;
+				$total_vendaF = 0;
+
 
 				$query = $pdo->query("SELECT * FROM produtos ORDER BY nome asc");
 				$res = $query->fetchAll(PDO::FETCH_ASSOC);
@@ -179,6 +185,12 @@ include('data_formatada.php');
 						$res2 = $query2->fetchAll(PDO::FETCH_ASSOC);
 						$nome_categoria = @$res2[0]['nome'];
 
+						$total_compra += $valor_compra * $estoque;
+						$total_venda += $valor_venda * $estoque;
+
+						$total_compraF = number_format($total_compra, 2, ',', '.');
+						$total_vendaF = number_format($total_venda, 2, ',', '.');
+
 
 				?>
 
@@ -219,6 +231,25 @@ include('data_formatada.php');
 						<span style="color: #FF9E00"><?php echo $produtos_inativos ?></span></td>
 
 				<td style="font-size: 10px; width:180px; text-align: right;"><b>Total de Produtos: <?php echo $total_reg ?></td>
+
+			</tr>
+		</tbody>
+		</thead>
+	</table>
+
+
+	<table>
+		<thead>
+		<tbody>
+			<tr>
+				<td style="font-size: 10px; width:180px; text-align: right;"> </td>
+
+				<td style="font-size: 10px; width:180px; text-align: right;"></td>
+
+				<td style="font-size: 10px; width:180px; text-align: right;"><b>Total Custo:
+						<span style="color: red">R$ <?php echo $total_compraF ?></span></td>
+
+				<td style="font-size: 10px; width:180px; text-align: right;"><b>Total Venda: <span style="color:green">R$ <?php echo $total_vendaF ?></span></td>
 
 			</tr>
 		</tbody>

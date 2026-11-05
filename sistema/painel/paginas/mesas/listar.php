@@ -79,6 +79,8 @@ HTML;
 
 			<a class="btn btn-success-light btn-sm" href="#" onclick="ativar('{$id}', '{$acao}')" title="{$titulo_link}"><i class="fa {$icone}"></i></a>
 
+			<a class="btn btn-dark btn-sm" href="#" onclick="gerarQrCode('{$id}', '{$nome}')" title="QR Code"><i class="fa fa-qrcode"></i></a>
+
 		</td>
 </tr>
 HTML;
@@ -138,6 +140,25 @@ HTML;
         		alertWarning(result)
         	}
             
+        }
+    });
+	}
+
+
+	function gerarQrCode(id, nome){	
+
+
+		$('#titulo_qrcode').text(nome);
+		$('#modalQRCode').modal('show');	
+
+		$.ajax({
+        url: 'paginas/' + pag + "/gerar_qrcode.php",
+        method: 'POST',
+        data: {id, nome},
+        dataType: "html",
+
+        success:function(result){
+        	$('#gerar_qrcode').html(result);	           
         }
     });
 	}

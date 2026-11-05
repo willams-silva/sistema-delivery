@@ -270,6 +270,10 @@ if (@$clientes == 'ocultar') {
 											<td><span id="cep_dados"></span></td>
 										</tr>
 
+											<tr>
+											<td class="bg-primary text-white w_150">Cartões Fidelidade</td>
+											<td><span id="cartoes_dados"></span></td>
+										</tr>
 
 									</table>
 								</div>

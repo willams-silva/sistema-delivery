@@ -70,6 +70,12 @@ HTML;
 		}
 
 
+		if($nivel == "Entregador" || $nivel == "Motoboy"){
+			$classe_nivel = '';
+		}else{
+			$classe_nivel = 'ocultar';
+		}
+
 
 		echo <<<HTML
 <tr >
@@ -98,6 +104,9 @@ HTML;
 
 <a class="btn btn-dark-light btn-sm" href="#" onclick="arquivo('{$id}', '{$nome}')" title="Inserir / Ver Arquivos"><i class="fa fa-file-o"></i></a>
 
+
+<a class="{$classe_nivel} btn btn-success btn-sm" href="#" onclick="entregas('{$id}', '{$nome}')" title="Ver Entregas Pendentes"><i class="fa fa-usd"></i></a>
+
 </td>
 </tr>
 HTML;
@@ -114,6 +123,7 @@ echo <<<HTML
 </small>
 HTML;
 ?>
+
 
 
 
@@ -220,5 +230,11 @@ HTML;
 		listarArquivos();
 	}
 
+	function entregas(id, nome){
+		$('#id_entrega').val(id);
+		$('#nome_entrega').text(nome);
 
+		listarEntregas(id);
+		$('#modalEntregas').modal('show');
+	}
 </script>

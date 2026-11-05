@@ -30,6 +30,7 @@ $referencia = $res[0]['referencia'];
 $id_ref = $res[0]['id_ref'];
 $hash = $res[0]['hash'];
 
+$referencia_agendamento = 'pagar';
 if ($hash != "") {
 	require("../../apis/cancelar_agendamento.php");
 }

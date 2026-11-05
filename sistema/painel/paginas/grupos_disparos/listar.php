@@ -5,7 +5,7 @@ require_once("../../../conexao.php");
 $tabela = 'grupos_disparos';
 
 
-$query = $pdo->query("SELECT * from $tabela where empresa = '$id_empresa' order by nome asc");
+$query = $pdo->query("SELECT * from $tabela order by nome asc");
 $res = $query->fetchAll(PDO::FETCH_ASSOC);
 $linhas = @count($res);
 if($linhas > 0){

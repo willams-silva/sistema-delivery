@@ -110,7 +110,7 @@ $pag = 'produtos';
 
 						<div class="col-md-2">
 							<div class="form-group">
-								<label for="exampleInputEmail1">Valor Compra</label>
+								<label for="exampleInputEmail1">Valor Custo</label>
 								<input type="text" class="form-control" id="valor_compra" name="valor_compra" placeholder="R$ 0,00">
 							</div>
 						</div>
@@ -186,7 +186,9 @@ $pag = 'produtos';
 							<div class="form-group">
 								<label for="exampleInputEmail1">Preparado Cozinha?</label>
 								<select class="form-select" id="preparado" name="preparado" style="width:100%;">
-									<option value="Sim">Sim</option>
+									<option value="Cozinha">Cozinha</option>
+									<option value="Bar">Bar</option>
+									<option value="Outro">Outro Local (Local 3)</option>
 									<option value="Não">Não</option>
 								</select>
 							</div>

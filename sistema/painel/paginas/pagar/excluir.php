@@ -13,6 +13,7 @@ if($foto != "sem-foto.png"){
 	@unlink('../../images/contas/'.$foto);
 }
 
+$referencia_agendamento = 'pagar';
 if($hash != ""){
 	require("../../apis/cancelar_agendamento.php");
 }

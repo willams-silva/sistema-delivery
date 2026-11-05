@@ -451,6 +451,33 @@ if (@$funcionarios == 'ocultar') {
 
 
 
+<!-- Modal Entregas-->
+<div class="modal fade" id="modalEntregas" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+	<div class="modal-dialog" role="document">
+		<div class="modal-content">
+			<div class="modal-header bg-primary text-white">
+				<h4 class="modal-title" id="tituloModal"><span id="nome_entrega"> </span>/ Total: <span class="text-danger" id="total_pagar"></span></h4>
+				<button id="btn-fechar-entrega" aria-label="Close" class="btn-close" data-bs-dismiss="modal"
+					type="button"><span class="text-white" aria-hidden="true">&times;</span></button>
+			</div>
+		
+			
+			<div class="modal-body">			
+
+				<div id="listar_entregas">
+					
+				</div>
+
+				<input type="hidden" id="id_entrega">
+
+			</div>
+
+			
+		</div>
+	</div>
+</div>
+
+
 
 
 
@@ -660,4 +687,21 @@ if (@$funcionarios == 'ocultar') {
 		}
 	};
 
+</script>
+
+
+
+<script type="text/javascript">
+	function listarEntregas(id){
+		$.ajax({
+        url: 'paginas/' + pag + "/listar_entregas.php",
+        method: 'POST',
+        data: {id},
+        dataType: "html",
+
+        success:function(result){
+            $("#listar_entregas").html(result);           
+        }
+    });
+	}
 </script>

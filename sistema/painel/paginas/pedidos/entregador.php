@@ -283,7 +283,7 @@ if ($api_whatsapp != 'Não') {
 
   $mensagem .= '_Acessar Painel com seu telefone para visaulizar e confrimar a entrega:_ %0A';
 
-  $mensagem .= $url_sistema . 'sistema/entregador';
+  $mensagem .= $url_sistema . 'sistema';
 
 
 

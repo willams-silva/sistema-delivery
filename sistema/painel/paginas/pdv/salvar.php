@@ -15,6 +15,8 @@ $data_inicio_ano = $ano_atual."-01-01";
 $data_ontem = date('Y-m-d', strtotime("-1 days",strtotime($data_atual)));
 $data_amanha = date('Y-m-d', strtotime("+1 days",strtotime($data_atual)));
 
+$total_compra = 0;
+
 
 if($mes_atual == '04' || $mes_atual == '06' || $mes_atual == '09' || $mes_atual == '11'){
 	$data_final_mes = $ano_atual.'-'.$mes_atual.'-30';
@@ -74,10 +76,27 @@ if($cliente == ""){
 	$cliente = 0;
 }
 
-
+$total_cartoes_cliente = 0;
 $query = $pdo->query("SELECT * FROM clientes where id = '$cliente'");
 $res = $query->fetchAll(PDO::FETCH_ASSOC);
 $nome_cliente = @$res[0]['nome'];
+$total_cartoes_cliente = @$res[0]['cartoes'];
+if(@count($res) > 0){
+    if($total_cartoes_cliente == ""){
+      $total_cartoes_cliente = 0;
+    }
+    if($total_cartoes_cliente < $total_cartoes_config){
+      $total_cartoes_cliente = $total_cartoes_cliente + 1;
+    } 
+
+    if($total_cartoes_config == 0){
+       $total_cartoes_cliente = 0;
+    }
+
+$pdo->query("UPDATE clientes SET  cartoes = '$total_cartoes_cliente' where id = '$cliente'");
+
+}
+
 
 $query = $pdo->query("SELECT * FROM formas_pgto where nome = '$saida'");
 $res = $query->fetchAll(PDO::FETCH_ASSOC);
@@ -107,6 +126,9 @@ if ($total_reg > 0) {
     $valor_produto = $res2[0]['valor_venda'];
     $estoque = $res2[0]['estoque'];
     $tem_estoque = $res2[0]['tem_estoque'];
+    $valor_compra = $res2[0]['valor_compra'];
+    $valor_compra = $quantidade * $valor_compra;
+    $total_compra += $valor_compra;
 
 
     if ($tem_estoque == 'Sim') {
@@ -190,14 +212,14 @@ if(@count($res1) > 0){
 	$id_caixa = 0;
 }
 
-$query = $pdo->prepare("INSERT INTO vendas SET cliente = '$cliente', valor = '$total_final', total_pago = '$troco', troco = '$troco_calculado', data = curDate(), hora = curTime(), status = 'Iniciado', pago = '$pago', obs = '', taxa_entrega = '$frete', tipo_pgto = '$saida', usuario_baixa = '0', entrega = 'Consumir Local', mesa = '$mesa', nome_cliente = '$nome_cliente', cupom = '$desconto', pago_entregador = 'Não', pedido = '$pedido', ref_api = '', tipo_pedido = '$tipo_pedido', taxa_extra_pedido = '0', caixa = '$id_caixa'");
+$query = $pdo->prepare("INSERT INTO vendas SET cliente = '$cliente', valor = '$total_final', total_pago = '$troco', troco = '$troco_calculado', data = curDate(), hora = curTime(), status = 'Iniciado', pago = '$pago', obs = '', taxa_entrega = '$frete', tipo_pgto = '$saida', usuario_baixa = '0', entrega = 'Consumir Local', mesa = '$mesa', nome_cliente = '$nome_cliente', cupom = '$desconto', pago_entregador = 'Não', pedido = '$pedido', ref_api = '', tipo_pedido = '$tipo_pedido', taxa_extra_pedido = '0', caixa = '$id_caixa', custo = '$total_compra'");
 $query->execute();
 $id_pedido = $pdo->lastInsertId();
 $id_pedido_feito = $pdo->lastInsertId();
 
 
 //lançar nas contas a receber
-$pdo->query("INSERT INTO receber SET descricao = 'Nova Venda', cliente = '$cliente', valor = '$total_final', vencimento = '$data', data_pgto = '$data', data_lanc = curDate(), forma_pgto = '$id_saida', frequencia = '0',  arquivo = 'sem-foto.jpg', foto = 'sem-foto.jpg', subtotal = '$total_final', usuario_lanc = '$id_usuario', usuario_pgto = '$usuario_pgto', pago = '$pago', referencia = 'Venda', caixa = '$id_caixa', hora = curTime(), tipo = 'Balcão' ");
+$pdo->query("INSERT INTO receber SET descricao = 'Nova Venda', cliente = '$cliente', valor = '$total_final', vencimento = '$data', data_pgto = '$data', data_lanc = curDate(), forma_pgto = '$id_saida', frequencia = '0',  arquivo = 'sem-foto.jpg', foto = 'sem-foto.jpg', subtotal = '$total_final', usuario_lanc = '$id_usuario', usuario_pgto = '$usuario_pgto', pago = '$pago', referencia = 'Venda', caixa = '$id_caixa', hora = curTime(), tipo = 'Balcão', custo = '$total_compra' ");
 
 
 //relacionar itens do carrinho com o pedido

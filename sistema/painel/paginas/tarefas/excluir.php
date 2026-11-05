@@ -2,6 +2,8 @@
 $tabela = 'tarefas';
 require_once("../../../conexao.php");
 
+$referencia_agendamento = 'tarefa';
+
 $id = $_POST['id'];
 
 $query = $pdo->query("SELECT * FROM $tabela where id = '$id'");

@@ -56,7 +56,7 @@ if($tipo_desconto == "%"){
 }
 
 
-
+$total_compra = 0;
 
 $query = $pdo->prepare("UPDATE $tabela SET garcon = :garcon, total = :total, horario_fechamento = curTime(), status = 'Fechada', obs = :obs, comissao_garcon = :comissao, couvert = :couvert, subtotal = :subtotal, forma_pgto = :forma_pgto, valor_adiantado = '$total_valor_fechamento', desconto = :desconto, total_recebido = :total_recebido, troco = :troco WHERE id = '$id_ab'");
 
@@ -100,18 +100,6 @@ $query->bindValue(":valor", "$comissao");
 $query->execute();
 
 
-#######LANÇAR AS VENDAS###########################################
-$query = $pdo->prepare("INSERT INTO receber SET descricao = 'Venda Mesa', tipo = 'Venda', valor = :valor, data_lanc = curDate(), vencimento = curDate(), data_pgto = curDate(), usuario_lanc = '$id_usuario', usuario_pgto = '$id_usuario', foto = 'sem-foto.png', arquivo = 'sem-foto.jpg', pessoa = '0', pago = 'Sim', referencia = 'Venda', id_ref = '$id_ab', caixa = '$id_caixa', forma_pgto = '$forma_pgto', subtotal = '$subtotal', hora = curTime(), troco = :troco, total_recebido = :total_recebido, desconto = :desconto");
-$query->bindValue(":valor", "$subtotal");
-$query->bindValue(":troco", "$troco");
-$query->bindValue(":total_recebido", "$total_recebido");
-$query->bindValue(":desconto", "$total_desconto");
-$query->execute();
-
-
-
-$pdo->query("INSERT INTO vendas SET cliente = '0', valor = '$subtotal', total_pago = '$total_recebido', troco = '$troco', data = curDate(), hora = curTime(), status = 'Finalizado', pago = 'Sim',  taxa_entrega = '0', tipo_pgto = '$nome_forma_pgto', usuario_baixa = '$id_usuario', entrega = 'Pedido Mesa', mesa = '$id_mesa', nome_cliente = '$nome_cliente_ab', cupom = '$total_desconto', pago_entregador = 'Não', pedido = '', ref_api = '', tipo_pedido = 'Mesa'");
-
 
 //atualizar produtos
 $query = $pdo->query("SELECT * FROM carrinho where mesa = '$id_ab'");
@@ -133,6 +121,9 @@ if ($total_reg > 0) {
     $valor_produto = $res2[0]['valor_venda'];
     $estoque = $res2[0]['estoque'];
     $tem_estoque = $res2[0]['tem_estoque'];
+    $valor_compra = $res2[0]['valor_compra'];
+    $valor_compra = $quantidade * $valor_compra;
+    $total_compra += $valor_compra;
 
 
     if ($tem_estoque == 'Sim') {
@@ -142,6 +133,22 @@ if ($total_reg > 0) {
 
   }
 } 
+
+
+
+#######LANÇAR AS VENDAS###########################################
+$query = $pdo->prepare("INSERT INTO receber SET descricao = 'Venda Mesa', tipo = 'Venda', valor = :valor, data_lanc = curDate(), vencimento = curDate(), data_pgto = curDate(), usuario_lanc = '$id_usuario', usuario_pgto = '$id_usuario', foto = 'sem-foto.png', arquivo = 'sem-foto.png', pessoa = '0', pago = 'Sim', referencia = 'Venda', id_ref = '$id_ab', caixa = '$id_caixa', forma_pgto = '$forma_pgto', subtotal = '$subtotal', hora = curTime(), troco = :troco, total_recebido = :total_recebido, desconto = :desconto, custo = '$total_compra'");
+$query->bindValue(":valor", "$subtotal");
+$query->bindValue(":troco", "$troco");
+$query->bindValue(":total_recebido", "$total_recebido");
+$query->bindValue(":desconto", "$total_desconto");
+$query->execute();
+
+
+
+$pdo->query("INSERT INTO vendas SET cliente = '0', valor = '$subtotal', total_pago = '$subtotal', troco = '$troco', data = curDate(), hora = curTime(), status = 'Finalizado', pago = 'Sim',  taxa_entrega = '0', tipo_pgto = '$nome_forma_pgto', usuario_baixa = '$id_usuario', entrega = 'Pedido Mesa', mesa = '$id_mesa', nome_cliente = '$nome_cliente_ab', cupom = '$total_desconto', pago_entregador = 'Não', pedido = '', ref_api = '', tipo_pedido = 'Mesa', custo = '$total_compra'");
+
+
 
 
 

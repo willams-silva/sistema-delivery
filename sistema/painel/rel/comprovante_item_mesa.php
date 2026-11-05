@@ -159,7 +159,7 @@ $horaF = date("H:i", strtotime($hora));
 
 <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
 
-<?php if (@$impressao_automatica == 'Sim') { ?>
+<?php if (@$impressao_cozinha == 'Sim') { ?>
 	<script type="text/javascript">
 		$(document).ready(function() {
 			window.print();

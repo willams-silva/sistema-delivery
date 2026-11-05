@@ -41,7 +41,10 @@ if ($total_reg > 0) {
 
 			$query2 = $pdo->query("SELECT * FROM usuarios where id = '$garcon' ");
 			$res2 = $query2->fetchAll(PDO::FETCH_ASSOC);
-			$nome_garcon = '(' . @$res2[0]['nome'] . ')';
+			$nome_garcon = 'Garçon: (' . @$res2[0]['nome'] . ')';
+
+			
+			$nome_cliente = ' / Cliente: (' . @$cliente . ')';
 
 			$horario_aberturaF = date('H:i', @strtotime($horario_abertura));
 
@@ -60,6 +63,7 @@ if ($total_reg > 0) {
 			$garcon = '';
 			$status_abertura = '';
 			$obsF = '';
+			$nome_cliente = '&nbsp;';
 		}
 
 
@@ -189,7 +193,10 @@ if ($total_reg > 0) {
                     <div class="stats" align="center">
                       <span>                     
 
-                        <small><span style="color:green" class="vazio">{$totalF}</span> <span style="color:red; font-size: 10px">{$horario_aberturaF} </span> <span style="color:blue; font-size: 13px">{$pessoas_mesa}</span><br> <i><span style="color:#061f9c; font-size: 10px">{$nome_garcon}</span></i></small></span>
+                        <small><span style="color:green" class="vazio">{$totalF}</span> <span style="color:red; font-size: 10px">{$horario_aberturaF} </span> <span style="color:blue; font-size: 13px">{$pessoas_mesa}</span><br> 
+                        <i><span style="color:#061f9c; font-size: 9px">{$nome_garcon}</span></i>
+                        <i><span style="color:#074a1b; font-size: 9px">{$nome_cliente}</span></i>
+                        </small></span>
                     </div>
                 </div>
         	</div>

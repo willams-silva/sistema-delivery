@@ -100,6 +100,25 @@ if(@$_FILES['foto']['name'] != ""){
 }
 
 
+if($categoria == ""){
+	$categoria = 0;
+}
+
+if($valor_compra == ""){
+	$valor_compra = 0;
+}
+
+if($valor_venda == ""){
+	$valor_venda = 0;
+}
+
+if($nivel_estoque == ""){
+	$nivel_estoque = 0;
+}
+
+if($val_promocional == ""){
+	$val_promocional = 0;
+}
 
 
 if($id == ""){

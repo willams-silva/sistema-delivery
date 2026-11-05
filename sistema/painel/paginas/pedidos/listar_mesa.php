@@ -15,23 +15,35 @@ if($delivery_monitor != 'Sim'){
 }
 
 //TOTAIS DOS PEDIDOS
-$query = $pdo->query("SELECT * FROM $tabela where status = 'Aguardando' $sql_mesa ");
+// base da consulta: só itens da cozinha
+$base = "FROM $tabela c 
+         INNER JOIN produtos p ON p.id = c.produto
+         WHERE p.preparado = 'Cozinha' $sql_mesa";
+
+// Aguardando
+$query = $pdo->query("SELECT * $base AND c.status = 'Aguardando'");
 $res = $query->fetchAll(PDO::FETCH_ASSOC);
 $total_ini = @count($res);
 
-$query = $pdo->query("SELECT * FROM $tabela where status = 'Preparando' $sql_mesa");
+// Preparando
+$query = $pdo->query("SELECT * $base AND c.status = 'Preparando'");
 $res = $query->fetchAll(PDO::FETCH_ASSOC);
 $total_prep = @count($res);
 
-$query = $pdo->query("SELECT * FROM $tabela where status = 'Pronto' $sql_mesa");
+// Pronto
+$query = $pdo->query("SELECT * $base AND c.status = 'Pronto'");
 $res = $query->fetchAll(PDO::FETCH_ASSOC);
 $total_ent = @count($res);
 
-$query = $pdo->query("SELECT * FROM $tabela where (status = 'Aguardando' or status = 'Preparando' or status = 'Pronto') $sql_mesa");
+// Todos (Aguardando, Preparando ou Pronto)
+$query = $pdo->query("SELECT * $base 
+                      AND (c.status = 'Aguardando' 
+                       OR  c.status = 'Preparando' 
+                       OR  c.status = 'Pronto')");
 $res = $query->fetchAll(PDO::FETCH_ASSOC);
 $total_pedidos = @count($res);
 
-$query = $pdo->query("SELECT * FROM $tabela where status != 'Finalizado' and status != 'Cancelado' $sql_mesa order by id desc limit 1");
+$query = $pdo->query("SELECT * FROM $tabela where status != 'Finalizado' and status != 'Cancelado'  order by id desc limit 1");
 $res = $query->fetchAll(PDO::FETCH_ASSOC);
 $id_ult_pedido = @$res[0]['id'];
 
@@ -75,6 +87,7 @@ if ($total_reg > 0) {
     $ab_mesa = $res[$i]['mesa'];
     $obs_item = $res[$i]['obs'];
     $pedido = $res[$i]['pedido'];
+    $impressao = $res[$i]['impressao'];
 
 
     if ($status == "") {
@@ -194,7 +207,7 @@ if ($total_reg > 0) {
       $preparado = "";
     }
 
-    if($preparado == 'Não'){
+    if($preparado != 'Cozinha'){
       continue;
     }
 
@@ -251,6 +264,15 @@ if ($total_reg > 0) {
       } else {
         $nome_borda = 'Sem Borda';
       }
+    }
+
+
+
+    //validando impressao automatica
+    if ($status == 'Aguardando' and $impressao_cozinha == 'Sim' and $impressao != "Sim") {
+      $ids .= $id . '-';
+      //coloco a impressao = sim
+      $pdo->query("UPDATE $tabela SET impressao = 'Sim' where id = '$id'");
     }
 
 
@@ -516,7 +538,7 @@ $total_dos_itens_pedidos = @count($res);
 
       let a = document.createElement('a');
       a.target = '_blank';
-      a.href = 'rel/comprovante.php?id=' + id_pedido;
+      a.href = 'rel/comprovante_item_mesa.php?id=' + id_pedido;
       a.click();
     }
 

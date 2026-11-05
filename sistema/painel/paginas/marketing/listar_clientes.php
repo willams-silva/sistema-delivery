@@ -37,6 +37,21 @@ if ($clientes == "Teste") {
 }else if ($clientes == "Inadimplentes"){
 	$resultado = $pdo->query("SELECT DISTINCT c.nome, c.telefone, c.id FROM clientes c JOIN receber r ON c.id = r.cliente WHERE r.vencimento < CURDATE() AND r.pago = 'Não' ");
 
+}else if ($clientes == "1"){
+	$resultado = $pdo->query("SELECT * FROM clientes where cartoes = 1 ");	
+
+}else if ($clientes == "2"){
+	$resultado = $pdo->query("SELECT * FROM clientes where cartoes = 2 ");	
+
+}else if ($clientes == "3"){
+	$resultado = $pdo->query("SELECT * FROM clientes where cartoes = 3 ");	
+
+}else if ($clientes == "4"){
+	$resultado = $pdo->query("SELECT * FROM clientes where cartoes = 4 ");	
+
+}else if ($clientes == "5"){
+	$resultado = $pdo->query("SELECT * FROM clientes where cartoes = 5 ");	
+
 }else{
 	$resultado = $pdo->query("SELECT * FROM grupos_clientes where grupo = '$clientes'");	
 }

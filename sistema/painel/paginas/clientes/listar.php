@@ -46,6 +46,7 @@ HTML;
 		$data_nasc = $res[$i]['data_nasc'];
 		$complemento = $res[$i]['complemento'];
 		$marketing = $res[$i]['marketing'];
+		$cartoes = $res[$i]['cartoes'];
 
 		$data_cadF = implode('/', array_reverse(@explode('-', $data_cad)));
 		$data_nascF = implode('/', array_reverse(@explode('-', $data_nasc)));
@@ -79,6 +80,11 @@ HTML;
 		$nomeF = rawurlencode($nome);
 		$enderecoF = rawurlencode($endereco);
 
+		$mostrar_cartao = '';
+		if($total_cartoes_config == 0){
+			$mostrar_cartao = 'ocultar';
+		}
+
 		echo <<<HTML
 <tr class="{$debito2}">
 <td align="center">
@@ -95,13 +101,15 @@ HTML;
 
 <big><a class="btn btn-danger-light btn-sm" href="#" onclick="excluir('{$id}')" title="Excluir"><i class="fa fa-trash-can text-danger"></i></a></big>
 
-<a class="btn btn-primary-light btn-sm" href="#" onclick="mostrar('{$nome}','{$email}','{$telefone}','{$endereco}', '{$data_cadF}','{$cpf}','{$data_nascF}','{$numero}','{$bairro}','{$cidade}','{$estado}','{$cep}','{$complemento}')" title="Mostrar Dados"><i class="fa fa-info-circle"></i></a>
+<a class="btn btn-primary-light btn-sm" href="#" onclick="mostrar('{$nome}','{$email}','{$telefone}','{$endereco}', '{$data_cadF}','{$cpf}','{$data_nascF}','{$numero}','{$bairro}','{$cidade}','{$estado}','{$cep}','{$complemento}','{$cartoes}')" title="Mostrar Dados"><i class="fa fa-info-circle"></i></a>
 
 <a class="btn btn-dark-light btn-sm" href="#" onclick="arquivo('{$id}', '{$nome}')" title="Inserir / Ver Arquivos"><i class="fa fa-file-o "></i></a>
 
 <a class="btn btn-success-light btn-sm" href="#" onclick="mostrarContas('{$nome}','{$id}')" title="Mostrar Contas"><i class="fa fa-money"></i></a>
 
 <a class="btn btn-success-light btn-sm {$ocultar_whats}" href="http://api.whatsapp.com/send?1=pt_BR&phone={$tel_whatsF}" title="Whatsapp" target="_blank"><i class="fa-brands fa-whatsapp"></i></a>
+
+<a class="btn btn-info btn-sm {$mostrar_cartao}" href="#" title="Mensagem Cartões" onclick="mensagemMarketing('{$id}', '{$nome}', '{$cartoes}', '{$telefone}')"><i class="fa fa-id-card"></i></a>
 
 <big><a class="btn btn-danger-light btn-sm {$ocultar_mark}" href="#" onclick="excluirMarketing('{$id}')" title="Remover do Marketing Whatsapp"><i class="fa fa-ban text-danger"></i></a></big>
 
@@ -155,7 +163,7 @@ HTML;
 		$('#modalForm').modal('show');
 	}
 
-	function mostrar(nome, email, telefone, endereco, data_cad, cpf, data_nasc, numero, bairro, cidade, estado, cep, complemento) {
+	function mostrar(nome, email, telefone, endereco, data_cad, cpf, data_nasc, numero, bairro, cidade, estado, cep, complemento, cartoes) {
 
 		$('#titulo_dados').text(decodeURIComponent(nome));
 		$('#email_dados').text(email);
@@ -171,6 +179,7 @@ HTML;
 		$('#estado_dados').text(estado);
 		$('#cep_dados').text(cep);
 		$('#complemento_dados').text(complemento);
+		$('#cartoes_dados').text(cartoes);
 
 		$('#modalDados').modal('show');
 	}
@@ -288,5 +297,23 @@ function excluirMarketing(id) {
 
 
 };
+
+
+
+function mensagemMarketing(id, nome, cartoes, telefone) {
+
+		$.ajax({
+			url: 'paginas/' + pag + "/mensagem_marketing.php",
+			method: 'POST',
+			data: {
+				id, nome, cartoes, telefone
+			},
+			dataType: "html",
+
+			success: function(result) {
+				alert('Mensagem Enviada!');
+			}
+		});
+	}
 
 </script>

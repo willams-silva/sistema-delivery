@@ -544,11 +544,25 @@ if (@count($res1) > 0) {
 									<span class="side-menu__label" style="margin-left: 15px">Pedidos Esteira</span></a>
 							</li>
 
-							<li class="slide <?php echo @$pedidos_mesa ?>">
-								<a class="side-menu__item" href="pedidos_mesa">
-									<i class="fa fa-table text-white"></i>
-									<span class="side-menu__label" style="margin-left: 15px">Pedido Cozinha</span></a>
+
+							<li class="slide <?php echo @$menu_pedidos_locais ?>">
+								<a class="side-menu__item" data-bs-toggle="slide" href="javascript:void(0);">
+									<i class="fa fa-table text-white mt-1"></i>
+									<span class="side-menu__label" style="margin-left: 15px">Pedidos Locais</span><i
+										class="angle fe fe-chevron-right"></i></a>
+								<ul class="slide-menu">
+
+									<li class="<?php echo @$pedidos_mesa ?>"><a class="slide-item" href="pedidos_mesa"> Pedidos Cozinha</a></li>
+
+									<li class="<?php echo @$pedidos_bar ?>"><a class="slide-item" href="pedidos_bar"> Pedidos Bar</a></li>
+
+									<li class="<?php echo @$pedidos_outros ?>"><a class="slide-item" href="pedidos_outros"> Outros Locais</a></li>
+									
+
+								</ul>
 							</li>
+
+							
 
 							<li class="slide <?php echo @$novo_pedido ?>">
 								<a class="side-menu__item" href="novo_pedido">
@@ -754,12 +768,13 @@ if (@count($res1) > 0) {
 										<span class="side-menu__label" style="margin-left: 15px">Marketing</span></a>
 								</li>
 
-
+								<?php if($api_whatsapp == 'menuia'){ ?>
 								<li class="slide <?php echo @$dispositivos ?>" >
 									<a class="side-menu__item" href="dispositivos">
 										<i class="fa fa-phone text-white"></i>
 										<span class="side-menu__label" style="margin-left: 15px">Dispositivos</span></a>
 								</li>
+							<?php } ?>
 
 
 						</ul>
@@ -1390,7 +1405,7 @@ if (@count($res1) > 0) {
 
 					<div class="row mb-3">
 
-						<div class="col-md-3">
+						<div class="col-md-2" style="margin-top: -7px">
 							<label>
 								<div class="icones_mobile" class="dropdown" style="display: inline-block; ">
 									<a title="Clique para ver as opções das apis" href="#" aria-expanded="false" aria-haspopup="true"
@@ -1414,6 +1429,11 @@ if (@count($res1) > 0) {
 												</a>
 												<br><br>
 
+												<b>4 - (Evolution)</b> <br>
+												<a href="" target="_blank">Aplicação da Evolution
+												</a>
+												<br><br>
+
 											</p>
 
 										</div>
@@ -1423,8 +1443,12 @@ if (@count($res1) > 0) {
 								Api Whatsapp <a href="#" onclick="testarApi()" title="Testar disparo Api"><i
 										class="fa-brands fa-whatsapp text-verde"></i></a>
 							</label>
-							<select name="api_whatsapp" id="api_whatsapp" class="form-select">
+							<select onchange="habilitarUrl()" name="api_whatsapp" id="api_whatsapp" class="form-select">
 								<option value="Não" <?php if ($api_whatsapp == 'Não') { ?> selected <?php } ?>>Não</option>
+
+								<option value="evolution" <?php if ($api_whatsapp == 'evolution') { ?> selected <?php } ?>>Evolution</option>
+
+
 								<option value="menuia" <?php if ($api_whatsapp == 'menuia') { ?> selected <?php } ?>>Menuia</option>
 								<option value="wm" <?php if ($api_whatsapp == 'wm') { ?> selected <?php } ?>>WordMensagens</option>
 								<option value="newtek" <?php if ($api_whatsapp == 'newtek') { ?> selected <?php } ?>>NewTek</option>
@@ -1435,17 +1459,23 @@ if (@count($res1) > 0) {
 						</div>
 
 
-						<div class="col-md-4">
+						<div class="col-md-3">
 							<label>Token Whatsapp (appkey)</label>
 							<input type="text" class="form-control" id="token_whatsapp" name="token_whatsapp"
 								placeholder="Token ou App Key" value="<?php echo @$token_whatsapp ?>">
 						</div>
 
 
-						<div class="col-md-5">
+						<div class="col-md-4">
 							<label>Instância Whatsapp (authKey)</label>
 							<input type="text" class="form-control" id="instancia_whatsapp" name="instancia_whatsapp"
 								placeholder="Instância ou authKey" value="<?php echo @$instancia_whatsapp ?>">
+						</div>
+
+						<div id="url_da_evo" class="col-md-3">
+							<label>Url da Evolution</label>
+							<input type="text" class="form-control" id="url_evolution" name="url_evolution"
+								placeholder="Url da Evolution" value="<?php echo @$url_evolution ?>">
 						</div>
 
 
@@ -1512,8 +1542,8 @@ if (@count($res1) > 0) {
 						</div>
 
 						<div class="col-md-5">
-							<label>API Mercado Pago</label>
-							<input type="text" class="form-control" id="api_merc" name="api_merc" placeholder="API Mercado Pago"
+							<label>API Mercado Pago (Apenas Acess Token)</label>
+							<input type="text" class="form-control" id="api_merc" name="api_merc" placeholder="Access Token MP"
 								value="<?php echo @$api_merc ?>" <?php if ($nivel_usuario == 'Administrador') {
 																									} else { ?> readonly <?php } ?>>
 						</div>
@@ -1603,6 +1633,27 @@ if (@count($res1) > 0) {
 								<option value="Não" <?php if (@$consumir_local == 'Não') { ?> selected <?php } ?>>Não</option>
 							</select>
 						</div>
+
+
+						<div class="col-md-3">
+							<label>Somente Pix no Delivery </label>
+							<select class="form-select" name="somente_pix_delivery">
+								<option value="Não" <?php if (@$somente_pix_delivery == 'Não') { ?> selected <?php } ?>>Não</option>
+								<option value="Sim" <?php if (@$somente_pix_delivery == 'Sim') { ?> selected <?php } ?>>Sim</option>
+								
+							</select>
+						</div>
+
+
+						<div class="col-md-3">
+							<label>Impressão Automática Cozinha </label>
+							<select class="form-select" name="impressao_cozinha">
+								<option value="Não" <?php if (@$impressao_cozinha == 'Não') { ?> selected <?php } ?>>Não</option>
+								<option value="Sim" <?php if (@$impressao_cozinha == 'Sim') { ?> selected <?php } ?>>Sim</option>
+								
+							</select>
+						</div>
+
 					</div>
 
 
@@ -2490,6 +2541,7 @@ if (@count($res1) > 0) {
 		var token = $('#token_whatsapp').val();
 		var instancia = $('#instancia_whatsapp').val();
 		var telefone_sistema = $('#telefone_sistema').val();
+		var url_evolution = $('#url_evolution').val();
 
 		$.ajax({
 			url: 'apis/teste_whatsapp.php',
@@ -2498,7 +2550,8 @@ if (@count($res1) > 0) {
 				seletor_api,
 				token,
 				instancia,
-				telefone_sistema
+				telefone_sistema,
+				url_evolution
 			},
 			dataType: "html",
 
@@ -2628,4 +2681,30 @@ if (@count($res1) > 0) {
 		document.getElementById('ano-' + campo).style.color = "#fff";
 		document.getElementById(id).style.color = "blue";
 	}
+</script>
+
+
+<style>
+  #url_da_evo {
+    display: none;
+  }
+</style>
+
+
+<script>
+function habilitarUrl() {
+    var api = document.getElementById("api_whatsapp").value;
+    var divUrl = document.getElementById("url_da_evo");
+
+    if (api === "evolution") {
+        divUrl.style.display = "block";
+    } else {
+        divUrl.style.display = "none";
+    }
+}
+
+// Executa ao carregar a página
+document.addEventListener("DOMContentLoaded", function() {
+    habilitarUrl();
+});
 </script>

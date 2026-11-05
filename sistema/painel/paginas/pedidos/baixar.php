@@ -14,6 +14,8 @@ if($id_usuario == ""){
 $id = @$_POST['id'];
 $pgto = $_POST['pgto'];
 
+$custo = 0;
+
 $query = $pdo->query("SELECT * FROM vendas where id = '$id'");
 $res = $query->fetchAll(PDO::FETCH_ASSOC);
 $total_reg = @count($res);
@@ -21,6 +23,7 @@ if ($total_reg > 0) {
   $valor = $res[0]['valor'];
   $entrega = $res[0]['entrega'];
   $cliente = $res[0]['cliente'];
+  $custo = $res[0]['custo'];
 }
 
 
@@ -44,6 +47,6 @@ if (@count($res1) > 0) {
   $id_caixa = 0;
 }
 
-$pdo->query("INSERT INTO receber SET descricao = '$entrega', cliente = '$cliente', valor = '$valor', subtotal = '$valor', data_lanc = curDate(), hora = curTime(), pago = 'Sim', usuario_pgto = '$id_usuario', vencimento = curDate(), data_pgto = curDate(), foto = 'sem-foto.png', arquivo = 'sem-foto.png', forma_pgto = '$id_tipo_pgto', caixa = '$id_caixa', referencia = '$entrega'");
+$pdo->query("INSERT INTO receber SET descricao = '$entrega', cliente = '$cliente', valor = '$valor', subtotal = '$valor', data_lanc = curDate(), hora = curTime(), pago = 'Sim', usuario_pgto = '$id_usuario', vencimento = curDate(), data_pgto = curDate(), foto = 'sem-foto.png', arquivo = 'sem-foto.png', forma_pgto = '$id_tipo_pgto', caixa = '$id_caixa', referencia = '$entrega', custo = '$custo'");
 
 echo 'Baixado com Sucesso';

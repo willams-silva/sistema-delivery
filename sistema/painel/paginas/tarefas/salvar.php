@@ -4,6 +4,8 @@ $id_usuario = @$_SESSION['id'];
 $tabela = 'tarefas';
 require_once("../../../conexao.php");
 
+$referencia_agendamento = 'tarefa';
+
 $data_atual = 'Y-m-d';
 $hora_atual = date("H:i:s");
 
@@ -71,6 +73,7 @@ if ($hora < 6 && $hora >= 0)
 $query = $pdo->query("SELECT * FROM $tabela where id = '$id'");
 $res = $query->fetchAll(PDO::FETCH_ASSOC);
 $hash = @$res[0]['hash'];
+
 
 if ($hash != "") {
 	require("../../apis/cancelar_agendamento.php");

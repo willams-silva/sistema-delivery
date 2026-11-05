@@ -13,7 +13,7 @@ $tarefas = 'ocultar';
 $lancar_tarefas = 'ocultar';
 $anotacoes = 'ocultar';
 $configuracoes = 'ocultar';
-$pedidos_mesa = 'ocultar';
+
 $pedido_site = 'ocultar';
 $minhas_comissoes = 'ocultar';
 $marketing = 'ocultar';
@@ -67,6 +67,10 @@ $rel_balanco = 'ocultar';
 
 
 
+//pedidos locais
+$pedidos_mesa = 'ocultar';
+$pedidos_bar = 'ocultar';
+$pedidos_outros = 'ocultar';
 
 
 $query = $pdo->query("SELECT * FROM usuarios_permissoes where usuario = '$id_usuario'");
@@ -311,6 +315,15 @@ if($total_reg > 0){
 			$comissoes = '';
 		}
 
+
+		if ($chave == 'pedidos_bar') {
+			$pedidos_bar = '';
+		}
+
+		if ($chave == 'pedidos_outros') {
+			$pedidos_outros = '';
+		}
+
 		
 
 
@@ -382,4 +395,11 @@ if ($rel_produtos == 'ocultar' and $rel_lucro == 'ocultar' and $rel_balanco == '
 	$relatorios = 'ocultar';
 } else {
 	$relatorios = '';
+}
+
+
+if ($pedidos_mesa == 'ocultar' and $pedidos_bar == 'ocultar' and $pedidos_outros == 'ocultar' ) {
+	$menu_pedidos_locais = 'ocultar';
+} else {
+	$menu_pedidos_locais = '';
 }

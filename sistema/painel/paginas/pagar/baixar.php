@@ -66,6 +66,7 @@ $referencia = $res[0]['referencia'];
 $hash = $res[0]['hash'];
 $vencimento = $res[0]['vencimento'];
 
+$referencia_agendamento = 'pagar';
 if ($hash != "") {
 	require("../../apis/cancelar_agendamento.php");
 }

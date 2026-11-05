@@ -28,7 +28,7 @@ if(@count($res2) > 0){
 
 
 //verificar se ele tem a permissão de estar nessa página
-if(@$vendas == 'ocultar'){
+if(@$vendas == 'ocultar' and $novo_pedido == 'ocultar'){
 	echo "<script>window.location='index.php'</script>";
 	exit();
 }
@@ -1140,9 +1140,10 @@ function FormaPg(){
 						if (msg[0].trim() == "Inserido com Sucesso") {  
 
 							//chamar add carrinho
+							inserido();
 							addCarrinhoDireto(qtd, id_pdr, tot, vlr_prd);
 							
-							inserido();
+							
 
 							setTimeout(function() {
 						       listarVendas();
@@ -1222,6 +1223,7 @@ function FormaPg(){
 
             success: function(mensagem) {
                 if (mensagem.trim() == "Inserido com Sucesso") {
+
                     $('#btn-fechar-grade').click();
                     listarVendas();
                 } else {

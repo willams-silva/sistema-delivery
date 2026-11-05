@@ -238,7 +238,7 @@ HTML;
 		}
 
 
-		$query2 = $pdo->query("SELECT * FROM $tabela where status LIKE '$status_busca' and status != 'Finalizado' and status != 'Cancelado' and nome_cliente like '%$busca%' order by hora asc");
+		$query2 = $pdo->query("SELECT * FROM $tabela where status LIKE '$status_busca' and status != 'Finalizado' and status != 'Cancelado' and nome_cliente like '%$busca%' and tipo_pedido != 'Balcão' order by hora asc");
 		$res2 = $query2->fetchAll(PDO::FETCH_ASSOC);
 		$num_total = @count($res2);
 		$num_paginas = ceil($num_total/$itens_paginacao);

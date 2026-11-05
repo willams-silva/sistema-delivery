@@ -2,6 +2,8 @@
 $tabela = 'pagar';
 require_once("../../../conexao.php");
 
+$referencia_agendamento = 'pagar';
+
 @session_start();
 $id_usuario = @$_SESSION['id'];
 
@@ -205,6 +207,8 @@ if ($id == "") {
 			$mensagem_whatsapp .= '*Valor:* ' . $valorF . ' %0A';
 
 			$data_agd = $nova_data_vencimento . ' 09:00:00';
+			$ultimo_id = $id_ultimo;
+			$referencia_agendamento = 'pagar';
 			require('../../apis/agendar.php');
 
 			$pdo->query("UPDATE $tabela SET hash = '$hash' where id = '$id_ultimo'");
@@ -224,6 +228,7 @@ if ($id == "") {
 		$res4 = $query4->fetchAll(PDO::FETCH_ASSOC);
 		$hash = @$res4[0]['hash'];
 
+		$referencia_agendamento = 'pagar';
 		if ($hash != "") {
 			require("../../apis/cancelar_agendamento.php");
 		}
@@ -242,6 +247,8 @@ if ($id == "") {
 			$mensagem_whatsapp .= '*Valor:* ' . $valorF . ' %0A';
 
 			$data_agd = $vencimento . ' 09:00:00';
+			$ultimo_id = $id;
+			$referencia_agendamento = 'pagar';
 			require('../../apis/agendar.php');
 
 			$pdo->query("UPDATE $tabela SET hash = '$hash' where id = '$id_ultimo_alt'");
@@ -272,6 +279,8 @@ $ultimo_id = $pdo->lastInsertId();
 		$mensagem_whatsapp .= '*Valor:* ' . $valorF . ' %0A';
 
 		$data_agd = $vencimento . ' 09:00:00';
+
+		$referencia_agendamento = 'pagar';
 		require('../../apis/agendar.php');
 
 		$pdo->query("UPDATE $tabela SET hash = '$hash' where id = '$ultimo_id'");

@@ -2,6 +2,8 @@ RewriteEngine On
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME} !-d
 
+RewriteRule ^pedidos_bar(.*)$ index.php?pagina=pedidos_bar [L]
+RewriteRule ^pedidos_outros(.*)$ index.php?pagina=pedidos_outros [L]
 RewriteRule ^pdv(.*)$ index.php?pagina=pdv [L]
 RewriteRule ^unidade_medida(.*)$ index.php?pagina=unidade_medida [L]
 RewriteRule ^grupos_disparos(.*)$ index.php?pagina=grupos_disparos [L]

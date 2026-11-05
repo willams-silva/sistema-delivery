@@ -513,6 +513,7 @@ if ($total_reg > 0) {
 
             success: function(mensagem) {
                 if (mensagem.trim() == "Inserido com Sucesso") {
+                    inserido();
                     $('#btn-fechar-grade').click();
                     listarVendas();
                 } else {

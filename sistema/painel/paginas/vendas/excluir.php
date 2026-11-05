@@ -15,8 +15,8 @@ for($i=0; $i < $total_reg; $i++){
 	$query2 = $pdo->query("SELECT * FROM produtos where id = '$id_produto'");
 	$res2 = $query2->fetchAll(PDO::FETCH_ASSOC);
 	$total_reg2 = @count($res2);
-	$estoque = $res2[0]['estoque'];
-	$tem_estoque = $res2[0]['tem_estoque'];
+	$estoque = @$res2[0]['estoque'];
+	$tem_estoque = @$res2[0]['tem_estoque'];
 
 	if($tem_estoque == 'Sim'){
 		$novo_estoque = $estoque + $quantidade;

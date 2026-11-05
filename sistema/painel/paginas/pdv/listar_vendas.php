@@ -12,7 +12,7 @@ $desconto = @$_POST['desconto'];
 $troco = @$_POST['troco'];
 $tipo_desconto = @$_POST['tipo_desconto'];
 $frete = @$_POST['frete'];
-$frete = str_replace(',', '.', $frete);
+$frete = @str_replace(',', '.', $frete);
 
 if($frete == ""){
 	$frete = 0;
@@ -159,30 +159,35 @@ if($linhas > 0){
 
 
 
-	echo '<div class="row">';
-	echo '<div class="col-md-3" style="margin-right:3px">';
-	echo '<img src="images/produtos/'.$foto_produto.'" width="45px">';
-	echo '</div>';
-	echo '<div class="col-md-9" style="margin-left:-15px; margin-top:3px">';
-	echo '<span class="text-dark" style="font-size:13px; margin-left: -15px">';
-	echo '<span class=" '.$ocultar_quantidades.'">'.$quantidadeF.'</span> '.$nome_produtoF.' '.$sigla_grade;
-	echo '</span>
-    <span class="'.$ocultar_temp.'"><a title="Ver Grade" onclick="verGrade('.$id.')"><i class="fa fa-file text-info" ></i></a></span>
+	echo '<div class="row g-0">'; // g-0 remove o “gutter” padrão sem precisar de margens negativas
+  echo '<div class="col-3 col-md-3 pe-1">'; // antes: margin-right:3px
+    echo '<img src="images/produtos/'.$foto_produto.'" width="45px">'; // mantém 45px
+  echo '</div>';
+
+  // Torna este bloco "relative" para o X absoluto ancorar corretamente
+  echo '<div class="col-9 col-md-9 position-relative">'; // antes tinha margin-left:-15px
+    echo '<span class="text-dark" style="font-size:13px;">'; // mantém 13px (sem margin-left negativo)
+      echo '<span class="'.$ocultar_quantidades.'">'.$quantidadeF.'</span> '.$nome_produtoF.' '.$sigla_grade;
+    echo '</span>
+    <span class="'.$ocultar_temp.'"><a title="Ver Grade" onclick="verGrade('.$id.')"><i class="fa fa-file text-info"></i></a></span>
     <br>';
-	echo '<div class="text-dark" style="font-size:12px; margin-top:0px; margin-left:0px">
-	<a class="'.$ocultar_quantidades.'" href="#" onclick="diminuir('.$id.', '.$quantidadeF.')"><big><i class="fa fa-minus-circle text-danger" ></i></big></a>
-	<input type="text" value="'.$quantidadeF.'" style="background:transparent; border:none; outline:none; width:28px; text-align:center" id="input_quant_'.$id.'" onblur="alterarQuantidade('.$id.', '.$quantidadeF.')"> '.$sigla_unidade.'
-	<a class="'.$ocultar_quantidades.'" href="#" onclick="aumentar('.$id.', '.$quantidadeF.')"><big><i class="fa fa-plus-circle text-success" ></i></big></a>
-	Total Item: R$ '.$totalF.' ';
 
+    echo '<div class="text-dark" style="font-size:12px; margin-top:0;">'; // mantém 12px e sem margin-left
+      echo '<a class="'.$ocultar_quantidades.'" href="#" onclick="diminuir('.$id.', '.$quantidadeF.')"><big><i class="fa fa-minus-circle text-danger"></i></big></a>
+      <input type="text" value="'.$quantidadeF.'" style="background:transparent; border:none; outline:none; width:28px; text-align:center" id="input_quant_'.$id.'" onblur="alterarQuantidade('.$id.', '.$quantidadeF.')"> '.$sigla_unidade.'
+      <a class="'.$ocultar_quantidades.'" href="#" onclick="aumentar('.$id.', '.$quantidadeF.')"><big><i class="fa fa-plus-circle text-success"></i></big></a>
+      Total Item: R$ '.$totalF.'
+      ';
 
-	echo '<div class="dropdown head-dpdn2" style="position:absolute; top:0px; right:10px">
-		<a title="Remover Item" href="#" onclick="excluirAlert('.$id.')"><big><i class="fa fa-times" style="color:#7d1107"></i></big></a></div>';
+      // Ícone remover no canto — mesmo visual, mas sem depender de margem negativa
+      echo '<div class="dropdown head-dpdn2" style="position:absolute; top:0; right:10px;">
+        <a title="Remover Item" href="#" onclick="excluirAlert('.$id.')"><big><i class="fa fa-times" style="color:#7d1107"></i></big></a>
+      </div>';
 
+    echo '</div>';
+  echo '</div>';
+echo '</div>';
 
-	echo '</div>';
-	echo '</div>';
-	echo '</div>';
 	
 	}
 }

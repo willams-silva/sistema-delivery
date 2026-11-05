@@ -509,6 +509,11 @@ if(@$pag == 'ocultar'){
 									<option value="Todos">Todos os Clientes</option>
 									<option value="Clientes Semana">Clientes Cadastrados na Última Semana</option>
 									<option value="Clientes Mês">Clientes Cadastrados no Último Mês</option>
+									<option value="1">1 Cartão</option>
+									<option value="2">2 Cartões</option>
+									<option value="3">3 Cartões</option>
+									<option value="4">4 Cartões</option>
+									<option value="5">5 Cartões</option>
 									
 									
 									<?php 

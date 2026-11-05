@@ -13,6 +13,9 @@ $id = $_POST['id'];
 $total_caixa_fechar = $_POST['total_caixa_fechar'];
 $valor_abertura_fechar = $_POST['valor_abertura_fechar'];
 
+$total_caixa_fechar = str_replace(',', '.', $total_caixa_fechar);
+$valor_abertura_fechar = str_replace(',', '.', $valor_abertura_fechar);
+
 
 $query2 = $pdo->query("SELECT * FROM caixas where id = '$id'");
 $res2 = $query2->fetchAll(PDO::FETCH_ASSOC);

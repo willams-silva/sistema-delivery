@@ -6,7 +6,7 @@ require_once("../../../conexao.php");
 
 
 
-$query = $pdo->query("SELECT * from $tabela where sessao = '$id_usuario' and pedido = '0' order by id asc");
+$query = $pdo->query("SELECT * from $tabela where sessao = '$id_usuario' and pedido = '0' and mesa = '' order by id asc");
 $res = $query->fetchAll(PDO::FETCH_ASSOC);
 $linhas = @count($res);
 if($linhas > 0){

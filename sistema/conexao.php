@@ -108,7 +108,9 @@ if ($linhas == 0) {
 	$consumir_local = $res[0]['consumir_local'];
 	$entrega_delivery = $res[0]['entrega_delivery'];
 	$delivery_monitor = $res[0]['delivery_monitor'];
-
+	$somente_pix_delivery = $res[0]['somente_pix_delivery'];
+	$impressao_cozinha = $res[0]['impressao_cozinha'];
+	$url_evolution = $res[0]['url_evolution'];
 
 	if($taxa_extra == ""){
 		$taxa_extra = 0;

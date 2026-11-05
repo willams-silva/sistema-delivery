@@ -252,6 +252,7 @@ $query = $pdo->prepare("UPDATE $tabela SET descricao = :descricao, cliente = :cl
 			$mensagem_whatsapp .= '🤖 _Esta é uma mensagem automática!_';
 
 			$data_agd = $vencimento . ' 09:00:00';
+			$ultimo_id = $id;
 			require('../../apis/agendar.php');
 
 			$pdo->query("UPDATE $tabela SET hash = '$hash' where id = '$id'");

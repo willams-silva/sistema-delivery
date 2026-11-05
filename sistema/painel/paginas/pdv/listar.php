@@ -65,8 +65,8 @@ if($linhas > 0){
 
 
 	//tratamento separa string
-	$est = explode(".", $estoque);
-	if($est[1] > 0){
+	$est = @explode(".", $estoque);
+	if(@$est[1] > 0){
 		$estoqueF = $estoque;		
 	}else{
 		$estoqueF = $est[0];
