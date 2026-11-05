@@ -11,6 +11,8 @@ if($sessao_pedido_balcao == 'BALCÃO'){
   $tipo_pedido = 'Balcão';
 }
 
+$total_compra = 0;
+
 $data_atual = date('Y-m-d');
 $data_dias_retorno = date('Y-m-d', strtotime("+$dias_retorno days",strtotime($data_atual)));
 
@@ -145,7 +147,9 @@ if ($total_reg > 0) {
     $valor_produto = $res2[0]['valor_venda'];
     $estoque = $res2[0]['estoque'];
     $tem_estoque = $res2[0]['tem_estoque'];
-
+    $valor_compra = $res2[0]['valor_compra'];
+    $valor_compra = $quantidade * $valor_compra;
+    $total_compra += $valor_compra;
 
     if ($tem_estoque == 'Sim') {
       $total_produtos = $estoque - $quantidade;
@@ -177,7 +181,7 @@ if ($num_pedido == "") {
 }
 $pedido = $num_pedido + 1;
 
-$query = $pdo->prepare("INSERT INTO vendas SET cliente = '$cliente', valor = '$total_com_frete', total_pago = '$total_pago', troco = '$troco', data = curDate(), hora = curTime(), status = 'Iniciado', pago = '$pago', obs = :obs, taxa_entrega = '$taxa_entrega', tipo_pgto = '$pagamento', usuario_baixa = '0', entrega = '$entrega', mesa = '$mesa', nome_cliente = '$nome_cliente_ped', cupom = '$cupom', pago_entregador = 'Não', pedido = '$pedido', ref_api = '$codigo_pix', tipo_pedido = '$tipo_pedido', taxa_extra_pedido = '$taxa_extra'");
+$query = $pdo->prepare("INSERT INTO vendas SET cliente = '$cliente', valor = '$total_com_frete', total_pago = '$total_pago', troco = '$troco', data = curDate(), hora = curTime(), status = 'Iniciado', pago = '$pago', obs = :obs, taxa_entrega = '$taxa_entrega', tipo_pgto = '$pagamento', usuario_baixa = '0', entrega = '$entrega', mesa = '$mesa', nome_cliente = '$nome_cliente_ped', cupom = '$cupom', pago_entregador = 'Não', pedido = '$pedido', ref_api = '$codigo_pix', tipo_pedido = '$tipo_pedido', taxa_extra_pedido = '$taxa_extra', custo = '$total_compra'");
 $query->bindValue(":obs", "$obs");
 $query->execute();
 $id_pedido = $pdo->lastInsertId();

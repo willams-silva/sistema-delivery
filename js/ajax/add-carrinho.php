@@ -21,7 +21,7 @@ $valor_venda = $res[0]['valor_venda'];
 $preparado = $res[0]['preparado'];
 
 $status = '';
-if($preparado === 'Sim' and $mesa != ""){
+if($preparado != 'Não'){
     $status = 'Aguardando';
 }
 
@@ -59,6 +59,9 @@ if (@$_SESSION['id_edicao'] != "") {
 	$pdo->query("UPDATE vendas SET valor = '$total_venda', total_pago = '$total_pago', troco = '$troco' where id = '$id_edicao'");
 }
 
+if($mesa > 0){
+	$total_item = $total_item * $quantidade;
+}
 
 $query = $pdo->prepare("INSERT INTO carrinho SET sessao = '$sessao', cliente = '0', produto = '$produto', quantidade = '$quantidade', total_item = '$total_item', obs = :obs, pedido = '$id_edicao', data = curDate(), mesa = '$mesa', nome_cliente = '', valor_unitario = '$valor_produto', status = '$status', hora = curTime()");
 $query->bindValue(":obs", "$obs");

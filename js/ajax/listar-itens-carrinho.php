@@ -58,7 +58,10 @@ if($total_reg > 0){
 		
 		$id_sabor = $res[$i]['id_sabor'];
 
-		$total_item = $total_item * $quantidade;
+		if($id_mesa == 0 || $id_mesa == ""){
+			$total_item = $total_item * $quantidade;
+		}
+		
 
 		$total_carrinho += $total_item;
 
@@ -309,8 +312,17 @@ HTML;
 
 	<script type="text/javascript">
 		$("#total-do-pedido").text("<?=$total_carrinhoF?>");
+		var id_mesa = "<?=$id_mesa?>";
+
+		
 
 		function mudarQuant(id, quantidade, acao){
+
+			if(id_mesa > 0){
+			alert('Você não pode alterar a quantidade!');
+			return;
+		}
+
 			if(acao == 'menos' && quantidade == 1){
 				excluirCarrinho(id);
 			}
@@ -336,6 +348,11 @@ HTML;
 
 
 		function excluirCarrinho(id, id_sabor){
+
+			if(id_mesa > 0){
+			alert('Você não pode alterar a quantidade!');
+			return;
+		}
 
 			$.ajax({
 				url: 'js/ajax/excluir-carrinho.php',
