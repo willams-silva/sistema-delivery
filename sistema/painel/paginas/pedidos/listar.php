@@ -4,34 +4,44 @@ $tabela = 'vendas';
 $data_hoje = date('Y-m-d');
 
 $status = '%' . @$_POST['status'] . '%';
+$status_busca = '%' . @$_POST['status'] . '%';
 $ult_ped = @$_POST['ult_pedido'];
 
 $total_vendas = 0;
 
+$busca = @$_POST['p1'];
+$pagina = @$_POST['p2'];
+
+if($pagina == ""){
+	$pagina = 0;
+}
+$itens_paginacao = 10;
+$limite = $pagina * @$itens_paginacao;
+
 
 //TOTAIS DOS PEDIDOS
-$query = $pdo->query("SELECT * FROM $tabela where status = 'Iniciado'");
+$query = $pdo->query("SELECT * FROM $tabela where status = 'Iniciado' and tipo_pedido != 'Balcão'");
 $res = $query->fetchAll(PDO::FETCH_ASSOC);
 $total_ini = @count($res);
 
-$query = $pdo->query("SELECT * FROM $tabela where status = 'Aceito'");
+$query = $pdo->query("SELECT * FROM $tabela where status = 'Aceito'  and tipo_pedido != 'Balcão'");
 $res = $query->fetchAll(PDO::FETCH_ASSOC);
 $total_ace = @count($res);
 
-$query = $pdo->query("SELECT * FROM $tabela where status = 'Preparando'");
+$query = $pdo->query("SELECT * FROM $tabela where status = 'Preparando'  and tipo_pedido != 'Balcão'");
 $res = $query->fetchAll(PDO::FETCH_ASSOC);
 $total_prep = @count($res);
 
-$query = $pdo->query("SELECT * FROM $tabela where status = 'Entrega'");
+$query = $pdo->query("SELECT * FROM $tabela where status = 'Entrega'  and tipo_pedido != 'Balcão'");
 $res = $query->fetchAll(PDO::FETCH_ASSOC);
 $total_ent = @count($res);
 
-$query = $pdo->query("SELECT * FROM $tabela where status != 'Finalizado' and status != 'Cancelado'");
+$query = $pdo->query("SELECT * FROM $tabela where status != 'Finalizado' and status != 'Cancelado'  and tipo_pedido != 'Balcão'");
 $res = $query->fetchAll(PDO::FETCH_ASSOC);
 $total_pedidos = @count($res);
 
 
-$query = $pdo->query("SELECT * FROM $tabela where status != 'Finalizado' and status != 'Cancelado' order by id desc limit 1");
+$query = $pdo->query("SELECT * FROM $tabela where status != 'Finalizado' and status != 'Cancelado'  and tipo_pedido != 'Balcão' order by id desc limit 1");
 $res = $query->fetchAll(PDO::FETCH_ASSOC);
 $id_ult_pedido = @$res[0]['id'];
 
@@ -48,14 +58,14 @@ if ($ult_ped == "" and $id_ult_pedido != "") {
 }
 
 $ids = '';
-$query = $pdo->query("SELECT * FROM $tabela where status LIKE '$status' and status != 'Finalizado' and status != 'Cancelado' order by hora asc");
+$query = $pdo->query("SELECT * FROM $tabela where status LIKE '$status' and status != 'Finalizado' and status != 'Cancelado' and nome_cliente like '%$busca%'  and tipo_pedido != 'Balcão' order by hora asc LIMIT $limite, $itens_paginacao");
 $res = $query->fetchAll(PDO::FETCH_ASSOC);
 $total_reg = @count($res);
 if ($total_reg > 0) {
 
 	echo <<<HTML
 	<small>
-	<table class="table table-bordered text-nowrap border-bottom dt-responsive" id="tabela">
+	<table class="table table-bordered text-nowrap border-bottom dt-responsive" id="">
 	<thead> 
 	<tr> 
 	<th>Cliente</th>	
@@ -228,6 +238,13 @@ HTML;
 		}
 
 
+		$query2 = $pdo->query("SELECT * FROM $tabela where status LIKE '$status_busca' and status != 'Finalizado' and status != 'Cancelado' and nome_cliente like '%$busca%' order by hora asc");
+		$res2 = $query2->fetchAll(PDO::FETCH_ASSOC);
+		$num_total = @count($res2);
+		$num_paginas = ceil($num_total/$itens_paginacao);
+
+
+
 		echo <<<HTML
 <tr style="background: {$classe_pago2}">
 <td><sapn style="color:{$classe_alerta}"><i class="fa fa-square"></i></sapn> <b>Pedido ({$pedido})</b> / {$nome_cliente} <span class="{$classe_entrega}"><small>({$entrega}) </small></span>
@@ -269,7 +286,7 @@ HTML;
 
 
 
-<a class="btn btn-success-light btn-sm {$classe_excluir}" href="#" onclick="baixar('{$id}', '{$nome_cliente}', '{$tipo_pgto}')" title="Confirmar Pgto">
+<a id="btn_baixar_{$id}" class="btn btn-success-light btn-sm {$classe_excluir}" href="#" onclick="baixar('{$id}', '{$nome_cliente}', '{$tipo_pgto}')" title="Confirmar Pgto">
 <i class="fa fa-check-square"></i></a>
 
 
@@ -301,10 +318,41 @@ HTML;
 <div align="right">Total de Pedidos: <span class=""> {$total_reg}</span> </div>
 
 </small>
+
+
+<div class="" align="center">
+<a href="#" onclick="listar('{$busca}', 0)" class="btn btn-outline-primary "><i class="fa fa-chevron-left"></i></a>
+HTML;
+
+for($i = 0; $i < @$num_paginas; $i++){
+	$estilo = '';
+	if($pagina == $i){
+		$estilo = 'active';
+	}
+	$pagina_cont = $i + 1;
+	$ultima_pagina = $num_paginas - 1;
+
+	if($pagina >= ($i - 2) && $pagina <= ($i + 2)){ 
+echo <<<HTML
+		<a style="width:35px" href="#" onclick="listar('{$busca}', '{$i}')" class="btn btn btn-outline-primary {$estilo}">{$pagina_cont}</a>   
+HTML;                  
+
+}
+
+}
+echo <<<HTML
+<a href="#" onclick="listar('{$busca}', '{$ultima_pagina}')" class="btn btn-outline-primary "><i class="fa fa-chevron-right"></i></a>
+</div>
+
 HTML;
 } else {
+	$pagina = 0;
 	echo '<small>Não possui nenhum Pedido Hoje ainda!</small>';
 }
+
+
+
+
 
 
 
@@ -317,6 +365,9 @@ $total_dos_itens_pedidos = @count($res);
 
 <script type="text/javascript">
 	$(document).ready(function() {
+
+		var pagina = "<?= $pagina ?>";
+		$('#pagina').val(pagina);
 
 		var ids = "<?= $ids ?>";
 		var id_imp = ids.split("-");
@@ -439,8 +490,15 @@ $total_dos_itens_pedidos = @count($res);
 						$('#area_status_' + id).show();
 					} else {
 						alertInformativoFechar(mensagem)
-						$('#mensagem-excluir').addClass('text-danger')
-						$('#mensagem-excluir').text(mensagem)
+						//$('#mensagem-excluir').addClass('text-danger')
+						//$('#mensagem-excluir').text(mensagem)
+
+						if(mensagem.trim() === 'O pedido ainda está pendente de pagamento, dê a baixa no pagamento antes!'){
+							setTimeout(function() {
+								$('#btn_baixar_' + id).click();
+								}, 2000);
+						}
+
 
 						$('#status_link_' + id).hide();
 						$('#area_status_' + id).show();

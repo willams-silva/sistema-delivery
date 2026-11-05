@@ -9,28 +9,28 @@ $ult_ped = @$_POST['ult_pedido'];
 $total_vendas = 0;
 
 //TOTAIS DOS PEDIDOS
-$query = $pdo->query("SELECT * FROM $tabela where status = 'Iniciado'");
+$query = $pdo->query("SELECT * FROM $tabela where status = 'Iniciado'  and tipo_pedido != 'Balcão'");
 $res = $query->fetchAll(PDO::FETCH_ASSOC);
 $total_ini = @count($res);
 
-$query = $pdo->query("SELECT * FROM $tabela where status = 'Aceito'");
+$query = $pdo->query("SELECT * FROM $tabela where status = 'Aceito'  and tipo_pedido != 'Balcão'");
 $res = $query->fetchAll(PDO::FETCH_ASSOC);
 $total_ace = @count($res);
 
-$query = $pdo->query("SELECT * FROM $tabela where status = 'Preparando'");
+$query = $pdo->query("SELECT * FROM $tabela where status = 'Preparando' and tipo_pedido != 'Balcão'");
 $res = $query->fetchAll(PDO::FETCH_ASSOC);
 $total_prep = @count($res);
 
-$query = $pdo->query("SELECT * FROM $tabela where status = 'Entrega'");
+$query = $pdo->query("SELECT * FROM $tabela where status = 'Entrega' and tipo_pedido != 'Balcão'");
 $res = $query->fetchAll(PDO::FETCH_ASSOC);
 $total_ent = @count($res);
 
-$query = $pdo->query("SELECT * FROM $tabela where status != 'Finalizado' and status != 'Cancelado'");
+$query = $pdo->query("SELECT * FROM $tabela where status != 'Finalizado' and status != 'Cancelado' and tipo_pedido != 'Balcão'");
 $res = $query->fetchAll(PDO::FETCH_ASSOC);
 $total_pedidos = @count($res);
 
 
-$query = $pdo->query("SELECT * FROM $tabela where status != 'Finalizado' and status != 'Cancelado' order by id desc limit 1");
+$query = $pdo->query("SELECT * FROM $tabela where status != 'Finalizado' and status != 'Cancelado' and tipo_pedido != 'Balcão' order by id desc limit 1");
 $res = $query->fetchAll(PDO::FETCH_ASSOC);
 $id_ult_pedido = @$res[0]['id'];
 
@@ -47,7 +47,7 @@ if ($ult_ped == "" and $id_ult_pedido != "") {
 }
 
 $ids = '';
-$query = $pdo->query("SELECT * FROM $tabela where status LIKE '$status' and status != 'Finalizado' and status != 'Cancelado' order by hora asc");
+$query = $pdo->query("SELECT * FROM $tabela where status LIKE '$status' and status != 'Finalizado' and status != 'Cancelado' and tipo_pedido != 'Balcão' order by hora asc");
 $res = $query->fetchAll(PDO::FETCH_ASSOC);
 $total_reg = @count($res);
 if ($total_reg > 0) {
@@ -250,7 +250,7 @@ if ($total_reg > 0) {
 
 <big><a href="#" class="btn btn-danger-light btn-sm {$classe_excluir}" onclick="excluir('{$id}')" title="Excluir"><i class="fa fa-trash-can text-danger"></i></a></big>
 
-	<a class="btn btn-success-light btn-sm {$classe_excluir}" href="#" onclick="baixar('{$id}', '{$nome_cliente}', '{$tipo_pgto}')" title="Confirmar Pgto"><i class="fa fa-check-square"></i></a>
+	<a id="btn_baixar_{$id}" class="btn btn-success-light btn-sm {$classe_excluir}" href="#" onclick="baixar('{$id}', '{$nome_cliente}', '{$tipo_pgto}')" title="Confirmar Pgto"><i class="fa fa-check-square"></i></a>
 
 
 		<a class="btn btn-dark-light btn-sm" href="#" onclick="gerarComprovante('{$id}', '{$tipo_pedido}')" title="Gerar Comprovante"><i class="fa fa-file-pdf-o"></i></a>
@@ -404,8 +404,15 @@ $total_dos_itens_pedidos = @count($res);
 						$('#area_status_' + id).show();
 					} else {
 						alertInformativoFechar(mensagem)
-						$('#mensagem-excluir').addClass('text-danger')
-						$('#mensagem-excluir').text(mensagem)
+						//$('#mensagem-excluir').addClass('text-danger')
+						//$('#mensagem-excluir').text(mensagem)
+
+						if(mensagem.trim() === 'O pedido ainda está pendente de pagamento, dê a baixa no pagamento antes!'){
+							setTimeout(function() {
+								$('#btn_baixar_' + id).click();
+								}, 2000);
+						}
+
 
 						$('#status_link_' + id).hide();
 						$('#area_status_' + id).show();

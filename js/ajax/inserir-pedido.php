@@ -85,6 +85,10 @@ if ($tel_cliente != "") {
     if($total_cartoes_cliente == $total_cartoes_config and $cupom == $valor_cupom_config){
       $total_cartoes_cliente = 0;
     }
+
+    if($total_cartoes_config == 0){
+       $total_cartoes_cliente = 0;
+    }
     
 
     //atualiza os dados do cliente

@@ -367,3 +367,43 @@ function alertInformativo(mensagem) {
         }
     })
 }
+
+
+
+
+
+//############### MÁSCRAS MOEDAS #########################################
+function mascaraMoeda(elemento) {
+    let value = elemento.value;
+    // Remove todos os caracteres que não são números
+    value = value.replace(/\D/g, '');
+    // Converte o valor para um número decimal com duas casas
+    value = (value / 100).toFixed(2);
+    // Substitui ponto por vírgula
+    value = value.replace('.', ',');
+    // Adiciona separadores de milhar
+    value = value.replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+    // Atualiza o valor do input sem o prefixo "R$"
+    elemento.value = value;
+}
+
+// FUNÇÃO PARA FORMATAR VALOR PARA REAL
+function formatarParaReal(valor) {
+    return valor.toLocaleString({
+        style: 'currency',
+        currency: 'BRL'
+    });
+}
+
+
+//FUNÇÃO PARA MOEDA
+function formatarMoeda(input) {
+    // Remove caracteres que não são dígitos
+    let valor = input.value.replace(/\D/g, '');
+
+    // Formata como moeda
+    valor = (valor / 100).toFixed(2).replace('.', ',');
+
+    // Adiciona o prefixo de moeda
+    input.value = valor;
+}

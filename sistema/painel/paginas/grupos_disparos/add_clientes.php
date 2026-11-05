@@ -10,7 +10,7 @@ $id = @$_POST['id'];
 
 //validacao nome
 
-$query = $pdo->query("SELECT * from $tabela where grupo = '$grupo' and empresa = '$id_empresa' and cliente = '$id'");
+$query = $pdo->query("SELECT * from $tabela where grupo = '$grupo' and empresa = '0' and cliente = '$id'");
 $res = $query->fetchAll(PDO::FETCH_ASSOC);
 $id_reg = @$res[0]['id'];
 if(@count($res) > 0 and $id != $id_reg){
@@ -19,7 +19,7 @@ if(@count($res) > 0 and $id != $id_reg){
 }
 
 
-$query = $pdo->prepare("INSERT INTO $tabela SET grupo = :grupo, cliente = :cliente, empresa = '$id_empresa' ");
+$query = $pdo->prepare("INSERT INTO $tabela SET grupo = :grupo, cliente = :cliente, empresa = '0' ");
 $query->bindValue(":grupo", "$grupo");
 $query->bindValue(":cliente", "$id");
 $query->execute();

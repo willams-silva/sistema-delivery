@@ -79,6 +79,10 @@ $query = $pdo->query("SELECT * FROM clientes where id = '$cliente'");
 $res = $query->fetchAll(PDO::FETCH_ASSOC);
 $nome_cliente = @$res[0]['nome'];
 
+$query = $pdo->query("SELECT * FROM formas_pgto where nome = '$saida'");
+$res = $query->fetchAll(PDO::FETCH_ASSOC);
+$id_saida = @$res[0]['id'];
+
 
 $total_carrinho = 0;
 $query = $pdo->query("SELECT * FROM carrinho where sessao = '$sessao' and pedido = 0 and mesa = ''");
@@ -191,6 +195,9 @@ $query->execute();
 $id_pedido = $pdo->lastInsertId();
 $id_pedido_feito = $pdo->lastInsertId();
 
+
+//lançar nas contas a receber
+$pdo->query("INSERT INTO receber SET descricao = 'Nova Venda', cliente = '$cliente', valor = '$total_final', vencimento = '$data', data_pgto = '$data', data_lanc = curDate(), forma_pgto = '$id_saida', frequencia = '0',  arquivo = 'sem-foto.jpg', foto = 'sem-foto.jpg', subtotal = '$total_final', usuario_lanc = '$id_usuario', usuario_pgto = '$usuario_pgto', pago = '$pago', referencia = 'Venda', caixa = '$id_caixa', hora = curTime(), tipo = 'Balcão' ");
 
 
 //relacionar itens do carrinho com o pedido

@@ -35,6 +35,8 @@ $segundos = $tempo_atualizar * 1000;
 
 ?>
 
+<input type="hidden" name="pagina" id="pagina">
+
 <div class="breadcrumb-header justify-content-between">
 	<div class="left-content mt-2">
 
@@ -85,6 +87,16 @@ $segundos = $tempo_atualizar * 1000;
 		</div>
 
 	</div>
+
+
+		<div class="d-flex justify-content-end me-2" style="max-width: 300px; margin-left: auto; margin-bottom: 10px">
+    <div class="input-group">
+        <span class="input-group-text bg-light border border-primary">
+            <i class="fas fa-search text-secondary"></i>
+        </span>
+        <input type="text" class="form-control border border-primary" id="busca" placeholder="Buscar..." onkeyup="listar()">
+    </div>
+</div>
 
 	<hr>
 	<div id="listar">
@@ -332,9 +344,7 @@ $segundos = $tempo_atualizar * 1000;
 });
 
 
-	window.addEventListener("focus", function() {
-    listar(); // Chama a função AJAX ao voltar para a aba
-});
+
 	
 </script>
 
@@ -356,7 +366,16 @@ $segundos = $tempo_atualizar * 1000;
 
 
 <script type="text/javascript">
-	function listar() {
+	function listar(p1, p2) {
+
+		if(p1 == "" || p1 == "undefined" || p1 == undefined){
+			var p1 = $('#busca').val();
+		}
+		
+		if(p2 == "" || p2 == "undefined" || p2 == undefined){
+			var p2 = $('#pagina').val();
+		}
+		
 
 		var status = $('#buscar-contas').val();
 		var ult_pedido = $('#id_pedido').val();
@@ -365,6 +384,8 @@ $segundos = $tempo_atualizar * 1000;
 			url: 'paginas/' + pag + "/listar.php",
 			method: 'POST',
 			data: {
+				p1,
+				p2,
 				status,
 				ult_pedido
 			},

@@ -22,6 +22,14 @@ $id_abertura_mesa = $res2[0]['id'];
 $pessoas = $res2[0]['pessoas'];
 $mesa = $res2[0]['mesa'];
 $data = $res2[0]['data'];
+$desconto = $res2[0]['desconto'];
+$total_recebido = $res2[0]['total_recebido'];
+$troco = $res2[0]['troco'];
+
+
+$descontoF = @number_format($desconto, 2, ',', '.');
+$total_recebidoF = @number_format($total_recebido, 2, ',', '.');
+$trocoF = @number_format($troco, 2, ',', '.');
 
 $dataF = implode('/', array_reverse(@explode('-', $data)));
 
@@ -43,7 +51,7 @@ $res2 = $query2->fetchAll(PDO::FETCH_ASSOC);
 $total_reg2 = @count($res2);
 if ($total_reg2 > 0) {
 	for ($i2 = 0; $i2 < $total_reg2; $i2++) {
-		$total_mesa += $res2[$i2]['total_item'] * $res2[$i2]['quantidade'];
+		$total_mesa += $res2[$i2]['total_item'];
 	}
 } else {
 	$total_mesa = 0;
@@ -66,7 +74,7 @@ $total_comissaoF = @number_format($total_comissao, 2, ',', '.');
 $total_couvert = $pessoas * $couvert;
 $total_couvertF = @number_format($total_couvert, 2, ',', '.');
 
-$subtotal = $total_mesa + $total_comissao + $total_couvert;
+$subtotal = $total_mesa + $total_comissao + $total_couvert - $desconto;
 $subtotalF = @number_format($subtotal, 2, ',', '.');
 
 $total_por_pessoa = $subtotal / $pessoas;
@@ -315,7 +323,7 @@ $total_por_pessoaF = @number_format($total_por_pessoa, 2, ',', '.');
 		}
 
 
-$total_item_final = $total_item * $quantidade;
+$total_item_final = $total_item;
 
 
 	?>
@@ -468,7 +476,7 @@ $total_item_final = $total_item * $quantidade;
 
 	<div class="row valores">
 		<div class="col-6">Total Itens</div>
-		<div class="col-6" align="right">R$ <b><?php echo @$total_itensF ?></b></div>
+		<div class="col-6" align="right"><b><?php echo @$total_itensF ?></b></div>
 	</div>
 
 	<?php if ($comissao_garcon > 0) { ?>
@@ -485,6 +493,13 @@ $total_item_final = $total_item * $quantidade;
 		</div>
 	<?php } ?>
 
+	<?php if ($desconto > 0) { ?>
+		<div class="row valores">
+			<div class="col-6">Desconto</div>
+			<div class="col-6" align="right">R$ <b><?php echo @$descontoF ?></b></div>
+		</div>
+	<?php } ?>	
+
 	<div class="th" style="margin-bottom: 7px"></div>
 
 
@@ -492,6 +507,21 @@ $total_item_final = $total_item * $quantidade;
 		<div class="col-6">SubTotal</div>
 		<div class="col-6" align="right">R$ <b><?php echo @$subtotalF ?></b></div>
 	</div>
+
+
+	<?php if ($total_recebido > 0) { ?>
+		<div class="row valores">
+			<div class="col-6">Total Recebido</div>
+			<div class="col-6" align="right">R$ <b><?php echo @$total_recebidoF ?></b></div>
+		</div>
+	<?php } ?>
+
+	<?php if ($troco > 0) { ?>
+		<div class="row valores">
+			<div class="col-6">Troco</div>
+			<div class="col-6" align="right">R$ <b><?php echo @$trocoF ?></b></div>
+		</div>
+	<?php } ?>
 
 
 	<div class="th" style="margin-bottom: 7px"></div>

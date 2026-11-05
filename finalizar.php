@@ -675,9 +675,10 @@ if($consumir_local == "Não"){
 <script type="text/javascript">
   function pix() {
 
+    var entrega = $('#entrega').val();
 
     var bairro = $('#bairro').val();
-    if(bairro === ""){
+    if(bairro === "" && entrega == 'Delivery'){
       return;
     }
 

@@ -5,7 +5,7 @@ $tabela = 'bairros';
 $id = $_POST['id'];
 $nome = $_POST['nome'];
 $valor = $_POST['valor'];
-
+$valor = @str_replace(',', '.', $valor);
 
 //validar email
 $query = $pdo->query("SELECT * from $tabela where nome = '$nome'");

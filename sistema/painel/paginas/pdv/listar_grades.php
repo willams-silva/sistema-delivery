@@ -136,26 +136,7 @@ if ($total_reg > 0) {
             $valor_total_pedidoF = @number_format($valor_total_do_item, 2, ',', '.');
         } ?>
 
-<div class="destaque-qtd" style="
-  margin-top:10px; padding:6px 0;
-  display:none; display:flex;
-  align-items:center; justify-content:space-between;
-  border-bottom:1px solid #e5e7eb;">
-  
-  <b style="font-size:13px; color:#374151;">Quantidade</b>
 
-  <span class="direita" style="display:flex; align-items:center; gap:10px;">
-    <button style="background:none; border:none; cursor:pointer;" onclick="diminuirQuant()" title="Diminuir">
-      <i class="bi bi-dash-circle-fill text-danger" style="font-size:20px;"></i>
-    </button>
-
-    <b><span id="quant" style="min-width:28px; text-align:center; display:inline-block;">0</span></b>
-
-    <button style="background:none; border:none; cursor:pointer;" onclick="aumentarQuant()" title="Aumentar">
-      <i class="bi bi-plus-circle-fill text-success" style="font-size:20px;"></i>
-    </button>
-  </span>
-</div>
 
 
 

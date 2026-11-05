@@ -1779,8 +1779,9 @@ if (@count($res1) > 0) {
 								<option value="">Tudo</option>
 								<option value="Conta">Ganhos / Despesas</option>
 								<option value="Delivery">Delivery</option>
-								<option value="Venda">Venda Mesas</option>
+								<option value="Venda">Vendas</option>
 								<option value="Balcão">Venda Balcão</option>
+								<option value="Mesas">Venda Mesas</option>
 								<option value="Comissão">Comissões</option>
 
 							</select>

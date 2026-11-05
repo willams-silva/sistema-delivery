@@ -38,6 +38,8 @@ HTML;
 		$categoria = $res[$i]['categoria'];
 		$valor_unit = $res[$i]['valor_unitario'];
 		$status = $res[$i]['status'];
+		$total_do_item = $res[$i]['total_item'];
+
 
 		if ($status == 'Aguardando') {
 			$classe_alerta = 'text-danger';
@@ -62,10 +64,10 @@ HTML;
 			}
 		}
 
-		$total_item = $total_item * $quantidade;
+		//$total_item = $total_item * $quantidade;
 		$total_carrinho += $total_item;
 
-
+		$total_do_itemF = number_format($total_do_item, 2, ',', '.');
 		$total_itemF = number_format($total_item, 2, ',', '.');
 		$valor_unitF = number_format($valor_unit, 2, ',', '.');
 		$total_carrinhoF = number_format($total_carrinho, 2, ',', '.');
@@ -142,7 +144,7 @@ HTML;
 <tr>
 <td><img class="" src="../../sistema/painel/images/produtos/{$foto_produto}" width="25px"></td>
 <td><i class="fa fa-square {$classe_alerta}" style="opacity: {$opacidade}"></i> <span class="">{$quantidadeF} {$sigla_unidade} </span> / {$nome_produto}</td>
-<td>{$total_itemF}</td>
+<td>{$total_do_itemF}</td>
 <td>
 
 

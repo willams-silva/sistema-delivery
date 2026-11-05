@@ -261,7 +261,7 @@ if ($linhas > 0) {
 
 
 					<div class="row">
-						<div class="col-md-3">
+						<div class="col-md-2">
 							<div class="form-group">
 								<label for="couvert_fechamento">Couvert</label>
 								<input onkeyup="calcular()" type="text" class="form-control" id="couvert_fechamento" name="couvert"
@@ -276,10 +276,27 @@ if ($linhas > 0) {
 							</div>
 						</div>
 
+
+						<div class="col-md-2">
+							<div class="form-group">
+								<label for="">Total Mesa</label>
+								<input readonly type="text" class="form-control" id="total_mesa_fechamento" name="total_mesa_fechamento" placeholder="">
+							</div>
+						</div>
+
+						<div class="col-md-3">
+            	<label class="block text-sm font-medium text-dark mb-1">Desconto <a id="desc_reais" class="desconto_link_ativo" href="#" onclick="tipoDesc('reais')">R$</a> / <a id="desc_p" class="desconto_link_inativo" href="#" onclick="tipoDesc('%')">%</a></label>
+             
+              <input type="number" class="form-control" id="desconto" name="desconto" placeholder="R$" onkeyup="totalizar()">
+            </div>
+
+
+
+
 						<div class="col-md-3">
 							<div class="form-group">
 								<label for="subtotal_fechamento">Subtotal</label>
-								<input type="text" class="form-control" id="subtotal_fechamento" name="subtotal" placeholder="">
+								<input oninput="mascaraMoeda(this)" type="text" class="form-control" id="subtotal_fechamento" name="subtotal" placeholder="">
 							</div>
 						</div>
 
@@ -288,7 +305,7 @@ if ($linhas > 0) {
 						<div class="col-md-4">
 							<div class="form-group">
 								<label>Forma de Pagamento</label>
-								<select class="form-select" id="forma_pgto" name="forma_pgto">
+								<select class="form-select" id="forma_pgto_fechamento" name="forma_pgto" onchange="formaPgto()">
 									<?php
 									$query = $pdo->query("SELECT * FROM formas_pgto ORDER BY id asc");
 									$res = $query->fetchAll(PDO::FETCH_ASSOC);
@@ -296,7 +313,7 @@ if ($linhas > 0) {
 									if ($total_reg > 0) {
 										for ($i = 0; $i < $total_reg; $i++) {
 
-											echo '<option value="' . $res[$i]['id'] . '">' . $res[$i]['nome'] . '</option>';
+											echo '<option value="' . $res[$i]['id'] . '" data-nome="'.$res[$i]['nome'].'">' . $res[$i]['nome'] . '</option>';
 										}
 									} else {
 										echo '<option value="0">Cadastre uma Forma de Pagamento</option>';
@@ -305,6 +322,21 @@ if ($linhas > 0) {
 
 
 								</select>
+							</div>
+						</div>
+
+
+						<div class="col-md-3" id="div_total_recebido">
+							<div class="form-group">
+								<label for="">Total Recebido R$</label>
+								<input oninput="mascaraMoeda(this)" type="text" class="form-control" id="total_recebido" name="total_recebido" placeholder="Recebimento Dinheiro" onkeyup="calcularTroco()">
+							</div>
+						</div>
+
+						<div class="col-md-2" id="div_troco">
+							<div class="form-group">
+								<label for="">Troco</label>
+								<input oninput="mascaraMoeda(this)" type="text" class="form-control" id="troco" name="troco" placeholder="Troco">
 							</div>
 						</div>
 
@@ -329,7 +361,7 @@ if ($linhas > 0) {
 					</div>
 
 
-
+					<input type="hidden" name="tipo_desconto" id="tipo_desconto" value="reais">
 					<input type="hidden" name="id" id="id_fechamento">
 					<input type="hidden" name="id_ab" id="id_ab_fechamento">
 
@@ -383,7 +415,7 @@ if ($linhas > 0) {
 						<div class="col-md-4">
 							<div class="form-group">
 								<label>Forma de Pagamento</label>
-								<select class="form-select" id="forma_pgto" name="forma_pgto">
+								<select class="form-select" id="forma_pgto_valores" name="forma_pgto">
 									<?php
 									$query = $pdo->query("SELECT * FROM formas_pgto ORDER BY id asc");
 									$res = $query->fetchAll(PDO::FETCH_ASSOC);
@@ -558,6 +590,9 @@ if ($linhas > 0) {
 </div>
 
 
+
+
+
 <script type="text/javascript">
 	window.addEventListener("focus", function() {    
     listarCarrinho();
@@ -581,6 +616,8 @@ if ($linhas > 0) {
 
 <script type="text/javascript">
 	$(document).ready(function() {
+		formaPgto()
+
 		setInterval(listar, 20000);
 		setInterval(listarCarrinho, 20000);
 
@@ -778,4 +815,79 @@ if ($linhas > 0) {
 		});
 
 	});
+
+
+
+
+	function totalizar(){
+				var desconto = $("#desconto").val();				
+				var tipo_desconto = $("#tipo_desconto").val();
+				var total_mesa = $("#total_mesa_fechamento").val();	
+				$.ajax({
+					url: 'paginas/' + pag + "/totalizar.php",
+					method: 'POST',
+					data: {desconto, tipo_desconto, total_mesa},
+					dataType: "html",
+
+					success:function(result){
+						$("#subtotal_fechamento").val(result);  
+						calcularTroco();          
+					}
+				});	
+
+
+			}
+
+
+
+			function tipoDesc(p){
+	$('#desc_reais').removeClass()
+	$('#desc_p').removeClass()
+
+	if(p == '%'){
+		$('#desconto').attr('placeholder', '%');
+		$('#desc_reais').addClass('desconto_link_inativo')
+		$('#desc_p').addClass('desconto_link_ativo')
+	}else{
+		$('#desconto').attr('placeholder', 'R$');
+		$('#desc_reais').addClass('desconto_link_ativo')
+		$('#desc_p').addClass('desconto_link_inativo')
+	}
+
+	 $("#tipo_desconto").val(p);
+	 totalizar();
+}
+
+
+function formaPgto(){
+	 var forma_pgto = $("#forma_pgto_fechamento option:selected").data("nome");	
+	if(forma_pgto == 'Dinheiro'){
+		$("#div_troco").show();          
+		$("#div_total_recebido").show();          
+	}else{
+		$("#div_troco").hide();          
+		$("#div_total_recebido").hide(); 
+
+		$("#total_recebido").val('');
+		$("#troco").val('');
+
+	}
+}
+
+
+function calcularTroco(){
+	var total_recebido = $("#total_recebido").val();		
+	var subtotal = $("#subtotal_fechamento").val();				
+					
+				$.ajax({
+					url: 'paginas/' + pag + "/troco.php",
+					method: 'POST',
+					data: {total_recebido, subtotal},
+					dataType: "html",
+
+					success:function(result){						
+						$("#troco").val(result);            
+					}
+				});	
+}
 </script>

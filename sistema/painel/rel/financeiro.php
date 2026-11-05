@@ -81,7 +81,17 @@ if($dataInicial == $dataFinal){
 
 $texto_filtro = $filtro_dataF.' : '.$datas.' '.$filtro_pendentesF;
 
+$sql_balcao = " ";
+if($filtro_lancamento == "Balcão"){
+	$sql_balcao = " and tipo = 'Balcão' ";
+	$filtro_lancamento = 'Venda';
+}
 
+$sql_mesa = " ";
+if($filtro_lancamento == "Mesas"){
+	$sql_mesa = " and tipo = 'Venda' ";
+	$filtro_lancamento = 'Venda';
+}
 
 ?>
 <!DOCTYPE html>
@@ -192,9 +202,9 @@ $pagas = 0;
 
 
 if($filtro_delivery == 'Sim'){
-	$query = $pdo->query("SELECT * from $filtro_tipo where $filtro_data >= '$dataInicial' and $filtro_data <= '$dataFinal' and pago LIKE '%$filtro_pendentes%' and (referencia = 'Delivery' or referencia = 'Retirar' or referencia = 'Consumir Local') order by $filtro_data asc");
+	$query = $pdo->query("SELECT * from $filtro_tipo where $filtro_data >= '$dataInicial' and $filtro_data <= '$dataFinal' and pago LIKE '%$filtro_pendentes%' $sql_mesa $sql_balcao and (referencia = 'Delivery' or referencia = 'Retirar' or referencia = 'Consumir Local') order by $filtro_data asc");
 }else{
-	$query = $pdo->query("SELECT * from $filtro_tipo where $filtro_data >= '$dataInicial' and $filtro_data <= '$dataFinal' and pago LIKE '%$filtro_pendentes%' and referencia LIKE '%$filtro_lancamento%' order by $filtro_data asc");
+	$query = $pdo->query("SELECT * from $filtro_tipo where $filtro_data >= '$dataInicial' and $filtro_data <= '$dataFinal' and pago LIKE '%$filtro_pendentes%' and referencia LIKE '%$filtro_lancamento%' $sql_mesa $sql_balcao order by $filtro_data asc");
 }
 
 $res = $query->fetchAll(PDO::FETCH_ASSOC);

@@ -6,6 +6,13 @@ require_once("sistema/conexao.php");
 
 <head>
 	<title><?php echo $nome_sistema ?></title>
+
+	 <meta property="og:description" content="<?php echo $nome_sistema ?>" />
+  <meta property="og:image" content="sistema/img/logo.png">
+    <meta property="og:image:type" content="image/jpg">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630"> 
+
 	<meta charset="utf-8" />
 	<meta http-equiv="X-UA-Compatible" content="IE=edge" />
 	<!-- Mobile Metas -->

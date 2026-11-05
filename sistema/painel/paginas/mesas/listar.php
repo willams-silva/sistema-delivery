@@ -45,7 +45,15 @@ HTML;
 		}
 
 
+		$selected_aberta = '';
+		if($status == 'Aberta'){
+			$selected_aberta = 'selected';
+		}
 
+		$selected_fechada = '';
+		if($status == 'Fechada'){
+			$selected_fechada = 'selected';
+		}
 
 		echo <<<HTML
 <tr>
@@ -57,7 +65,12 @@ HTML;
 </td>
 <td style="color:{$classe_linha}">{$nome}</td>
 <td style="color:{$classe_linha}">{$ativo}</td>
-<td style="color:{$classe_linha}">{$status}</td>
+<td style="color:{$classe_linha}">
+<select id="status_{$id}" style="background:transparent; border:none; border-bottom:1px solid #000; outline:none" onchange="editarStatus('{$id}')">
+	<option value="Aberta" {$selected_aberta}>Aberta</option>
+	<option value="Fechada" {$selected_fechada}>Fechada</option>
+</select>
+</td>
 <td>
 			<a class="btn btn-info-light btn-sm" href="#" onclick="editar('{$id}','{$nome}')" title="Editar Dados"><i class="fa fa-edit"></i></a>
 
@@ -106,6 +119,27 @@ HTML;
 	function limparCampos() {
 		$('#nome').val('');
 		$('#id').val('');
+	}
+
+
+	function editarStatus(id){
+		var status = $('#status_'+id).val();		
+
+		$.ajax({
+        url: 'paginas/' + pag + "/editar_status.php",
+        method: 'POST',
+        data: {id, status},
+        dataType: "html",
+
+        success:function(result){
+        	if(result.trim() === 'Editado'){
+        		listar();
+        	}else{
+        		alertWarning(result)
+        	}
+            
+        }
+    });
 	}
 </script>
 

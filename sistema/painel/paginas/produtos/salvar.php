@@ -4,21 +4,20 @@ $tabela = 'produtos';
 
 $id = $_POST['id'];
 $nome = $_POST['nome'];
-$valor_compra = $_POST['valor_compra'];
-$valor_compra = str_replace(',', '.', $valor_compra);
-$valor_venda = $_POST['valor_venda'];
+$valor_compra = isset($_POST['valor_compra']) && $_POST['valor_compra'] !== '' ? str_replace(',', '.', $_POST['valor_compra']) : 0;
+$valor_venda = isset($_POST['valor_venda']) && $_POST['valor_venda'] !== '' ? str_replace(',', '.', $_POST['valor_venda']) : 0;
 
 $descricao = $_POST['descricao'];
-$nivel_estoque = $_POST['nivel_estoque'];
+$nivel_estoque = isset($_POST['nivel_estoque']) && $_POST['nivel_estoque'] !== '' ? $_POST['nivel_estoque'] : 0;
 $tem_estoque = $_POST['tem_estoque'];
 $promocao = @$_POST['promocao'];
 $combo = @$_POST['combo'];
 $preparado = @$_POST['preparado'];
 $delivery = @$_POST['delivery'];
-$categoria = @$_POST['categoria'];
-$val_promocional = @$_POST['val_promocional'];
-$val_promocional = str_replace(',', '.', $val_promocional);
-$unidade = @$_POST['unidade'];
+$categoria = isset($_POST['categoria']) && $_POST['categoria'] !== '' ? $_POST['categoria'] : 0;
+$val_promocional = isset($_POST['val_promocional']) && $_POST['val_promocional'] !== '' ? str_replace(',', '.', $_POST['val_promocional']) : 0;
+$unidade = isset($_POST['unidade']) && $_POST['unidade'] !== '' ? $_POST['unidade'] : 0;
+
 
 
 if($promocao == 'Sim' and $val_promocional <= 0){

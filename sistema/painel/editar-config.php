@@ -68,6 +68,8 @@ $consumir_local = $_POST['consumir_local'];
 $entrega_delivery = $_POST['entrega_delivery'];
 $delivery_monitor = $_POST['delivery_monitor'];
 
+$pedido_minimo = str_replace(',', '.', $pedido_minimo);
+
 $taxa_extra = str_replace(',', '.', $taxa_extra);
 $taxa_extra = str_replace('%', '', $taxa_extra);
 

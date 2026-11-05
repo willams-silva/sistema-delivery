@@ -35,10 +35,17 @@ if($linhas > 0){
 	$foto = $res[$i]['foto'];
 	$categoria = $res[$i]['categoria'];
 	$unidade = $res[$i]['unidade'];
+	$promocao = $res[$i]['promocao'];
+	$valor_promocao = $res[$i]['val_promocional'];
+
+	
+	if($promocao == 'Sim' and $valor_promocao > 0){
+		$valor_venda = $valor_promocao;
+	}
 	
 	$tem_estoque = $res[$i]['tem_estoque'];
 		
-	$valor_vendaF = number_format($valor_venda, 2, ',', '.'); 
+	$valor_vendaF = @number_format($valor_venda, 2, ',', '.'); 
 	$nomeF = mb_strimwidth($nome, 0, 80, "..."); 
 
 	if($estoque <= 0){

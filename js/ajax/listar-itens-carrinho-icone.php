@@ -150,25 +150,28 @@ if ($total_reg > 0) {
 
 
 						<li>
-              <div class="tpcart__item" >
-                <div class="tpcart__img">
-                  <img src="sistema/painel/images/produtos/{$foto_produto}" alt="">
-                </div>
-                <div class="tpcart__content">
-                  <span class="tpcart__content-title"><b>{$nome_produto} {$sigla_variacao}</b>
-                  </span>
-									
-                  <div class="tpcart__cart-price">
-                    <span class="quantity"><span class="">{$quantidadeF} {$sigla_unidade} </span> x</span>
-                    <span class="text-success">R$ $total_itemF</span>
-                  </div>
-                </div>
-								<div class="direita">
-                    <a href="#" onclick="excluirCarrinhoIcone('{$id}')" class="link-neutro {$ocultar_excluir}"><i class="icon-x-circle text-warning"></i></a>
-                  </div>
-              </div>
-							
-            </li>
+  <div class="tpcart__item" style="position:relative; padding-right:48px;">
+    <div class="tpcart__img">
+      <img src="sistema/painel/images/produtos/{$foto_produto}" alt="">
+    </div>
+
+    <div class="tpcart__content">
+      <span class="tpcart__content-title"><b>{$nome_produto} {$sigla_variacao}</b></span>
+      <div class="tpcart__cart-price">
+        <span class="quantity"><span class="">{$quantidadeF} {$sigla_unidade}</span> x</span>
+        <span class="text-success">R$ {$total_itemF}</span>
+      </div>
+    </div>
+
+    <!-- agora ancorado ao próprio item -->
+    <div style="position:absolute; right:12px; top:50%; transform:translateY(-50%);">
+      <a href="#" onclick="excluirCarrinhoIcone('{$id}')" class="link-neutro {$ocultar_excluir}">
+        <i class="icon-x-circle text-warning"></i>
+      </a>
+    </div>
+  </div>
+</li>
+
 
 
 						

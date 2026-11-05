@@ -6,6 +6,11 @@ $id = $_POST['id'];
 $nome = $_POST['nome'];
 $valor = $_POST['valor'];
 
+if($valor == ""){
+    $valor = 0;
+}
+$valor = str_replace(',', '.', $valor);
+
 
 //validar nome
 $query = $pdo->query("SELECT * from $tabela where nome = '$nome'");

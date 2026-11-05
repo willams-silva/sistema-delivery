@@ -1,9 +1,16 @@
 <?php 
+@session_start();
+$id_usuario = $_SESSION['id'];
+
+if($id_usuario == ""){
+    echo 'Sua sessão expirou, faça novamente o Login!';
+    exit();
+}
+
 $tabela = 'itens_venda';
 require_once("../../../conexao.php");
 
-@session_start();
-$id_usuario = $_SESSION['id'];
+
 
 $quantidade = $_POST['quantidade'];
 $quantidade = str_replace(',', '.', $quantidade);
@@ -15,6 +22,14 @@ $estoque = $res[0]['estoque'];
 $valor = $res[0]['valor_venda'];
 $tem_estoque = $res[0]['tem_estoque'];
 $unidade = $res[0]['unidade'];
+
+$promocao = $res[0]['promocao'];
+	$valor_promocao = $res[0]['val_promocional'];
+
+	
+	if($promocao == 'Sim' and $valor_promocao > 0){
+		$valor = $valor_promocao;
+	}
 
 $query3 = $pdo->query("SELECT * FROM unidade_medida where id = '$unidade'");
 	$res3 = $query3->fetchAll(PDO::FETCH_ASSOC);

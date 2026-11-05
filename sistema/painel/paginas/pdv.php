@@ -1,5 +1,6 @@
 <?php 
 $_SESSION['sessao_usuario'] = $id_usuario;
+$_SESSION['id_edicao'] = 0;
 $pag = 'pdv';
 
 $id_mesa = @$_POST['id_mesa'];
@@ -531,6 +532,32 @@ $data_atual = date('Y-m-d');
 			<div class="modal-body">
 				
 			<div id="listar_sabores">
+				
+			</div>
+			
+			</div>		
+			
+		</div>
+	</div>
+</div>
+
+
+
+
+
+<!-- Modal Ver Grades -->
+<div class="modal fade" id="modalVerGrade" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+	<div class="modal-dialog ">
+		<div class="modal-content">
+			<div class="modal-header bg-primary text-white">
+				<h4 class="modal-title" id="exampleModalLabel">Opções do Item</h4>
+				<button id="btn-fechar-ver_grades" aria-label="Close" class="btn-close" data-bs-dismiss="modal" type="button"><span
+						class="text-white" aria-hidden="true">&times;</span></button>
+			</div>
+			
+			<div class="modal-body">
+				
+			<div id="listar_itens_grades">
 				
 			</div>
 			
@@ -1227,6 +1254,21 @@ function FormaPg(){
 
         success:function(result){
             $("#listar_sabores").html(result);
+            
+        }
+    });
+  	}
+
+
+  	function listarItensGrades(id){
+  		$.ajax({
+        url: 'paginas/' + pag + "/listar_itens_grades.php",
+        method: 'POST',
+        data: {id},
+        dataType: "html",
+
+        success:function(result){
+            $("#listar_itens_grades").html(result);
             
         }
     });

@@ -63,6 +63,8 @@ $cartoes = @$res[0]['cartoes'];
 		<span style="font-size: 18px; margin-top: 5px"><b>Nº PEDIDO <?php echo $n_pedido ?></b></span>
 		<br>
 		<span style="font-size: 12px; margin-top: -5px">Ficamos gratos por realizar essa compra!</span><br>
+
+		<?php if($total_cartoes_config > 0){ ?>
 		<span style="font-size: 12px; margin-top: -5px">Você ganhou mais um cartão Fidelidade</span><br>
 
 		<span style="font-size: 12px; margin-top: -5px">Você possui <b><?php echo $cartoes ?> 
@@ -72,6 +74,8 @@ $cartoes = @$res[0]['cartoes'];
 			echo 'Cartões';
 		} ?>
 		 Fidelidade </b></span><br>
+
+		<?php } ?>
 
 
 
@@ -83,7 +87,7 @@ $cartoes = @$res[0]['cartoes'];
 			<span style="font-size: 13px;"><b>Opção de Entrega: </b> <span><?php echo $entrega ?></span></span><br>
 			<span style="font-size: 13px;"><b>Pagamento: <span style="color:<?php echo $cor_pago ?>; font-size: 15px">R$ <?php echo $valorF ?></span></b></span><br>
 			<?php if ($access_token == "") { ?>
-				<span style="font-size: 13px;"><b>Chave Pix:</b> <span style="font-size: 13px"><?php echo $tipo_chave ?> <?php echo $chave_pix ?></span></span><br>
+				<span style="font-size: 13px;"><b>Chave Pix:</b> <span style="font-size: 13px"><?php echo $tipo_chave ?> <?php echo @$dados_pagamento ?></span></span><br>
 			<?php } ?>
 		</p>
 
@@ -213,6 +217,9 @@ $cartoes = @$res[0]['cartoes'];
 		</div>
 
 
+		<?php if($total_cartoes_config > 0){ ?>
+
+
 		<br>
 
 		<?php if($total_cartoes_config == $cartoes){ ?>
@@ -242,6 +249,10 @@ for($i=1; $i<=$total_cartoes_config; $i++){
 </div>
 <?php } ?>
 </div>
+
+
+<?php } ?>
+
 <br>
 
 

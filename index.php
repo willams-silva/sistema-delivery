@@ -344,7 +344,7 @@ if($id_edicao == ""){
 </div>
 
   <?php
-  $query = $pdo->query("SELECT * FROM categorias where ativo = 'Sim' order by posicao asc");
+  $query = $pdo->query("SELECT * FROM categorias where ativo = 'Sim' and delivery = 'Sim'  order by posicao asc");
   $res = $query->fetchAll(PDO::FETCH_ASSOC);
   $total_cat = @count($res);
 
@@ -365,7 +365,7 @@ if($id_edicao == ""){
         <div class="swiper-wrapper">
 
           <?php
-          $query = $pdo->query("SELECT * FROM categorias where ativo = 'Sim' order by posicao asc");
+          $query = $pdo->query("SELECT * FROM categorias where ativo = 'Sim' and delivery = 'Sim'  order by posicao asc");
           $res = $query->fetchAll(PDO::FETCH_ASSOC);
           $total_reg = @count($res);
           if ($total_reg > 0) {
@@ -385,7 +385,7 @@ if($id_edicao == ""){
                 continue;
               }
 
-              $query2 = $pdo->query("SELECT * FROM produtos where categoria = '$id' and ativo = 'Sim'");
+              $query2 = $pdo->query("SELECT * FROM produtos where categoria = '$id' and ativo = 'Sim' and delivery = 'Sim'");
               $res2 = $query2->fetchAll(PDO::FETCH_ASSOC);
               $tem_produto = @count($res2);
               $mostrar = 'ocultar';
@@ -454,7 +454,7 @@ if($id_edicao == ""){
 
 
             <?php
-            $query = $pdo->query("SELECT * FROM produtos where ativo = 'Sim' and combo = 'Sim'");
+            $query = $pdo->query("SELECT * FROM produtos where ativo = 'Sim' and combo = 'Sim' and delivery = 'Sim'");
             $res = $query->fetchAll(PDO::FETCH_ASSOC);
             $tem_produto = @count($res);
             $mostrar = 'ocultar';
@@ -560,7 +560,7 @@ if($id_edicao == ""){
 
 
   <?php
-  $query = $pdo->query("SELECT * FROM categorias where ativo = 'Sim' order by posicao asc");
+  $query = $pdo->query("SELECT * FROM categorias where ativo = 'Sim' and delivery = 'Sim'  order by posicao asc");
   $res = $query->fetchAll(PDO::FETCH_ASSOC);
   $total_cat2 = @count($res);
 
@@ -581,7 +581,7 @@ if($id_edicao == ""){
           <div class="row">
 
             <?php
-            $query = $pdo->query("SELECT * FROM categorias where ativo = 'Sim' order by posicao asc");
+            $query = $pdo->query("SELECT * FROM categorias where ativo = 'Sim' and delivery = 'Sim' order by posicao asc");
             $res = $query->fetchAll(PDO::FETCH_ASSOC);
             $total_reg = @count($res);
             if ($total_reg > 0) {
@@ -601,7 +601,7 @@ if($id_edicao == ""){
                   continue;
                 }
 
-                $query2 = $pdo->query("SELECT * FROM produtos where categoria = '$id' and ativo = 'Sim'");
+                $query2 = $pdo->query("SELECT * FROM produtos where categoria = '$id' and ativo = 'Sim'  and delivery = 'Sim'");
                 $res2 = $query2->fetchAll(PDO::FETCH_ASSOC);
                 $tem_produto = @count($res2);
                 $mostrar = 'ocultar';
@@ -680,7 +680,7 @@ if($id_edicao == ""){
 
 
   <?php
-  $query = $pdo->query("SELECT * FROM produtos where ativo = 'Sim' and promocao = 'Sim'");
+  $query = $pdo->query("SELECT * FROM produtos where ativo = 'Sim' and promocao = 'Sim'  and delivery = 'Sim'");
   $res = $query->fetchAll(PDO::FETCH_ASSOC);
   $tem_produto = @count($res);
   if ($tem_produto > 0) { ?>
@@ -702,7 +702,7 @@ if($id_edicao == ""){
           <div class="row">
 
             <?php
-            $query = $pdo->query("SELECT * FROM produtos where ativo = 'Sim' and promocao = 'Sim'");
+            $query = $pdo->query("SELECT * FROM produtos where ativo = 'Sim' and promocao = 'Sim'  and delivery = 'Sim'");
             $res = $query->fetchAll(PDO::FETCH_ASSOC);
             $tem_produto = @count($res);
             $mostrar = 'ocultar';
@@ -820,7 +820,7 @@ if($id_edicao == ""){
 
 
   <?php
-  $query = $pdo->query("SELECT * FROM produtos where ativo = 'Sim' and combo = 'Sim'");
+  $query = $pdo->query("SELECT * FROM produtos where ativo = 'Sim' and combo = 'Sim' and delivery = 'Sim'");
   $res = $query->fetchAll(PDO::FETCH_ASSOC);
   $tem_produto = @count($res);
   $mostrar = 'ocultar';
@@ -843,7 +843,7 @@ if($id_edicao == ""){
 
 
             <?php
-            $query = $pdo->query("SELECT * FROM produtos where ativo = 'Sim' and combo = 'Sim'");
+            $query = $pdo->query("SELECT * FROM produtos where ativo = 'Sim' and combo = 'Sim'  and delivery = 'Sim'");
             $res = $query->fetchAll(PDO::FETCH_ASSOC);
             $tem_produto = @count($res);
             $mostrar = 'ocultar';

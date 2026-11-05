@@ -1,6 +1,6 @@
 <?php 
 @session_start();
-$id_empresa = @$_SESSION['empresa'];
+$id_empresa = 0;
 require_once("../../../conexao.php");
 
 $tabela = 'grupos_disparos';

@@ -8,8 +8,8 @@ require_once("../../conexao.php");
 $filtro_data = $_POST['filtro_data'];
 $dataInicial = $_POST['dataInicial'];
 $dataFinal = $_POST['dataFinal'];
-$filtro_tipo = urlencode($_POST['filtro_tipo']);
-$filtro_lancamento = urlencode($_POST['filtro_lancamento']);
+$filtro_tipo = $_POST['filtro_tipo'];
+$filtro_lancamento = $_POST['filtro_lancamento'];
 $filtro_pendentes = $_POST['filtro_pendentes'];
 
 ob_start();

@@ -16,10 +16,10 @@
   <button class="tpcart__close"><i class="icon-x"></i></button>
   <div class="tpcart">
     <h4 class="tpcart__title">CARRINHO</h4>
-    <div class="tpcart__product">
-      <div class="tpcart__product-list">
-        <ul id="listar-itens-carrinho-icone" style="margin-left: -40px;">
-
+    <div class="tpcart__product" style="display:flex;flex-direction:column;max-height:80vh;">
+      <div class="tpcart__product-list" style="flex:1;min-height:0;overflow-y:auto;">
+        <ul id="listar-itens-carrinho-icone" style="margin-left:-40px;">
+          <!-- itens do carrinho aqui -->
         </ul>
       </div>
       <div class="tpcart__checkout">
@@ -32,9 +32,9 @@
         </div>
       </div>
     </div>
-
   </div>
 </div>
+
 
 
 <!-- JS here -->

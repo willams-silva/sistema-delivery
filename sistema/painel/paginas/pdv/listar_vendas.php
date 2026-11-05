@@ -134,14 +134,41 @@ if($linhas > 0){
 
 	$nome_produtoF = mb_strimwidth($nome_produto, 0, 40, "..."); 
 
+
+
+
+    $query2 = $pdo->query("SELECT * FROM temp where carrinho = '$id' and tabela = 'Variação' order by id asc limit 1");
+        $res2 = $query2->fetchAll(PDO::FETCH_ASSOC);
+        $id_do_item = @$res2[0]['id_item'];
+
+        $query2 = $pdo->query("SELECT * FROM itens_grade where id = '$id_do_item'");
+        $res2 = $query2->fetchAll(PDO::FETCH_ASSOC);
+        if(@$res2[0]['texto'] != ""){
+            $sigla_grade = '<small> ('.@$res2[0]['texto'].')</small>';
+        }else{
+            $sigla_grade = '';
+        }
+
+
+        $ocultar_temp = 'ocultar';
+        $query2 = $pdo->query("SELECT * FROM temp where carrinho = '$id' order by id asc limit 1");
+        $res2 = $query2->fetchAll(PDO::FETCH_ASSOC);
+        if(@count($res2) > 0){
+            $ocultar_temp = '';
+        }
+
+
+
 	echo '<div class="row">';
 	echo '<div class="col-md-3" style="margin-right:3px">';
 	echo '<img src="images/produtos/'.$foto_produto.'" width="45px">';
 	echo '</div>';
 	echo '<div class="col-md-9" style="margin-left:-15px; margin-top:3px">';
 	echo '<span class="text-dark" style="font-size:13px; margin-left: -15px">';
-	echo '<span class=" '.$ocultar_quantidades.'">'.$quantidadeF.'</span> '.$nome_produtoF.' ';
-	echo '</span><br>';
+	echo '<span class=" '.$ocultar_quantidades.'">'.$quantidadeF.'</span> '.$nome_produtoF.' '.$sigla_grade;
+	echo '</span>
+    <span class="'.$ocultar_temp.'"><a title="Ver Grade" onclick="verGrade('.$id.')"><i class="fa fa-file text-info" ></i></a></span>
+    <br>';
 	echo '<div class="text-dark" style="font-size:12px; margin-top:0px; margin-left:0px">
 	<a class="'.$ocultar_quantidades.'" href="#" onclick="diminuir('.$id.', '.$quantidadeF.')"><big><i class="fa fa-minus-circle text-danger" ></i></big></a>
 	<input type="text" value="'.$quantidadeF.'" style="background:transparent; border:none; outline:none; width:28px; text-align:center" id="input_quant_'.$id.'" onblur="alterarQuantidade('.$id.', '.$quantidadeF.')"> '.$sigla_unidade.'
@@ -330,5 +357,10 @@ function excluirAlert(id) {
     });
 	}
 
+
+function verGrade(id){
+    $('#modalVerGrade').modal('show');
+    listarItensGrades(id);
+}
 	
 </script>

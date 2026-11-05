@@ -11,8 +11,32 @@ echo <<<HTML
 
 
 HTML;
-			$query = $pdo->query("SELECT * FROM produtos where nome like '%$buscar%' and ativo = 'Sim' order by valor_venda asc");
-			$res = $query->fetchAll(PDO::FETCH_ASSOC);
+				
+			$buscar = trim($_POST['buscar'] ?? '');
+			$like = "%{$buscar}%";
+
+			// Busca produtos que batem pelo nome ou pela categoria
+			$sql = "
+			  SELECT p.*
+			    FROM produtos p
+			   WHERE p.ativo = 'Sim'
+			     AND (
+			       p.nome LIKE :q
+			       OR p.categoria IN (
+			            SELECT c.id FROM categorias c
+			             WHERE c.ativo = 'Sim'
+			               AND (c.nome LIKE :q OR c.url LIKE :q)
+			       )
+			     )
+			   ORDER BY p.valor_venda ASC
+			";
+
+			$stmt = $pdo->prepare($sql);
+			$stmt->execute([':q' => $like]);
+			$res = $stmt->fetchAll(PDO::FETCH_ASSOC);
+			$total_reg = count($res);
+
+
 			$total_reg = @count($res);
 			if ($total_reg > 0) {
 				for ($i = 0; $i < $total_reg; $i++) {

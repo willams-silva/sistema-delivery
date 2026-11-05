@@ -2,6 +2,8 @@
 require_once("../../../conexao.php");
 $tabela = 'mesas';
 
+$totalF = 0;
+
 $query = $pdo->query("SELECT * FROM $tabela order by id asc");
 $res = $query->fetchAll(PDO::FETCH_ASSOC);
 $total_reg = @count($res);
@@ -86,7 +88,7 @@ if ($total_reg > 0) {
 		$total_reg2 = @count($res2);
 		if ($total_reg2 > 0 and $status_abertura == 'Aberta') {
 			for ($i2 = 0; $i2 < $total_reg2; $i2++) {
-				$total_mesa += $res2[$i2]['total_item'] * $res2[$i2]['quantidade'];
+				$total_mesa += $res2[$i2]['total_item'];
 			}
 		} else {
 			$total_mesa = 0;
@@ -272,10 +274,13 @@ HTML;
 		$('#couvert_fechamento').val(couvert);
 		$('#comissao_fechamento').val(comissao);
 		$('#subtotal_fechamento').val(subtotal);
+		$('#total_mesa_fechamento').val(subtotal);
 		$('#garcon_fechamento').val(garcon).change();
 		$('#total_itens_fechamento').val(total_itens);
 		$('#total_valor_fechamento').val(total_valor);
 		$('#modalFechamento').modal('show');
+
+		totalizar();
 
 
 	}
