@@ -72,6 +72,12 @@ if($consumir_local == "Não"){
   $ocultar_consumir = 'none';
 }
 
+
+$visualizar_pagamento = '';
+if($somente_pix_delivery == 'Sim'){
+  $visualizar_pagamento = 'none';
+}
+
 ?>
 <style>
   .telefone_user::placeholder {
@@ -367,7 +373,7 @@ if($consumir_local == "Não"){
 
           <div class="row" style="font-size:14px">
 
-            <div class="col-3 form-check">
+            <div class="col-3 form-check" style="display:<?php echo $visualizar_pagamento ?>">
               <small>Dinheiro
                 <input onchange="dinheiro()" class="form-check-input" type="radio" name="racio_dinheiro"
                   id="radio_dinheiro">
@@ -381,14 +387,14 @@ if($consumir_local == "Não"){
             </div>
 
 
-            <div class="col-3 form-check">
+            <div class="col-3 form-check" style="display:<?php echo $visualizar_pagamento ?>">
               <small>Crédito
                 <input onchange="credito()" class="form-check-input" type="radio" name="radio_credito"
                   id="radio_credito">
               </small>
             </div>
 
-            <div class="col-3 form-check">
+            <div class="col-3 form-check" style="display:<?php echo $visualizar_pagamento ?>">
               <small>Débito
                 <input onchange="debito()" class="form-check-input" type="radio" name="radio_debito" id="radio_debito">
               </small>
@@ -1444,6 +1450,7 @@ if($consumir_local == "Não"){
     var roundedDistance = Math.ceil(distance);
 
     //aqui entra a verificação solicitada
+    /*
     if(roundedDistance <= 3){
       return 5;
     }else if (roundedDistance > 3 && roundedDistance <= 6){
@@ -1451,8 +1458,15 @@ if($consumir_local == "Não"){
     }else if (roundedDistance > 6 && roundedDistance <= 9){
       return 10;
     }
+    */
 
-    //return roundedDistance * valor_km;
+    //abaixo calculo com base no valor das configurações;
+
+    if(valor_km == "" || valor_km <= 0){
+        valor_km = 1;
+      }
+      var roundedDistance = Math.ceil(distance);
+      return roundedDistance * valor_km;
 
   }
 </script>

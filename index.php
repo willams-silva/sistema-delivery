@@ -58,6 +58,15 @@ if (@$res2[0]['nome'] == "") {
   $_SESSION['nome_mesa'] = $nome_mesa;
 }
 
+if($id_mesa > 0){
+  $query2 = $pdo->query("SELECT * FROM abertura_mesa where mesa = '$id_mesa' and status = 'Aberta'");
+  $res2 = $query2->fetchAll(PDO::FETCH_ASSOC);
+  if(@count($res2) == 0){
+    $pdo->query("INSERT INTO abertura_mesa SET mesa = '$id_mesa', cliente = '$nome_mesa', data = curDate(), horario_abertura = curTime(), garcon = '0', status = 'Aberta'");
+    $pdo->query("UPDATE mesas set status = 'Aberta' where id = '$id_mesa'");
+  }
+}
+
 $query2 = $pdo->query("SELECT * FROM abertura_mesa where mesa = '$id_mesa' and status = 'Aberta'");
 $res2 = $query2->fetchAll(PDO::FETCH_ASSOC);
 $id_ab_mesa = @$res2[0]['id'];
@@ -980,7 +989,7 @@ if($id_edicao == ""){
             class="link-neutro"><i class="bi bi-instagram" style="color:#d11144"></i> @Instagram</a></span>
 
 
-        <span class="ocultar-mobile" style="margin-left: 15px"> / <a href="sistema" class="link-neutro "><i
+        <span class="" style="margin-left: 15px"> / <a href="sistema" class="link-neutro "><i
               class="bi bi-lock" style="color:red"></i> Painel Sistema</a></span>
       </div>
 

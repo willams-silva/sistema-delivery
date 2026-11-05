@@ -221,7 +221,7 @@ if ($nome_mesa == '' and $pedido_balcao == "") {
       <?php if ($nome_mesa == "") { ?>
         <a href='finalizar' class="btn btn-warning btn-lg">Finalizar Pedido <i class="fal fa-long-arrow-right"></i></a>
       <?php } else { ?>
-        <a href='' onclick="window.close()" class="btn btn-warning btn-lg">Finalizar Pedido <i class="fal fa-long-arrow-right"></i></a>
+        
       <?php } ?>
 
 
