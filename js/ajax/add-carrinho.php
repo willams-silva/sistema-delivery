@@ -2,6 +2,13 @@
 @session_start();
 require_once('../../sistema/conexao.php');
 
+$id_empresa = @$_SESSION['empresa'];
+if($id_empresa == ""){
+	echo 'Sem Sessão da Empresa, acesse novamente!';
+	exit();
+}
+require_once("../../sistema/painel/buscar_config.php");
+
 $produto = $_POST['produto'];
 //$telefone = $_POST['telefone'];
 //$nome = $_POST['nome'];
@@ -63,7 +70,7 @@ if($mesa > 0){
 	$total_item = $total_item * $quantidade;
 }
 
-$query = $pdo->prepare("INSERT INTO carrinho SET sessao = '$sessao', cliente = '0', produto = '$produto', quantidade = '$quantidade', total_item = '$total_item', obs = :obs, pedido = '$id_edicao', data = curDate(), mesa = '$mesa', nome_cliente = '', valor_unitario = '$valor_produto', status = '$status', hora = curTime()");
+$query = $pdo->prepare("INSERT INTO carrinho SET sessao = '$sessao', cliente = '0', produto = '$produto', quantidade = '$quantidade', total_item = '$total_item', obs = :obs, pedido = '$id_edicao', data = curDate(), mesa = '$mesa', nome_cliente = '', valor_unitario = '$valor_produto', status = '$status', hora = curTime(), empresa = '$id_empresa' ");
 $query->bindValue(":obs", "$obs");
 $query->execute();
 $id_carrinho = $pdo->lastInsertId();

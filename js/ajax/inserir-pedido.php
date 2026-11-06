@@ -1,7 +1,15 @@
 <?php
+@session_start();
 require_once ('../../sistema/conexao.php');
 require_once ('ApiConfig.php');
-@session_start();
+
+$id_empresa = @$_SESSION['empresa'];
+if($id_empresa == ""){
+  echo 'Sem Sessão da Empresa, acesse novamente!';
+  exit();
+}
+require_once("../../sistema/painel/buscar_config.php");
+
 
 $id_usuario = @$_SESSION['id'];
 
@@ -70,7 +78,7 @@ $cliente = 0;
 $total_cartoes_cliente = 0;
 
 if ($tel_cliente != "") {
-  $query = $pdo->prepare("SELECT * FROM clientes where telefone = :telefone ");
+  $query = $pdo->prepare("SELECT * FROM clientes where telefone = :telefone and empresa = '$id_empresa' ");
   $query->bindValue(":telefone", "$tel_cliente");
   $query->execute();
   $res = $query->fetchAll(PDO::FETCH_ASSOC);
@@ -106,7 +114,7 @@ if ($tel_cliente != "") {
     $query->execute();
 
   } else {
-    $query = $pdo->prepare("INSERT INTO clientes SET nome = :nome, telefone = :telefone, endereco = :rua, numero = :numero, bairro = :bairro, complemento = :complemento, data_cad = curDate(), cep = :cep, cidade = :cidade, data_mensagem = '$data_dias_retorno', retorno_enviado = 'Não', cartoes = '1', referencia = :referencia");
+    $query = $pdo->prepare("INSERT INTO clientes SET nome = :nome, telefone = :telefone, endereco = :rua, numero = :numero, bairro = :bairro, complemento = :complemento, data_cad = curDate(), cep = :cep, cidade = :cidade, data_mensagem = '$data_dias_retorno', retorno_enviado = 'Não', cartoes = '1', referencia = :referencia, empresa = '$id_empresa'");
     $query->bindValue(":nome", "$nome_cliente_ped");
     $query->bindValue(":telefone", "$tel_cliente");
     $query->bindValue(":rua", "$rua");
@@ -124,7 +132,7 @@ if ($tel_cliente != "") {
 
 
 $total_carrinho = 0;
-$query = $pdo->query("SELECT * FROM carrinho where sessao = '$sessao'");
+$query = $pdo->query("SELECT * FROM carrinho where sessao = '$sessao' and empresa = '$id_empresa' ");
 $res = $query->fetchAll(PDO::FETCH_ASSOC);
 $total_reg = @count($res);
 if ($total_reg > 0) {
@@ -173,7 +181,7 @@ if ($total_pago == "") {
 $troco = $total_pago - $total_com_frete;
 
 //recuperar número do pedido
-$query = $pdo->query("SELECT * FROM vendas where data = curDate() order by id desc limit 1");
+$query = $pdo->query("SELECT * FROM vendas where data = curDate() and empresa = '$id_empresa' order by id desc limit 1");
 $res = $query->fetchAll(PDO::FETCH_ASSOC);
 $num_pedido = @$res[0]['pedido'];
 if ($num_pedido == "") {
@@ -181,7 +189,7 @@ if ($num_pedido == "") {
 }
 $pedido = $num_pedido + 1;
 
-$query = $pdo->prepare("INSERT INTO vendas SET cliente = '$cliente', valor = '$total_com_frete', total_pago = '$total_pago', troco = '$troco', data = curDate(), hora = curTime(), status = 'Iniciado', pago = '$pago', obs = :obs, taxa_entrega = '$taxa_entrega', tipo_pgto = '$pagamento', usuario_baixa = '0', entrega = '$entrega', mesa = '$mesa', nome_cliente = '$nome_cliente_ped', cupom = '$cupom', pago_entregador = 'Não', pedido = '$pedido', ref_api = '$codigo_pix', tipo_pedido = '$tipo_pedido', taxa_extra_pedido = '$taxa_extra', custo = '$total_compra'");
+$query = $pdo->prepare("INSERT INTO vendas SET cliente = '$cliente', valor = '$total_com_frete', total_pago = '$total_pago', troco = '$troco', data = curDate(), hora = curTime(), status = 'Iniciado', pago = '$pago', obs = :obs, taxa_entrega = '$taxa_entrega', tipo_pgto = '$pagamento', usuario_baixa = '0', entrega = '$entrega', mesa = '$mesa', nome_cliente = '$nome_cliente_ped', cupom = '$cupom', pago_entregador = 'Não', pedido = '$pedido', ref_api = '$codigo_pix', tipo_pedido = '$tipo_pedido', taxa_extra_pedido = '$taxa_extra', custo = '$total_compra', empresa = '$id_empresa'");
 $query->bindValue(":obs", "$obs");
 $query->execute();
 $id_pedido = $pdo->lastInsertId();
@@ -190,7 +198,7 @@ $id_pedido_feito = $pdo->lastInsertId();
 
 
 //relacionar itens do carrinho com o pedido
-$pdo->query("UPDATE carrinho SET cliente = '$cliente', pedido = '$id_pedido' where sessao = '$sessao' and pedido = '0'");
+$pdo->query("UPDATE carrinho SET cliente = '$cliente', pedido = '$id_pedido' where sessao = '$sessao' and pedido = '0' and empresa = '$id_empresa' ");
 
 //limpar a sessao aberta
 @$_SESSION['sessao_usuario'] = "";
@@ -225,7 +233,7 @@ $mensagem .= '🧾 *_Detalhes do Pedido_* %0A%0A';
 
   //ABAIXO É PARA PEGAR OS PRODUTOS COMPRADOS
   $nome_produto2 = '';
-  $res = $pdo->query("SELECT * from carrinho where pedido = '$id_pedido' order by id asc");
+  $res = $pdo->query("SELECT * from carrinho where pedido = '$id_pedido' and empresa = '$id_empresa' order by id asc");
   $dados = $res->fetchAll(PDO::FETCH_ASSOC);
   $linhas = count($dados);
 
@@ -474,7 +482,7 @@ $mensagem .= '🧾 *_Detalhes do Pedido_* %0A%0A';
 
 
   $mensagem .= '%0A%0A' . '```Obrigado pela preferência```' . '%0A';
-  $mensagem .= $url_sistema . '%0A%0A';
+  $mensagem .= $url_sistema . 'site/'.$url_site.'%0A%0A';
 
   $mensagem .= 'Acompanhe o Status do Seu pedido%0A';
 
@@ -493,7 +501,7 @@ $id_pedido_codificado = encodeIdPedidoHV($id_pedido_feito);
 }
 
 
-$query2 = $pdo->query("SELECT * FROM formas_pgto WHERE nome = '$pagamento'");
+$query2 = $pdo->query("SELECT * FROM formas_pgto WHERE nome = '$pagamento' and empresa = '$id_empresa' ");
 $res2 = $query2->fetchAll(PDO::FETCH_ASSOC);
 if (@count($res2) > 0) {
   $id_tipo_pgto = $res2[0]['id'];
@@ -520,7 +528,7 @@ if($tipo_pedido == 'Balcão'){
 
 
 if($pago == 'Sim'){
-  $pdo->query("INSERT INTO receber SET descricao = '$entrega', cliente = '$cliente', valor = '$total_com_frete', subtotal = '$total_com_frete', data_lanc = curDate(), hora = curTime(), pago = 'Sim', vencimento = curDate(), data_pgto = curDate(), foto = 'sem-foto.png', arquivo = 'sem-foto.png', forma_pgto = '$id_tipo_pgto', referencia = '$entrega', caixa = '$id_caixa', usuario_pgto = '$id_usuario'");
+  $pdo->query("INSERT INTO receber SET descricao = '$entrega', cliente = '$cliente', valor = '$total_com_frete', subtotal = '$total_com_frete', data_lanc = curDate(), hora = curTime(), pago = 'Sim', vencimento = curDate(), data_pgto = curDate(), foto = 'sem-foto.png', arquivo = 'sem-foto.png', forma_pgto = '$id_tipo_pgto', referencia = '$entrega', caixa = '$id_caixa', usuario_pgto = '$id_usuario', empresa = '$id_empresa' ");
 }
 
 

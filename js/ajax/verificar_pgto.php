@@ -1,4 +1,14 @@
 <?php
+@session_start();
+require_once('../../sistema/conexao.php');
+
+$id_empresa = @$_SESSION['empresa'];
+if($id_empresa == ""){
+    echo 'Sem Sessão da Empresa, acesse novamente!';
+    exit();
+}
+require_once("../../sistema/painel/buscar_config.php");
+
 include('ApiConfig.php');
 //$ref_api = '58970903187';
 $curl = curl_init();

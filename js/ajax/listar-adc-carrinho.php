@@ -1,6 +1,14 @@
 <?php 
 @session_start();
 require_once('../../sistema/conexao.php');
+
+$id_empresa = @$_SESSION['empresa'];
+if($id_empresa == ""){
+	echo 'Sem Sessão da Empresa, acesse novamente!';
+	exit();
+}
+require_once("../../sistema/painel/buscar_config.php");
+
 $id = $_POST['id'];
 $id_sabor = @$_POST['id_sabor'];
 $sessao = $_SESSION['sessao_usuario'];
@@ -47,7 +55,7 @@ echo <<<HTML
 
 		<i class="bi bi-check-lg text-success"></i>
 		{$quantidade_temp} {$nome_adc} <span class="text-danger">(R$ {$valor_adcF})</span>
-		<a href="#" onclick="excluirAdc('{$id_temp}', '{$id}', '{$valor_adc}', '{$id_sabor}', '{$item}', '{$categoria}')"><i class="bi bi-trash text-danger"></i></a>
+		<a href="javascript:void(0)" onclick="excluirAdc('{$id_temp}', '{$id}', '{$valor_adc}', '{$id_sabor}', '{$item}', '{$categoria}')"><i class="bi bi-trash text-danger"></i></a>
 		<hr>
 
 HTML;

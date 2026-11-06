@@ -11,6 +11,9 @@ if ($linhas > 0) {
 		$id = $res[$i]['id'];
 		$nome = $res[$i]['nome'];
 		$telefone = $res[$i]['telefone'];
+		$id_empresa = $res[$i]['empresa'];
+
+		require("../sistema/painel/buscar_config.php");
 
 		$telefone_envio = '55' . preg_replace('/[ ()-]+/', '', $telefone);
 		//enviar a notificação via whatsapp

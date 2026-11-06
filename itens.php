@@ -3,7 +3,7 @@ require_once("cabecalho.php");
 $url = $_GET['url'];
 
 
-$query = $pdo->query("SELECT * FROM categorias where url = '$url'");
+$query = $pdo->query("SELECT * FROM categorias where url = '$url' and empresa = '$id_empresa' ");
 $res = $query->fetchAll(PDO::FETCH_ASSOC);
 $total_reg = @count($res);
 if ($total_reg > 0) {
@@ -18,7 +18,7 @@ if ($total_reg > 0) {
 
 
 
-	$pdo->query("DELETE FROM temp where carrinho = 0 and sessao = '$sessao'");
+	$pdo->query("DELETE FROM temp where carrinho = 0 and sessao = '$sessao' and empresa = '$id_empresa'");
 }
 
 if (@$_SESSION['nome_mesa'] != '') {
@@ -33,7 +33,7 @@ if (@$_SESSION['nome_mesa'] != '') {
 		<nav class="navbar bg-light fixed-top" style="box-shadow: 0px 3px 5px rgba(0, 0, 0, 0.20);">
 			<div class="container-fluid">
 				<div class="navbar-brand">
-					<a href="index"><big><i class="bi bi-arrow-left"></i></big></a>
+					<a href="site/<?php echo $url_site ?>"><big><i class="bi bi-arrow-left"></i></big></a>
 					<span style="margin-left: 15px; font-size:14px"><?php echo mb_strtoupper($nome) ?> <?php echo @$_SESSION['nome_mesa'] ?> <?php echo @$_SESSION['pedido_balcao'] ?></span>
 				</div>
 

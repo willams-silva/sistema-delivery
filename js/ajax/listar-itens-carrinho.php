@@ -2,6 +2,13 @@
 @session_start();
 require_once('../../sistema/conexao.php');
 
+$id_empresa = @$_SESSION['empresa'];
+if($id_empresa == ""){
+	echo 'Sem Sessão da Empresa, acesse novamente!';
+	exit();
+}
+require_once("../../sistema/painel/buscar_config.php");
+
 $sessao = @$_SESSION['sessao_usuario'];
 
 
@@ -12,9 +19,9 @@ if (@$_SESSION['id_ab_mesa'] != "") {
 
 $nome_produto2 = '';
 if ($id_mesa == "") {
-	$query = $pdo->query("SELECT * FROM carrinho where sessao = '$sessao'");
+	$query = $pdo->query("SELECT * FROM carrinho where sessao = '$sessao' and empresa = '$id_empresa' ");
 } else {
-	$query = $pdo->query("SELECT * FROM carrinho where mesa = '$id_mesa'");
+	$query = $pdo->query("SELECT * FROM carrinho where mesa = '$id_mesa' and empresa = '$id_empresa'");
 }
 
 $id_edicao = "";
@@ -23,7 +30,7 @@ if (@$_SESSION['id_edicao'] != "") {
 }
 
 if($id_edicao != ""){
-	$query = $pdo->query("SELECT * FROM carrinho where pedido = '$id_edicao'");
+	$query = $pdo->query("SELECT * FROM carrinho where pedido = '$id_edicao' and empresa = '$id_empresa'");
 }
 
 
@@ -239,16 +246,16 @@ echo <<<HTML
 
 
 			
-			<a href="#" onclick="excluir('{$id}')" class="link-neutro {$ocultar_excluir}"><i class="bi bi-x-lg direita"></i></a>
+			<a href="javascript:void(0)" onclick="excluir('{$id}')" class="link-neutro {$ocultar_excluir}"><i class="bi bi-x-lg direita"></i></a>
 
 			<div id="popup-excluir{$id}" class="overlay-excluir">
 			<div class="popup">
 			<div class="row">
 			<div class="col-12">
-			Confirmar Exclusão? <a href="#" onclick="excluirCarrinho('{$id}', '{$id_sabor}')" class="text-danger link-neutro">Sim</a>
+			Confirmar Exclusão? <a href="javascript:void(0)" onclick="excluirCarrinho('{$id}', '{$id_sabor}')" class="text-danger link-neutro">Sim</a>
 			</div>
 			<div class="col-3">
-			<a class="close" href="#" onclick="fecharExcluir('{$id}')">&times;</a>
+			<a class="close" href="javascript:void(0)" onclick="fecharExcluir('{$id}')">&times;</a>
 			</div>
 			</div>
 
@@ -260,18 +267,18 @@ echo <<<HTML
 			<div class="carrinho-qtd">
 
 			<div class="itens-carrinho-qtd">
-				<a title="Observações do item" class="link-neutro" href="#" onclick="obs('{$nome_produto}', '{$obs}', '{$id}')"><i class="bi bi-card-text {$classe_obs}"></i></a>
+				<a title="Observações do item" class="link-neutro" href="javascript:void(0)" onclick="obs('{$nome_produto}', '{$obs}', '{$id}')"><i class="bi bi-card-text {$classe_obs}"></i></a>
 			</div>
 
 			<div class="itens-carrinho-qtd-adc {$classe_adc}">
-				<a title="Ver Adicionais" class="link-neutro" href="#" onclick="adicionais('{$nome_produto}', '{$id}', '{$id_sabor}', '{$categoria}')"><i class="bi  bi-plus text-primary"></i><small><small>Adc</small></small></a>
+				<a title="Ver Adicionais" class="link-neutro" href="javascript:void(0)" onclick="adicionais('{$nome_produto}', '{$id}', '{$id_sabor}', '{$categoria}')"><i class="bi  bi-plus text-primary"></i><small><small>Adc</small></small></a>
 			</div>
 
 			<div class="itens-carrinho-qtd-adc {$classe_grade}">
-				<a title="Ver Opcionais" class="link-neutro" href="#" onclick="grades('{$nome_produto}', '{$id}', '{$produto}')"><i class="bi  bi-plus text-primary"></i><small><small>Opções</small></small></a>
+				<a title="Ver Opcionais" class="link-neutro" href="javascript:void(0)" onclick="grades('{$nome_produto}', '{$id}', '{$produto}')"><i class="bi  bi-plus text-primary"></i><small><small>Opções</small></small></a>
 			</div>
 
-			<a href="#" onclick="mudarQuant('{$id}', '{$quantidade}', 'menos')" class="link-neutro">
+			<a href="javascript:void(0)" onclick="mudarQuant('{$id}', '{$quantidade}', 'menos')" class="link-neutro">
 			<div class="menos-mais">
 			-
 			</div>
@@ -283,7 +290,7 @@ echo <<<HTML
 			</div>
 
 
-			<a href="#" onclick="mudarQuant('{$id}', '{$quantidade}', 'mais')" class="link-neutro">
+			<a href="javascript:void(0)" onclick="mudarQuant('{$id}', '{$quantidade}', 'mais')" class="link-neutro">
 			<div class="menos-mais">
 			+
 			</div>
@@ -304,7 +311,7 @@ HTML;
 		} 
 
 	}else{
-		echo "<script>window.location='index'</script>";
+		echo "<script>window.location='site/".$url_site."'</script>";
 	}
 
 
@@ -361,6 +368,7 @@ HTML;
 				dataType: "text",
 
 				success: function (mensagem) {  
+					
 					
 					if (mensagem.trim() == "Excluido com Sucesso") {                
 						listarCarrinho();         

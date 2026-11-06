@@ -12,3 +12,10 @@ RewriteRule ^index(.*)$ index.php [L]
 RewriteRule ^index.php(.*)$ index.php [L]
 RewriteRule ^pedido/(.*)$ pedido.php?id=$1 [L]
 RewriteRule ^mesa/(.*)$ mesa.php?id_mesa=$1 [L]
+
+RewriteRule ^site/(.*)$ site.php?url=$1 [L]
+
+
+RewriteRule ^pagamento_plano_asaas/(.*)$ sistema/sas/asaas/index.php?id_conta=$1 [L]
+RewriteRule ^pagamento_plano/(.*)$ sistema/sas/pagamentos/index.php?id_conta=$1 [L]
+RewriteRule ^pagamento/(.*)$ sistema/sas/pagamentos/index.php?id_conta=$1 [L]

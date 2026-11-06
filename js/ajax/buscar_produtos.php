@@ -1,5 +1,13 @@
 <?php 
+@session_start();
 require_once('../../sistema/conexao.php');
+
+$id_empresa = @$_SESSION['empresa'];
+if($id_empresa == ""){
+	echo 'Sem Sessão da Empresa, acesse novamente!';
+	exit();
+}
+require_once("../../sistema/painel/buscar_config.php");
 
 $buscar = $_POST['buscar'];
 
@@ -19,7 +27,7 @@ HTML;
 			$sql = "
 			  SELECT p.*
 			    FROM produtos p
-			   WHERE p.ativo = 'Sim'
+			   WHERE p.ativo = 'Sim' and empresa = '$id_empresa' 
 			     AND (
 			       p.nome LIKE :q
 			       OR p.categoria IN (

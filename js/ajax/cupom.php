@@ -1,5 +1,13 @@
 <?php
+@session_start();
 require_once ('../../sistema/conexao.php');
+
+$id_empresa = @$_SESSION['empresa'];
+if($id_empresa == ""){
+	echo 'Sem Sessão da Empresa, acesse novamente!';
+	exit();
+}
+require_once("../../sistema/painel/buscar_config.php");
 
 
 $data_atual = date('Y-m-d');
@@ -9,7 +17,7 @@ $codigo_cupom = filter_var(@$_POST['codigo_cupom'], @FILTER_SANITIZE_STRING);
 $telefone_cliente = filter_var(@$_POST['telefone_cliente'], @FILTER_SANITIZE_STRING);
 
 
-$query = $pdo->prepare("SELECT * FROM clientes where telefone = :telefone_cliente");
+$query = $pdo->prepare("SELECT * FROM clientes where telefone = :telefone_cliente and empresa = '$id_empresa' ");
 $query->bindValue(":telefone_cliente", "$telefone_cliente");
 $query->execute();
 $res = $query->fetchAll(PDO::FETCH_ASSOC);
@@ -28,7 +36,7 @@ if($codigo_cupom == 'cartao' || $codigo_cupom == 'cartão' || $codigo_cupom == '
 }else{
 
 
-	$query = $pdo->prepare("SELECT * FROM cupons where codigo = :codigo_cupom");
+	$query = $pdo->prepare("SELECT * FROM cupons where codigo = :codigo_cupom and empresa = '$id_empresa' ");
 $query->bindValue(":codigo_cupom", "$codigo_cupom");
 $query->execute();
 $res = $query->fetchAll(PDO::FETCH_ASSOC);

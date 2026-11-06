@@ -1,5 +1,14 @@
 <?php
+@session_start();
 require_once('../../sistema/conexao.php');
+
+$id_empresa = @$_SESSION['empresa'];
+if($id_empresa == ""){
+    echo 'Sem Sessão da Empresa, acesse novamente!';
+    exit();
+}
+require_once("../../sistema/painel/buscar_config.php");
+
 require_once('../../js/ajax/ApiConfig.php');
 
 if ($dados_pagamento != "" || $api_merc == '') {
@@ -60,6 +69,6 @@ echo "
 <img style='display:block;' width='200px' id='base64image'
 src='data:image/jpeg;base64, " . $resultado->point_of_interaction->transaction_data->qr_code_base64 . "'/>";
 echo '
-<a style="margin-left:15px" class="link-neutro" href="#" onClick="copiar()"><i class="bi bi-clipboard text-primary"></i> <span ><small><small>Copiar Chave Pix <br><input type="text" id="chave_pix_copia" value="' . $codigo_pix . '" style="background: transparent; border:none; width:100px; opacity:0" readonly></small></small></span> </a>';
+<a style="margin-left:15px" class="link-neutro" href="javascript:void(0)" onClick="copiar()"><i class="bi bi-clipboard text-primary"></i> <span ><small><small>Copiar Chave Pix <br><input type="text" id="chave_pix_copia" value="' . $codigo_pix . '" style="background: transparent; border:none; width:100px; opacity:0" readonly></small></small></span> </a>';
 
 echo '<input type="hidden" id="codigo_pix" value="' . $id_ref . '">';

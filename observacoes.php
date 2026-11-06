@@ -41,7 +41,7 @@ if ($nome_mesa != '') {
 }
 
 
-$query = $pdo->query("SELECT * FROM carrinho where sessao = '$sessao'");
+$query = $pdo->query("SELECT * FROM carrinho where sessao = '$sessao' and empresa = '$id_empresa'");
 $res = $query->fetchAll(PDO::FETCH_ASSOC);
 $total_reg = @count($res);
 if ($total_reg > 0) {
@@ -66,7 +66,7 @@ $url = $separar_url[0];
 $item = @$separar_url[1];
 
 
-$query = $pdo->query("SELECT * FROM produtos where url = '$url'");
+$query = $pdo->query("SELECT * FROM produtos where url = '$url' and empresa = '$id_empresa'");
 $res = $query->fetchAll(PDO::FETCH_ASSOC);
 $total_reg = @count($res);
 if ($total_reg > 0) {
@@ -111,7 +111,7 @@ if ($nome_mesa == '' and $pedido_balcao == "") {
                 confirmButtonText: 'OK'
             }).then((result) => {
                 if (result.isConfirmed) {
-                    window.location.href = 'index';
+                    window.location.href = 'site/".$url_site."';
                 }
             });
         };
@@ -135,7 +135,7 @@ if ($nome_mesa == '' and $pedido_balcao == "") {
                     // Ação a ser realizada após o clique no botão de confirmação
                     console.log('Botão OK clicado!');
                     // Você pode redirecionar para outra página, se necessário
-                    window.location.href = 'index';
+                    window.location.href = 'site/".$url_site."';
                 }
             });
         };
@@ -156,7 +156,7 @@ if ($nome_mesa == '' and $pedido_balcao == "") {
 	$dia_procurado = $diasemana[$diasemana_numero];
 
 	//percorrer os dias da semana que ele trabalha
-	$query = $pdo->query("SELECT * FROM dias where dia = '$dia_procurado'");
+	$query = $pdo->query("SELECT * FROM dias where dia = '$dia_procurado' and empresa = '$id_empresa'");
 	$res = $query->fetchAll(PDO::FETCH_ASSOC);
 	if (@count($res) > 0) {
 
@@ -172,7 +172,7 @@ if ($nome_mesa == '' and $pedido_balcao == "") {
                     // Ação a ser realizada após o clique no botão de confirmação
                     console.log('Botão OK clicado!');
                     // Você pode redirecionar para outra página, se necessário
-                    window.location.href = 'index';
+                    window.location.href = 'site/".$url_site."';
                 }
             });
         };
@@ -213,7 +213,7 @@ if ($nome_mesa == '' and $pedido_balcao == "") {
                     // Ação a ser realizada após o clique no botão de confirmação
                     console.log('Botão OK clicado!');
                     // Você pode redirecionar para outra página, se necessário
-                    window.location.href = 'index';
+                    window.location.href = 'site/".$url_site."';
                 }
             });
         };
@@ -239,7 +239,7 @@ if ($nome_mesa == '' and $pedido_balcao == "") {
                     // Ação a ser realizada após o clique no botão de confirmação
                     console.log('Botão OK clicado!');
                     // Você pode redirecionar para outra página, se necessário
-                    window.location.href = 'index';
+                    window.location.href = 'site/".$url_site."';
                 }
             });
         };
@@ -298,9 +298,9 @@ if ($nome_mesa == '' and $pedido_balcao == "") {
 			<b>QUANTIDADE</b>
 			<span class="direita">
 				<big>
-					<span><a href="#" onclick="diminuirQuant()"><i class="bi bi-dash-circle-fill text-danger"></i></a></span>
+					<span><a href="javascript:void(0)" onclick="diminuirQuant()"><i class="bi bi-dash-circle-fill text-danger"></i></a></span>
 					<span> <b><span id="quant"></span></b> </span>
-					<span><a href="#" onclick="aumentarQuant()"><i class="bi bi-plus-circle-fill text-success"></i></a></span>
+					<span><a href="javascript:void(0)" onclick="aumentarQuant()"><i class="bi bi-plus-circle-fill text-success"></i></a></span>
 				</big>
 			</span>
 		</div>

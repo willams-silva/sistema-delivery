@@ -62,7 +62,7 @@ if ($nome_mesa == '' and $pedido_balcao == "") {
   $dia_procurado = $diasemana[$diasemana_numero];
 
   //percorrer os dias da semana que ele trabalha
-  $query = $pdo->query("SELECT * FROM dias where dia = '$dia_procurado'");
+  $query = $pdo->query("SELECT * FROM dias where dia = '$dia_procurado' and empresa = '$id_empresa'");
   $res = $query->fetchAll(PDO::FETCH_ASSOC);
   if (@count($res) > 0) {
 
@@ -178,12 +178,12 @@ if ($nome_mesa == '' and $pedido_balcao == "") {
   <nav class="navbar bg-light fixed-top" style="box-shadow: 0px 3px 5px rgba(0, 0, 0, 0.20);">
     <div class="container-fluid">
       <div class="navbar-brand">
-        <a href="index"><big><i class="bi bi-arrow-left"></i></big></a>
+        <a href="site/<?php echo $url_site ?>"><big><i class="bi bi-arrow-left"></i></big></a>
         <span style="margin-left: 15px; font-size:14px">RESUMO DO PEDIDO <?php echo $nome_mesa ?> <?php echo @$_SESSION['pedido_balcao'] ?></span>
 
       </div>
 
-      <a class="" href="index">
+      <a class="" href="site/<?php echo $url_site ?>">
         <div class="">
           <button type="button" class="btn btn-warning btn-sm">Comprar Mais?</button>
         </div>

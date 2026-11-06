@@ -1,5 +1,14 @@
 <?php
+@session_start();
 require_once ('../../sistema/conexao.php');
+
+$id_empresa = @$_SESSION['empresa'];
+if($id_empresa == ""){
+  echo 'Sem Sessão da Empresa, acesse novamente!';
+  exit();
+}
+require_once("../../sistema/painel/buscar_config.php");
+
 $tel = @$_POST['tel'];
 
 if ($tel == "") {
@@ -10,7 +19,7 @@ if ($tel == "") {
 $taxa_entrega = "0";
 $taxa_entregaF = "0";
 
-$query = $pdo->query("SELECT * FROM clientes where telefone = '$tel' ");
+$query = $pdo->query("SELECT * FROM clientes where telefone = '$tel' and empresa = '$id_empresa' ");
 $res = $query->fetchAll(PDO::FETCH_ASSOC);
 if (@count($res) > 0) {
   $nome = $res[0]['nome'];
@@ -24,7 +33,7 @@ if (@count($res) > 0) {
   $referencia = $res[0]['referencia'];
 
 
-  $query = $pdo->query("SELECT * FROM bairros where nome = '$bairro'");
+  $query = $pdo->query("SELECT * FROM bairros where nome = '$bairro' and empresa = '$id_empresa'");
   $res = $query->fetchAll(PDO::FETCH_ASSOC);
 
   $taxa_entregaF = "";

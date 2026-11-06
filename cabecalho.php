@@ -1,5 +1,17 @@
 <?php
+@session_start();
 require_once("sistema/conexao.php");
+
+$url_site = $_SESSION['url_site'];
+
+
+$query2 = $pdo->query("SELECT * FROM config where url_site = '$url_site'");
+$res2 = $query2->fetchAll(PDO::FETCH_ASSOC);
+$id_empresa = @$res2[0]['empresa'];
+$_SESSION['empresa'] = $id_empresa;
+require_once("sistema/painel/buscar_config.php");
+
+
 ?>
 <!DOCTYPE html>
 <html>
@@ -7,8 +19,10 @@ require_once("sistema/conexao.php");
 <head>
 	<title><?php echo $nome_sistema ?></title>
 
+	<base href="<?php echo $url_sistema ?>">
+
 	 <meta property="og:description" content="<?php echo $nome_sistema ?>" />
-  <meta property="og:image" content="sistema/img/logo.png">
+  	<meta property="og:image" content="sistema/img/logo.png">
     <meta property="og:image:type" content="image/jpg">
     <meta property="og:image:width" content="1200">
     <meta property="og:image:height" content="630"> 

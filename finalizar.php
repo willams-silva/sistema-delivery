@@ -12,7 +12,7 @@ $sessao_pedido_balcao = @$_SESSION['pedido_balcao'];
 
 $total_carrinho = 0;
 $total_carrinhoF = 0;
-$query = $pdo->query("SELECT * FROM carrinho where sessao = '$sessao'");
+$query = $pdo->query("SELECT * FROM carrinho where sessao = '$sessao' and empresa = '$id_empresa' ");
 $res = $query->fetchAll(PDO::FETCH_ASSOC);
 $total_reg = @count($res);
 
@@ -95,7 +95,7 @@ if($somente_pix_delivery == 'Sim'){
 
   <nav class="navbar bg-light fixed-top" style="box-shadow: 0px 3px 5px rgba(0, 0, 0, 0.20);">
     <div class="container-fluid">
-      <a class="navbar-brand" href="index">
+      <a class="navbar-brand" href="site/<?php echo $url_site ?>">
         <img src="sistema/img/<?php echo $logo_sistema ?>" alt="" width="80px" class="d-inline-block align-text-top">
         Finalizar Pedido
       </a>
@@ -136,7 +136,7 @@ if($somente_pix_delivery == 'Sim'){
           <hr>
           <div class="row">
             <div class="col-6">
-              <a href="index" class="btn btn-danger botao_nao">NÃO</a>
+              <a href="site/<?php echo $url_site ?>" class="btn btn-danger botao_nao">NÃO</a>
 
             </div>
 
@@ -279,7 +279,7 @@ if($somente_pix_delivery == 'Sim'){
     <select class="input" name="bairro" id="bairro" required style="background: transparent; border: none;" onchange="calcularFrete()">
       <option value="">Selecione um Bairro</option>
       <?php
-      $query = $pdo->query("SELECT * FROM bairros ORDER BY id asc");
+      $query = $pdo->query("SELECT * FROM bairros where empresa = '$id_empresa' ORDER BY id asc");
       $res = $query->fetchAll(PDO::FETCH_ASSOC);
       $total_reg = @count($res);
       if ($total_reg > 0) {
@@ -348,7 +348,7 @@ if($somente_pix_delivery == 'Sim'){
 
 
 
-                <a id="colap-4" href="#" class="btn btn-success btn-sm" data-bs-toggle="collapse"
+                <a id="colap-4" href="javascript:void(0)" class="btn btn-success btn-sm" data-bs-toggle="collapse"
                   data-bs-target="#collapse4">Avançar para Pagamento</a>
 
               </div>
@@ -533,7 +533,7 @@ if($somente_pix_delivery == 'Sim'){
 
 
   <div class="d-grid gap-2 mt-4 abaixo">
-    <a href='#' id="botao_finalizar" onclick="finalizarPedido()" class="btn btn-warning btn-lg">Concluir
+    <a href='javascript:void(0)' id="botao_finalizar" onclick="finalizarPedido()" class="btn btn-warning btn-lg">Concluir
       Pedido</a>
 
     <div align="center" id="div_img" style="display:none"><img src="img/loading.gif" width="100%" height="40px"></div>

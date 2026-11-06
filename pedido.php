@@ -12,7 +12,7 @@ if($id != ''){
   if(count($partes) == 2 && $partes[1] == 'hugo'){
     $id = $partes[0];
   } else {
-    echo "<script>window.location='../index'</script>";
+    echo "<script>window.location='../site/".$url_site."'</script>";
     exit();
   }
 }
@@ -89,6 +89,8 @@ $cartoes = @$res[0]['cartoes'];
 
 		<?php } ?>
 
+
+		<span style="font-size: 13px;"><b>Novo Pedido -> </b> <span><a href="<?php echo $url_sistema ?>site/<?php echo $url_site ?>">Clique Aqui</a></span></span>
 
 
 		<hr style="margin:7px">

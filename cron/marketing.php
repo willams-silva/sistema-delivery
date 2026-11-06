@@ -16,6 +16,8 @@ if ($linhas5 > 0) {
 		$hora = $res5[$i5]['hora'];
 		$id_empresa = $res5[$i5]['empresa'];	
 
+		require("../sistema/painel/buscar_config.php");
+
 
 		$telefone_envio = '55' . preg_replace('/[ ()-]+/', '', $telefone);
 		//enviar a notificação via whatsapp

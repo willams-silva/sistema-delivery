@@ -34,7 +34,7 @@ if ($nome_mesa == '' and $pedido_balcao == "") {
                 confirmButtonText: 'OK'
             }).then((result) => {
                 if (result.isConfirmed) {
-                    window.location.href = 'index';
+                    window.location.href = 'site/".$url_site."';
                 }
             });
         };
@@ -58,7 +58,7 @@ if ($nome_mesa == '' and $pedido_balcao == "") {
                     // Ação a ser realizada após o clique no botão de confirmação
                     console.log('Botão OK clicado!');
                     // Você pode redirecionar para outra página, se necessário
-                    window.location.href = 'index';
+                    window.location.href = 'site/".$url_site."';
                 }
             });
         };
@@ -79,7 +79,7 @@ if ($nome_mesa == '' and $pedido_balcao == "") {
     $dia_procurado = $diasemana[$diasemana_numero];
 
     //percorrer os dias da semana que ele trabalha
-    $query = $pdo->query("SELECT * FROM dias where dia = '$dia_procurado'");
+    $query = $pdo->query("SELECT * FROM dias where dia = '$dia_procurado' and empresa = '$id_empresa' ");
     $res = $query->fetchAll(PDO::FETCH_ASSOC);
     if (@count($res) > 0) {
 
@@ -95,7 +95,7 @@ if ($nome_mesa == '' and $pedido_balcao == "") {
                     // Ação a ser realizada após o clique no botão de confirmação
                     console.log('Botão OK clicado!');
                     // Você pode redirecionar para outra página, se necessário
-                    window.location.href = 'index';
+                    window.location.href = 'site/".$url_site."';
                 }
             });
         };
@@ -138,7 +138,7 @@ if ($nome_mesa == '' and $pedido_balcao == "") {
                     // Ação a ser realizada após o clique no botão de confirmação
                     console.log('Botão OK clicado!');
                     // Você pode redirecionar para outra página, se necessário
-                    window.location.href = 'index';
+                    window.location.href = 'site/".$url_site."';
                 }
             });
         };
@@ -164,7 +164,7 @@ if ($nome_mesa == '' and $pedido_balcao == "") {
                     // Ação a ser realizada após o clique no botão de confirmação
                     console.log('Botão OK clicado!');
                     // Você pode redirecionar para outra página, se necessário
-                    window.location.href = 'index';
+                    window.location.href = 'site/".$url_site."';
                 }
             });
         };
@@ -189,14 +189,14 @@ $nova_sessao = $_SESSION['sessao_usuario'];
 $separar_url = explode("_", $url_completa);
 $url = $separar_url[0];
 
-$pdo->query("DELETE FROM temp where carrinho = '0' and sessao = '$nova_sessao'");
+$pdo->query("DELETE FROM temp where carrinho = '0' and sessao = '$nova_sessao' and empresa = '$id_empresa'");
 
 $tem_variação = 'Não';
 
 $data = date('Y-m-d');
 
 
-$query = $pdo->query("SELECT * FROM produtos where url = '$url'");
+$query = $pdo->query("SELECT * FROM produtos where url = '$url' and empresa = '$id_empresa' ");
 $res = $query->fetchAll(PDO::FETCH_ASSOC);
 $total_reg = @count($res);
 if ($total_reg > 0) {
@@ -401,7 +401,7 @@ if (@$_SESSION['id'] != "") {
     $id_usuario = '';
 }
 
-$query = $pdo->query("SELECT * FROM carrinho where sessao = '$sessao'");
+$query = $pdo->query("SELECT * FROM carrinho where sessao = '$sessao' and empresa = '$id_empresa' ");
 $res = $query->fetchAll(PDO::FETCH_ASSOC);
 $total_reg = @count($res);
 if ($total_reg > 0) {
@@ -425,7 +425,7 @@ $separar_url = explode("_", $url_completa);
 $url = $separar_url[0];
 
 
-$query = $pdo->query("SELECT * FROM produtos where url = '$url'");
+$query = $pdo->query("SELECT * FROM produtos where url = '$url' and empresa = '$id_empresa'");
 $res = $query->fetchAll(PDO::FETCH_ASSOC);
 $total_reg = @count($res);
 if ($total_reg > 0) {
@@ -451,7 +451,7 @@ if (@$id_mesa == "" and $pedido_balcao == "") {
 
     if ($status_estabelecimento == "Fechado") {
         echo "<script>window.alert('$texto_fechamento')</script>";
-        echo "<script>window.location='index'</script>";
+        echo "<script>window.location='site/".$url_site."'</script>";
         exit();
     }
 
@@ -463,11 +463,11 @@ if (@$id_mesa == "" and $pedido_balcao == "") {
     $dia_procurado = $diasemana[$diasemana_numero];
 
     //percorrer os dias da semana que ele trabalha
-    $query = $pdo->query("SELECT * FROM dias where dia = '$dia_procurado'");
+    $query = $pdo->query("SELECT * FROM dias where dia = '$dia_procurado' and empresa = '$id_empresa' ");
     $res = $query->fetchAll(PDO::FETCH_ASSOC);
     if (@count($res) > 0) {
         echo "<script>window.alert('Estamos Fechados! Não funcionamos Hoje!')</script>";
-        echo "<script>window.location='index'</script>";
+        echo "<script>window.location='site/".$url_site."'</script>";
         exit();
     }
 
@@ -488,13 +488,13 @@ if (@$id_mesa == "" and $pedido_balcao == "") {
                 if ($now < $end) {
                 } else {
                     echo "<script>window.alert('$texto_fechamento_horario')</script>";
-                    echo "<script>window.location='index'</script>";
+                    echo "<script>window.location='site/".$url_site."'</script>";
                     exit();
                 }
             }
         } else {
             echo "<script>window.alert('$texto_fechamento_horario')</script>";
-            echo "<script>window.location='index'</script>";
+            echo "<script>window.location='site/".$url_site."'</script>";
             exit();
         }
     }

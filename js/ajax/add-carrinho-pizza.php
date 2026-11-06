@@ -2,6 +2,13 @@
 @session_start();
 require_once('../../sistema/conexao.php');
 
+$id_empresa = @$_SESSION['empresa'];
+if($id_empresa == ""){
+	echo 'Sem Sessão da Empresa, acesse novamente!';
+	exit();
+}
+require_once("../../sistema/painel/buscar_config.php");
+
 $ids = $_POST['ids'];
 $variacao = $_POST['variacao'];
 $obs = $_POST['obs'];
@@ -90,7 +97,7 @@ if($mais_sabores == 'Média'){
 
 //calcular os adicionais
 $total_adicionais = 0;
-$query =$pdo->query("SELECT * FROM temp where carrinho = '0' and sessao = '$sessao' and tabela = 'adicionais'");
+$query =$pdo->query("SELECT * FROM temp where carrinho = '0' and sessao = '$sessao' and tabela = 'adicionais' and empresa = '$id_empresa' ");
 $res = $query->fetchAll(PDO::FETCH_ASSOC);
 $total_reg = @count($res);
 if($total_reg > 0){
@@ -147,7 +154,7 @@ if (@$_SESSION['id_edicao'] != "") {
 	$pdo->query("UPDATE vendas SET valor = '$total_venda', total_pago = '$total_pago', troco = '$troco' where id = '$id_edicao'");
 }
 
-$query = $pdo->prepare("INSERT INTO carrinho SET sessao = '$sessao', cliente = '0', produto = '$primeiro_id_produto', quantidade = '1', total_item = '$valor_produto_final', obs = :obs, pedido = '$id_edicao', id_sabor = '0', data = curDate(), variacao = '$id_variacao', mesa = '$mesa', nome_cliente = '', sabores = '$quantidade_sabores', nome_produto = '$nome_produto', borda = '$borda', categoria = '$categoria', status = '$status', hora = curTime()");
+$query = $pdo->prepare("INSERT INTO carrinho SET sessao = '$sessao', cliente = '0', produto = '$primeiro_id_produto', quantidade = '1', total_item = '$valor_produto_final', obs = :obs, pedido = '$id_edicao', id_sabor = '0', data = curDate(), variacao = '$id_variacao', mesa = '$mesa', nome_cliente = '', sabores = '$quantidade_sabores', nome_produto = '$nome_produto', borda = '$borda', categoria = '$categoria', status = '$status', hora = curTime(), empresa = '$id_empresa' ");
 $query->bindValue(":obs", "$obs");
 $query->execute();
 $id_carrinho = $pdo->lastInsertId();

@@ -26,6 +26,9 @@ if ($linhas > 0) {
     $id_empresa = (int)$res[$i]['empresa'];
     $telefone = $res[$i]['telefone'];
     $mensagem = $res[$i]['mensagem'];
+   
+
+    require("../sistema/painel/buscar_config.php");
 
     // 2) trava o registro pra não duplicar (se rodar 2 crons juntos)
     $st = $pdo->prepare("

@@ -2,6 +2,13 @@
 @session_start();
 require_once('../../sistema/conexao.php');
 
+$id_empresa = @$_SESSION['empresa'];
+if($id_empresa == ""){
+	echo 'Sem Sessão da Empresa, acesse novamente!';
+	exit();
+}
+require_once("../../sistema/painel/buscar_config.php");
+
 $sessao = @$_SESSION['sessao_usuario'];
 
 
@@ -14,11 +21,11 @@ if (@$_SESSION['id_ab_mesa'] != "") {
 $nome_produto2 = '';
 if ($id_mesa == "") {
 	if($sessao != ""){
-		$query = $pdo->query("SELECT * FROM carrinho where sessao = '$sessao'");
+		$query = $pdo->query("SELECT * FROM carrinho where sessao = '$sessao' and empresa = '$id_empresa' ");
 	}
 	
 } else {
-	$query = $pdo->query("SELECT * FROM carrinho where mesa = '$id_mesa'");
+	$query = $pdo->query("SELECT * FROM carrinho where mesa = '$id_mesa' and empresa = '$id_empresa' ");
 }
 
 $id_edicao = "";
@@ -27,7 +34,7 @@ if (@$_SESSION['id_edicao'] != "") {
 }
 
 if($id_edicao != ""){
-	$query = $pdo->query("SELECT * FROM carrinho where pedido = '$id_edicao'");
+	$query = $pdo->query("SELECT * FROM carrinho where pedido = '$id_edicao' and empresa = '$id_empresa' ");
 }
 
 
@@ -167,7 +174,7 @@ if ($total_reg > 0) {
 
     <!-- agora ancorado ao próprio item -->
     <div style="position:absolute; right:12px; top:50%; transform:translateY(-50%);">
-      <a href="#" onclick="excluirCarrinhoIcone('{$id}')" class="link-neutro {$ocultar_excluir}">
+      <a href="javascript:void(0)" onclick="excluirCarrinhoIcone('{$id}')" class="link-neutro {$ocultar_excluir}">
         <i class="icon-x-circle text-warning"></i>
       </a>
     </div>
