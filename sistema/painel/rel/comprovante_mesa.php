@@ -77,7 +77,12 @@ $total_couvertF = @number_format($total_couvert, 2, ',', '.');
 $subtotal = $total_mesa + $total_comissao + $total_couvert - $desconto;
 $subtotalF = @number_format($subtotal, 2, ',', '.');
 
-$total_por_pessoa = $subtotal / $pessoas;
+if($subtotal > 0 and $pessoas > 0){
+	$total_por_pessoa = $subtotal / $pessoas;
+}else{
+	$total_por_pessoa = 0;
+}
+
 $total_por_pessoaF = @number_format($total_por_pessoa, 2, ',', '.');
 ?>
 

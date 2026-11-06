@@ -41,10 +41,10 @@ if ($total_reg > 0) {
 
 			$query2 = $pdo->query("SELECT * FROM usuarios where id = '$garcon' ");
 			$res2 = $query2->fetchAll(PDO::FETCH_ASSOC);
-			$nome_garcon = 'Garçon: (' . @$res2[0]['nome'] . ')';
+			$nome_garcon = @$res2[0]['nome'];
 
 			
-			$nome_cliente = ' / Cliente: (' . @$cliente . ')';
+			$nome_cliente = @$cliente;
 
 			$horario_aberturaF = date('H:i', @strtotime($horario_abertura));
 
@@ -53,7 +53,7 @@ if ($total_reg > 0) {
 			$total = 0;
 			$cliente = "";
 			$horario_aberturaF = "<span style='color:green; font-size:10px'>(Disponível)</span>";
-			$nome_garcon = "&nbsp;";
+			$nome_garcon = "";
 			$totalF = '';
 			$obs = '';
 			$pessoas_mesa = '';
@@ -63,7 +63,9 @@ if ($total_reg > 0) {
 			$garcon = '';
 			$status_abertura = '';
 			$obsF = '';
-			$nome_cliente = '&nbsp;';
+			$nome_cliente = '';
+			$area_nome_garcon = '&nbsp;';
+			$area_nome_cliente = '&nbsp; <br>';
 		}
 
 
@@ -149,8 +151,20 @@ if ($total_reg > 0) {
 		$subtotalF = @number_format($subtotal, 2, ',', '.');
 		$subtotalC = @number_format($subtotal, 2);
 
+		if($nome_cliente != ""){
+			$area_nome_cliente = '<span style="color:#133591; font-size: 12px; font-family: Arial, Helvetica, sans-serif;
+font-weight:600;
+letter-spacing:0.5px;">CLIENTE: '.mb_strtoupper($nome_cliente).'</span><br>';
+		}
 
 
+		if($nome_garcon != ""){
+			$area_nome_garcon = '<span style="color:#616161; font-size: 11px; font-family: Arial, Helvetica, sans-serif;
+font-weight:600;
+letter-spacing:0.5px; ">GARÇON: '.mb_strtoupper($nome_garcon).'</span>';
+		}
+
+		
 
 		echo <<<HTML
 			<div class="col-xs-12 col-md-3  widget cardTarefas " style="margin-right: 5px; margin-bottom: 5px; display: inline-block; width:100%">
@@ -193,9 +207,10 @@ if ($total_reg > 0) {
                     <div class="stats" align="center">
                       <span>                     
 
-                        <small><span style="color:green" class="vazio">{$totalF}</span> <span style="color:red; font-size: 10px">{$horario_aberturaF} </span> <span style="color:blue; font-size: 13px">{$pessoas_mesa}</span><br> 
-                        <i><span style="color:#061f9c; font-size: 9px">{$nome_garcon}</span></i>
-                        <i><span style="color:#074a1b; font-size: 9px">{$nome_cliente}</span></i>
+                        <small><span style="color:green" class="vazio">{$totalF}</span> <span style="color:red; font-size: 10px">{$horario_aberturaF} </span> <span style="color:blue; font-size: 13px">{$pessoas_mesa}</span><br>                         	
+                        	{$area_nome_cliente}
+                        	{$area_nome_garcon} 
+                       
                         </small></span>
                     </div>
                 </div>

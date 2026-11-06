@@ -13,6 +13,7 @@ $tarefas = 'ocultar';
 $lancar_tarefas = 'ocultar';
 $anotacoes = 'ocultar';
 $configuracoes = 'ocultar';
+$pausar_delivery = 'ocultar';
 
 $pedido_site = 'ocultar';
 $minhas_comissoes = 'ocultar';
@@ -322,6 +323,11 @@ if($total_reg > 0){
 
 		if ($chave == 'pedidos_outros') {
 			$pedidos_outros = '';
+		}
+
+
+		if ($chave == 'pausar_delivery') {
+			$pausar_delivery = '';
 		}
 
 		

@@ -97,6 +97,17 @@ if (@count($res1) > 0) {
 }
 
 
+
+//inserir permissao pausa delivery
+$query = $pdo->query("SELECT * from acessos where chave = 'pausar_delivery'");
+$res = $query->fetchAll(PDO::FETCH_ASSOC);
+$linhas = @count($res);
+if($linhas == 0){
+	$pdo->query("INSERT INTO acessos SET nome = 'Pausar Delivery', chave = 'pausar_delivery', grupo = 0, pagina = 'Não' ");
+}
+
+
+
 ?>
 <!DOCTYPE HTML>
 <html lang="pt-BR" dir="ltr">
@@ -165,7 +176,7 @@ if (@count($res1) > 0) {
 
 						<div class="responsive-logo logo_painel">
 							<a href="index.php" class="header-logo">
-								<img src="../img/foto-painel.png" class="mobile-logo logo-1" alt="logo" style="width:40% !important; margin-left: 50px !important">
+								<img src="../img/foto-painel.png" class="mobile-logo logo-1" alt="logo" style="width:90px !important; margin-left: -120px !important">
 										<img src="../img/foto-painel.png" class="mobile-logo dark-logo-1" alt="logo" style="width:40% !important; margin-left: 50px !important">
 							</a>
 						</div>
@@ -233,6 +244,88 @@ if (@count($res1) > 0) {
 									<li class="dropdown nav-item" style="opacity: 0">
 										------------
 									</li>
+
+
+									<?php
+										$hvDeliveryPainelStatusTxt_9xK = 'ABERTO';
+										$hvDeliveryPainelStatusCor_9xK = '#10b981';
+										$hvDeliveryPainelStatusIcone_9xK = 'fa-circle-check';
+
+										if (@$pausar_delivery == 'Sim') {
+
+											$hvDeliveryPainelStatusTxt_9xK = 'PAUSADO';
+											$hvDeliveryPainelStatusCor_9xK = '#f59e0b';
+											$hvDeliveryPainelStatusIcone_9xK = 'fa-circle-pause';
+
+										} else if (@$status_estabelecimento == 'Fechado') {
+
+											$hvDeliveryPainelStatusTxt_9xK = 'FECHADO';
+											$hvDeliveryPainelStatusCor_9xK = '#ef4444';
+											$hvDeliveryPainelStatusIcone_9xK = 'fa-circle-xmark';
+
+										} else {
+
+											$hvDeliveryPainelData_9xK = date('Y-m-d');
+											$hvDeliveryPainelDias_9xK = array("Domingo", "Segunda-Feira", "Terça-Feira", "Quarta-Feira", "Quinta-Feira", "Sexta-Feira", "Sábado");
+											$hvDeliveryPainelDiaNum_9xK = date('w', strtotime($hvDeliveryPainelData_9xK));
+											$hvDeliveryPainelDiaAtual_9xK = $hvDeliveryPainelDias_9xK[$hvDeliveryPainelDiaNum_9xK];
+
+											$hvDeliveryPainelQueryDia_9xK = $pdo->query("SELECT * FROM dias WHERE dia = '$hvDeliveryPainelDiaAtual_9xK'");
+											$hvDeliveryPainelResDia_9xK = $hvDeliveryPainelQueryDia_9xK->fetchAll(PDO::FETCH_ASSOC);
+
+											if (@count($hvDeliveryPainelResDia_9xK) > 0) {
+
+												$hvDeliveryPainelStatusTxt_9xK = 'FECHADO';
+												$hvDeliveryPainelStatusCor_9xK = '#ef4444';
+												$hvDeliveryPainelStatusIcone_9xK = 'fa-circle-xmark';
+
+											} else {
+
+												$hvDeliveryPainelStart_9xK = strtotime(date('Y-m-d') . ' ' . $horario_abertura);
+												$hvDeliveryPainelEnd_9xK = strtotime(date('Y-m-d') . ' ' . $horario_fechamento);
+												$hvDeliveryPainelNow_9xK = time();
+
+												$hvDeliveryPainelAbertoAgora_9xK = false;
+
+												if ($hvDeliveryPainelEnd_9xK < $hvDeliveryPainelStart_9xK) {
+													if ($hvDeliveryPainelNow_9xK > $hvDeliveryPainelStart_9xK || $hvDeliveryPainelNow_9xK < $hvDeliveryPainelEnd_9xK) {
+														$hvDeliveryPainelAbertoAgora_9xK = true;
+													}
+												} else {
+													if ($hvDeliveryPainelStart_9xK <= $hvDeliveryPainelNow_9xK && $hvDeliveryPainelNow_9xK <= $hvDeliveryPainelEnd_9xK) {
+														$hvDeliveryPainelAbertoAgora_9xK = true;
+													}
+												}
+
+												if (!$hvDeliveryPainelAbertoAgora_9xK) {
+													$hvDeliveryPainelStatusTxt_9xK = 'FECHADO';
+													$hvDeliveryPainelStatusCor_9xK = '#ef4444';
+													$hvDeliveryPainelStatusIcone_9xK = 'fa-circle-xmark';
+												}
+											}
+										}
+										?>
+
+
+										<li class="dropdown nav-item ocultar_mobile" style="margin-right:6px;">
+											<a href="pedidos" class="nav-link" title="Status do Delivery" style="padding:0;">
+												<span style="
+													background: <?php echo $hvDeliveryPainelStatusCor_9xK ?>;
+													color:#fff;
+													font-size:10px;
+													font-weight:600;
+													padding:3px 7px;
+													border-radius:12px;
+													display:inline-flex;
+													align-items:center;
+													gap:3px;
+													line-height:1;
+												">
+													<i class="fa-solid <?php echo $hvDeliveryPainelStatusIcone_9xK ?>" style="font-size:9px;"></i>
+													<?php echo $hvDeliveryPainelStatusTxt_9xK ?>
+												</span>
+											</a>
+										</li>
 
 
 
@@ -511,8 +604,8 @@ if (@count($res1) > 0) {
 				<aside class="app-sidebar">
 					<div class="main-sidebar-header active">
 						<a class="header-logo active" href="index.php">
-							<img src="../img/foto-painel.png" class="main-logo  desktop-logo" alt="logo">
-							<img src="../img/foto-painel.png" class="main-logo  desktop-dark" alt="logo">
+							<img src="../img/foto-painel.png" class="main-logo  desktop-logo" alt="logo" >
+							<img src="../img/foto-painel.png" class="main-logo  desktop-dark" alt="logo" >
 							<img src="../img/icone.png" class="main-logo  mobile-logo" alt="logo">
 							<img src="../img/icone.png" class="main-logo  mobile-dark" alt="logo">
 						</a>
@@ -1655,6 +1748,35 @@ if (@count($res1) > 0) {
 						</div>
 
 					</div>
+
+
+
+					<div class="row mb-3">
+						<div class="col-md-3">
+							<label>Pedidos do PDV na tela Delivery
+								<div class="icones_mobile" class="dropdown" style="display: inline-block; ">
+									<a title="Clique para ver as opções das apis" href="#" aria-expanded="false" aria-haspopup="true"
+										data-bs-toggle="dropdown" class="dropdown"><i class="fa fa-info-circle text-primary"></i> </a>
+									<div class="dropdown-menu tx-13" style="width:500px">
+										<div class="dropdown-item-text" style="width:500px; background: #d3ffd6; box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;">
+											<p>
+												Se marcado como Sim, Quando uma venda for efetuada no PDV ela será recuperada em Pedidos e em Pedidos Esteira, onde geralmente só recuperamos os pedidos que vem do site delivery
+											</p>
+
+										</div>
+									</div>
+								</div>
+							</label>
+							<select class="form-select" name="pedidos_pdv_delivery">
+								<option value="Não" <?php if (@$pedidos_pdv_delivery == 'Não') { ?> selected <?php } ?>>Não</option>
+								<option value="Sim" <?php if (@$pedidos_pdv_delivery == 'Sim') { ?> selected <?php } ?>>Sim</option>
+								
+							</select>
+						</div>
+					</div>
+
+
+					<br>
 
 
 

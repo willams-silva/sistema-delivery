@@ -28,7 +28,7 @@ if(@count($res2) > 0){
 
 
 //verificar se ele tem a permissão de estar nessa página
-if(@$vendas == 'ocultar' and $novo_pedido == 'ocultar'){
+if(@$vendas == 'ocultar' and $novo_pedido == 'ocultar' and $pedido_site == 'ocultar'){
 	echo "<script>window.location='index.php'</script>";
 	exit();
 }
@@ -168,9 +168,19 @@ $data_atual = date('Y-m-d');
           
          <div class="grid grid-cols-2 gap-4 mb-4">
             <div>
-            <label class="block text-sm font-medium text-dark mb-1">Forma de Pagamento</label>
-            <select class="form-select" id="saida" name="saida" required="">
+            	<div class="flex items-center justify-between">
+ <label class="block text-sm font-medium text-dark mb-1">Forma de Pagamento</label>
+
+  <a href="#" onclick="chamarPix(); return false;" title="Gerar QR Code Pix">
+    <i class="fas fa-qrcode text-primary" style="font-size:18px;"></i>
+  </a>
+</div>
+            
+            <select class="form-select" id="saida" name="saida" required="" onchange="chamarPix()">
               <option value="">Forma de Pgto</option>
+              						<?php if($token_mp != ""){ ?>
+											<option value="pix_mp">Pix QRCode</option>
+										<?php } ?>
 												<?php 
 												$query = $pdo->query("SELECT * FROM formas_pgto order by id asc");
 												$res = $query->fetchAll(PDO::FETCH_ASSOC);
@@ -222,6 +232,20 @@ $data_atual = date('Y-m-d');
 
 
           </div>
+
+
+           <div class="grid grid-cols-2 gap-4 mb-4">  
+           	 <div>
+           <label class="block text-sm font-medium text-dark mb-1">Pedido Delivery?</label>        
+           		 <select class="form-select" id="entrega" name="entrega">
+	              <option value="">Não</option>	
+	              <option value="Delivery">Delivery</option>	
+	               <option value="Consumir Local">Consumir no Local</option>	
+	               <option value="Retirar">Retirar no Local</option>												
+            </select>
+             </div>
+
+           </div>
           
         
 
@@ -654,6 +678,8 @@ $("#form_venda").submit(function (event) {
 					$('#cliente').val('').change();
 					$('#cliente_input').val('');
 					$('#data').val('<?=$data_atual?>');
+					$('#saida').val('');
+					$('#entrega').val('');
 
 					listar(); 
 					listarVendas();
@@ -1275,4 +1301,219 @@ function FormaPg(){
         }
     });
   	}
+</script>
+
+
+
+
+
+<script>
+var intervaloPix = null;
+var verificandoPix = false;
+
+function chamarPix() {
+
+    var forma_pgto = $('#saida').val();
+
+    if(forma_pgto !== 'pix_mp'){
+        //$('#saida').val("");
+        return;
+    }
+
+    var valor = $('#subtotal_venda').val();
+
+    valor = String(valor)
+	    .replace('R$', '')
+	    .replace(/\s/g, '')
+	    .replace(',', '.'); // só troca vírgula por ponto
+
+	valor = parseFloat(valor) || 0;
+
+    if(valor <= 0){
+        Swal.fire({
+            title: 'Atenção',
+            text: 'Valor da venda inválido para gerar o Pix.',
+            icon: 'warning'
+        });
+
+        $('#saida').val("");
+        return;
+    }
+
+    if(intervaloPix){
+        clearInterval(intervaloPix);
+        intervaloPix = null;
+    }
+
+	    Swal.fire({
+	        title: 'Gerando Pix...',
+	        text: 'Aguarde enquanto geramos o QR Code',
+	        allowOutsideClick: false,
+	        allowEscapeKey: false,
+	        didOpen: () => {
+	            Swal.showLoading();
+	        }
+	    });
+
+	    $.ajax({
+	        url: 'paginas/' + pag + '/pix.php',
+	        method: 'POST',
+	        data: {
+	            valor: valor.toFixed(2)
+	        },
+	        dataType: 'html',
+
+	        success: function(retorno) {
+
+	            Swal.fire({
+	    title: 'Pagamento via Pix',
+	    html: retorno,
+	    width: 460,
+
+	    showConfirmButton: true,
+	    confirmButtonText: 'Fechar Janela',
+
+	    showDenyButton: true,
+	    denyButtonText: 'Verificar Pagamento',
+
+	    allowOutsideClick: false,
+	    allowEscapeKey: false,
+	    allowEnterKey: false,
+
+	    customClass: {
+	        confirmButton: 'btn btn-success mx-1',
+	        denyButton: 'btn btn-primary mx-1'
+	    },
+	    buttonsStyling: false,
+
+	    preDeny: () => {
+	        $('#status_pix').html('<span style="color:#0d6efd;">Verificando pagamento...</span>');
+	        verificarPgto(false);
+	        return false;
+	    },
+
+	    didOpen: () => {
+	        verificarPgto(false);
+
+	        intervaloPix = setInterval(function(){
+	            verificarPgto(true);
+	        }, 10000);
+	    },
+
+	    willClose: () => {
+	        if(intervaloPix){
+	            clearInterval(intervaloPix);
+	            intervaloPix = null;
+	        }
+
+	        $('#saida').val('');
+	    }
+
+	});
+
+        },
+
+        error: function() {
+            Swal.fire({
+                title: 'Erro',
+                text: 'Erro ao gerar o QR Code Pix.',
+                icon: 'error'
+            });
+        }
+    });
+}
+</script>
+
+
+<script>
+function copiar(){
+    var copyText = document.getElementById("chave_pix_copia");
+    copyText.select();
+    copyText.setSelectionRange(0, 99999);
+
+    document.execCommand("copy");
+
+    Swal.fire({
+        toast: true,
+        position: 'top-end',
+        icon: 'success',
+        title: 'Código Pix copiado!',
+        showConfirmButton: false,
+        timer: 1500
+    });
+}
+</script>
+
+
+<script>
+function verificarPgto(automatico = false){
+
+    if(verificandoPix){
+        return;
+    }
+
+    var codigo_pix = $('#codigo_pix').val();
+
+    if(codigo_pix == ''){
+        $('#status_pix').html('<span style="color:red;">Código do pagamento não encontrado.</span>');
+        return;
+    }
+
+    verificandoPix = true;
+
+    $.ajax({
+        url: 'paginas/' + pag + '/verificar_pgto.php',
+        method: 'POST',
+        data: {
+            codigo_pix: codigo_pix
+        },
+        dataType: 'json',
+
+        success: function(res){
+
+            if(res.status == 'approved'){
+
+                if(intervaloPix){
+                    clearInterval(intervaloPix);
+                    intervaloPix = null;
+                }
+
+                $('#status_pix').html('<span style="color:green; font-weight:bold;">Pagamento aprovado!</span>');
+
+                Swal.fire({
+                    title: 'Pagamento aprovado!',
+                    text: 'Finalizando venda...',
+                    icon: 'success',
+                    timer: 1800,
+                    showConfirmButton: false,
+                    allowOutsideClick: false,
+                    allowEscapeKey: false
+                }).then(() => {
+                    $('#btn_venda').trigger('click');
+                });
+
+            }else if(res.status == 'pending'){
+
+                $('#status_pix').html('<span style="color:#d97706;">Aguardando pagamento...</span>');
+
+                if(!automatico){
+                    $('#status_pix').html('<span style="color:#d97706;">Pagamento ainda não identificado.</span>');
+                }
+
+            }else{
+
+                $('#status_pix').html('<span style="color:#666;">Status: '+ res.mensagem +'</span>');
+
+            }
+        },
+
+        error: function(){
+            $('#status_pix').html('<span style="color:red;">Erro ao verificar pagamento.</span>');
+        },
+
+        complete: function(){
+            verificandoPix = false;
+        }
+    });
+}
 </script>

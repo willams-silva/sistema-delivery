@@ -43,11 +43,18 @@ $saida = $_POST['saida'];
 $data = $_POST['data2'];
 $frete = $_POST['frete'];
 $mesa = @$_POST['mesa'];
+$entrega = @$_POST['entrega'];
+
+if($entrega != "" and $cliente == ""){
+	echo 'Para qualquer opcao do delivery precisa selecionar um cliente!';
+	exit();
+}
 
 $tipo_pedido = '';
-if($mesa == ""){
+if($mesa == "" and $entrega == ""){
 	$tipo_pedido = 'Balcão';
 }
+
 
 $tipo_desconto = $_POST['tipo_desconto'];
 $subtotal_venda = $_POST['subtotal_venda'];
@@ -212,7 +219,13 @@ if(@count($res1) > 0){
 	$id_caixa = 0;
 }
 
-$query = $pdo->prepare("INSERT INTO vendas SET cliente = '$cliente', valor = '$total_final', total_pago = '$troco', troco = '$troco_calculado', data = curDate(), hora = curTime(), status = 'Iniciado', pago = '$pago', obs = '', taxa_entrega = '$frete', tipo_pgto = '$saida', usuario_baixa = '0', entrega = 'Consumir Local', mesa = '$mesa', nome_cliente = '$nome_cliente', cupom = '$desconto', pago_entregador = 'Não', pedido = '$pedido', ref_api = '', tipo_pedido = '$tipo_pedido', taxa_extra_pedido = '0', caixa = '$id_caixa', custo = '$total_compra'");
+
+if($entrega == ""){
+	$entrega = 'Consumir Local';
+}
+
+
+$query = $pdo->prepare("INSERT INTO vendas SET cliente = '$cliente', valor = '$total_final', total_pago = '$troco', troco = '$troco_calculado', data = curDate(), hora = curTime(), status = 'Iniciado', pago = '$pago', obs = '', taxa_entrega = '$frete', tipo_pgto = '$saida', usuario_baixa = '0', entrega = '$entrega', mesa = '$mesa', nome_cliente = '$nome_cliente', cupom = '$desconto', pago_entregador = 'Não', pedido = '$pedido', ref_api = '', tipo_pedido = '$tipo_pedido', taxa_extra_pedido = '0', caixa = '$id_caixa', custo = '$total_compra'");
 $query->execute();
 $id_pedido = $pdo->lastInsertId();
 $id_pedido_feito = $pdo->lastInsertId();

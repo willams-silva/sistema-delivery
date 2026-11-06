@@ -18,6 +18,14 @@ if(@count($res1) > 0){
 }
 // 
 
+if($dataInicial == ""){
+	$dataInicial = date('Y-m-d');
+}
+
+if($dataFinal == ""){
+	$dataFinal = date('Y-m-d');
+}
+
 $pdo->query("UPDATE $tabela SET pago = 'Sim', usuario_pgto = '$id_usuario', data_pgto = curDate(), caixa = '$id_caixa' where data_lanc >= '$dataInicial' and data_lanc <= '$dataFinal' and pago = 'Não' and funcionario LIKE '$funcionario' and referencia = 'Comissão'");
 
 echo 'Baixado com Sucesso';

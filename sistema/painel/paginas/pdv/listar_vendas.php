@@ -70,13 +70,13 @@ if($linhas > 0){
 
 
 	$total_final += $total;
-	$total_finalF = number_format($total_final, 2, ',', '.');
-	$valorF = number_format($valor, 2, ',', '.');
-	$totalF = number_format($total, 2, ',', '.');
+	$total_finalF = @number_format($total_final, 2, ',', '.');
+	$valorF = @number_format($valor, 2, ',', '.');
+	$totalF = @number_format($total, 2, ',', '.');
 	
 	if($troco > 0){
 		$total_troco = $troco - $total_final;
-		$total_trocoF = number_format($total_troco, 2, ',', '.');
+		$total_trocoF = @number_format($total_troco, 2, ',', '.');
 	}
 	
 
@@ -193,7 +193,7 @@ echo '</div>';
 }
 echo '</div>';
 
-$total_finalF = number_format($total_final, 2, ',', '.');
+$total_finalF = @number_format($total_final, 2, ',', '.');
 echo '<div align="right" style="margin-top:10px; font-size:14px; border-top:1px solid #8f8f8f;" >';
 echo '<br>';
 echo '<span style="margin-right:10px;">'.$nome_mesa.'</span>';

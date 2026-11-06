@@ -8,29 +8,34 @@ $ult_ped = @$_POST['ult_pedido'];
 
 $total_vendas = 0;
 
+$sql_pedido_balcao = "";
+if($pedidos_pdv_delivery != 'Sim'){
+	$sql_pedido_balcao = " and tipo_pedido != 'Balcão' ";
+}
+
 //TOTAIS DOS PEDIDOS
-$query = $pdo->query("SELECT * FROM $tabela where status = 'Iniciado'  and tipo_pedido != 'Balcão'");
+$query = $pdo->query("SELECT * FROM $tabela where status = 'Iniciado' $sql_pedido_balcao");
 $res = $query->fetchAll(PDO::FETCH_ASSOC);
 $total_ini = @count($res);
 
-$query = $pdo->query("SELECT * FROM $tabela where status = 'Aceito'  and tipo_pedido != 'Balcão'");
+$query = $pdo->query("SELECT * FROM $tabela where status = 'Aceito' $sql_pedido_balcao");
 $res = $query->fetchAll(PDO::FETCH_ASSOC);
 $total_ace = @count($res);
 
-$query = $pdo->query("SELECT * FROM $tabela where status = 'Preparando' and tipo_pedido != 'Balcão'");
+$query = $pdo->query("SELECT * FROM $tabela where status = 'Preparando' $sql_pedido_balcao");
 $res = $query->fetchAll(PDO::FETCH_ASSOC);
 $total_prep = @count($res);
 
-$query = $pdo->query("SELECT * FROM $tabela where status = 'Entrega' and tipo_pedido != 'Balcão'");
+$query = $pdo->query("SELECT * FROM $tabela where status = 'Entrega' $sql_pedido_balcao");
 $res = $query->fetchAll(PDO::FETCH_ASSOC);
 $total_ent = @count($res);
 
-$query = $pdo->query("SELECT * FROM $tabela where status != 'Finalizado' and status != 'Cancelado' and tipo_pedido != 'Balcão'");
+$query = $pdo->query("SELECT * FROM $tabela where status != 'Finalizado' and status != 'Cancelado' $sql_pedido_balcao");
 $res = $query->fetchAll(PDO::FETCH_ASSOC);
 $total_pedidos = @count($res);
 
 
-$query = $pdo->query("SELECT * FROM $tabela where status != 'Finalizado' and status != 'Cancelado' and tipo_pedido != 'Balcão' order by id desc limit 1");
+$query = $pdo->query("SELECT * FROM $tabela where status != 'Finalizado' and status != 'Cancelado' $sql_pedido_balcao order by id desc limit 1");
 $res = $query->fetchAll(PDO::FETCH_ASSOC);
 $id_ult_pedido = @$res[0]['id'];
 
@@ -47,7 +52,7 @@ if ($ult_ped == "" and $id_ult_pedido != "") {
 }
 
 $ids = '';
-$query = $pdo->query("SELECT * FROM $tabela where status LIKE '$status' and status != 'Finalizado' and status != 'Cancelado' and tipo_pedido != 'Balcão' order by hora asc");
+$query = $pdo->query("SELECT * FROM $tabela where status LIKE '$status' and status != 'Finalizado' and status != 'Cancelado' $sql_pedido_balcao order by hora asc");
 $res = $query->fetchAll(PDO::FETCH_ASSOC);
 $total_reg = @count($res);
 if ($total_reg > 0) {

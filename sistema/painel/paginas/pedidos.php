@@ -48,6 +48,84 @@ $segundos = $tempo_atualizar * 1000;
 
 <div class="bs-example widget-shadow" style="padding:15px; margin-top: -5px">
 
+
+	<?php
+// STATUS DO DELIVERY
+$status_delivery = 'Aberto';
+$classe_status_delivery = 'success';
+$texto_botao_delivery = 'Pausar Delivery';
+$classe_botao_delivery = 'warning';
+$acao_delivery = 'pausar';
+
+if (@$pausar_delivery == 'Sim') {
+	$status_delivery = 'Pausado';
+	$classe_status_delivery = 'warning';
+	$texto_botao_delivery = 'Ativar Delivery';
+	$classe_botao_delivery = 'success';
+	$acao_delivery = 'ativar';
+} else {
+
+	if (@$status_estabelecimento == "Fechado") {
+		$status_delivery = 'Fechado';
+		$classe_status_delivery = 'danger';
+	}
+
+	$data = date('Y-m-d');
+	$diasemana = array("Domingo", "Segunda-Feira", "Terça-Feira", "Quarta-Feira", "Quinta-Feira", "Sexta-Feira", "Sábado");
+	$diasemana_numero = date('w', strtotime($data));
+	$dia_procurado = $diasemana[$diasemana_numero];
+
+	$query_dia = $pdo->query("SELECT * FROM dias where dia = '$dia_procurado'");
+	$res_dia = $query_dia->fetchAll(PDO::FETCH_ASSOC);
+
+	if (@count($res_dia) > 0) {
+		$status_delivery = 'Fechado';
+		$classe_status_delivery = 'danger';
+	}
+
+	$start = strtotime(date('Y-m-d') . ' ' . $horario_abertura);
+	$end = strtotime(date('Y-m-d') . ' ' . $horario_fechamento);
+	$now = time();
+
+	if ($end < $start) {
+		if (!($now > $start || $now < $end)) {
+			$status_delivery = 'Fechado';
+			$classe_status_delivery = 'danger';
+		}
+	} else {
+		if (!($start <= $now && $now <= $end)) {
+			$status_delivery = 'Fechado';
+			$classe_status_delivery = 'danger';
+		}
+	}
+}
+?>
+
+
+<div class="row mb-3" style="margin-top: -10px">
+	<div class="col-md-12">
+		<div class="d-flex justify-content-between align-items-center flex-wrap p-1" 
+			style="background:#f8f9fa; border:1px solid #e5e5e5; border-radius:8px;">
+
+			<div>				
+				<span class="badge bg-<?php echo $classe_status_delivery ?>" style="font-size:14px; padding:8px 12px;">
+					<?php echo $status_delivery ?>
+				</span>
+			</div>
+
+			<div class="<?php echo $pausar_delivery ?>">
+				<button type="button" 
+					class="btn btn-<?php echo $classe_botao_delivery ?> btn-sm"
+					onclick="alterarStatusDelivery('<?php echo $acao_delivery ?>')">
+					<i class="fa fa-power-off"></i>
+					<?php echo $texto_botao_delivery ?>
+				</button>
+			</div>
+
+		</div>
+	</div>
+</div>
+
 	<div class="row">
 		<div class="col-md-12" align="center">
 
@@ -667,3 +745,84 @@ function cancelarPedido() {
 
 
 
+<script type="text/javascript">
+function alterarStatusDelivery(acao){
+
+	let titulo = acao == 'pausar' ? 'Pausar Delivery?' : 'Ativar Delivery?';
+	let texto = acao == 'pausar' 
+		? 'Ao pausar, o cliente não conseguirá fazer novos pedidos pelo delivery.'
+		: 'Ao ativar, o delivery voltará a receber pedidos normalmente.';
+
+	let textoBotao = acao == 'pausar' ? 'Sim, pausar!' : 'Sim, ativar!';
+	let corBotao = acao == 'pausar' ? '#f0ad4e' : '#28a745';
+
+	Swal.fire({
+		title: titulo,
+		text: texto,
+		icon: 'warning',
+		showCancelButton: true,
+		confirmButtonText: textoBotao,
+		cancelButtonText: 'Cancelar',
+		reverseButtons: true,
+		confirmButtonColor: corBotao,
+		cancelButtonColor: '#6c757d'
+	}).then((result) => {
+
+		if (result.isConfirmed) {
+
+			$.ajax({
+				url: 'paginas/' + pag + '/alterar_status_delivery.php',
+				method: 'POST',
+				data: {acao: acao},
+				dataType: 'text',
+
+				beforeSend: function(){
+					Swal.fire({
+						title: 'Aguarde...',
+						text: 'Atualizando status do delivery.',
+						allowOutsideClick: false,
+						allowEscapeKey: false,
+						didOpen: () => {
+							Swal.showLoading();
+						}
+					});
+				},
+
+				success: function(resposta){
+
+					if(resposta.trim() == 'Alterado com Sucesso'){
+
+						let msgSucesso = acao == 'pausar' 
+							? 'Delivery pausado com sucesso!'
+							: 'Delivery ativado com sucesso!';
+
+						Swal.fire({
+							icon: 'success',
+							title: msgSucesso,
+							showConfirmButton: false,
+							timer: 1200
+						}).then(() => {
+							location.reload();
+						});
+
+					}else{
+						Swal.fire({
+							icon: 'error',
+							title: 'Erro ao alterar',
+							text: resposta
+						});
+					}
+				},
+
+				error: function(){
+					Swal.fire({
+						icon: 'error',
+						title: 'Erro',
+						text: 'Não foi possível comunicar com o servidor.'
+					});
+				}
+			});
+		}
+	});
+}
+</script>

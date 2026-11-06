@@ -111,6 +111,9 @@ if ($linhas == 0) {
 	$somente_pix_delivery = $res[0]['somente_pix_delivery'];
 	$impressao_cozinha = $res[0]['impressao_cozinha'];
 	$url_evolution = $res[0]['url_evolution'];
+	$pausar_delivery = $res[0]['pausar_delivery'];
+	$pedidos_pdv_delivery = $res[0]['pedidos_pdv_delivery'];
+	$token_mp = $res[0]['api_merc'];
 
 	if($taxa_extra == ""){
 		$taxa_extra = 0;

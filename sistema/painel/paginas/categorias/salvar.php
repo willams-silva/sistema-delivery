@@ -8,14 +8,14 @@ $descricao = $_POST['descricao'];
 $mais_sabores = $_POST['mais_sabores'];
 $delivery = $_POST['delivery'];
 
-$nome_novo = strtolower( preg_replace("[^a-zA-Z0-9-]", "-", 
-        strtr(utf8_decode(trim($nome)), utf8_decode("áàãâéêíóôõúüñçÁÀÃÂÉÊÍÓÔÕÚÜÑÇ"),
+$nome_novo = @strtolower( @preg_replace("[^a-zA-Z0-9-]", "-", 
+        strtr(@utf8_decode(trim($nome)), @utf8_decode("áàãâéêíóôõúüñçÁÀÃÂÉÊÍÓÔÕÚÜÑÇ"),
         "aaaaeeiooouuncAAAAEEIOOOUUNC-")) );
-$url = preg_replace('/[ -]+/' , '-' , $nome_novo);
-$url = str_replace('+', '-', $url);
-$url = str_replace('/', '-', $url);
-$url = str_replace('"', '-', $url);
-$url = str_replace('%', '', $url);
+$url = @preg_replace('/[ -]+/' , '-' , $nome_novo);
+$url = @str_replace('+', '-', $url);
+$url = @str_replace('/', '-', $url);
+$url = @str_replace('"', '-', $url);
+$url = @str_replace('%', '', $url);
 
 //validar nome
 $query = $pdo->query("SELECT * from $tabela where nome = '$nome'");

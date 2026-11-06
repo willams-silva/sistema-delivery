@@ -11,7 +11,7 @@ $total_vendas = 0;
 if($delivery_monitor != 'Sim'){
   $sql_mesa = " and mesa > 0 ";
 }else{
-  $sql_mesa = " ";
+  $sql_mesa = " and (cliente > 0 or mesa > 0)";
 }
 
 //TOTAIS DOS PEDIDOS
@@ -43,7 +43,7 @@ $query = $pdo->query("SELECT * $base
 $res = $query->fetchAll(PDO::FETCH_ASSOC);
 $total_pedidos = @count($res);
 
-$query = $pdo->query("SELECT * FROM $tabela where status != 'Finalizado' and status != 'Cancelado'  order by id desc limit 1");
+$query = $pdo->query("SELECT * FROM $tabela where status != 'Finalizado' and status != 'Cancelado' $sql_mesa order by id desc limit 1");
 $res = $query->fetchAll(PDO::FETCH_ASSOC);
 $id_ult_pedido = @$res[0]['id'];
 
