@@ -15,19 +15,10 @@ if($url[1] == 'localhost/'){
 date_default_timezone_set('America/Sao_Paulo');
 
 try {
-    $pdo = new PDO(
-        "mysql:host=$servidor;dbname=$banco;charset=utf8mb4",
-        $usuario,
-        $senha,
-        [
-            PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
-            PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC
-        ]
-    );
-} catch (PDOException $e) {
-    error_log("Erro de conexão MySQL: " . $e->getMessage());
-    http_response_code(500);
-    exit('Não foi possível conectar ao banco de dados. Verifique a configuração no servidor.');
+	$pdo = new PDO("mysql:dbname=$banco;host=$servidor;charset=utf8mb4", "$usuario", "$senha");
+} catch (Exception $e) {
+	echo 'Erro ao conectar ao banco de dados!<br>';
+	//echo $e;
 }
 
 
