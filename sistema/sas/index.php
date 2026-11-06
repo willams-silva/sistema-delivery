@@ -713,8 +713,8 @@ if (@count($res1) > 0) {
 		<?php if ($pagina != 'vendas') { ?>
 			<div class="main-footer">
 				<div class="container-fluid pt-0 ht-100p">
-					Copyright © <?php echo date('Y'); ?> Desevolverdor <a href="https://www.hugocursos.com.br" target="_blank"
-						class="text-primary"> hugocursos.com.br</a>. Todos
+					Copyright © <?php echo date('Y'); ?> Desevolverdor <a href="https://sistemas.hugocursos.com.br" target="_blank"
+						class="text-primary"> Sistemas.com.br</a>. Todos
 					os direitos reservados
 				</div>
 			</div>
