@@ -2,7 +2,7 @@
 @session_start();
 require_once("cabecalho.php");
 
-
+$id_ab_mesa = "";
 $id_mesa = @$_POST['id_mesa'];
 $pedido_balcao = @$_POST['pedido_balcao'];
 
@@ -65,12 +65,14 @@ if($id_mesa > 0){
     $pdo->query("INSERT INTO abertura_mesa SET mesa = '$id_mesa', cliente = '$nome_mesa', data = curDate(), horario_abertura = curTime(), garcon = '0', status = 'Aberta'");
     $pdo->query("UPDATE mesas set status = 'Aberta' where id = '$id_mesa'");
   }
+
+  $query2 = $pdo->query("SELECT * FROM abertura_mesa where mesa = '$id_mesa' and status = 'Aberta'");
+  $res2 = $query2->fetchAll(PDO::FETCH_ASSOC);
+  $id_ab_mesa = @$res2[0]['id'];
+  $_SESSION['id_ab_mesa'] = $id_ab_mesa;
 }
 
-$query2 = $pdo->query("SELECT * FROM abertura_mesa where mesa = '$id_mesa' and status = 'Aberta'");
-$res2 = $query2->fetchAll(PDO::FETCH_ASSOC);
-$id_ab_mesa = @$res2[0]['id'];
-$_SESSION['id_ab_mesa'] = $id_ab_mesa;
+
 
 
 $img = 'aberto.png';
@@ -78,50 +80,60 @@ $img = 'aberto.png';
 
 if($id_edicao == ""){
 
-  if ($status_estabelecimento == "Fechado" and $id_mesa == "" and $sessão_balcao == "") {
-    $img = 'fechado.png';
-  }
+    // 🔴 PRIORIDADE MÁXIMA: DELIVERY PAUSADO
+  if (@$pausar_delivery == 'Sim' and $id_mesa == "" and $sessão_balcao == "") {
+    $img = 'pausado.png'; // crie essa imagem
+  } else {
 
-  if ($id_mesa == "" and $sessão_balcao == "") {
-    $data = date('Y-m-d');
-    //verificar se está aberto hoje
-    $diasemana = array("Domingo", "Segunda-Feira", "Terça-Feira", "Quarta-Feira", "Quinta-Feira", "Sexta-Feira", "Sábado");
-    $diasemana_numero = date('w', strtotime($data));
-    $dia_procurado = $diasemana[$diasemana_numero];
+      if ($status_estabelecimento == "Fechado" and $id_mesa == "" and $sessão_balcao == "") {
+        $img = 'fechado.png';
+      }
 
-    //percorrer os dias da semana que ele trabalha
-    $query = $pdo->query("SELECT * FROM dias where dia = '$dia_procurado'");
-    $res = $query->fetchAll(PDO::FETCH_ASSOC);
-    if (@count($res) > 0) {
-      $img = 'fechado.png';
-    }
+      if ($id_mesa == "" and $sessão_balcao == "") {
+        $data = date('Y-m-d');
+        //verificar se está aberto hoje
+        $diasemana = array("Domingo", "Segunda-Feira", "Terça-Feira", "Quarta-Feira", "Quinta-Feira", "Sexta-Feira", "Sábado");
+        $diasemana_numero = date('w', strtotime($data));
+        $dia_procurado = $diasemana[$diasemana_numero];
 
-    $hora_atual = date('H:i:s');
+        //percorrer os dias da semana que ele trabalha
+        $query = $pdo->query("SELECT * FROM dias where dia = '$dia_procurado'");
+        $res = $query->fetchAll(PDO::FETCH_ASSOC);
+        if (@count($res) > 0) {
+          $img = 'fechado.png';
+        }
 
-    //nova verificação de horarios
-    $start = strtotime(date('Y-m-d' . $horario_abertura));
-    $end = strtotime(date('Y-m-d' . $horario_fechamento));
-    $now = time();
+        $hora_atual = date('H:i:s');
 
-    if ($start <= $now && $now <= $end) {
-    } else {
+        //nova verificação de horarios
+        $start = strtotime(date('Y-m-d' . $horario_abertura));
+        $end = strtotime(date('Y-m-d' . $horario_fechamento));
+        $now = time();
 
-      if ($end < $start) {
-
-        if ($now > $start) {
+        if ($start <= $now && $now <= $end) {
         } else {
-          if ($now < $end) {
+
+          if ($end < $start) {
+
+            if ($now > $start) {
+            } else {
+              if ($now < $end) {
+              } else {
+                $img = 'fechado.png';
+              }
+            }
           } else {
             $img = 'fechado.png';
           }
         }
-      } else {
-        $img = 'fechado.png';
       }
+
     }
-  }
 
 }
+
+
+
 
 ?>
 <link rel="stylesheet" href="css/font-awesome.css">
@@ -181,7 +193,9 @@ if($id_edicao == ""){
 
   <nav class="navbar bg-light fixed-top" style="box-shadow: 0px 3px 5px rgba(0, 0, 0, 0.20);">
     <div class="container-fluid">
-      <a class="navbar-brand" href="index.php">
+
+
+      <a class="navbar-brand" href="index">
         <img src="sistema/img/<?php echo $logo_sistema ?>" alt="" width="80px" class="d-inline-block align-text-top">
         <small>
           <?php
@@ -195,6 +209,78 @@ if($id_edicao == ""){
       </a>
 
 
+
+<?php
+$status_delivery_txt = 'ABERTO';
+$status_delivery_cor = '#198754';
+$status_delivery_icone = 'bi-check-circle';
+
+if ($id_mesa == "" and $sessão_balcao == "") {
+
+  if (@$pausar_delivery == 'Sim') {
+
+    $status_delivery_txt = 'PAUSADO';
+    $status_delivery_cor = '#f59e0b';
+    $status_delivery_icone = 'bi-pause-circle';
+
+  } else if (@$status_estabelecimento == "Fechado") {
+
+    $status_delivery_txt = 'FECHADO';
+    $status_delivery_cor = '#dc3545';
+    $status_delivery_icone = 'bi-x-circle';
+
+  } else {
+
+    $data = date('Y-m-d');
+    $diasemana = array("Domingo", "Segunda-Feira", "Terça-Feira", "Quarta-Feira", "Quinta-Feira", "Sexta-Feira", "Sábado");
+    $diasemana_numero = date('w', strtotime($data));
+    $dia_procurado = $diasemana[$diasemana_numero];
+
+    $query_status_dia = $pdo->query("SELECT * FROM dias where dia = '$dia_procurado'");
+    $res_status_dia = $query_status_dia->fetchAll(PDO::FETCH_ASSOC);
+
+    if (@count($res_status_dia) > 0) {
+
+      $status_delivery_txt = 'FECHADO';
+      $status_delivery_cor = '#dc3545';
+      $status_delivery_icone = 'bi-x-circle';
+
+    } else {
+
+      $start = strtotime(date('Y-m-d') . ' ' . $horario_abertura);
+      $end = strtotime(date('Y-m-d') . ' ' . $horario_fechamento);
+      $now = time();
+
+      $aberto_agora = false;
+
+      if ($end < $start) {
+        if ($now > $start || $now < $end) {
+          $aberto_agora = true;
+        }
+      } else {
+        if ($start <= $now && $now <= $end) {
+          $aberto_agora = true;
+        }
+      }
+
+      if (!$aberto_agora) {
+        $status_delivery_txt = 'FECHADO';
+        $status_delivery_cor = '#dc3545';
+        $status_delivery_icone = 'bi-x-circle';
+      }
+    }
+  }
+}
+?>
+
+<div class="status-delivery-topo">
+  <span style="background: <?php echo $status_delivery_cor ?>;">
+    <i class="bi <?php echo $status_delivery_icone ?>"></i>
+    <?php echo $status_delivery_txt ?>
+  </span>
+</div>
+
+
       <?php require_once("icone-carrinho.php") ?>
 
 
@@ -202,7 +288,20 @@ if($id_edicao == ""){
     </div>
   </nav>
 
+
+
+
   <div id="slider" style="margin-top: 50px;" class="ocultar-banner-web">
+
+    <?php if(@$pausar_delivery == 'Sim'){ ?>
+  <div class="alert alert-warning">
+    <strong>Delivery Pausado</strong><br>
+    <?php echo $texto_fechamento != '' ? $texto_fechamento : 'Estamos temporariamente sem receber pedidos.'; ?>
+  </div>
+<?php } ?>
+
+
+
     <?php if ($id_mesa == "") { ?>
 
       <?php
@@ -961,9 +1060,9 @@ if($id_edicao == ""){
 }
 ?>
 
-
+<?php if($id_mesa == ""){ ?>
 <button id="botao-instalar" style="display: none; position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); padding: 12px 20px; background: #007bff; color: #fff; border: none; border-radius: 8px; z-index: 9999;">Instalar App</button>
-
+<?php } ?>
 
 <!-- Font Awesome -->
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" integrity="sha512-..." crossorigin="anonymous" referrerpolicy="no-referrer" />
@@ -998,10 +1097,29 @@ if($id_edicao == ""){
 
   </footer>
 
-  <?php if ($img == "aberto.png" and $mostrar_aberto != "Sim") {
-  } else { ?>
-    <img src="img/<?php echo $img ?>" width="70px" class="img-aberto">
-  <?php } ?>
+<?php 
+
+$img_rodape = 'aberto.png';
+$classe_extra = '';
+
+if (@$status_delivery_txt == 'FECHADO') {
+  $img_rodape = 'fechado.png';
+  $classe_extra = 'status-fechado';
+}
+
+if (@$status_delivery_txt == 'PAUSADO') {
+  $img_rodape = 'pausado.png';
+  $classe_extra = 'status-pausado';
+}
+
+if ($img_rodape == "aberto.png" and $mostrar_aberto != "Sim") {
+  // não mostra aberto se a configuração estiver desativada
+} else {
+?>
+  <img src="img/<?php echo $img_rodape ?>" width="70px" class="img-aberto <?php echo $classe_extra ?>">
+<?php } ?>
+
+
 
 <?php } ?>
 

@@ -37,7 +37,12 @@ for($i=0; $i<$total_ids; $i++){
 		$res = $query->fetchAll(PDO::FETCH_ASSOC);		
 		$nome_p = $res[0]['nome'];
 		$categoria = $res[0]['categoria'];
+		$preparado = $res[0]['preparado'];
 
+
+		if($preparado != 'Não'){
+		    $status = 'Aguardando';
+		}
 
 
 		if($i>0){

@@ -477,7 +477,14 @@ $mensagem .= '🧾 *_Detalhes do Pedido_* %0A%0A';
   $mensagem .= $url_sistema . '%0A%0A';
 
   $mensagem .= 'Acompanhe o Status do Seu pedido%0A';
-  $mensagem .= $url_sistema . 'pedido/'. $id_pedido_feito.'%0A';
+
+  function encodeIdPedidoHV($id){
+  return base64_encode($id . '|hugo');
+}
+
+$id_pedido_codificado = encodeIdPedidoHV($id_pedido_feito);
+
+  $mensagem .= $url_sistema . 'pedido/'. $id_pedido_codificado.'%0A';
   
 
   $data_mensagem = date('Y-m-d H:i:s');

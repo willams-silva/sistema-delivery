@@ -5,6 +5,18 @@ require_once("js/ajax/ApiConfig.php");
 
 $id = @$_GET['id'];
 
+if($id != ''){
+  $id_decode = base64_decode($id);
+  $partes = explode('|', $id_decode);
+
+  if(count($partes) == 2 && $partes[1] == 'hugo'){
+    $id = $partes[0];
+  } else {
+    echo "<script>window.location='../index'</script>";
+    exit();
+  }
+}
+
 
 
 //BUSCAR AS INFORMAÇÕES DO PEDIDO

@@ -95,7 +95,7 @@ if($somente_pix_delivery == 'Sim'){
 
   <nav class="navbar bg-light fixed-top" style="box-shadow: 0px 3px 5px rgba(0, 0, 0, 0.20);">
     <div class="container-fluid">
-      <a class="navbar-brand" href="index.php">
+      <a class="navbar-brand" href="index">
         <img src="sistema/img/<?php echo $logo_sistema ?>" alt="" width="80px" class="d-inline-block align-text-top">
         Finalizar Pedido
       </a>
@@ -995,7 +995,18 @@ if($somente_pix_delivery == 'Sim'){
     }
 
 
-
+    if(
+      !document.getElementById('radio_pix').checked &&
+      !document.getElementById('radio_dinheiro').checked &&
+      !document.getElementById('radio_credito').checked &&
+      !document.getElementById('radio_debito').checked
+    ){
+      alertWarning('Selecione uma forma de pagamento');
+      $('#botao_finalizar').show();
+      $('#div_img').hide();
+      $('#collapse-4').click();
+      return;
+    }
     if (pagamento == "") {
       alertWarning('Selecione uma forma de pagamento');
       $('#botao_finalizar').show();
@@ -1104,8 +1115,15 @@ if($somente_pix_delivery == 'Sim'){
                 window.open("sistema/painel/rel/comprovante2_class.php?id=" + id + "&enviar=sim");
               }
 
+             // função para codificar
+              function encodeId(id){
+                return btoa(id + '|hugo'); // pequena "salvação" pra evitar decode direto
+              }
+
+              var idCodificado = encodeId(id);
+
               setTimeout(() => {
-                window.location = 'pedido/' + id;
+                window.location = 'pedido/' + idCodificado;
               }, 2000);
 
 

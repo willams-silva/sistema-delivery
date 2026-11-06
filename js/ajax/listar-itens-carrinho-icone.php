@@ -11,10 +11,12 @@ if (@$_SESSION['id_ab_mesa'] != "") {
 }
 
 
-
 $nome_produto2 = '';
 if ($id_mesa == "") {
-	$query = $pdo->query("SELECT * FROM carrinho where sessao = '$sessao'");
+	if($sessao != ""){
+		$query = $pdo->query("SELECT * FROM carrinho where sessao = '$sessao'");
+	}
+	
 } else {
 	$query = $pdo->query("SELECT * FROM carrinho where mesa = '$id_mesa'");
 }

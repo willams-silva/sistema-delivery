@@ -39,7 +39,7 @@ $tem_estoque = @$res[0]['tem_estoque'];
 
 
 //ver se possui a quantidade de produtos comprados
-if($acao != 'menos' and $estoque <= 0 and $tem_estoque == 'Sim'){
+if($acao != 'menos' and $estoque <= 1 and $tem_estoque == 'Sim'){
 	echo 'Quantidade em Estoque insuficiente, possui apenas '.$estoque.' Itens';
 	exit();
 }
@@ -68,7 +68,7 @@ if (@$_SESSION['id_edicao'] != "") {
 	//adicionar o total item na tabela de vendas
 	$query = $pdo->query("SELECT * FROM vendas where id = '$id_edicao'");
 	$res = $query->fetchAll(PDO::FETCH_ASSOC);
-	$valor_venda = $res[0]['valor'];
+	$valor_venda = @$res[0]['valor'];
 
 	if($acao == 'menos'){
 	  $total_venda = $valor_venda - $total_item;

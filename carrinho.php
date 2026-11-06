@@ -32,7 +32,7 @@ if ($nome_mesa == '' and $pedido_balcao == "") {
     echo "<script>
         window.onload = function() {
             Swal.fire({
-                title: 'Bem-vindo!',
+                title: 'Delivery Fechado no momento',
                 text: '$texto_fechamento',
                 icon: 'info',
                 confirmButtonText: 'OK'
@@ -41,7 +41,7 @@ if ($nome_mesa == '' and $pedido_balcao == "") {
                     // Ação a ser realizada após o clique no botão de confirmação
                     console.log('Botão OK clicado!');
                     // Você pode redirecionar para outra página, se necessário
-                    window.location.href = 'index.php';
+                    window.location.href = 'index';
                 }
             });
         };
@@ -69,7 +69,7 @@ if ($nome_mesa == '' and $pedido_balcao == "") {
     echo "<script>
         window.onload = function() {
             Swal.fire({
-                title: 'Bem-vindo!',
+                title: 'Delivery Fechado no momento',
                 text: 'Estamos Fechados! Não funcionamos Hoje!',
                 icon: 'info',
                 confirmButtonText: 'OK'
@@ -78,7 +78,7 @@ if ($nome_mesa == '' and $pedido_balcao == "") {
                     // Ação a ser realizada após o clique no botão de confirmação
                     console.log('Botão OK clicado!');
                     // Você pode redirecionar para outra página, se necessário
-                    window.location.href = 'index.php';
+                    window.location.href = 'index';
                 }
             });
         };
@@ -112,7 +112,7 @@ if ($nome_mesa == '' and $pedido_balcao == "") {
           echo "<script>
         window.onload = function() {
             Swal.fire({
-                title: 'Bem-vindo!',
+                title: 'Delivery Fechado no momento',
                 text: '$texto_fechamento_horario $horario_aberturaF às $horario_fechamentoF',
                 icon: 'info',
                 confirmButtonText: 'OK'
@@ -121,7 +121,7 @@ if ($nome_mesa == '' and $pedido_balcao == "") {
                     // Ação a ser realizada após o clique no botão de confirmação
                     console.log('Botão OK clicado!');
                     // Você pode redirecionar para outra página, se necessário
-                    window.location.href = 'index.php';
+                    window.location.href = 'index';
                 }
             });
         };
@@ -138,7 +138,7 @@ if ($nome_mesa == '' and $pedido_balcao == "") {
       echo "<script>
         window.onload = function() {
             Swal.fire({
-                title: 'Bem-vindo!',
+                title: 'Delivery Fechado no momento',
                 text: '$texto_fechamento_horario $horario_aberturaF às $horario_fechamentoF',
                 icon: 'info',
                 confirmButtonText: 'OK'
@@ -147,7 +147,7 @@ if ($nome_mesa == '' and $pedido_balcao == "") {
                     // Ação a ser realizada após o clique no botão de confirmação
                     console.log('Botão OK clicado!');
                     // Você pode redirecionar para outra página, se necessário
-                    window.location.href = 'index.php';
+                    window.location.href = 'index';
                 }
             });
         };
@@ -183,7 +183,7 @@ if ($nome_mesa == '' and $pedido_balcao == "") {
 
       </div>
 
-      <a class="" href="index.php">
+      <a class="" href="index">
         <div class="">
           <button type="button" class="btn btn-warning btn-sm">Comprar Mais?</button>
         </div>
