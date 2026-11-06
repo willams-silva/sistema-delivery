@@ -1,19 +1,4 @@
 <?php
-@session_start();
-$id_usuario = @$_SESSION['id'];
-include('../../conexao.php');
-include('data_formatada.php');
-
-$filtro_data = $_GET['filtro_data'];
-$dataInicial = $_GET['dataInicial'];
-$dataFinal = $_GET['dataFinal'];
-$filtro_tipo = $_GET['filtro_tipo'];
-$filtro_lancamento = $_GET['filtro_lancamento'];
-$filtro_pendentes = $_GET['filtro_pendentes'];
-
-
-$id_usuario = $_GET['id_usuario'];
-
 $dataInicialF = implode('/', array_reverse(@explode('-', $dataInicial)));
 $dataFinalF = implode('/', array_reverse(@explode('-', $dataFinal)));
 
@@ -127,7 +112,7 @@ $texto_filtro = $filtro_dataF . ' : ' . $datas . ' ' . $filtro_pendentesF;
 <body>
 	<?php
 	if ($marca_dagua == 'Sim' and $tipo_rel != 'HTML') { ?>
-		<img class="marca" src="<?php echo $url_sistema ?>sistema/img/logo.jpg">
+		<img class="marca" src="<?php echo $url_sistema ?>sistema/img/<?php echo $logo_sistema ?>">
 	<?php } ?>
 
 
@@ -138,7 +123,7 @@ $texto_filtro = $filtro_dataF . ' : ' . $datas . ' ' . $filtro_pendentesF;
 				<tr>
 					<td style="border: 1px; solid #000; width: 25%; text-align: left;">
 						<img style="margin-top: 0px; margin-left: 7px;" id="imag"
-							src="<?php echo $url_sistema ?>sistema/img/logo.jpg" width="60%">
+							src="<?php echo $url_sistema ?>sistema/img/<?php echo $logo_sistema ?>" width="60%">
 					</td>
 
 					<td style="text-align: center; font-size: 10px; width: 40%;">
@@ -198,7 +183,7 @@ $texto_filtro = $filtro_dataF . ' : ' . $datas . ' ' . $filtro_pendentesF;
 				<?php
 
 
-					$query9 = $pdo->query("SELECT * from $filtro_tabela order by nome asc");
+					$query9 = $pdo->query("SELECT * from $filtro_tabela where empresa = '$id_empresa' order by nome asc");
 				$res9 = $query9->fetchAll(PDO::FETCH_ASSOC);
 				$linhas9 = @count($res9);
 				if ($linhas9 > 0) {
@@ -217,7 +202,7 @@ $texto_filtro = $filtro_dataF . ' : ' . $datas . ' ' . $filtro_pendentesF;
 						$pendentes = 0;
 						$pagas = 0;
 
-						$query = $pdo->query("SELECT * from $filtro_tipo where $filtro_data >= '$dataInicial' and $filtro_data <= '$dataFinal' and pago LIKE '%$filtro_pendentes%' and $filtro_lancamento = '$id_pessoa' order by $filtro_data asc");
+						$query = $pdo->query("SELECT * from $filtro_tipo where $filtro_data >= '$dataInicial' and $filtro_data <= '$dataFinal' and pago LIKE '%$filtro_pendentes%' and $filtro_lancamento = '$id_pessoa' and empresa = '$id_empresa' order by $filtro_data asc");
 						$res = $query->fetchAll(PDO::FETCH_ASSOC);
 						$linhas = @count($res);
 						if ($linhas > 0) {

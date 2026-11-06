@@ -53,7 +53,7 @@ $pag = 'caixas';
 
 					<?php
 					if ($nivel_usuario == 'Administrador' || $nivel_usuario == 'Gerente') {
-						$query = $pdo->query("SELECT * FROM usuarios where nivel != 'Cliente' and acessar_painel != 'Não'  and nivel != 'Entregador' and nivel != 'Motoboy' order by nome asc");
+						$query = $pdo->query("SELECT * FROM usuarios where nivel != 'Cliente' and acessar_painel != 'Não'  and nivel != 'Entregador' and nivel != 'Motoboy' and empresa = '$id_empresa' order by nome asc");
 						echo '<option value="">Selecionar Operador</option>';
 					} else {
 						$query = $pdo->query("SELECT * FROM usuarios where id = '$id_usuario' ");
@@ -121,7 +121,7 @@ $pag = 'caixas';
 								<select class="form-select sel5" aria-label="Default select example" name="operador" id="operador" style="width:100%" required>
 									<?php
 									if ($nivel_usuario == 'Administrador' || $nivel_usuario == 'Gerente') {
-										$query = $pdo->query("SELECT * FROM usuarios where nivel != 'Cliente'  and acessar_painel != 'Não' and nivel != 'Entregador' and nivel != 'Motoboy' order by id desc");
+										$query = $pdo->query("SELECT * FROM usuarios where nivel != 'Cliente'  and acessar_painel != 'Não' and nivel != 'Entregador' and nivel != 'Motoboy' and empresa = '$id_empresa' order by id desc");
 										echo '<option value="">Selecionar Operador</option>';
 									} else {
 										$query = $pdo->query("SELECT * FROM usuarios where id = '$id_usuario' ");
@@ -284,7 +284,7 @@ $pag = 'caixas';
 								<select class="form-select sel5" aria-label="Default select example" name="nome_operador_sangria" id="nome_operador_sangria" style="width:100%" required>
 									<?php
 									if ($nivel_usuario == 'Administrador' || $nivel_usuario == 'Gerente') {
-										$query = $pdo->query("SELECT * FROM usuarios where nivel != 'Cliente'  and acessar_painel != 'Não' and nivel != 'Entregador' and nivel != 'Motoboy' order by id desc");
+										$query = $pdo->query("SELECT * FROM usuarios where nivel != 'Cliente'  and acessar_painel != 'Não' and nivel != 'Entregador' and nivel != 'Motoboy' and empresa = '$id_empresa' order by id desc");
 										echo '<option value="0">Selecionar Operador</option>';
 									} else {
 										$query = $pdo->query("SELECT * FROM usuarios where id = '$id_usuario' ");

@@ -14,7 +14,7 @@ if (@count($res2) > 0) {
 
 
 //verificar se o caixa está aberto
-$query = $pdo->query("SELECT * from caixas where operador = '$id_usuario' and data_fechamento is null");
+$query = $pdo->query("SELECT * from caixas where operador = '$id_usuario' and data_fechamento is null and empresa = '$id_empresa'");
 $res = $query->fetchAll(PDO::FETCH_ASSOC);
 $linhas = @count($res);
 if ($linhas > 0) {
@@ -39,7 +39,7 @@ $diasemana_numero = date('w', strtotime($data));
 $dia_procurado = $diasemana[$diasemana_numero];
 
 //percorrer os dias da semana que ele trabalha
-$query = $pdo->query("SELECT * FROM dias where dia = '$dia_procurado'");
+$query = $pdo->query("SELECT * FROM dias where dia = '$dia_procurado' and empresa = '$id_empresa'");
 $res = $query->fetchAll(PDO::FETCH_ASSOC);
 if (@count($res) > 0) {
 	$img = 'fechado.png';
@@ -143,7 +143,7 @@ if (strtotime($hora_atual) > strtotime($horario_abertura) and strtotime($hora_at
 <div class="row cards" style="margin-bottom: 60px; ">
 
 	<?php
-	$query = $pdo->query("SELECT * FROM categorias where ativo = 'Sim'");
+	$query = $pdo->query("SELECT * FROM categorias where ativo = 'Sim' and empresa = '$id_empresa' ");
 	$res = $query->fetchAll(PDO::FETCH_ASSOC);
 	$total_reg = @count($res);
 	if ($total_reg > 0) {
@@ -157,7 +157,7 @@ if (strtotime($hora_atual) > strtotime($horario_abertura) and strtotime($hora_at
 			$id = $res[$i]['id'];
 			$mais_sabores = $res[$i]['mais_sabores'];
 
-			$query2 = $pdo->query("SELECT * FROM produtos where categoria = '$id' and ativo = 'Sim'");
+			$query2 = $pdo->query("SELECT * FROM produtos where categoria = '$id' and ativo = 'Sim' and empresa = '$id_empresa'");
 			$res2 = $query2->fetchAll(PDO::FETCH_ASSOC);
 			$tem_produto = @count($res2);
 			$mostrar = 'ocultar';

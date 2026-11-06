@@ -9,7 +9,7 @@ if (@$novo_pedido == 'ocultar') {
 	exit();
 }
 
-$query2 = $pdo->query("SELECT * FROM usuarios where id = '$id_usuario'");
+$query2 = $pdo->query("SELECT * FROM usuarios where id = '$id_usuario' and empresa = '$id_empresa' ");
 $res2 = $query2->fetchAll(PDO::FETCH_ASSOC);
 if (@count($res2) > 0) {
 	$nome_usuario = $res2[0]['nivel'];
@@ -18,7 +18,7 @@ if (@count($res2) > 0) {
 
 
 //verificar se o caixa está aberto
-$query = $pdo->query("SELECT * from caixas where operador = '$id_usuario' and data_fechamento is null");
+$query = $pdo->query("SELECT * from caixas where operador = '$id_usuario' and data_fechamento is null and empresa = '$id_empresa'");
 $res = $query->fetchAll(PDO::FETCH_ASSOC);
 $linhas = @count($res);
 if ($linhas > 0) {
@@ -31,7 +31,7 @@ if ($linhas > 0) {
 
 
 //verificar se o caixa está aberto
-$query = $pdo->query("SELECT * from caixas where operador = '$id_usuario' and data_fechamento is null");
+$query = $pdo->query("SELECT * from caixas where operador = '$id_usuario' and data_fechamento is null and empresa = '$id_empresa'");
 $res = $query->fetchAll(PDO::FETCH_ASSOC);
 $linhas = @count($res);
 if ($linhas > 0) {
@@ -51,7 +51,29 @@ if ($linhas > 0) {
 	</div>
 </div>
 
+<div style="position: relative; max-width: 260px;">
+    <i class="fa fa-search" 
+       style="position:absolute; left:12px; top:50%; transform:translateY(-50%); color:#777; font-size:13px;">
+    </i>
 
+    <input 
+        type="text" 
+        id="buscar_cliente" 
+        placeholder="Buscar Cliente"
+        onkeyup="listar(this.value)"
+        style="
+            width:100%;
+            height:38px;
+            padding:8px 12px 8px 35px;
+            border:1px solid #d0d0d0;
+            border-radius:20px;
+            outline:none;
+            font-size:13px;
+            color:#333;
+            background:#fff;
+            box-shadow:0 2px 6px rgba(0,0,0,0.08);
+        ">
+</div>
 
 <div style="padding:5px" id="listar">
 
@@ -85,7 +107,7 @@ if ($linhas > 0) {
 								<select class="form-select sel5" id="garcon" name="garcon" style="width:100%;">
 
 									<?php
-									$query = $pdo->query("SELECT * FROM usuarios where nivel = 'Garçon' or nivel = 'Atendente' ORDER BY nome asc");
+									$query = $pdo->query("SELECT * FROM usuarios where (nivel = 'Garçon' or nivel = 'Atendente') and empresa = '$id_empresa' ORDER BY nome asc");
 									$res = $query->fetchAll(PDO::FETCH_ASSOC);
 									$total_reg = @count($res);
 									if ($total_reg > 0) {
@@ -219,7 +241,7 @@ if ($linhas > 0) {
 								<select class="form-select sel6" id="garcon_fechamento" name="garcon" style="width:100%;">
 
 									<?php
-									$query = $pdo->query("SELECT * FROM usuarios where nivel = 'Garçon' or nivel = 'Atendente' ORDER BY nome asc");
+									$query = $pdo->query("SELECT * FROM usuarios where (nivel = 'Garçon' or nivel = 'Atendente') and empresa = '$id_empresa' ORDER BY nome asc");
 									$res = $query->fetchAll(PDO::FETCH_ASSOC);
 									$total_reg = @count($res);
 									if ($total_reg > 0) {
@@ -307,7 +329,7 @@ if ($linhas > 0) {
 								<label>Forma de Pagamento</label>
 								<select class="form-select" id="forma_pgto_fechamento" name="forma_pgto" onchange="formaPgto()">
 									<?php
-									$query = $pdo->query("SELECT * FROM formas_pgto ORDER BY id asc");
+									$query = $pdo->query("SELECT * FROM formas_pgto where empresa = '$id_empresa' ORDER BY id asc");
 									$res = $query->fetchAll(PDO::FETCH_ASSOC);
 									$total_reg = @count($res);
 									if ($total_reg > 0) {
@@ -417,7 +439,7 @@ if ($linhas > 0) {
 								<label>Forma de Pagamento</label>
 								<select class="form-select" id="forma_pgto_valores" name="forma_pgto">
 									<?php
-									$query = $pdo->query("SELECT * FROM formas_pgto ORDER BY id asc");
+									$query = $pdo->query("SELECT * FROM formas_pgto where empresa = '$id_empresa' ORDER BY id asc");
 									$res = $query->fetchAll(PDO::FETCH_ASSOC);
 									$total_reg = @count($res);
 									if ($total_reg > 0) {
@@ -480,7 +502,7 @@ if ($linhas > 0) {
 						<label for="exampleInputEmail1">Gerente</label>
 						<select class="form-select sel40" id="gerente" name="gerente" style="width:100%;">
 							<?php
-							$query = $pdo->query("SELECT * FROM usuarios where nivel = 'Gerente' or nivel = 'Administrador'");
+							$query = $pdo->query("SELECT * FROM usuarios where nivel = 'Gerente' or nivel = 'Administrador' and empresa = '$id_empresa'");
 							$res = $query->fetchAll(PDO::FETCH_ASSOC);
 							$total_reg = @count($res);
 
@@ -549,7 +571,7 @@ if ($linhas > 0) {
 						<label for="exampleInputEmail1">Mesa</label>
 						<select class="form-select" id="mesa_troca" name="mesa_troca" style="width:100%;">
 							<?php
-							$query = $pdo->query("SELECT * FROM mesas where ativo = 'Sim' and status = 'Fechada'");
+							$query = $pdo->query("SELECT * FROM mesas where ativo = 'Sim' and status = 'Fechada' and empresa = '$id_empresa'");
 							$res = $query->fetchAll(PDO::FETCH_ASSOC);
 							$total_reg = @count($res);							
 
@@ -616,9 +638,11 @@ if ($linhas > 0) {
 
 <script type="text/javascript">
 	$(document).ready(function() {
+		var buscar_cliente = $('#buscar_cliente');
+		
 		formaPgto()
 
-		setInterval(listar, 20000);
+		setInterval(listar(buscar_cliente), 20000);
 		setInterval(listarCarrinho, 20000);
 
 		$('.sel5').select2({
@@ -633,6 +657,8 @@ if ($linhas > 0) {
 			dropdownParent: $('#modalExcluir')
 		});
 	});
+
+
 
 	function listarCarrinho() {
 		var id = $('#id_abertura_mesa').val();

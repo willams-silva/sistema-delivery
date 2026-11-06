@@ -1,14 +1,17 @@
 <?php
+@session_start();
+$id_empresa = $_SESSION['empresa'];
 require_once("../../../conexao.php");
+require_once("../../buscar_config.php");
 $tabela = 'produtos';
 
 $categoria = @$_POST['p1'];
 
 
 if ($categoria != "") {
-	$query = $pdo->query("SELECT * from $tabela where categoria = '$categoria' order by id desc");
+	$query = $pdo->query("SELECT * from $tabela where categoria = '$categoria' and empresa = '$id_empresa' order by id desc");
 } else {
-	$query = $pdo->query("SELECT * from $tabela order by id desc");
+	$query = $pdo->query("SELECT * from $tabela where empresa = '$id_empresa' order by id desc");
 }
 
 
@@ -53,6 +56,7 @@ HTML;
 		$preparado = $res[$i]['preparado'];
 		$delivery = $res[$i]['delivery'];
 		$unidade = $res[$i]['unidade'];
+		$codigo = $res[$i]['codigo'];
 	
 		$val_promocional = $res[$i]['val_promocional'];
 
@@ -151,9 +155,9 @@ HTML;
 <td style="color:{$classe_linha}">{$delivery}</td>
 <td style="color:{$classe_linha}">{$preparado}</td>
 <td>
-	<a class="btn btn-info-light btn-sm" href="#" onclick="editar('{$id}','{$nomeF2}','{$descricaoF2}', '{$categoria}', '{$valor_compra}', '{$valor_venda}', '{$foto}', '{$nivel_estoque}', '{$tem_estoque}', '{$combo}', '{$promocao}', '{$preparado}', '{$delivery}', '{$val_promocional}', '{$unidade}')" title="Editar Dados"><i class="fa fa-edit"></i></a>
+	<a class="btn btn-info-light btn-sm" href="#" onclick="editar('{$id}','{$nomeF2}','{$descricaoF2}', '{$categoria}', '{$valor_compra}', '{$valor_venda}', '{$foto}', '{$nivel_estoque}', '{$tem_estoque}', '{$combo}', '{$promocao}', '{$preparado}', '{$delivery}', '{$val_promocional}', '{$unidade}', '{$codigo}')" title="Editar Dados"><i class="fa fa-edit"></i></a>
 
-		<a class="btn btn-primary-light btn-sm" href="#" onclick="mostrar('{$id}','{$nome}', '{$nome_cat}', '{$valor_compraF}',  '{$valor_vendaF}', '{$estoque}', '{$foto}', '{$nivel_estoque}', '{$tem_estoque}', '{$combo}', '{$promocao}', '{$preparado}', '{$delivery}', '{$val_promocionalF}')" title="Ver Dados"><i class="fa fa-info-circle"></i></a>
+		<a class="btn btn-primary-light btn-sm" href="#" onclick="mostrar('{$id}','{$nome}', '{$nome_cat}', '{$valor_compraF}',  '{$valor_vendaF}', '{$estoque}', '{$foto}', '{$nivel_estoque}', '{$tem_estoque}', '{$combo}', '{$promocao}', '{$preparado}', '{$delivery}', '{$val_promocionalF}', '{$codigo}')" title="Ver Dados"><i class="fa fa-info-circle"></i></a>
 
 <big><a href="#" class="btn btn-danger-light btn-sm" onclick="excluirProduto('{$id}')" title="Excluir"><i class="fa fa-trash-can text-danger"></i></a></big>
 
@@ -207,7 +211,7 @@ HTML;
 
 
 <script type="text/javascript">
-	function editar(id, nome, descricao, categoria, valor_compra, valor_venda, foto, nivel_estoque, tem_estoque, combo, promocao, preparado, delivery, val_promocional, unidade) {
+	function editar(id, nome, descricao, categoria, valor_compra, valor_venda, foto, nivel_estoque, tem_estoque, combo, promocao, preparado, delivery, val_promocional, unidade, codigo) {
 
 		
 
@@ -225,6 +229,9 @@ HTML;
 		$('#delivery').val(delivery).change();
 		$('#val_promocional').val(val_promocional);
 		$('#unidade').val(unidade).change();
+		$('#codigo').val(codigo);
+
+		gerarCodigo();
 
 		$('#titulo_inserir').text('Editar Registro');
 		$('#modalForm').modal('show');
@@ -249,13 +256,15 @@ HTML;
 		$('#unidade').val('0').change();
 		$('#target').attr('src', 'images/produtos/sem-foto.jpg');
 		$('#id_it_var').val('');
+		$('#codigo').val('');
+		$("#listar-codigo").html('');
 	}
 </script>
 
 
 
 <script type="text/javascript">
-	function mostrar(id, nome, categoria, valor_compra, valor_venda, estoque, foto, nivel_estoque, tem_estoque, combo, promocao, preparado, delivery, val_promocional) {
+	function mostrar(id, nome, categoria, valor_compra, valor_venda, estoque, foto, nivel_estoque, tem_estoque, combo, promocao, preparado, delivery, val_promocional, codigo) {
 
 		var descricao = $('#descricao_' + id).val();
 
@@ -272,6 +281,7 @@ HTML;
 
 
 		$('#combo_dados').text(combo);
+		$('#codigo_dados').text(codigo);
 		$('#promocao_dados').text(promocao);
 
 		$('#preparado_dados').text(preparado);

@@ -12,7 +12,7 @@ $data_atual = date('Y-m-d');
 $data_semana = date('Y/m/d', strtotime("-7 days",strtotime($data_atual)));
 
 
-@session_start();
+
 $id_usuario = $_SESSION['id'];
 
 $id = $_POST['id'];
@@ -79,44 +79,44 @@ if ($_FILES['arquivo_excel']['name'] != "" || $_FILES['arquivo_texto']['name'] !
 
 // Buscar os Contatos que serão enviados
 if ($clientes == "Teste") {
-	$query = $pdo->query("SELECT * FROM config where telefone != ''");
+	$query = $pdo->query("SELECT * FROM config where telefone != '' and empresa = '$id_empresa' ");
 
 } else if ($clientes == "Clientes Mês") {
-	$query = $pdo->query("SELECT * FROM clientes where month(data_cad) = '$dataMes' and year(data_cad) = '$dataAno' and telefone != '' and (marketing = '' or marketing is null) ");
+	$query = $pdo->query("SELECT * FROM clientes where month(data_cad) = '$dataMes' and year(data_cad) = '$dataAno' and telefone != '' and empresa = '$id_empresa' and (marketing = '' or marketing is null) ");
 
 } else if ($clientes == "Clientes Semana") {
-	$query = $pdo->query("SELECT * FROM clientes where data_cad >= '$data_semana' and telefone != '' and (marketing = '' or marketing is null) ");
+	$query = $pdo->query("SELECT * FROM clientes where data_cad >= '$data_semana' and telefone != '' and empresa = '$id_empresa' and (marketing = '' or marketing is null) ");
 
 } else if ($clientes == "Todos") {
-	$query = $pdo->query("SELECT * FROM clientes where telefone != '' and (marketing = '' or marketing is null) ");
+	$query = $pdo->query("SELECT * FROM clientes where telefone != '' and empresa = '$id_empresa' and (marketing = '' or marketing is null) ");
 
 
 }else if ($clientes == "Aniversariantes Mês"){
-	$query = $pdo->query("SELECT * FROM clientes where month(data_nasc) = '$dataMes'  and telefone != '' and (marketing = '' or marketing is null)  ");	
+	$query = $pdo->query("SELECT * FROM clientes where month(data_nasc) = '$dataMes' and empresa = '$id_empresa' and telefone != '' and (marketing = '' or marketing is null)  ");	
 
 }else if ($clientes == "Aniversariantes Dia"){
-	$query = $pdo->query("SELECT * FROM clientes where month(data_nasc) = '$dataMes' and day(data_nasc) = '$dataDia'  and telefone != '' and (marketing = '' or marketing is null) ");	
+	$query = $pdo->query("SELECT * FROM clientes where month(data_nasc) = '$dataMes' and day(data_nasc) = '$dataDia'  and telefone != '' and empresa = '$id_empresa' and (marketing = '' or marketing is null) ");	
 
 }else if ($clientes == "Inadimplentes"){
-	$query = $pdo->query("SELECT DISTINCT c.nome, c.telefone, c.id FROM clientes c JOIN receber r ON c.id = r.cliente WHERE r.vencimento < CURDATE() AND r.pago = 'Não' ");
+	$query = $pdo->query("SELECT DISTINCT c.nome, c.telefone, c.id FROM clientes c JOIN receber r ON c.id = r.cliente WHERE r.vencimento < CURDATE() AND r.pago = 'Não' and empresa = '$id_empresa' ");
 
 }else if ($clientes == "1") {
-	$query = $pdo->query("SELECT * FROM clientes where cartoes = 1 ");
+	$query = $pdo->query("SELECT * FROM clientes where cartoes = 1 and empresa = '$id_empresa' ");
 
 }else if ($clientes == "2") {
-	$query = $pdo->query("SELECT * FROM clientes where cartoes = 2 ");
+	$query = $pdo->query("SELECT * FROM clientes where cartoes = 2 and empresa = '$id_empresa' ");
 
 }else if ($clientes == "3") {
-	$query = $pdo->query("SELECT * FROM clientes where cartoes = 3 ");
+	$query = $pdo->query("SELECT * FROM clientes where cartoes = 3 and empresa = '$id_empresa' ");
 
 }else if ($clientes == "4") {
-	$query = $pdo->query("SELECT * FROM clientes where cartoes = 4 ");
+	$query = $pdo->query("SELECT * FROM clientes where cartoes = 4 and empresa = '$id_empresa' ");
 
 }else if ($clientes == "5") {
-	$query = $pdo->query("SELECT * FROM clientes where cartoes = 5 ");
+	$query = $pdo->query("SELECT * FROM clientes where cartoes = 5 and empresa = '$id_empresa' ");
 
 }else{
-	$query = $pdo->query("SELECT * FROM grupos_clientes where grupo = '$clientes'");
+	$query = $pdo->query("SELECT * FROM grupos_clientes where grupo = '$clientes' and empresa = '$id_empresa'");
 	$grupo = 'Sim';	
 
 	$query2 = $pdo->query("SELECT * FROM grupos_disparos where id = '$clientes'");
@@ -166,7 +166,7 @@ $data_disparo_real = date('Y-m-d', $timestamp_randomico);
 			
 
 
-	$pdo->query("INSERT INTO disparos set campanha = '$id', cliente = '$id_cliente', nome = '$nome_cliente', telefone = '$telefone_cliente', hora = '$hora', data_disparo = '$data_disparo_real', empresa = '0'");
+	$pdo->query("INSERT INTO disparos set campanha = '$id', cliente = '$id_cliente', nome = '$nome_cliente', telefone = '$telefone_cliente', hora = '$hora', data_disparo = '$data_disparo_real', empresa = '$id_empresa'");
 
 
 
@@ -200,7 +200,7 @@ $data_disparo_real = date('Y-m-d', $timestamp_randomico);
 							$nova_data = date('Y/m/d', strtotime("+$dias_parcela_2 days", strtotime($data_disparo_real)));
 						}
 
-					$pdo->query("INSERT INTO disparos set campanha = '$id', cliente = '$id_cliente', nome = '$nome_cliente', telefone = '$telefone_cliente', hora = '$hora', data_disparo = '$nova_data', empresa = '0'");
+					$pdo->query("INSERT INTO disparos set campanha = '$id', cliente = '$id_cliente', nome = '$nome_cliente', telefone = '$telefone_cliente', hora = '$hora', data_disparo = '$nova_data', empresa = '$id_empresa'");
 
 					}
 				}

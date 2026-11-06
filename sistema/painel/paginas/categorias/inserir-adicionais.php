@@ -1,5 +1,12 @@
-<?php 
+<?php
+@session_start();
+$id_empresa = $_SESSION['empresa'];
 require_once("../../../conexao.php");
+require_once("../../buscar_config.php");
+if($id_empresa == ""){
+	echo 'Sem Sessão da Empresa, refaça o Login!';
+	exit();
+}
 $tabela = 'adicionais_cat';
 
 $nome = $_POST['nome'];
@@ -17,7 +24,7 @@ if(@count($res) > 0 and $id_adc_editar != $res[0]['id']){
 }
 
 if($id_adc_editar == ""){
-	$query = $pdo->prepare("INSERT INTO $tabela SET nome = :nome, valor = :valor, categoria = '$produto', ativo = 'Sim'");
+	$query = $pdo->prepare("INSERT INTO $tabela SET nome = :nome, valor = :valor, categoria = '$produto', ativo = 'Sim', empresa = '$id_empresa' ");
 }else{
 	$query = $pdo->prepare("UPDATE $tabela SET nome = :nome, valor = :valor WHERE id = '$id_adc_editar'");
 }

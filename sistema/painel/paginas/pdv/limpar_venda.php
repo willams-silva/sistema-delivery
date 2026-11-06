@@ -1,12 +1,19 @@
-<?php 
+<?php
 @session_start();
+$id_empresa = $_SESSION['empresa'];
+require_once("../../../conexao.php");
+require_once("../../buscar_config.php");
+if($id_empresa == ""){
+	echo 'Sem Sessão da Empresa, refaça o Login!';
+	exit();
+}
 $id_usuario = $_SESSION['id'];
 $tabela = 'carrinho';
-require_once("../../../conexao.php");
 
 
 
-$query = $pdo->query("SELECT * from $tabela where sessao = '$id_usuario' and pedido = '0' and mesa = '' order by id asc");
+
+$query = $pdo->query("SELECT * from $tabela where sessao = '$id_usuario' and pedido = '0' and mesa = '' and empresa = '$id_empresa' order by id asc");
 $res = $query->fetchAll(PDO::FETCH_ASSOC);
 $linhas = @count($res);
 if($linhas > 0){

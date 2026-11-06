@@ -419,7 +419,7 @@ if (@$clientes == 'ocultar') {
 								<label>Forma PGTO</label>
 								<select class="form-select" name="saida-baixar" id="saida-baixar" required onchange="calcularTaxa()">
 									<?php
-									$query = $pdo->query("SELECT * FROM formas_pgto order by id asc");
+									$query = $pdo->query("SELECT * FROM formas_pgto where empresa = '$id_empresa' order by id asc");
 									$res = $query->fetchAll(PDO::FETCH_ASSOC);
 									for ($i = 0; $i < @count($res); $i++) {
 										foreach ($res[$i] as $key => $value) {

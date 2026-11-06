@@ -1,9 +1,4 @@
 <?php
-
-include('../../conexao.php');
-require_once("data_formatada.php");
-
-$id = $_GET['id'];
 $data_atual = date('Y-m-d');
 
 $query = $pdo->query("SELECT * from caixas where id = '$id'");

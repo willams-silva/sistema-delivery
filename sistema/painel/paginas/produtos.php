@@ -19,7 +19,7 @@ $pag = 'produtos';
 		<select class="form-select sel7" name="categoria" id="busca" style="width:350px" onchange="buscar()">
 			<option value="">Buscasr por Categoria</option>
 			<?php
-			$query = $pdo->query("SELECT * from categorias order by id desc");
+			$query = $pdo->query("SELECT * from categorias where empresa = '$id_empresa' order by id desc");
 			$res = $query->fetchAll(PDO::FETCH_ASSOC);
 			$linhas = @count($res);
 			if ($linhas > 0) {
@@ -59,21 +59,25 @@ $pag = 'produtos';
 				<div class="modal-body">
 
 					<div class="row">
-						<div class="col-md-7 needs-validation was-validated">
+						<div class="col-md-4 mb-2">							
+								<label>Código</label>
+								<input type="text" class="form-control" id="codigo" name="codigo" placeholder="Código de Barras" onkeyup="gerarCodigo()">							
+							</div>
+						<div class="col-md-5 needs-validation was-validated">
 							<div class="form-group">
 								<label for="exampleInputEmail1">Nome do Produto</label>
 								<input type="text" class="form-control" id="nome" name="nome" placeholder="Digite o Produto" required>
 							</div>
 						</div>
 
-						<div class="col-md-5">
+						<div class="col-md-3">
 
 							<div class="form-group">
 								<label for="exampleInputEmail1">Categoria</label>
 								<select class="form-select sel3" id="categoria" name="categoria" style="width:100%;">
 
 									<?php
-									$query = $pdo->query("SELECT * FROM categorias ORDER BY id desc");
+									$query = $pdo->query("SELECT * FROM categorias where empresa = '$id_empresa' ORDER BY id desc");
 									$res = $query->fetchAll(PDO::FETCH_ASSOC);
 									$total_reg = @count($res);
 									if ($total_reg > 0) {
@@ -220,7 +224,7 @@ $pag = 'produtos';
 							<select class="form-select" name="unidade" id="unidade">
 								<option value="0">Escolher Unidade</option>
 								<?php 
-								$query3 = $pdo->query("SELECT * from unidade_medida order by id asc");
+								$query3 = $pdo->query("SELECT * from unidade_medida where empresa = '$id_empresa' order by id asc");
 								$res3 = $query3->fetchAll(PDO::FETCH_ASSOC);
 								$linhas = @count($res3);
 								if($linhas > 0){
@@ -243,7 +247,7 @@ $pag = 'produtos';
 						</div>
 					</div>
 
-
+					<div id="listar-codigo"></div>
 
 					<input type="hidden" name="id" id="id">
 
@@ -292,6 +296,10 @@ $pag = 'produtos';
 							<div class="table-responsive">
 								<table id="" class="text-left table table-bordered">
 
+									<tr>
+										<td width="30%" class="bg-primary text-white">Código</td>
+										<td><span id="codigo_dados"></span></td>
+									</tr>
 
 									<tr>
 										<td width="30%" class="bg-primary text-white">Categoria</td>
@@ -1556,3 +1564,24 @@ function excluirProduto(id) {
 
 };
 </script>
+
+
+<script type="text/javascript">
+			function gerarCodigo(){
+				var codigo = $('#codigo').val();
+
+
+				$.ajax({
+					url: 'paginas/' + pag + "/gerar-codigo.php",
+					method: 'POST',
+					data: {codigo},
+					dataType: "html",
+
+					success:function(result){
+						$("#listar-codigo").html(result);
+
+					}
+				});
+
+			}
+		</script>

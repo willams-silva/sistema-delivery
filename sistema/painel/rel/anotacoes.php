@@ -1,15 +1,9 @@
 <?php 
-include('../../conexao.php');
-include('data_formatada.php');
 
-$token_rel = @$_GET['token'];
 if ($token_rel != 'M543664') {
 	echo '<script>window.location="../../"</script>';
 	exit();
 }
-
-$id = $_GET['id'];
-
 
 $query = $pdo->query("SELECT * from anotacoes where id = '$id'");
 $res = $query->fetchAll(PDO::FETCH_ASSOC);
@@ -159,7 +153,7 @@ body {font-family: 'Tw Cen MT', sans-serif;}
 <body>
 <?php 
 if($marca_dagua == 'Sim'){ ?>
-<img class="marca" src="<?php echo $url_sistema ?>sistema/img/logo.jpg">	
+<img class="marca" src="<?php echo $url_sistema ?>sistema/img/<?php echo $logo_sistema ?>">	
 <?php } ?>
 
 
@@ -169,7 +163,7 @@ if($marca_dagua == 'Sim'){ ?>
 		<table style="width: 100%; border: 0px solid #ccc;">
 			<tr>
 				<td style="border: 1px; solid #000; width: 30%; text-align: left;">
-					<img style="margin-top: 0px; margin-left: 7px;" id="imag" src="<?php echo $url_sistema ?>sistema/img/logo.jpg" width="120px">
+					<img style="margin-top: 0px; margin-left: 7px;" id="imag" src="<?php echo $url_sistema ?>sistema/img/<?php echo $logo_sistema ?>" width="120px">
 				</td>
 				
 				<td style="text-align: center; font-size: 10px; width: 45%;">

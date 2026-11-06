@@ -1,6 +1,14 @@
 <?php
-$tabela = 'usuarios';
+@session_start();
+$id_empresa = $_SESSION['empresa'];
 require_once("../../../conexao.php");
+require_once("../../buscar_config.php");
+if($id_empresa == ""){
+	echo 'Sem Sessão da Empresa, refaça o Login!';
+	exit();
+}
+$tabela = 'usuarios';
+
 
 $nome = $_POST['nome'];
 $email = $_POST['email'];
@@ -43,7 +51,7 @@ if ($cpf != "") {
 
 
 //validacao telefone
-$query = $pdo->query("SELECT * from $tabela where telefone = '$telefone'");
+$query = $pdo->query("SELECT * from $tabela where telefone = '$telefone' and empresa = '$id_empresa' ");
 $res = $query->fetchAll(PDO::FETCH_ASSOC);
 $id_reg = @$res[0]['id'];
 if (@count($res) > 0 and $id != $id_reg) {
@@ -134,7 +142,7 @@ if (@$_FILES['foto']['name'] != "") {
 
 
 if ($id == "") {
-	$query = $pdo->prepare("INSERT INTO $tabela SET nome = :nome, email = :email, senha = '', senha_crip = '$senha_crip', nivel = '$nivel', ativo = 'Sim', telefone = :telefone, data = curDate(), endereco = :endereco, pix = :pix $nasc, numero = :numero, bairro = :bairro, cidade = :cidade, estado = :estado, cep = :cep, acessar_painel = '$acessar_painel', complemento = :complemento, tipo_chave = '$tipo_chave', foto = '$foto'");
+	$query = $pdo->prepare("INSERT INTO $tabela SET nome = :nome, email = :email, senha = '', senha_crip = '$senha_crip', nivel = '$nivel', ativo = 'Sim', telefone = :telefone, data = curDate(), endereco = :endereco, pix = :pix $nasc, numero = :numero, bairro = :bairro, cidade = :cidade, estado = :estado, cep = :cep, acessar_painel = '$acessar_painel', complemento = :complemento, tipo_chave = '$tipo_chave', foto = '$foto', empresa = '$id_empresa' ");
 
 
 	//api whats

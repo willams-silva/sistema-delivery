@@ -1,8 +1,12 @@
 <?php 
 @session_start();
+$id_empresa = $_SESSION['empresa'];
+$id_usuario = $_SESSION['id'];
+require_once("../../conexao.php");
+require_once("../buscar_config.php");
+require_once ("../verificar.php");
 $id_usuario = @$_SESSION['id'];
 
-require_once("../../conexao.php");
 
 
 $filtro_data = $_POST['filtro_data'];

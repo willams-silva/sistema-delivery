@@ -1,7 +1,14 @@
 <?php
 @session_start();
+$id_empresa = $_SESSION['empresa'];
+require_once("../../../conexao.php");
+require_once("../../buscar_config.php");
+if($id_empresa == ""){
+  echo 'Sem Sessão da Empresa, refaça o Login!';
+  exit();
+}
 $id_usuario = $_SESSION['id'];
-require_once ("../../../conexao.php");
+
 $tabela = 'abertura_mesa';
 
 $id_ab = $_POST['id_ab'];
@@ -95,7 +102,7 @@ $res1 = $query1->fetchAll(PDO::FETCH_ASSOC);
 $nome_cliente_ab = $res1[0]['cliente'];
 
 //lançar a comissão do garçon
-$query = $pdo->prepare("INSERT INTO pagar SET descricao = 'Comissão Garçon', tipo = 'Comissão', valor = :valor, data_lanc = curDate(), vencimento = curDate(), usuario_lanc = '$id_usuario', foto = 'sem-foto.png', arquivo = 'sem-foto.jpg', pessoa = '0', pago = 'Não', funcionario = '$garcon', referencia = 'Comissão', id_ref = '$id_ab', caixa = '$id_caixa',  comissao = 'Garçon', hora = curTime() ");
+$query = $pdo->prepare("INSERT INTO pagar SET descricao = 'Comissão Garçon', tipo = 'Comissão', valor = :valor, data_lanc = curDate(), vencimento = curDate(), usuario_lanc = '$id_usuario', foto = 'sem-foto.png', arquivo = 'sem-foto.jpg', pessoa = '0', pago = 'Não', funcionario = '$garcon', referencia = 'Comissão', id_ref = '$id_ab', caixa = '$id_caixa',  comissao = 'Garçon', hora = curTime(), empresa = '$id_empresa' ");
 $query->bindValue(":valor", "$comissao");
 $query->execute();
 
@@ -137,7 +144,7 @@ if ($total_reg > 0) {
 
 
 #######LANÇAR AS VENDAS###########################################
-$query = $pdo->prepare("INSERT INTO receber SET descricao = 'Venda Mesa', tipo = 'Venda', valor = :valor, data_lanc = curDate(), vencimento = curDate(), data_pgto = curDate(), usuario_lanc = '$id_usuario', usuario_pgto = '$id_usuario', foto = 'sem-foto.png', arquivo = 'sem-foto.png', pessoa = '0', pago = 'Sim', referencia = 'Venda', id_ref = '$id_ab', caixa = '$id_caixa', forma_pgto = '$forma_pgto', subtotal = '$subtotal', hora = curTime(), troco = :troco, total_recebido = :total_recebido, desconto = :desconto, custo = '$total_compra'");
+$query = $pdo->prepare("INSERT INTO receber SET descricao = 'Venda Mesa', tipo = 'Venda', valor = :valor, data_lanc = curDate(), vencimento = curDate(), data_pgto = curDate(), usuario_lanc = '$id_usuario', usuario_pgto = '$id_usuario', foto = 'sem-foto.png', arquivo = 'sem-foto.png', pessoa = '0', pago = 'Sim', referencia = 'Venda', id_ref = '$id_ab', caixa = '$id_caixa', forma_pgto = '$forma_pgto', subtotal = '$subtotal', hora = curTime(), troco = :troco, total_recebido = :total_recebido, desconto = :desconto, custo = '$total_compra', empresa = '$id_empresa' ");
 $query->bindValue(":valor", "$subtotal");
 $query->bindValue(":troco", "$troco");
 $query->bindValue(":total_recebido", "$total_recebido");
@@ -146,7 +153,7 @@ $query->execute();
 
 
 
-$pdo->query("INSERT INTO vendas SET cliente = '0', valor = '$subtotal', total_pago = '$subtotal', troco = '$troco', data = curDate(), hora = curTime(), status = 'Finalizado', pago = 'Sim',  taxa_entrega = '0', tipo_pgto = '$nome_forma_pgto', usuario_baixa = '$id_usuario', entrega = 'Pedido Mesa', mesa = '$id_mesa', nome_cliente = '$nome_cliente_ab', cupom = '$total_desconto', pago_entregador = 'Não', pedido = '', ref_api = '', tipo_pedido = 'Mesa', custo = '$total_compra'");
+$pdo->query("INSERT INTO vendas SET cliente = '0', valor = '$subtotal', total_pago = '$subtotal', troco = '$troco', data = curDate(), hora = curTime(), status = 'Finalizado', pago = 'Sim',  taxa_entrega = '0', tipo_pgto = '$nome_forma_pgto', usuario_baixa = '$id_usuario', entrega = 'Pedido Mesa', mesa = '$id_mesa', nome_cliente = '$nome_cliente_ab', cupom = '$total_desconto', pago_entregador = 'Não', pedido = '', ref_api = '', tipo_pedido = 'Mesa', custo = '$total_compra', empresa = '$id_empresa' ");
 
 
 

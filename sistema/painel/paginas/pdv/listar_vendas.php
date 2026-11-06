@@ -1,7 +1,10 @@
-<?php 
+<?php
 @session_start();
-$tabela = 'carrinho';
+$id_empresa = $_SESSION['empresa'];
 require_once("../../../conexao.php");
+require_once("../../buscar_config.php");
+$tabela = 'carrinho';
+
 
 $id_ab_mesa = $_SESSION['id_ab_mesa'];
 
@@ -28,7 +31,7 @@ $total_trocoF = 0;
 $total_v = 0;
 
 //buscar o total da venda
-$query = $pdo->query("SELECT * from $tabela where sessao = '$id_usuario' and pedido = '0' and mesa = '$id_ab_mesa' order by id asc");
+$query = $pdo->query("SELECT * from $tabela where sessao = '$id_usuario' and pedido = '0' and mesa = '$id_ab_mesa' and empresa = '$id_empresa' order by id asc");
 $res = $query->fetchAll(PDO::FETCH_ASSOC);
 $linhas = @count($res);
 if($linhas > 0){
@@ -52,7 +55,7 @@ if($tipo_desconto == '%'){
 $total_final = $total_final + $frete;
 
 
-$query = $pdo->query("SELECT * from $tabela where sessao = '$id_usuario' and pedido = '0' and mesa = '$id_ab_mesa' order by id asc");
+$query = $pdo->query("SELECT * from $tabela where sessao = '$id_usuario' and pedido = '0' and mesa = '$id_ab_mesa' and empresa = '$id_empresa' order by id asc");
 $res = $query->fetchAll(PDO::FETCH_ASSOC);
 $linhas = @count($res);
 echo '<div style="overflow:auto; max-height:200px; width:100%; scrollbar-width: thin;">';

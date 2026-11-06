@@ -1,7 +1,14 @@
 <?php
-$tabela = 'pagar';
-require_once("../../../conexao.php");
 @session_start();
+$id_empresa = $_SESSION['empresa'];
+require_once("../../../conexao.php");
+require_once("../../buscar_config.php");
+if($id_empresa == ""){
+	echo 'Sem Sessão da Empresa, refaça o Login!';
+	exit();
+}
+$tabela = 'pagar';
+
 $id_usuario = $_SESSION['id'];
 
 $id = $_POST['id-baixar'];
@@ -127,7 +134,7 @@ if ($valor == $valor_antigo) {
 
 
 	if (@$dias_frequencia > 0) {
-		$pdo->query("INSERT INTO $tabela set descricao = '$descricao', fornecedor = '$fornecedor', funcionario = '$funcionario', valor = '$valor_antigo', data_lanc = curDate(), vencimento = '$nova_data_vencimento', frequencia = '$frequencia', forma_pgto = '$saida_antiga', arquivo = '$arquivo', pago = 'Não', referencia = '$referencia', usuario_lanc = '$id_usuario', caixa = '$id_caixa', hora = curTime()");
+		$pdo->query("INSERT INTO $tabela set descricao = '$descricao', fornecedor = '$fornecedor', funcionario = '$funcionario', valor = '$valor_antigo', data_lanc = curDate(), vencimento = '$nova_data_vencimento', frequencia = '$frequencia', forma_pgto = '$saida_antiga', arquivo = '$arquivo', pago = 'Não', referencia = '$referencia', usuario_lanc = '$id_usuario', caixa = '$id_caixa', hora = curTime(), empresa = '$id_empresa' ");
 		$id_ult_registro = $pdo->lastInsertId();
 
 		if ($api_whatsapp != 'Não' and $telefone_sistema != '') {
@@ -168,7 +175,7 @@ if ($valor == $valor_antigo) {
 
 	$valor_antigo = $valor_antigo - ($subtotal - $multa - $juros);
 
-	$pdo->query("INSERT INTO $tabela set id_ref = '$id', referencia = '$referencia', valor = '$valor_padrao', data_pgto = curDate(), vencimento = curDate(), data_lanc = curDate(), descricao = '$descricao', usuario_lanc = '$id_usuario', usuario_pgto = '$id_usuario', fornecedor = '$fornecedor', funcionario = '$funcionario', forma_pgto = '$saida', frequencia = '$frequencia', arquivo = '$arquivo', subtotal = '$subtotal', pago = 'Sim', multa = '$multa', juros = '$juros', desconto = '$desconto', residuo = 'Sim', caixa = '$id_caixa', hora = curTime()");
+	$pdo->query("INSERT INTO $tabela set id_ref = '$id', referencia = '$referencia', valor = '$valor_padrao', data_pgto = curDate(), vencimento = curDate(), data_lanc = curDate(), descricao = '$descricao', usuario_lanc = '$id_usuario', usuario_pgto = '$id_usuario', fornecedor = '$fornecedor', funcionario = '$funcionario', forma_pgto = '$saida', frequencia = '$frequencia', arquivo = '$arquivo', subtotal = '$subtotal', pago = 'Sim', multa = '$multa', juros = '$juros', desconto = '$desconto', residuo = 'Sim', caixa = '$id_caixa', hora = curTime(), empresa = '$id_empresa' ");
 
 
 

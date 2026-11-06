@@ -1,5 +1,8 @@
 <?php
+@session_start();
+$id_empresa = $_SESSION['empresa'];
 require_once("../../../conexao.php");
+require_once("../../buscar_config.php");
 
 if($modo_teste == 'Sim'){
     echo 'Em modo de teste esse recurso fica desabilitado para gerar Pix!';

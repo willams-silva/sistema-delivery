@@ -1,5 +1,12 @@
-<?php 
+<?php
+@session_start();
+$id_empresa = $_SESSION['empresa'];
 require_once("../../../conexao.php");
+require_once("../../buscar_config.php");
+if($id_empresa == ""){
+	echo 'Sem Sessão da Empresa, refaça o Login!';
+	exit();
+}
 $tabela = 'variacoes';
 
 $variacao = $_POST['variacao'];
@@ -29,7 +36,7 @@ if($id_editar == ""){
 }
 
 if($id_editar == ""){
-	$query = $pdo->prepare("INSERT INTO $tabela SET nome = :nome, produto = '$produto', sigla = :sigla, valor = :valor, descricao = :descricao, ativo = 'Sim'");
+	$query = $pdo->prepare("INSERT INTO $tabela SET nome = :nome, produto = '$produto', sigla = :sigla, valor = :valor, descricao = :descricao, ativo = 'Sim', empresa = '$id_empresa' ");
 }else{
 	$query = $pdo->prepare("UPDATE $tabela SET nome = :nome, produto = '$produto', sigla = :sigla, valor = :valor, descricao = :descricao WHERE id = '$id_editar'");
 }

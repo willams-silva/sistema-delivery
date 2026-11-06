@@ -1,7 +1,14 @@
-<?php 
-require_once("../../../conexao.php");
-$tabela = 'entradas';
+<?php
 @session_start();
+$id_empresa = $_SESSION['empresa'];
+require_once("../../../conexao.php");
+require_once("../../buscar_config.php");
+if($id_empresa == ""){
+	echo 'Sem Sessão da Empresa, refaça o Login!';
+	exit();
+}
+$tabela = 'entradas';
+
 $id_usuario = $_SESSION['id'];
 
 $id_produto = $_POST['id'];
@@ -19,7 +26,7 @@ if($quantidade_entrada == ""){
 
 $novo_estoque = $estoque + $quantidade_entrada;
 
-$query = $pdo->prepare("INSERT INTO $tabela SET produto = '$id_produto', quantidade = '$quantidade_entrada', motivo = :motivo, usuario = '$id_usuario', data = curDate()");
+$query = $pdo->prepare("INSERT INTO $tabela SET produto = '$id_produto', quantidade = '$quantidade_entrada', motivo = :motivo, usuario = '$id_usuario', data = curDate(), empresa = '$id_empresa' ");
 
 
 $query->bindValue(":motivo", "$motivo_entrada");

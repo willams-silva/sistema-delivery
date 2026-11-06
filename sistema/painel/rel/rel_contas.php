@@ -1,12 +1,4 @@
 <?php 
-include('../../conexao.php');
-include('data_formatada.php');
-
-$dataInicial = $_GET['dataInicial'];
-$dataFinal = $_GET['dataFinal'];
-$pago = $_GET['pago'];
-$busca = $_GET['busca'];
-$tabela = $_GET['tabela'];
 
 $dataInicialF = implode('/', array_reverse(explode('-', $dataInicial)));
 $dataFinalF = implode('/', array_reverse(explode('-', $dataFinal)));
@@ -202,7 +194,7 @@ $pago = '%'.$pago.'%';
 <div class="titulo_cab titulo_img"><u>Relatório de Contas <?php echo $texto_tabela ?>  <?php echo $acao_rel ?> </u></div>
 	<div class="data_img"><?php echo mb_strtoupper($data_hoje) ?></div>
 
-	<img class="imagem" src="<?php echo $url_sistema ?>img/<?php echo $logo_rel ?>">
+	<img class="imagem" src="<?php echo $url_sistema ?>img/<?php echo $logo_sistema ?>">
 
 	
 	<br><br><br>
@@ -227,7 +219,7 @@ $pago = '%'.$pago.'%';
 		$total_pagoF = 0;
 		$total_a_pagar = 0;
 		$total_a_pagarF = 0;
-		$query = $pdo->query("SELECT * from $tabela where ($busca >= '$dataInicial' and $busca <= '$dataFinal') and pago LIKE '$pago' order by id desc ");
+		$query = $pdo->query("SELECT * from $tabela where ($busca >= '$dataInicial' and $busca <= '$dataFinal') and pago LIKE '$pago' and empresa = '$id_empresa' order by id desc ");
 		$res = $query->fetchAll(PDO::FETCH_ASSOC);
 		$total_reg = count($res);
 		if($total_reg > 0){

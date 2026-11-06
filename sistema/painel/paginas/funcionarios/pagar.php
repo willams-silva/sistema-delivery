@@ -1,5 +1,12 @@
-<?php 
+<?php
+@session_start();
+$id_empresa = $_SESSION['empresa'];
 require_once("../../../conexao.php");
+require_once("../../buscar_config.php");
+if($id_empresa == ""){
+	echo 'Sem Sessão da Empresa, refaça o Login!';
+	exit();
+}
 $tabela = 'pagar';
 
 @session_start();
@@ -21,7 +28,7 @@ if(@strtotime($data) <= @strtotime($data_atual)){
 	$usuario_pgto = '';
 }
 
-$query = $pdo->prepare("INSERT INTO $tabela SET descricao = 'Pagamento Entregador', tipo = 'Entregador', valor = :valor, data_lanc = curDate(), vencimento = '$data', data_pgto = '$data_pgto', usuario_lanc = '$id_usuario', usuario_pgto = '$usuario_pgto', foto = 'sem-foto.jpg', pessoa = '', pago = '$pago', funcionario = '$funcionario', subtotal = :valor");
+$query = $pdo->prepare("INSERT INTO $tabela SET descricao = 'Pagamento Entregador', tipo = 'Entregador', valor = :valor, data_lanc = curDate(), vencimento = '$data', data_pgto = '$data_pgto', usuario_lanc = '$id_usuario', usuario_pgto = '$usuario_pgto', foto = 'sem-foto.jpg', pessoa = '', pago = '$pago', funcionario = '$funcionario', subtotal = :valor, empresa = '$id_empresa'");
 
 $query->bindValue(":valor", "$valor");
 $query->execute();

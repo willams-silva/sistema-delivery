@@ -1,6 +1,11 @@
 <?php 
+@session_start();
+$id_empresa = $_SESSION['empresa'];
+$id_usuario = $_SESSION['id'];
+require_once("../../conexao.php");
+require_once("../buscar_config.php");
+require_once ("../verificar.php");
 
-include('../../conexao.php');
 
 $dataInicial = $_POST['dataInicial'];
 $dataFinal = $_POST['dataFinal'];
@@ -12,13 +17,21 @@ $tipo = urlencode($_POST['tipo']);
 $impressao = urlencode($_POST['impressao']);
 
 if($impressao == 'Sim'){
-	$html = file_get_contents($url_sistema."sistema/painel/rel/imprimir_vendas.php?status=$status&dataInicial=$dataInicial&dataFinal=$dataFinal&forma_pgto=$forma_pgto&tipo=$tipo&horaInicial=$horaInicial&horaFinal=$horaFinal");
-	echo $html;
+$token_rel = 'M543664';
+require_once("data_formatada.php");
+ob_start();
+include("imprimir_vendas.php");
+$html = ob_get_clean();
 	exit();
 }
 
-//ALIMENTAR OS DADOS NO RELATÓRIO
-$html = file_get_contents($url_sistema."sistema/painel/rel/rel_vendas.php?status=$status&dataInicial=$dataInicial&dataFinal=$dataFinal&forma_pgto=$forma_pgto&tipo=$tipo&horaInicial=$horaInicial&horaFinal=$horaFinal");
+
+$token_rel = 'M543664';
+require_once("data_formatada.php");
+ob_start();
+include("rel_vendas.php");
+$html = ob_get_clean();
+
 
 if($tipo_rel != 'PDF'){
 	echo $html;

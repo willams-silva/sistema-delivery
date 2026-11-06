@@ -1,6 +1,8 @@
 <?php
+@session_start();
+$id_empresa = $_SESSION['empresa'];
 require_once("../../../conexao.php");
-session_start();
+require_once("../../buscar_config.php");
 $id_usuario = $_SESSION['id'];
 
 

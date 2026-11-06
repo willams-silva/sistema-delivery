@@ -1,9 +1,10 @@
 <?php 
-
 @session_start();
-$id_usuario = @$_SESSION['id'];
-
+$id_empresa = $_SESSION['empresa'];
+$id_usuario = $_SESSION['id'];
 require_once("../../conexao.php");
+require_once("../buscar_config.php");
+require_once ("../verificar.php");
 
 $filtro_data = $_POST['filtro_data'];
 $dataInicial = $_POST['dataInicial'];
@@ -12,7 +13,13 @@ $filtro_tipo = "pagar";
 $filtro_lancamento = urlencode($_POST['filtro_lancamento']);
 $filtro_pendentes = $_POST['filtro_pendentes'];
 
-$html = file_get_contents($url_sistema."sistema/painel/rel/sintetico.php?filtro_data=$filtro_data&dataInicial=$dataInicial&dataFinal=$dataFinal&filtro_tipo=$filtro_tipo&filtro_lancamento=$filtro_lancamento&filtro_pendentes=$filtro_pendentes&id_usuario=$id_usuario");
+$token_rel = 'M543664';
+require_once("data_formatada.php");
+ob_start();
+include("sintetico.php");
+$html = ob_get_clean();
+
+
 
 if ($tipo_rel != 'PDF') {
 	echo $html;

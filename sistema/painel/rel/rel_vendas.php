@@ -1,15 +1,4 @@
 <?php
-include('../../conexao.php');
-include('data_formatada.php');
-
-$dataInicial = $_GET['dataInicial'];
-$dataFinal = $_GET['dataFinal'];
-$status = $_GET['status'];
-$forma_pgto = $_GET['forma_pgto'];
-$tipo = $_GET['tipo'];
-
-$horaInicial = $_GET['horaInicial'];
-$horaFinal = $_GET['horaFinal'];
 
 // Mostrar ou ocultar colunas
 $mostrar_delivery = ($tipo == "" || $tipo == "Delivery");
@@ -133,7 +122,7 @@ $total_mesas_liquidoF = 0;
 <body>
 	<?php
 	if ($marca_dagua == 'Sim' and $tipo_rel != 'HTML') { ?>
-		<img class="marca" src="<?php echo $url_sistema ?>sistema/img/logo.jpg">
+		<img class="marca" src="<?php echo $url_sistema ?>sistema/img/<?php echo $logo_sistema ?>">
 	<?php } ?>
 
 
@@ -144,7 +133,7 @@ $total_mesas_liquidoF = 0;
 				<tr>
 					<td style="border: 1px; solid #000; width: 25%; text-align: left;">
 						<img style="margin-top: 0px; margin-left: 7px;" id="imag"
-							src="<?php echo $url_sistema ?>sistema/img/logo.jpg" width="60%">
+							src="<?php echo $url_sistema ?>sistema/img/<?php echo $logo_sistema ?>" width="60%">
 					</td>
 
 					<td style="text-align: center; font-size: 10px; width: 40%;">
@@ -191,7 +180,7 @@ $total_mesas_liquidoF = 0;
 		$total_mesasF_liquido = 0;
 		$total_balcao_liquido = 0;
 		$total_balcaoF_liquido = 0;
-		$query = $pdo->query("SELECT * from vendas where (data >= '$dataInicial' and data <= '$dataFinal') and pago = 'Sim' and status LIKE '$status' and tipo_pgto LIKE '$forma_pgto' $sql_tipo $sql_hora order by data asc, hora asc ");
+		$query = $pdo->query("SELECT * from vendas where (data >= '$dataInicial' and data <= '$dataFinal') and pago = 'Sim' and status LIKE '$status' and tipo_pgto LIKE '$forma_pgto' and empresa = '$id_empresa' $sql_tipo $sql_hora order by data asc, hora asc ");
 		$res = $query->fetchAll(PDO::FETCH_ASSOC);
 		$total_reg = count($res);
 		if ($total_reg > 0) {

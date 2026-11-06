@@ -1,5 +1,12 @@
-<?php 
+<?php
+@session_start();
+$id_empresa = $_SESSION['empresa'];
 require_once("../../../conexao.php");
+require_once("../../buscar_config.php");
+if($id_empresa == ""){
+	echo 'Sem Sessão da Empresa, refaça o Login!';
+	exit();
+}
 
 $tabela = 'itens_grade';
 
@@ -43,7 +50,7 @@ if($e_adicional == 'Sim'){
 $valor = str_replace(',', '.', $valor);
 
 if($id_item_editar == ""){
-$query = $pdo->prepare("INSERT INTO $tabela SET produto = '$produto', grade = '$grade', valor = :valor, texto = :texto, limite = :limite, ativo = 'Sim', adicional = '$adicional'");
+$query = $pdo->prepare("INSERT INTO $tabela SET produto = '$produto', grade = '$grade', valor = :valor, texto = :texto, limite = :limite, ativo = 'Sim', adicional = '$adicional', empresa = '$id_empresa' ");
 }else{
 	$query = $pdo->prepare("UPDATE $tabela SET valor = :valor, texto = :texto, limite = :limite, adicional = '$adicional' where id = '$id_item_editar'");
 }

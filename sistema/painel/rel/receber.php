@@ -1,18 +1,4 @@
 <?php 
-@session_start();
-
-$id_usuario = @$_SESSION['id'];
-require_once("../../conexao.php");
-require_once("data_formatada.php");
-
-$dataInicial = $_GET['dataInicial'];
-$dataFinal = $_GET['dataFinal'];
-$pago = $_GET['pago'];
-$tipo_data = $_GET['tipo_data'];
-
-
-$id_usuario = $_GET['id_usuario'];
-
 $dataInicialF = implode('/', array_reverse(@explode('-', $dataInicial)));
 $dataFinalF = implode('/', array_reverse(@explode('-', $dataFinal)));
 
@@ -86,7 +72,7 @@ body {font-family: 'Tw Cen MT', sans-serif;}
 <body>
 <?php 
 if($marca_dagua == 'Sim'){ ?>
-<img class="imagem" src="<?php echo $url_sistema ?>img/logo.jpg"  style="width: 200px;">
+<img class="imagem" src="<?php echo $url_sistema ?>img/<?php echo $logo_sistema ?>"  style="width: 200px;">
 <?php } ?>
 
 
@@ -96,7 +82,7 @@ if($marca_dagua == 'Sim'){ ?>
 		<table style="width: 100%; border: 0px solid #ccc;">
 			<tr>
 				<td style="border: 1px; solid #000; width: 7%; text-align: left;">
-					<img style="margin-top: 7px; margin-left: 7px;" id="imag" src="<?php echo $url_sistema ?>img/logo.jpg" width="110px">
+					<img style="margin-top: 7px; margin-left: 7px;" id="imag" src="<?php echo $url_sistema ?>img/<?php echo $logo_sistema ?>" width="110px">
 				</td>
 				<td style="width: 30%; text-align: left; font-size: 13px;">
 					
@@ -163,9 +149,9 @@ $pagas = 0;
 
 
 	if($pago == 'Vencidas'){
-		$query = $pdo->query("SELECT * from receber where vencimento < curDate() and pago != 'Sim' order by id desc");
+		$query = $pdo->query("SELECT * from receber where vencimento < curDate() and pago != 'Sim' and empresa = '$id_empresa' order by id desc");
 	}else{
-	$query = $pdo->query("SELECT * from receber where $tipo_data >= '$dataInicial' and $tipo_data <= '$dataFinal' and pago LIKE '%$pago%' order by id desc");
+	$query = $pdo->query("SELECT * from receber where $tipo_data >= '$dataInicial' and $tipo_data <= '$dataFinal' and pago LIKE '%$pago%' and empresa = '$id_empresa' order by id desc");
 	}
 
 

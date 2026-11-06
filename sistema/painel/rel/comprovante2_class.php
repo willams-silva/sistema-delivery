@@ -1,14 +1,20 @@
 <?php 
-
-include('../../conexao.php');
+@session_start();
+$id_empresa = $_SESSION['empresa'];
+$id_usuario = $_SESSION['id'];
+require_once("../../conexao.php");
+require_once("../buscar_config.php");
 
 
 $id = $_GET['id'];
 $enviar = $_GET['enviar'];
 
 
-//ALIMENTAR OS DADOS NO RELATÓRIO
-$html = file_get_contents($url_sistema."sistema/painel/rel/comprovante2.php?id=$id");
+$token_rel = 'M543664';
+require_once("data_formatada.php");
+ob_start();
+include("comprovante2.php");
+$html = ob_get_clean();
 
 
 //CARREGAR DOMPDF

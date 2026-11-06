@@ -1,5 +1,12 @@
-<?php 
+<?php
 @session_start();
+$id_empresa = $_SESSION['empresa'];
+require_once("../../../conexao.php");
+require_once("../../buscar_config.php");
+if($id_empresa == ""){
+	echo 'Sem Sessão da Empresa, refaça o Login!';
+	exit();
+}
 $id_usuario = $_SESSION['id'];
 
 if($id_usuario == ""){
@@ -8,7 +15,7 @@ if($id_usuario == ""){
 }
 
 $tabela = 'itens_venda';
-require_once("../../../conexao.php");
+
 
 
 

@@ -1,8 +1,12 @@
 <?php
-$tabela = 'usuarios';
+@session_start();
+$id_empresa = $_SESSION['empresa'];
 require_once("../../../conexao.php");
+require_once("../../buscar_config.php");
+$tabela = 'usuarios';
 
-$query = $pdo->query("SELECT * from $tabela where acessar_painel = 'Sim' order by id desc");
+
+$query = $pdo->query("SELECT * from $tabela where acessar_painel = 'Sim' and empresa = '$id_empresa' order by id desc");
 $res = $query->fetchAll(PDO::FETCH_ASSOC);
 $linhas = @count($res);
 if ($linhas > 0) {

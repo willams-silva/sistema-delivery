@@ -1,7 +1,14 @@
-<?php 
-require_once("../../../conexao.php");
-$tabela = 'vendas';
+<?php
 @session_start();
+$id_empresa = $_SESSION['empresa'];
+require_once("../../../conexao.php");
+require_once("../../buscar_config.php");
+if($id_empresa == ""){
+  echo 'Sem Sessão da Empresa, refaça o Login!';
+  exit();
+}
+$tabela = 'vendas';
+
 $id_usuario = $_SESSION['id'];
 
 if($id_usuario == ""){
@@ -27,7 +34,7 @@ if ($total_reg > 0) {
 }
 
 
-  $query2 = $pdo->query("SELECT * FROM formas_pgto WHERE nome = '$pgto'");
+  $query2 = $pdo->query("SELECT * FROM formas_pgto WHERE nome = '$pgto' and empresa = '$id_empresa' ");
   $res2 = $query2->fetchAll(PDO::FETCH_ASSOC);
   if (@count($res2) > 0) {
     $id_tipo_pgto = @$res2[0]['id'];
@@ -47,6 +54,6 @@ if (@count($res1) > 0) {
   $id_caixa = 0;
 }
 
-$pdo->query("INSERT INTO receber SET descricao = '$entrega', cliente = '$cliente', valor = '$valor', subtotal = '$valor', data_lanc = curDate(), hora = curTime(), pago = 'Sim', usuario_pgto = '$id_usuario', vencimento = curDate(), data_pgto = curDate(), foto = 'sem-foto.png', arquivo = 'sem-foto.png', forma_pgto = '$id_tipo_pgto', caixa = '$id_caixa', referencia = '$entrega', custo = '$custo'");
+$pdo->query("INSERT INTO receber SET descricao = '$entrega', cliente = '$cliente', valor = '$valor', subtotal = '$valor', data_lanc = curDate(), hora = curTime(), pago = 'Sim', usuario_pgto = '$id_usuario', vencimento = curDate(), data_pgto = curDate(), foto = 'sem-foto.png', arquivo = 'sem-foto.png', forma_pgto = '$id_tipo_pgto', caixa = '$id_caixa', referencia = '$entrega', custo = '$custo', empresa = '$id_empresa' ");
 
 echo 'Baixado com Sucesso';

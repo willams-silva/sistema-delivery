@@ -1,5 +1,8 @@
-<?php 
+<?php
+@session_start();
+$id_empresa = $_SESSION['empresa'];
 require_once("../../../conexao.php");
+require_once("../../buscar_config.php");
 
 $codigo_pix = $_POST['codigo_pix'] ?? '';
 

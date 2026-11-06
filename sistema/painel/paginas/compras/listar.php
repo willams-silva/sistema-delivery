@@ -1,5 +1,8 @@
 <?php
-require_once ("../../../conexao.php");
+@session_start();
+$id_empresa = $_SESSION['empresa'];
+require_once("../../../conexao.php");
+require_once("../../buscar_config.php");
 $tabela = 'pagar';
 $data_hoje = date('Y-m-d');
 
@@ -14,7 +17,7 @@ $total_a_pagar = 0;
 
 
 
-$query = $pdo->query("SELECT * FROM $tabela where vencimento >= '$dataInicial' and vencimento <= '$dataFinal' and pago LIKE '$status' and produto != 0 ORDER BY pago asc, vencimento asc");
+$query = $pdo->query("SELECT * FROM $tabela where vencimento >= '$dataInicial' and vencimento <= '$dataFinal' and pago LIKE '$status' and produto != 0 and empresa = '$id_empresa' ORDER BY pago asc, vencimento asc");
 $res = $query->fetchAll(PDO::FETCH_ASSOC);
 $total_reg = @count($res);
 if ($total_reg > 0) {

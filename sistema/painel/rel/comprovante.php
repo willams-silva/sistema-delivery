@@ -1,5 +1,8 @@
 <?php
+@session_start();
+$id_empresa = $_SESSION['empresa'];
 include('../../conexao.php');
+require_once("../buscar_config.php");
 include('data_formatada.php');
 
 $id = $_GET['id'];
@@ -192,7 +195,7 @@ if ($entrega == 'Consumir Local') {
 <div class="printer-ticket">
 	<div align="center">
 		<td>
-			<img style="margin: 12px; margin-left: 50px;" id="imag" src="<?php echo $url_sistema ?>sistema/img/logo.jpg"
+			<img style="margin: 12px; margin-left: 50px;" id="imag" src="<?php echo $url_sistema ?>sistema/img/<?php echo $logo_sistema ?>"
 				width="110px">
 		</td>
 	</div>

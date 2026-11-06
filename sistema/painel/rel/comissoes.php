@@ -1,9 +1,7 @@
 <?php 
-include('../../conexao.php');
-include('data_formatada.php');
+
 $data_atual = date('Y-m-d');
-$dataInicial = $_GET['dataInicial'];
-$dataFinal = $_GET['dataFinal'];
+
 
 if($dataInicial == ""){
 	$dataInicial = $data_atual;
@@ -86,7 +84,7 @@ body {font-family: 'Tw Cen MT', sans-serif;}
 <body>
 <?php 
 if($marca_dagua == 'Sim'){ ?>
-<img class="marca" src="<?php echo $url_sistema ?>sistema/img/logo.jpg">	
+<img class="marca" src="<?php echo $url_sistema ?>sistema/img/<?php echo $logo_sistema ?>">	
 <?php } ?>
 
 
@@ -96,7 +94,7 @@ if($marca_dagua == 'Sim'){ ?>
 		<table style="width: 100%; border: 0px solid #ccc;">
 			<tr>
 				<td style="border: 1px; solid #000; width: 25%; text-align: left;">
-					<img style="margin-top: 0px; margin-left: 7px;" id="imag" src="<?php echo $url_sistema ?>sistema/img/logo.jpg" width="130px">
+					<img style="margin-top: 0px; margin-left: 7px;" id="imag" src="<?php echo $url_sistema ?>sistema/img/<?php echo $logo_sistema ?>" width="130px">
 				</td>
 				
 				<td style="text-align: center; font-size: 10px; width: 60%;">
@@ -187,7 +185,7 @@ $total_pagasF = 0;
 $total_pendentesF = 0;
 $pendentes = 0;
 $pagas = 0;
-$query = $pdo->query("SELECT * FROM pagar where data_lanc >= '$dataInicial' and data_lanc <= '$dataFinal' and pago LIKE '%$pago%' and funcionario = '$funcionario' and referencia = 'Comissão' ORDER BY pago asc, vencimento asc");
+$query = $pdo->query("SELECT * FROM pagar where data_lanc >= '$dataInicial' and data_lanc <= '$dataFinal' and pago LIKE '%$pago%' and funcionario = '$funcionario' and referencia = 'Comissão' and empresa = '$id_empresa' ORDER BY pago asc, vencimento asc");
 $res = $query->fetchAll(PDO::FETCH_ASSOC);
 $linhas = @count($res);
 if($linhas > 0){

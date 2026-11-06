@@ -1,5 +1,8 @@
 <?php
-require_once ("../../../conexao.php");
+@session_start();
+$id_empresa = $_SESSION['empresa'];
+require_once("../../../conexao.php");
+require_once("../../buscar_config.php");
 $tabela = 'vendas';
 
 @session_start();
@@ -42,7 +45,7 @@ if (@count($res1) > 0) {
 	$id_caixa = 0;
 }
 
-$query2 = $pdo->query("SELECT * FROM formas_pgto WHERE nome = '$pagamento'");
+$query2 = $pdo->query("SELECT * FROM formas_pgto WHERE nome = '$pagamento' and empresa = '$id_empresa' ");
 $res2 = $query2->fetchAll(PDO::FETCH_ASSOC);
 if (@count($res2) > 0) {
 	$id_tipo_pgto = $res2[0]['id'];
@@ -54,7 +57,7 @@ if ($acao == 'Finalizado') {
 	$pdo->query("UPDATE $tabela SET status = '$acao', pago = '$pago', usuario_baixa = $id_usuario where id = '$id'");
 
 if($pago != 'Sim'){
-		$pdo->query("INSERT INTO receber SET descricao = '$entrega', cliente = '$cliente', valor = '$valor', subtotal = '$valor', data_lanc = curDate(), hora = curTime(), pago = 'Sim', usuario_pgto = '$id_usuario', vencimento = curDate(), data_pgto = curDate(), foto = 'sem-foto.png', arquivo = 'sem-foto.png', forma_pgto = '$id_tipo_pgto', caixa = '$id_caixa', referencia = '$entrega'");
+		$pdo->query("INSERT INTO receber SET descricao = '$entrega', cliente = '$cliente', valor = '$valor', subtotal = '$valor', data_lanc = curDate(), hora = curTime(), pago = 'Sim', usuario_pgto = '$id_usuario', vencimento = curDate(), data_pgto = curDate(), foto = 'sem-foto.png', arquivo = 'sem-foto.png', forma_pgto = '$id_tipo_pgto', caixa = '$id_caixa', referencia = '$entrega', empresa = '$id_empresa' ");
 }
 
 

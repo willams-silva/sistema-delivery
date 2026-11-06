@@ -1,15 +1,18 @@
 <?php
 @session_start();
+$id_empresa = $_SESSION['empresa'];
+require_once("../../../conexao.php");
+require_once("../../buscar_config.php");
 $mostrar_registros = @$_SESSION['registros'];
 $id_usuario = @$_SESSION['id'];
 
 $tabela = 'clientes';
-require_once("../../../conexao.php");
+
 
 if ($mostrar_registros == 'Não') {
-	$query = $pdo->query("SELECT * from $tabela where usuario = '$id_usuario' order by id desc");
+	$query = $pdo->query("SELECT * from $tabela where usuario = '$id_usuario' and empresa = '$id_empresa' order by id desc");
 } else {
-	$query = $pdo->query("SELECT * from $tabela order by id desc");
+	$query = $pdo->query("SELECT * from $tabela where empresa = '$id_empresa' order by id desc");
 }
 
 $res = $query->fetchAll(PDO::FETCH_ASSOC);
@@ -311,7 +314,8 @@ function mensagemMarketing(id, nome, cartoes, telefone) {
 			dataType: "html",
 
 			success: function(result) {
-				alert('Mensagem Enviada!');
+				
+				alertsucesso('Mensagem Enviada!');
 			}
 		});
 	}

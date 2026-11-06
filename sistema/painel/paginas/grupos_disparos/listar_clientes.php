@@ -1,12 +1,13 @@
-<?php 
+<?php
 @session_start();
-$id_empresa = @$_SESSION['empresa'];
+$id_empresa = $_SESSION['empresa'];
 require_once("../../../conexao.php");
+require_once("../../buscar_config.php");
 $tabela = 'clientes';
 
 $id_grupo = $_POST['id_grupo'];
 
-$query = $pdo->query("SELECT * from $tabela order by nome asc");
+$query = $pdo->query("SELECT * from $tabela where empresa = '$id_empresa' order by nome asc");
 $res = $query->fetchAll(PDO::FETCH_ASSOC);
 $linhas = @count($res);
 if($linhas > 0){

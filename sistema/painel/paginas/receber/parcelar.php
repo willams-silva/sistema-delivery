@@ -1,6 +1,14 @@
-<?php 
-$tabela = 'receber';
+<?php
+@session_start();
+$id_empresa = $_SESSION['empresa'];
 require_once("../../../conexao.php");
+require_once("../../buscar_config.php");
+if($id_empresa == ""){
+	echo 'Sem Sessão da Empresa, refaça o Login!';
+	exit();
+}
+$tabela = 'receber';
+
 
 @session_start();
 $id_usuario = $_SESSION['id'];
@@ -126,7 +134,7 @@ for($i=1; $i <= $qtd_parcelas; $i++){
 	$primeiroNome = explode(" ", $nome_cliente);
 
 
-	$pdo->query("INSERT INTO $tabela set descricao = '$nova_descricao', cliente = '$cliente', valor = '$novo_valor', usuario_lanc = '$id_usuario', data_lanc = curDate(), vencimento = '$novo_vencimento', frequencia = '$frequencia', forma_pgto = '$saida', arquivo = '$arquivo', pago = 'Não', referencia = '$referencia', id_ref = '$id_ref', subtotal = '$novo_valor'");
+	$pdo->query("INSERT INTO $tabela set descricao = '$nova_descricao', cliente = '$cliente', valor = '$novo_valor', usuario_lanc = '$id_usuario', data_lanc = curDate(), vencimento = '$novo_vencimento', frequencia = '$frequencia', forma_pgto = '$saida', arquivo = '$arquivo', pago = 'Não', referencia = '$referencia', id_ref = '$id_ref', subtotal = '$novo_valor', empresa = '$id_empresa' ");
 	$id_ult_registro = $pdo->lastInsertId();
 
 

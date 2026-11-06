@@ -1,6 +1,10 @@
-<?php 
-$tabela = 'produtos';
+<?php
+@session_start();
+$id_empresa = $_SESSION['empresa'];
 require_once("../../../conexao.php");
+require_once("../../buscar_config.php");
+$tabela = 'produtos';
+
 
 $id = @$_POST['p1'];
 $busca = @$_POST['p2'];
@@ -8,7 +12,7 @@ $busca = @$_POST['p2'];
 $id_cat = @$_POST['p1'];
 
 if($id == ""){
-	$query = $pdo->query("SELECT * from categorias where ativo = 'Sim' order by nome asc limit 1");
+	$query = $pdo->query("SELECT * from categorias where ativo = 'Sim' and empresa = '$id_empresa' order by nome asc limit 1");
 $res = $query->fetchAll(PDO::FETCH_ASSOC);
 $id = @$res[0]['id'];
 $nome_cat = @$res[0]['nome'];
@@ -19,9 +23,9 @@ $nome_cat = @$res[0]['nome'];
 }
 
 if($busca == ""){
-	$query = $pdo->query("SELECT * from $tabela where categoria = '$id'and ativo = 'Sim' and (estoque > 0 or tem_estoque = 'Não') order by nome asc");
+	$query = $pdo->query("SELECT * from $tabela where categoria = '$id' and ativo = 'Sim' and (estoque > 0 or tem_estoque = 'Não') and empresa = '$id_empresa' order by nome asc");
 }else{
-	$query = $pdo->query("SELECT * from $tabela where (nome LIKE '%$busca%' or codigo = '$busca') and ativo = 'Sim'  and (estoque > 0 or tem_estoque = 'Não') order by nome asc");
+	$query = $pdo->query("SELECT * from $tabela where (nome LIKE '%$busca%' or codigo = '$busca') and ativo = 'Sim'  and (estoque > 0 or tem_estoque = 'Não') and empresa = '$id_empresa' order by nome asc");
 }
 
 $res = $query->fetchAll(PDO::FETCH_ASSOC);

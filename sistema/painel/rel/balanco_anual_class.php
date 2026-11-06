@@ -1,7 +1,17 @@
 <?php 
+@session_start();
+$id_empresa = $_SESSION['empresa'];
+$id_usuario = $_SESSION['id'];
 require_once("../../conexao.php");
+require_once("../buscar_config.php");
+require_once ("../verificar.php");
 
-$html = file_get_contents($url_sistema."sistema/painel/rel/balanco_anual.php");
+$token_rel = 'M543664';
+require_once("data_formatada.php");
+ob_start();
+include("balanco_anual.php");
+$html = ob_get_clean();
+
 
 if ($tipo_rel != 'PDF') {
 	echo $html;

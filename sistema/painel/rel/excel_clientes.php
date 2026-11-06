@@ -1,7 +1,9 @@
 <?php
 @session_start();
+$id_empresa = $_SESSION['empresa'];
 $id_usuario = @$_SESSION['id'];
 require_once("../../conexao.php");
+require_once("../buscar_config.php");
 
 $dadosXls = "";
 $dadosXls .= " <table border='1' >";
@@ -23,7 +25,7 @@ $dadosXls .= " </tr>";
 
 
 
-$query = $pdo->query("SELECT * from clientes order by id desc");
+$query = $pdo->query("SELECT * from clientes where empresa = '$id_empresa' order by id desc");
 
 $res = $query->fetchAll(PDO::FETCH_ASSOC);
 $linhas = @count($res);

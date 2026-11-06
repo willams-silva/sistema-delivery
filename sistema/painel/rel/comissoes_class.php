@@ -1,5 +1,11 @@
 <?php 
+@session_start();
+$id_empresa = $_SESSION['empresa'];
+$id_usuario = $_SESSION['id'];
 require_once("../../conexao.php");
+require_once("../buscar_config.php");
+require_once ("../verificar.php");
+
 
 $dataInicial = $_POST['dataInicial'];
 $dataFinal = $_POST['dataFinal'];
@@ -8,7 +14,12 @@ $funcionario = urlencode($_POST['funcionario']);
 
 $url_sistema2 = $url_sistema.'sistema/';
 
-$html = file_get_contents($url_sistema2."painel/rel/comissoes.php?dataInicial=$dataInicial&dataFinal=$dataFinal&pago=$pago&funcionario=$funcionario");
+
+$token_rel = 'M543664';
+require_once("comissoes.php");
+ob_start();
+include("anotacoes.php");
+$html = ob_get_clean();
 
 //CARREGAR DOMPDF
 require_once '../dompdf/autoload.inc.php';

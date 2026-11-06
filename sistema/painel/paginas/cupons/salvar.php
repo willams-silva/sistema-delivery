@@ -1,5 +1,12 @@
-<?php 
+<?php
+@session_start();
+$id_empresa = $_SESSION['empresa'];
 require_once("../../../conexao.php");
+require_once("../../buscar_config.php");
+if($id_empresa == ""){
+	echo 'Sem Sessão da Empresa, refaça o Login!';
+	exit();
+}
 $tabela = 'cupons';
 
 $id = $_POST['id'];
@@ -13,7 +20,7 @@ $valor_minimo = str_replace(',', '.', $valor_minimo);
 $tipo = $_POST['tipo'];
 
 //validar email
-$query = $pdo->query("SELECT * from $tabela where codigo = '$codigo'");
+$query = $pdo->query("SELECT * from $tabela where codigo = '$codigo' and empresa = '$id_empresa'");
 $res = $query->fetchAll(PDO::FETCH_ASSOC);
 if(@count($res) > 0 and $id != $res[0]['id']){
 	echo 'Código já Cadastrado, escolha outro!!';
@@ -22,7 +29,7 @@ if(@count($res) > 0 and $id != $res[0]['id']){
 
 
 if($id == ""){
-	$query = $pdo->prepare("INSERT INTO $tabela SET codigo = :codigo, valor = :valor, data = '$data', quantidade = '$quantidade', valor_minimo = :valor_minimo, tipo = '$tipo'");
+	$query = $pdo->prepare("INSERT INTO $tabela SET codigo = :codigo, valor = :valor, data = '$data', quantidade = '$quantidade', valor_minimo = :valor_minimo, tipo = '$tipo', empresa = '$id_empresa' ");
 }else{
 	$query = $pdo->prepare("UPDATE $tabela SET codigo = :codigo, valor = :valor, data = '$data', quantidade = '$quantidade', valor_minimo = :valor_minimo, tipo = '$tipo' WHERE id = '$id'");
 }

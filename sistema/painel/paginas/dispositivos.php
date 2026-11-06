@@ -1,124 +1,119 @@
 <?php 
-@session_start();
+
 $pag = 'dispositivos';
 
 if(@$dispositivos == 'ocultar')
-{	
-    echo "<script>localStorage.setItem('id_usu', '')</script>";
-    unset($_SESSION['id'], $_SESSION['nome'], $_SESSION['nivel']);
+{
     echo "<script>window.location='../index.php'</script>";
     exit();
 }
 
 require_once("../conexao.php");
 
-$query = $pdo->prepare("SELECT * FROM dispositivos where status_api IS NOT NULL and empresa = 0");
+$query = $pdo->prepare("SELECT * FROM dispositivos WHERE status_api IS NOT NULL and empresa = '$id_empresa'");
 $query->execute();
 $res = $query->fetchAll(PDO::FETCH_ASSOC);
-$total_dispositivos = @count($res);
 
-$ativo = $bloqueado = 0;
+$total_dispositivos = @count($res);
+$conectados = 0;
+$desconectados = 0;
 
 foreach($res as $dispositivo)
 {
-    if($dispositivo['status'] == 'Ativo'){
-        $ativo++;
-    }
-    elseif($dispositivo['status'] == 'bloqueado'){
-        $bloqueado++;
+    if($dispositivo['status_api'] == 'conectado'){
+        $conectados++;
+    }else{
+        $desconectados++;
     }
 }
 
-$total = $ativo + $bloqueado;
+$limite_dispositivos = @$dispositivos;
 
- ?>
+if($limite_dispositivos == '' || $limite_dispositivos == 0){
+    $limite_dispositivos = $total_dispositivos;
+}
+
+?>
  
- <br>
-    <div class="row">
-        <div class="col-xl-4 col-lg-12 col-md-6 col-xs-12">
-            <div class="card sales-card"
-                style="box-shadow: 2px 2px 0px 0px rgba(0, 0, 0, 0.1); height:130px; border-radius: 10px;">
-                <a href="clientes">
-                    <div class="row">
-                        <div class="col-8">
-                            <div class="ps-4 pt-4 pe-3 pb-4">
-                                <div class="">
-                                    <p class="mb-1">Total Dispositivos</p>
-                                </div>
-                                <div class="pb-0 mt-0">
-                                    <div class="d-flex">
-                                        <h4 class="tx-20 font-weight-semibold mb-2"><?= $total; ?></h4>
-                                    </div>
-                                   
-                                </div>
-                            </div>
+<br>
+<div class="row">
+
+    <div class="col-xl-4 col-lg-12 col-md-6 col-xs-12">
+        <div class="card sales-card"
+            style="box-shadow: 2px 2px 0px 0px rgba(0, 0, 0, 0.1); height:130px; border-radius: 10px;">
+            <div class="row">
+                <div class="col-8">
+                    <div class="ps-4 pt-4 pe-3 pb-4">
+                        <div>
+                            <p class="mb-1">Total Dispositivos</p>
                         </div>
-                        <div class="col-4">
-                            <div class=" zoom circle-icon iconBgRoxo text-center align-self-center overflow-hidden ">
-                                <i class="fe fe-user tx-16 text-white"></i>
+                        <div class="pb-0 mt-0">
+                            <div class="d-flex">
+                                <h4 class="tx-20 font-weight-semibold mb-2"><?= $total_dispositivos; ?> / <?= $limite_dispositivos; ?></h4>
                             </div>
                         </div>
                     </div>
-                </a>
-            </div>
-        </div>
-        <div class="col-xl-4 col-lg-12 col-md-6 col-xs-12">
-            <div class="card sales-card"
-                style="box-shadow: 2px 2px 0px 0px rgba(0, 0, 0, 0.1); height:130px; border-radius: 10px">
-                <a href="pagar">
-                    <div class="row">
-                        <div class="col-8">
-                            <div class="ps-4 pt-4 pe-3 pb-4">
-                                <div class="">
-                                    <p class=" mb-1">Produção</p>
-                                </div>
-                                <div class="pb-0 mt-0">
-                                    <div class="d-flex">
-                                        <h4 class="tx-20 font-weight-semibold mb-2"><?= $ativo ?? 0; ?></h4>
-                                    </div>
-                                    
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-4">
-                            <div class="zoom circle-icon iconBgDanger text-center align-self-center overflow-hidden">
-                                <i class="bi bi-currency-dollar tx-16 text-white"></i>
-                            </div>
-                        </div>
+                </div>
+                <div class="col-4">
+                    <div class="zoom circle-icon iconBgRoxo text-center align-self-center overflow-hidden">
+                        <i class="fe fe-smartphone tx-16 text-white"></i>
                     </div>
-                </a>
+                </div>
             </div>
         </div>
-        <div class="col-xl-4 col-lg-12 col-md-6 col-xs-12">
-            <div class="card sales-card"
-                style="box-shadow: 2px 2px 0px 0px rgba(0, 0, 0, 0.1); height:130px; border-radius: 10px">
-                <a href="receber">
-                    <div class="row">
-                        <div class="col-8">
-                            <div class="ps-4 pt-4 pe-3 pb-4">
-                                <div class="">
-                                    <p class=" mb-1">Desconectado</p>
-                                </div>
-                                <div class="pb-0 mt-0">
-                                    <div class="d-flex">
-                                        <h4 class="tx-20 font-weight-semibold mb-2"><?= $bloqueado ?? 0; ?></h4>
-                                    </div>
-                                   
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-4">
-                            <div class=" zoom circle-icon iconBgSusses text-center align-self-center overflow-hidden">
-                                <i class="bi bi-currency-dollar tx-16 text-white"></i>
-                            </div>
-                        </div>
-                    </div>
-                </a>
-            </div>
-        </div>
-      
     </div>
 
+    <div class="col-xl-4 col-lg-12 col-md-6 col-xs-12">
+        <div class="card sales-card"
+            style="box-shadow: 2px 2px 0px 0px rgba(0, 0, 0, 0.1); height:130px; border-radius: 10px">
+            <div class="row">
+                <div class="col-8">
+                    <div class="ps-4 pt-4 pe-3 pb-4">
+                        <div>
+                            <p class="mb-1">Conectados</p>
+                        </div>
+                        <div class="pb-0 mt-0">
+                            <div class="d-flex">
+                                <h4 class="tx-20 font-weight-semibold mb-2"><?= $conectados; ?> / <?= $total_dispositivos; ?></h4>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-4">
+                    <div class="zoom circle-icon iconBgSusses text-center align-self-center overflow-hidden">
+                        <i class="bi bi-wifi tx-16 text-white"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-xl-4 col-lg-12 col-md-6 col-xs-12">
+        <div class="card sales-card"
+            style="box-shadow: 2px 2px 0px 0px rgba(0, 0, 0, 0.1); height:130px; border-radius: 10px">
+            <div class="row">
+                <div class="col-8">
+                    <div class="ps-4 pt-4 pe-3 pb-4">
+                        <div>
+                            <p class="mb-1">Desconectados</p>
+                        </div>
+                        <div class="pb-0 mt-0">
+                            <div class="d-flex">
+                                <h4 class="tx-20 font-weight-semibold mb-2"><?= $desconectados; ?> / <?= $total_dispositivos; ?></h4>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-4">
+                    <div class="zoom circle-icon iconBgDanger text-center align-self-center overflow-hidden">
+                        <i class="bi bi-wifi-off tx-16 text-white"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+  
+</div>
  
 
 <div class="main-page margin-mobile" style="margin-top: 10px">
@@ -160,25 +155,50 @@ $total = $ativo + $bloqueado;
 <script src="js/ajax.js"></script>
 
 <script type="text/javascript">
+
+
+var timeoutQrCode = null;
+var usuarioFechouQRCode = false;
+
+$('#modaldispositivo').on('hidden.bs.modal', function () {
+    usuarioFechouQRCode = true;
+
+    if(timeoutQrCode){
+        clearTimeout(timeoutQrCode);
+        timeoutQrCode = null;
+    }
+});
+
+
 function add(appkey = '') {
+
+    usuarioFechouQRCode = false;
+
+    if(timeoutQrCode){
+        clearTimeout(timeoutQrCode);
+        timeoutQrCode = null;
+    }
 
     var authkey = '<?= $instancia_whatsapp; ?>';
 
-     if(authkey == 'v9t7zpp51nsSCMeqqJWfI4lj8iGG12tyMqW8PwvBH3CojiUaHM' || authkey == ''){
-        alert('Insira nas configurações a sua Instancia / Authkey da Menuia!');
-        return;
-     }
-
-    var total_dispositivos = '<?= $total_dispositivos; ?>';    
-    if(total_dispositivos >= 1){
-        alert('Você já tem 1 dispositivo conectado, remova ele para conectar outro!');
+    if(authkey == 'v9t7zpp51nsSCMeqqJWfI4lj8iGG12tyMqW8PwvBH3CojiUaHMs' || authkey == ''){
+        alertWarning('Insira nas configurações a sua Instancia / Authkey da Menuia!');
         return;
     }
 
-    $('#modaldispositivo').modal('show');
+    var total_dispositivos = '<?= $total_dispositivos; ?>';
+    var dispositivos = '<?= $dispositivos; ?>';
 
-    
-    $('#statusMessage').hide();
+    if(total_dispositivos > 0) {  
+        if(total_dispositivos >= dispositivos && appkey == ""){
+            alertWarning('Você já tem '+total_dispositivos+' dispositivo conectado, remova ele para conectar outro!');
+            return;
+        }
+    }
+
+    $('#qrCodeContainer').html('').hide();
+    $('#statusMessage').html('Carregando QR Code, aguarde...').show();
+    $('#modaldispositivo').modal('show');
 
     $.ajax({
         url: 'paginas/' + pag + '/appkey.php',
@@ -186,62 +206,81 @@ function add(appkey = '') {
         data: { appkey: appkey },
         dataType: 'json',
         success: function(resposta) {
-            if (resposta.status == 200) 
-            {
+
+            if (resposta.status == 200) {
+
                 checar_conexao(resposta.appkey, function(status) {
-                    if (status == 501 || status == 404) 
-                    {
+
+                    if (usuarioFechouQRCode) {
+                        return;
+                    }
+
+                    if (status == 501 || status == 404) {
+
+                        $('#statusMessage').html('Aguardando leitura do QR Code...').show();
+
                         qrCode(resposta.appkey);
 
-                        // Chama novamente após 10 segundos
-                        setTimeout(function() {
-                            add(appkey);
-                        }, 10000); 
+                        timeoutQrCode = setTimeout(function() {
+                            if(!usuarioFechouQRCode && $('#modaldispositivo').hasClass('show')){
+                                add(resposta.appkey);
+                            }
+                        }, 10000);
+
                     } else if (status == 200) {
-                        var qrImage = $('<img>').attr('src', 'https://chatbot.menuia.com/uploads/connected.png').css('max-width', '100%');
+
+                        var qrImage = $('<img>')
+                            .attr('src', 'https://chatbot.menuia.com/uploads/connected.png')
+                            .css('max-width', '100%');
+
                         $('#qrCodeContainer').html(qrImage).show();
 
-                        // Segunda requisição AJAX para salvar no banco de dados
                         $.ajax({
                             url: 'paginas/' + pag + '/atualizar.php',
                             method: 'POST',
                             data: { appkey: resposta.appkey },
                             dataType: 'json',
                             success: function(resultado) {
+
                                 if (resultado.status == 200) {
                                     $('#statusMessage').html('Dispositivo Conectado!').show();
+
                                     setTimeout(function() {
-                                        location.reload(); // Atualiza a página
-                                    }, 3000); // 10000 milissegundos = 10 segundos
+                                        location.reload();
+                                    }, 3000);
+
                                 } else {
                                     $('#statusMessage').html('Dispositivo Conectado, porém não conseguiu salvar no banco de dados!').show();
                                 }
                             },
                             error: function() {
-                                console.log('Ocorreu um erro interno ao tentar salvar no banco de dados');
+                                $('#statusMessage').html('Erro ao salvar conexão no banco de dados.').show();
                             }
                         });
+                    } else {
+                        $('#statusMessage').html('Não foi possível verificar o dispositivo. Tente novamente.').show();
                     }
                 });
-            }else if(resposta.status == 404)
-            {
-                $('#statusMessage').html('Appkey Invalida, gere um novo dispositivo!').show();
-            }
-            else 
-            {
-                console.log('Erro');
+
+            } else if(resposta.status == 404) {
+
+                $('#statusMessage').html('Appkey inválida, gere um novo dispositivo!').show();
+
+            } else {
+
+                $('#statusMessage').html('Erro ao buscar appkey.').show();
             }
         },
         error: function() {
-            console.log('Erro na requisição AJAX');
+            $('#statusMessage').html('Erro na requisição AJAX.').show();
         }
     });
 }
 
 
-
 function checar_conexao(appkey, callback) {
     var authkey = '<?= $instancia_whatsapp; ?>';
+
     $.ajax({
         url: 'https://chatbot.menuia.com/api/developer',
         type: 'POST',
@@ -253,31 +292,34 @@ function checar_conexao(appkey, callback) {
         },
         success: function(response) {
             $('#loadingIndicator').hide();
-            if (response.status === 200) 
-            {
-               $.ajax({
+
+            if (response.status === 200) {
+
+                $.ajax({
                     url: 'paginas/' + pag + '/atualizar_numero.php',
                     method: 'POST',
-                    data: { appkey: appkey, dados: response.dados},
+                    data: { 
+                        appkey: appkey, 
+                        dados: response.dados
+                    },
                     dataType: 'json',
-                    success: function(resultado)
-                    {
-                    callback(200);
+                    success: function(resultado) {
+                        callback(200);
                     },
                     error: function() {
-                    console.log('Ocorreu um erro interno ao tentar salvar no banco de dados');
+                        console.log('Ocorreu um erro interno ao tentar salvar o número no banco de dados');
+                        callback(200);
                     }
                 });
-                
-                callback(200);
-            }
-            else if (response.status === 404 || response.status === 403) 
-            {
+
+            } else if (response.status === 404 || response.status === 403) {
+
                 callback(404);
-            } 
-            else 
-            {
+
+            } else {
+
                 callback(500);
+
             }
         },
         error: function(error) {
@@ -403,4 +445,26 @@ function excluirDisp(id) {
     });
 }
 
+</script>
+
+
+<script type="text/javascript">
+
+
+    function verificarStatusDispositivos(){
+    $.ajax({
+        url: 'paginas/' + pag + '/verificar_status.php',
+        method: 'POST',
+        dataType: 'html',
+        success: function(){
+            listar();
+        }
+    });
+}
+
+verificarStatusDispositivos();
+
+setInterval(function(){
+    verificarStatusDispositivos();
+}, 60000);
 </script>

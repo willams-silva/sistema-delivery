@@ -1,10 +1,17 @@
 <?php
-$tabela = 'pagar';
+@session_start();
+$id_empresa = $_SESSION['empresa'];
 require_once("../../../conexao.php");
+require_once("../../buscar_config.php");
+if($id_empresa == ""){
+	echo 'Sem Sessão da Empresa, refaça o Login!';
+	exit();
+}
+$tabela = 'pagar';
+
 
 $referencia_agendamento = 'pagar';
 
-@session_start();
 $id_usuario = @$_SESSION['id'];
 
 $descricao = $_POST['descricao'];
@@ -164,7 +171,7 @@ if (@count($res1) > 0) {
 
 
 if ($id == "") {
-	$query = $pdo->prepare("INSERT INTO $tabela SET descricao = :descricao, fornecedor = '$fornecedor', funcionario = '$funcionario', valor = :valor, vencimento = '$vencimento' $pgto, data_lanc = curDate(), forma_pgto = '$forma_pgto', frequencia = '$frequencia', obs = :obs, arquivo = '$foto', foto = '$foto', subtotal = :valor, usuario_lanc = '$id_usuario' $usu_pgto, pago = '$pago', referencia = 'Conta', caixa = '$id_caixa', hora = curTime() ");
+	$query = $pdo->prepare("INSERT INTO $tabela SET descricao = :descricao, fornecedor = '$fornecedor', funcionario = '$funcionario', valor = :valor, vencimento = '$vencimento' $pgto, data_lanc = curDate(), forma_pgto = '$forma_pgto', frequencia = '$frequencia', obs = :obs, arquivo = '$foto', foto = '$foto', subtotal = :valor, usuario_lanc = '$id_usuario' $usu_pgto, pago = '$pago', referencia = 'Conta', caixa = '$id_caixa', hora = curTime(), empresa = '$id_empresa' ");
 	
 
 
@@ -188,7 +195,7 @@ if ($id == "") {
 	if(@$dias_frequencia > 0 and $data_pgto != ''){
 
 
-		$pdo->query("INSERT INTO $tabela SET descricao = '$descricao', fornecedor = '$fornecedor', funcionario = '$funcionario', valor = '$valor' $pgto, data_lanc = curDate(), vencimento = '$nova_data_vencimento', forma_pgto = '$forma_pgto', frequencia = '$frequencia', obs = '$obs', arquivo = '$foto', foto = '$foto', subtotal = '$valor', usuario_lanc = '$id_usuario', referencia = 'Conta', caixa = '$id_caixa', hora = curTime(), pago = 'Não'");
+		$pdo->query("INSERT INTO $tabela SET descricao = '$descricao', fornecedor = '$fornecedor', funcionario = '$funcionario', valor = '$valor' $pgto, data_lanc = curDate(), vencimento = '$nova_data_vencimento', forma_pgto = '$forma_pgto', frequencia = '$frequencia', obs = '$obs', arquivo = '$foto', foto = '$foto', subtotal = '$valor', usuario_lanc = '$id_usuario', referencia = 'Conta', caixa = '$id_caixa', hora = curTime(), pago = 'Não', empresa = '$id_empresa' ");
 
 		$id_ultimo = $pdo->lastInsertId();
 

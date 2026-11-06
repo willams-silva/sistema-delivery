@@ -2,6 +2,11 @@
 @session_start();
 $id_empresa = @$_SESSION['empresa'];
 require_once("../../../conexao.php");
+require_once("../../buscar_config.php");
+if($id_empresa == ""){
+	echo 'Sem Sessão da Empresa, refaça o Login!';
+	exit();
+}
 $tabela = 'marketing';
 
 
@@ -141,7 +146,7 @@ if(@$_FILES['documento']['name'] != ""){
 
 
 if($id == ""){
-	$query = $pdo->prepare("INSERT INTO $tabela SET data = curDate(), titulo = :titulo, mensagem = :mensagem, mensagem2 = :mensagem2, arquivo = '$foto', audio = '$audio', documento = '$documento', empresa = '0', dispositivo = '$dispositivo'");
+	$query = $pdo->prepare("INSERT INTO $tabela SET data = curDate(), titulo = :titulo, mensagem = :mensagem, mensagem2 = :mensagem2, arquivo = '$foto', audio = '$audio', documento = '$documento', empresa = '$id_empresa', dispositivo = '$dispositivo'");
 }else{
 	$query = $pdo->prepare("UPDATE $tabela SET titulo = :titulo, mensagem = :mensagem, mensagem2 = :mensagem2, arquivo = '$foto', audio = '$audio', documento = '$documento', empresa = '$id_empresa', dispositivo = '$dispositivo' WHERE id = '$id'");
 }

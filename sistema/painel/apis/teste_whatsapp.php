@@ -3,7 +3,7 @@ $api_whatsapp = $_POST['seletor_api'];
 $token_whatsapp = $_POST['token'];
 $instancia_whatsapp = $_POST['instancia'];
 $telefone_sistema = $_POST['telefone_sistema'];
-$url_evolution = $_POST['url_evolution'];
+$url_evolution = @$_POST['url_evolution'];
 
 $telefone_sistemaF = '55'.preg_replace('/[ ()-]+/' , '' , $telefone_sistema);
 

@@ -1,8 +1,10 @@
 <?php 
 @session_start();
-$id_usuario = @$_SESSION['id'];
-
+$id_empresa = $_SESSION['empresa'];
+$id_usuario = $_SESSION['id'];
 require_once("../../conexao.php");
+require_once("../buscar_config.php");
+require_once ("../verificar.php");
 
 $dataInicial = $_POST['dataInicial'];
 $dataFinal = $_POST['dataFinal'];
@@ -10,7 +12,12 @@ $pago = $_POST['pago'];
 $tipo_data = $_POST['tipo_data'];
 
 
-$html = file_get_contents($url_sistema."painel/rel/receber.php?dataInicial=$dataInicial&dataFinal=$dataFinal&pago=$pago&tipo_data=$tipo_data&id_usuario=$id_usuario");
+$token_rel = 'M543664';
+require_once("data_formatada.php");
+ob_start();
+include("receber.php");
+$html = ob_get_clean();
+
 
 //CARREGAR DOMPDF
 require_once '../dompdf/autoload.inc.php';

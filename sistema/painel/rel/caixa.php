@@ -1,17 +1,6 @@
 <?php
 
-include('../../conexao.php');
-include('data_formatada.php');
-
-
-
 $data_atual = date('Y-m-d');
-
-$operador = $_GET['operador'];
-$dataInicial = $_GET['dataInicial'];
-$dataFinal = $_GET['dataFinal'];
-
-
 $query = $pdo->query("SELECT * from usuarios where id = '$operador'");
 $res = $query->fetchAll(PDO::FETCH_ASSOC);
 $nome_operador = @$res[0]['nome'];
@@ -108,7 +97,7 @@ $texto_filtro = $datas;
 	<?php
 
 	if ($marca_dagua == 'Sim') { ?>
-		<img class="marca" src="<?php echo $url_sistema ?>/sistema/img/logo.jpg">
+		<img class="marca" src="<?php echo $url_sistema ?>/sistema/img/<?php echo $logo_sistema ?>">
 	<?php } ?>
 
 
@@ -119,7 +108,7 @@ $texto_filtro = $datas;
 			<table style="width: 100%; border: 0px solid #ccc;">
 				<tr>
 					<td style="border: 1px; solid #000; width: 25%; text-align: left;">
-						<img style="margin-top: 0px; margin-left: 7px;" id="imag" src="<?php echo $url_sistema ?>/sistema/img/logo.jpg" width="130px">
+						<img style="margin-top: 0px; margin-left: 7px;" id="imag" src="<?php echo $url_sistema ?>/sistema/img/<?php echo $logo_sistema ?>" width="130px">
 					</td>
 
 					<td style="text-align: center; font-size: 10px; width: 60%;">
@@ -198,9 +187,9 @@ $texto_filtro = $datas;
 
 
 				if ($operador == "") {
-					$query = $pdo->query("SELECT * from caixas where data_abertura >= '$dataInicial' and data_abertura <= '$dataFinal' ");
+					$query = $pdo->query("SELECT * from caixas where data_abertura >= '$dataInicial' and data_abertura <= '$dataFinal' and empresa = '$id_empresa' ");
 				} else {
-					$query = $pdo->query("SELECT * from caixas where data_abertura >= '$dataInicial' and data_abertura <= '$dataFinal' and operador = '$operador' ");
+					$query = $pdo->query("SELECT * from caixas where data_abertura >= '$dataInicial' and data_abertura <= '$dataFinal' and operador = '$operador' and empresa = '$id_empresa' ");
 				}
 
 

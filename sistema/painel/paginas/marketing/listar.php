@@ -5,6 +5,7 @@ $tabela = 'marketing';
 
 $id_usuario = @$_SESSION['id'];
 require_once("../../../conexao.php");
+require_once("../../buscar_config.php");
 
 $filtro_busca = @$_POST['p1'];
 if($filtro_busca != ""){
@@ -17,7 +18,7 @@ if($filtro_busca != ""){
 	$ativo_todas = 'active';
 }
 
-$query = $pdo->query("SELECT * from $tabela where id > 0 $sql_busca order by id desc");
+$query = $pdo->query("SELECT * from $tabela where empresa = '$id_empresa' $sql_busca order by id desc");
 $res = $query->fetchAll(PDO::FETCH_ASSOC);
 $linhas = @count($res);
 if ($linhas > 0) {

@@ -1,12 +1,15 @@
 <?php
-$tabela = 'anotacoes';
 @session_start();
+$id_empresa = $_SESSION['empresa'];
+$tabela = 'anotacoes';
+require_once("../../../conexao.php");
+require_once("../../buscar_config.php");
 $id_usuario = @$_SESSION['id'];
 
-require_once("../../../conexao.php");
+
 require_once("../../verificar.php");
 
-$query = $pdo->query("SELECT * from $tabela order by id desc");
+$query = $pdo->query("SELECT * from $tabela where empresa = '$id_empresa' order by id desc");
 $res = $query->fetchAll(PDO::FETCH_ASSOC);
 $linhas = @count($res);
 if ($linhas > 0) {

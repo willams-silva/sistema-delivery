@@ -1,5 +1,8 @@
 <?php
+@session_start();
+$id_empresa = $_SESSION['empresa'];
 include('../../conexao.php');
+require_once("../buscar_config.php");
 include('data_formatada.php');
 
 $id = $_GET['id'];
@@ -189,7 +192,7 @@ $total_por_pessoaF = @number_format($total_por_pessoa, 2, ',', '.');
 
 <div class="printer-ticket">
 	<td>
-		<img class="logo" id="imag" src="<?php echo $url_sistema ?>sistema/img/logo.jpg"
+		<img class="logo" id="imag" src="<?php echo $url_sistema ?>sistema/img/<?php echo $logo_sistema ?>"
 			width="180px">
 	</td>
 

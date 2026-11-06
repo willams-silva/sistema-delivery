@@ -6,11 +6,13 @@ $nome_usuario  = $_SESSION['nome'];
 $tabela = 'dispositivos';
 
 require_once("../../../conexao.php");
+$id_empresa = @$_SESSION['empresa'];
+require_once("../../buscar_config.php");
 
 $data_atual = date('Y-m-d');
 
 $dataAtual = date("Y-m-d");
-$query = $pdo->prepare("SELECT * FROM $tabela where status_api IS NOT NULL and (empresa is null or empresa = 0)");
+$query = $pdo->prepare("SELECT * FROM $tabela where status_api IS NOT NULL and (empresa is null or empresa = '$id_empresa')");
 $query->execute();
 $res = $query->fetchAll(PDO::FETCH_ASSOC);
 
@@ -40,28 +42,57 @@ foreach($res as $dispositivos)
 $i++;
 $id = $dispositivos['id'];
 $appkey = $dispositivos['appkey'];
+
 $status = $dispositivos['status'];
+$status_api = $dispositivos['status_api'];
+
+if($status_api == 'conectado'){
+    $status_mostrar = '<span class="text-success">Conectado</span>';
+}else{
+    $status_mostrar = '<span class="text-danger">Desconectado</span>';
+}
+
 $telefone = $dispositivos['telefone'] ?? '';
 $nucleo = $dispositivos['nucleo'] ?? '';
+
+if($appkey == $token_whatsapp){
+    $principal = '<small><span class="text-success">(Dispositivo Principal)</span></small>';
+    $icone = 'fa-check-square';
+    $titulo_link = '';
+            $acao = 'Não';
+            $classe_ativo = '';
+    
+}else{
+    $principal = '';
+    $icone = 'fa-square-o';
+    $titulo_link = 'Tornar Principal';
+    $acao = 'Sim';
+    $classe_ativo = '#c4c4c4';
+   
+}
+
 
 
 ?>
 
 <tr style="" class="tabelaResultados">
-    <td class="esc"><?= $i; ?></td>
+    <td class="esc"><?= $i; ?> </td>
     <td class="esc"><?= $telefone; ?></td>
     <td class="esc"><?= $appkey;?></td>
-    <td class="esc"><?=$status;?></td>
+    <td class="esc"><?=$status_mostrar;?> <?php echo $principal ?></td>
     <td class="esc">
     	
-           <big><a href="#" class="btn btn-danger-light btn-sm" onclick="excluirDisp('<?= $id; ?>')" title="Excluir"><i class="fa fa-trash"></i></a></big>
-
+            <big><a href="#" class="btn btn-danger-light btn-sm" onclick="excluirDisp('<?= $id; ?>')" title="Excluir"><i class="fa fa-trash-can"></i></a></big>
 
         <big>
-            <a href="#" onclick="add('<?= $appkey; ?>'); $('#modaldispositivo').modal('show');" title="Reconectar Dispositivo">
+            <a href="#" onclick="add('<?= $appkey; ?>')" title="Reconectar Dispositivo">
                 <i class="fa fa-wifi" style="color:#3d1002"></i>
             </a>
         </big>
+
+
+        <big><a class="btn btn-success-light btn-sm" href="#" onclick="ativar('<?= $id_empresa; ?>', '<?= $appkey; ?>')" title="<?= $titulo_link; ?>"><i class="fa <?= $icone; ?> "></i></a></big>
+
 
          <big><a class="btn btn-success-light btn-sm" href="#" onclick="testarApi()" title="Testar Api"><i class="bi bi-whatsapp "></i></a></big>
 
@@ -145,12 +176,10 @@ HTML;
         }
     }
 
+
+
+
 </script>
-
-
-
-
-
 
 
 <script type="text/javascript">
@@ -177,4 +206,7 @@ HTML;
         });
     }
 </script>
+
+
+
 

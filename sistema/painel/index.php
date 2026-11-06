@@ -3,6 +3,90 @@
 require_once("../conexao.php");
 require_once("verificar.php");
 
+$id_empresa = @$_SESSION['empresa'];
+$_SESSION['entrar_empresa'] = 'Sim';
+
+$query = $pdo->query("SELECT * from config where empresa = '$id_empresa'");
+$res = $query->fetchAll(PDO::FETCH_ASSOC);
+$total_reg = @count($res);
+if($total_reg == 0){
+
+	// ✅ Mantive seu INSERT original e adicionei os NOVOS CAMPOS do ERP com defaults
+	$pdo->query("INSERT INTO config SET 
+		nome = '$nome_sistema',
+		email = '$email_sistema',
+		telefone = '$telefone_sistema',
+		endereco = '$endereco_sistema',
+		logo = '$logo_sistema',
+		logo_rel = '$logo_rel',
+		icone = '$icone_sistema',
+		logo_painel = '$logo_painel',		
+		ativo = 'Sim',
+		multa_atraso = '0',
+		juros_atraso = '0',
+		marca_dagua = 'Sim',
+		assinatura_recibo = 'Não',
+		impressao_automatica = 'Não',
+		entrar_automatico = 'Não',
+		mostrar_preloader = 'Sim',
+		ocultar_mobile = 'Não',
+
+		api_whatsapp = '$api_whatsapp',
+		token_whatsapp = '',
+		instancia_whatsapp = '$instancia_whatsapp',
+		dados_pagamento = '',
+		alterar_acessos = 'Não',
+		alterar_api_whatsapp = 'Não',
+
+		tipo_rel = 'PDF',
+		tipo_miniatura = 'Cores',
+		previsao_entrega = '60',
+		horario_abertura = '18:00',
+		horario_fechamento = '00:00',
+		status_estabelecimento = 'Aberto',
+		tempo_atualizar = '30',
+		dias_apagar = '30',
+		fonte_comprovante = '11',
+
+		banner_rotativo = 'Sim',
+		mostrar_aberto = 'Sim',
+		abrir_comprovante = 'Não',
+		mensagem_auto = 'Sim',
+		mostrar_acessos = 'Sim',
+		abertura_caixa = 'Não',
+
+		total_cartoes = '5',
+		valor_cupom = '15',
+		pedido_minimo = '0',
+		taxa_extra = '0',
+		titulo_taxa = '',
+		retirar_local = 'Sim',
+		consumir_local = 'Sim',
+		entrega_delivery = 'Sim',
+		delivery_monitor = 'Não',
+		somente_pix_delivery = 'Não',
+		impressao_cozinha = 'Não',
+		pedidos_pdv_delivery = 'Não',
+
+		access_token = '',
+		public_key = '',
+		chave_api_asaas = '',
+		limitar_recursos = 'Sim',
+		pagina_entrada = '',
+		multi_empresas = 'Não',
+		meta_descricao = '',
+
+		url_site = '',
+		dispositivos = '1',
+		empresa = '$id_empresa'
+	");
+
+}
+
+
+//trazer as configurações
+require_once("buscar_config.php");
+
 
 $data_atual = date('Y-m-d');
 $mes_atual = Date('m');
@@ -34,6 +118,10 @@ if (@$_SESSION['nivel'] != 'Administrador') {
 	require_once("verificar_permissoes.php");
 }
 
+if($limitar_recursos == 'Sim'){
+	require_once("verificar_permissoes_recursos.php");
+}
+
 if (@$_GET['pagina'] != "") {
 	$pagina = @$_GET['pagina'];
 } else {
@@ -43,20 +131,20 @@ if (@$_GET['pagina'] != "") {
 
 
 //verificar se já existe as unidades de medidas padrão
-$query = $pdo->query("SELECT * from unidade_medida where nome = 'Quilogramas' or nome = 'Quilograma' or nome = 'Quilo' or nome = 'KG'");
+$query = $pdo->query("SELECT * from unidade_medida where (nome = 'Quilogramas' or nome = 'Quilograma' or nome = 'Quilo' or nome = 'KG') and empresa = '$id_empresa' ");
 $res = $query->fetchAll(PDO::FETCH_ASSOC);
 $linhas = @count($res);
 if($linhas == 0){
-	$pdo->query("INSERT INTO unidade_medida SET nome = 'Quilogramas', unidade = 'KG' ");
+	$pdo->query("INSERT INTO unidade_medida SET nome = 'Quilogramas', unidade = 'KG', empresa = '$id_empresa' ");
 }
 
 
 
-$query = $pdo->query("SELECT * from unidade_medida where nome = 'Litro' or nome = 'Litros' or nome = 'L'");
+$query = $pdo->query("SELECT * from unidade_medida where (nome = 'Litro' or nome = 'Litros' or nome = 'L') and empresa = '$id_empresa' ");
 $res = $query->fetchAll(PDO::FETCH_ASSOC);
 $linhas = @count($res);
 if($linhas == 0){
-	$pdo->query("INSERT INTO unidade_medida SET nome = 'Litros', unidade = 'L' ");
+	$pdo->query("INSERT INTO unidade_medida SET nome = 'Litros', unidade = 'L', empresa = '$id_empresa' ");
 }
 
 $id_usuario = @$_SESSION['id'];
@@ -79,6 +167,7 @@ if ($linhas > 0) {
 	$cep_usuario = $res[0]['cep'];
 	$nivel_usuario = $res[0]['nivel'];
 	$complemento_usuario = $res[0]['complemento'];
+	$empresa_usuario = $res[0]['empresa'];
 } else {
 	echo '<script>window.location="../"</script>';
 	exit();
@@ -99,12 +188,51 @@ if (@count($res1) > 0) {
 
 
 //inserir permissao pausa delivery
-$query = $pdo->query("SELECT * from acessos where chave = 'pausar_delivery'");
+$query = $pdo->query("SELECT * from acessos where chave = 'pausar_delivery' and empresa = '$id_empresa' ");
 $res = $query->fetchAll(PDO::FETCH_ASSOC);
 $linhas = @count($res);
 if($linhas == 0){
-	$pdo->query("INSERT INTO acessos SET nome = 'Pausar Delivery', chave = 'pausar_delivery', grupo = 0, pagina = 'Não' ");
+	$pdo->query("INSERT INTO acessos SET nome = 'Pausar Delivery', chave = 'pausar_delivery', grupo = 0, pagina = 'Não', empresa = '$id_empresa' ");
 }
+
+
+
+// INSERIR FREQUÊNCIAS PADRÃO
+$query = $pdo->query("SELECT * FROM frequencias WHERE empresa = '$id_empresa'");
+$res = $query->fetchAll(PDO::FETCH_ASSOC);
+$linhas = @count($res);
+
+if($linhas == 0){
+
+	$pdo->query("INSERT INTO frequencias SET frequencia = 'Nenhuma', dias = '0', empresa = '$id_empresa'");
+	$pdo->query("INSERT INTO frequencias SET frequencia = 'Diária', dias = '1', empresa = '$id_empresa'");
+	$pdo->query("INSERT INTO frequencias SET frequencia = 'Semanal', dias = '7', empresa = '$id_empresa'");
+	$pdo->query("INSERT INTO frequencias SET frequencia = 'Mensal', dias = '30', empresa = '$id_empresa'");
+	$pdo->query("INSERT INTO frequencias SET frequencia = 'Trimestral', dias = '90', empresa = '$id_empresa'");
+	$pdo->query("INSERT INTO frequencias SET frequencia = 'Semestral', dias = '180', empresa = '$id_empresa'");
+	$pdo->query("INSERT INTO frequencias SET frequencia = 'Anual', dias = '365', empresa = '$id_empresa'");
+
+}
+
+
+// INSERIR CARGOS PADRÃO
+$query = $pdo->query("SELECT * FROM cargos WHERE empresa = '$id_empresa'");
+$res = $query->fetchAll(PDO::FETCH_ASSOC);
+$linhas = @count($res);
+
+if($linhas == 0){
+
+	$pdo->query("INSERT INTO cargos SET nome = 'Administrador', empresa = '$id_empresa'");
+	$pdo->query("INSERT INTO cargos SET nome = 'Gerente', empresa = '$id_empresa'");
+	$pdo->query("INSERT INTO cargos SET nome = 'Recepcionista', empresa = '$id_empresa'");
+	$pdo->query("INSERT INTO cargos SET nome = 'Atendente', empresa = '$id_empresa'");
+	$pdo->query("INSERT INTO cargos SET nome = 'Faxineiro', empresa = '$id_empresa'");
+	$pdo->query("INSERT INTO cargos SET nome = 'Garçom', empresa = '$id_empresa'");
+	$pdo->query("INSERT INTO cargos SET nome = 'Entregador', empresa = '$id_empresa'");
+	$pdo->query("INSERT INTO cargos SET nome = 'Balconista', empresa = '$id_empresa'");
+
+}
+
 
 
 
@@ -129,7 +257,7 @@ if($linhas == 0){
 
 	<title><?php echo $nome_sistema ?></title>
 
-	<link rel="icon" href="../img/icone.png" type="image/x-icon" />
+	<link rel="icon" href="../img/<?php echo $icone_sistema ?>" type="image/x-icon" />
 	<link href="../assets/css/icons.css" rel="stylesheet">
 	<link id="style" href="../assets/plugins/bootstrap/css/bootstrap.min.css" rel="stylesheet" />
 	<link href="../assets/css/style.css" rel="stylesheet">
@@ -176,8 +304,8 @@ if($linhas == 0){
 
 						<div class="responsive-logo logo_painel">
 							<a href="index.php" class="header-logo">
-								<img src="../img/foto-painel.png" class="mobile-logo logo-1" alt="logo" style="width:90px !important; margin-left: -120px !important">
-										<img src="../img/foto-painel.png" class="mobile-logo dark-logo-1" alt="logo" style="width:40% !important; margin-left: 50px !important">
+								<img src="../img/<?php echo $logo_painel ?>" class="mobile-logo logo-1" alt="logo" style="width:90px !important; margin-left: -120px !important">
+										<img src="../img/<?php echo $logo_painel ?>" class="mobile-logo dark-logo-1" alt="logo" style="width:40% !important; margin-left: 50px !important">
 							</a>
 						</div>
 
@@ -188,8 +316,8 @@ if($linhas == 0){
 						</div>
 						<div class="logo-horizontal">
 							<a href="index.php" class="header-logo">
-								<img src="../img/foto-painel.png" class="mobile-logo logo-1" alt="logo">
-								<img src="../img/foto-painel.png" class="mobile-logo dark-logo-1" alt="logo">
+								<img src="../img/<?php echo $logo_painel ?>" class="mobile-logo logo-1" alt="logo">
+								<img src="../img/<?php echo $logo_painel ?>" class="mobile-logo dark-logo-1" alt="logo">
 							</a>
 						</div>
 						<div class="main-header-center ms-4 d-sm-none d-md-none d-lg-block form-group">
@@ -270,7 +398,7 @@ if($linhas == 0){
 											$hvDeliveryPainelDiaNum_9xK = date('w', strtotime($hvDeliveryPainelData_9xK));
 											$hvDeliveryPainelDiaAtual_9xK = $hvDeliveryPainelDias_9xK[$hvDeliveryPainelDiaNum_9xK];
 
-											$hvDeliveryPainelQueryDia_9xK = $pdo->query("SELECT * FROM dias WHERE dia = '$hvDeliveryPainelDiaAtual_9xK'");
+											$hvDeliveryPainelQueryDia_9xK = $pdo->query("SELECT * FROM dias WHERE dia = '$hvDeliveryPainelDiaAtual_9xK' and empresa = '$id_empresa'");
 											$hvDeliveryPainelResDia_9xK = $hvDeliveryPainelQueryDia_9xK->fetchAll(PDO::FETCH_ASSOC);
 
 											if (@count($hvDeliveryPainelResDia_9xK) > 0) {
@@ -349,7 +477,7 @@ if($linhas == 0){
 
 									<li class="dropdown nav-item  main-header-message <?php echo $pedidos ?>">
 										<?php
-										$query = $pdo->query("SELECT * FROM vendas where data = CurDate() and status = 'Iniciado'");
+										$query = $pdo->query("SELECT * FROM vendas where data = CurDate() and status = 'Iniciado'  and empresa = '$id_empresa' ");
 										$res = $query->fetchAll(PDO::FETCH_ASSOC);
 										$total_reg = @count($res);
 										if ($total_reg > 1) {
@@ -382,7 +510,7 @@ if($linhas == 0){
 											<div class="main-message-list chat-scroll">
 
 												<?php
-												$query = $pdo->query("SELECT * FROM vendas where data = CurDate() and status = 'Iniciado' order by id desc limit 6");
+												$query = $pdo->query("SELECT * FROM vendas where data = CurDate() and status = 'Iniciado'  and empresa = '$id_empresa' order by id desc limit 6");
 												$res = $query->fetchAll(PDO::FETCH_ASSOC);
 												$total_reg = @count($res);
 												for ($i = 0; $i < $total_reg; $i++) {
@@ -433,7 +561,7 @@ if($linhas == 0){
 
 										<?php
 
-										$query = $pdo->query("SELECT * from receber where vencimento < curDate() and pago != 'Sim' order by id asc");
+										$query = $pdo->query("SELECT * from receber where vencimento < curDate() and pago != 'Sim'  and empresa = '$id_empresa' order by id asc");
 
 										$res = $query->fetchAll(PDO::FETCH_ASSOC);
 										$linhas = @count($res);
@@ -460,7 +588,7 @@ if($linhas == 0){
 
 												<?php
 
-												$query = $pdo->query("SELECT * from receber where vencimento < curDate() and pago != 'Sim' order by id asc");
+												$query = $pdo->query("SELECT * from receber where vencimento < curDate() and pago != 'Sim' and empresa = '$id_empresa' order by id asc");
 
 												$res = $query->fetchAll(PDO::FETCH_ASSOC);
 												$linhas = @count($res);
@@ -498,7 +626,7 @@ if($linhas == 0){
 
 									<li class="dropdown nav-item  main-header-message <?php echo $pagar ?>">
 										<?php
-										$query = $pdo->query("SELECT * from pagar where vencimento < curDate() and pago != 'Sim' order by id asc");
+										$query = $pdo->query("SELECT * from pagar where vencimento < curDate() and pago != 'Sim' and empresa = '$id_empresa' order by id asc");
 
 										$res = $query->fetchAll(PDO::FETCH_ASSOC);
 										$linhas = @count($res);
@@ -526,7 +654,7 @@ if($linhas == 0){
 
 												<?php
 
-												$query = $pdo->query("SELECT * from pagar where vencimento < curDate() and pago != 'Sim' order by id asc");
+												$query = $pdo->query("SELECT * from pagar where vencimento < curDate() and pago != 'Sim' and empresa = '$id_empresa' order by id asc");
 
 												$res = $query->fetchAll(PDO::FETCH_ASSOC);
 												$linhas = @count($res);
@@ -588,6 +716,14 @@ if($linhas == 0){
 													Configurações</a>
 											</span>
 
+
+											<?php if($empresa_usuario == "" || $empresa_usuario == 0){ ?>
+											<span ><a class="dropdown-item " href="../sas/"
+													><i class="fa fa-hand-o-left "></i>
+													Painel SAAS</a>
+											</span>
+										<?php } ?>
+
 											<a class="dropdown-item" href="logout.php"><i class="fa fa-arrow-left"></i> Sair</a>
 										</div>
 									</li>
@@ -604,10 +740,10 @@ if($linhas == 0){
 				<aside class="app-sidebar">
 					<div class="main-sidebar-header active">
 						<a class="header-logo active" href="index.php">
-							<img src="../img/foto-painel.png" class="main-logo  desktop-logo" alt="logo" >
-							<img src="../img/foto-painel.png" class="main-logo  desktop-dark" alt="logo" >
-							<img src="../img/icone.png" class="main-logo  mobile-logo" alt="logo">
-							<img src="../img/icone.png" class="main-logo  mobile-dark" alt="logo">
+							<img src="../img/<?php echo $logo_painel ?>" class="main-logo  desktop-logo" alt="logo" >
+							<img src="../img/<?php echo $logo_painel ?>" class="main-logo  desktop-dark" alt="logo" >
+							<img src="../img/<?php echo $icone_sistema ?>" class="main-logo  mobile-logo" alt="logo">
+							<img src="../img/<?php echo $icone_sistema ?>" class="main-logo  mobile-dark" alt="logo">
 						</a>
 					</div>
 					<div class="main-sidemenu">
@@ -638,7 +774,7 @@ if($linhas == 0){
 							</li>
 
 
-							<li class="slide <?php echo @$menu_pedidos_locais ?>">
+							<li class="slide <?php echo @$menu_pedidos_locais ?> ">
 								<a class="side-menu__item" data-bs-toggle="slide" href="javascript:void(0);">
 									<i class="fa fa-table text-white mt-1"></i>
 									<span class="side-menu__label" style="margin-left: 15px">Pedidos Locais</span><i
@@ -657,7 +793,7 @@ if($linhas == 0){
 
 							
 
-							<li class="slide <?php echo @$novo_pedido ?>">
+							<li class="slide <?php echo @$novo_pedido ?> <?php echo $recursos_pedidos_na_mesa ?>">
 								<a class="side-menu__item" href="novo_pedido">
 									<i class="fa-brands fa-palfed text-white"></i>
 									<span class="side-menu__label" style="margin-left: 15px">Pedido Mesas</span></a>
@@ -666,7 +802,7 @@ if($linhas == 0){
 
 
 
-							<li class="slide <?php echo @$pedido_site ?>">								
+							<li class="slide <?php echo @$pedido_site ?> <?php echo $recursos_pdv_balcao ?>">								
 								<a class="side-menu__item" href="pdv">
 									<i class="fa-solid fa-cart-plus text-white mt-1"></i>
 									<span class="side-menu__label" style="margin-left: 15px">PDV</span>
@@ -831,6 +967,31 @@ if($linhas == 0){
 							</li>
 
 
+							<?php if($multi_empresas == 'Sim'){ ?>
+							<li class="slide <?php echo @$mensalidades ?>">
+								<a class="side-menu__item" href="mensalidades">
+									<i class="fa fa-money text-white"></i>
+									<span class="side-menu__label" style="margin-left: 15px">Mensalidades Sistema</span></a>
+							</li>
+
+
+
+							<li class="slide">
+								<a class="side-menu__item <?php echo @$chamados ?>" href="chamados">
+									<i class="fa fa-phone-square text-white"></i>
+									<span class="side-menu__label" style="margin-left: 15px">Abertura Chamados</span></a>
+							</li>
+
+
+							<li class="slide">
+								<a class="side-menu__item" href="tutoriais">
+									<i class="fa fa-video text-white"></i>
+									<span class="side-menu__label" style="margin-left: 15px">Tutoriais</span></a>
+							</li>
+
+						<?php } ?>
+
+
 
 							<li class="slide <?php echo @$tarefas ?>">
 								<a class="side-menu__item" href="tarefas">
@@ -855,7 +1016,7 @@ if($linhas == 0){
 								
 
 
-										<li class="slide <?php echo @$marketing ?>" >
+										<li class="slide <?php echo @$marketing ?> <?php echo $recursos_marketing_whats ?>" >
 									<a class="side-menu__item" href="marketing">
 										<i class="fa fa-phone text-white"></i>
 										<span class="side-menu__label" style="margin-left: 15px">Marketing</span></a>
@@ -1773,6 +1934,23 @@ if($linhas == 0){
 								
 							</select>
 						</div>
+
+
+
+						<div class="col-md-5 mb-2  needs-validation was-validated">
+							<label>Url Site <small><a target="_blank" href="<?php echo $url_sistema ?>site/<?php echo $url_site ?>" style="color:blue"><?php echo $url_sistema ?>site/<?php echo $url_site ?></a></small></label>
+							<div class="input-group mb-3">								
+								<div style="display: flex; align-items: center;">
+								    <input type="text" value="<?php echo $url_sistema ?>site/" readonly
+								        style="background: #eee; border: 1px solid #ccc; padding: 6px; width: 300px;">
+								    <input type="text" class="form-control" name="url_site" id="url_site"
+								        placeholder="empresa1, loja1, etc"
+								        style="flex: 1; border-left: none;" value="<?php echo $url_site ?>">
+								</div>
+							</div>
+						</div>
+
+
 					</div>
 
 
@@ -1841,7 +2019,7 @@ if($linhas == 0){
 						</div>
 						<div class="col-md-2">
 							<div id="divImg">
-								<img src="../img/foto-painel.png" width="80px" id="target-painel">
+								<img src="../img/<?php echo $logo_painel ?>" width="80px" id="target-painel">
 							</div>
 						</div>
 

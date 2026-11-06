@@ -1,6 +1,14 @@
-<?php 
-$tabela = 'clientes';
+<?php
+@session_start();
+$id_empresa = $_SESSION['empresa'];
 require_once("../../../conexao.php");
+require_once("../../buscar_config.php");
+if($id_empresa == ""){
+	echo 'Sem Sessão da Empresa, refaça o Login!';
+	exit();
+}
+$tabela = 'clientes';
+
 
 $id = $_POST['id'];
 $nome = $_POST['nome'];
@@ -10,6 +18,14 @@ $total_cartoes_troca = $total_cartoes_config;
 
 if ($api_whatsapp != 'Não') {
   $telefone_envio = '55' . preg_replace('/[ ()-]+/', '', $tel_cliente);
+
+ if($total_cartoes_troca == ""){
+ 	$total_cartoes_troca = 0;
+ }
+
+  if($cartoes == ""){
+ 	$cartoes = 0;
+ }
   
 $cartoes_faltantes = $total_cartoes_troca - $cartoes;
 

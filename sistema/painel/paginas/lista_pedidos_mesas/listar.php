@@ -1,5 +1,8 @@
-<?php 
+<?php
+@session_start();
+$id_empresa = $_SESSION['empresa'];
 require_once("../../../conexao.php");
+require_once("../../buscar_config.php");
 $tabela = 'abertura_mesa';
 $data_hoje = date('Y-m-d');
 
@@ -11,7 +14,7 @@ $nome_forma_pgto = '';
 
 $total_vendas = 0;
 
-$query = $pdo->query("SELECT * FROM $tabela where data >= '$dataInicial' and data <= '$dataFinal' and status = 'Fechada'  order by data asc, horario_abertura desc");
+$query = $pdo->query("SELECT * FROM $tabela where data >= '$dataInicial' and data <= '$dataFinal' and status = 'Fechada' and empresa = '$id_empresa' order by data asc, horario_abertura desc");
 $res = $query->fetchAll(PDO::FETCH_ASSOC);
 $total_reg = @count($res);
 if($total_reg > 0){

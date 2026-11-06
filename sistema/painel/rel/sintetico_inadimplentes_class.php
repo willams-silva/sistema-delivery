@@ -1,10 +1,16 @@
 <?php 
 @session_start();
-$id_usuario = @$_SESSION['id'];
-
+$id_empresa = $_SESSION['empresa'];
+$id_usuario = $_SESSION['id'];
 require_once("../../conexao.php");
+require_once("../buscar_config.php");
+require_once ("../verificar.php");
 
-$html = file_get_contents($url_sistema."painel/rel/sintetico_ina.php?id_usuario=$id_usuario");
+$token_rel = 'M543664';
+require_once("data_formatada.php");
+ob_start();
+include("sintetico_ina.php");
+$html = ob_get_clean();
 
 //CARREGAR DOMPDF
 require_once '../dompdf/autoload.inc.php';

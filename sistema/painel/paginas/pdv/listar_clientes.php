@@ -1,5 +1,8 @@
-<?php 
+<?php
+@session_start();
+$id_empresa = $_SESSION['empresa'];
 require_once("../../../conexao.php");
+require_once("../../buscar_config.php");
 $pagina = 'clientes';
 
 $valor = @$_POST['valor'];
@@ -10,7 +13,7 @@ if($valor == ""){
 	echo '<option value="">Selecionar Cliente</option>';
 }
 
-$query = $pdo->query("SELECT * FROM clientes order by id desc");
+$query = $pdo->query("SELECT * FROM clientes where empresa = '$id_empresa' order by id desc");
 $res = $query->fetchAll(PDO::FETCH_ASSOC);
 for($i=0; $i < @count($res); $i++){
 	foreach ($res[$i] as $key => $value){}

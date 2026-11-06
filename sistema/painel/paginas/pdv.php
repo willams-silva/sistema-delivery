@@ -5,7 +5,7 @@ $pag = 'pdv';
 
 $id_mesa = @$_POST['id_mesa'];
 
-$query2 = $pdo->query("SELECT * FROM abertura_mesa where mesa = '$id_mesa' and status = 'Aberta'");
+$query2 = $pdo->query("SELECT * FROM abertura_mesa where mesa = '$id_mesa' and status = 'Aberta' and empresa = '$id_empresa'");
 $res2 = $query2->fetchAll(PDO::FETCH_ASSOC);
 if(@count($res2) > 0){
 	$id_ab_mesa = @$res2[0]['id'];
@@ -91,7 +91,7 @@ $data_atual = date('Y-m-d');
            
           	
 		<?php 
-		$query = $pdo->query("SELECT * from categorias where ativo = 'Sim' order by nome asc");
+		$query = $pdo->query("SELECT * from categorias where ativo = 'Sim' and empresa = '$id_empresa' order by nome asc");
 		$res = $query->fetchAll(PDO::FETCH_ASSOC);
 		$linhas = @count($res);
 		if($linhas > 0){
@@ -106,7 +106,7 @@ $data_atual = date('Y-m-d');
 				$nomeF = mb_strimwidth($nome, 0, 20, "..."); 
 				
 		//totalizar produtos
-				$query2 = $pdo->query("SELECT * from produtos where categoria = '$id' and ativo = 'Sim' and (estoque > 0 or tem_estoque = 'Não')  ");
+				$query2 = $pdo->query("SELECT * from produtos where categoria = '$id' and ativo = 'Sim' and (estoque > 0 or tem_estoque = 'Não') and empresa = '$id_empresa'  ");
 				$res2 = $query2->fetchAll(PDO::FETCH_ASSOC);
 				$produtos = @count($res2);
 
@@ -182,7 +182,7 @@ $data_atual = date('Y-m-d');
 											<option value="pix_mp">Pix QRCode</option>
 										<?php } ?>
 												<?php 
-												$query = $pdo->query("SELECT * FROM formas_pgto order by id asc");
+												$query = $pdo->query("SELECT * FROM formas_pgto where empresa = '$id_empresa' order by id asc");
 												$res = $query->fetchAll(PDO::FETCH_ASSOC);
 												for($i=0; $i < @count($res); $i++){
 													foreach ($res[$i] as $key => $value){}
@@ -267,7 +267,7 @@ $data_atual = date('Y-m-d');
 											<select class="form-select" name="forma_pgto2" id="forma_pgto2"> 
 												<option value="">Forma de Pgto</option>
 												<?php 
-												$query = $pdo->query("SELECT * FROM formas_pgto  order by id asc");
+												$query = $pdo->query("SELECT * FROM formas_pgto where empresa = '$id_empresa' order by id asc");
 												$res = $query->fetchAll(PDO::FETCH_ASSOC);
 												for($i=0; $i < @count($res); $i++){
 													foreach ($res[$i] as $key => $value){}
@@ -1048,7 +1048,7 @@ function FormaPg(){
 		            	addVenda(id, estoque_unit, nome, nome_unidade);
 
 		            	if(estoque_unit != 'Não'){
-		            		var audio = new Audio('../../img/barCode.wav');
+		            		var audio = new Audio('../img/barCode.wav');
 					         audio.addEventListener('canplaythrough', function() {
 					          audio.play();
 					        });

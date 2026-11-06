@@ -1,5 +1,9 @@
-<?php
-include('../../conexao.php');
+<?php 
+@session_start();
+$id_empresa = $_SESSION['empresa'];
+$id_usuario = $_SESSION['id'];
+require_once("../../conexao.php");
+require_once("../buscar_config.php");
 include('data_formatada.php');
 
 $dataInicial = $_GET['dataInicial'];
@@ -151,7 +155,7 @@ $total_reg = count($res);
 <div class="printer-ticket">
 
 	<div class="header" align="center">
-		<img src="<?php echo $url_sistema ?>sistema/img/logo.jpg" width="110">
+		<img src="<?php echo $url_sistema ?>sistema/img/<?php echo $logo_sistema ?>" width="110">
 	</div>
 
 	<div class="th">

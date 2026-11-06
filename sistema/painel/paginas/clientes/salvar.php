@@ -1,8 +1,14 @@
 <?php
-$tabela = 'clientes';
-require_once("../../../conexao.php");
-
 @session_start();
+$id_empresa = $_SESSION['empresa'];
+require_once("../../../conexao.php");
+require_once("../../buscar_config.php");
+if($id_empresa == ""){
+    echo 'Sem Sessão da Empresa, refaça o Login!';
+    exit();
+}
+$tabela = 'clientes';
+
 $id_usuario = @$_SESSION['id'];
 
 
@@ -28,7 +34,7 @@ if($cpf != "") {
 
 //validacao email
 if($email != "") {
-    $query = $pdo->query("SELECT * from $tabela where email = '$email'");
+    $query = $pdo->query("SELECT * from $tabela where email = '$email' and empresa = '$id_empresa' ");
     $res = $query->fetchAll(PDO::FETCH_ASSOC);
     $id_reg = @$res[0]['id'];
     if(@count($res) > 0 and $id != $id_reg) {
@@ -40,7 +46,7 @@ if($email != "") {
 
 //validacao telefone
 if($telefone != "") {
-    $query = $pdo->query("SELECT * from $tabela where telefone = '$telefone'");
+    $query = $pdo->query("SELECT * from $tabela where telefone = '$telefone' and empresa = '$id_empresa'");
     $res = $query->fetchAll(PDO::FETCH_ASSOC);
     $id_reg = @$res[0]['id'];
     if(@count($res) > 0 and $id != $id_reg) {
@@ -57,7 +63,7 @@ if($data_nasc == "") {
 }
 
 if($id == "") {
-    $query = $pdo->prepare("INSERT INTO $tabela SET nome = :nome, email = :email, telefone = :telefone, data_cad = curDate(), endereco = :endereco, cpf = :cpf $nasc, usuario = '$id_usuario', numero = :numero, bairro = :bairro, cidade = :cidade, estado = :estado, cep = :cep, complemento = :complemento");
+    $query = $pdo->prepare("INSERT INTO $tabela SET nome = :nome, email = :email, telefone = :telefone, data_cad = curDate(), endereco = :endereco, cpf = :cpf $nasc, usuario = '$id_usuario', numero = :numero, bairro = :bairro, cidade = :cidade, estado = :estado, cep = :cep, complemento = :complemento, empresa = '$id_empresa' ");
 
 } else {
 

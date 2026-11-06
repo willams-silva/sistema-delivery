@@ -15,7 +15,7 @@ if (@count($res2) > 0) {
 
 
 //verificar se o caixa está aberto
-$query = $pdo->query("SELECT * from caixas where operador = '$id_usuario' and data_fechamento is null");
+$query = $pdo->query("SELECT * from caixas where operador = '$id_usuario' and data_fechamento is null and empresa = '$id_empresa'");
 $res = $query->fetchAll(PDO::FETCH_ASSOC);
 $linhas = @count($res);
 if ($linhas > 0) {
@@ -243,7 +243,7 @@ if ($linhas > 0) {
 								<option value="0">Selecione um Fornecedor</option>
 								<?php
 
-								$query = $pdo->query("SELECT * from fornecedores order by id asc");
+								$query = $pdo->query("SELECT * from fornecedores where empresa = '$id_empresa' order by id asc");
 								$res = $query->fetchAll(PDO::FETCH_ASSOC);
 								$linhas = @count($res);
 								if ($linhas > 0) {
@@ -261,7 +261,7 @@ if ($linhas > 0) {
 							<select name="funcionario" id="funcionario" class="form-select sel3" style="width:100%; height:35px">
 								<option value="0">Selecione um Funcionário</option>
 								<?php
-								$query = $pdo->query("SELECT * from usuarios where nivel != 'Administrador' order by id asc");
+								$query = $pdo->query("SELECT * from usuarios where nivel != 'Administrador' and empresa = '$id_empresa' order by id asc");
 								$res = $query->fetchAll(PDO::FETCH_ASSOC);
 								$linhas = @count($res);
 								if ($linhas > 0) {
@@ -281,7 +281,7 @@ if ($linhas > 0) {
 							<label>Forma Pgto</label>
 							<select name="forma_pgto" id="forma_pgto" class="form-select">
 								<?php
-								$query = $pdo->query("SELECT * from formas_pgto order by id asc");
+								$query = $pdo->query("SELECT * from formas_pgto where empresa = '$id_empresa' order by id asc");
 								$res = $query->fetchAll(PDO::FETCH_ASSOC);
 								$linhas = @count($res);
 								if ($linhas > 0) {
@@ -299,7 +299,7 @@ if ($linhas > 0) {
 							<label>Frequência</label>
 							<select name="frequencia" id="frequencia" class="form-select">
 								<?php
-								$query = $pdo->query("SELECT * from frequencias order by id asc");
+								$query = $pdo->query("SELECT * from frequencias where empresa = '$id_empresa' order by id asc");
 								$res = $query->fetchAll(PDO::FETCH_ASSOC);
 								$linhas = @count($res);
 								if ($linhas > 0) {
@@ -521,7 +521,7 @@ if ($linhas > 0) {
 								<select class="form-select" name="frequencia" id="frequencia-parcelar" required style="width:100%;">
 
 									<?php
-									$query = $pdo->query("SELECT * FROM frequencias order by id asc");
+									$query = $pdo->query("SELECT * FROM frequencias where empresa = '$id_empresa' order by id asc");
 									$res = $query->fetchAll(PDO::FETCH_ASSOC);
 									for ($i = 0; $i < @count($res); $i++) {
 										foreach ($res[$i] as $key => $value) {
@@ -598,7 +598,7 @@ if ($linhas > 0) {
 								<label>Forma PGTO</label>
 								<select class="form-select" name="saida-baixar" id="saida-baixar" required>
 									<?php
-									$query = $pdo->query("SELECT * FROM formas_pgto order by id asc");
+									$query = $pdo->query("SELECT * FROM formas_pgto where empresa = '$id_empresa' order by id asc");
 									$res = $query->fetchAll(PDO::FETCH_ASSOC);
 									for ($i = 0; $i < @count($res); $i++) {
 										foreach ($res[$i] as $key => $value) {

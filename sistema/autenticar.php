@@ -19,12 +19,48 @@ if ($id_usu != "") {
 		$_SESSION['id'] = $res[0]['id'];
 		$_SESSION['nivel'] = $res[0]['nivel'];
 		$_SESSION['aut_token_SaL1P'] = '25tNX1L1MSaL1P';
+		$_SESSION['empresa'] = $res[0]['empresa'];
+		$empresa = $res[0]['empresa'];
 
-		if ($pagina == "") {
-			echo '<script>window.location="painel"</script>';
-		} else {
-			echo '<script>window.location="painel/' . $pagina . '"</script>';
+		
+			if($empresa > 0){
+
+		//verificar se tem período de teste
+		$query = $pdo->prepare("SELECT * from empresas where id = :id_empresa");
+		$query->bindValue(":id_empresa", "$empresa");
+		$query->execute();
+		$res = $query->fetchAll(PDO::FETCH_ASSOC);
+		$data_teste = @$res[0]['data_teste'];
+		if($data_teste != ""){
+			if(strtotime($data_atual) > strtotime($data_teste)){
+				$_SESSION['msg'] = 'Seu prazo de testes expirou, contate o administrador!'; 
+				echo "<script>localStorage.setItem('id_usu', '')</script>";
+				echo '<script>window.location="login"</script>'; 
+
+				$pdo->query("UPDATE empresas SET ativo = 'Não' WHERE id = '$empresa' ");
+				$pdo->query("UPDATE usuarios SET ativo = 'Não' WHERE empresa = '$empresa' ");
+				exit(); 
+			}
 		}
+
+
+		if($pagina == ""){
+		echo '<script>window.location="painel"</script>';  
+		}else{
+			echo '<script>window.location="painel/'.$pagina.'"</script>';  
+		}
+
+	}else{
+		if($pagina == ""){
+		echo '<script>window.location="sas"</script>';  
+		}else{
+			if($multi_empresas == 'Não'){
+				echo '<script>window.location="sas"</script>';  
+			}else{
+				echo '<script>window.location="sas/'.$pagina.'"</script>';  
+			}
+		}
+	}
 
 	} else {
 		echo "<script>localStorage.setItem('id_usu', '')</script>";
@@ -37,7 +73,7 @@ $senha = filter_var(@$_POST['senha'], @FILTER_SANITIZE_STRING);
 $salvar = filter_var(@$_POST['salvar'], @FILTER_SANITIZE_STRING);
 
 
-$query = $pdo->prepare("SELECT * from usuarios where email = :email order by id asc limit 1");
+$query = $pdo->prepare("SELECT * from usuarios where email = :email order by id desc limit 1");
 $query->bindValue(":email", "$usuario");
 $query->execute();
 $res = $query->fetchAll(PDO::FETCH_ASSOC);
@@ -62,6 +98,9 @@ if ($linhas > 0) {
 	$_SESSION['aut_token_SaL1P'] = '25tNX1L1MSaL1P';
 
 	$id = $res[0]['id'];
+	$_SESSION['empresa'] = $res[0]['empresa'];
+
+	$empresa = $res[0]['empresa'];
 
 	if ($salvar == 'Sim') {
 		echo "<script>localStorage.setItem('email_usu', '$usuario')</script>";
@@ -75,7 +114,28 @@ if ($linhas > 0) {
 
 
 
-	echo '<script>window.location="painel"</script>';
+	if($empresa > 0){
+
+		//verificar se tem período de teste
+		$query = $pdo->prepare("SELECT * from empresas where id = :id_empresa");
+		$query->bindValue(":id_empresa", "$empresa");
+		$query->execute();
+		$res = $query->fetchAll(PDO::FETCH_ASSOC);
+		$data_teste = @$res[0]['data_teste'];
+		if($data_teste != ""){
+			if(strtotime($data_atual) > strtotime($data_teste)){
+				$_SESSION['msg'] = 'Seu prazo de testes expirou, contate o administrador!'; 
+				echo '<script>window.location="login"</script>';  
+				$pdo->query("UPDATE empresas SET ativo = 'Não' WHERE id = '$empresa' ");
+				$pdo->query("UPDATE usuarios SET ativo = 'Não' WHERE empresa = '$empresa' ");
+				exit();
+			}
+		}
+
+		echo '<script>window.location="painel"</script>';
+	}else{
+		echo '<script>window.location="sas"</script>';
+	}
 
 } else {
 	$_SESSION['msg'] = 'Dados Incorretos!';

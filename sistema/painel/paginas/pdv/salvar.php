@@ -1,8 +1,15 @@
-<?php 
+<?php
 @session_start();
+$id_empresa = $_SESSION['empresa'];
+require_once("../../../conexao.php");
+require_once("../../buscar_config.php");
+if($id_empresa == ""){
+	echo 'Sem Sessão da Empresa, refaça o Login!';
+	exit();
+}
 $id_usuario = $_SESSION['id'];
 $tabela = 'receber';
-require_once("../../../conexao.php");
+
 
 $sessao = $id_usuario;
 
@@ -105,13 +112,13 @@ $pdo->query("UPDATE clientes SET  cartoes = '$total_cartoes_cliente' where id = 
 }
 
 
-$query = $pdo->query("SELECT * FROM formas_pgto where nome = '$saida'");
+$query = $pdo->query("SELECT * FROM formas_pgto where nome = '$saida' and empresa = '$id_empresa' ");
 $res = $query->fetchAll(PDO::FETCH_ASSOC);
 $id_saida = @$res[0]['id'];
 
 
 $total_carrinho = 0;
-$query = $pdo->query("SELECT * FROM carrinho where sessao = '$sessao' and pedido = 0 and mesa = ''");
+$query = $pdo->query("SELECT * FROM carrinho where sessao = '$sessao' and pedido = 0 and mesa = '' and empresa = '$id_empresa'");
 $res = $query->fetchAll(PDO::FETCH_ASSOC);
 $total_reg = @count($res);
 if ($total_reg > 0) {
@@ -195,7 +202,7 @@ if(strtotime($data) > strtotime($data_atual)){
 
 
 //recuperar número do pedido
-$query = $pdo->query("SELECT * FROM vendas where data = curDate() order by id desc limit 1");
+$query = $pdo->query("SELECT * FROM vendas where data = curDate() and empresa = '$id_empresa' order by id desc limit 1");
 $res = $query->fetchAll(PDO::FETCH_ASSOC);
 $num_pedido = @$res[0]['pedido'];
 if ($num_pedido == "") {
@@ -225,14 +232,14 @@ if($entrega == ""){
 }
 
 
-$query = $pdo->prepare("INSERT INTO vendas SET cliente = '$cliente', valor = '$total_final', total_pago = '$troco', troco = '$troco_calculado', data = curDate(), hora = curTime(), status = 'Iniciado', pago = '$pago', obs = '', taxa_entrega = '$frete', tipo_pgto = '$saida', usuario_baixa = '0', entrega = '$entrega', mesa = '$mesa', nome_cliente = '$nome_cliente', cupom = '$desconto', pago_entregador = 'Não', pedido = '$pedido', ref_api = '', tipo_pedido = '$tipo_pedido', taxa_extra_pedido = '0', caixa = '$id_caixa', custo = '$total_compra'");
+$query = $pdo->prepare("INSERT INTO vendas SET cliente = '$cliente', valor = '$total_final', total_pago = '$troco', troco = '$troco_calculado', data = curDate(), hora = curTime(), status = 'Iniciado', pago = '$pago', obs = '', taxa_entrega = '$frete', tipo_pgto = '$saida', usuario_baixa = '0', entrega = '$entrega', mesa = '$mesa', nome_cliente = '$nome_cliente', cupom = '$desconto', pago_entregador = 'Não', pedido = '$pedido', ref_api = '', tipo_pedido = '$tipo_pedido', taxa_extra_pedido = '0', caixa = '$id_caixa', custo = '$total_compra', empresa = '$id_empresa' ");
 $query->execute();
 $id_pedido = $pdo->lastInsertId();
 $id_pedido_feito = $pdo->lastInsertId();
 
 
 //lançar nas contas a receber
-$pdo->query("INSERT INTO receber SET descricao = 'Nova Venda', cliente = '$cliente', valor = '$total_final', vencimento = '$data', data_pgto = '$data', data_lanc = curDate(), forma_pgto = '$id_saida', frequencia = '0',  arquivo = 'sem-foto.jpg', foto = 'sem-foto.jpg', subtotal = '$total_final', usuario_lanc = '$id_usuario', usuario_pgto = '$usuario_pgto', pago = '$pago', referencia = 'Venda', caixa = '$id_caixa', hora = curTime(), tipo = 'Balcão', custo = '$total_compra' ");
+$pdo->query("INSERT INTO receber SET descricao = 'Nova Venda', cliente = '$cliente', valor = '$total_final', vencimento = '$data', data_pgto = '$data', data_lanc = curDate(), forma_pgto = '$id_saida', frequencia = '0',  arquivo = 'sem-foto.jpg', foto = 'sem-foto.jpg', subtotal = '$total_final', usuario_lanc = '$id_usuario', usuario_pgto = '$usuario_pgto', pago = '$pago', referencia = 'Venda', caixa = '$id_caixa', hora = curTime(), tipo = 'Balcão', custo = '$total_compra', empresa = '$id_empresa' ");
 
 
 //relacionar itens do carrinho com o pedido

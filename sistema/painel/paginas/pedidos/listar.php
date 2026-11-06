@@ -1,5 +1,8 @@
 <?php
+@session_start();
+$id_empresa = $_SESSION['empresa'];
 require_once("../../../conexao.php");
+require_once("../../buscar_config.php");
 $tabela = 'vendas';
 $data_hoje = date('Y-m-d');
 
@@ -18,9 +21,9 @@ if($pagina == ""){
 $itens_paginacao = 10;
 $limite = $pagina * @$itens_paginacao;
 
-$sql_pedido_balcao = "";
+$sql_pedido_balcao = " and empresa = '$id_empresa' ";
 if($pedidos_pdv_delivery != 'Sim'){
-	$sql_pedido_balcao = " and tipo_pedido != 'Balcão' ";
+	$sql_pedido_balcao = " and tipo_pedido != 'Balcão' and empresa = '$id_empresa' ";
 }
 
 //TOTAIS DOS PEDIDOS
@@ -114,7 +117,7 @@ HTML;
 
 		//verificar pgto pix
 		if ($codigo_pix != "" and $pago != "Sim") {
-			require("../../../../js/ajax/verificar_pgto.php");
+			require("verificar_pgto.php");
 			if (@$status_api == 'approved') {
 				$pdo->query("UPDATE vendas set pago = 'Sim', tipo_pgto = 'Pix' where id = '$id'");
 			}
@@ -262,7 +265,7 @@ HTML;
 
 		<a style="display:inline-block; margin-left:10px" href="#" onclick="darDesconto('{$id}')" title="Dar Desconto"><i class="fa fa-usd text-success"></i></a>
 
-		<form method="POST" action="../../index" target="_blank" style="display:inline-block;">
+		<form method="POST" action="../../site/{$url_site}" target="_blank" style="display:inline-block;">
 					<input type="hidden" name="id_edicao" value="{$id}">
 					<button style="outline:none; background:transparent; border:none; " type="submit" title="Editar Pedido"><i class="fa fa-edit text-info"></i>
 				</form>

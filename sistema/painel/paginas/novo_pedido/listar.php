@@ -1,10 +1,15 @@
 <?php
+@session_start();
+$id_empresa = $_SESSION['empresa'];
 require_once("../../../conexao.php");
+require_once("../../buscar_config.php");
+
 $tabela = 'mesas';
 
 $totalF = 0;
+$buscar_cliente = @$_POST['p1'];
 
-$query = $pdo->query("SELECT * FROM $tabela order by id asc");
+$query = $pdo->query("SELECT * FROM $tabela where empresa = '$id_empresa' order by id asc");
 $res = $query->fetchAll(PDO::FETCH_ASSOC);
 $total_reg = @count($res);
 if ($total_reg > 0) {
@@ -17,6 +22,8 @@ if ($total_reg > 0) {
 		$status = $res[$i]['status'];
 
 		$mostrar_fechar = '';
+
+
 
 		//abertura da mesa
 		$query2 = $pdo->query("SELECT * FROM abertura_mesa where mesa = '$id' and status = 'Aberta'");
@@ -46,6 +53,8 @@ if ($total_reg > 0) {
 			
 			$nome_cliente = @$cliente;
 
+
+
 			$horario_aberturaF = date('H:i', @strtotime($horario_abertura));
 
 			$pessoas_mesa = '<img class="icon-rounded-vermelho" src="../../img/user.png" width="15px" height="15px"> (' . $pessoas . ')';
@@ -67,6 +76,13 @@ if ($total_reg > 0) {
 			$area_nome_garcon = '&nbsp;';
 			$area_nome_cliente = '&nbsp; <br>';
 		}
+
+
+		if($buscar_cliente != ""){
+			    if(stripos($nome_cliente, $buscar_cliente) === false){
+			        continue;
+			    }
+			}
 
 
 		$ocultar_botoes = 'ocultar';
@@ -128,10 +144,10 @@ if ($total_reg > 0) {
 		$subtotalF = @number_format($subtotal, 2, ',', '.');
 
 
-
 		//totalizar valores pagos
 		$total_valor = 0;
 		$total_valorF = 0;
+		
 		$query2 = $pdo->query("SELECT * FROM valor_adiantamento where abertura = '$id_abertura_mesa' order by id desc");
 		$res2 = $query2->fetchAll(PDO::FETCH_ASSOC);
 		$total_reg2 = @count($res2);

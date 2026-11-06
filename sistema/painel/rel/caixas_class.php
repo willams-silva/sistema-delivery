@@ -1,6 +1,10 @@
-<?php
-require_once ("../verificar.php");
+<?php 
+@session_start();
+$id_empresa = $_SESSION['empresa'];
+$id_usuario = $_SESSION['id'];
 require_once("../../conexao.php");
+require_once("../buscar_config.php");
+require_once ("../verificar.php");
 
 
 $operador = $_POST['operador'];
@@ -9,7 +13,12 @@ $dataFinal = $_POST['dataFinal'];
 
 $url_sistema2 = $url_sistema.'sistema/';
 
-$html = file_get_contents($url_sistema2."painel/rel/caixa.php?dataInicial=$dataInicial&dataFinal=$dataFinal&operador=$operador");
+
+$token_rel = 'M543664';
+require_once("data_formatada.php");
+ob_start();
+include("caixa.php");
+$html = ob_get_clean();
 
 
 

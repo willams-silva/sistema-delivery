@@ -1,7 +1,14 @@
 <?php
 @session_start();
+$id_empresa = $_SESSION['empresa'];
+require_once("../../../conexao.php");
+require_once("../../buscar_config.php");
+if($id_empresa == ""){
+  echo 'Sem Sessão da Empresa, refaça o Login!';
+  exit();
+}
 $id_usuario = $_SESSION['id'];
-require_once ("../../../conexao.php");
+
 $tabela = 'vendas';
 
 $id = $_POST['id'];
@@ -293,7 +300,7 @@ if ($api_whatsapp != 'Não') {
 
 
 
-$query = $pdo->prepare("INSERT INTO pagar SET descricao = 'Comissão Entrega', tipo = 'Comissão', valor = :valor, data_lanc = curDate(), vencimento = curDate(), usuario_lanc = '$id_usuario', foto = 'sem-foto.png', arquivo = 'sem-foto.jpg', pessoa = '0', pago = 'Não', funcionario = '$entregador', referencia = 'Comissão', id_ref = '$n_pedido', comissao = 'Entregador'");
+$query = $pdo->prepare("INSERT INTO pagar SET descricao = 'Comissão Entrega', tipo = 'Comissão', valor = :valor, data_lanc = curDate(), vencimento = curDate(), usuario_lanc = '$id_usuario', foto = 'sem-foto.png', arquivo = 'sem-foto.jpg', pessoa = '0', pago = 'Não', funcionario = '$entregador', referencia = 'Comissão', id_ref = '$n_pedido', comissao = 'Entregador', empresa = '$id_empresa' ");
 $query->bindValue(":valor", "$taxa_entrega");
 $query->execute();
 ?>

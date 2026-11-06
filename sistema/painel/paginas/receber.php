@@ -226,7 +226,7 @@ if ($linhas > 0) {
 							<label>Forma Pgto</label>
 							<select name="forma_pgto" id="forma_pgto" class="form-select">
 								<?php
-								$query = $pdo->query("SELECT * from formas_pgto order by id asc");
+								$query = $pdo->query("SELECT * from formas_pgto where empresa = '$id_empresa' order by id asc");
 								$res = $query->fetchAll(PDO::FETCH_ASSOC);
 								$linhas = @count($res);
 								if ($linhas > 0) {
@@ -253,7 +253,7 @@ if ($linhas > 0) {
 								<option value="">Selecione um Cliente</option>
 								<?php
 
-								$query = $pdo->query("SELECT * from clientes order by id asc");
+								$query = $pdo->query("SELECT * from clientes where empresa = '$id_empresa' order by id asc");
 								$res = $query->fetchAll(PDO::FETCH_ASSOC);
 								$linhas = @count($res);
 								if ($linhas > 0) {
@@ -292,7 +292,7 @@ if ($linhas > 0) {
 							<label>Frequência</label>
 							<select name="frequencia" id="frequencia" class="form-select">
 								<?php
-								$query = $pdo->query("SELECT * from frequencias order by id asc");
+								$query = $pdo->query("SELECT * from frequencias where empresa = '$id_empresa' order by id asc");
 								$res = $query->fetchAll(PDO::FETCH_ASSOC);
 								$linhas = @count($res);
 								if ($linhas > 0) {
@@ -518,7 +518,7 @@ if ($linhas > 0) {
 								<select class="form-select" name="frequencia" id="frequencia-parcelar" required style="width:100%;">
 
 									<?php
-									$query = $pdo->query("SELECT * FROM frequencias order by id asc");
+									$query = $pdo->query("SELECT * FROM frequencias where empresa = '$id_empresa' order by id asc");
 									$res = $query->fetchAll(PDO::FETCH_ASSOC);
 									for ($i = 0; $i < @count($res); $i++) {
 										foreach ($res[$i] as $key => $value) {
@@ -601,7 +601,7 @@ if ($linhas > 0) {
 								<label>Forma PGTO</label>
 								<select class="form-select" name="saida-baixar" id="saida-baixar" required onchange="calcularTaxa()">
 									<?php
-									$query = $pdo->query("SELECT * FROM formas_pgto order by id asc");
+									$query = $pdo->query("SELECT * FROM formas_pgto where empresa = '$id_empresa' order by id asc");
 									$res = $query->fetchAll(PDO::FETCH_ASSOC);
 									for ($i = 0; $i < @count($res); $i++) {
 										foreach ($res[$i] as $key => $value) {

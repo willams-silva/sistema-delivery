@@ -155,7 +155,7 @@ $data_final_mes = $ano_atual . "-" . $mes_atual . "-" . $dia_final_mes;
 								<select class="form-select sel3" id="produto" name="produto" style="width:100%;">
 
 									<?php
-									$query = $pdo->query("SELECT * FROM produtos where tem_estoque = 'Sim' ORDER BY nome asc");
+									$query = $pdo->query("SELECT * FROM produtos where tem_estoque = 'Sim' and empresa = '$id_empresa' ORDER BY nome asc");
 									$res = $query->fetchAll(PDO::FETCH_ASSOC);
 									$total_reg = @count($res);
 
@@ -184,7 +184,7 @@ $data_final_mes = $ano_atual . "-" . $mes_atual . "-" . $dia_final_mes;
 								<select class="form-select sel3" id="pessoa" name="pessoa" style="width:100%;">
 
 									<?php
-									$query = $pdo->query("SELECT * FROM fornecedores ORDER BY nome asc");
+									$query = $pdo->query("SELECT * FROM fornecedores where empresa = '$id_empresa' ORDER BY nome asc");
 									$res = $query->fetchAll(PDO::FETCH_ASSOC);
 									$total_reg = @count($res);
 
@@ -262,7 +262,7 @@ $data_final_mes = $ano_atual . "-" . $mes_atual . "-" . $dia_final_mes;
 								<label>Forma de Pagamento</label>
 								<select class="form-select" name="saida" id="saida">
 									<?php
-									$query = $pdo->query("SELECT * from formas_pgto order by id desc");
+									$query = $pdo->query("SELECT * from formas_pgto where empresa = '$id_empresa' order by id desc");
 									$res = $query->fetchAll(PDO::FETCH_ASSOC);
 									$linhas = @count($res);
 									if ($linhas > 0) {

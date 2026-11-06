@@ -1,8 +1,11 @@
 <?php
+@session_start();
+$id_empresa = $_SESSION['empresa'];
 require_once("../../../conexao.php");
+require_once("../../buscar_config.php");
 $tabela = 'cupons';
 
-$query = $pdo->query("SELECT * FROM $tabela order by id desc");
+$query = $pdo->query("SELECT * FROM $tabela where empresa = '$id_empresa' order by id desc");
 $res = $query->fetchAll(PDO::FETCH_ASSOC);
 $total_reg = @count($res);
 if ($total_reg > 0) {

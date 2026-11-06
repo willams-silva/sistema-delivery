@@ -1,6 +1,9 @@
 <?php
 @session_start();
+$id_empresa = $_SESSION['empresa'];
+$tabela = 'cargos';
 require_once("../../../conexao.php");
+require_once("../../buscar_config.php");
 $nivel_usuario = $_SESSION['nivel'];
 $id_usuario = $_SESSION['id'];
 
@@ -11,7 +14,7 @@ $pagina = 'caixas';
 $data_atual = date('Y-m-d');
 
 //trazer valor fechamento ultimo caixa
-$query = $pdo->query("SELECT * from $pagina order by id desc limit 1");
+$query = $pdo->query("SELECT * from $pagina where empresa = '$id_empresa' order by id desc limit 1");
 $res = $query->fetchAll(PDO::FETCH_ASSOC);
 $ultimo_valor_fechado = @$res[0]['valor_fechamento'];
 
@@ -37,9 +40,9 @@ if ($nivel_usuario != 'Administrador' and $nivel_usuario != 'Gerente') {
 }
 
 if ($operador == "") {
-	$query = $pdo->query("SELECT * from $pagina WHERE data_abertura >= '$dataInicial' and data_abertura <= '$dataFinal' order by id desc ");
+	$query = $pdo->query("SELECT * from $pagina WHERE data_abertura >= '$dataInicial' and data_abertura <= '$dataFinal' and empresa = '$id_empresa' order by id desc ");
 } else {
-	$query = $pdo->query("SELECT * from $pagina WHERE data_abertura >= '$dataInicial' and data_abertura <= '$dataFinal' and operador = '$operador' order by id desc ");
+	$query = $pdo->query("SELECT * from $pagina WHERE data_abertura >= '$dataInicial' and data_abertura <= '$dataFinal' and operador = '$operador' and empresa = '$id_empresa' order by id desc ");
 }
 
 
@@ -162,7 +165,7 @@ HTML;
 
 
 		//pegar a forma de pagamento dinheiro
-		$query2 = $pdo->query("SELECT * FROM formas_pgto where nome LIKE '%Dinheiro%'");
+		$query2 = $pdo->query("SELECT * FROM formas_pgto where nome LIKE '%Dinheiro%' and empresa = '$id_empresa'");
 		$res2 = $query2->fetchAll(PDO::FETCH_ASSOC);
 		$pgto_dinheiro = $res2[0]['id'];
 

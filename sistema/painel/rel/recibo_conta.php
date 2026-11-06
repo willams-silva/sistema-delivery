@@ -1,8 +1,5 @@
-<?php
-require_once ("../../conexao.php");
-require_once ("../funcoes/extenso.php");
-
-$id = $_GET['id'];
+<?php 
+require_once("../funcoes/extenso.php");
 
 $query = $pdo->query("SELECT * from receber where id = '$id' ");
 $res = $query->fetchAll(PDO::FETCH_ASSOC);
@@ -135,7 +132,7 @@ if (@count($res) > 0) {
 
   <div class="receipt-main">
 
-    <img class="imagem" src="<?php echo $url_sistema ?>sistema/img/logo.jpg" >
+    <img class="imagem" src="<?php echo $url_sistema ?>sistema/img/<?php echo $logo_sistema ?>" >
 
     <p class="receipt-title">Recibo de Pagamento</p>
     <br>

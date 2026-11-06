@@ -1,15 +1,10 @@
 <?php
-include('../../conexao.php');
 include('data_formatada.php');
-
-$token_rel = @$_GET['token'];
 if ($token_rel != 'M543664') {
 	echo '<script>window.location="../../"</script>';
 	exit();
 }
 
-$dataInicial = $_GET['dataInicial'];
-$dataFinal = $_GET['dataFinal'];
 
 $dataInicialF = implode('/', array_reverse(@explode('-', $dataInicial)));
 $dataFinalF = implode('/', array_reverse(@explode('-', $dataFinal)));
@@ -192,7 +187,7 @@ $texto_filtro = "PERÍODO DA APURAÇÃO : " . $datas;
 <body>
 	<?php
 	if ($marca_dagua == 'Sim' and $tipo_rel != 'HTML') { ?>
-		<img class="marca" src="<?php echo $url_sistema ?>sistema/img/logo.jpg">
+		<img class="marca" src="<?php echo $url_sistema ?>sistema/img/<?php echo $logo_sistema ?>">
 	<?php } ?>
 
 
@@ -203,7 +198,7 @@ $texto_filtro = "PERÍODO DA APURAÇÃO : " . $datas;
 				<tr>
 					<td style="border: 1px; solid #000; width: 25%; text-align: left;">
 						<img style="margin-top: 0px; margin-left: 7px;" id="imag"
-							src="<?php echo $url_sistema ?>sistema/img/logo.jpg" width="60%">
+							src="<?php echo $url_sistema ?>sistema/img/<?php echo $logo_sistema ?>" width="60%">
 					</td>
 
 					<td style="text-align: center; font-size: 10px; width: 40%;">
@@ -277,7 +272,7 @@ $texto_filtro = "PERÍODO DA APURAÇÃO : " . $datas;
 
 
 				//totalizar contas recebidas
-				$query = $pdo->query("SELECT * FROM receber where data_pgto >= '$dataInicial' and data_pgto <= '$dataFinal' and pago = 'Sim' ORDER BY data_pgto asc");
+				$query = $pdo->query("SELECT * FROM receber where data_pgto >= '$dataInicial' and data_pgto <= '$dataFinal' and pago = 'Sim' and empresa = '$id_empresa' ORDER BY data_pgto asc");
 				$res = $query->fetchAll(PDO::FETCH_ASSOC);
 				$total_reg = @count($res);
 				for ($i = 0; $i < $total_reg; $i++) {
@@ -292,7 +287,7 @@ $texto_filtro = "PERÍODO DA APURAÇÃO : " . $datas;
 
 
 				//totalizar contas despesas
-				$query = $pdo->query("SELECT * FROM pagar where data_pgto >= '$dataInicial' and data_pgto <= '$dataFinal' and referencia = 'Conta' and pago = 'Sim' ORDER BY data_pgto asc");
+				$query = $pdo->query("SELECT * FROM pagar where data_pgto >= '$dataInicial' and data_pgto <= '$dataFinal' and referencia = 'Conta' and pago = 'Sim' and empresa = '$id_empresa' ORDER BY data_pgto asc");
 				$res = $query->fetchAll(PDO::FETCH_ASSOC);
 				$total_reg = @count($res);
 				for ($i = 0; $i < $total_reg; $i++) {
@@ -306,7 +301,7 @@ $texto_filtro = "PERÍODO DA APURAÇÃO : " . $datas;
 
 
 				//totalizar contas compras
-				$query = $pdo->query("SELECT * FROM pagar where data_pgto >= '$dataInicial' and data_pgto <= '$dataFinal' and referencia = 'Compra' and pago = 'Sim' ORDER BY data_pgto asc");
+				$query = $pdo->query("SELECT * FROM pagar where data_pgto >= '$dataInicial' and data_pgto <= '$dataFinal' and referencia = 'Compra' and pago = 'Sim' and empresa = '$id_empresa' ORDER BY data_pgto asc");
 				$res = $query->fetchAll(PDO::FETCH_ASSOC);
 				$total_reg = @count($res);
 				for ($i = 0; $i < $total_reg; $i++) {

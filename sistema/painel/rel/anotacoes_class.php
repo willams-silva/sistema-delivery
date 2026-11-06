@@ -1,12 +1,20 @@
 <?php 
+@session_start();
+$id_empresa = $_SESSION['empresa'];
+$id_usuario = $_SESSION['id'];
 require_once("../../conexao.php");
+require_once("../buscar_config.php");
 require_once ("../verificar.php");
 
 $id = @$_POST['id'];
 
 $url_sistema2 = $url_sistema . 'sistema/';
 
-$html = file_get_contents($url_sistema2."painel/rel/anotacoes.php?id=$id&token=M543664");
+$token_rel = 'M543664';
+require_once("data_formatada.php");
+ob_start();
+include("anotacoes.php");
+$html = ob_get_clean();
 
 //CARREGAR DOMPDF
 require_once '../dompdf/autoload.inc.php';
@@ -34,7 +42,7 @@ $pdf->render();
 
 
 $pdf->stream(
-	'lucro.pdf',
+	'anotacao.pdf',
 	array("Attachment" => false)
 );
 

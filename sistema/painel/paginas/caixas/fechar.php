@@ -1,10 +1,14 @@
 <?php 
-
+@session_start();
+$id_empresa = $_SESSION['empresa'];
+require_once("../../../conexao.php");
+require_once("../../buscar_config.php");
+if($id_empresa == ""){
+	echo 'Sem Sessão da Empresa, refaça o Login!';
+	exit();
+}
 $tabela = 'caixas';
 
-require_once("../../../conexao.php");
-
-@session_start();
 
 $id_usuario = $_SESSION['id'];
 $data_atual = 'Y-m-d';
@@ -26,14 +30,14 @@ $data_abertura = @$res2[0]['data_abertura'];
 
 
 //pegar a forma de pagamento dinheiro
-$query2 = $pdo->query("SELECT * FROM formas_pgto where nome LIKE '%Dinheiro%'");
+$query2 = $pdo->query("SELECT * FROM formas_pgto where nome LIKE '%Dinheiro%' and empresa = '$id_empresa' ");
 $res2 = $query2->fetchAll(PDO::FETCH_ASSOC);
 $pgto_dinheiro = $res2[0]['id'];
 
 
 
 //pegar a forma de pagamento dinheiro
-$query2 = $pdo->query("SELECT * FROM formas_pgto where nome LIKE '%Dinheiro%'");
+$query2 = $pdo->query("SELECT * FROM formas_pgto where nome LIKE '%Dinheiro%' and empresa = '$id_empresa'");
 $res2 = $query2->fetchAll(PDO::FETCH_ASSOC);
 $pgto_dinheiro = $res2[0]['id'];
 

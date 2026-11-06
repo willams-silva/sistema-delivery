@@ -1,5 +1,8 @@
-<?php 
+<?php
+@session_start();
+$id_empresa = $_SESSION['empresa'];
 require_once("../../../conexao.php");
+require_once("../../buscar_config.php");
 $tabela = 'vendas';
 $data_hoje = date('Y-m-d');
 
@@ -10,7 +13,7 @@ $status = '%'.@$_POST['status'].'%';
 
 $total_vendas = 0;
 
-$query = $pdo->query("SELECT * FROM $tabela where data >= '$dataInicial' and data <= '$dataFinal' and status LIKE '$status' and pago = 'Sim'  order by data asc, hora desc");
+$query = $pdo->query("SELECT * FROM $tabela where data >= '$dataInicial' and data <= '$dataFinal' and status LIKE '$status' and pago = 'Sim' and empresa = '$id_empresa' order by data asc, hora desc");
 $res = $query->fetchAll(PDO::FETCH_ASSOC);
 $total_reg = @count($res);
 if($total_reg > 0){

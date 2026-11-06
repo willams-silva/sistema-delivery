@@ -1,11 +1,3 @@
-<?php 
-include('../../conexao.php');
-include('data_formatada.php');
-
-$id_usuario = $_GET['id_usuario'];
-
-
-?>
 <!DOCTYPE html>
 <html>
 <head>
@@ -34,7 +26,7 @@ body {font-family: 'Tw Cen MT', sans-serif;}
 <body>
 <?php 
 if($marca_dagua == 'Sim'){ ?>
-<img class="marca" src="<?php echo $url_sistema ?>img/logo.jpg">	
+<img class="marca" src="<?php echo $url_sistema ?>img/<?php echo $logo_sistema ?>">	
 <?php } ?>
 
 
@@ -44,7 +36,7 @@ if($marca_dagua == 'Sim'){ ?>
 		<table style="width: 100%; border: 0px solid #ccc;">
 			<tr>
 				<td style="border: 1px; solid #000; width: 7%; text-align: left;">
-					<img style="margin-top: 7px; margin-left: 7px;" id="imag" src="<?php echo $url_sistema ?>img/logo.jpg" width="110px">
+					<img style="margin-top: 7px; margin-left: 7px;" id="imag" src="<?php echo $url_sistema ?>img/<?php echo $logo_sistema ?>" width="110px">
 				</td>
 				<td style="width: 30%; text-align: left; font-size: 13px;">
 					
@@ -99,7 +91,7 @@ if($marca_dagua == 'Sim'){ ?>
 $total_ina = 0;
 $total_inaF = 0;
 
-	$query9 = $pdo->query("SELECT * from clientes order by nome asc");
+	$query9 = $pdo->query("SELECT * from clientes where empresa = '$id_empresa' order by nome asc");
 
 $res9 = $query9->fetchAll(PDO::FETCH_ASSOC);
 $linhas9 = @count($res9);
@@ -116,7 +108,7 @@ $total_valorF = 0;
 
 
 
-$query = $pdo->query("SELECT * from receber where vencimento < curDate() and pago != 'Sim' and cliente = '$id_pessoa'");
+$query = $pdo->query("SELECT * from receber where vencimento < curDate() and pago != 'Sim' and cliente = '$id_pessoa' and empresa = '$id_empresa'");
 $res = $query->fetchAll(PDO::FETCH_ASSOC);
 $linhas = @count($res);
 if($linhas > 0){

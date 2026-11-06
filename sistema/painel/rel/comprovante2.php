@@ -1,8 +1,6 @@
 <?php
-include ('../../conexao.php');
 include ('data_formatada.php');
 
-$id = $_GET['id'];
 
 //BUSCAR AS INFORMAÇÕES DO PEDIDO
 $query = $pdo->query("SELECT * from vendas where id = '$id' ");

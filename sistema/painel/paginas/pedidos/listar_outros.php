@@ -1,5 +1,8 @@
 <?php
+@session_start();
+$id_empresa = $_SESSION['empresa'];
 require_once("../../../conexao.php");
+require_once("../../buscar_config.php");
 $tabela = 'carrinho';
 $data_hoje = date('Y-m-d');
 
@@ -21,17 +24,17 @@ $base = "FROM $tabela c
          WHERE p.preparado = 'Outro' $sql_mesa";
 
 // Aguardando
-$query = $pdo->query("SELECT * $base AND c.status = 'Aguardando'");
+$query = $pdo->query("SELECT * $base AND c.status = 'Aguardando' and c.empresa = '$id_empresa'");
 $res = $query->fetchAll(PDO::FETCH_ASSOC);
 $total_ini = @count($res);
 
 // Preparando
-$query = $pdo->query("SELECT * $base AND c.status = 'Preparando'");
+$query = $pdo->query("SELECT * $base AND c.status = 'Preparando' and c.empresa = '$id_empresa'");
 $res = $query->fetchAll(PDO::FETCH_ASSOC);
 $total_prep = @count($res);
 
 // Pronto
-$query = $pdo->query("SELECT * $base AND c.status = 'Pronto'");
+$query = $pdo->query("SELECT * $base AND c.status = 'Pronto' and c.empresa = '$id_empresa'");
 $res = $query->fetchAll(PDO::FETCH_ASSOC);
 $total_ent = @count($res);
 
@@ -39,11 +42,11 @@ $total_ent = @count($res);
 $query = $pdo->query("SELECT * $base 
                       AND (c.status = 'Aguardando' 
                        OR  c.status = 'Preparando' 
-                       OR  c.status = 'Pronto')");
+                       OR  c.status = 'Pronto') and c.empresa = '$id_empresa'");
 $res = $query->fetchAll(PDO::FETCH_ASSOC);
 $total_pedidos = @count($res);
 
-$query = $pdo->query("SELECT * FROM $tabela where status != 'Finalizado' and status != 'Cancelado'  order by id desc limit 1");
+$query = $pdo->query("SELECT * FROM $tabela where status != 'Finalizado' and status != 'Cancelado' and empresa = '$id_empresa' order by id desc limit 1");
 $res = $query->fetchAll(PDO::FETCH_ASSOC);
 $id_ult_pedido = @$res[0]['id'];
 
@@ -61,7 +64,7 @@ if ($ult_ped == "" and $id_ult_pedido != "") {
 }
 
 $ids = '';
-$query = $pdo->query("SELECT * FROM $tabela where status LIKE '$status' and status != 'Finalizado' and status != 'Cancelado' $sql_mesa order by hora asc");
+$query = $pdo->query("SELECT * FROM $tabela where status LIKE '$status' and status != 'Finalizado' and status != 'Cancelado' and empresa = '$id_empresa' $sql_mesa order by hora asc");
 $res = $query->fetchAll(PDO::FETCH_ASSOC);
 $total_reg = @count($res);
 if ($total_reg > 0) {

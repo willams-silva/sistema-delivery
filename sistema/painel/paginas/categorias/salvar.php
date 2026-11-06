@@ -1,5 +1,13 @@
-<?php 
+<?php
+@session_start();
+$id_empresa = $_SESSION['empresa'];
 require_once("../../../conexao.php");
+require_once("../../buscar_config.php");
+if($id_empresa == ""){
+	echo 'Sem Sessão da Empresa, refaça o Login!';
+	exit();
+}
+
 $tabela = 'categorias';
 
 $id = $_POST['id'];
@@ -18,7 +26,7 @@ $url = @str_replace('"', '-', $url);
 $url = @str_replace('%', '', $url);
 
 //validar nome
-$query = $pdo->query("SELECT * from $tabela where nome = '$nome'");
+$query = $pdo->query("SELECT * from $tabela where nome = '$nome' and empresa = '$id_empresa' ");
 $res = $query->fetchAll(PDO::FETCH_ASSOC);
 if(@count($res) > 0 and $id != $res[0]['id']){
 	echo 'Categoria já Cadastrado, escolha outro nome!!';
@@ -77,7 +85,7 @@ if (@$_FILES['foto']['name'] != "") {
 
 
 if($id == ""){
-	$query = $pdo->prepare("INSERT INTO $tabela SET nome = :nome, descricao = :descricao,  ativo = 'Sim', foto = '$foto', url = '$url', mais_sabores = '$mais_sabores', delivery = '$delivery'");
+	$query = $pdo->prepare("INSERT INTO $tabela SET nome = :nome, descricao = :descricao,  ativo = 'Sim', foto = '$foto', url = '$url', mais_sabores = '$mais_sabores', delivery = '$delivery', empresa = '$id_empresa' ");
 }else{
 	$query = $pdo->prepare("UPDATE $tabela SET nome = :nome, descricao = :descricao,  ativo = 'Sim', foto = '$foto', url = '$url', mais_sabores = '$mais_sabores', delivery = '$delivery' WHERE id = '$id'");
 }

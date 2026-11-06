@@ -1,10 +1,13 @@
-<?php 
+<?php
 @session_start();
+$id_empresa = $_SESSION['empresa'];
+require_once("../../../conexao.php");
+require_once("../../buscar_config.php");
 $id_usuario = @$_SESSION['id']; 
 $data_atual = date('Y-m-d');
 
 $tabela = 'tarefas';
-require_once("../../../conexao.php");
+
 
 $data = @$_POST['p1'];
 $usuario = @$_POST['p2'];
@@ -18,20 +21,20 @@ if($usuario == ""){
 }
 
 
-$query = $pdo->query("SELECT * from $tabela where usuario = '$usuario' and status = 'Agendada' and data <= curDate() and hora < curTime() order by id desc");
+$query = $pdo->query("SELECT * from $tabela where usuario = '$usuario' and status = 'Agendada' and data <= curDate() and hora < curTime() and empresa = '$id_empresa' order by id desc");
 $res = $query->fetchAll(PDO::FETCH_ASSOC);
 $tarefas_atrasadas = @count($res);
 
-$query = $pdo->query("SELECT * from $tabela where usuario = '$usuario' and status = 'Agendada' order by id desc");
+$query = $pdo->query("SELECT * from $tabela where usuario = '$usuario' and status = 'Agendada' and empresa = '$id_empresa' order by id desc");
 $res = $query->fetchAll(PDO::FETCH_ASSOC);
 $total_tarefas = @count($res);
 
 
-$query = $pdo->query("SELECT * from $tabela where usuario = '$usuario' and status = 'Agendada' and data = '$data' order by id desc");
+$query = $pdo->query("SELECT * from $tabela where usuario = '$usuario' and status = 'Agendada' and data = '$data' and empresa = '$id_empresa' order by id desc");
 $res = $query->fetchAll(PDO::FETCH_ASSOC);
 $agendadas_hoje = @count($res);
 
-$query = $pdo->query("SELECT * from $tabela where usuario = '$usuario' and data = '$data' order by hora asc");
+$query = $pdo->query("SELECT * from $tabela where usuario = '$usuario' and data = '$data' and empresa = '$id_empresa' order by hora asc");
 $res = $query->fetchAll(PDO::FETCH_ASSOC);
 $linhas = @count($res);
 if($linhas > 0){

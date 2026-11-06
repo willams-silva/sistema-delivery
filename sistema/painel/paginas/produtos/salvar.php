@@ -1,5 +1,12 @@
-<?php 
+<?php
+@session_start();
+$id_empresa = $_SESSION['empresa'];
 require_once("../../../conexao.php");
+require_once("../../buscar_config.php");
+if($id_empresa == ""){
+	echo 'Sem Sessão da Empresa, refaça o Login!';
+	exit();
+}
 $tabela = 'produtos';
 
 $id = $_POST['id'];
@@ -17,7 +24,7 @@ $delivery = @$_POST['delivery'];
 $categoria = isset($_POST['categoria']) && $_POST['categoria'] !== '' ? $_POST['categoria'] : 0;
 $val_promocional = isset($_POST['val_promocional']) && $_POST['val_promocional'] !== '' ? str_replace(',', '.', $_POST['val_promocional']) : 0;
 $unidade = isset($_POST['unidade']) && $_POST['unidade'] !== '' ? $_POST['unidade'] : 0;
-
+$codigo = $_POST['codigo'];
 
 
 if($promocao == 'Sim' and $val_promocional <= 0){
@@ -45,13 +52,22 @@ if($categoria == 0 || $categoria == ""){
 
 
 //validar nome
-$query = $pdo->query("SELECT * from $tabela where nome = '$nome'");
+$query = $pdo->query("SELECT * from $tabela where nome = '$nome' and empresa = '$id_empresa' ");
 $res = $query->fetchAll(PDO::FETCH_ASSOC);
 if(@count($res) > 0 and $id != $res[0]['id']){
 	echo 'Produto já Cadastrado, escolha outro nome!!';
 	exit();
 }
 
+//validar codigo
+if($codigo != ""){
+	$query = $pdo->query("SELECT * from $tabela where codigo = '$codigo' and empresa = '$id_empresa' ");
+	$res = $query->fetchAll(PDO::FETCH_ASSOC);
+	if(@count($res) > 0 and $id != $res[0]['id']){
+		echo 'Código já Cadastrado, escolha outro!!';
+		exit();
+	}
+}
 
 
 
@@ -122,9 +138,9 @@ if($val_promocional == ""){
 
 
 if($id == ""){
-	$query = $pdo->prepare("INSERT INTO $tabela SET nome = :nome, categoria = '$categoria', valor_compra = :valor_compra, valor_venda = :valor_venda, descricao = :descricao, foto = '$foto', nivel_estoque = '$nivel_estoque', tem_estoque = '$tem_estoque', ativo = 'Sim', url = '$url', promocao = '$promocao', combo = '$combo', preparado = '$preparado', delivery = '$delivery', val_promocional = :val_promocional, unidade = :unidade");
+	$query = $pdo->prepare("INSERT INTO $tabela SET nome = :nome, categoria = '$categoria', valor_compra = :valor_compra, valor_venda = :valor_venda, descricao = :descricao, foto = '$foto', nivel_estoque = '$nivel_estoque', tem_estoque = '$tem_estoque', ativo = 'Sim', url = '$url', promocao = '$promocao', combo = '$combo', preparado = '$preparado', delivery = '$delivery', val_promocional = :val_promocional, unidade = :unidade, empresa = '$id_empresa', codigo = :codigo ");
 }else{
-	$query = $pdo->prepare("UPDATE $tabela SET nome = :nome, categoria = '$categoria', valor_compra = :valor_compra, valor_venda = :valor_venda, descricao = :descricao, foto = '$foto', nivel_estoque = '$nivel_estoque', tem_estoque = '$tem_estoque', url = '$url', promocao = '$promocao', combo = '$combo', preparado = '$preparado', delivery = '$delivery', val_promocional = :val_promocional, unidade = :unidade WHERE id = '$id'");
+	$query = $pdo->prepare("UPDATE $tabela SET nome = :nome, categoria = '$categoria', valor_compra = :valor_compra, valor_venda = :valor_venda, descricao = :descricao, foto = '$foto', nivel_estoque = '$nivel_estoque', tem_estoque = '$tem_estoque', url = '$url', promocao = '$promocao', combo = '$combo', preparado = '$preparado', delivery = '$delivery', val_promocional = :val_promocional, unidade = :unidade, codigo = :codigo WHERE id = '$id'");
 }
 
 $query->bindValue(":nome", "$nome");
@@ -133,6 +149,7 @@ $query->bindValue(":valor_compra", "$valor_compra");
 $query->bindValue(":descricao", "$descricao");
 $query->bindValue(":val_promocional", "$val_promocional");
 $query->bindValue(":unidade", "$unidade");
+$query->bindValue(":codigo", "$codigo");
 $query->execute();
 
 echo 'Salvo com Sucesso';

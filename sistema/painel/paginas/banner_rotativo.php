@@ -47,7 +47,7 @@ $pag = 'banner_rotativo';
 								<select class="form-select sel3" id="categoria" name="categoria" style="width:100%;">
 									<option value="0">Nenhuma Categoria</option>
 									<?php
-									$query = $pdo->query("SELECT * FROM categorias ORDER BY id asc");
+									$query = $pdo->query("SELECT * FROM categorias where empresa = '$id_empresa' ORDER BY id asc");
 									$res = $query->fetchAll(PDO::FETCH_ASSOC);
 									$total_reg = @count($res);
 									if ($total_reg > 0) {

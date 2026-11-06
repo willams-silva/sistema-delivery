@@ -1,10 +1,15 @@
 <?php 
-
+@session_start();
+$id_empresa = $_SESSION['empresa'];
+require_once("../../../conexao.php");
+require_once("../../buscar_config.php");
+if($id_empresa == ""){
+	echo 'Sem Sessão da Empresa, refaça o Login!';
+	exit();
+}
 $tabela = 'caixas';
 
-require_once("../../../conexao.php");
 
-@session_start();
 $id_usuario = @$_SESSION['id'];
 
 $operador = $_POST['operador'];
@@ -17,7 +22,7 @@ $obs = $_POST['obs'];
 $id = $_POST['id'];
 
 if($id == ""){
-	$query = $pdo->prepare("INSERT INTO $tabela SET operador = '$operador', data_abertura = '$data_abertura', valor_abertura = :valor_abertura, usuario_abertura = '$id_usuario', obs = :obs");	
+	$query = $pdo->prepare("INSERT INTO $tabela SET operador = '$operador', data_abertura = '$data_abertura', valor_abertura = :valor_abertura, usuario_abertura = '$id_usuario', obs = :obs, empresa = '$id_empresa'");	
 
 }else{
 

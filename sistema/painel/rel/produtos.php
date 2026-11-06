@@ -1,8 +1,3 @@
-<?php
-include('../../conexao.php');
-include('data_formatada.php');
-
-?>
 <!DOCTYPE html>
 <html>
 
@@ -60,7 +55,7 @@ include('data_formatada.php');
 <body>
 	<?php
 	if ($marca_dagua == 'Sim' and $tipo_rel != 'HTML') { ?>
-		<img class="marca" src="<?php echo $url_sistema ?>sistema/img/logo.jpg">
+		<img class="marca" src="<?php echo $url_sistema ?>sistema/img/<?php echo $logo_sistema ?>">
 	<?php } ?>
 
 
@@ -71,7 +66,7 @@ include('data_formatada.php');
 				<tr>
 					<td style="border: 1px; solid #000; width: 25%; text-align: left;">
 						<img style="margin-top: 0px; margin-left: 7px;" id="imag"
-							src="<?php echo $url_sistema ?>sistema/img/logo.jpg" width="60%">
+							src="<?php echo $url_sistema ?>sistema/img/<?php echo $logo_sistema ?>" width="60%">
 					</td>
 
 					<td style="text-align: center; font-size: 10px; width: 40%;">
@@ -141,7 +136,7 @@ include('data_formatada.php');
 				$total_vendaF = 0;
 
 
-				$query = $pdo->query("SELECT * FROM produtos ORDER BY nome asc");
+				$query = $pdo->query("SELECT * FROM produtos where empresa = '$id_empresa' ORDER BY nome asc");
 				$res = $query->fetchAll(PDO::FETCH_ASSOC);
 				$total_reg = @count($res);
 				if ($total_reg > 0) {

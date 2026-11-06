@@ -43,7 +43,7 @@ body {font-family: 'Tw Cen MT', sans-serif;}
 <body>
 <?php 
 if($marca_dagua == 'Sim'){ ?>
-<img class="marca" src="<?php echo $url_sistema ?>sistema/img/<?php echo $logo_rel ?>">	
+<img class="marca" src="<?php echo $url_sistema ?>sistema/img/<?php echo $logo_sistema ?>">	
 <?php } ?>
 
 
@@ -53,7 +53,7 @@ if($marca_dagua == 'Sim'){ ?>
 		<table style="width: 100%; border: 0px solid #ccc;">
 			<tr>
 			<td style="border: 1px; solid #000; width: 25%; text-align: left;">
-					<img style="margin-top: 0px; margin-left: 7px;" id="imag" src="<?php echo $url_sistema ?>sistema/img/<?php echo $logo_rel ?>" width="150px">
+					<img style="margin-top: 0px; margin-left: 7px;" id="imag" src="<?php echo $url_sistema ?>sistema/img/<?php echo $logo_sistema ?>" width="150px">
 				</td>
 				
 				<td style="text-align: center; font-size: 10px; width: 40%;">
@@ -106,7 +106,7 @@ if($marca_dagua == 'Sim'){ ?>
 			<thead>
 				<tbody>
 					<?php 
-$query = $pdo->query("SELECT * from marketing where titulo like '%$pesquisar%' $sql_busca order by id desc");
+$query = $pdo->query("SELECT * from marketing where titulo like '%$pesquisar%' and empresa = '$id_empresa' $sql_busca order by id desc");
 $res = $query->fetchAll(PDO::FETCH_ASSOC);
 $linhas = @count($res);
 if($linhas > 0){

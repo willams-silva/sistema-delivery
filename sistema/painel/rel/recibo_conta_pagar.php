@@ -1,9 +1,5 @@
 <?php
-require_once("../../conexao.php");
 require_once("../funcoes/extenso.php");
-
-$id = $_GET['id'];
-
 
 
 $query = $pdo->query("SELECT * from pagar where id = '$id' ");
@@ -157,7 +153,7 @@ if (@count($res) > 0) {
     <?php
     if ($tipo_rel != '') {
     ?>
-      <img class="imagem" src="<?php echo $url_sistema ?>sistema/img/logo.jpg">
+      <img class="imagem" src="<?php echo $url_sistema ?>sistema/img/<?php echo $logo_sistema ?>">
 
     <?php } ?>
 

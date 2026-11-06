@@ -1,6 +1,10 @@
-<?php 
-$tabela = 'grupo_acessos';
+<?php
+@session_start();
+$id_empresa = $_SESSION['empresa'];
 require_once("../../../conexao.php");
+require_once("../../buscar_config.php");
+$tabela = 'grupo_acessos';
+
 
 $query = $pdo->query("SELECT * from $tabela order by id desc");
 $res = $query->fetchAll(PDO::FETCH_ASSOC);

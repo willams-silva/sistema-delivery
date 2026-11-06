@@ -1,6 +1,10 @@
 <?php 
-
-include('../../conexao.php');
+@session_start();
+$id_empresa = $_SESSION['empresa'];
+$id_usuario = $_SESSION['id'];
+require_once("../../conexao.php");
+require_once("../buscar_config.php");
+require_once ("../verificar.php");
 
 $dataInicial = $_POST['dataInicial'];
 $dataFinal = $_POST['dataFinal'];
@@ -8,8 +12,12 @@ $pago = urlencode($_POST['pago']);
 $tabela = urlencode($_POST['tabela']);
 $busca = urlencode($_POST['busca']);
 
-//ALIMENTAR OS DADOS NO RELATÓRIO
-$html = file_get_contents($url_sistema."sistema/painel/rel/rel_contas.php?pago=$pago&dataInicial=$dataInicial&dataFinal=$dataFinal&tabela=$tabela&busca=$busca");
+$token_rel = 'M543664';
+require_once("data_formatada.php");
+ob_start();
+include("rel_contas.php");
+$html = ob_get_clean();
+
 
 if($tipo_rel != 'PDF'){
 	echo $html;

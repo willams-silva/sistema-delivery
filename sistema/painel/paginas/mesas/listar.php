@@ -1,8 +1,11 @@
 <?php
+@session_start();
+$id_empresa = $_SESSION['empresa'];
 require_once("../../../conexao.php");
+require_once("../../buscar_config.php");
 $tabela = 'mesas';
 
-$query = $pdo->query("SELECT * FROM $tabela ORDER BY id asc");
+$query = $pdo->query("SELECT * FROM $tabela where empresa = '$id_empresa' ORDER BY id asc");
 $res = $query->fetchAll(PDO::FETCH_ASSOC);
 $total_reg = @count($res);
 

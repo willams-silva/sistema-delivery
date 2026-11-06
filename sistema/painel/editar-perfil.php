@@ -1,6 +1,14 @@
 <?php
+@session_start();
+$id_empresa = @$_SESSION['empresa'];
+
+if($id_empresa == ""){
+    echo 'Sessão expirada! Atualize a página!';
+    exit();
+}
 $tabela = 'usuarios';
 require_once("../conexao.php");
+require_once("buscar_config.php");
 
 if($modo_teste == 'Sim'){
 	echo 'Esse recurso está desativado no modo teste!';
@@ -30,7 +38,7 @@ if ($conf_senha != $senha) {
 }
 
 //validacao email
-$query = $pdo->query("SELECT * from $tabela where email = '$email'");
+$query = $pdo->query("SELECT * from $tabela where email = '$email' and empresa = '$id_empresa' ");
 $res = $query->fetchAll(PDO::FETCH_ASSOC);
 $id_reg = @$res[0]['id'];
 if (@count($res) > 0 and $id != $id_reg) {
@@ -39,7 +47,7 @@ if (@count($res) > 0 and $id != $id_reg) {
 }
 
 //validacao telefone
-$query = $pdo->query("SELECT * from $tabela where telefone = '$telefone'");
+$query = $pdo->query("SELECT * from $tabela where telefone = '$telefone' and empresa = '$id_empresa' ");
 $res = $query->fetchAll(PDO::FETCH_ASSOC);
 $id_reg = @$res[0]['id'];
 if (@count($res) > 0 and $id != $id_reg) {

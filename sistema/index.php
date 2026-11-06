@@ -5,7 +5,7 @@ require_once ("conexao.php");
 
 
 ################# CRIAR UM ADM CASO NÃO TENHA NENHUM ############################################
-$query = $pdo->query("SELECT * from usuarios WHERE nivel = 'Administrador' and ativo = 'Sim'");
+$query = $pdo->query("SELECT * from usuarios WHERE nivel = 'Administrador' and ativo = 'Sim' and empresa = 0");
 $res = $query->fetchAll(PDO::FETCH_ASSOC);
 $linhas = @count($res);
 
@@ -13,7 +13,7 @@ $senha = '123';
 $senha_crip = password_hash($senha, PASSWORD_DEFAULT);
 
 if ($linhas == 0) {
-	$pdo->query("INSERT INTO usuarios SET nome = 'Administrador', email = '$email_sistema', cpf = '000.000.000-00', senha = '', senha_crip = '$senha_crip', nivel = 'Administrador', ativo = 'Sim', foto = 'sem-foto.jpg', telefone = '$telefone_sistema', data = curDate()");
+	$pdo->query("INSERT INTO usuarios SET nome = 'Administrador', email = '$email_sistema', cpf = '000.000.000-00', senha = '', senha_crip = '$senha_crip', nivel = 'Administrador', ativo = 'Sim', foto = 'sem-foto.jpg', telefone = '$telefone_sistema', data = curDate(), empresa = 0");
 }
 
 
@@ -191,7 +191,12 @@ if (@$mensagem_auto == 'Sim' and strtotime($data_cobranca) != strtotime($data_at
 </div>
 <!-- /GLOBAL-LOADER -->
 
-<body class="ltr error-page1 bg-primary" id="pagina">
+<?php 
+if($fundo_login != "" and $fundo_login != "sem-foto.png"){ ?>
+<body class="ltr error-page1 bg-primary" id="pagina" style="background: url('img/<?php echo $fundo_login ?>') no-repeat center center fixed; background-size: cover;">
+<?php }else{ ?>
+<body class="ltr error-page1 bg-primary" id="pagina" >
+<?php } ?>
 
 
 	<div class="square-box">

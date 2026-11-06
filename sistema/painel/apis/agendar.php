@@ -4,7 +4,7 @@
 // $id_empresa, $telefone_envio, $mensagem_whatsapp, $data_agd
 
 $hash = ''; // vai voltar para seu UPDATE $tabela SET hash = '$hash'
-$id_empresa = 0;
+
 if(@$referencia_agendamento == ""){
 	$referencia_agendamento = 'receber';
 }

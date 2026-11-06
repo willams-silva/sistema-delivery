@@ -96,7 +96,7 @@ if(@$pag == 'ocultar'){
 								<select class="form-select" name="dispositivo" id="dispositivo">							
 								<option value="">Dispositivo Padrão</option>	
 								<?php 
-									$query = $pdo->query("SELECT * from dispositivos where status_api = 'conectado' order by id asc");
+									$query = $pdo->query("SELECT * from dispositivos where status_api = 'conectado' and empresa = '$id_empresa' order by id asc");
 									$res = $query->fetchAll(PDO::FETCH_ASSOC);
 									$linhas = @count($res);
 									if($linhas > 0){
@@ -517,7 +517,7 @@ if(@$pag == 'ocultar'){
 									
 									
 									<?php 
-									$query = $pdo->query("SELECT * FROM grupos_disparos order by id desc");
+									$query = $pdo->query("SELECT * FROM grupos_disparos where empresa = '$id_empresa' order by id desc");
 										$res = $query->fetchAll(PDO::FETCH_ASSOC);
 										for($i=0; $i < @count($res); $i++){
 											foreach ($res[$i] as $key => $value){}
@@ -593,7 +593,7 @@ if(@$pag == 'ocultar'){
 							<select name="frequencia" id="frequencia" class="form-select">
 							<option value="0">Nenhuma</option>
 								<?php
-								$query = $pdo->query("SELECT * from frequencias order by id asc");
+								$query = $pdo->query("SELECT * from frequencias where empresa = '$id_empresa' order by id asc");
 								$res = $query->fetchAll(PDO::FETCH_ASSOC);
 								$linhas = @count($res);
 								if ($linhas > 0) {

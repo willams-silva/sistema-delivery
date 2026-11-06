@@ -1,8 +1,12 @@
-<?php 
-$tabela = 'unidade_medida';
+<?php
+@session_start();
+$id_empresa = $_SESSION['empresa'];
 require_once("../../../conexao.php");
+require_once("../../buscar_config.php");
+$tabela = 'unidade_medida';
 
-$query = $pdo->query("SELECT * from $tabela order by id asc");
+
+$query = $pdo->query("SELECT * from $tabela where empresa = '$id_empresa' order by id asc");
 $res = $query->fetchAll(PDO::FETCH_ASSOC);
 $linhas = @count($res);
 if($linhas > 0){

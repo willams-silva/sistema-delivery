@@ -1,5 +1,8 @@
 <?php
+@session_start();
+$id_empresa = $_SESSION['empresa'];
 require_once("../../../conexao.php");
+require_once("../../buscar_config.php");
 $tabela = 'vendas';
 $data_hoje = date('Y-m-d');
 
@@ -8,9 +11,9 @@ $ult_ped = @$_POST['ult_pedido'];
 
 $total_vendas = 0;
 
-$sql_pedido_balcao = "";
+$sql_pedido_balcao = " and empresa = '$id_empresa' ";
 if($pedidos_pdv_delivery != 'Sim'){
-	$sql_pedido_balcao = " and tipo_pedido != 'Balcão' ";
+	$sql_pedido_balcao = " and tipo_pedido != 'Balcão' and empresa = '$id_empresa' ";
 }
 
 //TOTAIS DOS PEDIDOS
@@ -84,7 +87,7 @@ if ($total_reg > 0) {
 
 		//verificar pgto pix
 		if ($codigo_pix != "" and $pago != "Sim") {
-			require("../../../../js/ajax/verificar_pgto.php");
+			require("verificar_pgto.php");
 			if (@$status_api == 'approved') {
 				$pdo->query("UPDATE vendas set pago = 'Sim', tipo_pgto = 'Pix' where id = '$id'");
 			}

@@ -1,8 +1,10 @@
 <?php
 @session_start();
+$id_empresa = $_SESSION['empresa'];
+require_once("../../../conexao.php");
+require_once("../../buscar_config.php");
 $id_usuario = @$_SESSION['id'];
 $tabela = 'pagar';
-require_once("../../../conexao.php");
 
 
 
@@ -71,7 +73,7 @@ $total_recebidasF = 0;
 
 
 //PEGAR O TOTAL DAS CONTAS A PAGAR PENDENTES
-$query = $pdo->query("SELECT * from $tabela where pago = 'Não'");
+$query = $pdo->query("SELECT * from $tabela where pago = 'Não' and empresa = '$id_empresa' ");
 $res = $query->fetchAll(PDO::FETCH_ASSOC);
 $total_reg = @count($res);
 if ($total_reg > 0) {
@@ -85,7 +87,7 @@ if ($total_reg > 0) {
 
 //PEGAR O TOTAL DAS CONTAS A PAGAR
 
-$query = $pdo->query("SELECT * from $tabela");
+$query = $pdo->query("SELECT * from $tabela where empresa = '$id_empresa' ");
 $res = $query->fetchAll(PDO::FETCH_ASSOC);
 $total_reg = @count($res);
 if ($total_reg > 0) {
@@ -99,7 +101,7 @@ if ($total_reg > 0) {
 
 
 //PEGAR O TOTAL DAS CONTAS A PAGAR PEDENTES
-$query = $pdo->query("SELECT * from $tabela where vencimento < curDate() and pago = 'Não'");
+$query = $pdo->query("SELECT * from $tabela where vencimento < curDate() and pago = 'Não' and empresa = '$id_empresa' ");
 $res = $query->fetchAll(PDO::FETCH_ASSOC);
 $total_reg = @count($res);
 if ($total_reg > 0) {
@@ -112,7 +114,7 @@ if ($total_reg > 0) {
 }
 
 //PEGAR O TOTAL DAS CONTAS A PAGAR QUE VENCE HOJE
-$query = $pdo->query("SELECT * from $tabela where vencimento = curDate() and pago = 'Não'");
+$query = $pdo->query("SELECT * from $tabela where vencimento = curDate() and pago = 'Não' and empresa = '$id_empresa'");
 $res = $query->fetchAll(PDO::FETCH_ASSOC);
 $total_am = @count($res);
 if ($total_am > 0) {
@@ -126,7 +128,7 @@ if ($total_am > 0) {
 
 
 //PEGAR O TOTAL DAS CONTAS A PAGAR RECEBIDAS
-$query = $pdo->query("SELECT * from $tabela where pago = 'Sim'");
+$query = $pdo->query("SELECT * from $tabela where pago = 'Sim' and empresa = '$id_empresa'");
 $res = $query->fetchAll(PDO::FETCH_ASSOC);
 $total_pg = @count($res);
 if ($total_pg > 0) {
@@ -144,7 +146,7 @@ $data_amanha = date('Y/m/d', @strtotime("+1 days", @strtotime($data_hoje)));
 
 
 //PEGAR O TOTAL DAS CONTAS A PAGAR QUE VENCE AMANHÃ
-$query = $pdo->query("SELECT * from $tabela where vencimento = '$data_amanha' and pago = 'Não'");
+$query = $pdo->query("SELECT * from $tabela where vencimento = '$data_amanha' and pago = 'Não' and empresa = '$id_empresa' ");
 $res = $query->fetchAll(PDO::FETCH_ASSOC);
 $total_am = @count($res);
 if ($total_am > 0) {
@@ -158,19 +160,19 @@ if ($total_am > 0) {
 
 
 if ($filtro == 'Vencidas') {
-	$query = $pdo->query("SELECT * from $tabela where $tipo_data < curDate() and pago = 'Não' order by id desc ");
+	$query = $pdo->query("SELECT * from $tabela where $tipo_data < curDate() and pago = 'Não' and empresa = '$id_empresa' order by id desc ");
 } else if ($filtro == 'Recebidas') {
-	$query = $pdo->query("SELECT * from $tabela where pago = 'Sim' order by id desc ");
+	$query = $pdo->query("SELECT * from $tabela where pago = 'Sim' and empresa = '$id_empresa' order by id desc ");
 } else if ($filtro == 'Hoje') {
-	$query = $pdo->query("SELECT * from $tabela where $tipo_data = curDate() and pago = 'Não' order by id desc ");
+	$query = $pdo->query("SELECT * from $tabela where $tipo_data = curDate() and pago = 'Não' and empresa = '$id_empresa' order by id desc ");
 } else if ($filtro == 'Amanha') {
-	$query = $pdo->query("SELECT * from $tabela where $tipo_data = '$data_amanha' and pago = 'Não' order by id desc ");
+	$query = $pdo->query("SELECT * from $tabela where $tipo_data = '$data_amanha' and pago = 'Não' and empresa = '$id_empresa' order by id desc ");
 } else if ($filtro == 'Todas') {
-	$query = $pdo->query("SELECT * from $tabela order by id desc ");
+	$query = $pdo->query("SELECT * from $tabela where empresa = '$id_empresa' order by id desc ");
 } else if ($filtro == 'Pedentes') {
-	$query = $pdo->query("SELECT * from $tabela where pago = 'Não' order by id desc ");
+	$query = $pdo->query("SELECT * from $tabela where pago = 'Não' and empresa = '$id_empresa' order by id desc ");
 } else {
-	$query = $pdo->query("SELECT * from $tabela WHERE $tipo_data >= '$dataInicial' and vencimento <= '$dataFinal' order by id desc ");
+	$query = $pdo->query("SELECT * from $tabela WHERE $tipo_data >= '$dataInicial' and vencimento <= '$dataFinal' and empresa = '$id_empresa' order by id desc ");
 }
 
 

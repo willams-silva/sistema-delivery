@@ -1,9 +1,12 @@
 <?php 
+@session_start();
+$id_empresa = $_SESSION['empresa'];
 require_once("../../../conexao.php");
+require_once("../../buscar_config.php");
 $tabela = 'pagar';
 $data_hoje = date('Y-m-d');
 
-@session_start();
+
 $id_usuario = $_SESSION['id'];
 
 $dataInicial = @$_POST['dataInicial'];

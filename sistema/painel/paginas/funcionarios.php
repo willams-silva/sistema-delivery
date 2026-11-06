@@ -78,7 +78,7 @@ if (@$funcionarios == 'ocultar') {
 							<label>Cargo</label>
 							<select class="form-select" name="nivel" id="nivel">
 								<?php
-								$query = $pdo->query("SELECT * from cargos where nome != 'Administrador' order by id desc");
+								$query = $pdo->query("SELECT * from cargos where nome != 'Administrador' and empresa = '$id_empresa' order by id desc");
 								$res = $query->fetchAll(PDO::FETCH_ASSOC);
 								$linhas = @count($res);
 								if ($linhas > 0) {

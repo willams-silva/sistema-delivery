@@ -7,17 +7,17 @@ $sql_usuario_lanc = " ";
 
 //total clientes
 
-$query = $pdo->query("SELECT * from clientes");
+$query = $pdo->query("SELECT * from clientes where empresa = '$id_empresa' ");
 $res = $query->fetchAll(PDO::FETCH_ASSOC);
 $total_clientes = @count($res);
 
 //total clientes mes
-$query = $pdo->query("SELECT * from clientes where data_cad >= '$data_inicio_mes' and data_cad <= '$data_final_mes' $sql_usuario");
+$query = $pdo->query("SELECT * from clientes where data_cad >= '$data_inicio_mes' and data_cad <= '$data_final_mes' and empresa = '$id_empresa' $sql_usuario");
 $res = $query->fetchAll(PDO::FETCH_ASSOC);
 $total_clientes_mes = @count($res);
 
 $total_pagar_vencidas = 0;
-$query = $pdo->query("SELECT * from pagar where vencimento < curDate() and pago != 'Sim' $sql_usuario_lanc");
+$query = $pdo->query("SELECT * from pagar where vencimento < curDate() and pago != 'Sim' and empresa = '$id_empresa' $sql_usuario_lanc");
 $res = $query->fetchAll(PDO::FETCH_ASSOC);
 $contas_pagar_vencidas = @count($res);
 for ($i = 0; $i < $contas_pagar_vencidas; $i++) {
@@ -29,7 +29,7 @@ $total_pagar_vencidasF = @number_format($total_pagar_vencidas, 2, ',', '.');
 
 
 $total_receber_vencidas = 0;
-$query = $pdo->query("SELECT * from receber where vencimento < curDate() and pago != 'Sim' $sql_usuario_lanc");
+$query = $pdo->query("SELECT * from receber where vencimento < curDate() and pago != 'Sim' and empresa = '$id_empresa' $sql_usuario_lanc");
 $res = $query->fetchAll(PDO::FETCH_ASSOC);
 $contas_receber_vencidas = @count($res);
 for ($i = 0; $i < $contas_receber_vencidas; $i++) {
@@ -41,7 +41,7 @@ $total_receber_vencidasF = @number_format($total_receber_vencidas, 2, ',', '.');
 
 //total recebidas mes
 $total_recebidas_mes = 0;
-$query = $pdo->query("SELECT * from receber where data_pgto >= '$data_inicio_mes' and data_pgto <= '$data_final_mes' and pago = 'Sim' $sql_usuario_lanc");
+$query = $pdo->query("SELECT * from receber where data_pgto >= '$data_inicio_mes' and data_pgto <= '$data_final_mes' and pago = 'Sim' and empresa = '$id_empresa' $sql_usuario_lanc");
 $res = $query->fetchAll(PDO::FETCH_ASSOC);
 $contas_recebidas_mes = @count($res);
 for ($i = 0; $i < $contas_recebidas_mes; $i++) {
@@ -52,7 +52,7 @@ $total_recebidas_mesF = @number_format($total_recebidas_mes, 2, ',', '.');
 
 //total contas pagas mes
 $total_pagas_mes = 0;
-$query = $pdo->query("SELECT * from pagar where data_pgto >= '$data_inicio_mes' and data_pgto <= '$data_final_mes' and pago = 'Sim' $sql_usuario_lanc");
+$query = $pdo->query("SELECT * from pagar where data_pgto >= '$data_inicio_mes' and data_pgto <= '$data_final_mes' and pago = 'Sim' and empresa = '$id_empresa' $sql_usuario_lanc");
 $res = $query->fetchAll(PDO::FETCH_ASSOC);
 $contas_pagas_mes = @count($res);
 for ($i = 0; $i < $contas_pagas_mes; $i++) {
@@ -79,7 +79,7 @@ if ($total_saldo_mes >= 0) {
 
 //total recebidas dia
 $total_recebidas_dia = 0;
-$query = $pdo->query("SELECT * from receber where data_pgto = curDate() and pago = 'Sim' $sql_usuario_lanc");
+$query = $pdo->query("SELECT * from receber where data_pgto = curDate() and pago = 'Sim' and empresa = '$id_empresa' $sql_usuario_lanc");
 $res = $query->fetchAll(PDO::FETCH_ASSOC);
 $contas_recebidas_dia = @count($res);
 for ($i = 0; $i < $contas_recebidas_dia; $i++) {
@@ -90,7 +90,7 @@ $total_recebidas_diaF = @number_format($total_recebidas_dia, 2, ',', '.');
 
 //total contas pagas dia
 $total_pagas_dia = 0;
-$query = $pdo->query("SELECT * from pagar where data_pgto = curDate() and pago = 'Sim' $sql_usuario_lanc");
+$query = $pdo->query("SELECT * from pagar where data_pgto = curDate() and pago = 'Sim' and empresa = '$id_empresa' $sql_usuario_lanc");
 $res = $query->fetchAll(PDO::FETCH_ASSOC);
 $contas_pagas_dia = @count($res);
 for ($i = 0; $i < $contas_pagas_dia; $i++) {
@@ -143,7 +143,7 @@ for ($i = 1; $i <= 12; $i++) {
 
 	//total recebidas mes
 	$total_recebidas_mes_grafico = 0;
-	$query2 = $pdo->query("SELECT * from receber where data_pgto >= '$data_inicio_mes_grafico' and data_pgto <= '$data_final_mes_grafico' and pago = 'Sim' $sql_usuario_lanc");
+	$query2 = $pdo->query("SELECT * from receber where data_pgto >= '$data_inicio_mes_grafico' and data_pgto <= '$data_final_mes_grafico' and pago = 'Sim' and empresa = '$id_empresa' $sql_usuario_lanc");
 	$res2 = $query2->fetchAll(PDO::FETCH_ASSOC);
 	$contas_recebidas_mes_grafico = @count($res2);
 	for ($i2 = 0; $i2 < $contas_recebidas_mes_grafico; $i2++) {
@@ -154,7 +154,7 @@ for ($i = 1; $i <= 12; $i++) {
 
 	//total contas pagas mes
 	$total_pagas_mes_grafico = 0;
-	$query2 = $pdo->query("SELECT * from pagar where data_pgto >= '$data_inicio_mes_grafico' and data_pgto <= '$data_final_mes_grafico' and pago = 'Sim' $sql_usuario_lanc");
+	$query2 = $pdo->query("SELECT * from pagar where data_pgto >= '$data_inicio_mes_grafico' and data_pgto <= '$data_final_mes_grafico' and pago = 'Sim' and empresa = '$id_empresa' $sql_usuario_lanc");
 	$res2 = $query2->fetchAll(PDO::FETCH_ASSOC);
 	$contas_pagas_mes_grafico = @count($res2);
 	for ($i2 = 0; $i2 < $contas_pagas_mes_grafico; $i2++) {
@@ -172,21 +172,21 @@ for ($i = 1; $i <= 12; $i++) {
 
 
 //tarefas
-$query = $pdo->query("SELECT * from tarefas where usuario = '$id_usuario' and status = 'Agendada' and data <= curDate() and hora < curTime() order by id desc");
+$query = $pdo->query("SELECT * from tarefas where usuario = '$id_usuario' and status = 'Agendada' and data <= curDate() and hora < curTime() and empresa = '$id_empresa' order by id desc");
 $res = $query->fetchAll(PDO::FETCH_ASSOC);
 $tarefas_atrasadas = @count($res);
 
-$query = $pdo->query("SELECT * from tarefas where usuario = '$id_usuario' and status = 'Agendada' order by id desc");
+$query = $pdo->query("SELECT * from tarefas where usuario = '$id_usuario' and status = 'Agendada' and empresa = '$id_empresa' order by id desc");
 $res = $query->fetchAll(PDO::FETCH_ASSOC);
 $total_tarefas = @count($res);
 
 
-$query = $pdo->query("SELECT * from tarefas where usuario = '$id_usuario' and status = 'Agendada' and data = curDate() order by id desc");
+$query = $pdo->query("SELECT * from tarefas where usuario = '$id_usuario' and status = 'Agendada' and data = curDate() and empresa = '$id_empresa' order by id desc");
 $res = $query->fetchAll(PDO::FETCH_ASSOC);
 $tarefas_agendadas_hoje = @count($res);
 
 #####ANOTAÇÕES#####################################
-$query = $pdo->query("SELECT * from anotacoes");
+$query = $pdo->query("SELECT * from anotacoes where empresa = '$id_empresa'");
 $res = $query->fetchAll(PDO::FETCH_ASSOC);
 $linhas = @count($res);
 for ($i5 = 0; $i5 < $linhas; $i5++) {
@@ -204,7 +204,7 @@ if (@$home == 'ocultar') {
 
 #####PUXAR TOTAL DE DELIVERY############################################
 $valor_delivery = 0;
-$query = $pdo->query("SELECT * from vendas where entrega = 'Delivery'");
+$query = $pdo->query("SELECT * from vendas where entrega = 'Delivery' and empresa = '$id_empresa' ");
 $res = $query->fetchAll(PDO::FETCH_ASSOC);
 $linhas1 = @count($res);
 for ($i6 = 0; $i6 < $linhas1; $i6++) {
@@ -217,7 +217,7 @@ $porcent_deli = $linhas1 / 100;
 
 #####PUXAR TOTAL DE CONSUMIR LOCAL############################################
 $valor_local = 0;
-$query = $pdo->query("SELECT * from vendas where entrega = 'Consumir Local'");
+$query = $pdo->query("SELECT * from vendas where entrega = 'Consumir Local' and empresa = '$id_empresa'");
 $res = $query->fetchAll(PDO::FETCH_ASSOC);
 $linhas2 = @count($res);
 for ($i6 = 0; $i6 < $linhas2; $i6++) {
@@ -229,7 +229,7 @@ $porcent_local = $linhas2 / 100;
 
 #####PUXAR TOTAL DE CRETIRADA############################################
 $valor_retirada = 0;
-$query = $pdo->query("SELECT * from vendas where entrega = 'Retirar'");
+$query = $pdo->query("SELECT * from vendas where entrega = 'Retirar' and empresa = '$id_empresa'");
 $res = $query->fetchAll(PDO::FETCH_ASSOC);
 $linhas3 = @count($res);
 for ($i6 = 0; $i6 < $linhas3; $i6++) {
@@ -241,7 +241,7 @@ $porcent_retirada = $linhas3 / 100;
 
 ##### PUXAR TOTAL DA MESA ############################################
 $valor_mesa = 0;
-$query = $pdo->query("SELECT * from abertura_mesa");
+$query = $pdo->query("SELECT * from abertura_mesa where empresa = '$id_empresa'");
 $res = $query->fetchAll(PDO::FETCH_ASSOC);
 $linhas4 = @count($res);
 for ($i6 = 0; $i6 < $linhas4; $i6++) {
@@ -417,7 +417,7 @@ $porcent_mesa = $linhas4 / 100;
 	<!-- ################################ FIM PAINEL DE INFORMAÇÕES ###################################### -->
 	<?php
 
-	$query = $pdo->query("SELECT * from anotacoes where mostrar_home = 'Sim' order by id desc");
+	$query = $pdo->query("SELECT * from anotacoes where mostrar_home = 'Sim' and empresa = '$id_empresa' order by id desc");
 	$res = $query->fetchAll(PDO::FETCH_ASSOC);
 	$linhas = @count($res);
 	if ($linhas > 0) {
@@ -457,7 +457,7 @@ HTML;
 			$data = $res[$i]['data'];
 
 
-			$query2 = $pdo->query("SELECT * FROM usuarios where id = '$usuario'");
+			$query2 = $pdo->query("SELECT * FROM usuarios where id = '$usuario' and empresa = '$id_empresa'");
 			$res2 = $query2->fetchAll(PDO::FETCH_ASSOC);
 			if (@count($res2) > 0) {
 				$nome_usuario = $res2[0]['nome'];
@@ -737,4 +737,96 @@ HTML;
 			chart1.render();
 		}, 300);
 	}
+</script>
+
+
+
+
+
+<div class="modal fade" id="modalAlertaSaas" tabindex="-1" aria-hidden="true"
+     data-bs-backdrop="static" data-bs-keyboard="false">
+  <div class="modal-dialog modal-dialog-centered modal-lg">
+    <div class="modal-content border-0 shadow-lg" style="border-top: 4px solid #ffc107;">
+      <div class="modal-header border-0 pb-0">
+        <div class="d-flex align-items-center gap-3">
+          <span class="alert-badge">
+            <i class="fas fa-exclamation-triangle"></i>
+          </span>
+          <h5 class="modal-title mb-0" id="alertaTitulo"></h5>
+        </div>
+      </div>
+      <div class="modal-body">
+        <div id="alertaTexto" style="font-weight: normal;"></div>
+      </div>
+      <div class="modal-footer justify-content-end">
+        <button type="button" class="btn btn-primary" id="btnFecharAlerta">Fechar</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<style>
+  .alert-badge{
+    display:inline-flex; align-items:center; justify-content:center;
+    width:44px; height:44px; border-radius:50%;
+    background: rgba(255,193,7,.18); /* amarelo suave */
+    color:#b58100; font-size:1.25rem;
+    box-shadow: 0 2px 6px rgba(0,0,0,.06) inset;
+  }
+</style>
+
+
+<script>
+$(function () {
+  $.getJSON('alerta_atual.php', function (resp) {
+    if (!resp || !resp.ok || !resp.alerta) return;
+
+    const a = resp.alerta;                       // { id, titulo, texto, ... }
+    const title = (a.titulo || 'Aviso');
+    const text  = (a.texto  || '');
+
+    // fingerprint do conteúdo (título + texto)
+    const normTitle = title.trim().toLowerCase();
+    const normText  = text.replace(/\s+/g, ' ').trim();
+    const fp = fnv1a(normTitle + '\n' + normText);
+
+    // chave por ID (se existir) ou por título normalizado
+    const storageKey = 'alerta_saas_fp_' + (a.id ? ('id_' + a.id) : ('t_' + encodeURIComponent(normTitle)));
+    const seen = localStorage.getItem(storageKey);
+
+    if (seen === fp) return; // já visto com esse mesmo conteúdo
+
+    // Preenche e mostra modal
+    $('#alertaTitulo').text(title);
+    $('#alertaTexto').html(text);
+
+    const modalEl = document.getElementById('modalAlertaSaas');
+    const modal   = new bootstrap.Modal(modalEl);
+
+    const markSeen = () => localStorage.setItem(storageKey, fp);
+
+    $('#btnFecharAlerta').off('click').on('click', function () {
+      markSeen();
+      modal.hide();
+    });
+
+    // se fechar por qualquer outro meio no futuro, ainda marca como visto
+    modalEl.addEventListener('hidden.bs.modal', function () {
+      markSeen();
+    }, { once: true });
+
+    modal.show();
+  });
+
+  // hash rápido FNV-1a (32-bit) para fingerprint
+  function fnv1a(str) {
+    let h = 0x811c9dc5;
+    for (let i = 0; i < str.length; i++) {
+      h ^= str.charCodeAt(i);
+      h = (h + ((h<<1) + (h<<4) + (h<<7) + (h<<8) + (h<<24))) >>> 0;
+    }
+    return ('00000000' + h.toString(16)).slice(-8);
+  }
+});
 </script>

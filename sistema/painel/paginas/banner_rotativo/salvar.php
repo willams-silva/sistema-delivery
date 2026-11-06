@@ -1,12 +1,20 @@
-<?php 
-require_once("../../../conexao.php");
+<?php
+@session_start();
+$id_empresa = $_SESSION['empresa'];
 $tabela = 'banner_rotativo';
+require_once("../../../conexao.php");
+require_once("../../buscar_config.php");
+if($id_empresa == ""){
+	echo 'Sem Sessão da Empresa, refaça o Login!';
+	exit();
+}
+
 
 $id = $_POST['id'];
 $categoria = $_POST['categoria'];
 
 //validar troca da foto
-$query = $pdo->query("SELECT * FROM $tabela where id = '$id'");
+$query = $pdo->query("SELECT * FROM $tabela where id = '$id' and empresa = '$id_empresa' ");
 $res = $query->fetchAll(PDO::FETCH_ASSOC);
 $total_reg = @count($res);
 if($total_reg > 0){
@@ -46,7 +54,7 @@ if(@$_FILES['foto']['name'] != ""){
 
 
 if($id == ""){
-	$pdo->query("INSERT INTO $tabela SET categoria = '$categoria', foto = '$foto'");
+	$pdo->query("INSERT INTO $tabela SET categoria = '$categoria', foto = '$foto', empresa = '$id_empresa'");
 }else{
 	$pdo->query("UPDATE $tabela SET categoria = '$categoria', foto = '$foto' WHERE id = '$id'");
 }

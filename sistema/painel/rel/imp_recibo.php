@@ -1,5 +1,9 @@
-<?php
-include('../../conexao.php');
+<?php 
+@session_start();
+$id_empresa = $_SESSION['empresa'];
+$id_usuario = $_SESSION['id'];
+require_once("../../conexao.php");
+require_once("../buscar_config.php");
 
 $id = $_POST['id'];
 
@@ -135,7 +139,7 @@ if (@count($res2) > 0) {
 <table class="printer-ticket">
 
 	<tr>
-		<th class="ttu" class="title" colspan="3"><img style="margin-top: 10px; margin-left: 50px;" id="imag" src="<?php echo $url_sistema ?>sistema/img/logo.jpg" width="180px">
+		<th class="ttu" class="title" colspan="3"><img style="margin-top: 10px; margin-left: 50px;" id="imag" src="<?php echo $url_sistema ?>sistema/img/<?php echo $logo_sistema ?>" width="180px">
 		</th>
 	</tr>
 

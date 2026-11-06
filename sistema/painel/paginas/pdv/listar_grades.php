@@ -1,7 +1,10 @@
-<?php 
+<?php
 @session_start();
-$id_usuario = $_SESSION['id'];
+$id_empresa = $_SESSION['empresa'];
 require_once("../../../conexao.php");
+require_once("../../buscar_config.php");
+$id_usuario = $_SESSION['id'];
+
 $_SESSION['sessao_usuario'] = $id_usuario;
 $nova_sessao = $id_usuario;
 $sessao = $id_usuario;
@@ -12,7 +15,7 @@ $id_ab_mesa = $_SESSION['id_ab_mesa'];
 
 $id = $_POST['id'];
 
-$pdo->query("DELETE FROM temp where carrinho = '0' and sessao = '$nova_sessao'");
+$pdo->query("DELETE FROM temp where carrinho = '0' and sessao = '$nova_sessao' and empresa = '$id_empresa' ");
 
 $tem_variação = 'Não';
 
@@ -182,7 +185,7 @@ if (@$_SESSION['id'] != "") {
     $id_usuario = '';
 }
 
-$query = $pdo->query("SELECT * FROM carrinho where sessao = '$sessao'");
+$query = $pdo->query("SELECT * FROM carrinho where sessao = '$sessao' and empresa = '$id_empresa' ");
 $res = $query->fetchAll(PDO::FETCH_ASSOC);
 $total_reg = @count($res);
 if ($total_reg > 0) {

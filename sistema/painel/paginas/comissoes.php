@@ -58,7 +58,7 @@ if(@$comissoes == 'ocultar'){
 				
 				if($nivel_usuario == 'Administrador' || $nivel_usuario == 'Gerente'){
 					
-					$query = $pdo->query("SELECT * FROM usuarios order by nome asc");
+					$query = $pdo->query("SELECT * FROM usuarios where empresa = '$id_empresa' order by nome asc");
 					
 				}else{
 					$query = $pdo->query("SELECT * FROM usuarios where id = '$id_usuario' ");

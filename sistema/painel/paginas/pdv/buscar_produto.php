@@ -1,10 +1,14 @@
-<?php 
-$tabela = 'produtos';
+<?php
+@session_start();
+$id_empresa = $_SESSION['empresa'];
 require_once("../../../conexao.php");
+require_once("../../buscar_config.php");
+$tabela = 'produtos';
+
 
 $codigo = $_POST['codigo'];
 
-$query = $pdo->query("SELECT * from $tabela where codigo = '$codigo'");
+$query = $pdo->query("SELECT * from $tabela where codigo = '$codigo' and empresa = '$id_empresa' ");
 $res = $query->fetchAll(PDO::FETCH_ASSOC);
 if(@count($res) > 0){
 	$id = $res[0]['id'];

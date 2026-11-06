@@ -1,4 +1,12 @@
 <?php 
+@session_start();
+$id_empresa = @$_SESSION['empresa'];
+
+if($id_empresa == ""){
+    echo 'Sessão expirada! Atualize a página!';
+    exit();
+}
+
 $tabela = 'config';
 require_once("../conexao.php");
 
@@ -83,118 +91,120 @@ $multa_atraso = str_replace('%', '', $multa_atraso);
 $juros_atraso = str_replace(',', '.', $juros_atraso);
 $juros_atraso = str_replace('%', '', $juros_atraso);
 
-//foto logo
-$caminho = '../img/logo.png';
-$imagem_temp = @$_FILES['foto-logo']['tmp_name']; 
 
+
+
+
+$logo = 'logo_'.$id_empresa.'.png';
+$logo_rel = 'logo_rel_'.$id_empresa.'.jpg';
+$icone = 'icone_'.$id_empresa.'.png';
+$logo_painel = 'foto-painel_'.$id_empresa.'.png';
+$assinatura = 'assinatura_'.$id_empresa.'.jpg';
+
+
+//foto logo
 if(@$_FILES['foto-logo']['name'] != ""){
 	$ext = pathinfo($_FILES['foto-logo']['name'], PATHINFO_EXTENSION);   
+
 	if($ext == 'png' || $ext == 'PNG'){ 	
-				
-		move_uploaded_file($imagem_temp, $caminho);
+		move_uploaded_file(@$_FILES['foto-logo']['tmp_name'], '../img/'.$logo);
 	}else{
-		echo 'Extensão de Imagem não permitida!';
+		echo 'Extensão de Imagem não permitida para a Logo, use somente PNG!';
 		exit();
 	}
 }
 
 
 //foto logo rel
-$caminho = '../img/logo.jpg';
-$imagem_temp = @$_FILES['foto-logo-rel']['tmp_name']; 
-
 if(@$_FILES['foto-logo-rel']['name'] != ""){
 	$ext = pathinfo(@$_FILES['foto-logo-rel']['name'], PATHINFO_EXTENSION);   
-	if($ext == 'jpg' || $ext == 'JPG'){ 	
-			
-		move_uploaded_file($imagem_temp, $caminho);
+
+	if($ext == 'jpg' || $ext == 'JPG' || $ext == 'jpeg' || $ext == 'JPEG'){ 	
+		move_uploaded_file(@$_FILES['foto-logo-rel']['tmp_name'], '../img/'.$logo_rel);
 	}else{
-		echo 'Extensão de Imagem não permitida!';
+		echo 'Extensão de Imagem não permitida para o relatório, use somente JPG!';
 		exit();
 	}
 }
 
 
 //foto icone
-$caminho = '../img/icone.png';
-$caminho_192 = '../img/icone_192.png';
-$caminho_512 = '../img/icone_512.png';
-$imagem_temp = @$_FILES['foto-icone']['tmp_name']; 
-
 if(@$_FILES['foto-icone']['name'] != ""){
 	$ext = pathinfo(@$_FILES['foto-icone']['name'], PATHINFO_EXTENSION);   
-	if($ext == 'png' || $ext == 'png'){ 	
-			
-		move_uploaded_file($imagem_temp, $caminho);
 
+	if($ext == 'png' || $ext == 'PNG'){ 	
+		$caminho = '../img/'.$icone;
+		$caminho_192 = '../img/icone_192_'.$id_empresa.'.png';
+		$caminho_512 = '../img/icone_512_'.$id_empresa.'.png';
 
-		 // Cria as duas versões redimensionadas
-        $img = @imagecreatefrompng($caminho);
+		move_uploaded_file(@$_FILES['foto-icone']['tmp_name'], $caminho);
 
-        // Função para redimensionar e salvar imagem
-        function redimensionar_png($origem, $largura, $altura, $destino) {
-            $largura_original = imagesx($origem);
-            $altura_original = imagesy($origem);
+		$img = @imagecreatefrompng($caminho);
 
-            $nova = imagecreatetruecolor($largura, $altura);
+		if($img){
+			if(!function_exists('redimensionar_png')){
+				function redimensionar_png($origem, $largura, $altura, $destino) {
+					$largura_original = imagesx($origem);
+					$altura_original = imagesy($origem);
 
-            // Preserva transparência
-            imagealphablending($nova, false);
-            imagesavealpha($nova, true);
-            $transparente = imagecolorallocatealpha($nova, 0, 0, 0, 127);
-            imagefilledrectangle($nova, 0, 0, $largura, $altura, $transparente);
+					$nova = imagecreatetruecolor($largura, $altura);
 
-            imagecopyresampled($nova, $origem, 0, 0, 0, 0, $largura, $altura, $largura_original, $altura_original);
-            imagepng($nova, $destino);
-            imagedestroy($nova);
-        }
+					imagealphablending($nova, false);
+					imagesavealpha($nova, true);
 
-        redimensionar_png($img, 192, 192, $caminho_192);
-        redimensionar_png($img, 512, 512, $caminho_512);
+					$transparente = imagecolorallocatealpha($nova, 0, 0, 0, 127);
+					imagefilledrectangle($nova, 0, 0, $largura, $altura, $transparente);
 
-        imagedestroy($img);
+					imagecopyresampled($nova, $origem, 0, 0, 0, 0, $largura, $altura, $largura_original, $altura_original);
+					imagepng($nova, $destino);
+					imagedestroy($nova);
+				}
+			}
 
+			redimensionar_png($img, 192, 192, $caminho_192);
+			redimensionar_png($img, 512, 512, $caminho_512);
+
+			imagedestroy($img);
+		}
 
 	}else{
-		echo 'Extensão de Imagem não permitida!';
+		echo 'Extensão de Imagem não permitida para o ícone, use somente PNG!';
 		exit();
 	}
 }
 
 
 //foto ass
-$caminho = '../img/assinatura.jpg';
-$imagem_temp = @$_FILES['assinatura_rel']['tmp_name']; 
-
 if(@$_FILES['assinatura_rel']['name'] != ""){
 	$ext = pathinfo(@$_FILES['assinatura_rel']['name'], PATHINFO_EXTENSION);   
-	if($ext == 'jpg' || $ext == 'JPG'){ 	
-			
-		move_uploaded_file($imagem_temp, $caminho);
+
+	if($ext == 'jpg' || $ext == 'JPG' || $ext == 'jpeg' || $ext == 'JPEG'){ 	
+		move_uploaded_file(@$_FILES['assinatura_rel']['tmp_name'], '../img/'.$assinatura);
 	}else{
-		echo 'Extensão de Imagem não permitida!';
+		echo 'Extensão de Imagem não permitida para assinatura, use somente JPG!';
 		exit();
 	}
 }
 
 
 //foto painel
-$caminho = '../img/foto-painel.png';
-$imagem_temp = @$_FILES['foto-painel']['tmp_name']; 
-
 if(@$_FILES['foto-painel']['name'] != ""){
 	$ext = pathinfo(@$_FILES['foto-painel']['name'], PATHINFO_EXTENSION);   
+
 	if($ext == 'png' || $ext == 'PNG'){ 	
-			
-		move_uploaded_file($imagem_temp, $caminho);
+		move_uploaded_file(@$_FILES['foto-painel']['tmp_name'], '../img/'.$logo_painel);
 	}else{
-		echo 'Extensão de Imagem não permitida!';
+		echo 'Extensão de Imagem não permitida para a foto do painel, use somente PNG!';
 		exit();
 	}
 }
 
 
-$query = $pdo->prepare("UPDATE $tabela SET nome = :nome, email = :email, telefone = :telefone, endereco = :endereco, instagram = :instagram, multa_atraso = :multa_atraso, juros_atraso = :juros_atraso, marca_dagua = :marca_dagua, marca_dagua = :marca_dagua, assinatura_recibo = :assinatura_recibo, impressao_automatica = :impressao_automatica, cnpj = :cnpj_sistema, entrar_automatico = :entrar_automatico, mostrar_preloader = :mostrar_preloader, ocultar_mobile = :ocultar_mobile, api_whatsapp = '$api_whatsapp', token_whatsapp = :token_whatsapp, instancia_whatsapp = :instancia_whatsapp, dados_pagamento = :dados_pagamento, telefone_fixo = :telefone_fixo, tipo_rel = :tipo_rel, tipo_miniatura = :tipo_miniatura, previsao_entrega = :previsao_entrega, horario_abertura = :horario_abertura, horario_fechamento = :horario_fechamento, texto_fechamento_horario = :texto_fechamento_horario, texto_fechamento = :texto_fechamento, status_estabelecimento = :status_estabelecimento, tempo_atualizar = :tempo_atualizar, tipo_chave = :tipo_chave, dias_apagar = :dias_apagar, banner_rotativo = :banner_rotativo, pedido_minimo = :pedido_minimo, mostrar_aberto = :mostrar_aberto, entrega_distancia = :entrega_distancia, chave_api_maps = :chave_api_maps, latitude_rest = :latitude_rest, longitude_rest = :longitude_rest, distancia_entrega_km = :distancia_entrega_km, valor_km = :valor_km, abrir_comprovante = '$abrir_comprovante', fonte_comprovante = :fonte_comprovante, mensagem_auto = '$mensagem_auto', api_merc = :api_merc, comissao_garcon = :comissao_garcon, couvert = :couvert, mostrar_acessos = '$mostrar_acessos', abertura_caixa = '$abertura_caixa', mais_sabores = :mais_sabores, link_retorno = :link_retorno, dias_retorno = :dias_retorno, mensagem_retorno = :mensagem_retorno, total_cartoes = :total_cartoes, valor_cupom = :valor_cupom, taxa_extra = :taxa_extra, titulo_taxa = :titulo_taxa, retirar_local = :retirar_local, consumir_local = :consumir_local, entrega_delivery = :entrega_delivery, delivery_monitor = :delivery_monitor, somente_pix_delivery = :somente_pix_delivery, impressao_cozinha = :impressao_cozinha, url_evolution = :url_evolution, pedidos_pdv_delivery = :pedidos_pdv_delivery where id = 1");
+
+$query = $pdo->prepare("UPDATE $tabela SET nome = :nome, email = :email, telefone = :telefone, endereco = :endereco, instagram = :instagram, multa_atraso = :multa_atraso, juros_atraso = :juros_atraso, marca_dagua = :marca_dagua, marca_dagua = :marca_dagua, assinatura_recibo = :assinatura_recibo, impressao_automatica = :impressao_automatica, cnpj = :cnpj_sistema, entrar_automatico = :entrar_automatico, mostrar_preloader = :mostrar_preloader, ocultar_mobile = :ocultar_mobile, api_whatsapp = '$api_whatsapp', token_whatsapp = :token_whatsapp, instancia_whatsapp = :instancia_whatsapp, dados_pagamento = :dados_pagamento, telefone_fixo = :telefone_fixo, tipo_rel = :tipo_rel, tipo_miniatura = :tipo_miniatura, previsao_entrega = :previsao_entrega, horario_abertura = :horario_abertura, horario_fechamento = :horario_fechamento, texto_fechamento_horario = :texto_fechamento_horario, texto_fechamento = :texto_fechamento, status_estabelecimento = :status_estabelecimento, tempo_atualizar = :tempo_atualizar, tipo_chave = :tipo_chave, dias_apagar = :dias_apagar, banner_rotativo = :banner_rotativo, pedido_minimo = :pedido_minimo, mostrar_aberto = :mostrar_aberto, entrega_distancia = :entrega_distancia, chave_api_maps = :chave_api_maps, latitude_rest = :latitude_rest, longitude_rest = :longitude_rest, distancia_entrega_km = :distancia_entrega_km, valor_km = :valor_km, abrir_comprovante = '$abrir_comprovante', fonte_comprovante = :fonte_comprovante, mensagem_auto = '$mensagem_auto', api_merc = :api_merc, comissao_garcon = :comissao_garcon, couvert = :couvert, mostrar_acessos = '$mostrar_acessos', abertura_caixa = '$abertura_caixa', mais_sabores = :mais_sabores, link_retorno = :link_retorno, dias_retorno = :dias_retorno, mensagem_retorno = :mensagem_retorno, total_cartoes = :total_cartoes, valor_cupom = :valor_cupom, taxa_extra = :taxa_extra, titulo_taxa = :titulo_taxa, retirar_local = :retirar_local, consumir_local = :consumir_local, entrega_delivery = :entrega_delivery, delivery_monitor = :delivery_monitor, somente_pix_delivery = :somente_pix_delivery, impressao_cozinha = :impressao_cozinha, url_evolution = :url_evolution, pedidos_pdv_delivery = :pedidos_pdv_delivery, logo = '$logo',
+logo_rel = '$logo_rel',
+icone = '$icone',
+logo_painel = '$logo_painel' where empresa = '$id_empresa' ");
 
 $query->bindValue(":nome", "$nome");
 $query->bindValue(":email", "$email");

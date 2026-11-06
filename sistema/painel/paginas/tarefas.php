@@ -19,7 +19,7 @@ if (@$tarefas == 'ocultar') {
 			<select class="form-control sel50 " aria-label="Default select example" name="usuario_selecionado" id="usuario_selecionado" style="width:350px;" onchange="buscar()">
 				<?php
 				if ($nivel_usuario == 'Administrador' || $lancar_tarefas == '') {
-					$query = $pdo->query("SELECT * FROM usuarios where nivel != 'Cliente' order by nome asc");
+					$query = $pdo->query("SELECT * FROM usuarios where nivel != 'Cliente' and empresa = '$id_empresa' order by nome asc");
 				} else {
 					$query = $pdo->query("SELECT * FROM usuarios where id = '$id_usuario' ");
 				}

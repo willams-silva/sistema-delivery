@@ -1,6 +1,14 @@
-<?php 
-$tabela = 'usuarios';
+<?php
+@session_start();
+$id_empresa = $_SESSION['empresa'];
 require_once("../../../conexao.php");
+require_once("../../buscar_config.php");
+if($id_empresa == ""){
+	echo 'Sem Sessão da Empresa, refaça o Login!';
+	exit();
+}
+$tabela = 'usuarios';
+
 
 if($modo_teste == 'Sim'){
 	echo 'Esse recurso está desativado no modo teste!';
@@ -35,7 +43,7 @@ $senha = '123';
 $senha_crip = password_hash($senha, PASSWORD_DEFAULT);
 
 //validacao email
-$query = $pdo->query("SELECT * from $tabela where email = '$email'");
+$query = $pdo->query("SELECT * from $tabela where email = '$email' and empresa = '$id_empresa' ");
 $res = $query->fetchAll(PDO::FETCH_ASSOC);
 $id_reg = @$res[0]['id'];
 if(@count($res) > 0 and $id != $id_reg){
@@ -44,7 +52,7 @@ if(@count($res) > 0 and $id != $id_reg){
 }
 
 //validacao telefone
-$query = $pdo->query("SELECT * from $tabela where telefone = '$telefone'");
+$query = $pdo->query("SELECT * from $tabela where telefone = '$telefone' and empresa = '$id_empresa'");
 $res = $query->fetchAll(PDO::FETCH_ASSOC);
 $id_reg = @$res[0]['id'];
 if(@count($res) > 0 and $id != $id_reg){
@@ -60,7 +68,7 @@ if($data_nasc == ""){
 }
 
 if($id == ""){
-$query = $pdo->prepare("INSERT INTO $tabela SET nome = :nome, email = :email, senha = '', senha_crip = '$senha_crip', nivel = '$nivel', ativo = 'Sim', foto = 'sem-foto.jpg', telefone = :telefone, data = curDate(), endereco = :endereco, numero = :numero, bairro = :bairro, cidade = :cidade, estado = :estado, cep = :cep $nasc, cpf = :cpf, pix = :pix, acessar_painel = 'Sim', tipo_chave = '$tipo_chave', complemento = :complemento");
+$query = $pdo->prepare("INSERT INTO $tabela SET nome = :nome, email = :email, senha = '', senha_crip = '$senha_crip', nivel = '$nivel', ativo = 'Sim', foto = 'sem-foto.jpg', telefone = :telefone, data = curDate(), endereco = :endereco, numero = :numero, bairro = :bairro, cidade = :cidade, estado = :estado, cep = :cep $nasc, cpf = :cpf, pix = :pix, acessar_painel = 'Sim', tipo_chave = '$tipo_chave', complemento = :complemento, empresa = '$id_empresa' ");
 
 //enviar whatsapp
 if($api_whatsapp != 'Não' and $telefone != ''){

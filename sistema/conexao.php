@@ -38,11 +38,31 @@ $telefone_sistema = '(81) 99264-9694';
 
 
 //VERIFICAR SE EXISTE DADOS NO CONFIG
-$query = $pdo->query("SELECT * from config");
+$query = $pdo->query("SELECT * from config where empresa = 0");
 $res = $query->fetchAll(PDO::FETCH_ASSOC);
 $linhas = @count($res);
 if ($linhas == 0) {
-	$pdo->query("INSERT INTO config SET nome = '$nome_sistema', email = '$email_sistema', telefone = '$telefone_sistema', logo = 'logo.png', logo_rel = 'logo.jpg', icone = 'icone.png', ativo = 'Sim', multa_atraso = '0', juros_atraso = '0', marca_dagua = 'Sim', assinatura_recibo = 'Não', impressao_automatica = 'Não', api_whatsapp = 'Não', tipo_rel = 'PDF', tipo_miniatura = 'Cores', previsao_entrega = '60', horario_abertura = '18:00', horario_fechamento = '00:00', status_estabelecimento = 'Aberto', tempo_atualizar = '30', dias_apagar = '30', fonte_comprovante = '11', banner_rotativo = 'Sim', mostrar_aberto = 'Sim', abrir_comprovante = 'Não', mensagem_auto = 'Sim', mostrar_acessos = :mostrar_acessos, abertura_caixa = 'Não', total_cartoes = '5', valor_cupom = '15'");
+	$pdo->query("INSERT INTO config SET nome = '$nome_sistema', email = '$email_sistema', telefone = '$telefone_sistema', logo = 'logo.png', logo_rel = 'logo.jpg', icone = 'icone.png', ativo = 'Sim', multa_atraso = '0', juros_atraso = '0', marca_dagua = 'Sim', assinatura_recibo = 'Não', impressao_automatica = 'Não', api_whatsapp = 'Não', tipo_rel = 'PDF', tipo_miniatura = 'Cores', previsao_entrega = '60', horario_abertura = '18:00', horario_fechamento = '00:00', status_estabelecimento = 'Aberto', tempo_atualizar = '30', dias_apagar = '30', fonte_comprovante = '11', banner_rotativo = 'Sim', mostrar_aberto = 'Sim', abrir_comprovante = 'Não', mensagem_auto = 'Sim', mostrar_acessos = 'Sim', abertura_caixa = 'Não', total_cartoes = '5', valor_cupom = '15',
+		-- NOVOS CAMPOS (ERP)	
+		logo_painel = '',
+		entrar_automatico = 'Não',
+		mostrar_preloader = 'Sim',
+		ocultar_mobile = 'Não',
+		token_whatsapp = '',
+		instancia_whatsapp = '',
+		alterar_acessos = 'Não',
+		dados_pagamento = '',
+		access_token = '',
+		public_key = '',
+		limitar_recursos = 'Sim',
+		chave_api_asaas = '',
+		alterar_api_whatsapp = 'Não',
+		pagina_entrada = '',
+		multi_empresas = 'Sim',
+		meta_descricao = '',
+		empresa = 0
+
+		");
 } else {
 	$nome_sistema = $res[0]['nome'];
 	$email_sistema = $res[0]['email'];
@@ -114,6 +134,36 @@ if ($linhas == 0) {
 	$pausar_delivery = $res[0]['pausar_delivery'];
 	$pedidos_pdv_delivery = $res[0]['pedidos_pdv_delivery'];
 	$token_mp = $res[0]['api_merc'];
+	$api_pagamento = $res[0]['api_pagamento'];
+
+
+	// ✅ NOVOS CAMPOS (ERP) - recuperando com os MESMOS NOMES de variáveis do ERP
+// ✅ NOVOS CAMPOS (ERP)
+$logo_painel          = $res[0]['logo_painel'] ?? '';
+$alterar_acessos      = $res[0]['alterar_acessos'] ?? 'Não';
+$access_token_mp      = $res[0]['access_token'] ?? '';
+$public_key_mp        = $res[0]['public_key'] ?? '';
+$limitar_recursos     = $res[0]['limitar_recursos'] ?? 'Sim';
+$chave_api_asaas      = $res[0]['chave_api_asaas'] ?? '';
+$alterar_api_whatsapp = $res[0]['alterar_api_whatsapp'] ?? 'Não';
+$pagina_entrada       = $res[0]['pagina_entrada'] ?? '';
+$multi_empresas       = $res[0]['multi_empresas'] ?? 'Não';
+$meta_descricao       = $res[0]['meta_descricao'] ?? '';
+$fundo_login = $res[0]['fundo_login'];
+
+	// Novas variaveis Menuia (mantive seu bloco)
+    $emailMenuia = $res[0]['email_menuia'] ?? '';
+    $planoMenuia = $res[0]['plano_menuia'] ?? '';
+    $validadeMenuia = $res[0]['validade_menuia'] ?? '';
+    $senhaMenuia = $res[0]['senha_menuia'] ?? '';
+
+    // ⚠️ Aqui você já tinha $token_whatsapp e $instancia_whatsapp vindo de token/instancia.
+    // Mantive como estava, mas agora também existem colunas próprias token_whatsapp/instancia_whatsapp no config.
+    // Se você quiser usar as novas, comente as duas linhas abaixo.
+    
+    if($fundo_login == ""){
+		$fundo_login = 'sem-foto.png';
+	}
 
 	if($taxa_extra == ""){
 		$taxa_extra = 0;

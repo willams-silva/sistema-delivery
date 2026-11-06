@@ -12,7 +12,7 @@ if (@$mesas == 'ocultar') {
 $pag = 'mesas';
 
 
-$query2 = $pdo->query("SELECT * FROM usuarios where id = '$id_usuario'");
+$query2 = $pdo->query("SELECT * FROM usuarios where id = '$id_usuario' and empresa = '$id_empresa' ");
 $res2 = $query2->fetchAll(PDO::FETCH_ASSOC);
 if (@count($res2) > 0) {
 	$nome_usuario = $res2[0]['nivel'];

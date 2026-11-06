@@ -1,6 +1,14 @@
-<?php 
-$tabela = 'pagar';
+<?php
+@session_start();
+$id_empresa = $_SESSION['empresa'];
 require_once("../../../conexao.php");
+require_once("../../buscar_config.php");
+if($id_empresa == ""){
+	echo 'Sem Sessão da Empresa, refaça o Login!';
+	exit();
+}
+$tabela = 'pagar';
+
 
 $id = $_POST['id'];
 

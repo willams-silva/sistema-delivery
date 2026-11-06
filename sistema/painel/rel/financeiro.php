@@ -122,7 +122,7 @@ body {font-family: 'Tw Cen MT', sans-serif;}
 <body>
 <?php 
 if($marca_dagua == 'Sim' and $tipo_rel != 'HTML'){ ?>
-<img class="marca" src="<?php echo $url_sistema ?>sistema/img/logo.jpg">	
+<img class="marca" src="<?php echo $url_sistema ?>sistema/img/<?php echo $logo_sistema ?>">	
 <?php } ?>
 
 
@@ -133,7 +133,7 @@ if($marca_dagua == 'Sim' and $tipo_rel != 'HTML'){ ?>
 				<tr>
 					<td style="border: 1px; solid #000; width: 25%; text-align: left;">
 						<img style="margin-top: 0px; margin-left: 7px;" id="imag"
-							src="<?php echo $url_sistema ?>sistema/img/logo.jpg" width="60%">
+							src="<?php echo $url_sistema ?>sistema/img/<?php echo $logo_sistema ?>" width="60%">
 					</td>
 
 					<td style="text-align: center; font-size: 10px; width: 40%;">
@@ -202,9 +202,9 @@ $pagas = 0;
 
 
 if($filtro_delivery == 'Sim'){
-	$query = $pdo->query("SELECT * from $filtro_tipo where $filtro_data >= '$dataInicial' and $filtro_data <= '$dataFinal' and pago LIKE '%$filtro_pendentes%' $sql_mesa $sql_balcao and (referencia = 'Delivery' or referencia = 'Retirar' or referencia = 'Consumir Local') order by $filtro_data asc");
+	$query = $pdo->query("SELECT * from $filtro_tipo where $filtro_data >= '$dataInicial' and $filtro_data <= '$dataFinal' and pago LIKE '%$filtro_pendentes%' $sql_mesa $sql_balcao and (referencia = 'Delivery' or referencia = 'Retirar' or referencia = 'Consumir Local') and empresa = '$id_empresa' order by $filtro_data asc");
 }else{
-	$query = $pdo->query("SELECT * from $filtro_tipo where $filtro_data >= '$dataInicial' and $filtro_data <= '$dataFinal' and pago LIKE '%$filtro_pendentes%' and referencia LIKE '%$filtro_lancamento%' $sql_mesa $sql_balcao order by $filtro_data asc");
+	$query = $pdo->query("SELECT * from $filtro_tipo where $filtro_data >= '$dataInicial' and $filtro_data <= '$dataFinal' and pago LIKE '%$filtro_pendentes%' and empresa = '$id_empresa' and referencia LIKE '%$filtro_lancamento%' $sql_mesa $sql_balcao order by $filtro_data asc");
 }
 
 $res = $query->fetchAll(PDO::FETCH_ASSOC);

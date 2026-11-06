@@ -74,7 +74,7 @@ if (@$pausar_delivery == 'Sim') {
 	$diasemana_numero = date('w', strtotime($data));
 	$dia_procurado = $diasemana[$diasemana_numero];
 
-	$query_dia = $pdo->query("SELECT * FROM dias where dia = '$dia_procurado'");
+	$query_dia = $pdo->query("SELECT * FROM dias where dia = '$dia_procurado' and empresa = '$id_empresa'");
 	$res_dia = $query_dia->fetchAll(PDO::FETCH_ASSOC);
 
 	if (@count($res_dia) > 0) {
@@ -219,7 +219,7 @@ if (@$pausar_delivery == 'Sim') {
 						<div class="col-md-8">
 							<select class="form-select " id="pgto" name="pgto" style="width:100%;">
 								<?php
-								$query = $pdo->query("SELECT * FROM formas_pgto order by id asc");
+								$query = $pdo->query("SELECT * FROM formas_pgto where empresa = '$id_empresa' order by id asc");
 								$res = $query->fetchAll(PDO::FETCH_ASSOC);
 								for ($i = 0; $i < @count($res); $i++) {
 									foreach ($res[$i] as $key => $value) {
@@ -271,7 +271,7 @@ if (@$pausar_delivery == 'Sim') {
 						<div class="col-md-8">
 							<select class="form-select " id="entregador" name="entregador" style="width:100%;">
 								<?php
-								$query = $pdo->query("SELECT * FROM usuarios WHERE nivel = 'Entregador' or nivel = 'Motoboy' or nivel = 'Motoboys' or nivel = 'Entregadores' ORDER BY id asc");
+								$query = $pdo->query("SELECT * FROM usuarios WHERE (nivel = 'Entregador' or nivel = 'Motoboy' or nivel = 'Motoboys' or nivel = 'Entregadores') and empresa = '$id_empresa' ORDER BY id asc");
 								$res = $query->fetchAll(PDO::FETCH_ASSOC);
 								$total_reg = @count($res);
 								if ($total_reg > 0) {

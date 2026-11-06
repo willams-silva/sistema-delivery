@@ -1,8 +1,15 @@
 <?php
 @session_start();
+$id_empresa = $_SESSION['empresa'];
+require_once("../../../conexao.php");
+require_once("../../buscar_config.php");
+if($id_empresa == ""){
+	echo 'Sem Sessão da Empresa, refaça o Login!';
+	exit();
+}
 $id_usuario = @$_SESSION['id'];
 $tabela = 'tarefas';
-require_once("../../../conexao.php");
+
 
 $referencia_agendamento = 'tarefa';
 
@@ -45,7 +52,7 @@ $telefone_usuario = @$res[0]['telefone'];
 
 
 if ($id == "") {
-	$query = $pdo->prepare("INSERT INTO $tabela SET usuario = '$usuario_tarefa', usuario_lanc = '$id_usuario', data = '$data', hora = '$hora', hora_mensagem = '$hora_alerta', descricao = :descricao, status = 'Agendada', prioridade = '$prioridade' ");
+	$query = $pdo->prepare("INSERT INTO $tabela SET usuario = '$usuario_tarefa', usuario_lanc = '$id_usuario', data = '$data', hora = '$hora', hora_mensagem = '$hora_alerta', descricao = :descricao, status = 'Agendada', prioridade = '$prioridade', empresa = '$id_empresa' ");
 } else {
 	$query = $pdo->prepare("UPDATE $tabela SET data = '$data', hora = '$hora', hora_mensagem = '$hora_alerta', descricao = :descricao, prioridade = '$prioridade' where id = '$id'");
 }
