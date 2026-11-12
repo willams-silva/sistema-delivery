@@ -11,7 +11,6 @@ require_once("../../sistema/painel/buscar_config.php");
 
 $id = $_POST['id'];
 $id_sabor = @$_POST['id_sabor'];
-$sessao = $_SESSION['sessao_usuario'];
 $categoria = @$_POST['cat'];
 
 
