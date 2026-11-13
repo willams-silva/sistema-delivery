@@ -11,6 +11,20 @@ require_once("../../sistema/painel/buscar_config.php");
 
 require_once('../../js/ajax/ApiConfig.php');
 
+// Prioriza o QR Code Pix fixo cadastrado nas configurações da empresa.
+$arquivos_qrcode_pix = glob(__DIR__ . '/../../sistema/img/qrcode_pix_' . (int)$id_empresa . '.*');
+if (!empty($arquivos_qrcode_pix)) {
+    $arquivo_qrcode_pix = 'sistema/img/' . basename($arquivos_qrcode_pix[0]);
+    echo '<div style="display:flex;flex-direction:column;align-items:flex-start;gap:8px">';
+    echo '<b>Escaneie o QR Code para pagar via Pix</b>';
+    echo '<img src="' . htmlspecialchars($arquivo_qrcode_pix, ENT_QUOTES, 'UTF-8') . '?v=' . filemtime($arquivos_qrcode_pix[0]) . '" alt="QR Code Pix" style="width:220px;max-width:100%;height:auto">';
+    if (!empty($dados_pagamento)) {
+        echo '<b>Chave Pix: ' . htmlspecialchars($dados_pagamento, ENT_QUOTES, 'UTF-8') . '</b>';
+    }
+    echo '</div>';
+    exit();
+}
+
 if ($dados_pagamento != "" || $api_merc == '') {
     echo '<b>Chave Pix</b><br>';
     echo '<b>' . $tipo_chave . '</b> : ' . $dados_pagamento;
