@@ -31,15 +31,11 @@ if (!$autenticado && isset($_GET['sair'])) {
   </div>
   <?php if (!$autenticado) { ?>
     <div class="mp-card" style="max-width:480px;margin:20px auto">
-      <label for="mp-telefone">Telefone utilizado na compra</label>
+      <label for="mp-telefone">Telefone cadastrado na compra</label>
       <input class="mp-input" id="mp-telefone" type="tel" placeholder="(00) 00000-0000" autocomplete="tel">
-      <button class="mp-btn w-100" id="mp-enviar" type="button">Enviar código pelo WhatsApp</button>
-      <div id="mp-codigo-area" style="display:none;margin-top:18px">
-        <label for="mp-codigo">Código de 6 dígitos</label>
-        <input class="mp-input" id="mp-codigo" inputmode="numeric" maxlength="6" placeholder="000000">
-        <button class="mp-btn w-100" id="mp-validar" type="button">Confirmar e visualizar pedidos</button>
-      </div>
+      <button class="mp-btn w-100" id="mp-validar-telefone" type="button">Consultar meus pedidos</button>
       <div id="mp-msg" class="mp-muted" role="status" style="margin-top:12px"></div>
+      <p class="mp-muted mt-2 mb-0">Informe o mesmo telefone utilizado no cadastro do pedido.</p>
     </div>
   <?php } else {
     $q = $pdo->prepare("SELECT v.id, v.pedido, v.data, v.hora, v.valor, v.status, v.pago, v.entrega, v.tipo_pgto
@@ -84,26 +80,17 @@ if (!$autenticado && isset($_GET['sair'])) {
 (function(){
  const endpoint='js/ajax/meus-pedidos-auth.php';
  const msg=document.getElementById('mp-msg');
- const enviar=document.getElementById('mp-enviar');
- const validar=document.getElementById('mp-validar');
- enviar.addEventListener('click', async function(){
-   enviar.disabled=true; msg.textContent='Solicitando código...';
-   try {
-     const body=new URLSearchParams({acao:'enviar_codigo',telefone:document.getElementById('mp-telefone').value});
-     const r=await fetch(endpoint,{method:'POST',headers:{'Content-Type':'application/x-www-form-urlencoded'},body});
-     const j=await r.json(); msg.textContent=j.mensagem;
-     if(j.ok) document.getElementById('mp-codigo-area').style.display='block';
-   } catch(e){msg.textContent='Não foi possível solicitar o código. Tente novamente.';}
-   finally{enviar.disabled=false;}
- });
+ const validar=document.getElementById('mp-validar-telefone');
  validar.addEventListener('click', async function(){
-   validar.disabled=true; msg.textContent='Validando código...';
+   const telefone=document.getElementById('mp-telefone').value.trim();
+   if(!telefone){msg.textContent='Informe o telefone utilizado na compra.';return;}
+   validar.disabled=true; msg.textContent='Verificando telefone...';
    try {
-     const body=new URLSearchParams({acao:'validar_codigo',codigo:document.getElementById('mp-codigo').value});
+     const body=new URLSearchParams({acao:'validar_telefone',telefone});
      const r=await fetch(endpoint,{method:'POST',headers:{'Content-Type':'application/x-www-form-urlencoded'},body});
      const j=await r.json(); msg.textContent=j.mensagem;
      if(j.ok) window.location.reload();
-   } catch(e){msg.textContent='Não foi possível validar o código. Tente novamente.';}
+   } catch(e){msg.textContent='Não foi possível validar o telefone. Tente novamente.';}
    finally{validar.disabled=false;}
  });
 })();
