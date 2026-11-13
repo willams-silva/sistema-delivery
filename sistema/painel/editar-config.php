@@ -10,7 +10,7 @@ if($id_empresa == ""){
 $tabela = 'config';
 require_once("../conexao.php");
 
-if($modo_teste == 'Sim'){
+if(isset($modo_teste) && $modo_teste == 'Sim'){
 	echo 'Esse recurso está desativado no modo teste!';
 	exit();
 }
