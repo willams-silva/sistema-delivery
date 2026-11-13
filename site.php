@@ -431,6 +431,11 @@ if ($id_mesa == "" and $sessão_balcao == "") {
           </li>
         </ul>
 
+        <div class="text-center" style="margin-top:-25px; margin-bottom:25px;">
+          <a href="meus-pedidos" class="btn btn-outline-warning" style="border-radius:25px; padding:9px 22px; font-weight:600;">
+            <i class="bi bi-receipt-cutoff"></i> Meus Pedidos
+          </a>
+        </div>
 
       </div>
     </div>
