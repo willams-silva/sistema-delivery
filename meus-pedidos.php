@@ -44,9 +44,9 @@ if (!$autenticado && isset($_GET['sair'])) {
   <?php } else {
     $q = $pdo->prepare("SELECT v.id, v.pedido, v.data, v.hora, v.valor, v.status, v.pago, v.entrega, v.tipo_pgto
       FROM vendas v INNER JOIN clientes c ON c.id = v.cliente
-      WHERE c.empresa = :empresa AND v.empresa = :empresa AND c.telefone = :telefone
+      WHERE c.empresa = :empresa_cliente AND v.empresa = :empresa_venda AND c.telefone = :telefone
       ORDER BY v.id DESC LIMIT 50");
-    $q->execute([':empresa'=>$id_empresa, ':telefone'=>$telefone_autenticado]);
+    $q->execute([':empresa_cliente'=>$id_empresa, ':empresa_venda'=>$id_empresa, ':telefone'=>$telefone_autenticado]);
     $pedidos = $q->fetchAll(PDO::FETCH_ASSOC);
     ?>
     <div class="d-flex justify-content-between align-items-center flex-wrap mb-3">
@@ -57,7 +57,7 @@ if (!$autenticado && isset($_GET['sair'])) {
     <?php foreach ($pedidos as $pedido) {
       $dataF = !empty($pedido['data']) ? date('d/m/Y', strtotime($pedido['data'])) : '';
       $valorF = number_format((float)$pedido['valor'], 2, ',', '.');
-      $itensQ = $pdo->prepare("SELECT nome_produto, quantidade, total_item FROM carrinho WHERE pedido = :pedido AND empresa = :empresa ORDER BY id");
+      $itensQ = $pdo->prepare("SELECT nome_produto, quantidade, (total_item * quantidade) AS total_item FROM carrinho WHERE pedido = :pedido AND empresa = :empresa ORDER BY id");
       $itensQ->execute([':pedido'=>$pedido['id'], ':empresa'=>$id_empresa]);
       $itens = $itensQ->fetchAll(PDO::FETCH_ASSOC);
     ?>
