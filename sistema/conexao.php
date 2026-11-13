@@ -16,6 +16,8 @@ date_default_timezone_set('America/Sao_Paulo');
 
 try {
 	$pdo = new PDO("mysql:dbname=$banco;host=$servidor;charset=utf8mb4", "$usuario", "$senha");
+	// Mantém as funções de data/hora do MySQL no mesmo fuso do PHP (Brasília).
+	$pdo->exec("SET time_zone = '-03:00'");
 } catch (Exception $e) {
 	echo 'Erro ao conectar ao banco de dados!<br>';
 	//echo $e;
