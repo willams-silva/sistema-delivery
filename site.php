@@ -2,6 +2,8 @@
 @session_start();
 $url_site = $_GET['url'];
 $_SESSION['url_site'] = $url_site;
+// Identifica que esta requisição é a página pública de uma loja específica.
+$configurar_config_site = true;
 require_once("cabecalho.php");
 
 
