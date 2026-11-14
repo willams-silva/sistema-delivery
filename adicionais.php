@@ -24,7 +24,14 @@ if (!function_exists('iconeAdicionalDelivery')) {
     if (strpos($nome_normalizado, 'camarao') !== false) return '🍤';
     if (strpos($nome_normalizado, 'frango') !== false) return '🍗';
     if (strpos($nome_normalizado, 'queijo coalho') !== false || strpos($nome_normalizado, 'queijo ralado') !== false || strpos($nome_normalizado, 'queijo') !== false) return '🧀';
-    if (strpos($nome_normalizado, 'mel') !== false) return '🍯';
+        if (strpos($nome_normalizado, 'tomate') !== false) return '🍅';
+    if (strpos($nome_normalizado, 'passas') !== false) return '🍇';
+    if (strpos($nome_normalizado, 'cheddar') !== false || strpos($nome_normalizado, 'catupiry') !== false) return '🧀';
+    if (strpos($nome_normalizado, 'barbecue') !== false || strpos($nome_normalizado, 'barbecure') !== false || strpos($nome_normalizado, 'barbecue') !== false) return '🍖';
+    if (strpos($nome_normalizado, 'charque') !== false || strpos($nome_normalizado, 'carne de sol') !== false) return '🥩';
+    if (strpos($nome_normalizado, 'atum') !== false) return '🐟';
+    if (strpos($nome_normalizado, 'dueto') !== false || (strpos($nome_normalizado, 'milho') !== false && strpos($nome_normalizado, 'ervilha') !== false)) return '🌽';
+if (strpos($nome_normalizado, 'mel') !== false) return '🍯';
         if (strpos($nome_normalizado, 'banana') !== false) return '🍌';
         if (strpos($nome_normalizado, 'farinha lactea') !== false) return '🥛';
         if (strpos($nome_normalizado, 'acucar') !== false) return '🧂';
