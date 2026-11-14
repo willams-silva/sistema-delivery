@@ -375,9 +375,14 @@ if ($nome_mesa == '' and $pedido_balcao == "") {
 				$url = $res[$i]['url'];
 				$estoque = $res[$i]['estoque'];
 				$tem_estoque = $res[$i]['tem_estoque'];
-				$valor = $res[$i]['valor_venda'];
-				$valorF = number_format($valor, 2, ',', '.');
+				$valor = (float) $res[$i]['valor_venda'];
+				$valor_promocional = (float) $res[$i]['val_promocional'];
 				$promocao = $res[$i]['promocao'];
+				$fator_promocao = 1;
+				if ($promocao == 'Sim' && $valor_promocional > 0 && $valor > 0) {
+					$fator_promocao = $valor_promocional / $valor;
+				}
+				$valorF = number_format(($promocao == 'Sim' && $valor_promocional > 0) ? $valor_promocional : $valor, 2, ',', '.');
 
 				if ($tem_estoque == 'Sim' and $estoque <= 0) {
 					$mostrar = '';
@@ -433,7 +438,10 @@ if ($nome_mesa == '' and $pedido_balcao == "") {
 											foreach ($res2[$i2] as $key => $value) {
 											}
 											$sigla = $res2[$i2]['sigla'];
-											$valorvar = $res2[$i2]['valor'];
+											$valorvar = (float) $res2[$i2]['valor'];
+											if ($fator_promocao < 1) {
+												$valorvar = $valorvar * $fator_promocao;
+											}
 											$valorvarF = number_format($valorvar, 2, ',', '.');
 
 											echo '<span style="font-size:10px">(' . $sigla . ') R$ ' . $valorvarF;
