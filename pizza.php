@@ -2,6 +2,30 @@
 @session_start();
 require_once("cabecalho.php");
 
+// Ícone automático para os adicionais da categoria.
+function iconeAdicionalPizza($nome) {
+    $nome_normalizado = mb_strtolower(trim((string) $nome), 'UTF-8');
+    $nome_normalizado = strtr($nome_normalizado, [
+        'á' => 'a', 'à' => 'a', 'ã' => 'a', 'â' => 'a', 'ä' => 'a',
+        'é' => 'e', 'è' => 'e', 'ê' => 'e', 'ë' => 'e',
+        'í' => 'i', 'ì' => 'i', 'î' => 'i', 'ï' => 'i',
+        'ó' => 'o', 'ò' => 'o', 'õ' => 'o', 'ô' => 'o', 'ö' => 'o',
+        'ú' => 'u', 'ù' => 'u', 'û' => 'u', 'ü' => 'u', 'ç' => 'c'
+    ]);
+
+    if (strpos($nome_normalizado, 'mel') !== false) return '🍯';
+    if (strpos($nome_normalizado, 'banana') !== false) return '🍌';
+    if (strpos($nome_normalizado, 'farinha lactea') !== false) return '🥛';
+    if (strpos($nome_normalizado, 'acucar') !== false) return '🧂';
+    if (strpos($nome_normalizado, 'canela') !== false) return '🍂';
+    if (strpos($nome_normalizado, 'chocolate') !== false) return '🍫';
+    if (strpos($nome_normalizado, 'morango') !== false) return '🍓';
+    if (strpos($nome_normalizado, 'coco') !== false) return '🥥';
+    if (strpos($nome_normalizado, 'leite') !== false) return '🥛';
+    if (strpos($nome_normalizado, 'doce') !== false) return '🍬';
+    return '🥄';
+}
+
 $url = $_GET['url'];
 $id_usuario = @$_SESSION['id'];
 $pedido_balcao = @$_SESSION['pedido_balcao'];
@@ -458,7 +482,7 @@ if ($nome_mesa == '' and $pedido_balcao == "") {
 
 
 					<li class="list-group-item d-flex  ">
-						<span style="font-size: 12px"><?php echo $nome ?> (R$ <?php echo $valorF ?>) </span>
+						<span style="font-size: 12px"><?php echo iconeAdicionalPizza($nome) ?> <?php echo $nome ?> (R$ <?php echo $valorF ?>) </span>
 
 						<span class="direita" style="font-size:14px">
 
