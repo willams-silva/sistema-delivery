@@ -405,7 +405,7 @@ if ($id_mesa == "" and $sessão_balcao == "") {
 
         <ul class="nav nav-pills d-inline-flex justify-content-center border-bottom mb-5" style="width:100%;">
           <li class="nav-item" style="width:34%;">
-            <a class="d-flex align-items-center text-start mx-3 ms-0 pb-3 " href="#categoria">
+            <a class="d-flex align-items-center text-start mx-3 ms-0 pb-3 " href="site/<?php echo $url_site ?>#categoria">
               <img class="icone_mobile" src="img/acai.png" width="50px" height="50px">
               <div class="ps-1">
                 <small class="text-body titulo_icones">Categorias</small>
@@ -414,7 +414,7 @@ if ($id_mesa == "" and $sessão_balcao == "") {
             </a>
           </li>
           <li class="nav-item" style="width:34%;">
-            <a class="d-flex align-items-center text-start mx-3 pb-3" href="#combo">
+            <a class="d-flex align-items-center text-start mx-3 pb-3" href="site/<?php echo $url_site ?>#combo">
               <img class="icone_mobile" src="img/acai2.png" width="50px" height="50px">
               <div class="ps-1">
                 <small class="text-body titulo_icones">Combos</small>
@@ -423,7 +423,7 @@ if ($id_mesa == "" and $sessão_balcao == "") {
             </a>
           </li>
           <li class="nav-item" style="width:32%;">
-            <a class="d-flex align-items-center text-start mx-3 me-0 pb-3" href="#promocao">
+            <a class="d-flex align-items-center text-start mx-3 me-0 pb-3" href="site/<?php echo $url_site ?>#promocao">
               <img class="icone_mobile" src="img/icone3.png" width="50px" height="50px">
               <div class="ps-1">
                 <small class="text-body titulo_icones">Promoções</small>
