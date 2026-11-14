@@ -201,6 +201,25 @@ if($id_edicao == ""){
       display:none;
     }
   }
+
+  /* Ícones temáticos exclusivos da loja Rainha das Tapiocas */
+  .icone-tapioca-personalizado,
+  .icone-combo-personalizado {
+    width: 50px;
+    height: 50px;
+    min-width: 50px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 12px;
+    background: #fff3df;
+    color: #a85b24;
+    font-size: 29px;
+  }
+  .icone-combo-personalizado {
+    background: #fce9d7;
+    color: #9b4b20;
+  }
 </style>
 
 
@@ -415,7 +434,7 @@ if ($id_mesa == "" and $sessão_balcao == "") {
         <ul class="nav nav-pills d-inline-flex justify-content-center border-bottom mb-5" style="width:100%;">
           <li class="nav-item" style="width:34%;">
             <a class="d-flex align-items-center text-start mx-3 ms-0 pb-3 " href="site/<?php echo $url_site ?>#categoria" onclick="return verificarDisponibilidade(event, 'Categorias', <?php echo $qtd_categorias_disponiveis ?>)">
-              <img class="icone_mobile" src="img/acai.png" width="50px" height="50px">
+              <?php if ($url_site == 'rainhadastapiocas') { ?><span class="icone_mobile icone-tapioca-personalizado"><i class="bi bi-egg-fried"></i></span><?php } else { ?><img class="icone_mobile" src="img/acai.png" width="50px" height="50px"><?php } ?>
               <div class="ps-1">
                 <small class="text-body titulo_icones">Categorias</small>
                 <h6 class="mt-n1 mb-0 subtitulo_icones" style="font-size: 12px">Produtos</h6>
@@ -424,7 +443,7 @@ if ($id_mesa == "" and $sessão_balcao == "") {
           </li>
           <li class="nav-item" style="width:34%;">
             <a class="d-flex align-items-center text-start mx-3 pb-3" href="site/<?php echo $url_site ?>#combo" onclick="return verificarDisponibilidade(event, 'Combos', <?php echo $qtd_combos_disponiveis ?>)">
-              <img class="icone_mobile" src="img/acai2.png" width="50px" height="50px">
+              <?php if ($url_site == 'rainhadastapiocas') { ?><span class="icone_mobile icone-combo-personalizado"><i class="bi bi-basket2-fill"></i></span><?php } else { ?><img class="icone_mobile" src="img/acai2.png" width="50px" height="50px"><?php } ?>
               <div class="ps-1">
                 <small class="text-body titulo_icones">Combos</small>
                 <h6 class="mt-n1 mb-0 subtitulo_icones" style="font-size: 12px">Diversos</h6>
