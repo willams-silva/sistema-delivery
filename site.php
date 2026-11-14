@@ -6,6 +6,15 @@ $_SESSION['url_site'] = $url_site;
 $configurar_config_site = true;
 require_once("cabecalho.php");
 
+ // Verifica se cada seção possui produtos disponíveis para delivery.
+$query_disp = $pdo->query("SELECT COUNT(*) FROM categorias c WHERE c.ativo = 'Sim' AND c.delivery = 'Sim' AND c.empresa = '$id_empresa' AND EXISTS (SELECT 1 FROM produtos p WHERE p.categoria = c.id AND p.ativo = 'Sim' AND p.delivery = 'Sim' AND p.empresa = '$id_empresa' AND (p.tem_estoque = 'Não' OR p.estoque > 0))");
+$qtd_categorias_disponiveis = (int) $query_disp->fetchColumn();
+$query_disp = $pdo->query("SELECT COUNT(*) FROM produtos WHERE ativo = 'Sim' AND combo = 'Sim' AND delivery = 'Sim' AND empresa = '$id_empresa' AND (tem_estoque = 'Não' OR estoque > 0)");
+$qtd_combos_disponiveis = (int) $query_disp->fetchColumn();
+$query_disp = $pdo->query("SELECT COUNT(*) FROM produtos WHERE ativo = 'Sim' AND promocao = 'Sim' AND delivery = 'Sim' AND empresa = '$id_empresa' AND (tem_estoque = 'Não' OR estoque > 0)");
+$qtd_promocoes_disponiveis = (int) $query_disp->fetchColumn();
+
+
 
 
 $id_ab_mesa = "";
@@ -405,7 +414,7 @@ if ($id_mesa == "" and $sessão_balcao == "") {
 
         <ul class="nav nav-pills d-inline-flex justify-content-center border-bottom mb-5" style="width:100%;">
           <li class="nav-item" style="width:34%;">
-            <a class="d-flex align-items-center text-start mx-3 ms-0 pb-3 " href="site/<?php echo $url_site ?>#categoria">
+            <a class="d-flex align-items-center text-start mx-3 ms-0 pb-3 " href="site/<?php echo $url_site ?>#categoria" onclick="return verificarDisponibilidade(event, 'Categorias', <?php echo $qtd_categorias_disponiveis ?>)">
               <img class="icone_mobile" src="img/acai.png" width="50px" height="50px">
               <div class="ps-1">
                 <small class="text-body titulo_icones">Categorias</small>
@@ -414,7 +423,7 @@ if ($id_mesa == "" and $sessão_balcao == "") {
             </a>
           </li>
           <li class="nav-item" style="width:34%;">
-            <a class="d-flex align-items-center text-start mx-3 pb-3" href="site/<?php echo $url_site ?>#combo">
+            <a class="d-flex align-items-center text-start mx-3 pb-3" href="site/<?php echo $url_site ?>#combo" onclick="return verificarDisponibilidade(event, 'Combos', <?php echo $qtd_combos_disponiveis ?>)">
               <img class="icone_mobile" src="img/acai2.png" width="50px" height="50px">
               <div class="ps-1">
                 <small class="text-body titulo_icones">Combos</small>
@@ -423,7 +432,7 @@ if ($id_mesa == "" and $sessão_balcao == "") {
             </a>
           </li>
           <li class="nav-item" style="width:32%;">
-            <a class="d-flex align-items-center text-start mx-3 me-0 pb-3" href="site/<?php echo $url_site ?>#promocao">
+            <a class="d-flex align-items-center text-start mx-3 me-0 pb-3" href="site/<?php echo $url_site ?>#promocao" onclick="return verificarDisponibilidade(event, 'Promoções', <?php echo $qtd_promocoes_disponiveis ?>)">
               <img class="icone_mobile" src="img/icone3.png" width="50px" height="50px">
               <div class="ps-1">
                 <small class="text-body titulo_icones">Promoções</small>
@@ -943,7 +952,7 @@ if ($id_mesa == "" and $sessão_balcao == "") {
   $res = $query->fetchAll(PDO::FETCH_ASSOC);
   $tem_produto = @count($res);
   $mostrar = 'ocultar';
-  if ($tem_produto >= 0) { ?>
+  if ($tem_produto > 0) { ?>
 
 
     <!-- APROVEITE NOSSO COMBOS -->
@@ -1055,8 +1064,6 @@ if ($id_mesa == "" and $sessão_balcao == "") {
               <div class="swiper-slide" style="width:100%;">
                 <div class="text-center p-4" style="background:#f8f9fa; border:1px solid #e9ecef; border-radius:10px; margin:0 12px;">
                   <div style="font-size:32px; color:#adb5bd; margin-bottom:8px;"><i class="bi bi-basket"></i></div>
-                  <div style="font-weight:600; color:#495057;">Ainda não temos combos cadastrados.</div>
-                  <div style="color:#6c757d; font-size:13px; margin-top:5px;">Confira nossas categorias e ofertas disponíveis.</div>
                 </div>
               </div>
             <?php } ?>
@@ -1144,6 +1151,39 @@ if ($img_rodape == "aberto.png" and $mostrar_aberto != "Sim") {
 
 
 
+
+
+<div id="aviso-secao-vazia" class="aviso-secao-overlay" style="display:none;" role="dialog" aria-modal="true" aria-labelledby="aviso-secao-titulo">
+  <div class="aviso-secao-caixa">
+    <button type="button" class="aviso-secao-fechar" onclick="fecharAvisoSecao()" aria-label="Fechar">&times;</button>
+    <div class="aviso-secao-icone"><i class="bi bi-basket"></i></div>
+    <h5 id="aviso-secao-titulo">Nenhum produto disponível</h5>
+    <p id="aviso-secao-mensagem">Ainda não temos produtos disponíveis nesta opção. Confira novamente em breve!</p>
+    <button type="button" class="btn btn-warning" onclick="fecharAvisoSecao()">Entendi</button>
+  </div>
+</div>
+<style>
+.aviso-secao-overlay{position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:100000;display:flex;align-items:center;justify-content:center;padding:20px}
+.aviso-secao-caixa{position:relative;width:100%;max-width:360px;background:#fff;border-radius:16px;padding:28px 22px;text-align:center;box-shadow:0 12px 40px rgba(0,0,0,.25)}
+.aviso-secao-fechar{position:absolute;right:12px;top:7px;border:0;background:transparent;font-size:28px;color:#777;line-height:1}
+.aviso-secao-icone{font-size:38px;color:#f0a500;margin-bottom:8px}
+.aviso-secao-caixa h5{font-weight:700;color:#333;margin-bottom:8px}
+.aviso-secao-caixa p{font-size:14px;color:#666;margin-bottom:20px}
+</style>
+<script>
+function verificarDisponibilidade(evento, secao, quantidade) {
+  if (Number(quantidade) > 0) return true;
+  evento.preventDefault();
+  var modal = document.getElementById('aviso-secao-vazia');
+  document.getElementById('aviso-secao-titulo').textContent = secao + ' sem produtos';
+  document.getElementById('aviso-secao-mensagem').textContent = 'Ainda não temos produtos disponíveis em ' + secao.toLowerCase() + '. Confira novamente em breve!';
+  modal.style.display = 'flex';
+  return false;
+}
+function fecharAvisoSecao() { document.getElementById('aviso-secao-vazia').style.display = 'none'; }
+document.addEventListener('keydown', function(evento) { if (evento.key === 'Escape') fecharAvisoSecao(); });
+document.getElementById('aviso-secao-vazia').addEventListener('click', function(evento) { if (evento.target === this) fecharAvisoSecao(); });
+</script>
 
 <!-- JS here -->
 <script src="assets/js/waypoints.js"></script>
