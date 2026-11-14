@@ -14,7 +14,17 @@ if (!function_exists('iconeAdicionalDelivery')) {
             'ú' => 'u', 'ù' => 'u', 'û' => 'u', 'ü' => 'u', 'ç' => 'c'
         ]);
 
-        if (strpos($nome_normalizado, 'mel') !== false) return '🍯';
+    
+    if (strpos($nome_normalizado, 'cebola') !== false) return '🧅';
+    if (strpos($nome_normalizado, 'cenoura') !== false) return '🥕';
+    if (strpos($nome_normalizado, 'beterraba') !== false) return '🫜';
+    if (strpos($nome_normalizado, 'uva passa') !== false || strpos($nome_normalizado, 'uva-passa') !== false) return '🍇';
+    if (strpos($nome_normalizado, 'oregano') !== false) return '🌿';
+    if (strpos($nome_normalizado, 'manteiga') !== false) return '🧈';
+    if (strpos($nome_normalizado, 'camarao') !== false) return '🍤';
+    if (strpos($nome_normalizado, 'frango') !== false) return '🍗';
+    if (strpos($nome_normalizado, 'queijo coalho') !== false || strpos($nome_normalizado, 'queijo ralado') !== false || strpos($nome_normalizado, 'queijo') !== false) return '🧀';
+    if (strpos($nome_normalizado, 'mel') !== false) return '🍯';
         if (strpos($nome_normalizado, 'banana') !== false) return '🍌';
         if (strpos($nome_normalizado, 'farinha lactea') !== false) return '🥛';
         if (strpos($nome_normalizado, 'acucar') !== false) return '🧂';
