@@ -45,6 +45,9 @@ for($i=0; $i<$total_ids; $i++){
 		$nome_p = $res[0]['nome'];
 		$categoria = $res[0]['categoria'];
 		$preparado = $res[0]['preparado'];
+		$valor_base_produto = (float) $res[0]['valor_venda'];
+		$valor_promocional_produto = (float) $res[0]['val_promocional'];
+		$promocao_produto = $res[0]['promocao'];
 
 
 		if($preparado != 'Não'){
@@ -69,7 +72,10 @@ for($i=0; $i<$total_ids; $i++){
 		$query = $pdo->query("SELECT * FROM variacoes where produto = '$id' and sigla = '$sigla'");
 		$res = $query->fetchAll(PDO::FETCH_ASSOC);
 		if(@count($res) > 0){	
-			$valor_p = $res[0]['valor'];	
+			$valor_p = (float) $res[0]['valor'];
+			if ($promocao_produto == 'Sim' && $valor_promocional_produto > 0 && $valor_base_produto > 0) {
+				$valor_p = $valor_p * ($valor_promocional_produto / $valor_base_produto);
+			}
 			$id_variacao = $res[0]['id'];			
 		}else{
 			$valor_p = 0;
