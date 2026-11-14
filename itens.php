@@ -46,9 +46,22 @@ if (@$_SESSION['nome_mesa'] != '') {
 
 
 			<?php
-			$query = $pdo->query("SELECT * FROM produtos where categoria = '$id' and ativo = 'Sim' order by valor_venda asc");
+			$query = $pdo->query("SELECT * FROM produtos where categoria = '$id' and ativo = 'Sim' and empresa = '$id_empresa' order by valor_venda asc");
 			$res = $query->fetchAll(PDO::FETCH_ASSOC);
-			$total_reg = @count($res);
+
+			// Na vitrine do delivery, considera somente produtos disponíveis para delivery.
+			// Em pedidos de mesa, mantém também os produtos exclusivos do atendimento local.
+			if (@$_SESSION['nome_mesa'] == "") {
+				$res_filtrados = array();
+				foreach ($res as $produto_categoria) {
+					if ($produto_categoria['delivery'] != 'Não') {
+						$res_filtrados[] = $produto_categoria;
+					}
+				}
+				$res = $res_filtrados;
+			}
+
+			$total_reg = count($res);
 			if ($total_reg > 0) {
 				for ($i = 0; $i < $total_reg; $i++) {
 					foreach ($res[$i] as $key => $value) {
@@ -193,7 +206,16 @@ if (@$_SESSION['nome_mesa'] != '') {
 					</a>
 
 			<?php }
-			} ?>
+			} else { ?>
+				<li class="list-group-item text-center py-4 mb-2" style="border:1px solid #e9ecef; border-radius:10px; background:#f8f9fa;">
+					<div style="font-size:32px; color:#adb5bd; margin-bottom:8px;">
+						<i class="bi bi-basket"></i>
+					</div>
+					<div style="font-weight:600; color:#495057; font-size:15px;">Ainda não temos produtos nesta categoria.</div>
+					<div style="color:#6c757d; font-size:13px; margin-top:5px;">Volte em breve para conferir as novidades!</div>
+					<a href="site/<?php echo $url_site ?>" class="btn btn-outline-secondary btn-sm mt-3" style="border-radius:20px;">Voltar ao cardápio</a>
+				</li>
+			<?php } ?>
 
 
 
