@@ -135,6 +135,10 @@ if (@$_SESSION['nome_mesa'] != '') {
 											$res2 = $query2->fetchAll(PDO::FETCH_ASSOC);
 											$total_reg2 = @count($res2);
 											if ($total_reg2 > 0) {
+												// Exibe o preço promocional do produto mesmo quando há variações.
+												if ($promocao == 'Sim' && (float)$val_promocional > 0) {
+													echo '<span style="display:block; color:#198754; font-weight:600">R$ ' . $val_promocionalF . ' <del style="color:red; font-weight:400">R$ ' . $valorF . '</del></span>';
+												}
 												$id_grade = $res2[0]['id'];
 
 												$query3 = $pdo->query("SELECT * FROM itens_grade where grade = '$id_grade' and ativo = 'Sim' order by id asc");
@@ -157,7 +161,7 @@ if (@$_SESSION['nome_mesa'] != '') {
 											} else {
 												if ($valor > 0) {
 
-													if($val_promocional != 0 and $promocao != 'Não'){
+													if($promocao == 'Sim' && (float)$val_promocional > 0){
 														echo 'R$ ' . $val_promocionalF;
 														echo '  <del style="color: red">R$ ' . $valorF . ' </del';
 
