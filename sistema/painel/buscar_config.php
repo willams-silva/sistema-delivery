@@ -5,21 +5,34 @@ if (session_status() !== PHP_SESSION_ACTIVE) {
 	@session_start();
 }
 
-if (!isset($id_empresa) || $id_empresa === '') {
-	$id_empresa = $_SESSION['empresa'] ?? '';
-}
-
-if ($id_empresa == "") {
-	echo 'Sessão expirada! Atualize a página!';
-	exit();
-}
-
 if (!isset($pdo) || !($pdo instanceof PDO)) {
 	require_once __DIR__ . '/../conexao.php';
 }
 
-$query_config = $pdo->query("SELECT * FROM config WHERE empresa = '$id_empresa' LIMIT 1");
-$res_config = $query_config->fetchAll(PDO::FETCH_ASSOC);
+// Na vitrine pública, a configuração deve ser identificada pelo endereço exclusivo da loja.
+// Isso evita carregar os contatos/configurações gerais ou de outra loja da mesma conta SaaS.
+if (!empty($configurar_config_site) && !empty($_SESSION['url_site'])) {
+	$stmt_config = $pdo->prepare("SELECT * FROM config WHERE url_site = :url_site LIMIT 1");
+	$stmt_config->execute([':url_site' => $_SESSION['url_site']]);
+	$res_config = $stmt_config->fetchAll(PDO::FETCH_ASSOC);
+
+	if (count($res_config) > 0) {
+		$id_empresa = $res_config[0]['empresa'] ?? '';
+		$_SESSION['empresa'] = $id_empresa;
+	}
+} else {
+	if (!isset($id_empresa) || $id_empresa === '') {
+		$id_empresa = $_SESSION['empresa'] ?? '';
+	}
+
+	if ($id_empresa == "") {
+		echo 'Sessão expirada! Atualize a página!';
+		exit();
+	}
+
+	$query_config = $pdo->query("SELECT * FROM config WHERE empresa = '$id_empresa' LIMIT 1");
+	$res_config = $query_config->fetchAll(PDO::FETCH_ASSOC);
+}
 
 if (@count($res_config) > 0) {
 
