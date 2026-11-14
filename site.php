@@ -204,7 +204,8 @@ if($id_edicao == ""){
 
   /* Ícones temáticos exclusivos da loja Rainha das Tapiocas */
   .icone-tapioca-personalizado,
-  .icone-combo-personalizado {
+  .icone-combo-personalizado,
+  .icone-promocao-personalizado {
     width: 50px;
     height: 50px;
     min-width: 50px;
@@ -219,6 +220,10 @@ if($id_edicao == ""){
   .icone-combo-personalizado {
     background: #fce9d7;
     color: #9b4b20;
+  }
+  .icone-promocao-personalizado {
+    background: #f9e5df;
+    color: #a9432b;
   }
 </style>
 
@@ -434,7 +439,7 @@ if ($id_mesa == "" and $sessão_balcao == "") {
         <ul class="nav nav-pills d-inline-flex justify-content-center border-bottom mb-5" style="width:100%;">
           <li class="nav-item" style="width:34%;">
             <a class="d-flex align-items-center text-start mx-3 ms-0 pb-3 " href="site/<?php echo $url_site ?>#categoria" onclick="return verificarDisponibilidade(event, 'Categorias', <?php echo $qtd_categorias_disponiveis ?>)">
-              <?php if ($url_site == 'rainhadastapiocas') { ?><span class="icone_mobile icone-tapioca-personalizado"><i class="bi bi-egg-fried"></i></span><?php } else { ?><img class="icone_mobile" src="img/acai.png" width="50px" height="50px"><?php } ?>
+              <?php if ($url_site == 'rainhadastapiocas') { ?><span class="icone_mobile icone-tapioca-personalizado" aria-label="Tapioca">🫓</span><?php } else { ?><img class="icone_mobile" src="img/acai.png" width="50px" height="50px"><?php } ?>
               <div class="ps-1">
                 <small class="text-body titulo_icones">Categorias</small>
                 <h6 class="mt-n1 mb-0 subtitulo_icones" style="font-size: 12px">Produtos</h6>
@@ -452,7 +457,7 @@ if ($id_mesa == "" and $sessão_balcao == "") {
           </li>
           <li class="nav-item" style="width:32%;">
             <a class="d-flex align-items-center text-start mx-3 me-0 pb-3" href="site/<?php echo $url_site ?>#promocao" onclick="return verificarDisponibilidade(event, 'Promoções', <?php echo $qtd_promocoes_disponiveis ?>)">
-              <img class="icone_mobile" src="img/icone3.png" width="50px" height="50px">
+              <?php if ($url_site == 'rainhadastapiocas') { ?><span class="icone_mobile icone-promocao-personalizado"><i class="bi bi-tag-fill"></i></span><?php } else { ?><img class="icone_mobile" src="img/icone3.png" width="50px" height="50px"><?php } ?>
               <div class="ps-1">
                 <small class="text-body titulo_icones">Promoções</small>
                 <h6 class="mt-n1 mb-0 subtitulo_icones" style="font-size: 12px">Ofertas</h6>
