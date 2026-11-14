@@ -383,6 +383,8 @@ if ($nome_mesa == '' and $pedido_balcao == "") {
 					$fator_promocao = $valor_promocional / $valor;
 				}
 				$valorF = number_format(($promocao == 'Sim' && $valor_promocional > 0) ? $valor_promocional : $valor, 2, ',', '.');
+				$valorOriginalF = number_format($valor, 2, ',', '.');
+				$tem_promocao_valida = ($promocao == 'Sim' && $valor_promocional > 0 && $valor_promocional < $valor);
 
 				if ($tem_estoque == 'Sim' and $estoque <= 0) {
 					$mostrar = '';
@@ -438,21 +440,32 @@ if ($nome_mesa == '' and $pedido_balcao == "") {
 											foreach ($res2[$i2] as $key => $value) {
 											}
 											$sigla = $res2[$i2]['sigla'];
-											$valorvar = (float) $res2[$i2]['valor'];
+											$valorvar_original = (float) $res2[$i2]['valor'];
+											$valorvar = $valorvar_original;
 											if ($fator_promocao < 1) {
-												$valorvar = $valorvar * $fator_promocao;
+												$valorvar = $valorvar_original * $fator_promocao;
 											}
 											$valorvarF = number_format($valorvar, 2, ',', '.');
+											$valorvarOriginalF = number_format($valorvar_original, 2, ',', '.');
 
-											echo '<span style="font-size:10px">(' . $sigla . ') R$ ' . $valorvarF;
+											echo '<span style="font-size:10px">(' . $sigla . ') ';
+											if ($fator_promocao < 1) {
+												echo '<del style="color:#888; font-weight:normal">R$ ' . $valorvarOriginalF . '</del> <strong style="color:#c62828">R$ ' . $valorvarF . '</strong>';
+											} else {
+												echo 'R$ ' . $valorvarF;
+											}
 											if ($i2 < $total_reg2 - 1) {
 												echo ' / ';
 											}
 											echo '</span>';
 										}
 									} else {
-										echo 'R$ ' . $valorF;
-									}
+										if ($tem_promocao_valida) {
+											echo '<del style="color:#888; font-size:11px; font-weight:normal">R$ ' . $valorOriginalF . '</del> <strong style="color:#c62828">R$ ' . $valorF . '</strong>';
+										} else {
+											echo 'R$ ' . $valorF;
+										}
+					}
 									?>
 
 								</span>
