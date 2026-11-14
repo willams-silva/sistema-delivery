@@ -943,7 +943,7 @@ if ($id_mesa == "" and $sessão_balcao == "") {
   $res = $query->fetchAll(PDO::FETCH_ASSOC);
   $tem_produto = @count($res);
   $mostrar = 'ocultar';
-  if ($tem_produto > 0) { ?>
+  if ($tem_produto >= 0) { ?>
 
 
     <!-- APROVEITE NOSSO COMBOS -->
@@ -1051,7 +1051,15 @@ if ($id_mesa == "" and $sessão_balcao == "") {
                   </div>
                 </div>
             <?php }
-            } ?>
+            } else { ?>
+              <div class="swiper-slide" style="width:100%;">
+                <div class="text-center p-4" style="background:#f8f9fa; border:1px solid #e9ecef; border-radius:10px; margin:0 12px;">
+                  <div style="font-size:32px; color:#adb5bd; margin-bottom:8px;"><i class="bi bi-basket"></i></div>
+                  <div style="font-weight:600; color:#495057;">Ainda não temos combos cadastrados.</div>
+                  <div style="color:#6c757d; font-size:13px; margin-top:5px;">Confira nossas categorias e ofertas disponíveis.</div>
+                </div>
+              </div>
+            <?php } ?>
           </div>
 
         </div>
