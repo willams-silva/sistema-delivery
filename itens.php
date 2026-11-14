@@ -208,12 +208,14 @@ if (@$_SESSION['nome_mesa'] != '') {
 			<?php }
 			} else { ?>
 				<li class="list-group-item text-center py-4 mb-2" style="border:1px solid #e9ecef; border-radius:10px; background:#f8f9fa;">
-					<div style="font-size:32px; color:#adb5bd; margin-bottom:8px;">
-						<i class="bi bi-basket"></i>
+					<div id="aviso-categoria-vazia" style="position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:100000;display:flex;align-items:center;justify-content:center;padding:20px;">
+						<div style="width:100%;max-width:360px;background:#fff;border-radius:16px;padding:28px 22px;text-align:center;box-shadow:0 12px 40px rgba(0,0,0,.25);">
+							<div style="font-size:38px;color:#f0a500;margin-bottom:8px;"><i class="bi bi-basket"></i></div>
+							<h5 style="font-weight:700;color:#333;">Categoria sem produtos</h5>
+							<p style="font-size:14px;color:#666;">Ainda não temos produtos disponíveis nesta categoria. Confira novamente em breve!</p>
+							<a href="site/<?php echo $url_site ?>" class="btn btn-warning">Voltar ao cardápio</a>
+						</div>
 					</div>
-					<div style="font-weight:600; color:#495057; font-size:15px;">Ainda não temos produtos nesta categoria.</div>
-					<div style="color:#6c757d; font-size:13px; margin-top:5px;">Volte em breve para conferir as novidades!</div>
-					<a href="site/<?php echo $url_site ?>" class="btn btn-outline-secondary btn-sm mt-3" style="border-radius:20px;">Voltar ao cardápio</a>
 				</li>
 			<?php } ?>
 
