@@ -222,7 +222,7 @@ if($somente_pix_delivery == 'Sim'){
               <div class="row">
                 <div class="col-4">
                   <div class="group">
-                    <input type="text" class="input" name="cep" id="cep" required inputmode="numeric" maxlength="9" autocomplete="postal-code" placeholder="00000-000" onblur="if (<?= json_encode($entrega_distancia == 'Sim' && $chave_api_maps != '') ?>) calcularFreteDistancia()">
+                    <input type="text" class="input" name="cep" id="cep" required inputmode="numeric" maxlength="9" autocomplete="postal-code" onblur="if (<?= json_encode($entrega_distancia == 'Sim' && $chave_api_maps != '') ?>) calcularFreteDistancia()">
                     <span class="highlight"></span>
                     <span class="bar"></span>
                     <label class="label">CEP*</label>
