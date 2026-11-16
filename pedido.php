@@ -219,6 +219,30 @@ $cartoes = @$res[0]['cartoes'];
 
 				<hr style="margin:2px">
 
+				<?php
+				$query_adc_pedido = $pdo->prepare("SELECT id_item, id_sabor, quantidade, valor_item FROM temp WHERE carrinho = ? AND tabela = 'adicionais' ORDER BY id_sabor, id");
+				$query_adc_pedido->execute([$id_carrinho]);
+				$adicionais_pedido = $query_adc_pedido->fetchAll(PDO::FETCH_ASSOC);
+				foreach ($adicionais_pedido as $adc_pedido) {
+					$id_adc_pedido = (int)$adc_pedido['id_item'];
+					$query_nome_adc = $pdo->prepare("SELECT nome FROM adicionais_cat WHERE id = ? LIMIT 1");
+					$query_nome_adc->execute([$id_adc_pedido]);
+					$nome_adc_pedido = (string)$query_nome_adc->fetchColumn();
+					$id_sabor_pedido = (int)$adc_pedido['id_sabor'];
+					$nome_sabor_pedido = '';
+					if ($id_sabor_pedido > 0) {
+						$query_nome_sabor = $pdo->prepare("SELECT nome FROM produtos WHERE id = ? LIMIT 1");
+						$query_nome_sabor->execute([$id_sabor_pedido]);
+						$nome_sabor_pedido = (string)$query_nome_sabor->fetchColumn();
+					}
+					$quantidade_adc_pedido = (int)$adc_pedido['quantidade'];
+					?>
+					<div class="col-12" style="font-size:11px; padding-left:18px; color:#555">
+						+ <?php echo $quantidade_adc_pedido ?>x <?php echo htmlspecialchars($nome_adc_pedido, ENT_QUOTES, 'UTF-8') ?>
+						<?php if ($nome_sabor_pedido != '') { ?> <span>(<?php echo htmlspecialchars($nome_sabor_pedido, ENT_QUOTES, 'UTF-8') ?>)</span><?php } ?>
+					</div>
+				<?php } ?>
+
 			<?php } ?>
 		</div>
 

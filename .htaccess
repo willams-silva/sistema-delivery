@@ -11,6 +11,7 @@ RewriteRule ^finalizar(.*)$ finalizar.php [L]
 RewriteRule ^index(.*)$ index.php [L]
 RewriteRule ^index.php(.*)$ index.php [L]
 RewriteRule ^pedido/(.*)$ pedido.php?id=$1 [L]
+RewriteRule ^meus-pedidos/?$ meus-pedidos.php [L]
 RewriteRule ^mesa/(.*)$ mesa.php?id_mesa=$1 [L]
 
 RewriteRule ^site/(.*)$ site.php?url=$1 [L]

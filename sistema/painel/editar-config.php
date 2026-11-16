@@ -10,7 +10,7 @@ if($id_empresa == ""){
 $tabela = 'config';
 require_once("../conexao.php");
 
-if($modo_teste == 'Sim'){
+if(isset($modo_teste) && $modo_teste == 'Sim'){
 	echo 'Esse recurso está desativado no modo teste!';
 	exit();
 }
@@ -91,6 +91,41 @@ $multa_atraso = str_replace('%', '', $multa_atraso);
 $juros_atraso = str_replace(',', '.', $juros_atraso);
 $juros_atraso = str_replace('%', '', $juros_atraso);
 
+
+
+// QR Code Pix fixo da empresa
+if (isset($_FILES['qrcode-pix']) && $_FILES['qrcode-pix']['error'] !== UPLOAD_ERR_NO_FILE) {
+	if ($_FILES['qrcode-pix']['error'] !== UPLOAD_ERR_OK) {
+		echo 'Não foi possível receber o QR Code Pix. Tente novamente.';
+		exit();
+	}
+	if ($_FILES['qrcode-pix']['size'] > 5 * 1024 * 1024) {
+		echo 'O QR Code Pix deve ter no máximo 5 MB.';
+		exit();
+	}
+	$info_qrcode = @getimagesize($_FILES['qrcode-pix']['tmp_name']);
+	$extensoes_qrcode = array(
+		'image/png' => 'png',
+		'image/jpeg' => 'jpg',
+		'image/webp' => 'webp'
+	);
+	if (!$info_qrcode || !isset($extensoes_qrcode[$info_qrcode['mime']])) {
+		echo 'Formato inválido. Envie o QR Code em PNG, JPG ou WEBP.';
+		exit();
+	}
+	$ext_qrcode = $extensoes_qrcode[$info_qrcode['mime']];
+	$nome_qrcode = 'qrcode_pix_' . (int)$id_empresa . '.' . $ext_qrcode;
+	$destino_qrcode = '../img/' . $nome_qrcode;
+	if (!move_uploaded_file($_FILES['qrcode-pix']['tmp_name'], $destino_qrcode)) {
+		echo 'Não foi possível salvar o QR Code Pix.';
+		exit();
+	}
+	foreach (glob('../img/qrcode_pix_' . (int)$id_empresa . '.*') as $arquivo_qrcode_antigo) {
+		if (basename($arquivo_qrcode_antigo) !== $nome_qrcode) {
+			@unlink($arquivo_qrcode_antigo);
+		}
+	}
+}
 
 
 

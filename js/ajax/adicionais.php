@@ -1,40 +1,76 @@
-<?php 
+<?php
 @session_start();
 require_once('../../sistema/conexao.php');
 
 $id_empresa = @$_SESSION['empresa'];
-if($id_empresa == ""){
-	echo 'Sem Sessão da Empresa, acesse novamente!';
-	exit();
+$sessao = @$_SESSION['sessao_usuario'];
+if ($id_empresa == '' || $sessao == '') {
+    echo 'Sem Sessão da Empresa, acesse novamente!';
+    exit();
 }
 require_once("../../sistema/painel/buscar_config.php");
 
-$id = $_POST['id'];
-$quantidade = $_POST['quantidade'];
-$sessao = @$_SESSION['sessao_usuario'];
+$id = (int) (@$_POST['id'] ?? 0);
+$id_sabor = (int) (@$_POST['id_sabor'] ?? 0);
+$quantidade_recebida = (string) (@$_POST['quantidade'] ?? '0');
+$quantidade = ($quantidade_recebida === 'Sim') ? 1 : (($quantidade_recebida === 'Não') ? 0 : (int)$quantidade_recebida);
+$ids_selecionados = array_filter(array_map('intval', explode('-', trim((string) (@$_POST['ids'] ?? ''), '-'))));
 
-
-
-
-if($quantidade == 0){
-	$pdo->query("DELETE FROM temp WHERE id_item = '$id' and sessao = '$sessao' and tabela = 'adicionais' and carrinho = '0' and categoria = 'Sim' and empresa = '$id_empresa' "); 
-	echo 'Alterado com Sucesso';
-	exit();
+if (!empty($_POST['limpar_sabor']) && $id_sabor > 0) {
+    $stmt = $pdo->prepare("DELETE FROM temp WHERE id_sabor = ? AND sessao = ? AND tabela = 'adicionais' AND carrinho = '0' AND empresa = ?");
+    $stmt->execute([$id_sabor, $sessao, $id_empresa]);
+    echo 'Alterado com Sucesso';
+    exit();
 }
 
-$query = $pdo->query("SELECT * FROM adicionais_cat where id = '$id'");
-$res = $query->fetchAll(PDO::FETCH_ASSOC);
-$valor_adc = $res[0]['valor'];
-
-$query = $pdo->query("SELECT * FROM temp where id_item = '$id' and sessao = '$sessao' and tabela = 'adicionais' and carrinho = '0' and empresa = '$id_empresa' ");
-$res = $query->fetchAll(PDO::FETCH_ASSOC);
-$total_reg = @count($res);
-if($total_reg > 0){
-	$pdo->query("UPDATE temp SET quantidade = '$quantidade' WHERE id_item = '$id' and sessao = '$sessao' and tabela = 'adicionais' and carrinho = '0' and categoria = 'Sim'"); 
-}else{
-	$pdo->query("INSERT INTO temp SET sessao = '$sessao', tabela = 'adicionais', id_item = '$id', carrinho = '0', data = curDate(), categoria = 'Sim', quantidade = '1', valor_item = '$valor_adc', empresa = '$id_empresa' "); 
+if ($id <= 0) {
+    echo 'Adicional inválido';
+    exit();
 }
 
+// Quando há vínculo com sabor, ele precisa estar selecionado e pertencer à categoria do adicional.
+if ($id_sabor > 0) {
+    if (!in_array($id_sabor, $ids_selecionados, true)) {
+        echo 'Selecione o sabor antes dos adicionais';
+        exit();
+    }
+    $stmt = $pdo->prepare("SELECT p.id, p.categoria FROM produtos p WHERE p.id = ? LIMIT 1");
+    $stmt->execute([$id_sabor]);
+    $produto = $stmt->fetch(PDO::FETCH_ASSOC);
+    $stmt = $pdo->prepare("SELECT id, valor, categoria FROM adicionais_cat WHERE id = ? AND ativo = 'Sim' LIMIT 1");
+    $stmt->execute([$id]);
+    $adicional = $stmt->fetch(PDO::FETCH_ASSOC);
+    if (!$produto || !$adicional || (int)$produto['categoria'] !== (int)$adicional['categoria']) {
+        echo 'Adicional não pertence a este sabor';
+        exit();
+    }
+} else {
+    $stmt = $pdo->prepare("SELECT id, valor FROM adicionais_cat WHERE id = ? AND ativo = 'Sim' LIMIT 1");
+    $stmt->execute([$id]);
+    $adicional = $stmt->fetch(PDO::FETCH_ASSOC);
+    if (!$adicional) {
+        echo 'Adicional não encontrado';
+        exit();
+    }
+}
 
+if ($quantidade <= 0) {
+    $stmt = $pdo->prepare("DELETE FROM temp WHERE id_item = ? AND id_sabor = ? AND sessao = ? AND tabela = 'adicionais' AND carrinho = '0' AND categoria = 'Sim' AND empresa = ?");
+    $stmt->execute([$id, $id_sabor, $sessao, $id_empresa]);
+    echo 'Alterado com Sucesso';
+    exit();
+}
+
+$stmt = $pdo->prepare("SELECT id FROM temp WHERE id_item = ? AND id_sabor = ? AND sessao = ? AND tabela = 'adicionais' AND carrinho = '0' AND empresa = ? LIMIT 1");
+$stmt->execute([$id, $id_sabor, $sessao, $id_empresa]);
+$existente = $stmt->fetch(PDO::FETCH_ASSOC);
+
+if ($existente) {
+    $stmt = $pdo->prepare("UPDATE temp SET quantidade = ?, valor_item = ? WHERE id = ? AND empresa = ?");
+    $stmt->execute([$quantidade, $adicional['valor'], $existente['id'], $id_empresa]);
+} else {
+    $stmt = $pdo->prepare("INSERT INTO temp SET sessao = ?, tabela = 'adicionais', id_item = ?, id_sabor = ?, carrinho = '0', data = curDate(), categoria = 'Sim', quantidade = ?, valor_item = ?, empresa = ?");
+    $stmt->execute([$sessao, $id, $id_sabor, $quantidade, $adicional['valor'], $id_empresa]);
+}
 
 echo 'Alterado com Sucesso';

@@ -1961,6 +1961,25 @@ if($linhas == 0){
 					<hr>
 
 					<div class="row mb-3">
+						<div class="col-md-5">
+							<label>QR Code Pix fixo (PNG, JPG ou WEBP)</label>
+							<input class="form-control" type="file" name="qrcode-pix" id="qrcode-pix" accept="image/png,image/jpeg,image/webp">
+							<small class="text-muted">Envie a imagem do QR Code Pix da sua empresa. Ela será exibida quando o cliente escolher Pix.</small>
+						</div>
+						<div class="col-md-3">
+							<?php
+							$arquivos_qrcode_pix = glob(__DIR__ . '/../img/qrcode_pix_' . (int)$id_empresa . '.*');
+							if (!empty($arquivos_qrcode_pix)) {
+								$preview_qrcode_pix = '../img/' . basename($arquivos_qrcode_pix[0]);
+								echo '<img src="' . htmlspecialchars($preview_qrcode_pix, ENT_QUOTES, 'UTF-8') . '?v=' . filemtime($arquivos_qrcode_pix[0]) . '" style="max-width:140px;max-height:140px;object-fit:contain" alt="QR Code Pix cadastrado">';
+							} else {
+								echo '<small class="text-muted">Nenhum QR Code cadastrado.</small>';
+							}
+							?>
+						</div>
+					</div>
+
+					<div class="row mb-3">
 						<div class="col-md-4">
 							<div class="form-group">
 								<label>Logo (*PNG)<small>(Logo Escura)</small></label>

@@ -1,6 +1,47 @@
 <?php 
 @session_start();
 require_once('../../sistema/conexao.php');
+
+// Ícone automático para os adicionais exibidos nesta lista carregada via AJAX.
+function iconeAdicionalAjax($nome) {
+    $nome_normalizado = mb_strtolower(trim((string) $nome), 'UTF-8');
+    $nome_normalizado = strtr($nome_normalizado, [
+        'á' => 'a', 'à' => 'a', 'ã' => 'a', 'â' => 'a', 'ä' => 'a',
+        'é' => 'e', 'è' => 'e', 'ê' => 'e', 'ë' => 'e',
+        'í' => 'i', 'ì' => 'i', 'î' => 'i', 'ï' => 'i',
+        'ó' => 'o', 'ò' => 'o', 'õ' => 'o', 'ô' => 'o', 'ö' => 'o',
+        'ú' => 'u', 'ù' => 'u', 'û' => 'u', 'ü' => 'u', 'ç' => 'c'
+    ]);
+
+
+    if (strpos($nome_normalizado, 'cebola') !== false) return '🧅';
+    if (strpos($nome_normalizado, 'cenoura') !== false) return '🥕';
+    if (strpos($nome_normalizado, 'beterraba') !== false) return '🫜';
+    if (strpos($nome_normalizado, 'uva passa') !== false || strpos($nome_normalizado, 'uva-passa') !== false) return '🍇';
+    if (strpos($nome_normalizado, 'oregano') !== false) return '🌿';
+    if (strpos($nome_normalizado, 'manteiga') !== false) return '🧈';
+    if (strpos($nome_normalizado, 'camarao') !== false) return '🍤';
+    if (strpos($nome_normalizado, 'frango') !== false) return '🍗';
+    if (strpos($nome_normalizado, 'queijo coalho') !== false || strpos($nome_normalizado, 'queijo ralado') !== false || strpos($nome_normalizado, 'queijo') !== false) return '🧀';
+        if (strpos($nome_normalizado, 'tomate') !== false) return '🍅';
+    if (strpos($nome_normalizado, 'passas') !== false) return '🍇';
+    if (strpos($nome_normalizado, 'cheddar') !== false || strpos($nome_normalizado, 'catupiry') !== false) return '🧀';
+    if (strpos($nome_normalizado, 'barbecue') !== false || strpos($nome_normalizado, 'barbecure') !== false || strpos($nome_normalizado, 'barbecue') !== false) return '🍖';
+    if (strpos($nome_normalizado, 'charque') !== false || strpos($nome_normalizado, 'carne de sol') !== false) return '🥩';
+    if (strpos($nome_normalizado, 'atum') !== false) return '🐟';
+    if (strpos($nome_normalizado, 'dueto') !== false || (strpos($nome_normalizado, 'milho') !== false && strpos($nome_normalizado, 'ervilha') !== false)) return '🌽';
+if (strpos($nome_normalizado, 'mel') !== false) return '🍯';
+    if (strpos($nome_normalizado, 'banana') !== false) return '🍌';
+    if (strpos($nome_normalizado, 'farinha lactea') !== false) return '🥛';
+    if (strpos($nome_normalizado, 'acucar') !== false) return '🧂';
+    if (strpos($nome_normalizado, 'canela') !== false) return '🍂';
+    if (strpos($nome_normalizado, 'chocolate') !== false) return '🍫';
+    if (strpos($nome_normalizado, 'morango') !== false) return '🍓';
+    if (strpos($nome_normalizado, 'coco') !== false) return '🥥';
+    if (strpos($nome_normalizado, 'leite') !== false) return '🥛';
+    if (strpos($nome_normalizado, 'doce') !== false) return '🍬';
+    return '🥄';
+}
 $id = $_POST['id'];
 $valor_item = $_POST['valor'];
 $quant = $_POST['quant'];
@@ -27,6 +68,7 @@ HTML;
 		$nome_adc = $res[$i]['nome'];
 		$valoradc = $res[$i]['valor'];
 		$valoradcF = number_format($valoradc, 2, ',', '.');
+        $icone_adc = iconeAdicionalAjax($nome_adc);
 
 		$query2 =$pdo->query("SELECT * FROM temp where sessao = '$sessao' and id_item = '$id' and tabela = 'adicionais' and carrinho = '0'");
 		$res2 = $query2->fetchAll(PDO::FETCH_ASSOC);
@@ -49,7 +91,7 @@ echo <<<HTML
 
 		<a href="#" onclick="adicionar('{$id}', '{$acao}')" class="link-neutro" title="{$titulo_link}">
 		<li class="list-group-item">		    	
-		{$nome_adc} <span class="valor-item">(R$ {$valoradcF})</span>
+		<span style="display:inline-block;width:27px;margin-right:5px;font-size:18px;vertical-align:middle">{$icone_adc}</span>{$nome_adc} <span class="valor-item">(R$ {$valoradcF})</span>
 		<i class="bi {$icone} direita"></i>			
 		</li>
 		</a>

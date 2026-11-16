@@ -2,6 +2,47 @@
 @session_start();
 require_once("cabecalho.php");
 
+// Ícone automático para os adicionais da categoria.
+function iconeAdicionalPizza($nome) {
+    $nome_normalizado = mb_strtolower(trim((string) $nome), 'UTF-8');
+    $nome_normalizado = strtr($nome_normalizado, [
+        'á' => 'a', 'à' => 'a', 'ã' => 'a', 'â' => 'a', 'ä' => 'a',
+        'é' => 'e', 'è' => 'e', 'ê' => 'e', 'ë' => 'e',
+        'í' => 'i', 'ì' => 'i', 'î' => 'i', 'ï' => 'i',
+        'ó' => 'o', 'ò' => 'o', 'õ' => 'o', 'ô' => 'o', 'ö' => 'o',
+        'ú' => 'u', 'ù' => 'u', 'û' => 'u', 'ü' => 'u', 'ç' => 'c'
+    ]);
+
+
+    if (strpos($nome_normalizado, 'cebola') !== false) return '🧅';
+    if (strpos($nome_normalizado, 'cenoura') !== false) return '🥕';
+    if (strpos($nome_normalizado, 'beterraba') !== false) return '🫜';
+    if (strpos($nome_normalizado, 'uva passa') !== false || strpos($nome_normalizado, 'uva-passa') !== false) return '🍇';
+    if (strpos($nome_normalizado, 'oregano') !== false) return '🌿';
+    if (strpos($nome_normalizado, 'manteiga') !== false) return '🧈';
+    if (strpos($nome_normalizado, 'camarao') !== false) return '🍤';
+    if (strpos($nome_normalizado, 'frango') !== false) return '🍗';
+    if (strpos($nome_normalizado, 'queijo coalho') !== false || strpos($nome_normalizado, 'queijo ralado') !== false || strpos($nome_normalizado, 'queijo') !== false) return '🧀';
+        if (strpos($nome_normalizado, 'tomate') !== false) return '🍅';
+    if (strpos($nome_normalizado, 'passas') !== false) return '🍇';
+    if (strpos($nome_normalizado, 'cheddar') !== false || strpos($nome_normalizado, 'catupiry') !== false) return '🧀';
+    if (strpos($nome_normalizado, 'barbecue') !== false || strpos($nome_normalizado, 'barbecure') !== false || strpos($nome_normalizado, 'barbecue') !== false) return '🍖';
+    if (strpos($nome_normalizado, 'charque') !== false || strpos($nome_normalizado, 'carne de sol') !== false) return '🥩';
+    if (strpos($nome_normalizado, 'atum') !== false) return '🐟';
+    if (strpos($nome_normalizado, 'dueto') !== false || (strpos($nome_normalizado, 'milho') !== false && strpos($nome_normalizado, 'ervilha') !== false)) return '🌽';
+if (strpos($nome_normalizado, 'mel') !== false) return '🍯';
+    if (strpos($nome_normalizado, 'banana') !== false) return '🍌';
+    if (strpos($nome_normalizado, 'farinha lactea') !== false) return '🥛';
+    if (strpos($nome_normalizado, 'acucar') !== false) return '🧂';
+    if (strpos($nome_normalizado, 'canela') !== false) return '🍂';
+    if (strpos($nome_normalizado, 'chocolate') !== false) return '🍫';
+    if (strpos($nome_normalizado, 'morango') !== false) return '🍓';
+    if (strpos($nome_normalizado, 'coco') !== false) return '🥥';
+    if (strpos($nome_normalizado, 'leite') !== false) return '🥛';
+    if (strpos($nome_normalizado, 'doce') !== false) return '🍬';
+    return '🥄';
+}
+
 $url = $_GET['url'];
 $id_usuario = @$_SESSION['id'];
 $pedido_balcao = @$_SESSION['pedido_balcao'];
@@ -38,6 +79,7 @@ $res = $query->fetchAll(PDO::FETCH_ASSOC);
 $total_reg = @count($res);
 if ($total_reg > 0) {
 	$nome = $res[0]['nome'];
+	$eh_tapiocas_doces = (strtolower(trim($nome)) === 'tapiocas doces');
 	$descricao = $res[0]['descricao'];
 	$id = $res[0]['id'];
 	$mais_sabores = $res[0]['mais_sabores'];
@@ -334,9 +376,16 @@ if ($nome_mesa == '' and $pedido_balcao == "") {
 				$url = $res[$i]['url'];
 				$estoque = $res[$i]['estoque'];
 				$tem_estoque = $res[$i]['tem_estoque'];
-				$valor = $res[$i]['valor_venda'];
-				$valorF = number_format($valor, 2, ',', '.');
+				$valor = (float) $res[$i]['valor_venda'];
+				$valor_promocional = (float) $res[$i]['val_promocional'];
 				$promocao = $res[$i]['promocao'];
+				$fator_promocao = 1;
+				if ($promocao == 'Sim' && $valor_promocional > 0 && $valor > 0) {
+					$fator_promocao = $valor_promocional / $valor;
+				}
+				$valorF = number_format(($promocao == 'Sim' && $valor_promocional > 0) ? $valor_promocional : $valor, 2, ',', '.');
+				$valorOriginalF = number_format($valor, 2, ',', '.');
+				$tem_promocao_valida = ($promocao == 'Sim' && $valor_promocional > 0 && $valor_promocional < $valor);
 
 				if ($tem_estoque == 'Sim' and $estoque <= 0) {
 					$mostrar = '';
@@ -392,18 +441,32 @@ if ($nome_mesa == '' and $pedido_balcao == "") {
 											foreach ($res2[$i2] as $key => $value) {
 											}
 											$sigla = $res2[$i2]['sigla'];
-											$valorvar = $res2[$i2]['valor'];
+											$valorvar_original = (float) $res2[$i2]['valor'];
+											$valorvar = $valorvar_original;
+											if ($fator_promocao < 1) {
+												$valorvar = $valorvar_original * $fator_promocao;
+											}
 											$valorvarF = number_format($valorvar, 2, ',', '.');
+											$valorvarOriginalF = number_format($valorvar_original, 2, ',', '.');
 
-											echo '<span style="font-size:10px">(' . $sigla . ') R$ ' . $valorvarF;
+											echo '<span style="font-size:10px">(' . $sigla . ') ';
+											if ($fator_promocao < 1) {
+												echo '<del style="color:#888; font-weight:normal">R$ ' . $valorvarOriginalF . '</del> <strong style="color:#c62828">R$ ' . $valorvarF . '</strong>';
+											} else {
+												echo 'R$ ' . $valorvarF;
+											}
 											if ($i2 < $total_reg2 - 1) {
 												echo ' / ';
 											}
 											echo '</span>';
 										}
 									} else {
-										echo 'R$ ' . $valorF;
-									}
+										if ($tem_promocao_valida) {
+											echo '<del style="color:#888; font-size:11px; font-weight:normal">R$ ' . $valorOriginalF . '</del> <strong style="color:#c62828">R$ ' . $valorF . '</strong>';
+										} else {
+											echo 'R$ ' . $valorF;
+										}
+					}
 									?>
 
 								</span>
@@ -423,6 +486,31 @@ if ($nome_mesa == '' and $pedido_balcao == "") {
 
 					</div>
 
+					<?php if (!empty($eh_tapiocas_doces)) {
+						$query_adc_sabor = $pdo->query("SELECT * FROM adicionais_cat where categoria = '$id' and ativo = 'Sim' order by nome asc");
+						$adicionais_sabor = $query_adc_sabor->fetchAll(PDO::FETCH_ASSOC);
+						if (count($adicionais_sabor) > 0) { ?>
+							<div class="mt-2" style="padding-left:8px" onclick="event.stopPropagation();">
+								<button type="button" class="btn btn-sm btn-outline-success" onclick="toggleAdicionaisSabor('<?php echo $id_produto ?>')">＋ Adicionais deste sabor</button>
+								<div id="adicionais-sabor-<?php echo $id_produto ?>" style="display:none; margin-top:8px; padding:10px; background:#fff8e8; border-radius:8px;">
+									<?php foreach ($adicionais_sabor as $adc_sabor) {
+										$id_adc_sabor = (int) $adc_sabor['id'];
+										$nome_adc_sabor = htmlspecialchars($adc_sabor['nome'], ENT_QUOTES, 'UTF-8');
+										$valor_adc_sabor = number_format((float) $adc_sabor['valor'], 2, ',', '.'); ?>
+										<div class="d-flex justify-content-between align-items-center" style="padding:5px 0; border-bottom:1px solid #eee;">
+											<small><?php echo iconeAdicionalPizza($nome_adc_sabor) ?> <?php echo $nome_adc_sabor ?> <span class="text-success">(R$ <?php echo $valor_adc_sabor ?>)</span></small>
+											<div class="d-flex align-items-center">
+												<button type="button" class="btn btn-sm btn-link text-danger p-1" onclick="dimAdicionalSabor('<?php echo $id_adc_sabor ?>','<?php echo $id_produto ?>')">−</button>
+												<b id="qtd-adc-<?php echo $id_produto ?>-<?php echo $id_adc_sabor ?>" style="min-width:18px;text-align:center">0</b>
+												<button type="button" class="btn btn-sm btn-link text-success p-1" onclick="aumAdicionalSabor('<?php echo $id_adc_sabor ?>','<?php echo $id_produto ?>')">＋</button>
+											</div>
+										</div>
+									<?php } ?>
+								</div>
+							</div>
+						<?php }
+					} ?>
+
 				</li>
 
 
@@ -436,7 +524,7 @@ if ($nome_mesa == '' and $pedido_balcao == "") {
 
 
 
-		<?php
+		<?php if (empty($eh_tapiocas_doces)) {
 		$query = $pdo->query("SELECT * FROM adicionais_cat where categoria = '$id' and ativo = 'Sim'");
 		$res = $query->fetchAll(PDO::FETCH_ASSOC);
 		$total_reg = @count($res);
@@ -458,7 +546,7 @@ if ($nome_mesa == '' and $pedido_balcao == "") {
 
 
 					<li class="list-group-item d-flex  ">
-						<span style="font-size: 12px"><?php echo $nome ?> (R$ <?php echo $valorF ?>) </span>
+						<span style="font-size: 12px"><?php echo iconeAdicionalPizza($nome) ?> <?php echo $nome ?> (R$ <?php echo $valorF ?>) </span>
 
 						<span class="direita" style="font-size:14px">
 
@@ -482,6 +570,7 @@ if ($nome_mesa == '' and $pedido_balcao == "") {
 			} ?>
 
 			</div>
+			<?php } ?>
 
 
 			<div class="destaque-qtd">
@@ -515,7 +604,14 @@ if ($nome_mesa == '' and $pedido_balcao == "") {
 
 
 <script type="text/javascript">
+	var requisicoesAdicionaisSabor = [];
 	function addCarrinho() {
+		if (requisicoesAdicionaisSabor.length > 0) {
+			var pendentes = requisicoesAdicionaisSabor.slice();
+			requisicoesAdicionaisSabor = [];
+			$.when.apply($, pendentes).always(function(){ addCarrinho(); });
+			return;
+		}
 		var variacao = $('#variacao_sel').val();
 		var borda = $('#borda_sel').val();
 		var mesa = "<?= $id_ab_mesa ?>";
@@ -593,19 +689,43 @@ if ($nome_mesa == '' and $pedido_balcao == "") {
 
 
 	function selecionar(id) {
-
 		var ids = $('#ids').val();
-
 		if ($('#seletor-' + id).is(":checked") == true) {
-			var novo_id = ids + id + '-';
-			$('#ids').val(novo_id);
+			if (ids.indexOf(id + '-') === -1) $('#ids').val(ids + id + '-');
 		} else {
-			var retirar = ids.replace(id + '-', '');
-			$('#ids').val(retirar);
-
+			$('#ids').val(ids.replace(id + '-', ''));
+			if (typeof ehTapiocasDoces !== 'undefined' && ehTapiocasDoces) {
+				$.post('js/ajax/adicionais.php', {id_sabor:id, limpar_sabor:1, ids:$('#ids').val()});
+				$('#adicionais-sabor-' + id).hide();
+				$('[id^="qtd-adc-' + id + '-"]').text('0');
+			}
 		}
+	}
 
-
+	var ehTapiocasDoces = <?php echo !empty($eh_tapiocas_doces) ? 'true' : 'false'; ?>;
+	function toggleAdicionaisSabor(id) {
+		if (!$('#seletor-' + id).is(':checked')) {
+			alert('Selecione este sabor primeiro para escolher os adicionais.');
+			return;
+		}
+		$('#adicionais-sabor-' + id).stop(true, true).slideToggle(150);
+	}
+	function atualizarAdicionalSabor(idAdicional, idSabor, quantidade) {
+		if (!$('#seletor-' + idSabor).is(':checked')) {
+			alert('Selecione este sabor primeiro.');
+			return;
+		}
+		$('#qtd-adc-' + idSabor + '-' + idAdicional).text(quantidade);
+		var requisicao = $.ajax({url:'js/ajax/adicionais.php', method:'POST', dataType:'text', data:{id:idAdicional, quantidade:quantidade, id_sabor:idSabor, ids:$('#ids').val()}});
+		requisicoesAdicionaisSabor.push(requisicao);
+	}
+	function aumAdicionalSabor(idAdicional, idSabor) {
+		var atual = parseInt($('#qtd-adc-' + idSabor + '-' + idAdicional).text(), 10) || 0;
+		atualizarAdicionalSabor(idAdicional, idSabor, atual + 1);
+	}
+	function dimAdicionalSabor(idAdicional, idSabor) {
+		var atual = parseInt($('#qtd-adc-' + idSabor + '-' + idAdicional).text(), 10) || 0;
+		if (atual > 0) atualizarAdicionalSabor(idAdicional, idSabor, atual - 1);
 	}
 
 

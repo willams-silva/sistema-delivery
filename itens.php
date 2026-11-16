@@ -46,9 +46,22 @@ if (@$_SESSION['nome_mesa'] != '') {
 
 
 			<?php
-			$query = $pdo->query("SELECT * FROM produtos where categoria = '$id' and ativo = 'Sim' order by valor_venda asc");
+			$query = $pdo->query("SELECT * FROM produtos where categoria = '$id' and ativo = 'Sim' and empresa = '$id_empresa' order by valor_venda asc");
 			$res = $query->fetchAll(PDO::FETCH_ASSOC);
-			$total_reg = @count($res);
+
+			// Na vitrine do delivery, considera somente produtos disponíveis para delivery.
+			// Em pedidos de mesa, mantém também os produtos exclusivos do atendimento local.
+			if (@$_SESSION['nome_mesa'] == "") {
+				$res_filtrados = array();
+				foreach ($res as $produto_categoria) {
+					if ($produto_categoria['delivery'] != 'Não') {
+						$res_filtrados[] = $produto_categoria;
+					}
+				}
+				$res = $res_filtrados;
+			}
+
+			$total_reg = count($res);
 			if ($total_reg > 0) {
 				for ($i = 0; $i < $total_reg; $i++) {
 					foreach ($res[$i] as $key => $value) {
@@ -135,6 +148,10 @@ if (@$_SESSION['nome_mesa'] != '') {
 											$res2 = $query2->fetchAll(PDO::FETCH_ASSOC);
 											$total_reg2 = @count($res2);
 											if ($total_reg2 > 0) {
+												// Exibe o preço promocional do produto mesmo quando há variações.
+												if ($promocao == 'Sim' && (float)$val_promocional > 0) {
+													echo '<span style="display:block; color:#198754; font-weight:600">R$ ' . $val_promocionalF . ' <del style="color:red; font-weight:400">R$ ' . $valorF . '</del></span>';
+												}
 												$id_grade = $res2[0]['id'];
 
 												$query3 = $pdo->query("SELECT * FROM itens_grade where grade = '$id_grade' and ativo = 'Sim' order by id asc");
@@ -157,7 +174,7 @@ if (@$_SESSION['nome_mesa'] != '') {
 											} else {
 												if ($valor > 0) {
 
-													if($val_promocional != 0 and $promocao != 'Não'){
+													if($promocao == 'Sim' && (float)$val_promocional > 0){
 														echo 'R$ ' . $val_promocionalF;
 														echo '  <del style="color: red">R$ ' . $valorF . ' </del';
 
@@ -189,7 +206,18 @@ if (@$_SESSION['nome_mesa'] != '') {
 					</a>
 
 			<?php }
-			} ?>
+			} else { ?>
+				<li class="list-group-item text-center py-4 mb-2" style="border:1px solid #e9ecef; border-radius:10px; background:#f8f9fa;">
+					<div id="aviso-categoria-vazia" style="position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:100000;display:flex;align-items:center;justify-content:center;padding:20px;">
+						<div style="width:100%;max-width:360px;background:#fff;border-radius:16px;padding:28px 22px;text-align:center;box-shadow:0 12px 40px rgba(0,0,0,.25);">
+							<div style="font-size:38px;color:#f0a500;margin-bottom:8px;"><i class="bi bi-basket"></i></div>
+							<h5 style="font-weight:700;color:#333;">Categoria sem produtos</h5>
+							<p style="font-size:14px;color:#666;">Ainda não temos produtos disponíveis nesta categoria. Confira novamente em breve!</p>
+							<a href="site/<?php echo $url_site ?>" class="btn btn-warning">Voltar ao cardápio</a>
+						</div>
+					</div>
+				</li>
+			<?php } ?>
 
 
 

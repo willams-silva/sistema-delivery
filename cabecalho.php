@@ -11,6 +11,19 @@ $id_empresa = @$res2[0]['empresa'];
 $_SESSION['empresa'] = $id_empresa;
 require_once("sistema/painel/buscar_config.php");
 
+// Garante que os contatos exibidos na vitrine sejam sempre os da loja acessada,
+// sem depender de variáveis globais previamente carregadas pelo cadastro SaaS.
+$stmt_contatos_loja = $pdo->prepare("SELECT telefone, instagram FROM config WHERE url_site = :url_site LIMIT 1");
+$stmt_contatos_loja->execute([':url_site' => $_SESSION['url_site']]);
+$config_contatos_loja = $stmt_contatos_loja->fetch(PDO::FETCH_ASSOC);
+
+if ($config_contatos_loja) {
+	$telefone_sistema = $config_contatos_loja['telefone'] ?? '';
+	$whatsapp_sistema = $telefone_sistema;
+	$tel_whats = '55' . preg_replace('/\\D+/', '', $telefone_sistema);
+	$instagram_sistema = $config_contatos_loja['instagram'] ?? '';
+}
+
 
 ?>
 <!DOCTYPE html>

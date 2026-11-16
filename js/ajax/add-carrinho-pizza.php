@@ -45,6 +45,9 @@ for($i=0; $i<$total_ids; $i++){
 		$nome_p = $res[0]['nome'];
 		$categoria = $res[0]['categoria'];
 		$preparado = $res[0]['preparado'];
+		$valor_base_produto = (float) $res[0]['valor_venda'];
+		$valor_promocional_produto = (float) $res[0]['val_promocional'];
+		$promocao_produto = $res[0]['promocao'];
 
 
 		if($preparado != 'Não'){
@@ -69,7 +72,10 @@ for($i=0; $i<$total_ids; $i++){
 		$query = $pdo->query("SELECT * FROM variacoes where produto = '$id' and sigla = '$sigla'");
 		$res = $query->fetchAll(PDO::FETCH_ASSOC);
 		if(@count($res) > 0){	
-			$valor_p = $res[0]['valor'];	
+			$valor_p = (float) $res[0]['valor'];
+			if ($promocao_produto == 'Sim' && $valor_promocional_produto > 0 && $valor_base_produto > 0) {
+				$valor_p = $valor_p * ($valor_promocional_produto / $valor_base_produto);
+			}
 			$id_variacao = $res[0]['id'];			
 		}else{
 			$valor_p = 0;
@@ -95,27 +101,39 @@ if($mais_sabores == 'Média'){
 }
 
 
-//calcular os adicionais
+// Identificar se a categoria usa adicionais individuais por sabor.
+$query_categoria = $pdo->prepare("SELECT nome FROM categorias WHERE id = ? AND empresa = ? LIMIT 1");
+$query_categoria->execute([(int)$categoria, $id_empresa]);
+$dados_categoria = $query_categoria->fetch(PDO::FETCH_ASSOC);
+$eh_tapiocas_doces = $dados_categoria && strtolower(trim($dados_categoria['nome'])) === 'tapiocas doces';
+
+// Somar somente os adicionais vinculados aos sabores selecionados.
+// Nas demais categorias, manter o comportamento antigo (id_sabor = 0).
 $total_adicionais = 0;
-$query =$pdo->query("SELECT * FROM temp where carrinho = '0' and sessao = '$sessao' and tabela = 'adicionais' and empresa = '$id_empresa' ");
-$res = $query->fetchAll(PDO::FETCH_ASSOC);
-$total_reg = @count($res);
-if($total_reg > 0){
-	for($i=0; $i < $total_reg; $i++){
-		foreach ($res[$i] as $key => $value){}
-			$id_temp = $res[$i]['id'];				
-			$id_item = $res[$i]['id_item'];	
-			$quantidade_temp = $res[$i]['quantidade'];	
-
-			$query2 =$pdo->query("SELECT * FROM adicionais_cat where id = '$id_item'");
-			$res2 = $query2->fetchAll(PDO::FETCH_ASSOC);
-			$total_reg2 = @count($res2);
-			$nome_adc = $res2[0]['nome'];
-			$valor_adc = $res2[0]['valor'] * $quantidade_temp;	
-			$total_adicionais += $valor_adc;
+if ($eh_tapiocas_doces) {
+    $placeholders = implode(',', array_fill(0, count($separar), '?'));
+    $sql_adc = "SELECT id_item, quantidade, valor_item FROM temp
+                WHERE carrinho = '0' AND sessao = ? AND tabela = 'adicionais'
+                AND empresa = ? AND id_sabor IN ($placeholders)";
+    $params_adc = array_merge([$sessao, $id_empresa], array_map('intval', $separar));
+} else {
+    $sql_adc = "SELECT id_item, quantidade, valor_item FROM temp
+                WHERE carrinho = '0' AND sessao = ? AND tabela = 'adicionais'
+                AND empresa = ? AND id_sabor = 0";
+    $params_adc = [$sessao, $id_empresa];
 }
+$stmt_adc = $pdo->prepare($sql_adc);
+$stmt_adc->execute($params_adc);
+$adicionais_selecionados = $stmt_adc->fetchAll(PDO::FETCH_ASSOC);
+foreach ($adicionais_selecionados as $adc) {
+    $valor_unitario_adc = (float)$adc['valor_item'];
+    if ($valor_unitario_adc <= 0) {
+        $stmt_valor = $pdo->prepare("SELECT valor FROM adicionais_cat WHERE id = ? LIMIT 1");
+        $stmt_valor->execute([(int)$adc['id_item']]);
+        $valor_unitario_adc = (float)$stmt_valor->fetchColumn();
+    }
+    $total_adicionais += $valor_unitario_adc * (int)$adc['quantidade'];
 }
-
 $valor_produto_final += $total_adicionais;
 
 //pegar o valor da borda
@@ -162,5 +180,12 @@ echo 'Inserido com Sucesso';
 
 
 //limpar os ingredientes e adicionais
-$pdo->query("UPDATE temp SET carrinho = '$id_carrinho' where sessao = '$sessao' and carrinho = '0'"); 
+if ($eh_tapiocas_doces) {
+    $placeholders_temp = implode(',', array_fill(0, count($separar), '?'));
+    $stmt_temp = $pdo->prepare("UPDATE temp SET carrinho = ? WHERE sessao = ? AND carrinho = '0' AND empresa = ? AND (tabela != 'adicionais' OR id_sabor IN ($placeholders_temp))");
+    $stmt_temp->execute(array_merge([$id_carrinho, $sessao, $id_empresa], array_map('intval', $separar)));
+} else {
+    $stmt_temp = $pdo->prepare("UPDATE temp SET carrinho = ? WHERE sessao = ? AND carrinho = '0' AND empresa = ?");
+    $stmt_temp->execute([$id_carrinho, $sessao, $id_empresa]);
+} 
 

@@ -2,7 +2,18 @@
 @session_start();
 $url_site = $_GET['url'];
 $_SESSION['url_site'] = $url_site;
+// Identifica que esta requisição é a página pública de uma loja específica.
+$configurar_config_site = true;
 require_once("cabecalho.php");
+
+ // Verifica se cada seção possui produtos disponíveis para delivery.
+$query_disp = $pdo->query("SELECT COUNT(*) FROM categorias c WHERE c.ativo = 'Sim' AND c.delivery = 'Sim' AND c.empresa = '$id_empresa' AND EXISTS (SELECT 1 FROM produtos p WHERE p.categoria = c.id AND p.ativo = 'Sim' AND p.delivery = 'Sim' AND p.empresa = '$id_empresa' AND (p.tem_estoque = 'Não' OR p.estoque > 0))");
+$qtd_categorias_disponiveis = (int) $query_disp->fetchColumn();
+$query_disp = $pdo->query("SELECT COUNT(*) FROM produtos WHERE ativo = 'Sim' AND combo = 'Sim' AND delivery = 'Sim' AND empresa = '$id_empresa' AND (tem_estoque = 'Não' OR estoque > 0)");
+$qtd_combos_disponiveis = (int) $query_disp->fetchColumn();
+$query_disp = $pdo->query("SELECT COUNT(*) FROM produtos WHERE ativo = 'Sim' AND promocao = 'Sim' AND delivery = 'Sim' AND empresa = '$id_empresa' AND (tem_estoque = 'Não' OR estoque > 0)");
+$qtd_promocoes_disponiveis = (int) $query_disp->fetchColumn();
+
 
 
 
@@ -189,6 +200,30 @@ if($id_edicao == ""){
     .ocultar_mobile_menor{
       display:none;
     }
+  }
+
+  /* Ícones temáticos exclusivos da loja Rainha das Tapiocas */
+  .icone-tapioca-personalizado,
+  .icone-combo-personalizado,
+  .icone-promocao-personalizado {
+    width: 50px;
+    height: 50px;
+    min-width: 50px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 12px;
+    background: #fff3df;
+    color: #a85b24;
+    font-size: 29px;
+  }
+  .icone-combo-personalizado {
+    background: #fce9d7;
+    color: #9b4b20;
+  }
+  .icone-promocao-personalizado {
+    background: #f9e5df;
+    color: #a9432b;
   }
 </style>
 
@@ -403,8 +438,8 @@ if ($id_mesa == "" and $sessão_balcao == "") {
 
         <ul class="nav nav-pills d-inline-flex justify-content-center border-bottom mb-5" style="width:100%;">
           <li class="nav-item" style="width:34%;">
-            <a class="d-flex align-items-center text-start mx-3 ms-0 pb-3 " href="#categoria">
-              <img class="icone_mobile" src="img/acai.png" width="50px" height="50px">
+            <a class="d-flex align-items-center text-start mx-3 ms-0 pb-3 " href="site/<?php echo $url_site ?>#categoria" onclick="return verificarDisponibilidade(event, 'Categorias', <?php echo $qtd_categorias_disponiveis ?>)">
+              <?php if ($url_site == 'rainhadastapiocas') { ?><span class="icone_mobile icone-tapioca-personalizado" aria-label="Tapioca">🫓</span><?php } else { ?><img class="icone_mobile" src="img/acai.png" width="50px" height="50px"><?php } ?>
               <div class="ps-1">
                 <small class="text-body titulo_icones">Categorias</small>
                 <h6 class="mt-n1 mb-0 subtitulo_icones" style="font-size: 12px">Produtos</h6>
@@ -412,8 +447,8 @@ if ($id_mesa == "" and $sessão_balcao == "") {
             </a>
           </li>
           <li class="nav-item" style="width:34%;">
-            <a class="d-flex align-items-center text-start mx-3 pb-3" href="#combo">
-              <img class="icone_mobile" src="img/acai2.png" width="50px" height="50px">
+            <a class="d-flex align-items-center text-start mx-3 pb-3" href="site/<?php echo $url_site ?>#combo" onclick="return verificarDisponibilidade(event, 'Combos', <?php echo $qtd_combos_disponiveis ?>)">
+              <?php if ($url_site == 'rainhadastapiocas') { ?><span class="icone_mobile icone-combo-personalizado"><i class="bi bi-basket2-fill"></i></span><?php } else { ?><img class="icone_mobile" src="img/acai2.png" width="50px" height="50px"><?php } ?>
               <div class="ps-1">
                 <small class="text-body titulo_icones">Combos</small>
                 <h6 class="mt-n1 mb-0 subtitulo_icones" style="font-size: 12px">Diversos</h6>
@@ -421,8 +456,8 @@ if ($id_mesa == "" and $sessão_balcao == "") {
             </a>
           </li>
           <li class="nav-item" style="width:32%;">
-            <a class="d-flex align-items-center text-start mx-3 me-0 pb-3" href="#promocao">
-              <img class="icone_mobile" src="img/icone3.png" width="50px" height="50px">
+            <a class="d-flex align-items-center text-start mx-3 me-0 pb-3" href="site/<?php echo $url_site ?>#promocao" onclick="return verificarDisponibilidade(event, 'Promoções', <?php echo $qtd_promocoes_disponiveis ?>)">
+              <?php if ($url_site == 'rainhadastapiocas') { ?><span class="icone_mobile icone-promocao-personalizado"><i class="bi bi-tag-fill"></i></span><?php } else { ?><img class="icone_mobile" src="img/icone3.png" width="50px" height="50px"><?php } ?>
               <div class="ps-1">
                 <small class="text-body titulo_icones">Promoções</small>
                 <h6 class="mt-n1 mb-0 subtitulo_icones" style="font-size: 12px">Ofertas</h6>
@@ -431,9 +466,14 @@ if ($id_mesa == "" and $sessão_balcao == "") {
           </li>
         </ul>
 
-
       </div>
     </div>
+  </div>
+
+  <div class="text-center" style="display:block!important; visibility:visible!important; opacity:1!important; clear:both; position:relative; z-index:20; margin:10px auto 25px; padding:0 12px;">
+    <a href="/meus-pedidos" class="btn btn-warning" style="display:inline-flex!important; align-items:center; gap:8px; visibility:visible!important; opacity:1!important; border-radius:25px; padding:10px 22px; font-weight:700; color:#fff;">
+      <i class="bi bi-receipt-cutoff"></i> Meus Pedidos
+    </a>
   </div>
   <!-- Menu End -->
 
@@ -468,7 +508,7 @@ if ($id_mesa == "" and $sessão_balcao == "") {
     <section class="category-area ocultar_dasktop" id="categoria">
       <div class="row">
         <div class="col-lg-12 text-center mb-10">
-          <h4 class="tpsection__sub-title">~~~~~~~~ CATEGORIAS ~~~~~~~~</h4>
+          <h4 class="tpsection__sub-title">Nossas Categorias</h4>
         </div>
       </div>
 
@@ -686,7 +726,7 @@ if ($id_mesa == "" and $sessão_balcao == "") {
           <div class="row">
             <div class="col-lg-12 text-center mb-20">
               <div class="tpsection">
-                <h4 class="tpsection__sub-title">~~~~~~~~ CATEGORIAS ~~~~~~~~</h4>
+                <h4 class="tpsection__sub-title">Nossas Categorias</h4>
               </div>
             </div>
           </div>
@@ -807,7 +847,7 @@ if ($id_mesa == "" and $sessão_balcao == "") {
           <div class="row">
             <div class="col-lg-12 text-center mb-20">
               <div class="tpsection">
-                <h4 class="tpsection__sub-title">~~~~~~~~ OFERTAS DA SEMANA ~~~~~~~~</h4>
+                <h4 class="tpsection__sub-title">Ofertas da Semana</h4>
               </div>
             </div>
           </div>
@@ -945,7 +985,7 @@ if ($id_mesa == "" and $sessão_balcao == "") {
         <div class="row">
           <div class="col-lg-12 text-center">
             <div class="tpsection mb-35">
-              <h4 class="tpsection__sub-title">~~~~~~~~ APROVEITE NOSSOS COMBOS ~~~~~~~~</h4>
+              <h4 class="tpsection__sub-title">Combos Especiais</h4>
             </div>
           </div>
         </div>
@@ -1044,7 +1084,13 @@ if ($id_mesa == "" and $sessão_balcao == "") {
                   </div>
                 </div>
             <?php }
-            } ?>
+            } else { ?>
+              <div class="swiper-slide" style="width:100%;">
+                <div class="text-center p-4" style="background:#f8f9fa; border:1px solid #e9ecef; border-radius:10px; margin:0 12px;">
+                  <div style="font-size:32px; color:#adb5bd; margin-bottom:8px;"><i class="bi bi-basket"></i></div>
+                </div>
+              </div>
+            <?php } ?>
           </div>
 
         </div>
@@ -1129,6 +1175,39 @@ if ($img_rodape == "aberto.png" and $mostrar_aberto != "Sim") {
 
 
 
+
+
+<div id="aviso-secao-vazia" class="aviso-secao-overlay" style="display:none;" role="dialog" aria-modal="true" aria-labelledby="aviso-secao-titulo">
+  <div class="aviso-secao-caixa">
+    <button type="button" class="aviso-secao-fechar" onclick="fecharAvisoSecao()" aria-label="Fechar">&times;</button>
+    <div class="aviso-secao-icone"><i class="bi bi-basket"></i></div>
+    <h5 id="aviso-secao-titulo">Nenhum produto disponível</h5>
+    <p id="aviso-secao-mensagem">Ainda não temos produtos disponíveis nesta opção. Confira novamente em breve!</p>
+    <button type="button" class="btn btn-warning" onclick="fecharAvisoSecao()">Entendi</button>
+  </div>
+</div>
+<style>
+.aviso-secao-overlay{position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:100000;display:flex;align-items:center;justify-content:center;padding:20px}
+.aviso-secao-caixa{position:relative;width:100%;max-width:360px;background:#fff;border-radius:16px;padding:28px 22px;text-align:center;box-shadow:0 12px 40px rgba(0,0,0,.25)}
+.aviso-secao-fechar{position:absolute;right:12px;top:7px;border:0;background:transparent;font-size:28px;color:#777;line-height:1}
+.aviso-secao-icone{font-size:38px;color:#f0a500;margin-bottom:8px}
+.aviso-secao-caixa h5{font-weight:700;color:#333;margin-bottom:8px}
+.aviso-secao-caixa p{font-size:14px;color:#666;margin-bottom:20px}
+</style>
+<script>
+function verificarDisponibilidade(evento, secao, quantidade) {
+  if (Number(quantidade) > 0) return true;
+  evento.preventDefault();
+  var modal = document.getElementById('aviso-secao-vazia');
+  document.getElementById('aviso-secao-titulo').textContent = secao + ' sem produtos';
+  document.getElementById('aviso-secao-mensagem').textContent = 'Ainda não temos produtos disponíveis em ' + secao.toLowerCase() + '. Confira novamente em breve!';
+  modal.style.display = 'flex';
+  return false;
+}
+function fecharAvisoSecao() { document.getElementById('aviso-secao-vazia').style.display = 'none'; }
+document.addEventListener('keydown', function(evento) { if (evento.key === 'Escape') fecharAvisoSecao(); });
+document.getElementById('aviso-secao-vazia').addEventListener('click', function(evento) { if (evento.target === this) fecharAvisoSecao(); });
+</script>
 
 <!-- JS here -->
 <script src="assets/js/waypoints.js"></script>

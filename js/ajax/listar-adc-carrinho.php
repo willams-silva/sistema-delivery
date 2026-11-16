@@ -11,13 +11,12 @@ require_once("../../sistema/painel/buscar_config.php");
 
 $id = $_POST['id'];
 $id_sabor = @$_POST['id_sabor'];
-$sessao = $_SESSION['sessao_usuario'];
 $categoria = @$_POST['cat'];
 
 
 
-$query_car = $pdo->query("SELECT * FROM carrinho where id = '$id'");
-$id_sabor = 0;
+$query_car = $pdo->prepare("SELECT * FROM carrinho where id = ? AND empresa = ?");
+$query_car->execute([(int)$id, $id_empresa]);
 
 $res_car = $query_car->fetchAll(PDO::FETCH_ASSOC);
 $total_reg_car = @count($res_car);
@@ -26,15 +25,17 @@ $quantidade = $res_car[$i_car]['quantidade'];
 $id = $res_car[$i_car]['id'];
 $item = $res_car[$i_car]['item'];
 
-$query =$pdo->query("SELECT * FROM temp where carrinho = '$id' and tabela = 'adicionais'");
+$query = $pdo->prepare("SELECT * FROM temp where carrinho = ? and tabela = 'adicionais' and empresa = ? ORDER BY id_sabor, id");
+$query->execute([(int)$id, $id_empresa]);
 $res = $query->fetchAll(PDO::FETCH_ASSOC);
 $total_reg = @count($res);
 if($total_reg > 0){
 
 	for($i=0; $i < $total_reg; $i++){
 		foreach ($res[$i] as $key => $value){}
-			$id_temp = $res[$i]['id'];				
-		$id_item = $res[$i]['id_item'];	
+			$id_temp = $res[$i]['id'];
+		$id_item = $res[$i]['id_item'];
+		$id_sabor_adicional = (int)$res[$i]['id_sabor'];
 		$quantidade_temp = $res[$i]['quantidade'];	
 
 		if($categoria > 0){
@@ -47,16 +48,25 @@ if($total_reg > 0){
 		$total_reg2 = @count($res2);
 		$nome_adc = $res2[0]['nome'];
 		
-		$valor_adc = ($res2[0]['valor'] * $quantidade_temp) * $quantidade;
+		$valor_adc = ((float)$res2[0]['valor'] * $quantidade_temp) * $quantidade;
+		$nome_sabor_adc = '';
+		if ($id_sabor_adicional > 0) {
+			$query_sabor = $pdo->prepare("SELECT nome FROM produtos WHERE id = ? LIMIT 1");
+			$query_sabor->execute([$id_sabor_adicional]);
+			$nome_sabor_adc = (string)$query_sabor->fetchColumn();
+		}
 		
-		$valor_adcF = number_format($valor_adc, 2, ',', '.');	
+		$valor_adcF = number_format($valor_adc, 2, ',', '.');
+		$rotulo_sabor_adc = ($nome_sabor_adc !== '') ? 'No sabor ' . $nome_sabor_adc . ': ' : '';	
 
 echo <<<HTML
 
-		<i class="bi bi-check-lg text-success"></i>
-		{$quantidade_temp} {$nome_adc} <span class="text-danger">(R$ {$valor_adcF})</span>
-		<a href="javascript:void(0)" onclick="excluirAdc('{$id_temp}', '{$id}', '{$valor_adc}', '{$id_sabor}', '{$item}', '{$categoria}')"><i class="bi bi-trash text-danger"></i></a>
-		<hr>
+		<div style="margin-bottom:6px">
+			<i class="bi bi-check-lg text-success"></i>
+			<strong>{$rotulo_sabor_adc}</strong>
+			{$quantidade_temp} {$nome_adc} <span class="text-danger">(R$ {$valor_adcF})</span>
+		<a href="javascript:void(0)" onclick="excluirAdc('{$id_temp}', '{$id}', '{$valor_adc}', '{$id_sabor_adicional}', '{$item}', '{$categoria}')"><i class="bi bi-trash text-danger"></i></a>
+		</div><hr>
 
 HTML;
 
