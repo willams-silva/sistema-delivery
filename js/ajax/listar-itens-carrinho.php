@@ -312,18 +312,17 @@ echo <<<HTML
 			
 			<a href="javascript:void(0)" onclick="excluir('{$id}')" class="link-neutro {$ocultar_excluir}"><i class="bi bi-x-lg direita"></i></a>
 
-			<div id="popup-excluir{$id}" class="overlay-excluir">
-			<div class="popup">
-			<div class="row">
-			<div class="col-12">
-			Confirmar Exclusão? <a href="javascript:void(0)" onclick="excluirCarrinho('{$id}', '{$id_sabor}')" class="text-danger link-neutro">Sim</a>
-			</div>
-			<div class="col-3">
-			<a class="close" href="javascript:void(0)" onclick="fecharExcluir('{$id}')">&times;</a>
-			</div>
-			</div>
-
-			</div>
+			<div id="popup-excluir{$id}" class="overlay-excluir" role="dialog" aria-modal="true" aria-labelledby="titulo-excluir-{$id}" style="position:fixed;inset:0;z-index:100005;background:rgba(53,33,20,.52);align-items:center;justify-content:center;padding:18px;">
+				<div class="popup" style="position:relative;width:100%;max-width:390px;margin:auto;top:auto;left:auto;transform:none;background:#fffdf9;border:1px solid #efddc9;border-radius:20px;padding:28px 22px;box-shadow:0 18px 55px rgba(78,43,20,.18);text-align:center;color:#503827;">
+					<button type="button" onclick="fecharExcluir('{$id}')" aria-label="Fechar aviso" style="position:absolute;right:14px;top:10px;border:0;background:transparent;color:#82451f;font-size:27px;line-height:1;cursor:pointer;">&times;</button>
+					<div aria-hidden="true" style="width:58px;height:58px;margin:4px auto 16px;border-radius:50%;background:#fff2e4;color:#a85b24;display:flex;align-items:center;justify-content:center;font-size:27px;"><i class="bi bi-trash3"></i></div>
+					<h3 id="titulo-excluir-{$id}" style="font-size:22px;font-weight:750;color:#753d1e;margin:0 0 10px;">Remover este produto?</h3>
+					<p style="font-size:15px;color:#80634e;line-height:1.5;margin:0 0 22px;">O produto será retirado do seu carrinho.</p>
+					<div style="display:flex;flex-wrap:wrap;gap:10px;justify-content:center;">
+						<button type="button" onclick="fecharExcluir('{$id}')" style="flex:1 1 125px;min-height:46px;border:1px solid #e8c9a9;border-radius:11px;background:#fff2e4;color:#82451f;font-weight:700;cursor:pointer;">Cancelar</button>
+						<button type="button" onclick="excluirCarrinho('{$id}', '{$id_sabor}')" style="flex:1 1 125px;min-height:46px;border:1px solid #a85b24;border-radius:11px;background:#a85b24;color:#fff;font-weight:750;cursor:pointer;">Sim, remover</button>
+					</div>
+				</div>
 			</div>	
 
 
