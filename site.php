@@ -654,18 +654,7 @@ if ($id_mesa == "" and $sessão_balcao == "") {
                   }
                 }
 
-                // Ofertas de tapiocas com seleção por sabor devem usar o configurador
-                // completo (adicionais, proteínas e opcionais), não a tela genérica.
-                if ($url_site === 'rainhadastapiocas') {
-                  $stmt_cat_oferta = $pdo->prepare("SELECT nome, url, mais_sabores FROM categorias WHERE id = ? AND empresa = ? LIMIT 1");
-                  $stmt_cat_oferta->execute([(int)$res[$i]['categoria'], $id_empresa]);
-                  $cat_oferta = $stmt_cat_oferta->fetch(PDO::FETCH_ASSOC);
-                  $nome_cat_oferta = mb_strtolower(trim((string)($cat_oferta['nome'] ?? '')), 'UTF-8');
-                  if (in_array($nome_cat_oferta, ['tapiocas doces', 'tapiocas salgadas'], true)
-                      && ($cat_oferta['mais_sabores'] ?? '') === 'Sim') {
-                    $url_produto = 'categoria-sabores-' . $cat_oferta['url'] . '?oferta=' . (int)$id_prod;
-                  }
-                }
+
 
 
 
@@ -924,6 +913,20 @@ if ($id_mesa == "" and $sessão_balcao == "") {
                     $url_produto = 'observacoes-' . $url;
                   }
                 }
+
+                // Ofertas da Rainha: abrir o configurador da categoria
+                // para permitir adicionais, opcionais e proteínas por sabor.
+                if ($url_site === 'rainhadastapiocas') {
+                  $stmt_cat_oferta = $pdo->prepare("SELECT nome, url FROM categorias WHERE id = ? AND empresa = ? LIMIT 1");
+                  $stmt_cat_oferta->execute([(int)$res[$i]['categoria'], $id_empresa]);
+                  $cat_oferta = $stmt_cat_oferta->fetch(PDO::FETCH_ASSOC);
+                  $nome_cat_oferta = mb_strtolower(trim((string)($cat_oferta['nome'] ?? '')), 'UTF-8');
+                  if (in_array($nome_cat_oferta, ['tapiocas doces', 'tapiocas salgadas'], true)
+                      && !empty($cat_oferta['url'])) {
+                    $url_produto = 'categoria-sabores-' . $cat_oferta['url'] . '?oferta=' . (int)$id_prod;
+                  }
+                }
+
 
 
 
