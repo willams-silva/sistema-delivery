@@ -829,13 +829,13 @@ body.selecao-cardapio { background:#fffaf5 !important; color:#503827; }
 		var fundo = document.createElement('div');
 		fundo.id = 'aviso-selecao-sabor';
 		fundo.setAttribute('role', 'presentation');
-		fundo.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,.65);z-index:2147483647;display:flex;align-items:center;justify-content:center;padding:20px;';
-		fundo.innerHTML = '<div role="alertdialog" aria-modal="true" aria-labelledby="titulo-aviso-sabor" aria-describedby="texto-aviso-sabor" style="position:relative;background:#fff;border-radius:22px;padding:42px 24px 30px;width:100%;max-width:420px;text-align:center;box-shadow:0 12px 35px rgba(0,0,0,.25);font-family:inherit;">' +
-		'<button type="button" data-fechar-aviso aria-label="Fechar" style="position:absolute;right:16px;top:10px;border:0;background:none;color:#777;font-size:30px;cursor:pointer;">&times;</button>' +
-		'<div aria-hidden="true" style="color:#ffb900;font-size:48px;line-height:1;margin-bottom:22px;">&#128722;</div>' +
-		'<h2 id="titulo-aviso-sabor" style="font-size:24px;color:#222;font-weight:700;margin:0 0 14px;">Selecione o sabor</h2>' +
-		'<p id="texto-aviso-sabor" style="font-size:16px;color:#777;line-height:1.6;margin:0 0 26px;">Selecione este sabor primeiro para escolher os adicionais.</p>' +
-		'<button type="button" data-fechar-aviso style="border:0;border-radius:9px;background:#ffc107;color:#111;font-weight:600;padding:12px 25px;cursor:pointer;">ENTENDI</button></div>';
+		fundo.style.cssText = 'position:fixed;inset:0;background:rgba(53,33,20,.48);z-index:2147483647;display:flex;align-items:center;justify-content:center;padding:20px;';
+		fundo.innerHTML = '<div role="alertdialog" aria-modal="true" aria-labelledby="titulo-aviso-sabor" aria-describedby="texto-aviso-sabor" style="position:relative;background:#fffdf9;border:1px solid #efddc9;border-radius:20px;padding:36px 24px 28px;width:100%;max-width:420px;text-align:center;box-shadow:0 18px 55px rgba(78,43,20,.18);font-family:inherit;">' +
+		'<button type="button" data-fechar-aviso aria-label="Fechar" style="position:absolute;right:16px;top:10px;border:0;background:none;color:#82451f;font-size:30px;cursor:pointer;">&times;</button>' +
+		'<div aria-hidden="true" style="color:#a85b24;font-size:48px;line-height:1;margin-bottom:22px;">&#128722;</div>' +
+		'<h2 id="titulo-aviso-sabor" style="font-size:24px;color:#753d1e;font-weight:750;margin:0 0 14px;">Selecione o sabor</h2>' +
+		'<p id="texto-aviso-sabor" style="font-size:16px;color:#80634e;line-height:1.6;margin:0 0 26px;">Selecione este sabor primeiro para escolher os adicionais.</p>' +
+		'<button type="button" data-fechar-aviso style="border:0;border-radius:11px;background:#a85b24;color:#fff;font-weight:750;padding:12px 25px;cursor:pointer;">ENTENDI</button></div>';
 		fundo.querySelector('#titulo-aviso-sabor').textContent = titulo;
 		fundo.querySelector('#texto-aviso-sabor').textContent = mensagem;
 		document.body.appendChild(fundo);
