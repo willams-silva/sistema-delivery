@@ -647,13 +647,15 @@ if ($nome_mesa == '' and $pedido_balcao == "") {
 		var mesa = "<?= $id_ab_mesa ?>";
 
 		if (variacao == "") {
-			alert("Selecione um Tamanho");
+			if (ehTapiocasDoces) mostrarAvisoSelecaoSabor('Selecione o tamanho', 'Escolha um tamanho para continuar.');
+			else alert("Selecione um Tamanho");
 			return;
 		}
 
 		var ids = $('#ids').val();
 		if (ids == "") {
-			alert("Selecione pelo menos um sabor de pizza!");
+			if (ehTapiocasDoces) mostrarAvisoSelecaoSabor('Selecione uma tapioca', 'Escolha pelo menos um sabor antes de adicionar ao carrinho.');
+			else alert("Selecione pelo menos um sabor de pizza!");
 			return;
 		}
 
@@ -663,7 +665,8 @@ if ($nome_mesa == '' and $pedido_balcao == "") {
 		var id_prod = ids.split("-");
 
 		if (id_prod.length - 1 > quantidade_sabores) {
-			alert('Você pode escolher só até ' + quantidade_sabores + ' Sabores!');
+			if (ehTapiocasDoces) mostrarAvisoSelecaoSabor('Limite de sabores', 'Você pode escolher até ' + quantidade_sabores + ' sabor(es).');
+			else alert('Você pode escolher só até ' + quantidade_sabores + ' Sabores!');
 			return;
 		}
 
@@ -680,9 +683,16 @@ if ($nome_mesa == '' and $pedido_balcao == "") {
 			dataType: "text",
 
 			success: function(mensagem) {
-				alert(mensagem)                
 				if (mensagem.trim() == "Inserido com Sucesso") {
-					window.location = 'carrinho';
+					if (ehTapiocasDoces) {
+						mostrarAvisoSelecaoSabor('Adicionado ao carrinho', 'Sua tapioca foi adicionada com sucesso!', function() { window.location = 'carrinho'; });
+					} else {
+						alert(mensagem);
+						window.location = 'carrinho';
+					}
+				} else {
+					if (ehTapiocasDoces) mostrarAvisoSelecaoSabor('Não foi possível adicionar', mensagem);
+					else alert(mensagem);
 				}
 
 			},
@@ -733,7 +743,9 @@ if ($nome_mesa == '' and $pedido_balcao == "") {
 	}
 
 	var ehTapiocasDoces = <?php echo !empty($eh_tapiocas_doces) ? 'true' : 'false'; ?>;
-	function mostrarAvisoSelecaoSabor() {
+	function mostrarAvisoSelecaoSabor(titulo, mensagem, aoFechar) {
+		titulo = titulo || 'Selecione o sabor';
+		mensagem = mensagem || 'Selecione este sabor primeiro para escolher os adicionais.';
 		var anterior = document.getElementById('aviso-selecao-sabor');
 		if (anterior) anterior.remove();
 		var fundo = document.createElement('div');
@@ -746,8 +758,10 @@ if ($nome_mesa == '' and $pedido_balcao == "") {
 		'<h2 id="titulo-aviso-sabor" style="font-size:24px;color:#222;font-weight:700;margin:0 0 14px;">Selecione o sabor</h2>' +
 		'<p id="texto-aviso-sabor" style="font-size:16px;color:#777;line-height:1.6;margin:0 0 26px;">Selecione este sabor primeiro para escolher os adicionais.</p>' +
 		'<button type="button" data-fechar-aviso style="border:0;border-radius:9px;background:#ffc107;color:#111;font-weight:600;padding:12px 25px;cursor:pointer;">ENTENDI</button></div>';
+		fundo.querySelector('#titulo-aviso-sabor').textContent = titulo;
+		fundo.querySelector('#texto-aviso-sabor').textContent = mensagem;
 		document.body.appendChild(fundo);
-		var fechar = function () { fundo.remove(); document.removeEventListener('keydown', tecla); };
+		var fechar = function () { fundo.remove(); document.removeEventListener('keydown', tecla); if (typeof aoFechar === 'function') aoFechar(); };
 		var tecla = function (e) { if (e.key === 'Escape') fechar(); };
 		fundo.addEventListener('click', function(e) { if (e.target === fundo || e.target.closest('[data-fechar-aviso]')) fechar(); });
 		document.addEventListener('keydown', tecla);
