@@ -78,8 +78,13 @@ for($i=0; $i<$total_ids; $i++){
 			}
 			$id_variacao = $res[0]['id'];			
 		}else{
-			$valor_p = 0;
-			$id_variacao = "";		
+			// Algumas tapiocas têm preço direto no produto e não possuem
+			// registro correspondente em variacoes. Não zerar o preço base.
+			$valor_p = $valor_base_produto;
+			if ($promocao_produto == 'Sim' && $valor_promocional_produto > 0) {
+				$valor_p = $valor_promocional_produto;
+			}
+			$id_variacao = "";
 		}
 
 		$valor_produto_media += $valor_p;
