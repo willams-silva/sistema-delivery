@@ -229,6 +229,54 @@ body.cardapio-unificado .rodape { background:#fffdf9 !important; border-top:1px 
 }
 </style>
 
+<?php if ($url_site == 'rainhadastapiocas') { ?>
+<style>
+/* Menu de atalhos: impedir que os títulos ultrapassem os cards no celular. */
+@media (max-width: 767px) {
+  .container-xxl .tab-class > .nav-pills {
+    display: flex !important;
+    flex-wrap: nowrap !important;
+    width: 100% !important;
+  }
+  .container-xxl .tab-class > .nav-pills > .nav-item {
+    flex: 1 1 0 !important;
+    width: 0 !important;
+    min-width: 0 !important;
+  }
+  .container-xxl .tab-class > .nav-pills > .nav-item > a {
+    box-sizing: border-box;
+    width: calc(100% - 4px);
+    margin: 0 2px !important;
+    padding: 9px 3px !important;
+    min-width: 0;
+    gap: 3px;
+  }
+  .container-xxl .tab-class > .nav-pills > .nav-item > a .icone_mobile {
+    width: 36px !important;
+    height: 36px !important;
+    min-width: 36px !important;
+    flex: 0 0 36px;
+    font-size: 20px;
+  }
+  .container-xxl .tab-class > .nav-pills > .nav-item > a > div {
+    min-width: 0;
+    padding-left: 0 !important;
+    overflow-wrap: anywhere;
+  }
+  .container-xxl .tab-class .titulo_icones {
+    display: block;
+    font-size: clamp(9px, 2.65vw, 12px) !important;
+    line-height: 1.2;
+    overflow-wrap: anywhere;
+  }
+  .container-xxl .tab-class .subtitulo_icones {
+    font-size: 10px !important;
+    line-height: 1.2;
+  }
+}
+</style>
+<?php } ?>
+
 
 <style>
 /* Vitrine principal: seletores diretos, sem depender de classe JS no body. */
