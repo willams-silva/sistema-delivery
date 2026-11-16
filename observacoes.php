@@ -256,6 +256,36 @@ if ($nome_mesa == '' and $pedido_balcao == "") {
 
 
 ?>
+<style>
+/* Identidade visual das telas de seleção de produtos, sem alterar lógica. */
+body.selecao-cardapio { background:#fffaf5 !important; color:#503827; }
+.selecao-cardapio .main-container { max-width:1360px; margin:0 auto; padding:0 14px; }
+.selecao-cardapio .navbar { background:#fffdf9 !important; border-bottom:1px solid #efddc9; box-shadow:0 3px 16px rgba(94,53,25,.09) !important; }
+.selecao-cardapio .navbar-brand { display:flex; align-items:center; gap:10px; color:#753d1e; font-weight:750; }
+.selecao-cardapio .navbar-brand a { color:#a85b24; }
+.selecao-cardapio .navbar-brand span { color:#753d1e; font-weight:750; }
+.selecao-cardapio .list-group-item { border-color:#efddc9 !important; background:#fff !important; }
+.selecao-cardapio .titulo-itens,.selecao-cardapio .titulo-itens-pizza,.selecao-cardapio .titulo-itens-2 { background:#fff2e4 !important; color:#82451f !important; padding:11px 15px !important; font-weight:750; border-radius:10px; }
+.selecao-cardapio .list-group { border-radius:14px; }
+.selecao-cardapio .list-group-item:first-child { border-radius:14px 14px 0 0; }
+.selecao-cardapio .list-group-item:last-child { border-radius:0 0 14px 14px; }
+.selecao-cardapio .btn-warning,.selecao-cardapio .btn-success,.selecao-cardapio .btn-primary { background:#a85b24 !important; border-color:#a85b24 !important; color:#fff !important; border-radius:11px; font-weight:750; }
+.selecao-cardapio .btn-outline-success { color:#a85b24 !important; border-color:#a85b24 !important; border-radius:10px; }
+.selecao-cardapio .btn-outline-success:hover { color:#fff !important; background:#a85b24 !important; }
+.selecao-cardapio .form-check-input:checked { background-color:#a85b24; border-color:#a85b24; }
+.selecao-cardapio textarea,.selecao-cardapio .form-control { border:1px solid #ddc4ad; border-radius:11px; background:#fffdfb; color:#503827; }
+.selecao-cardapio textarea:focus,.selecao-cardapio .form-control:focus { border-color:#a85b24; box-shadow:0 0 0 .2rem rgba(168,91,36,.12); }
+.selecao-cardapio .area-pedidos { background:#fffdf9 !important; border-top:1px solid #efddc9; }
+.selecao-cardapio .area-pedidos .btn,.selecao-cardapio .abaixo .btn { background:#a85b24 !important; border-color:#a85b24 !important; color:#fff !important; border-radius:12px; }
+@media(max-width:767px) {
+ .selecao-cardapio .main-container { padding:0 9px; }
+ .selecao-cardapio .navbar-brand span { font-size:13px !important; }
+ .selecao-cardapio .list-group-item { padding:12px !important; }
+ .selecao-cardapio .titulo-itens,.selecao-cardapio .titulo-itens-pizza { padding:10px !important; }
+}
+</style>
+<script>document.body.classList.add('selecao-cardapio');</script>
+
 
 <style type="text/css">
 	body {
