@@ -106,11 +106,13 @@ $query_categoria = $pdo->prepare("SELECT nome FROM categorias WHERE id = ? AND e
 $query_categoria->execute([(int)$categoria, $id_empresa]);
 $dados_categoria = $query_categoria->fetch(PDO::FETCH_ASSOC);
 $eh_tapiocas_doces = $dados_categoria && strtolower(trim($dados_categoria['nome'])) === 'tapiocas doces';
+$eh_tapiocas_salgadas = ($url_site === 'rainhadastapiocas' && $dados_categoria && strtolower(trim($dados_categoria['nome'])) === 'tapiocas salgadas');
+$eh_tapiocas_com_adicionais_por_sabor = ($eh_tapiocas_doces || $eh_tapiocas_salgadas);
 
 // Somar somente os adicionais vinculados aos sabores selecionados.
 // Nas demais categorias, manter o comportamento antigo (id_sabor = 0).
 $total_adicionais = 0;
-if ($eh_tapiocas_doces) {
+if ($eh_tapiocas_com_adicionais_por_sabor) {
     $placeholders = implode(',', array_fill(0, count($separar), '?'));
     $sql_adc = "SELECT id_item, quantidade, valor_item FROM temp
                 WHERE carrinho = '0' AND sessao = ? AND tabela = 'adicionais'
@@ -180,7 +182,7 @@ echo 'Inserido com Sucesso';
 
 
 //limpar os ingredientes e adicionais
-if ($eh_tapiocas_doces) {
+if ($eh_tapiocas_com_adicionais_por_sabor) {
     $placeholders_temp = implode(',', array_fill(0, count($separar), '?'));
     $stmt_temp = $pdo->prepare("UPDATE temp SET carrinho = ? WHERE sessao = ? AND carrinho = '0' AND empresa = ? AND (tabela != 'adicionais' OR id_sabor IN ($placeholders_temp))");
     $stmt_temp->execute(array_merge([$id_carrinho, $sessao, $id_empresa], array_map('intval', $separar)));
