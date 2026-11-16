@@ -4,7 +4,7 @@ if (empty($_SESSION['url_site'])) {
   $url_site = $_GET['url'] ?? '';
   if ($url_site !== '') $_SESSION['url_site'] = $url_site;
 }
-require_once("cabecalho.php");
+
 
 // O logout precisa ser processado antes de calcular o estado de autenticação.
 if (isset($_GET['sair'])) {
@@ -16,6 +16,8 @@ if (isset($_GET['sair'])) {
   header('Location: /meus-pedidos');
   exit;
 }
+
+require_once("cabecalho.php");
 
 $telefone_autenticado = $_SESSION['meus_pedidos_telefone_autenticado'] ?? '';
 $empresa_autenticada = (int)($_SESSION['meus_pedidos_empresa_autenticada'] ?? 0);
