@@ -80,6 +80,30 @@ $total_reg = @count($res);
 if ($total_reg > 0) {
 	$nome = $res[0]['nome'];
 	$eh_tapiocas_doces = (strtolower(trim($nome)) === 'tapiocas doces');
+
+	// Nas telas pequenas, empilha a área do produto e os adicionais.
+	// Regra emitida na própria página para evitar cache antigo do arquivo CSS.
+	if ($eh_tapiocas_doces) {
+		echo '<style>
+			@media (max-width: 767px) {
+				li.item-tapioca-doce {
+					display: flex !important;
+					flex-direction: column !important;
+					align-items: stretch !important;
+				}
+				li.item-tapioca-doce > .row,
+				li.item-tapioca-doce > .mt-2 {
+					width: 100% !important;
+					max-width: 100% !important;
+					flex: 0 0 auto !important;
+				}
+				li.item-tapioca-doce > .mt-2 {
+					margin-top: 12px !important;
+					padding-left: 0 !important;
+				}
+			}
+		</style>';
+	}
 	$descricao = $res[0]['descricao'];
 	$id = $res[0]['id'];
 	$mais_sabores = $res[0]['mais_sabores'];
