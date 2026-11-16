@@ -37,21 +37,36 @@ if ($id_sabor > 0) {
     $stmt = $pdo->prepare("SELECT p.id, p.categoria FROM produtos p WHERE p.id = ? LIMIT 1");
     $stmt->execute([$id_sabor]);
     $produto = $stmt->fetch(PDO::FETCH_ASSOC);
-    $stmt = $pdo->prepare("SELECT id, valor, categoria FROM adicionais_cat WHERE id = ? AND ativo = 'Sim' LIMIT 1");
-    $stmt->execute([$id]);
+    $stmt = $pdo->prepare("SELECT id, valor, tipo, categoria FROM adicionais_cat WHERE id = ? AND empresa = ? AND ativo = 'Sim' LIMIT 1");
+    $stmt->execute([$id, $id_empresa]);
     $adicional = $stmt->fetch(PDO::FETCH_ASSOC);
     if (!$produto || !$adicional || (int)$produto['categoria'] !== (int)$adicional['categoria']) {
         echo 'Adicional não pertence a este sabor';
         exit();
     }
 } else {
-    $stmt = $pdo->prepare("SELECT id, valor FROM adicionais_cat WHERE id = ? AND ativo = 'Sim' LIMIT 1");
-    $stmt->execute([$id]);
+    $stmt = $pdo->prepare("SELECT id, valor, tipo FROM adicionais_cat WHERE id = ? AND empresa = ? AND ativo = 'Sim' LIMIT 1");
+    $stmt->execute([$id, $id_empresa]);
     $adicional = $stmt->fetch(PDO::FETCH_ASSOC);
     if (!$adicional) {
         echo 'Adicional não encontrado';
         exit();
     }
+}
+
+// Itens opcionais representam uma retirada, nunca uma cobrança.
+// Impedir que uma requisição forjada altere preços ou marque múltiplas retiradas.
+$tipo_adicional = (string)($adicional['tipo'] ?? 'adicional');
+if ($tipo_adicional === 'opcional') {
+    $stmt_tipo = $pdo->prepare("SELECT c.nome FROM categorias c JOIN adicionais_cat a ON a.categoria = c.id WHERE a.id = ? AND c.empresa = ? LIMIT 1");
+    $stmt_tipo->execute([$id, $id_empresa]);
+    $nome_cat = strtolower(trim((string)$stmt_tipo->fetchColumn()));
+    if (($url_site ?? '') !== 'rainhadastapiocas' || $nome_cat !== 'tapiocas salgadas' || $id_sabor <= 0) {
+        echo 'Opcional inválido para esta categoria';
+        exit();
+    }
+    $quantidade = $quantidade > 0 ? 1 : 0;
+    $adicional['valor'] = 0;
 }
 
 if ($quantidade <= 0) {
