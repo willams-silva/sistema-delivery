@@ -332,6 +332,7 @@ $pag = 'categorias';
 
 <script type="text/javascript">
 	var pag = "<?= $pag ?>"
+	window.lojaRainhaTapiocas = <?= json_encode(($url_site ?? "") === "rainhadastapiocas") ?>;
 </script>
 <script src="js/ajax.js"></script>
 
