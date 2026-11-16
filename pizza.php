@@ -317,9 +317,15 @@ if ($nome_mesa == '' and $pedido_balcao == "") {
 		$query = $pdo->query("SELECT * FROM variacoes_cat where categoria = '$id' order by id asc");
 		$res = $query->fetchAll(PDO::FETCH_ASSOC);
 		$total_reg = @count($res);
+		// Apenas a loja Rainha das Tapiocas, com um único tamanho na categoria doces.
+		$tamanho_unico_automatico = ($url_site === 'rainhadastapiocas' && !empty($eh_tapiocas_doces) && $total_reg === 1);
+		if ($tamanho_unico_automatico) {
+			$id_tamanho_unico = (int) $res[0]['id'];
+			$limite_sabores_tamanho_unico = (int) $res[0]['sabores'];
+		}
 		if ($total_reg > 0) {
 
-			echo '<ul class="list-group form-check">';
+			echo '<ul class="list-group form-check"' . ($tamanho_unico_automatico ? ' style="display:none"' : '') . '>';
 			echo '<span class="titulo-itens-pizza"><span style="margin-left:20px">Escolha o tamanho</span></span>';
 			for ($i = 0; $i < $total_reg; $i++) {
 				$id_var = $res[$i]['id'];
@@ -606,10 +612,10 @@ if ($nome_mesa == '' and $pedido_balcao == "") {
 
 
 
-			<input type="hidden" id="variacao_sel">
+			<input type="hidden" id="variacao_sel" value="<?php echo !empty($tamanho_unico_automatico) ? $id_tamanho_unico : ''; ?>">
 			<input type="hidden" id="borda_sel">
 			<input type="hidden" id="ids">
-			<input type="hidden" id="quantidade_sabores">
+			<input type="hidden" id="quantidade_sabores" value="<?php echo !empty($tamanho_unico_automatico) ? $limite_sabores_tamanho_unico : ''; ?>">
 
 
 
