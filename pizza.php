@@ -394,7 +394,15 @@ if ($nome_mesa == '' and $pedido_balcao == "") {
 
 		<span class="titulo-itens-pizza"><span style="margin-left:20px">Escolha <span id="quant_sabores"> os </span> sabores</span></span>
 		<?php
-		$query = $pdo->query("SELECT * FROM produtos where categoria = '$id' and ativo = 'Sim' and (tem_estoque = 'Não' OR estoque > 0)");
+		// Ao abrir pela seção Ofertas da Semana, listar apenas sabores em promoção.
+		// A navegação normal pela categoria continua mostrando todos os sabores ativos.
+		$modo_ofertas_tapiocas = ($url_site === 'rainhadastapiocas'
+			&& !empty($eh_tapiocas_com_adicionais_por_sabor)
+			&& isset($_GET['oferta']) && (int)$_GET['oferta'] > 0);
+		$sql_sabores = "SELECT * FROM produtos WHERE categoria = ? AND empresa = ? AND ativo = 'Sim' AND (tem_estoque = 'Não' OR estoque > 0)";
+		if ($modo_ofertas_tapiocas) $sql_sabores .= " AND promocao = 'Sim' AND val_promocional > 0";
+		$query = $pdo->prepare($sql_sabores);
+		$query->execute([(int)$id, $id_empresa]);
 		$res = $query->fetchAll(PDO::FETCH_ASSOC);
 		$total_reg = @count($res);
 		if ($total_reg > 0) {
