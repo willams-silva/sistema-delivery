@@ -144,9 +144,17 @@ if($total_reg > 0){
 			$valor_base_total = max(0, (float)$total_item - $total_extras_unidade * (float)$quantidade);
 			$valor_base_formatado = number_format($valor_base_total, 2, ',', '.');
 			$valor_extras_formatado = number_format($total_extras_unidade * (float)$quantidade, 2, ',', '.');
+			$observacao_tapioca = trim((string)$obs);
+			$resumo_observacao_tapioca = '';
+			if ($observacao_tapioca !== '') {
+				$resumo_observacao_tapioca = '<div class="mt-2 pt-2" style="border-top:1px solid #e9d5a7;font-size:13px">'
+					. '<div style="font-weight:700;margin-bottom:4px"><i class="bi bi-chat-left-text"></i> Observação</div>'
+					. '<div style="white-space:pre-wrap;overflow-wrap:anywhere;color:#555">' . htmlspecialchars($observacao_tapioca, ENT_QUOTES, 'UTF-8') . '</div></div>';
+			}
 			$resumo_preco_tapioca = '<div class="mt-3 p-3" style="background:#fff8e8;border-radius:12px;border:1px solid #f5e4ba">'
 				. '<div class="d-flex justify-content-between gap-2 pb-2" style="font-size:14px"><span>🫓 Tapioca (' . htmlspecialchars((string)$quantidade, ENT_QUOTES, 'UTF-8') . ' un.)</span><strong>R$ ' . $valor_base_formatado . '</strong></div>'
 				. $resumo_adicionais_tapioca
+				. $resumo_observacao_tapioca
 				. '<div class="d-flex justify-content-between gap-2 pt-2 mt-2" style="border-top:1px solid #e9d5a7;font-size:13px"><span>Subtotal dos adicionais</span><strong>R$ ' . $valor_extras_formatado . '</strong></div>'
 				. '</div>';
 		}
