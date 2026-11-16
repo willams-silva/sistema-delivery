@@ -68,8 +68,37 @@ $cartoes = @$res[0]['cartoes'];
 
 ?>
 
-<body style="background: #ededdf;">
-	<div class="container" align="center" style="padding:10px; font-size: 'Verdana';">
+<script>document.body.classList.add("resumo-cardapio");</script>
+
+<style>
+/* Resumo do pedido: identidade visual do cardápio e checkout. */
+body.resumo-cardapio { background:#fffaf5 !important; color:#503827; margin:0; }
+.resumo-cardapio .resumo-container { max-width:760px; margin:22px auto 45px; padding:24px !important; background:#fff; border:1px solid #efddc9; border-radius:20px; box-shadow:0 8px 30px rgba(100,58,29,.08); font-family:inherit; }
+.resumo-cardapio .resumo-container > img:first-child { width:72px; height:72px; object-fit:contain; }
+.resumo-cardapio .resumo-container > span:first-of-type { display:inline-block; font-size:23px !important; color:#8d4a20; margin:8px 0 4px; }
+.resumo-cardapio .resumo-container hr { border:0; border-top:1px solid #ead7c3; opacity:1; margin:18px 0 !important; }
+.resumo-cardapio .resumo-container a { color:#a85b24; font-weight:700; text-decoration:none; }
+.resumo-cardapio .resumo-container a:hover { text-decoration:underline; }
+.resumo-cardapio .resumo-container > p { padding:17px 18px; border:1px solid #f0dfce; border-radius:14px; background:#fffaf5; line-height:1.9; }
+.resumo-cardapio .resumo-itens-titulo { background:#a85b24 !important; padding:13px 16px !important; border-radius:12px; color:#fff !important; font-size:14px !important; font-weight:750; letter-spacing:.4px; }
+.resumo-cardapio .resumo-itens { margin:0 !important; padding:12px 10px; border:1px solid #efddc9; border-radius:14px; background:#fffdf9; row-gap:8px; font-size:14px !important; }
+.resumo-cardapio .resumo-itens > .col-9 { font-weight:650; color:#543925; padding:9px 10px; }
+.resumo-cardapio .resumo-itens > .col-3 { font-weight:750; color:#925024; padding:9px 8px; white-space:nowrap; }
+.resumo-cardapio .resumo-itens hr { margin:0 !important; opacity:.6; }
+.resumo-cardapio .resumo-itens > .col-12 { color:#80634e !important; font-size:12px !important; padding-left:24px !important; }
+.resumo-cardapio #listar_st { padding:16px; background:#fff7ed; border:1px solid #efddc9; border-radius:14px; margin-top:20px !important; }
+.resumo-cardapio .resumo-container img { max-width:100%; }
+@media(max-width:600px) {
+  .resumo-cardapio .resumo-container { margin:12px 10px 30px; padding:17px 13px !important; border-radius:15px; }
+  .resumo-cardapio .resumo-container > span:first-of-type { font-size:20px !important; }
+  .resumo-cardapio .resumo-container > p { padding:13px 10px; }
+  .resumo-cardapio .resumo-itens { padding:9px 3px; }
+  .resumo-cardapio .resumo-itens > .col-9 { width:72%; }
+  .resumo-cardapio .resumo-itens > .col-3 { width:28%; }
+}
+</style>
+
+	<div class="container resumo-container" align="center" style="padding:10px; font-size: 'Verdana';">
 		<img src="<?php echo $url_sistema ?>img/check_ok.png" width="80px">
 		<br>
 		<span style="font-size: 18px; margin-top: 5px"><b>Nº PEDIDO <?php echo $n_pedido ?></b></span>
@@ -106,11 +135,11 @@ $cartoes = @$res[0]['cartoes'];
 		</p>
 
 		<hr style="margin:7px">
-		<p style="background: #757571; padding:2px; color:#FFF; font-size:13px">CONFIRA SEUS ITENS</p>
+		<p class="resumo-itens-titulo" style="background: #757571; padding:2px; color:#FFF; font-size:13px">CONFIRA SEUS ITENS</p>
 
 
 
-		<div class="row itens" style="font-size:12px">
+		<div class="row itens resumo-itens" style="font-size:12px">
 			<?php
 			$res = $pdo->query("SELECT * from carrinho where pedido = '$id' order by id asc");
 			$dados = $res->fetchAll(PDO::FETCH_ASSOC);
