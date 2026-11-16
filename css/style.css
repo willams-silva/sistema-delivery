@@ -777,3 +777,16 @@ input:valid~label {
   50%{ transform: scale(1.05); }
   100%{ transform: scale(1); }
 }
+
+/* Ajuste exclusivo: adicionais por sabor nas TAPIOCAS DOCES em telas pequenas */
+@media (max-width: 767px) {
+  .item-tapioca-doce {
+    flex-wrap: wrap;
+  }
+
+  .item-tapioca-doce > .row,
+  .item-tapioca-doce > .mt-2 {
+    flex: 0 0 100%;
+    max-width: 100%;
+  }
+}
