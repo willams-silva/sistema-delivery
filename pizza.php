@@ -729,7 +729,17 @@ if ($nome_mesa == '' and $pedido_balcao == "") {
 	var ehTapiocasDoces = <?php echo !empty($eh_tapiocas_doces) ? 'true' : 'false'; ?>;
 	function toggleAdicionaisSabor(id) {
 		if (!$('#seletor-' + id).is(':checked')) {
-			alert('Selecione este sabor primeiro para escolher os adicionais.');
+			Swal.fire({
+				iconHtml: '<span style="font-size:42px;line-height:1;color:#ffb900;">&#128722;</span>',
+				customClass: { icon: 'border-0', popup: 'rounded-4', confirmButton: 'btn btn-warning px-4 py-2' },
+				buttonsStyling: false,
+				title: 'Selecione o sabor',
+				text: 'Selecione este sabor primeiro para escolher os adicionais.',
+				confirmButtonText: 'ENTENDI',
+				showCloseButton: true,
+				width: 'min(92vw, 420px)',
+				background: '#fff'
+			});
 			return;
 		}
 		$('#adicionais-sabor-' + id).stop(true, true).slideToggle(150);
