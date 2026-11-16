@@ -606,7 +606,7 @@ if ($id_mesa == "" and $sessão_balcao == "") {
 
 
             <?php
-            $query = $pdo->query("SELECT * FROM produtos where ativo = 'Sim' and combo = 'Sim' and delivery = 'Sim' and empresa = '$id_empresa'");
+            $query = $pdo->query("SELECT * FROM produtos where ativo = 'Sim' and combo = 'Sim' and delivery = 'Sim' and empresa = '$id_empresa' and (tem_estoque = 'Não' OR estoque > 0)");
             $res = $query->fetchAll(PDO::FETCH_ASSOC);
             $tem_produto = @count($res);
             $mostrar = 'ocultar';
@@ -832,7 +832,7 @@ if ($id_mesa == "" and $sessão_balcao == "") {
 
 
   <?php
-  $query = $pdo->query("SELECT * FROM produtos where ativo = 'Sim' and promocao = 'Sim'  and delivery = 'Sim' and empresa = '$id_empresa'");
+  $query = $pdo->query("SELECT * FROM produtos where ativo = 'Sim' and promocao = 'Sim'  and delivery = 'Sim' and empresa = '$id_empresa' and (tem_estoque = 'Não' OR estoque > 0)");
   $res = $query->fetchAll(PDO::FETCH_ASSOC);
   $tem_produto = @count($res);
   if ($tem_produto > 0) { ?>
@@ -854,7 +854,7 @@ if ($id_mesa == "" and $sessão_balcao == "") {
           <div class="row">
 
             <?php
-            $query = $pdo->query("SELECT * FROM produtos where ativo = 'Sim' and promocao = 'Sim'  and delivery = 'Sim' and empresa = '$id_empresa'");
+            $query = $pdo->query("SELECT * FROM produtos where ativo = 'Sim' and promocao = 'Sim'  and delivery = 'Sim' and empresa = '$id_empresa' and (tem_estoque = 'Não' OR estoque > 0)");
             $res = $query->fetchAll(PDO::FETCH_ASSOC);
             $tem_produto = @count($res);
             $mostrar = 'ocultar';
@@ -972,7 +972,7 @@ if ($id_mesa == "" and $sessão_balcao == "") {
 
 
   <?php
-  $query = $pdo->query("SELECT * FROM produtos where ativo = 'Sim' and combo = 'Sim' and delivery = 'Sim' and empresa = '$id_empresa'");
+  $query = $pdo->query("SELECT * FROM produtos where ativo = 'Sim' and combo = 'Sim' and delivery = 'Sim' and empresa = '$id_empresa' and (tem_estoque = 'Não' OR estoque > 0)");
   $res = $query->fetchAll(PDO::FETCH_ASSOC);
   $tem_produto = @count($res);
   $mostrar = 'ocultar';
@@ -995,7 +995,7 @@ if ($id_mesa == "" and $sessão_balcao == "") {
 
 
             <?php
-            $query = $pdo->query("SELECT * FROM produtos where ativo = 'Sim' and combo = 'Sim'  and delivery = 'Sim' and empresa = '$id_empresa'");
+            $query = $pdo->query("SELECT * FROM produtos where ativo = 'Sim' and combo = 'Sim'  and delivery = 'Sim' and empresa = '$id_empresa' and (tem_estoque = 'Não' OR estoque > 0)");
             $res = $query->fetchAll(PDO::FETCH_ASSOC);
             $tem_produto = @count($res);
             $mostrar = 'ocultar';
