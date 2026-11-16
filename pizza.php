@@ -408,7 +408,7 @@ if ($nome_mesa == '' and $pedido_balcao == "") {
 		?>
 
 
-				<li class="list-group-item d-flex justify-content-between align-items-start ">
+				<li class="list-group-item d-flex justify-content-between align-items-start <?php echo !empty($eh_tapiocas_doces) ? 'item-tapioca-doce' : ''; ?>">
 
 					<img onclick="selectPizzas('<?php echo $id_produto ?>')" class="<?php echo $mostrar ?>" src="img/esgotado.png"
 						width="65px" height="65px" style="position:absolute; right:0; top:0px">
