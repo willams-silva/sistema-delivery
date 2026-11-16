@@ -229,6 +229,24 @@ body.cardapio-unificado .rodape { background:#fffdf9 !important; border-top:1px 
 }
 </style>
 
+
+<style>
+/* Vitrine principal: seletores diretos, sem depender de classe JS no body. */
+body { background:#fffaf5 !important; }
+.container-xxl .section-title span[style] { color:#753d1e !important; }
+.container-xxl .tab-class > .nav-pills { border-bottom:1px solid #ead7c3 !important; }
+.container-xxl .tab-class > .nav-pills .nav-item > a { background:#fffdf9 !important; border:1px solid #efddc9 !important; border-radius:15px !important; padding:12px 10px !important; margin:0 6px !important; box-shadow:0 4px 15px rgba(100,58,29,.07) !important; }
+.container-xxl .tab-class .titulo_icones { color:#753d1e !important; font-weight:750 !important; }
+.container-xxl .tab-class .subtitulo_icones { color:#9a6949 !important; }
+a[href="/meus-pedidos"].btn-warning { background:#a85b24 !important; border-color:#a85b24 !important; color:white !important; }
+.padding_input #buscar { background:#fffdf9 !important; border:1px solid #ddc4ad !important; border-radius:12px !important; padding:13px 16px !important; margin-top:0 !important; }
+.category-area .tpsection__sub-title,.blog-area .tpsection__sub-title { color:#753d1e !important; font-weight:800 !important; }
+.category-area .swiper-slide .tpbrandproduct__item,.category-area .swiper-slide .tpcategory__item,.category-area .swiper-slide .tpblog__item,.blog-area .swiper-slide .tpbrandproduct__item { background:#fffdf9 !important; border:1px solid #efddc9 !important; border-radius:16px !important; box-shadow:0 5px 20px rgba(100,58,29,.07) !important; overflow:hidden; }
+.category-area .swiper-slide a,.category-area .swiper-slide h5,.category-area .swiper-slide h6 { color:#82451f !important; }
+.rodape { background:#fffdf9 !important; border-top:1px solid #efddc9 !important; }
+@media(max-width:767px) { .container-xxl .tab-class > .nav-pills .nav-item > a { padding:9px 5px !important; margin:0 3px !important; } }
+</style>
+
 <!-- BOTÃO Scroll-top -->
 <button class="scroll-top scroll-to-target mb-25" data-target="html">
   <i class="icon-chevrons-up"></i>
