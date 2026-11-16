@@ -727,19 +727,29 @@ if ($nome_mesa == '' and $pedido_balcao == "") {
 	}
 
 	var ehTapiocasDoces = <?php echo !empty($eh_tapiocas_doces) ? 'true' : 'false'; ?>;
+	function mostrarAvisoSelecaoSabor() {
+		var anterior = document.getElementById('aviso-selecao-sabor');
+		if (anterior) anterior.remove();
+		var fundo = document.createElement('div');
+		fundo.id = 'aviso-selecao-sabor';
+		fundo.setAttribute('role', 'presentation');
+		fundo.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,.65);z-index:2147483647;display:flex;align-items:center;justify-content:center;padding:20px;';
+		fundo.innerHTML = '<div role="alertdialog" aria-modal="true" aria-labelledby="titulo-aviso-sabor" aria-describedby="texto-aviso-sabor" style="position:relative;background:#fff;border-radius:22px;padding:42px 24px 30px;width:100%;max-width:420px;text-align:center;box-shadow:0 12px 35px rgba(0,0,0,.25);font-family:inherit;">' +
+		'<button type="button" data-fechar-aviso aria-label="Fechar" style="position:absolute;right:16px;top:10px;border:0;background:none;color:#777;font-size:30px;cursor:pointer;">&times;</button>' +
+		'<div aria-hidden="true" style="color:#ffb900;font-size:48px;line-height:1;margin-bottom:22px;">&#128722;</div>' +
+		'<h2 id="titulo-aviso-sabor" style="font-size:24px;color:#222;font-weight:700;margin:0 0 14px;">Selecione o sabor</h2>' +
+		'<p id="texto-aviso-sabor" style="font-size:16px;color:#777;line-height:1.6;margin:0 0 26px;">Selecione este sabor primeiro para escolher os adicionais.</p>' +
+		'<button type="button" data-fechar-aviso style="border:0;border-radius:9px;background:#ffc107;color:#111;font-weight:600;padding:12px 25px;cursor:pointer;">ENTENDI</button></div>';
+		document.body.appendChild(fundo);
+		var fechar = function () { fundo.remove(); document.removeEventListener('keydown', tecla); };
+		var tecla = function (e) { if (e.key === 'Escape') fechar(); };
+		fundo.addEventListener('click', function(e) { if (e.target === fundo || e.target.closest('[data-fechar-aviso]')) fechar(); });
+		document.addEventListener('keydown', tecla);
+		fundo.querySelector('[data-fechar-aviso]').focus();
+	}
 	function toggleAdicionaisSabor(id) {
 		if (!$('#seletor-' + id).is(':checked')) {
-			Swal.fire({
-				iconHtml: '<span style="font-size:42px;line-height:1;color:#ffb900;">&#128722;</span>',
-				customClass: { icon: 'border-0', popup: 'rounded-4', confirmButton: 'btn btn-warning px-4 py-2' },
-				buttonsStyling: false,
-				title: 'Selecione o sabor',
-				text: 'Selecione este sabor primeiro para escolher os adicionais.',
-				confirmButtonText: 'ENTENDI',
-				showCloseButton: true,
-				width: 'min(92vw, 420px)',
-				background: '#fff'
-			});
+			mostrarAvisoSelecaoSabor();
 			return;
 		}
 		$('#adicionais-sabor-' + id).stop(true, true).slideToggle(150);
