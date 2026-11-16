@@ -247,6 +247,25 @@ a[href="/meus-pedidos"].btn-warning { background:#a85b24 !important; border-colo
 @media(max-width:767px) { .container-xxl .tab-class > .nav-pills .nav-item > a { padding:9px 5px !important; margin:0 3px !important; } }
 </style>
 
+
+<style>
+/* Carrinho lateral da vitrine: mesmo visual do checkout. */
+.tpcartinfo,.tpcart,.tpcart__area { background:#fffdf9 !important; color:#503827 !important; }
+.tpcart__close,.tpcart__title { background:#fff2e4 !important; color:#753d1e !important; }
+.tpcart__title h4,.tpcart__title h5,.tpcart__title span,.tpcart__title strong { color:#753d1e !important; font-weight:800 !important; }
+.tpcart__close button,.tpcart__close a { color:#a85b24 !important; }
+.tpcart__product,.tpcart__item { border-color:#efddc9 !important; }
+.tpcart__item { background:#fffaf5 !important; border-radius:12px !important; padding:12px !important; margin-bottom:10px !important; }
+.tpcart__content-title,.tpcart__content-title a,.tpcart__cart-price,.tpcart__total-price { color:#503827 !important; }
+.tpcart__total-price { font-weight:800 !important; }
+.tpcart__checkout a,.tpcart__checkout button { background:#a85b24 !important; color:#fff !important; border:1px solid #a85b24 !important; border-radius:14px !important; font-weight:750 !important; }
+.tpcart__checkout a:hover,.tpcart__checkout button:hover { background:#87441b !important; border-color:#87441b !important; }
+.tpcart__del a,.tpcart__del button { color:#a85b24 !important; }
+.tpcart__total { border-top:1px solid #efddc9 !important; }
+.cartbody-overlay { background:rgba(53,33,20,.46) !important; }
+@media(max-width:575px){.tpcartinfo,.tpcart { max-width:100vw !important; }.tpcart__item{padding:10px !important;}}
+</style>
+
 <!-- BOTÃO Scroll-top -->
 <button class="scroll-top scroll-to-target mb-25" data-target="html">
   <i class="icon-chevrons-up"></i>
