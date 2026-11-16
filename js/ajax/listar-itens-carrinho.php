@@ -320,7 +320,7 @@ echo <<<HTML
 			<div class="carrinho-qtd">
 
 			<div class="itens-carrinho-qtd">
-				<a title="Observações do item" class="link-neutro" href="javascript:void(0)" onclick="obs('{$nome_produto}', '{$obs}', '{$id}')"><i class="bi bi-card-text {$classe_obs}"></i></a>
+				<a title="Observações do item" class="link-neutro" href="javascript:void(0)" onclick="obs('{$nome_produto}', '{$obs}', '{$id}')"><i class="bi bi-chat-left-text {$classe_obs}"></i></a>
 			</div>
 
 			<div class="itens-carrinho-qtd-adc {$classe_adc}">
