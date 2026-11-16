@@ -196,6 +196,39 @@ body.cardapio-unificado { background:#fffaf5 !important; color:#503827; }
 </style>
 <script>document.body.classList.add('cardapio-unificado');</script>
 
+
+<style>
+/* Ajuste específico dos elementos efetivamente usados na vitrine principal. */
+body.cardapio-unificado .container-xxl .section-title span { color:#82451f !important; }
+body.cardapio-unificado .container-xxl .nav-pills { border-bottom:1px solid #ead7c3 !important; padding-bottom:12px; }
+body.cardapio-unificado .container-xxl .nav-pills .nav-item > a { background:#fffdf9; border:1px solid #efddc9; border-radius:15px !important; padding:12px 10px !important; margin:0 6px !important; min-height:83px; box-shadow:0 4px 15px rgba(100,58,29,.06); }
+body.cardapio-unificado .container-xxl .nav-pills .titulo_icones { color:#753d1e !important; font-weight:750; }
+body.cardapio-unificado .container-xxl .nav-pills .subtitulo_icones { color:#9a6949 !important; }
+body.cardapio-unificado .container-xxl .nav-pills .icone-tapioca-personalizado,
+body.cardapio-unificado .container-xxl .nav-pills .icone-combo-personalizado,
+body.cardapio-unificado .container-xxl .nav-pills .icone-promocao-personalizado { background:#fff2e4 !important; color:#a85b24 !important; border-radius:13px !important; }
+body.cardapio-unificado a[href="/meus-pedidos"].btn { background:#a85b24 !important; border-color:#a85b24 !important; color:#fff !important; border-radius:24px !important; }
+body.cardapio-unificado #buscar { background:#fffdf9 !important; border:1px solid #ddc4ad !important; border-radius:12px !important; padding:13px 16px !important; margin-top:0 !important; color:#503827; }
+body.cardapio-unificado #buscar:focus { border-color:#a85b24 !important; box-shadow:0 0 0 3px rgba(168,91,36,.1); }
+body.cardapio-unificado .category-area .tpsection__sub-title,
+body.cardapio-unificado .blog-area .tpsection__sub-title { color:#753d1e !important; }
+body.cardapio-unificado .category-area .tpbrandproduct__item,
+body.cardapio-unificado .category-area .tpcategory__item,
+body.cardapio-unificado .category-area .tpblog__item,
+body.cardapio-unificado .blog-area .tpbrandproduct__item { background:#fffdf9 !important; border:1px solid #efddc9 !important; border-radius:16px !important; box-shadow:0 5px 20px rgba(100,58,29,.07) !important; overflow:hidden; }
+body.cardapio-unificado .category-area .tpbrandproduct__item a,
+body.cardapio-unificado .category-area .tpbrandproduct__item span,
+body.cardapio-unificado .category-area .tpbrandproduct__item h5,
+body.cardapio-unificado .category-area .tpbrandproduct__item h6 { color:#82451f !important; }
+body.cardapio-unificado .category-area .swiper-slide img { border-radius:12px !important; }
+body.cardapio-unificado .rodape { background:#fffdf9 !important; border-top:1px solid #efddc9; color:#604837 !important; }
+@media(max-width:767px) {
+ body.cardapio-unificado .container-xxl .nav-pills .nav-item > a { margin:0 3px !important; padding:9px 5px !important; min-height:75px; }
+ body.cardapio-unificado .container-xxl .nav-pills .titulo_icones { font-size:12px !important; }
+ body.cardapio-unificado .container-xxl .nav-pills .subtitulo_icones { font-size:10px !important; }
+}
+</style>
+
 <!-- BOTÃO Scroll-top -->
 <button class="scroll-top scroll-to-target mb-25" data-target="html">
   <i class="icon-chevrons-up"></i>
