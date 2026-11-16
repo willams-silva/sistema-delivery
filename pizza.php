@@ -766,6 +766,23 @@ if ($nome_mesa == '' and $pedido_balcao == "") {
 	}
 
 	var ehTapiocasDoces = <?php echo !empty($eh_tapiocas_com_adicionais_por_sabor) ? 'true' : 'false'; ?>;
+	// Ao entrar pela Oferta da Semana, pré-selecionar somente o sabor ofertado.
+	// O cliente continua podendo personalizar normalmente antes de comprar.
+	<?php if ($url_site === 'rainhadastapiocas' && !empty($eh_tapiocas_com_adicionais_por_sabor)) { ?>
+	$(function() {
+		var idOferta = <?php echo (int)($_GET['oferta'] ?? 0); ?>;
+		if (idOferta > 0) {
+			var $saborOferta = $('#seletor-' + idOferta);
+			if ($saborOferta.length && !$saborOferta.prop('disabled')) {
+				$saborOferta.prop('checked', true);
+				selecionar(idOferta);
+				var itemOferta = $saborOferta.closest('li')[0];
+				if (itemOferta) itemOferta.scrollIntoView({behavior:'smooth',block:'center'});
+			}
+		}
+	});
+	<?php } ?>
+
 	function mostrarAvisoSelecaoSabor(titulo, mensagem, aoFechar) {
 		titulo = titulo || 'Selecione o sabor';
 		mensagem = mensagem || 'Selecione este sabor primeiro para escolher os adicionais.';
