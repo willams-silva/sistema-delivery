@@ -310,7 +310,7 @@ echo <<<HTML
 
 
 			
-			<a href="javascript:void(0)" onclick="excluir('{$id}')" class="link-neutro {$ocultar_excluir}"><i class="bi bi-x-lg direita"></i></a>
+			<a href="javascript:void(0)" onclick="excluir('{$id}')" class="link-neutro {$ocultar_excluir}" title="Remover produto" aria-label="Remover produto"><i class="bi bi-trash3 direita" style="color:#a85b24;font-size:19px;"></i></a>
 
 			<div id="popup-excluir{$id}" class="overlay-excluir" role="dialog" aria-modal="true" aria-labelledby="titulo-excluir-{$id}" style="position:fixed;inset:0;z-index:100005;background:rgba(53,33,20,.52);align-items:center;justify-content:center;padding:18px;">
 				<div class="popup" style="position:relative;width:100%;max-width:390px;margin:auto;top:auto;left:auto;transform:none;background:#fffdf9;border:1px solid #efddc9;border-radius:20px;padding:28px 22px;box-shadow:0 18px 55px rgba(78,43,20,.18);text-align:center;color:#503827;">
