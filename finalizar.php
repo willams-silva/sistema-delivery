@@ -218,11 +218,11 @@ if($somente_pix_delivery == 'Sim'){
 
           <div id="area-endereco">
 
-            <?php if ($entrega_distancia == "Sim" and $chave_api_maps != "") { ?>
+            <?php // CEP obrigatório em qualquer modalidade de entrega Delivery. ?>
               <div class="row">
                 <div class="col-4">
                   <div class="group">
-                    <input type="text" class="input" name="cep" id="cep" required onblur="calcularFreteDistancia()">
+                    <input type="text" class="input" name="cep" id="cep" required inputmode="numeric" maxlength="9" autocomplete="postal-code" placeholder="00000-000" onblur="if (<?= json_encode($entrega_distancia == 'Sim' && $chave_api_maps != '') ?>) calcularFreteDistancia()">
                     <span class="highlight"></span>
                     <span class="bar"></span>
                     <label class="label">CEP*</label>
@@ -231,7 +231,7 @@ if($somente_pix_delivery == 'Sim'){
 
 
               </div>
-            <?php } ?>
+            <?php // Fim do campo CEP. ?>
 
             <div class="row">
               <div class="col-7">
@@ -901,18 +901,12 @@ if($somente_pix_delivery == 'Sim'){
     var chave_api_maps = "<?= $chave_api_maps ?>";
     var entrega_distancia = "<?= $entrega_distancia ?>";
 
-    if (chave_api_maps == "" || entrega_distancia != "Sim") {
-      var cep = "";
-      var cidade = "";
-    } else {
-      var cep = $('#cep').val();
-      var cidade = $('#cidade').val();
-    }
+    var cep = ($('#cep').val() || '').replace(/\D/g, '');
+    var cidade = $('#cidade').val() || '';
 
-
-    if (entrega == "Delivery" && entrega_distancia == 'Sim') {
-      if (cep == "") {
-        alertWarning("Preencha o CEP");
+    if (entrega == "Delivery") {
+      if (cep.length !== 8) {
+        alertWarning("Preencha um CEP válido com 8 dígitos");
         $('#cep').focus();
         $('#botao_finalizar').show();
         $('#div_img').hide();
@@ -922,8 +916,8 @@ if($somente_pix_delivery == 'Sim'){
 
 
 
-    if (taxa_entrega == "") {
-      alertWarning("Digite um CEP válido para receber seu Pedido, ou atualize a chave da api do google maps para o calculo de frete por distância!");
+    if (entrega == "Delivery" && taxa_entrega == "") {
+      alertWarning("Selecione um bairro válido para calcular a taxa de entrega.");
       $('#botao_finalizar').show();
       $('#div_img').hide();
       $('#colapse-').click();
@@ -1347,11 +1341,9 @@ if($somente_pix_delivery == 'Sim'){
 
 
   document.getElementById('cep').addEventListener('input', function(event) {
-    var cep = event.target.value.replace(/\D/g, '');
-
-    if (cep.length === 8) {
-      fetchAddressData(cep);
-    }
+    var cep = event.target.value.replace(/\D/g, '').slice(0, 8);
+    event.target.value = cep.length > 5 ? cep.slice(0, 5) + '-' + cep.slice(5) : cep;
+    if (cep.length === 8) fetchAddressData(cep);
   });
 
   function calcularFreteDistancia() {
@@ -1359,7 +1351,6 @@ if($somente_pix_delivery == 'Sim'){
     var chave_api = "<?= $chave_api_maps ?>";
     var distancia_km = "<?= $distancia_entrega_km ?>";
 
-    event.preventDefault();
     var cep = document.getElementById('cep').value;
     var address = document.getElementById('rua').value;
     var number = document.getElementById('numero').value;
@@ -1425,8 +1416,18 @@ if($somente_pix_delivery == 'Sim'){
       .then(function(data) {
         if (!data.erro) {
           document.getElementById('rua').value = data.logradouro;
-          document.getElementById('bairro').value = data.bairro;
-          document.getElementById('cidade').value = data.localidade;
+          var bairroInput = document.getElementById('bairro');
+          if (bairroInput.tagName === 'SELECT') {
+            // A taxa permanece vinculada ao bairro cadastrado, não ao CEP.
+            var opcao = Array.from(bairroInput.options).find(function(item) {
+              return item.value.trim().toLocaleLowerCase('pt-BR') === (data.bairro || '').trim().toLocaleLowerCase('pt-BR');
+            });
+            if (opcao) { bairroInput.value = opcao.value; calcularFrete(); }
+          } else {
+            bairroInput.value = data.bairro || '';
+          }
+          var cidadeInput = document.getElementById('cidade');
+          if (cidadeInput) cidadeInput.value = data.localidade || '';
           document.getElementById('numero').focus();
 
         }
@@ -1561,7 +1562,7 @@ if($somente_pix_delivery == 'Sim'){
 
 
       //cep
-      $("#cep").val(res.address.postcode);
+      $("#cep").val(res.address.postcode || '').trigger('input');
 
       //cidade
       $("#cidade").val(cidade);
