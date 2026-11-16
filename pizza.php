@@ -762,7 +762,7 @@ if ($nome_mesa == '' and $pedido_balcao == "") {
 	}
 	function atualizarAdicionalSabor(idAdicional, idSabor, quantidade) {
 		if (!$('#seletor-' + idSabor).is(':checked')) {
-			alert('Selecione este sabor primeiro.');
+			mostrarAvisoSelecaoSabor();
 			return;
 		}
 		$('#qtd-adc-' + idSabor + '-' + idAdicional).text(quantidade);
