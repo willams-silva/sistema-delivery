@@ -491,7 +491,7 @@ $pag = 'categorias';
 
 		$('#nome_adc').val('');
 		$('#valor_adc').val('');
-		$('#tipo_adc').val('adicional');
+		$('#tipo_adc').val('adicional').trigger('change');
 
 	}
 
@@ -715,10 +715,17 @@ $pag = 'categorias';
 
 
 
+	// Opcionais são retiradas gratuitas: o painel não permite atribuir cobrança.
+	$('#tipo_adc').on('change', function () {
+		var retirar = $(this).val() === 'opcional';
+		if (retirar) $('#valor_adc').val('0,00');
+		$('#valor_adc').prop('readonly', retirar);
+	});
+
 	function editarAdc(id, nome, valor, tipo) {
 		$('#nome_adc').val(nome);
 		$('#valor_adc').val(valor);
-		$('#tipo_adc').val(tipo || 'adicional');
+		$('#tipo_adc').val(tipo || 'adicional').trigger('change');
 		$('#id_adc_editar').val(id);
 
 		$('#btn_editar_adc').text('Editar');
