@@ -386,7 +386,7 @@ if ($nome_mesa == '' and $pedido_balcao == "") {
 
 		<span class="titulo-itens-pizza"><span style="margin-left:20px">Escolha <span id="quant_sabores"> os </span> sabores</span></span>
 		<?php
-		$query = $pdo->query("SELECT * FROM produtos where categoria = '$id' and ativo = 'Sim'");
+		$query = $pdo->query("SELECT * FROM produtos where categoria = '$id' and ativo = 'Sim' and (tem_estoque = 'Não' OR estoque > 0)");
 		$res = $query->fetchAll(PDO::FETCH_ASSOC);
 		$total_reg = @count($res);
 		if ($total_reg > 0) {
