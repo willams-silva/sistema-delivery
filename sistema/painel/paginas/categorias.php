@@ -234,6 +234,14 @@ $pag = 'categorias';
 						</div>
 
 						<div class="col-md-3">
+							<div class="form-group" id="grupo-tipo-adc" style="display:none">
+								<label for="tipo_adc">Tipo</label>
+								<select class="form-select" name="tipo" id="tipo_adc">
+									<option value="adicional">Adicional</option>
+									<option value="opcional">Opcional (retirar, grátis)</option>
+									<option value="proteina">Proteína</option>
+								</select>
+							</div>
 							<button id="btn_editar_adc" type="submit" class="btn btn-primary">Salvar</button>
 
 						</div>
@@ -482,6 +490,7 @@ $pag = 'categorias';
 
 		$('#nome_adc').val('');
 		$('#valor_adc').val('');
+		$('#tipo_adc').val('adicional');
 
 	}
 
@@ -501,6 +510,7 @@ $pag = 'categorias';
 
 
 	function listarAdicionais(id) {
+		$('#grupo-tipo-adc').toggle(window.categoriaSalgadaRainha === true);
 		$.ajax({
 			url: 'paginas/' + pag + "/listar-adicionais.php",
 			method: 'POST',
@@ -704,9 +714,10 @@ $pag = 'categorias';
 
 
 
-	function editarAdc(id, nome, valor) {
+	function editarAdc(id, nome, valor, tipo) {
 		$('#nome_adc').val(nome);
 		$('#valor_adc').val(valor);
+		$('#tipo_adc').val(tipo || 'adicional');
 		$('#id_adc_editar').val(id);
 
 		$('#btn_editar_adc').text('Editar');
