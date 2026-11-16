@@ -524,9 +524,9 @@ if ($nome_mesa == '' and $pedido_balcao == "") {
 										<div class="d-flex justify-content-between align-items-center" style="padding:5px 0; border-bottom:1px solid #eee;">
 											<small><?php echo iconeAdicionalPizza($nome_adc_sabor) ?> <?php echo $nome_adc_sabor ?> <span class="text-success">(R$ <?php echo $valor_adc_sabor ?>)</span></small>
 											<div class="d-flex align-items-center">
-												<button type="button" class="btn btn-sm btn-link text-danger p-1" onclick="dimAdicionalSabor('<?php echo $id_adc_sabor ?>','<?php echo $id_produto ?>')">−</button>
-												<b id="qtd-adc-<?php echo $id_produto ?>-<?php echo $id_adc_sabor ?>" style="min-width:18px;text-align:center">0</b>
-												<button type="button" class="btn btn-sm btn-link text-success p-1" onclick="aumAdicionalSabor('<?php echo $id_adc_sabor ?>','<?php echo $id_produto ?>')">＋</button>
+												<button type="button" aria-label="Retirar uma unidade de <?php echo $nome_adc_sabor ?>" class="btn btn-sm" style="width:34px;height:34px;border:1.5px solid #dc3545;border-radius:10px;color:#dc3545;background:#fff;display:inline-flex;align-items:center;justify-content:center;padding:0;font-size:23px;font-weight:700;line-height:1;" onclick="dimAdicionalSabor('<?php echo $id_adc_sabor ?>','<?php echo $id_produto ?>')">&minus;</button>
+												<b id="qtd-adc-<?php echo $id_produto ?>-<?php echo $id_adc_sabor ?>" aria-live="polite" style="min-width:26px;text-align:center;font-size:16px;margin:0 5px">0</b>
+												<button type="button" aria-label="Adicionar uma unidade de <?php echo $nome_adc_sabor ?>" class="btn btn-sm" style="width:34px;height:34px;border:1.5px solid #198754;border-radius:10px;color:#fff;background:#198754;display:inline-flex;align-items:center;justify-content:center;padding:0;font-size:23px;font-weight:700;line-height:1;" onclick="aumAdicionalSabor('<?php echo $id_adc_sabor ?>','<?php echo $id_produto ?>')">+</button>
 											</div>
 										</div>
 									<?php } ?>
