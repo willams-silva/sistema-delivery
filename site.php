@@ -508,7 +508,7 @@ if ($id_mesa == "" and $sessão_balcao == "") {
     <section class="category-area ocultar_dasktop" id="categoria">
       <div class="row">
         <div class="col-lg-12 text-center mb-10">
-          <h4 class="tpsection__sub-title">~~~~~~~~ CATEGORIAS ~~~~~~~~</h4>
+          <h4 class="tpsection__sub-title">Nossas Categorias</h4>
         </div>
       </div>
 
@@ -726,7 +726,7 @@ if ($id_mesa == "" and $sessão_balcao == "") {
           <div class="row">
             <div class="col-lg-12 text-center mb-20">
               <div class="tpsection">
-                <h4 class="tpsection__sub-title">~~~~~~~~ CATEGORIAS ~~~~~~~~</h4>
+                <h4 class="tpsection__sub-title">Nossas Categorias</h4>
               </div>
             </div>
           </div>
@@ -847,7 +847,7 @@ if ($id_mesa == "" and $sessão_balcao == "") {
           <div class="row">
             <div class="col-lg-12 text-center mb-20">
               <div class="tpsection">
-                <h4 class="tpsection__sub-title">~~~~~~~~ OFERTAS DA SEMANA ~~~~~~~~</h4>
+                <h4 class="tpsection__sub-title">Ofertas da Semana</h4>
               </div>
             </div>
           </div>
@@ -985,7 +985,7 @@ if ($id_mesa == "" and $sessão_balcao == "") {
         <div class="row">
           <div class="col-lg-12 text-center">
             <div class="tpsection mb-35">
-              <h4 class="tpsection__sub-title">~~~~~~~~ APROVEITE NOSSOS COMBOS ~~~~~~~~</h4>
+              <h4 class="tpsection__sub-title">Combos Especiais</h4>
             </div>
           </div>
         </div>
