@@ -176,6 +176,7 @@ HTML;
 <script type="text/javascript">
 	function adicionais(id, nome) {
 
+		window.categoriaSalgadaRainha = window.lojaRainhaTapiocas === true && nome.trim().toLowerCase() === 'tapiocas salgadas';
 		$('#titulo_nome_adc').text(nome);
 		$('#id_adc').val(id);
 
