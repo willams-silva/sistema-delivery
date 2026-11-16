@@ -184,6 +184,19 @@ if($id_edicao == ""){
     z-index: 300;
   }
 
+  /* Em celulares, manter o selo de status fora do rodapé e dos contatos. */
+  @media (max-width: 767px) {
+    .img-aberto {
+      bottom: auto !important;
+      top: 76px !important;
+      left: 12px !important;
+      width: 70px !important;
+      max-width: 70px !important;
+      animation: none !important;
+      z-index: 300;
+    }
+  }
+
   @keyframes slidein {
     from {
       margin-left: 200%;
