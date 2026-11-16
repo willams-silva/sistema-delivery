@@ -250,6 +250,11 @@ a[href="/meus-pedidos"].btn-warning { background:#a85b24 !important; border-colo
 
 <style>
 /* Carrinho lateral da vitrine: mesmo visual do checkout. */
+/* Evita corte da primeira letra no texto de carrinho vazio. */
+.tpcart__product { padding-left:16px !important; padding-right:16px !important; box-sizing:border-box; }
+.tpcart__product p,.tpcart__product span,.tpcart__product div { text-indent:0 !important; }
+.tpcart__product p { margin-left:0 !important; overflow:visible !important; }
+
 .tpcartinfo,.tpcart,.tpcart__area { background:#fffdf9 !important; color:#503827 !important; }
 .tpcart__close,.tpcart__title { background:#fff2e4 !important; color:#753d1e !important; }
 .tpcart__title h4,.tpcart__title h5,.tpcart__title span,.tpcart__title strong { color:#753d1e !important; font-weight:800 !important; }
