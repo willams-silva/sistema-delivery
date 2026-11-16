@@ -1415,14 +1415,15 @@ if($somente_pix_delivery == 'Sim'){
       })
       .then(function(data) {
         if (!data.erro) {
-          document.getElementById('rua').value = data.logradouro;
+          if (document.getElementById('cep').value.replace(/\D/g, '') !== cep) return;
+          if (data.logradouro) document.getElementById('rua').value = data.logradouro;
           var bairroInput = document.getElementById('bairro');
           if (bairroInput.tagName === 'SELECT') {
             // A taxa permanece vinculada ao bairro cadastrado, não ao CEP.
             var opcao = Array.from(bairroInput.options).find(function(item) {
               return item.value.trim().toLocaleLowerCase('pt-BR') === (data.bairro || '').trim().toLocaleLowerCase('pt-BR');
             });
-            if (opcao) { bairroInput.value = opcao.value; calcularFrete(); }
+            if (opcao) { bairroInput.value = opcao.value; $(bairroInput).trigger('change'); }
           } else {
             bairroInput.value = data.bairro || '';
           }
@@ -1538,49 +1539,43 @@ if($somente_pix_delivery == 'Sim'){
 
 <script type="text/javascript">
   function geo(latitude, longitude) {
+    $.getJSON('https://nominatim.openstreetmap.org/reverse?format=json&addressdetails=1&zoom=18&lat=' +
+      encodeURIComponent(latitude) + '&lon=' + encodeURIComponent(longitude), function(res) {
+      var endereco = res.address || {};
+      var rua = endereco.road || endereco.pedestrian || endereco.residential || endereco.street || '';
+      var numero = endereco.house_number || '';
+      var cep = (endereco.postcode || '').replace(/\D/g, '').slice(0, 8);
+      var bairro = endereco.suburb || endereco.neighbourhood || endereco.quarter || '';
+      var cidade = endereco.city || endereco.town || endereco.village || endereco.municipality || '';
 
-    $.getJSON('https://nominatim.openstreetmap.org/reverse?format=json&lat=' + latitude + '&lon=' + longitude, function(res) {
-
-      var entrega_distancia = "<?= $entrega_distancia ?>";
-
-      //rua
-      $("#rua").val(res.address.road);
-
-
-
-      //cidade ver qual
-      var cidade = res.address.city;
-
-      if (cidade == "" || cidade == null) {
-        //TENTAR PEGAR POR TOWN
-        var cidade = res.address.town;
-
-        if (cidade == "" || cidade == null) {
-          var cidade = res.address.village;
+      if (rua) $('#rua').val(rua);
+      // Número só é preenchido quando o mapa informa explicitamente.
+      if (numero) $('#numero').val(numero);
+      if (cidade) $('#cidade').val(cidade);
+      if (cep.length === 8) {
+        $('#cep').val(cep.slice(0, 5) + '-' + cep.slice(5));
+      }
+      var bairroInput = document.getElementById('bairro');
+      if (bairroInput && bairro) {
+        if (bairroInput.tagName === 'SELECT') {
+          var opcao = Array.from(bairroInput.options).find(function(item) {
+            return item.value.trim().toLocaleLowerCase('pt-BR') === bairro.trim().toLocaleLowerCase('pt-BR');
+          });
+          if (opcao) $(bairroInput).val(opcao.value).trigger('change');
+        } else {
+          $(bairroInput).val(bairro);
         }
       }
-
-
-      //cep
-      $("#cep").val(res.address.postcode || '').trigger('input');
-
-      //cidade
-      $("#cidade").val(cidade);
-
-
-      //bairo
-      if (entrega_distancia == 'Sim') {
-        $("#bairro").val(res.address.suburb);
-        calcularFreteDistancia()
-      } else {
-        //$("#bairro").val(res.address.suburb).change();
+      if ("<?= $entrega_distancia ?>" === 'Sim' && "<?= $chave_api_maps ?>" !== '' && cep.length === 8) {
+        calcularFreteDistancia();
       }
-
-
-
-
+      if (!numero) $('#numero').focus();
+    }).fail(function() {
+      alertWarning('Não foi possível obter o endereço pela localização. Preencha manualmente.');
+      $('#rua').val('');
     });
   };
+
 </script>
 
 
