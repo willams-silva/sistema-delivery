@@ -130,9 +130,12 @@ $adicionais_selecionados = $stmt_adc->fetchAll(PDO::FETCH_ASSOC);
 foreach ($adicionais_selecionados as $adc) {
     $valor_unitario_adc = (float)$adc['valor_item'];
     if ($valor_unitario_adc <= 0) {
-        $stmt_valor = $pdo->prepare("SELECT valor FROM adicionais_cat WHERE id = ? LIMIT 1");
-        $stmt_valor->execute([(int)$adc['id_item']]);
-        $valor_unitario_adc = (float)$stmt_valor->fetchColumn();
+        $stmt_valor = $pdo->prepare("SELECT valor, tipo FROM adicionais_cat WHERE id = ? AND empresa = ? LIMIT 1");
+        $stmt_valor->execute([(int)$adc['id_item'], $id_empresa]);
+        $cadastro_adc = $stmt_valor->fetch(PDO::FETCH_ASSOC);
+        // Retirar ingredientes não pode gerar cobrança, mesmo com preço legado.
+        $valor_unitario_adc = ($cadastro_adc && ($cadastro_adc['tipo'] ?? '') !== 'opcional')
+            ? (float)$cadastro_adc['valor'] : 0.0;
     }
     $total_adicionais += $valor_unitario_adc * (int)$adc['quantidade'];
 }
