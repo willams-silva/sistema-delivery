@@ -111,14 +111,14 @@ if($total_reg > 0){
 			}
 
 
-		// Resumo detalhado exclusivo das TAPIOCAS DOCES da Rainha das Tapiocas.
+		// Resumo detalhado das TAPIOCAS DOCES e SALGADAS da Rainha das Tapiocas.
 		$exibir_resumo_tapioca = false;
 		$resumo_adicionais_tapioca = '';
 		$resumo_preco_tapioca = '';
 		if ($url_site === 'rainhadastapiocas' && (int)$categoria > 0) {
 			$stmt_categoria = $pdo->prepare("SELECT nome FROM categorias WHERE id = ? AND empresa = ? LIMIT 1");
 			$stmt_categoria->execute([(int)$categoria, $id_empresa]);
-			$exibir_resumo_tapioca = (strtolower(trim((string)$stmt_categoria->fetchColumn())) === 'tapiocas doces');
+			$exibir_resumo_tapioca = (in_array(strtolower(trim((string)$stmt_categoria->fetchColumn())), ['tapiocas doces', 'tapiocas salgadas'], true));
 		}
 		if ($exibir_resumo_tapioca) {
 			$stmt_extras = $pdo->prepare("SELECT t.quantidade, t.valor_item, t.id_sabor, a.nome, a.valor AS valor_cadastro, p.nome AS nome_sabor
