@@ -90,7 +90,49 @@ if($somente_pix_delivery == 'Sim'){
     color: #888; /* opcional, muda a cor do placeholder */
   }
 </style>
+<style>
+/* Checkout: identidade visual acolhedora do cardápio, isolada desta página. */
+body.checkout-cardapio { background:#fffaf5; color:#493425; }
+.checkout-cardapio .main-container { max-width:1050px; margin:0 auto; padding:0 14px; }
+.checkout-cardapio .navbar { background:#fffdf9 !important; border-bottom:1px solid #f0dfce; box-shadow:0 3px 16px rgba(94,53,25,.09) !important; }
+.checkout-cardapio .navbar-brand { color:#753d1e; font-weight:750; display:flex; align-items:center; gap:12px; font-size:clamp(15px,2.5vw,20px); }
+.checkout-cardapio .navbar-brand img { width:64px; max-height:58px; object-fit:contain; }
+.checkout-cardapio #accordionExample { margin-top:90px !important; margin-bottom:215px !important; overflow:visible !important; height:auto !important; display:grid; gap:14px; }
+.checkout-cardapio .accordion-item { border:1px solid #efddc9; border-radius:16px !important; overflow:hidden; background:#fff; box-shadow:0 4px 20px rgba(100,58,29,.055); }
+.checkout-cardapio .accordion-button { padding:19px 22px; font-size:15px !important; font-weight:750; color:#75401f; background:#fff; box-shadow:none; }
+.checkout-cardapio .accordion-button:not(.collapsed) { background:#fff2e4; color:#8d4a20; box-shadow:none; }
+.checkout-cardapio .accordion-button:focus { box-shadow:0 0 0 2px #e5b88c; }
+.checkout-cardapio .accordion-button::after { filter:sepia(1) saturate(1.5); }
+.checkout-cardapio .accordion-body { padding:22px; }
+.checkout-cardapio .list-group { padding-left:0; gap:9px; }
+.checkout-cardapio .list-group-item { border:1px solid #eedfce; border-radius:12px !important; padding:16px; cursor:pointer; color:#553b2a; background:#fffdfb; }
+.checkout-cardapio .list-group-item:hover { background:#fff2e5; }
+.checkout-cardapio .form-check-input:checked { background-color:#a85b24; border-color:#a85b24; }
+.checkout-cardapio .group .input { color:#50392b; border-bottom-color:#cbb29a; }
+.checkout-cardapio .group .label { color:#87674d; }
+.checkout-cardapio .group .input:focus { border-bottom-color:#a85b24; }
+.checkout-cardapio .btn-success, .checkout-cardapio .btn-warning { background:#a85b24 !important; border-color:#a85b24 !important; color:#fff !important; border-radius:11px; font-weight:700; padding:11px 19px; }
+.checkout-cardapio .btn-success:hover, .checkout-cardapio .btn-warning:hover { background:#87441b !important; }
+.checkout-cardapio .btn-danger { background:#fff; border-color:#d8bba3; color:#7b4d2d; border-radius:11px; padding:11px 19px; }
+.checkout-cardapio .total-finalizar { background:#fffdf9; border-top:1px solid #ead7c3; box-shadow:0 -5px 20px rgba(95,54,25,.08); }
+.checkout-cardapio .total-pedido { background:#fff; border-color:#ecd9c5 !important; }
+.checkout-cardapio #botao_finalizar { width:100%; }
+.checkout-cardapio #area-endereco button[title="Buscar Localização"] { background:#a85b24 !important; border-radius:9px; width:36px !important; height:36px !important; }
+.checkout-cardapio #area-endereco button[title="Buscar Localização"] i { color:#fff !important; }
+@media(max-width:767px) {
+  .checkout-cardapio .main-container { padding:0 10px; }
+  .checkout-cardapio #accordionExample { margin-top:77px !important; margin-bottom:240px !important; gap:10px; }
+  .checkout-cardapio .accordion-body { padding:16px 13px; }
+  .checkout-cardapio .accordion-button { padding:16px 13px; font-size:13px !important; }
+  .checkout-cardapio .navbar-brand img { width:47px; }
+  .checkout-cardapio .navbar-brand { gap:7px; }
+  .checkout-cardapio #area-endereco .col-4 { width:55%; }
+  .checkout-cardapio #area-endereco .col-7 { min-width:0; }
+  .checkout-cardapio #area-endereco .group .input { max-width:100%; }
+}
+</style>
 
+<script>document.body.classList.add("checkout-cardapio");</script>
 <div class="main-container">
 
   <nav class="navbar bg-light fixed-top" style="box-shadow: 0px 3px 5px rgba(0, 0, 0, 0.20);">
