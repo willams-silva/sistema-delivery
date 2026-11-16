@@ -80,10 +80,12 @@ $total_reg = @count($res);
 if ($total_reg > 0) {
 	$nome = $res[0]['nome'];
 	$eh_tapiocas_doces = (strtolower(trim($nome)) === 'tapiocas doces');
+	$eh_tapiocas_salgadas = ($url_site === 'rainhadastapiocas' && strtolower(trim($nome)) === 'tapiocas salgadas');
+	$eh_tapiocas_com_adicionais_por_sabor = ($eh_tapiocas_doces || $eh_tapiocas_salgadas);
 
 	// Nas telas pequenas, empilha a área do produto e os adicionais.
 	// Regra emitida na própria página para evitar cache antigo do arquivo CSS.
-	if ($eh_tapiocas_doces) {
+	if ($eh_tapiocas_com_adicionais_por_sabor) {
 		echo '<style>
 			@media (max-width: 767px) {
 				li.item-tapioca-doce {
@@ -318,7 +320,7 @@ if ($nome_mesa == '' and $pedido_balcao == "") {
 		$res = $query->fetchAll(PDO::FETCH_ASSOC);
 		$total_reg = @count($res);
 		// Apenas a loja Rainha das Tapiocas, com um único tamanho na categoria doces.
-		$tamanho_unico_automatico = ($url_site === 'rainhadastapiocas' && !empty($eh_tapiocas_doces) && $total_reg === 1);
+		$tamanho_unico_automatico = ($url_site === 'rainhadastapiocas' && !empty($eh_tapiocas_com_adicionais_por_sabor) && $total_reg === 1);
 		if ($tamanho_unico_automatico) {
 			$id_tamanho_unico = (int) $res[0]['id'];
 			$limite_sabores_tamanho_unico = (int) $res[0]['sabores'];
@@ -438,7 +440,7 @@ if ($nome_mesa == '' and $pedido_balcao == "") {
 		?>
 
 
-				<li class="list-group-item d-flex justify-content-between align-items-start <?php echo !empty($eh_tapiocas_doces) ? 'item-tapioca-doce' : ''; ?>">
+				<li class="list-group-item d-flex justify-content-between align-items-start <?php echo !empty($eh_tapiocas_com_adicionais_por_sabor) ? 'item-tapioca-doce' : ''; ?>">
 
 					<img onclick="selectPizzas('<?php echo $id_produto ?>')" class="<?php echo $mostrar ?>" src="img/esgotado.png"
 						width="65px" height="65px" style="position:absolute; right:0; top:0px">
@@ -516,7 +518,7 @@ if ($nome_mesa == '' and $pedido_balcao == "") {
 
 					</div>
 
-					<?php if (!empty($eh_tapiocas_doces)) {
+					<?php if (!empty($eh_tapiocas_com_adicionais_por_sabor)) {
 						$query_adc_sabor = $pdo->query("SELECT * FROM adicionais_cat where categoria = '$id' and ativo = 'Sim' order by nome asc");
 						$adicionais_sabor = $query_adc_sabor->fetchAll(PDO::FETCH_ASSOC);
 						if (count($adicionais_sabor) > 0) { ?>
@@ -554,7 +556,7 @@ if ($nome_mesa == '' and $pedido_balcao == "") {
 
 
 
-		<?php if (empty($eh_tapiocas_doces)) {
+		<?php if (empty($eh_tapiocas_com_adicionais_por_sabor)) {
 		$query = $pdo->query("SELECT * FROM adicionais_cat where categoria = '$id' and ativo = 'Sim'");
 		$res = $query->fetchAll(PDO::FETCH_ASSOC);
 		$total_reg = @count($res);
@@ -742,7 +744,7 @@ if ($nome_mesa == '' and $pedido_balcao == "") {
 		}
 	}
 
-	var ehTapiocasDoces = <?php echo !empty($eh_tapiocas_doces) ? 'true' : 'false'; ?>;
+	var ehTapiocasDoces = <?php echo !empty($eh_tapiocas_com_adicionais_por_sabor) ? 'true' : 'false'; ?>;
 	function mostrarAvisoSelecaoSabor(titulo, mensagem, aoFechar) {
 		titulo = titulo || 'Selecione o sabor';
 		mensagem = mensagem || 'Selecione este sabor primeiro para escolher os adicionais.';
