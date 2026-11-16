@@ -111,6 +111,46 @@ if($total_reg > 0){
 			}
 
 
+		// Resumo detalhado exclusivo das TAPIOCAS DOCES da Rainha das Tapiocas.
+		$exibir_resumo_tapioca = false;
+		$resumo_adicionais_tapioca = '';
+		$resumo_preco_tapioca = '';
+		if ($url_site === 'rainhadastapiocas' && (int)$categoria > 0) {
+			$stmt_categoria = $pdo->prepare("SELECT nome FROM categorias WHERE id = ? AND empresa = ? LIMIT 1");
+			$stmt_categoria->execute([(int)$categoria, $id_empresa]);
+			$exibir_resumo_tapioca = (strtolower(trim((string)$stmt_categoria->fetchColumn())) === 'tapiocas doces');
+		}
+		if ($exibir_resumo_tapioca) {
+			$stmt_extras = $pdo->prepare("SELECT t.quantidade, t.valor_item, t.id_sabor, a.nome, a.valor AS valor_cadastro, p.nome AS nome_sabor
+				FROM temp t
+				JOIN adicionais_cat a ON a.id = t.id_item AND a.empresa = ?
+				LEFT JOIN produtos p ON p.id = t.id_sabor
+				WHERE t.carrinho = ? AND t.tabela = 'adicionais' AND t.empresa = ? ORDER BY t.id_sabor, a.nome");
+			$stmt_extras->execute([$id_empresa, (int)$id, $id_empresa]);
+			$extras_tapioca = $stmt_extras->fetchAll(PDO::FETCH_ASSOC);
+			$total_extras_unidade = 0.0;
+			foreach ($extras_tapioca as $extra) {
+				$qtd_extra = max(0, (int)$extra['quantidade']);
+				$preco_extra = (float)$extra['valor_item'];
+				if ($preco_extra <= 0) $preco_extra = (float)$extra['valor_cadastro'];
+				$subtotal_extra = $qtd_extra * $preco_extra;
+				$total_extras_unidade += $subtotal_extra;
+				$nome_extra = htmlspecialchars((string)$extra['nome'], ENT_QUOTES, 'UTF-8');
+				$nome_sabor_extra = htmlspecialchars((string)$extra['nome_sabor'], ENT_QUOTES, 'UTF-8');
+				$texto_sabor = $nome_sabor_extra !== '' ? '<small class="text-muted"> · ' . $nome_sabor_extra . '</small>' : '';
+				$valor_extra_formatado = number_format($subtotal_extra * (float)$quantidade, 2, ',', '.');
+				$resumo_adicionais_tapioca .= '<div class="d-flex justify-content-between gap-2 py-1" style="font-size:13px"><span><i class="bi bi-plus-circle-fill text-success"></i> ' . $qtd_extra . 'x ' . $nome_extra . $texto_sabor . '</span><strong>R$ ' . $valor_extra_formatado . '</strong></div>';
+			}
+			$valor_base_total = max(0, (float)$total_item - $total_extras_unidade * (float)$quantidade);
+			$valor_base_formatado = number_format($valor_base_total, 2, ',', '.');
+			$valor_extras_formatado = number_format($total_extras_unidade * (float)$quantidade, 2, ',', '.');
+			$resumo_preco_tapioca = '<div class="mt-3 p-3" style="background:#fff8e8;border-radius:12px;border:1px solid #f5e4ba">'
+				. '<div class="d-flex justify-content-between gap-2 pb-2" style="font-size:14px"><span>🫓 Tapioca (' . htmlspecialchars((string)$quantidade, ENT_QUOTES, 'UTF-8') . ' un.)</span><strong>R$ ' . $valor_base_formatado . '</strong></div>'
+				. $resumo_adicionais_tapioca
+				. '<div class="d-flex justify-content-between gap-2 pt-2 mt-2" style="border-top:1px solid #e9d5a7;font-size:13px"><span>Subtotal dos adicionais</span><strong>R$ ' . $valor_extras_formatado . '</strong></div>'
+				. '</div>';
+		}
+
 		$ocultar_quantidades = '';
 			$sigla_unidade = '';
 			if($nome_unidade == 'Quilogramas' or $nome_unidade == 'Quilo' or $nome_unidade == 'Quilograma' or $nome_unidade == 'KG'){
@@ -121,6 +161,11 @@ if($total_reg > 0){
 			if($nome_unidade == 'Metros' or $nome_unidade == 'Metro' or $nome_unidade == 'M' or $nome_unidade == 'm'){
 				$sigla_unidade = ' (m)';
 				$ocultar_quantidades = 'ocultar';
+			}
+
+			if ($exibir_resumo_tapioca) {
+				$sigla_unidade = '';
+				$ocultar_quantidades = '';
 			}
 
 			if($nome_unidade == 'Litro' or $nome_unidade == 'Litros' or $nome_unidade == 'L'){
@@ -228,7 +273,7 @@ $query5 = $pdo->query("SELECT * FROM temp where carrinho = '$id' and tabela = 'a
 		$res5 = $query5->fetchAll(PDO::FETCH_ASSOC);
 		$total_reg5 = @count($res5);
 		if($total_reg5 > 0){
-			$classe_adc = '';
+			$classe_adc = $exibir_resumo_tapioca ? 'ocultar' : '';
 		}else{
 			$classe_adc = 'ocultar';
 		}
@@ -302,7 +347,7 @@ echo <<<HTML
 			</div>
 
 			</div>
-
+			{$resumo_preco_tapioca}
 
 			</li>
 
