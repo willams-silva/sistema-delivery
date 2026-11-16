@@ -193,6 +193,9 @@ body { background:#fffaf5 !important; color:#493425; }
 #listar-itens-carrinho img { max-width:100%; object-fit:cover; }
 .area-pedidos { background:#fffdf9 !important; border-top:1px solid #efddc9 !important; box-shadow:0 -5px 20px rgba(95,54,25,.08); padding:12px max(14px,calc((100vw - 1360px)/2 + 14px)) !important; }
 .area-pedidos .total-pedido { background:#fff !important; border:1px solid #efddc9 !important; border-radius:12px !important; padding:12px 16px !important; color:#503827; }
+/* Subtotal com a mesma largura do botão de finalizar, ambos centralizados. */
+.area-pedidos .total-pedido { box-sizing:border-box; width:min(100%, 360px); margin-left:auto; margin-right:auto; }
+.area-pedidos .total-pedido::after { content:""; display:block; clear:both; }
 .area-pedidos .abaixo { margin-top:10px !important; }
 .area-pedidos .abaixo { display:flex !important; justify-content:center; align-items:center; }
 .area-pedidos .btn-lg { display:inline-flex !important; align-items:center; justify-content:center; flex-wrap:nowrap; gap:10px; width:auto !important; max-width:100%; min-width:min(100%, 280px); margin:0 auto; padding:13px 22px !important; font-size:clamp(14px, 3.8vw, 20px) !important; white-space:nowrap; text-align:center; }
