@@ -46,7 +46,7 @@ if (@$_SESSION['nome_mesa'] != '') {
 
 
 			<?php
-			$query = $pdo->query("SELECT * FROM produtos where categoria = '$id' and ativo = 'Sim' and empresa = '$id_empresa' order by valor_venda asc");
+			$query = $pdo->query("SELECT * FROM produtos where categoria = '$id' and ativo = 'Sim' and empresa = '$id_empresa' and (tem_estoque = 'Não' OR estoque > 0) order by valor_venda asc");
 			$res = $query->fetchAll(PDO::FETCH_ASSOC);
 
 			// Na vitrine do delivery, considera somente produtos disponíveis para delivery.
