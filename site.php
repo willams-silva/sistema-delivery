@@ -167,6 +167,35 @@ if($id_edicao == ""){
 <script src="js/main.js"></script>
 
 
+
+<style>
+/* Cardápio público: identidade consistente com checkout e seleção de produtos. */
+body.cardapio-unificado { background:#fffaf5 !important; color:#503827; }
+.cardapio-unificado .tpsection__sub-title,.cardapio-unificado .section-title { color:#753d1e !important; font-weight:800 !important; }
+.cardapio-unificado .tpsection__sub-title { font-size:clamp(22px,3vw,30px); letter-spacing:-.4px; }
+.cardapio-unificado .category-area,.cardapio-unificado .blog-area,.cardapio-unificado .product-area { background:transparent !important; }
+.cardapio-unificado .category-area,.cardapio-unificado .blog-area { padding-left:10px; padding-right:10px; }
+.cardapio-unificado .category-area .swiper-slide,.cardapio-unificado .blog-area .swiper-slide { border-radius:16px; }
+.cardapio-unificado .category-area .swiper-slide > a,.cardapio-unificado .blog-area .swiper-slide > a { border-radius:16px; }
+.cardapio-unificado .category-area img,.cardapio-unificado .blog-area img { border-radius:13px; }
+.cardapio-unificado .nav-pills .nav-link { border-radius:12px !important; color:#82451f !important; transition:background .2s ease; }
+.cardapio-unificado .nav-pills .nav-link.active,.cardapio-unificado .nav-pills .show > .nav-link { background:#a85b24 !important; color:#fff !important; }
+.cardapio-unificado .nav-pills .nav-link:hover { background:#fff2e4; }
+.cardapio-unificado .btn-primary,.cardapio-unificado .btn-warning,.cardapio-unificado .btn-success { background:#a85b24 !important; border-color:#a85b24 !important; color:#fff !important; border-radius:11px; font-weight:750; }
+.cardapio-unificado .btn-outline-primary { color:#a85b24 !important; border-color:#a85b24 !important; border-radius:11px; }
+.cardapio-unificado .btn-outline-primary:hover { background:#a85b24 !important; color:#fff !important; }
+.cardapio-unificado .blog-area .tpblog__item,.cardapio-unificado .blog-area .tpblog__content,.cardapio-unificado .category-area .tpcategory__item { border-radius:16px; }
+.cardapio-unificado .blog-area .tpblog__item { background:#fffdf9; border:1px solid #efddc9; box-shadow:0 5px 20px rgba(100,58,29,.07); overflow:hidden; }
+.cardapio-unificado a:hover { color:#a85b24; }
+.cardapio-unificado .scroll-top { background:#a85b24 !important; color:#fff !important; border-radius:50%; }
+@media(max-width:767px) {
+ .cardapio-unificado .tpsection__sub-title { font-size:22px; }
+ .cardapio-unificado .category-area,.cardapio-unificado .blog-area { padding-left:6px; padding-right:6px; }
+ .cardapio-unificado .nav-pills .nav-link { padding:9px 7px; }
+}
+</style>
+<script>document.body.classList.add('cardapio-unificado');</script>
+
 <!-- BOTÃO Scroll-top -->
 <button class="scroll-top scroll-to-target mb-25" data-target="html">
   <i class="icon-chevrons-up"></i>
