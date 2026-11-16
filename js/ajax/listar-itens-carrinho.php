@@ -114,6 +114,8 @@ if($total_reg > 0){
 		// Resumo detalhado das TAPIOCAS DOCES e SALGADAS da Rainha das Tapiocas.
 		$exibir_resumo_tapioca = false;
 		$resumo_adicionais_tapioca = '';
+		$resumo_opcionais_tapioca = '';
+		$resumo_proteinas_tapioca = '';
 		$resumo_preco_tapioca = '';
 		if ($url_site === 'rainhadastapiocas' && (int)$categoria > 0) {
 			$stmt_categoria = $pdo->prepare("SELECT nome FROM categorias WHERE id = ? AND empresa = ? LIMIT 1");
@@ -121,7 +123,7 @@ if($total_reg > 0){
 			$exibir_resumo_tapioca = (in_array(strtolower(trim((string)$stmt_categoria->fetchColumn())), ['tapiocas doces', 'tapiocas salgadas'], true));
 		}
 		if ($exibir_resumo_tapioca) {
-			$stmt_extras = $pdo->prepare("SELECT t.quantidade, t.valor_item, t.id_sabor, a.nome, a.valor AS valor_cadastro, p.nome AS nome_sabor
+			$stmt_extras = $pdo->prepare("SELECT t.quantidade, t.valor_item, t.id_sabor, a.nome, a.tipo, a.valor AS valor_cadastro, p.nome AS nome_sabor
 				FROM temp t
 				JOIN adicionais_cat a ON a.id = t.id_item AND a.empresa = ?
 				LEFT JOIN produtos p ON p.id = t.id_sabor
@@ -131,15 +133,22 @@ if($total_reg > 0){
 			$total_extras_unidade = 0.0;
 			foreach ($extras_tapioca as $extra) {
 				$qtd_extra = max(0, (int)$extra['quantidade']);
-				$preco_extra = (float)$extra['valor_item'];
-				if ($preco_extra <= 0) $preco_extra = (float)$extra['valor_cadastro'];
+				$tipo_extra = (string)($extra['tipo'] ?? 'adicional');
+				$preco_extra = $tipo_extra === 'opcional' ? 0 : (float)$extra['valor_item'];
+				if ($preco_extra <= 0 && $tipo_extra !== 'opcional') $preco_extra = (float)$extra['valor_cadastro'];
 				$subtotal_extra = $qtd_extra * $preco_extra;
 				$total_extras_unidade += $subtotal_extra;
 				$nome_extra = htmlspecialchars((string)$extra['nome'], ENT_QUOTES, 'UTF-8');
 				$nome_sabor_extra = htmlspecialchars((string)$extra['nome_sabor'], ENT_QUOTES, 'UTF-8');
 				$texto_sabor = $nome_sabor_extra !== '' ? '<small class="text-muted"> · ' . $nome_sabor_extra . '</small>' : '';
 				$valor_extra_formatado = number_format($subtotal_extra * (float)$quantidade, 2, ',', '.');
-				$resumo_adicionais_tapioca .= '<div class="d-flex justify-content-between gap-2 py-1" style="font-size:13px"><span><i class="bi bi-plus-circle-fill text-success"></i> ' . $qtd_extra . 'x ' . $nome_extra . $texto_sabor . '</span><strong>R$ ' . $valor_extra_formatado . '</strong></div>';
+				if ($tipo_extra === 'opcional') {
+					$resumo_opcionais_tapioca .= '<div class="d-flex justify-content-between gap-2 py-1" style="font-size:13px"><span><i class="bi bi-dash-circle text-danger"></i> Sem ' . $nome_extra . $texto_sabor . '</span><strong>Sem custo</strong></div>';
+				} elseif ($tipo_extra === 'proteina') {
+					$resumo_proteinas_tapioca .= '<div class="d-flex justify-content-between gap-2 py-1" style="font-size:13px"><span><i class="bi bi-plus-circle-fill text-success"></i> ' . $qtd_extra . 'x ' . $nome_extra . $texto_sabor . '</span><strong>R$ ' . $valor_extra_formatado . '</strong></div>';
+				} else {
+					$resumo_adicionais_tapioca .= '<div class="d-flex justify-content-between gap-2 py-1" style="font-size:13px"><span><i class="bi bi-plus-circle-fill text-success"></i> ' . $qtd_extra . 'x ' . $nome_extra . $texto_sabor . '</span><strong>R$ ' . $valor_extra_formatado . '</strong></div>';
+				}
 			}
 			$valor_base_total = max(0, (float)$total_item - $total_extras_unidade * (float)$quantidade);
 			$valor_base_formatado = number_format($valor_base_total, 2, ',', '.');
@@ -153,7 +162,9 @@ if($total_reg > 0){
 			}
 			$resumo_preco_tapioca = '<div class="mt-3 p-3" style="background:#fff8e8;border-radius:12px;border:1px solid #f5e4ba">'
 				. '<div class="d-flex justify-content-between gap-2 pb-2" style="font-size:14px"><span>🫓 Tapioca (' . htmlspecialchars((string)$quantidade, ENT_QUOTES, 'UTF-8') . ' un.)</span><strong>R$ ' . $valor_base_formatado . '</strong></div>'
-				. $resumo_adicionais_tapioca
+				. ($resumo_adicionais_tapioca !== '' ? '<div class="fw-bold mt-2">Adicionais</div>' . $resumo_adicionais_tapioca : '')
+				. ($resumo_proteinas_tapioca !== '' ? '<div class="fw-bold mt-2">Proteínas</div>' . $resumo_proteinas_tapioca : '')
+				. ($resumo_opcionais_tapioca !== '' ? '<div class="fw-bold mt-2">Retirar do preparo</div>' . $resumo_opcionais_tapioca : '')
 				. $resumo_observacao_tapioca
 				. '<div class="d-flex justify-content-between gap-2 pt-2 mt-2" style="border-top:1px solid #e9d5a7;font-size:13px"><span>Subtotal dos adicionais</span><strong>R$ ' . $valor_extras_formatado . '</strong></div>'
 				. '</div>';

@@ -519,26 +519,46 @@ if ($nome_mesa == '' and $pedido_balcao == "") {
 					</div>
 
 					<?php if (!empty($eh_tapiocas_com_adicionais_por_sabor)) {
-						$query_adc_sabor = $pdo->query("SELECT * FROM adicionais_cat where categoria = '$id' and ativo = 'Sim' order by nome asc");
+						$query_adc_sabor = $pdo->prepare("SELECT * FROM adicionais_cat WHERE categoria = ? AND ativo = 'Sim' AND empresa = ? ORDER BY nome ASC");
+						$query_adc_sabor->execute([(int)$id, $id_empresa]);
 						$adicionais_sabor = $query_adc_sabor->fetchAll(PDO::FETCH_ASSOC);
+						$grupos_adc_sabor = ['adicional' => [], 'opcional' => [], 'proteina' => []];
+						foreach ($adicionais_sabor as $adc_sabor) {
+							$tipo_adc_sabor = !empty($eh_tapiocas_salgadas) ? ($adc_sabor['tipo'] ?? 'adicional') : 'adicional';
+							if (!isset($grupos_adc_sabor[$tipo_adc_sabor])) $tipo_adc_sabor = 'adicional';
+							$grupos_adc_sabor[$tipo_adc_sabor][] = $adc_sabor;
+						}
 						if (count($adicionais_sabor) > 0) { ?>
 							<div class="mt-2" style="padding-left:8px" onclick="event.stopPropagation();">
-								<button type="button" class="btn btn-sm btn-outline-success" onclick="toggleAdicionaisSabor('<?php echo $id_produto ?>')">＋ Adicionais deste sabor</button>
-								<div id="adicionais-sabor-<?php echo $id_produto ?>" style="display:none; margin-top:8px; padding:10px; background:#fff8e8; border-radius:8px;">
-									<?php foreach ($adicionais_sabor as $adc_sabor) {
-										$id_adc_sabor = (int) $adc_sabor['id'];
-										$nome_adc_sabor = htmlspecialchars($adc_sabor['nome'], ENT_QUOTES, 'UTF-8');
-										$valor_adc_sabor = number_format((float) $adc_sabor['valor'], 2, ',', '.'); ?>
-										<div class="d-flex justify-content-between align-items-center" style="padding:5px 0; border-bottom:1px solid #eee;">
-											<small><?php echo iconeAdicionalPizza($nome_adc_sabor) ?> <?php echo $nome_adc_sabor ?> <span class="text-success">(R$ <?php echo $valor_adc_sabor ?>)</span></small>
-											<div class="d-flex align-items-center">
-												<button type="button" aria-label="Retirar uma unidade de <?php echo $nome_adc_sabor ?>" class="btn btn-sm" style="width:34px;height:34px;border:1.5px solid #dc3545;border-radius:10px;color:#dc3545;background:#fff;display:inline-flex;align-items:center;justify-content:center;padding:0;font-size:23px;font-weight:700;line-height:1;" onclick="dimAdicionalSabor('<?php echo $id_adc_sabor ?>','<?php echo $id_produto ?>')">&minus;</button>
-												<b id="qtd-adc-<?php echo $id_produto ?>-<?php echo $id_adc_sabor ?>" aria-live="polite" style="min-width:26px;text-align:center;font-size:16px;margin:0 5px">0</b>
-												<button type="button" aria-label="Adicionar uma unidade de <?php echo $nome_adc_sabor ?>" class="btn btn-sm" style="width:34px;height:34px;border:1.5px solid #198754;border-radius:10px;color:#fff;background:#198754;display:inline-flex;align-items:center;justify-content:center;padding:0;font-size:23px;font-weight:700;line-height:1;" onclick="aumAdicionalSabor('<?php echo $id_adc_sabor ?>','<?php echo $id_produto ?>')">+</button>
+								<?php foreach ($grupos_adc_sabor as $tipo_grupo => $itens_grupo) {
+									if (!$itens_grupo) continue;
+									$rotulo_grupo = ['adicional'=>'Adicionais', 'opcional'=>'Opcionais · retirar sem custo', 'proteina'=>'Proteínas'][$tipo_grupo];
+									$chave_grupo = $tipo_grupo . '-' . (int)$id_produto; ?>
+									<button type="button" class="btn btn-sm btn-outline-success mb-1 me-1" onclick="toggleAdicionaisSabor('<?php echo $id_produto ?>','<?php echo $tipo_grupo ?>')">＋ <?php echo $rotulo_grupo ?></button>
+									<div id="adicionais-sabor-<?php echo $chave_grupo ?>" style="display:none;margin-top:8px;padding:10px;background:#fff8e8;border-radius:8px;">
+										<?php foreach ($itens_grupo as $adc_sabor) {
+											$id_adc_sabor = (int)$adc_sabor['id'];
+											$nome_adc_sabor = htmlspecialchars($adc_sabor['nome'], ENT_QUOTES, 'UTF-8');
+											$valor_adc_sabor = number_format((float)$adc_sabor['valor'], 2, ',', '.'); ?>
+											<div class="d-flex justify-content-between align-items-center gap-2" style="padding:6px 0;border-bottom:1px solid #eee;">
+												<small><?php echo iconeAdicionalPizza($nome_adc_sabor) ?> <?php echo $nome_adc_sabor ?>
+													<?php if ($tipo_grupo !== 'opcional') { ?><span class="text-success">(R$ <?php echo $valor_adc_sabor ?>)</span><?php } else { ?><span class="text-muted">(retirar · grátis)</span><?php } ?>
+												</small>
+												<?php if ($tipo_grupo === 'opcional') { ?>
+													<label class="d-flex align-items-center gap-1" style="white-space:nowrap">
+														<input type="checkbox" aria-label="Retirar <?php echo $nome_adc_sabor ?>" onchange="atualizarAdicionalSabor('<?php echo $id_adc_sabor ?>','<?php echo $id_produto ?>',this.checked?1:0)"> Retirar
+													</label>
+												<?php } else { ?>
+													<div class="d-flex align-items-center">
+														<button type="button" aria-label="Retirar uma unidade de <?php echo $nome_adc_sabor ?>" class="btn btn-sm" style="width:34px;height:34px;border:1.5px solid #dc3545;border-radius:10px;color:#dc3545;background:#fff;padding:0;font-size:23px" onclick="dimAdicionalSabor('<?php echo $id_adc_sabor ?>','<?php echo $id_produto ?>')">&minus;</button>
+														<b id="qtd-adc-<?php echo $id_produto ?>-<?php echo $id_adc_sabor ?>" style="min-width:26px;text-align:center;margin:0 5px">0</b>
+														<button type="button" aria-label="Adicionar uma unidade de <?php echo $nome_adc_sabor ?>" class="btn btn-sm" style="width:34px;height:34px;border:1.5px solid #198754;border-radius:10px;color:#fff;background:#198754;padding:0;font-size:23px" onclick="aumAdicionalSabor('<?php echo $id_adc_sabor ?>','<?php echo $id_produto ?>')">+</button>
+													</div>
+												<?php } ?>
 											</div>
-										</div>
-									<?php } ?>
-								</div>
+										<?php } ?>
+									</div>
+								<?php } ?>
 							</div>
 						<?php }
 					} ?>
@@ -738,7 +758,8 @@ if ($nome_mesa == '' and $pedido_balcao == "") {
 			$('#ids').val(ids.replace(id + '-', ''));
 			if (typeof ehTapiocasDoces !== 'undefined' && ehTapiocasDoces) {
 				$.post('js/ajax/adicionais.php', {id_sabor:id, limpar_sabor:1, ids:$('#ids').val()});
-				$('#adicionais-sabor-' + id).hide();
+				$('[id^="adicionais-sabor-"][id$="-' + id + '"]').hide();
+				$('#seletor-' + id).closest('li').find('input[type="checkbox"]').not('#seletor-' + id).prop('checked', false);
 				$('[id^="qtd-adc-' + id + '-"]').text('0');
 			}
 		}
@@ -769,12 +790,12 @@ if ($nome_mesa == '' and $pedido_balcao == "") {
 		document.addEventListener('keydown', tecla);
 		fundo.querySelector('[data-fechar-aviso]').focus();
 	}
-	function toggleAdicionaisSabor(id) {
+	function toggleAdicionaisSabor(id, grupo) {
 		if (!$('#seletor-' + id).is(':checked')) {
 			mostrarAvisoSelecaoSabor();
 			return;
 		}
-		$('#adicionais-sabor-' + id).stop(true, true).slideToggle(150);
+		$('#adicionais-sabor-' + (grupo || 'adicional') + '-' + id).stop(true, true).slideToggle(150);
 	}
 	function atualizarAdicionalSabor(idAdicional, idSabor, quantidade) {
 		if (!$('#seletor-' + idSabor).is(':checked')) {
