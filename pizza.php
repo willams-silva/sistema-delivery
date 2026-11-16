@@ -680,7 +680,7 @@ body.selecao-cardapio { background:#fffaf5 !important; color:#503827; }
 
 
 			<div class="d-grid gap-2 col-8 mx-auto mt-4 mb-4">
-				<button onclick="addCarrinho()" class="btn btn-warning btn-lg"><?php echo $texto_botao ?> <i class="fal fa-long-arrow-right"></i></button>
+				<button onclick="addCarrinho()" class="btn btn-warning btn-lg" style="display:inline-flex;align-items:center;justify-content:center;flex-wrap:nowrap;gap:10px;max-width:100%;font-size:clamp(14px, 3.8vw, 20px);white-space:nowrap;"><span><?php echo $texto_botao ?></span><i class="fal fa-long-arrow-right" style="flex-shrink:0;"></i></button>
 			</div>
 
 	</ol>
