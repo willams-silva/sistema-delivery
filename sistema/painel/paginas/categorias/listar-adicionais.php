@@ -2,7 +2,7 @@
 require_once("../../../conexao.php");
 $tabela = 'adicionais_cat';
 
-$id = $_POST['id'];
+$id = (int)($_POST['id'] ?? 0);
 
 $query = $pdo->query("SELECT * FROM $tabela where categoria = '$id' order by id desc");
 $res = $query->fetchAll(PDO::FETCH_ASSOC);
@@ -15,6 +15,7 @@ if ($total_reg > 0) {
 	<thead> 
 	<tr> 
 	<th>Nome</th>
+	<th>Tipo</th>
 	<th>Valor</th>
 	<th>Ações</th>
 	</tr> 
@@ -28,6 +29,9 @@ HTML;
 		$id = $res[$i]['id'];
 		$nome = $res[$i]['nome'];
 		$valor = $res[$i]['valor'];
+		$tipo = $res[$i]['tipo'] ?? 'adicional';
+		$tipoF = ['adicional' => 'Adicional', 'opcional' => 'Opcional', 'proteina' => 'Proteína'][$tipo] ?? 'Adicional';
+		$parametrosEditar = htmlspecialchars(json_encode([(int)$id, $nome, (string)$valor, $tipo], JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_TAG | JSON_HEX_AMP), ENT_QUOTES, 'UTF-8');
 		$ativo = $res[$i]['ativo'];
 
 
@@ -49,6 +53,7 @@ HTML;
 		echo <<<HTML
 <tr>
 <td style="color:{$classe_linha}">{$nome}</td>
+<td>{$tipoF}</td>
 <td style="color:{$classe_linha}">{$valor}</td>
 <td>
 	
@@ -67,7 +72,7 @@ HTML;
 
 		<a class="btn btn-success-light btn-sm" href="#" onclick="ativarAdc('{$id}', '{$acao}')" title="{$titulo_link}"><i class="fa {$icone}"></i></a>
 
-		<a class="btn btn-info-light btn-sm" href="#" onclick="editarAdc('{$id}', '{$nome}', '{$valor}')" title="{$titulo_link}"><i class="fa fa-edit"></i></a>
+		<a class="btn btn-info-light btn-sm" href="#" onclick="editarAdc(...JSON.parse(this.dataset.dados))" data-dados='{$parametrosEditar}' title="{$titulo_link}"><i class="fa fa-edit"></i></a>
 
 </td>
 </tr>
