@@ -923,7 +923,7 @@ if ($id_mesa == "" and $sessão_balcao == "") {
                   $nome_cat_oferta = mb_strtolower(trim((string)($cat_oferta['nome'] ?? '')), 'UTF-8');
                   if (in_array($nome_cat_oferta, ['tapiocas doces', 'tapiocas salgadas'], true)
                       && !empty($cat_oferta['url'])) {
-                    $url_produto = 'categoria-sabores-' . $cat_oferta['url'] . '?oferta=' . (int)$id_prod;
+                    $url_produto = 'pizza.php?url=' . rawurlencode($cat_oferta['url']) . '&oferta=' . (int)$id_prod;
                   }
                 }
 
