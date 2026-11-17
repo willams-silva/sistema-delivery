@@ -1078,8 +1078,7 @@ if($linhas == 0){
 		<!--######################## RODAPÉ ###########################-->
 		<div class="main-footer">
 			<div class="container-fluid pt-0 ht-100p">
-				Copyright © <?php echo date('Y'); ?> Desevolvedor<a target="_BLACK" href="https://hugocursos.com.br/"
-					class="text-primary"> Hugo Vasconcelos</a>. Todos os direitos reservados
+				Copyright © <?php echo date('Y'); ?> <strong>Bora Comanda</strong> — Seu pedido, mais fácil! Todos os direitos reservados.
 			</div>
 		</div>
 		<!--######################## FIM RODAPÉ ###########################-->
