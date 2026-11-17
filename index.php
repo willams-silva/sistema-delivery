@@ -462,7 +462,14 @@ if($total_reg > 0) {
 
 
 
- <a title="Ir para o whatsapp" target="_blank" href="http://api.whatsapp.com/send?1=pt_BR&phone=<?php echo @$tel_whats ?>"><img src="<?php echo $url_sistema ?>sistema/img/logo_whats.png" width="50px" style="position:fixed; bottom:20px; right:20px; z-index: 100"></a>
+ <?php if (!empty($tel_whats)) { ?>
+ <a title="Conversar pelo WhatsApp" aria-label="Conversar pelo WhatsApp" target="_blank" rel="noopener noreferrer" href="https://api.whatsapp.com/send?phone=<?php echo preg_replace('/\\D+/', '', (string)$tel_whats); ?>" class="bc-whatsapp-float"><i class="fab fa-whatsapp" aria-hidden="true"></i></a>
+ <?php } ?>
+ <style>
+ .bc-whatsapp-float{position:fixed;right:20px;bottom:20px;z-index:1000;width:56px;height:56px;display:flex;align-items:center;justify-content:center;border-radius:50%;background:#25d366;color:#fff!important;font-size:32px;box-shadow:0 5px 18px rgba(0,0,0,.28);text-decoration:none;transition:transform .2s,box-shadow .2s}
+ .bc-whatsapp-float:hover,.bc-whatsapp-float:focus{transform:translateY(-3px);box-shadow:0 8px 22px rgba(0,0,0,.35);color:#fff!important}
+ @media(max-width:640px){.bc-whatsapp-float{right:16px;bottom:16px;width:52px;height:52px;font-size:30px}}
+ </style>
 
 
  <script src="assets/js/lgpd-cookie.js" type="module"></script>
