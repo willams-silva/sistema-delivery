@@ -88,3 +88,16 @@ body.main-body{background:var(--ux-bg);color:var(--ux-ink)}
 #modalBaixar .modal-body .row,#modalEntregador .modal-body .row,#modalDesconto .modal-body .row{align-items:end;row-gap:10px}
 #modalBaixar .modal-body button[type="submit"],#modalEntregador .modal-body button[type="submit"],#modalDesconto .modal-body button[type="submit"]{min-height:39px;width:100%}
 @media(max-width:767px){.main-content .sales-card{min-height:120px}.main-content .sales-card .ps-4{padding-left:14px!important}.main-content .sales-card .pe-3{padding-right:10px!important}#modalDados .modal-dialog{margin:12px auto}#modalDados #listar-pedido{padding:14px;overflow-x:auto}}
+
+/* Navegação administrativa: leitura, foco e toque */
+.app-sidebar .side-menu{padding-bottom:24px}
+.app-sidebar .side-menu__item{min-height:43px;display:flex;align-items:center;gap:8px;padding-top:10px;padding-bottom:10px}
+.app-sidebar .side-menu__label{line-height:1.35;white-space:normal;overflow-wrap:anywhere}
+.app-sidebar .side-menu__icon{flex-shrink:0}
+.app-sidebar .side-menu__item:focus-visible{outline:3px solid rgba(37,99,235,.5);outline-offset:1px}
+.app-sidebar .slide-menu a{min-height:36px;display:flex;align-items:center;line-height:1.35;border-radius:8px;transition:background .15s}
+.app-sidebar .slide-menu a:hover{background:rgba(37,99,235,.08)}
+.app-sidebar .slide-menu a:focus-visible{outline:2px solid rgba(37,99,235,.5);outline-offset:1px}
+.app-sidebar .side-menu__item .angle{margin-left:auto}
+@media(max-width:767px){.app-sidebar .side-menu__item{min-height:46px}.app-sidebar .slide-menu a{min-height:42px}}
+@media(prefers-reduced-motion:reduce){.app-sidebar .side-menu__item,.app-sidebar .slide-menu a{transition:none!important}}
