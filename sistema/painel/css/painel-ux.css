@@ -218,3 +218,17 @@ body.main-body{background:var(--ux-bg);color:var(--ux-ink)}
 .ux-home-kpi-row .sales-card>a{display:block;width:100%;height:100%;padding-bottom:55px}
 .ux-home-kpi-row .sales-card .circle-icon{position:absolute!important;right:24px;bottom:0;margin:0!important;transform:none!important}
 @media(max-width:767px){.ux-home-kpi-row .sales-card{min-height:170px}}
+
+/* Segunda linha do dashboard: mesma grade e espaçamento dos KPIs superiores. */
+.ux-home-secondary-row{align-items:stretch;row-gap:20px}
+.ux-home-secondary-row>[class*="col-"]{display:flex;min-width:0}
+.ux-home-secondary-row .card{width:100%;height:100%;margin-bottom:0}
+.ux-home-secondary-row .sales-card{min-height:210px;position:relative}
+.ux-home-secondary-row .sales-card .circle-icon{position:absolute!important;right:24px;bottom:0;margin:0!important;transform:none!important}
+.ux-home-secondary-row .sales-card .row{min-height:165px}
+.ux-home-secondary-row .sales-card .row>[class*="col-"]{min-width:0}
+.ux-home-secondary-row .card-header{min-height:58px}
+.ux-home-secondary-row .customers{padding:14px 22px 18px!important}
+.ux-home-secondary-row .customers .d-flex{flex-wrap:wrap;gap:4px}
+.ux-home-secondary-row .customers .ms-auto{margin-left:auto!important}
+@media(max-width:767px){.ux-home-secondary-row .sales-card{min-height:170px}.ux-home-secondary-row .customers{padding:14px!important}}
