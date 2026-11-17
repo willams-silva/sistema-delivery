@@ -117,25 +117,15 @@ body { font-family: DejaVu Sans, sans-serif; font-size: 9px; color: #14243d; }
 .summary-table { width: 100%; margin-top: 15px; border-top: 2px solid #ffc400; border-collapse: collapse; }
 .summary-table td { padding: 10px 4px; text-align: right; font-size: 9px; }
 .marca { position: fixed; top: 220px; left: 90px; width: 65%; opacity: .07; }
+<?php echo sasRelatorioCss(); ?>
 </style>
 
 </head>
 <body>
 <?php
 // Imagens locais incorporadas evitam ícones quebrados no Dompdf.
-$logo_relatorio = '';
-// O painel salva a logo de relatório em sistema/img/logo.jpg.
-$logo_path = __DIR__ . '/../../img/logo.jpg';
-if (is_file($logo_path) && is_readable($logo_path)) {
-    $logo_bytes = file_get_contents($logo_path);
-    if ($logo_bytes !== false && $logo_bytes !== '') {
-        $logo_info = @getimagesize($logo_path);
-        $logo_mime = isset($logo_info['mime']) ? $logo_info['mime'] : '';
-        if (in_array($logo_mime, array('image/jpeg', 'image/png', 'image/gif'), true)) {
-            $logo_relatorio = 'data:' . $logo_mime . ';base64,' . base64_encode($logo_bytes);
-        }
-    }
-}
+require_once __DIR__ . '/identidade_pdf.php';
+$logo_relatorio = sasRelatorioLogo();
 ?>
 <?php if ($marca_dagua == 'Sim' && $logo_relatorio != '') { ?>
 <img class="marca" src="<?php echo $logo_relatorio; ?>">
