@@ -245,3 +245,7 @@ body.main-body{background:var(--ux-bg);color:var(--ux-ink)}
 
 /* Contraste dos titulos das colunas nas tabelas do painel. */
 .main-content table thead th,.main-content table thead th *, .main-content .table thead th,.main-content .table thead th *{color:#253858!important}
+
+/* Pedidos: cliente, modalidade e atalhos sempre na mesma linha; rolagem horizontal em telas estreitas. */
+.ux-orders-table td.ux-order-customer-nowrap{white-space:nowrap!important;min-width:max-content!important;overflow-wrap:normal!important;word-break:normal!important}
+.ux-orders-table td.ux-order-customer-nowrap form,.ux-orders-table td.ux-order-customer-nowrap a{vertical-align:middle}
