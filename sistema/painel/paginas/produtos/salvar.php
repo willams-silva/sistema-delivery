@@ -51,6 +51,14 @@ if($categoria == 0 || $categoria == ""){
 
 
 
+$limite_mista_validacao = (int)($_POST['limite_proteinas_mista'] ?? 0);
+$stmt_cat_validacao = $pdo->prepare("SELECT nome FROM categorias WHERE id = ? AND empresa = ? LIMIT 1");
+$stmt_cat_validacao->execute([(int)$categoria, $id_empresa]);
+if (strtolower(trim((string)$stmt_cat_validacao->fetchColumn())) === 'tapiocas mistas' && !in_array($limite_mista_validacao, [2, 3], true)) {
+    echo 'Selecione 2 ou 3 proteínas inclusas para a tapioca mista.';
+    exit();
+}
+
 //validar nome
 $query = $pdo->query("SELECT * from $tabela where nome = '$nome' and empresa = '$id_empresa' ");
 $res = $query->fetchAll(PDO::FETCH_ASSOC);
@@ -152,6 +160,23 @@ $query->bindValue(":unidade", "$unidade");
 $query->bindValue(":codigo", "$codigo");
 $query->execute();
 
+// Configuração por produto; não interfere nas demais categorias.
+$limite_mista = (int)($_POST['limite_proteinas_mista'] ?? 0);
+$stmt_categoria_mista = $pdo->prepare("SELECT nome FROM categorias WHERE id = ? AND empresa = ? LIMIT 1");
+$stmt_categoria_mista->execute([(int)$categoria, $id_empresa]);
+$nome_categoria_mista = strtolower(trim((string)$stmt_categoria_mista->fetchColumn()));
+if ($nome_categoria_mista === 'tapiocas mistas') {
+    if (!in_array($limite_mista, [2, 3], true)) {
+        echo 'Selecione 2 ou 3 proteínas inclusas para a tapioca mista.';
+        exit();
+    }
+    $id_config_mista = $id !== '' ? (int)$id : (int)$pdo->lastInsertId();
+    $stmt_mista = $pdo->prepare("INSERT INTO tapiocas_mistas_config (produto_id, empresa, limite_proteinas) VALUES (?, ?, ?) ON DUPLICATE KEY UPDATE empresa = VALUES(empresa), limite_proteinas = VALUES(limite_proteinas)");
+    $stmt_mista->execute([$id_config_mista, $id_empresa, $limite_mista]);
+} elseif ($id !== '') {
+    $stmt_mista = $pdo->prepare("DELETE FROM tapiocas_mistas_config WHERE produto_id = ? AND empresa = ?");
+    $stmt_mista->execute([(int)$id, $id_empresa]);
+}
 echo 'Salvo com Sucesso';
 
 ?>

@@ -8,7 +8,7 @@ if (@$produtos === 'ocultar') {
 
 $pag = 'produtos';
 ?>
-<div class="breadcrumb-header justify-content-between">
+<div class="breadcrumb-header justify-content-between ux-catalog-toolbar">
 	<div class="left-content mt-2">
 		<a class="btn ripple btn-primary text-white" onclick="inserir()" type="button"><i class="fe fe-plus me-1"></i>
 			Adicionar <?php echo ucfirst($pag); ?></a>
@@ -17,7 +17,7 @@ $pag = 'produtos';
 		<a class="btn btn-danger" href="#" onclick="deletarSelProdutos()" title="Excluir" id="btn-deletar" style="display:none"><i class="fe fe-trash-2"></i> Deletar</a>
 
 		<select class="form-select sel7" name="categoria" id="busca" style="width:350px" onchange="buscar()">
-			<option value="">Buscasr por Categoria</option>
+			<option value="">Buscar por categoria</option>
 			<?php
 			$query = $pdo->query("SELECT * from categorias where empresa = '$id_empresa' order by id desc");
 			$res = $query->fetchAll(PDO::FETCH_ASSOC);
@@ -247,6 +247,16 @@ $pag = 'produtos';
 						</div>
 					</div>
 
+                    <div class="row mt-2" id="config-tapioca-mista" style="display:none">
+                        <div class="col-md-6"><label for="limite_proteinas_mista">Proteínas inclusas (tapioca mista)</label>
+                            <select class="form-select" name="limite_proteinas_mista" id="limite_proteinas_mista">
+                                <option value="0">Não é tapioca mista</option>
+                                <option value="2">2 proteínas inclusas</option>
+                                <option value="3">3 proteínas inclusas</option>
+                            </select>
+                            <small>As proteínas extras são cobradas pelo preço do cadastro de adicionais.</small>
+                        </div>
+                    </div>
 					<div id="listar-codigo"></div>
 
 					<input type="hidden" name="id" id="id">
@@ -1585,3 +1595,25 @@ function excluirProduto(id) {
 
 			}
 		</script>
+<script>
+(function(){
+ function atualizarCampoMista(){
+   var categoria = ($('#categoria option:selected').text() || '').trim().toLowerCase();
+   var mista = categoria === 'tapiocas mistas';
+   $('#config-tapioca-mista').toggle(mista);
+   if (!mista) $('#limite_proteinas_mista').val('0');
+ }
+ $(document).on('change', '#categoria', atualizarCampoMista);
+ $(document).on('click', '[onclick^="inserir("]', function(){ $('#limite_proteinas_mista').val('0'); setTimeout(atualizarCampoMista, 0); });
+ $(document).on('click', '[onclick^="editar("]', function(){
+   var id = $('#id').val();
+   $('#limite_proteinas_mista').val('0');
+   atualizarCampoMista();
+   if (id && $('#config-tapioca-mista').is(':visible')) {
+     $.getJSON('paginas/produtos/consultar-mista.php', {id:id}, function(r){
+       if ($('#id').val() == id) $('#limite_proteinas_mista').val(String(r.limite || 0));
+     });
+   }
+ });
+})();
+</script>

@@ -80,9 +80,41 @@ $total_reg = @count($res);
 if ($total_reg > 0) {
 	$nome = $res[0]['nome'];
 	$eh_tapiocas_doces = (strtolower(trim($nome)) === 'tapiocas doces');
+	$eh_tapiocas_salgadas = ($url_site === 'rainhadastapiocas' && strtolower(trim($nome)) === 'tapiocas salgadas');
+	$eh_tapiocas_com_adicionais_por_sabor = ($eh_tapiocas_doces || $eh_tapiocas_salgadas);
+
+	// Nas telas pequenas, empilha a área do produto e os adicionais.
+	// Regra emitida na própria página para evitar cache antigo do arquivo CSS.
+	if ($eh_tapiocas_com_adicionais_por_sabor) {
+		echo '<style>
+			@media (max-width: 767px) {
+				li.item-tapioca-doce {
+					display: flex !important;
+					flex-direction: column !important;
+					align-items: stretch !important;
+				}
+				li.item-tapioca-doce > .row,
+				li.item-tapioca-doce > .mt-2 {
+					width: 100% !important;
+					max-width: 100% !important;
+					flex: 0 0 auto !important;
+				}
+				li.item-tapioca-doce > .mt-2 {
+					margin-top: 12px !important;
+					padding-left: 0 !important;
+				}
+			}
+		</style>';
+	}
 	$descricao = $res[0]['descricao'];
 	$id = $res[0]['id'];
 	$mais_sabores = $res[0]['mais_sabores'];
+    // Fluxo exclusivo da categoria de tapiocas mistas; demais categorias não mudam.
+    if (($url_site ?? '') === 'rainhadastapiocas' && strtolower(trim($nome)) === 'tapiocas mistas') {
+        require __DIR__ . '/tapiocas-mistas.php';
+        exit;
+    }
+
 
 
 	$pdo->query("DELETE FROM temp where carrinho = 0 and sessao = '$sessao' and empresa = '$id_empresa' ");
@@ -269,6 +301,36 @@ if ($nome_mesa == '' and $pedido_balcao == "") {
 }
 
 ?>
+<style>
+/* Identidade visual das telas de seleção de produtos, sem alterar lógica. */
+body.selecao-cardapio { background:#fffaf5 !important; color:#503827; }
+.selecao-cardapio .main-container { max-width:1360px; margin:0 auto; padding:0 14px; }
+.selecao-cardapio .navbar { background:#fffdf9 !important; border-bottom:1px solid #efddc9; box-shadow:0 3px 16px rgba(94,53,25,.09) !important; }
+.selecao-cardapio .navbar-brand { display:flex; align-items:center; gap:10px; color:#753d1e; font-weight:750; }
+.selecao-cardapio .navbar-brand a { color:#a85b24; }
+.selecao-cardapio .navbar-brand span { color:#753d1e; font-weight:750; }
+.selecao-cardapio .list-group-item { border-color:#efddc9 !important; background:#fff !important; }
+.selecao-cardapio .titulo-itens,.selecao-cardapio .titulo-itens-pizza,.selecao-cardapio .titulo-itens-2 { background:#fff2e4 !important; color:#82451f !important; padding:11px 15px !important; font-weight:750; border-radius:10px; }
+.selecao-cardapio .list-group { border-radius:14px; }
+.selecao-cardapio .list-group-item:first-child { border-radius:14px 14px 0 0; }
+.selecao-cardapio .list-group-item:last-child { border-radius:0 0 14px 14px; }
+.selecao-cardapio .btn-warning,.selecao-cardapio .btn-success,.selecao-cardapio .btn-primary { background:#a85b24 !important; border-color:#a85b24 !important; color:#fff !important; border-radius:11px; font-weight:750; }
+.selecao-cardapio .btn-outline-success { color:#a85b24 !important; border-color:#a85b24 !important; border-radius:10px; }
+.selecao-cardapio .btn-outline-success:hover { color:#fff !important; background:#a85b24 !important; }
+.selecao-cardapio .form-check-input:checked { background-color:#a85b24; border-color:#a85b24; }
+.selecao-cardapio textarea,.selecao-cardapio .form-control { border:1px solid #ddc4ad; border-radius:11px; background:#fffdfb; color:#503827; }
+.selecao-cardapio textarea:focus,.selecao-cardapio .form-control:focus { border-color:#a85b24; box-shadow:0 0 0 .2rem rgba(168,91,36,.12); }
+.selecao-cardapio .area-pedidos { background:#fffdf9 !important; border-top:1px solid #efddc9; }
+.selecao-cardapio .area-pedidos .btn,.selecao-cardapio .abaixo .btn { background:#a85b24 !important; border-color:#a85b24 !important; color:#fff !important; border-radius:12px; }
+@media(max-width:767px) {
+ .selecao-cardapio .main-container { padding:0 9px; }
+ .selecao-cardapio .navbar-brand span { font-size:13px !important; }
+ .selecao-cardapio .list-group-item { padding:12px !important; }
+ .selecao-cardapio .titulo-itens,.selecao-cardapio .titulo-itens-pizza { padding:10px !important; }
+}
+</style>
+<script>document.body.classList.add('selecao-cardapio');</script>
+
 
 <div class="main-container">
 
@@ -293,9 +355,15 @@ if ($nome_mesa == '' and $pedido_balcao == "") {
 		$query = $pdo->query("SELECT * FROM variacoes_cat where categoria = '$id' order by id asc");
 		$res = $query->fetchAll(PDO::FETCH_ASSOC);
 		$total_reg = @count($res);
+		// Apenas a loja Rainha das Tapiocas, com um único tamanho na categoria doces.
+		$tamanho_unico_automatico = ($url_site === 'rainhadastapiocas' && !empty($eh_tapiocas_com_adicionais_por_sabor) && $total_reg === 1);
+		if ($tamanho_unico_automatico) {
+			$id_tamanho_unico = (int) $res[0]['id'];
+			$limite_sabores_tamanho_unico = (int) $res[0]['sabores'];
+		}
 		if ($total_reg > 0) {
 
-			echo '<ul class="list-group form-check">';
+			echo '<ul class="list-group form-check"' . ($tamanho_unico_automatico ? ' style="display:none"' : '') . '>';
 			echo '<span class="titulo-itens-pizza"><span style="margin-left:20px">Escolha o tamanho</span></span>';
 			for ($i = 0; $i < $total_reg; $i++) {
 				$id_var = $res[$i]['id'];
@@ -362,7 +430,15 @@ if ($nome_mesa == '' and $pedido_balcao == "") {
 
 		<span class="titulo-itens-pizza"><span style="margin-left:20px">Escolha <span id="quant_sabores"> os </span> sabores</span></span>
 		<?php
-		$query = $pdo->query("SELECT * FROM produtos where categoria = '$id' and ativo = 'Sim'");
+		// Ao abrir pela seção Ofertas da Semana, listar apenas sabores em promoção.
+		// A navegação normal pela categoria continua mostrando todos os sabores ativos.
+		$modo_ofertas_tapiocas = ($url_site === 'rainhadastapiocas'
+			&& !empty($eh_tapiocas_com_adicionais_por_sabor)
+			&& isset($_GET['oferta']) && (int)$_GET['oferta'] > 0);
+		$sql_sabores = "SELECT * FROM produtos WHERE categoria = ? AND empresa = ? AND ativo = 'Sim' AND (tem_estoque = 'Não' OR estoque > 0)";
+		if ($modo_ofertas_tapiocas) $sql_sabores .= " AND promocao = 'Sim' AND val_promocional > 0";
+		$query = $pdo->prepare($sql_sabores);
+		$query->execute([(int)$id, $id_empresa]);
 		$res = $query->fetchAll(PDO::FETCH_ASSOC);
 		$total_reg = @count($res);
 		if ($total_reg > 0) {
@@ -408,7 +484,7 @@ if ($nome_mesa == '' and $pedido_balcao == "") {
 		?>
 
 
-				<li class="list-group-item d-flex justify-content-between align-items-start ">
+				<li class="list-group-item d-flex justify-content-between align-items-start <?php echo !empty($eh_tapiocas_com_adicionais_por_sabor) ? 'item-tapioca-doce' : ''; ?>">
 
 					<img onclick="selectPizzas('<?php echo $id_produto ?>')" class="<?php echo $mostrar ?>" src="img/esgotado.png"
 						width="65px" height="65px" style="position:absolute; right:0; top:0px">
@@ -486,27 +562,47 @@ if ($nome_mesa == '' and $pedido_balcao == "") {
 
 					</div>
 
-					<?php if (!empty($eh_tapiocas_doces)) {
-						$query_adc_sabor = $pdo->query("SELECT * FROM adicionais_cat where categoria = '$id' and ativo = 'Sim' order by nome asc");
+					<?php if (!empty($eh_tapiocas_com_adicionais_por_sabor)) {
+						$query_adc_sabor = $pdo->prepare("SELECT * FROM adicionais_cat WHERE categoria = ? AND ativo = 'Sim' AND empresa = ? ORDER BY nome ASC");
+						$query_adc_sabor->execute([(int)$id, $id_empresa]);
 						$adicionais_sabor = $query_adc_sabor->fetchAll(PDO::FETCH_ASSOC);
+						$grupos_adc_sabor = ['adicional' => [], 'opcional' => [], 'proteina' => []];
+						foreach ($adicionais_sabor as $adc_sabor) {
+							$tipo_adc_sabor = !empty($eh_tapiocas_salgadas) ? ($adc_sabor['tipo'] ?? 'adicional') : 'adicional';
+							if (!isset($grupos_adc_sabor[$tipo_adc_sabor])) $tipo_adc_sabor = 'adicional';
+							$grupos_adc_sabor[$tipo_adc_sabor][] = $adc_sabor;
+						}
 						if (count($adicionais_sabor) > 0) { ?>
 							<div class="mt-2" style="padding-left:8px" onclick="event.stopPropagation();">
-								<button type="button" class="btn btn-sm btn-outline-success" onclick="toggleAdicionaisSabor('<?php echo $id_produto ?>')">＋ Adicionais deste sabor</button>
-								<div id="adicionais-sabor-<?php echo $id_produto ?>" style="display:none; margin-top:8px; padding:10px; background:#fff8e8; border-radius:8px;">
-									<?php foreach ($adicionais_sabor as $adc_sabor) {
-										$id_adc_sabor = (int) $adc_sabor['id'];
-										$nome_adc_sabor = htmlspecialchars($adc_sabor['nome'], ENT_QUOTES, 'UTF-8');
-										$valor_adc_sabor = number_format((float) $adc_sabor['valor'], 2, ',', '.'); ?>
-										<div class="d-flex justify-content-between align-items-center" style="padding:5px 0; border-bottom:1px solid #eee;">
-											<small><?php echo iconeAdicionalPizza($nome_adc_sabor) ?> <?php echo $nome_adc_sabor ?> <span class="text-success">(R$ <?php echo $valor_adc_sabor ?>)</span></small>
-											<div class="d-flex align-items-center">
-												<button type="button" class="btn btn-sm btn-link text-danger p-1" onclick="dimAdicionalSabor('<?php echo $id_adc_sabor ?>','<?php echo $id_produto ?>')">−</button>
-												<b id="qtd-adc-<?php echo $id_produto ?>-<?php echo $id_adc_sabor ?>" style="min-width:18px;text-align:center">0</b>
-												<button type="button" class="btn btn-sm btn-link text-success p-1" onclick="aumAdicionalSabor('<?php echo $id_adc_sabor ?>','<?php echo $id_produto ?>')">＋</button>
+								<?php foreach ($grupos_adc_sabor as $tipo_grupo => $itens_grupo) {
+									if (!$itens_grupo) continue;
+									$rotulo_grupo = ['adicional'=>'Adicionais', 'opcional'=>'Opcionais · retirar sem custo', 'proteina'=>'Proteínas'][$tipo_grupo];
+									$chave_grupo = $tipo_grupo . '-' . (int)$id_produto; ?>
+									<button type="button" class="btn btn-sm btn-outline-success mb-1 me-1" onclick="toggleAdicionaisSabor('<?php echo $id_produto ?>','<?php echo $tipo_grupo ?>')">＋ <?php echo $rotulo_grupo ?></button>
+									<div id="adicionais-sabor-<?php echo $chave_grupo ?>" style="display:none;margin-top:8px;padding:10px;background:#fff8e8;border-radius:8px;">
+										<?php foreach ($itens_grupo as $adc_sabor) {
+											$id_adc_sabor = (int)$adc_sabor['id'];
+											$nome_adc_sabor = htmlspecialchars($adc_sabor['nome'], ENT_QUOTES, 'UTF-8');
+											$valor_adc_sabor = number_format((float)$adc_sabor['valor'], 2, ',', '.'); ?>
+											<div class="d-flex justify-content-between align-items-center gap-2" style="padding:6px 0;border-bottom:1px solid #eee;">
+												<small><?php echo iconeAdicionalPizza($nome_adc_sabor) ?> <?php echo $nome_adc_sabor ?>
+													<?php if ($tipo_grupo !== 'opcional') { ?><span class="text-success">(R$ <?php echo $valor_adc_sabor ?>)</span><?php } else { ?><span class="text-muted">(retirar · grátis)</span><?php } ?>
+												</small>
+												<?php if ($tipo_grupo === 'opcional') { ?>
+													<label class="d-flex align-items-center gap-1" style="white-space:nowrap">
+														<input type="checkbox" aria-label="Retirar <?php echo $nome_adc_sabor ?>" onchange="atualizarAdicionalSabor('<?php echo $id_adc_sabor ?>','<?php echo $id_produto ?>',this.checked?1:0)"> Retirar
+													</label>
+												<?php } else { ?>
+													<div class="d-flex align-items-center">
+														<button type="button" aria-label="Retirar uma unidade de <?php echo $nome_adc_sabor ?>" class="btn btn-sm" style="width:34px;height:34px;border:1.5px solid #dc3545;border-radius:10px;color:#dc3545;background:#fff;padding:0;font-size:23px" onclick="dimAdicionalSabor('<?php echo $id_adc_sabor ?>','<?php echo $id_produto ?>')">&minus;</button>
+														<b id="qtd-adc-<?php echo $id_produto ?>-<?php echo $id_adc_sabor ?>" style="min-width:26px;text-align:center;margin:0 5px">0</b>
+														<button type="button" aria-label="Adicionar uma unidade de <?php echo $nome_adc_sabor ?>" class="btn btn-sm" style="width:34px;height:34px;border:1.5px solid #198754;border-radius:10px;color:#fff;background:#198754;padding:0;font-size:23px" onclick="aumAdicionalSabor('<?php echo $id_adc_sabor ?>','<?php echo $id_produto ?>')">+</button>
+													</div>
+												<?php } ?>
 											</div>
-										</div>
-									<?php } ?>
-								</div>
+										<?php } ?>
+									</div>
+								<?php } ?>
 							</div>
 						<?php }
 					} ?>
@@ -524,7 +620,7 @@ if ($nome_mesa == '' and $pedido_balcao == "") {
 
 
 
-		<?php if (empty($eh_tapiocas_doces)) {
+		<?php if (empty($eh_tapiocas_com_adicionais_por_sabor)) {
 		$query = $pdo->query("SELECT * FROM adicionais_cat where categoria = '$id' and ativo = 'Sim'");
 		$res = $query->fetchAll(PDO::FETCH_ASSOC);
 		$total_reg = @count($res);
@@ -582,15 +678,15 @@ if ($nome_mesa == '' and $pedido_balcao == "") {
 
 
 
-			<input type="hidden" id="variacao_sel">
+			<input type="hidden" id="variacao_sel" value="<?php echo !empty($tamanho_unico_automatico) ? $id_tamanho_unico : ''; ?>">
 			<input type="hidden" id="borda_sel">
 			<input type="hidden" id="ids">
-			<input type="hidden" id="quantidade_sabores">
+			<input type="hidden" id="quantidade_sabores" value="<?php echo !empty($tamanho_unico_automatico) ? $limite_sabores_tamanho_unico : ''; ?>">
 
 
 
 			<div class="d-grid gap-2 col-8 mx-auto mt-4 mb-4">
-				<button onclick="addCarrinho()" class="btn btn-warning btn-lg"><?php echo $texto_botao ?> <i class="fal fa-long-arrow-right"></i></button>
+				<button onclick="addCarrinho()" class="btn btn-warning btn-lg" style="display:inline-flex;align-items:center;justify-content:center;flex-wrap:nowrap;gap:10px;max-width:100%;font-size:clamp(14px, 3.8vw, 20px);white-space:nowrap;"><span><?php echo $texto_botao ?></span><i class="fal fa-long-arrow-right" style="flex-shrink:0;"></i></button>
 			</div>
 
 	</ol>
@@ -617,13 +713,15 @@ if ($nome_mesa == '' and $pedido_balcao == "") {
 		var mesa = "<?= $id_ab_mesa ?>";
 
 		if (variacao == "") {
-			alert("Selecione um Tamanho");
+			if (ehTapiocasDoces) mostrarAvisoSelecaoSabor('Selecione o tamanho', 'Escolha um tamanho para continuar.');
+			else alert("Selecione um Tamanho");
 			return;
 		}
 
 		var ids = $('#ids').val();
 		if (ids == "") {
-			alert("Selecione pelo menos um sabor de pizza!");
+			if (ehTapiocasDoces) mostrarAvisoSelecaoSabor('Selecione uma tapioca', 'Escolha pelo menos um sabor antes de adicionar ao carrinho.');
+			else alert("Selecione pelo menos um sabor de pizza!");
 			return;
 		}
 
@@ -633,7 +731,8 @@ if ($nome_mesa == '' and $pedido_balcao == "") {
 		var id_prod = ids.split("-");
 
 		if (id_prod.length - 1 > quantidade_sabores) {
-			alert('Você pode escolher só até ' + quantidade_sabores + ' Sabores!');
+			if (ehTapiocasDoces) mostrarAvisoSelecaoSabor('Limite de sabores', 'Você pode escolher até ' + quantidade_sabores + ' sabor(es).');
+			else alert('Você pode escolher só até ' + quantidade_sabores + ' Sabores!');
 			return;
 		}
 
@@ -650,9 +749,16 @@ if ($nome_mesa == '' and $pedido_balcao == "") {
 			dataType: "text",
 
 			success: function(mensagem) {
-				alert(mensagem)                
 				if (mensagem.trim() == "Inserido com Sucesso") {
-					window.location = 'carrinho';
+					if (ehTapiocasDoces) {
+						mostrarAvisoSelecaoSabor('Adicionado ao carrinho', 'Sua tapioca foi adicionada com sucesso!', function() { window.location = 'carrinho'; });
+					} else {
+						alert(mensagem);
+						window.location = 'carrinho';
+					}
+				} else {
+					if (ehTapiocasDoces) mostrarAvisoSelecaoSabor('Não foi possível adicionar', mensagem);
+					else alert(mensagem);
 				}
 
 			},
@@ -696,23 +802,65 @@ if ($nome_mesa == '' and $pedido_balcao == "") {
 			$('#ids').val(ids.replace(id + '-', ''));
 			if (typeof ehTapiocasDoces !== 'undefined' && ehTapiocasDoces) {
 				$.post('js/ajax/adicionais.php', {id_sabor:id, limpar_sabor:1, ids:$('#ids').val()});
-				$('#adicionais-sabor-' + id).hide();
+				$('[id^="adicionais-sabor-"][id$="-' + id + '"]').hide();
+				$('#seletor-' + id).closest('li').find('input[type="checkbox"]').not('#seletor-' + id).prop('checked', false);
 				$('[id^="qtd-adc-' + id + '-"]').text('0');
 			}
 		}
 	}
 
-	var ehTapiocasDoces = <?php echo !empty($eh_tapiocas_doces) ? 'true' : 'false'; ?>;
-	function toggleAdicionaisSabor(id) {
+	var ehTapiocasDoces = <?php echo !empty($eh_tapiocas_com_adicionais_por_sabor) ? 'true' : 'false'; ?>;
+	// Ao entrar pela Oferta da Semana, pré-selecionar somente o sabor ofertado.
+	// O cliente continua podendo personalizar normalmente antes de comprar.
+	<?php if ($url_site === 'rainhadastapiocas' && !empty($eh_tapiocas_com_adicionais_por_sabor)) { ?>
+	$(function() {
+		var idOferta = <?php echo (int)($_GET['oferta'] ?? 0); ?>;
+		if (idOferta > 0) {
+			var $saborOferta = $('#seletor-' + idOferta);
+			if ($saborOferta.length && !$saborOferta.prop('disabled')) {
+				$saborOferta.prop('checked', true);
+				selecionar(idOferta);
+				var itemOferta = $saborOferta.closest('li')[0];
+				if (itemOferta) itemOferta.scrollIntoView({behavior:'smooth',block:'center'});
+			}
+		}
+	});
+	<?php } ?>
+
+	function mostrarAvisoSelecaoSabor(titulo, mensagem, aoFechar) {
+		titulo = titulo || 'Selecione o sabor';
+		mensagem = mensagem || 'Selecione este sabor primeiro para escolher os adicionais.';
+		var anterior = document.getElementById('aviso-selecao-sabor');
+		if (anterior) anterior.remove();
+		var fundo = document.createElement('div');
+		fundo.id = 'aviso-selecao-sabor';
+		fundo.setAttribute('role', 'presentation');
+		fundo.style.cssText = 'position:fixed;inset:0;background:rgba(53,33,20,.48);z-index:2147483647;display:flex;align-items:center;justify-content:center;padding:20px;';
+		fundo.innerHTML = '<div role="alertdialog" aria-modal="true" aria-labelledby="titulo-aviso-sabor" aria-describedby="texto-aviso-sabor" style="position:relative;background:#fffdf9;border:1px solid #efddc9;border-radius:20px;padding:36px 24px 28px;width:100%;max-width:420px;text-align:center;box-shadow:0 18px 55px rgba(78,43,20,.18);font-family:inherit;">' +
+		'<button type="button" data-fechar-aviso aria-label="Fechar" style="position:absolute;right:16px;top:10px;border:0;background:none;color:#82451f;font-size:30px;cursor:pointer;">&times;</button>' +
+		'<div aria-hidden="true" style="color:#a85b24;font-size:48px;line-height:1;margin-bottom:22px;">&#128722;</div>' +
+		'<h2 id="titulo-aviso-sabor" style="font-size:24px;color:#753d1e;font-weight:750;margin:0 0 14px;">Selecione o sabor</h2>' +
+		'<p id="texto-aviso-sabor" style="font-size:16px;color:#80634e;line-height:1.6;margin:0 0 26px;">Selecione este sabor primeiro para escolher os adicionais.</p>' +
+		'<button type="button" data-fechar-aviso style="border:0;border-radius:11px;background:#a85b24;color:#fff;font-weight:750;padding:12px 25px;cursor:pointer;">ENTENDI</button></div>';
+		fundo.querySelector('#titulo-aviso-sabor').textContent = titulo;
+		fundo.querySelector('#texto-aviso-sabor').textContent = mensagem;
+		document.body.appendChild(fundo);
+		var fechar = function () { fundo.remove(); document.removeEventListener('keydown', tecla); if (typeof aoFechar === 'function') aoFechar(); };
+		var tecla = function (e) { if (e.key === 'Escape') fechar(); };
+		fundo.addEventListener('click', function(e) { if (e.target === fundo || e.target.closest('[data-fechar-aviso]')) fechar(); });
+		document.addEventListener('keydown', tecla);
+		fundo.querySelector('[data-fechar-aviso]').focus();
+	}
+	function toggleAdicionaisSabor(id, grupo) {
 		if (!$('#seletor-' + id).is(':checked')) {
-			alert('Selecione este sabor primeiro para escolher os adicionais.');
+			mostrarAvisoSelecaoSabor();
 			return;
 		}
-		$('#adicionais-sabor-' + id).stop(true, true).slideToggle(150);
+		$('#adicionais-sabor-' + (grupo || 'adicional') + '-' + id).stop(true, true).slideToggle(150);
 	}
 	function atualizarAdicionalSabor(idAdicional, idSabor, quantidade) {
 		if (!$('#seletor-' + idSabor).is(':checked')) {
-			alert('Selecione este sabor primeiro.');
+			mostrarAvisoSelecaoSabor();
 			return;
 		}
 		$('#qtd-adc-' + idSabor + '-' + idAdicional).text(quantidade);
