@@ -258,7 +258,7 @@ HTML;
 
 		echo <<<HTML
 <tr style="background: {$classe_pago2}">
-<td><sapn style="color:{$classe_alerta}"><i class="fa fa-square"></i></sapn> <b>Pedido ({$pedido})</b> / {$nome_cliente} <span class="{$classe_entrega}"><small>({$entrega}) {$span_balcao} </small></span>
+<td class="ux-order-customer-nowrap"><span style="color:{$classe_alerta}"><i class="fa fa-square"></i></span> <b>Pedido ({$pedido})</b> / {$nome_cliente} <span class="{$classe_entrega}"><small>({$entrega}) {$span_balcao} </small></span>
 
 
 
