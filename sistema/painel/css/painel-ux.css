@@ -1,0 +1,29 @@
+/* Modernização visual progressiva do painel - sem alterar fluxos PHP/JS */
+:root{--ux-primary:#2563eb;--ux-ink:#17243b;--ux-muted:#64748b;--ux-border:#e6eaf1;--ux-surface:#fff;--ux-bg:#f5f7fb}
+body.main-body{background:var(--ux-bg);color:var(--ux-ink)}
+.main-header,.app-header{background:var(--ux-surface)!important;border-bottom:1px solid var(--ux-border);box-shadow:0 2px 16px rgba(15,23,42,.035)}
+.app-sidebar{box-shadow:4px 0 24px rgba(15,23,42,.055)}
+.app-sidebar .side-menu__item{border-radius:10px;margin:3px 10px;transition:background .18s,color .18s,transform .18s}
+.app-sidebar .side-menu__item:hover{background:rgba(37,99,235,.09);transform:translateX(2px)}
+.app-sidebar .side-menu__item.active{background:rgba(37,99,235,.13)}
+.main-content .card,.main-content .sales-card,.main-content .table-responsive{border:1px solid var(--ux-border);border-radius:16px;box-shadow:0 5px 24px rgba(15,23,42,.045)}
+.main-content .sales-card{height:auto!important;min-height:132px;transition:transform .18s,box-shadow .18s}
+.main-content .sales-card:hover{transform:translateY(-3px);box-shadow:0 10px 28px rgba(15,23,42,.10)}
+.main-content .sales-card a{display:block;color:inherit;text-decoration:none}
+.main-content .sales-card h4{font-size:clamp(1.15rem,2vw,1.55rem);overflow-wrap:anywhere}
+.main-content .card-header{border-bottom:1px solid var(--ux-border);background:transparent}
+.main-content .table{vertical-align:middle}
+.main-content .table thead th{background:#f8fafc;color:#475569;font-weight:700;white-space:nowrap}
+.main-content .table tbody tr{transition:background .15s}
+.main-content .table tbody tr:hover{background:#f8fafc}
+.main-content .btn{border-radius:9px;transition:transform .15s,box-shadow .15s}
+.main-content .btn:hover{transform:translateY(-1px)}
+.main-content .form-control,.main-content .form-select,.main-content .select2-selection{border-radius:9px!important;border-color:#dbe2ed}
+.main-content .form-control:focus,.main-content .form-select:focus{border-color:#93b4f9;box-shadow:0 0 0 3px rgba(37,99,235,.12)}
+.main-content .badge{border-radius:7px;padding:.4em .65em}
+.modal-content{border:0;border-radius:18px;box-shadow:0 20px 65px rgba(15,23,42,.18)}
+.modal-header{border-bottom:1px solid var(--ux-border)}
+.modal-footer{border-top:1px solid var(--ux-border)}
+:where(a,button,input,select,textarea):focus-visible{outline:3px solid rgba(37,99,235,.45);outline-offset:2px}
+@media(max-width:767px){.main-content .sales-card{min-height:115px}.main-content .card{border-radius:13px}.main-content .table-responsive{overflow-x:auto;-webkit-overflow-scrolling:touch}.main-content .btn{min-height:36px}.modal-dialog{margin:.65rem}}
+@media(prefers-reduced-motion:reduce){.main-content .sales-card,.main-content .btn,.app-sidebar .side-menu__item{transition:none!important;transform:none!important}}
