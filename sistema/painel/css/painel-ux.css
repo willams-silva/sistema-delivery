@@ -153,3 +153,24 @@ body.main-body{background:var(--ux-bg);color:var(--ux-ink)}
 .ux-admin-register-modal .modal-body input[type="checkbox"],.ux-admin-register-modal .modal-body input[type="radio"]{min-height:initial}
 .ux-admin-register-modal .modal-body img{max-width:100%;height:auto}
 @media(max-width:767px){.ux-admin-register-toolbar .left-content{align-items:stretch}.ux-admin-register-modal .modal-body{padding:14px;max-height:calc(100dvh - 140px)}.ux-admin-register-modal .modal-body .row{row-gap:8px}.ux-admin-register-list .table td{padding:9px 8px}}
+
+/* Financeiro: indicadores, filtros e registros */
+.ux-finance-page .left-content>.btn{min-height:40px}
+.ux-finance-page .left-content .form-control2{min-height:38px;max-width:100%;border:1px solid #dbe2ed;border-radius:9px;padding:7px 9px;background:#fff;color:#17243b}
+.ux-finance-page .card-group{gap:10px;flex-wrap:wrap;margin-bottom:14px!important}
+.ux-finance-page .card-group>.card{min-width:150px;flex:1 1 170px;width:auto!important;margin:0 0 10px!important;height:auto!important;min-height:92px;border-radius:13px!important;overflow:hidden}
+.ux-finance-page .card-group>.card .card-header{padding:9px 12px;font-weight:700}
+.ux-finance-page .card-group>.card .card-corpo{padding:10px 12px}
+.ux-finance-page .card-group>.card .card-corpo h5{margin:0;overflow-wrap:anywhere}
+.ux-finance-list{overflow-x:auto;-webkit-overflow-scrolling:touch}
+.ux-finance-list .table{vertical-align:middle}
+.ux-finance-list .table th{white-space:nowrap}
+.ux-finance-modal .modal-content{border-radius:16px;overflow:hidden}
+.ux-finance-modal .modal-body{max-height:calc(100dvh - 175px);overflow-y:auto;overflow-x:hidden;padding:20px}
+.ux-finance-modal .modal-body .row{row-gap:10px}
+.ux-finance-modal .modal-body [class*="col-"]{min-width:0}
+.ux-finance-modal .modal-body label{font-weight:650;color:#334155;margin-bottom:5px}
+.ux-finance-modal .modal-body .form-control,.ux-finance-modal .modal-body .form-select{max-width:100%;min-height:40px;border-radius:9px}
+.ux-finance-modal .modal-body input[type="checkbox"],.ux-finance-modal .modal-body input[type="radio"]{min-height:initial}
+.ux-finance-modal .modal-body img{max-width:100%;height:auto}
+@media(max-width:767px){.ux-finance-page .card-group>.card{flex-basis:calc(50% - 10px);min-width:130px}.ux-finance-page .left-content .form-control2{font-size:14px}.ux-finance-modal .modal-body{padding:14px;max-height:calc(100dvh - 140px)}}
