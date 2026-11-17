@@ -27,9 +27,25 @@ $id = $_POST['id'];
 $complemento = $_POST['complemento'];
 
 
-if($cpf != "") {
-    require_once("../../validar_cpf.php");
+// Campos obrigatórios: validar também no servidor.
+$nome = trim((string) $nome);
+$telefone = trim((string) $telefone);
+$cpf = trim((string) $cpf);
+if ($nome === '') {
+    echo 'Informe o nome do cliente!';
+    exit();
 }
+$telefone_digitos = preg_replace('/\\D/', '', $telefone);
+if (!in_array(strlen($telefone_digitos), [10, 11], true)) {
+    echo 'Informe um telefone com DDD válido!';
+    exit();
+}
+$cpf_digitos = preg_replace('/\\D/', '', $cpf);
+if (strlen($cpf_digitos) !== 11) {
+    echo 'Informe um CPF válido!';
+    exit();
+}
+require_once("../../validar_cpf.php");
 
 
 //validacao email
