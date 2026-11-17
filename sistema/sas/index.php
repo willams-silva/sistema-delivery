@@ -154,6 +154,15 @@ if (@count($res1) > 0) {
     <link rel="stylesheet" href="../dist/plugins/colors/ui/trumbowyg.colors.min.css">
 	
 
+
+<style>
+/* Identidade visual do SAS: ampliar a logo sem distorcer nem afetar o menu recolhido. */
+@media (min-width: 992px) {
+  .app-sidebar .main-sidebar-header .header-logo {display:flex;align-items:center;justify-content:center;width:100%;padding:6px 10px;}
+  .app-sidebar .main-sidebar-header .header-logo img.desktop-logo,
+  .app-sidebar .main-sidebar-header .header-logo img.desktop-dark {width:85%!important;max-width:265px!important;height:auto!important;max-height:68px!important;object-fit:contain!important;}
+}
+</style>
 </head>
 
 <body class="ltr main-body app sidebar-mini">
