@@ -179,6 +179,21 @@ if (@count($res1) > 0) {
   body:not(.sidenav-toggled) .app-sidebar .main-sidemenu .side-menu {margin-top:0!important;}
 }
 </style>
+
+<style id="bora-comanda-sas-theme">
+/* Identidade SaaS Bora Comanda — somente apresentação */
+:root{--bc-navy:#061b3a;--bc-dark:#07152d;--bc-yellow:#ffc400;--bc-orange:#ff8900}
+.app-sidebar,.app-sidebar .main-sidebar-header{background-color:var(--bc-dark)!important}
+.app-sidebar .side-menu__item{color:#f8fafc!important;border-radius:12px!important;transition:background .2s,color .2s}
+.app-sidebar .side-menu__icon,.app-sidebar .side-menu__angle{color:#f8fafc!important}
+.app-sidebar .side-menu__item:hover{background:#163354!important}
+.app-sidebar .side-menu__item.active,.app-sidebar .side-menu__item.active:hover,.app-sidebar .side-menu__item[aria-expanded="true"]{background:var(--bc-yellow)!important;color:var(--bc-dark)!important}
+.app-sidebar .side-menu__item.active .side-menu__icon,.app-sidebar .side-menu__item.active .side-menu__angle,.app-sidebar .side-menu__item[aria-expanded="true"] .side-menu__icon{color:var(--bc-dark)!important}
+.header,.app-header{background:linear-gradient(110deg,#06152d 0%,#061b3a 72%,#ffbd00 90%,#ff8900 100%)!important;color:#fff!important}
+.header .header-icon,.app-header .header-icon,.header .nav-link,.app-header .nav-link{color:#fff!important}
+.main-content,.app-content{background:#f1f5fb}
+@media(max-width:991px){.header,.app-header{background:#061b3a!important}}
+</style>
 </head>
 
 <body class="ltr main-body app sidebar-mini">
