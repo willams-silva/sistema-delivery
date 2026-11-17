@@ -194,6 +194,36 @@ if (@count($res1) > 0) {
 .main-content,.app-content{background:#f1f5fb}
 @media(max-width:991px){.header,.app-header{background:#061b3a!important}}
 </style>
+
+<style id="bora-comanda-sas-internal">
+/* Etapa 4: padronização visual das páginas internas do SaaS. */
+:root{--bc-border:#dce5f0;--bc-muted:#64748b;--bc-surface:#fff}
+.main-header.side-header{background:#061b3a!important;border-bottom:3px solid #ffc400!important;box-shadow:0 3px 14px rgba(6,27,58,.13)}
+.main-header .main-header-left,.main-header .main-header-right{align-items:center}
+.main-header .nav-link,.main-header .header-icon,.main-header .main-header-center{color:#f8fafc!important}
+.main-header .dropdown-menu{background:#fff;color:#061b3a;border:1px solid var(--bc-border);border-radius:14px;box-shadow:0 15px 30px rgba(6,27,58,.13)}
+.main-header .dropdown-menu .dropdown-item{color:#14243d}
+.main-header .dropdown-menu .dropdown-item:hover{background:#fff8dd;color:#061b3a}
+.main-content .card,.app-content .card{border:1px solid var(--bc-border);border-radius:16px;box-shadow:0 4px 15px rgba(6,27,58,.055)}
+.main-content .card-header,.app-content .card-header{background:#fff;border-bottom:1px solid var(--bc-border);border-radius:16px 16px 0 0}
+.main-content .card-title,.app-content .card-title{color:#061b3a;font-weight:750}
+.main-content .table,.app-content .table{color:#14243d}
+.main-content .table thead th,.app-content .table thead th{background:#f1f5fb;color:#061b3a;font-weight:750;border-color:#dce5f0;vertical-align:middle}
+.main-content .table tbody td,.app-content .table tbody td{vertical-align:middle;border-color:#e8edf4}
+.main-content .table tbody tr:hover,.app-content .table tbody tr:hover{background:#fffbee}
+.main-content .form-control,.app-content .form-control,.main-content .form-select,.app-content .form-select{border:1px solid #cbd5e1;border-radius:10px;min-height:40px}
+.main-content .form-control:focus,.app-content .form-control:focus,.main-content .form-select:focus,.app-content .form-select:focus{border-color:#e7a900;box-shadow:0 0 0 3px rgba(255,196,0,.16)}
+.main-content .btn-primary,.app-content .btn-primary{background:#061b3a;border-color:#061b3a;color:#fff;border-radius:10px}
+.main-content .btn-primary:hover,.app-content .btn-primary:hover{background:#103b66;border-color:#103b66}
+.main-content .btn-warning,.app-content .btn-warning{background:#ffc400;border-color:#ffc400;color:#061b3a;border-radius:10px}
+.main-content .btn-warning:hover,.app-content .btn-warning:hover{background:#ffae00;border-color:#ffae00}
+.main-content .modal-content,.app-content .modal-content{border-radius:16px;border:1px solid var(--bc-border);overflow:hidden}
+.main-content .modal-header,.app-content .modal-header{background:#061b3a;color:#fff}
+.main-content .modal-header .modal-title,.app-content .modal-header .modal-title{color:#fff}
+.main-content .pagination .page-link,.app-content .pagination .page-link{color:#061b3a;border-color:#dce5f0}
+.main-content .pagination .active .page-link,.app-content .pagination .active .page-link{background:#061b3a;border-color:#061b3a;color:#fff}
+@media(max-width:767px){.main-content .card,.app-content .card{border-radius:12px}.main-content .table-responsive,.app-content .table-responsive{overflow-x:auto;-webkit-overflow-scrolling:touch}.main-header.side-header{border-bottom-width:2px!important}}
+</style>
 </head>
 
 <body class="ltr main-body app sidebar-mini">
