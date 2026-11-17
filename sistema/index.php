@@ -182,6 +182,32 @@ if (@$mensagem_auto == 'Sim' and strtotime($data_cobranca) != strtotime($data_at
 
 
 
+
+<style id="bora-comanda-login-theme">
+:root{--bc-navy:#061b3a;--bc-dark:#041229;--bc-yellow:#ffc400;--bc-light:#f5f8fd}
+body#pagina{background-color:var(--bc-dark)!important;color:var(--bc-navy);min-height:100vh}
+body#pagina:not([style*="background: url"]){background:radial-gradient(ellipse at 20% 15%,#17375b 0%,#061b3a 48%,#041229 100%)!important}
+body#pagina .square-box{opacity:.14;pointer-events:none}
+body#pagina .page-single{min-height:100vh;display:flex;align-items:center}
+body#pagina .card-sigin-main{max-width:510px;width:100%;padding:12px!important}
+body#pagina .card-sigin,body#pagina .main-card-signin{background:#fff!important;border-radius:22px!important;box-shadow:0 22px 70px rgba(0,0,0,.35)!important;border:1px solid rgba(255,196,0,.35)!important;overflow:hidden}
+body#pagina .main-card-signin{padding:22px 18px 15px}
+body#pagina .sign-favicon{width:100%!important;max-width:350px!important;height:auto!important;max-height:135px!important;object-fit:contain!important}
+body#pagina .main-signup-header label{color:#061b3a;font-weight:600;margin-bottom:8px}
+body#pagina .main-signup-header .form-control{background:#f7f9fc!important;color:#061b3a!important;border:1px solid #d5dfeb!important;border-radius:0 10px 10px 0!important;min-height:46px}
+body#pagina .main-signup-header .input-group-text{background:#f0f4f9!important;border:1px solid #d5dfeb!important;color:#061b3a!important;border-radius:10px 0 0 10px!important}
+body#pagina .main-signup-header .form-control:focus{border-color:#ffc400!important;box-shadow:0 0 0 3px rgba(255,196,0,.17)!important}
+body#pagina .main-signup-header .btn-primary{background:#ffc400!important;border:1px solid #e5ae00!important;color:#041229!important;border-radius:11px!important;min-height:48px;font-weight:700;box-shadow:0 5px 16px rgba(255,196,0,.24)}
+body#pagina .main-signup-header .btn-primary:hover{background:#ffda4d!important}
+body#pagina .main-signin-footer a{color:#123c68!important;font-weight:600}
+body#pagina .main-signin-footer a:hover{color:#b88600!important}
+body#pagina .form-check-input:checked{background-color:#ffc400!important;border-color:#ffc400!important}
+#exampleModal .modal-content{border-radius:18px;overflow:hidden;border:1px solid #dce5f0}
+#exampleModal .modal-header{background:#061b3a!important;color:#fff!important}
+#exampleModal .btn-primary{background:#ffc400!important;border-color:#ffc400!important;color:#041229!important;font-weight:700}
+#exampleModal .form-control:focus{border-color:#ffc400!important;box-shadow:0 0 0 3px rgba(255,196,0,.18)!important}
+@media(max-width:575px){body#pagina .card-sigin-main{padding:10px!important}body#pagina .main-card-signin{padding:16px 9px 12px}body#pagina .sign-favicon{max-width:290px!important}}
+</style>
 </head>
 
 
@@ -365,7 +391,7 @@ if($fundo_login != "" and $fundo_login != "sem-foto.png"){ ?>
 <script type="text/javascript">
 	$(document).ready(function () {
 
-		var modo_teste = "<?= $modo_teste ?>";
+		var modo_teste = <?= json_encode($modo_teste ?? "Não") ?>;
 		if(modo_teste == 'Sim'){
 			setTimeout(function() {
 	 	    $('#usuario').val('contato@hugocursos.com.br');
