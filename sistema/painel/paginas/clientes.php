@@ -63,8 +63,8 @@ if (@$clientes == 'ocultar') {
 						</div>
 
 						<div class="col-md-3 col-6">
-							<label>Telefone</label>
-							<input type="text" class="form-control" id="telefone" name="telefone" placeholder="Telefone">
+							<label>Telefone <span class="text-danger" style="font-size: 9px">(Obrigatório)</span></label>
+							<input type="text" class="form-control" id="telefone" name="telefone" placeholder="(00) 00000-0000" required inputmode="tel" maxlength="15">
 						</div>
 
 						<div class="col-md-3 mb-2">
@@ -79,8 +79,8 @@ if (@$clientes == 'ocultar') {
 					<div class="row">
 
 						<div class="col-md-3 mb-2 col-6">
-							<label>CPF</label>
-							<input type="text" class="form-control" id="cpf" name="cpf" placeholder="CPF">
+							<label>CPF <span class="text-danger" style="font-size: 9px">(Obrigatório)</span></label>
+							<input type="text" class="form-control" id="cpf" name="cpf" placeholder="000.000.000-00" required inputmode="numeric" maxlength="14">
 						</div>
 
 						<div class="col-md-6">
@@ -522,6 +522,55 @@ if (@$clientes == 'ocultar') {
 	var pag = "<?= $pag ?>"
 </script>
 <script src="js/ajax.js"></script>
+<script>
+(function () {
+    const form = document.getElementById('form');
+    if (!form) return;
+    const telefone = form.querySelector('#telefone');
+    const cpf = form.querySelector('#cpf');
+    const digits = value => value.replace(/\D/g, '');
+    function validCPF(value) {
+        const v = digits(value);
+        if (v.length !== 11 || /^(\d)\1{10}$/.test(v)) return false;
+        for (let n = 9; n < 11; n++) {
+            let sum = 0;
+            for (let i = 0; i < n; i++) sum += Number(v[i]) * (n + 1 - i);
+            if (Number(v[n]) !== ((sum * 10) % 11) % 10) return false;
+        }
+        return true;
+    }
+    function checkPhone() {
+        const n = digits(telefone.value);
+        telefone.setCustomValidity(n.length === 10 || n.length === 11 ? '' : 'Informe um telefone com DDD válido.');
+    }
+    function checkCPF() {
+        cpf.setCustomValidity(validCPF(cpf.value) ? '' : 'Informe um CPF válido.');
+    }
+    telefone.addEventListener('input', function () {
+        const n = digits(this.value).slice(0, 11);
+        this.value = n.length > 6
+            ? '(' + n.slice(0,2) + ') ' + n.slice(2, n.length === 11 ? 7 : 6) + '-' + n.slice(n.length === 11 ? 7 : 6)
+            : n.length > 2 ? '(' + n.slice(0,2) + ') ' + n.slice(2) : n;
+        this.setCustomValidity('');
+    });
+    cpf.addEventListener('input', function () {
+        const n = digits(this.value).slice(0, 11);
+        this.value = n.slice(0,3) + (n.length > 3 ? '.' + n.slice(3,6) : '') + (n.length > 6 ? '.' + n.slice(6,9) : '') + (n.length > 9 ? '-' + n.slice(9) : '');
+        this.setCustomValidity('');
+    });
+    telefone.addEventListener('blur', checkPhone);
+    cpf.addEventListener('blur', checkCPF);
+    form.addEventListener('submit', function (event) {
+        checkPhone(); checkCPF();
+        if (!form.checkValidity()) {
+            event.preventDefault();
+            event.stopImmediatePropagation();
+            form.reportValidity();
+        }
+    }, true);
+})();
+</script>
+
 
 
 
