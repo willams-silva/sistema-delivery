@@ -174,3 +174,23 @@ body.main-body{background:var(--ux-bg);color:var(--ux-ink)}
 .ux-finance-modal .modal-body input[type="checkbox"],.ux-finance-modal .modal-body input[type="radio"]{min-height:initial}
 .ux-finance-modal .modal-body img{max-width:100%;height:auto}
 @media(max-width:767px){.ux-finance-page .card-group>.card{flex-basis:calc(50% - 10px);min-width:130px}.ux-finance-page .left-content .form-control2{font-size:14px}.ux-finance-modal .modal-body{padding:14px;max-height:calc(100dvh - 140px)}}
+
+/* Caixa: filtros, tabela e operações de abertura/fechamento */
+.ux-cash-page .left-content{margin-bottom:16px}
+.ux-cash-page .left-content>form{display:flex;align-items:center;flex-wrap:wrap;gap:10px}
+.ux-cash-page .left-content>form>.esc,.ux-cash-page .left-content>form>div{float:none!important;position:static!important;margin:0!important}
+.ux-cash-page .left-content>form>.esc .form-control{min-height:40px;max-width:100%;border-radius:9px}
+.ux-cash-page .left-content>form #status-busca{width:min(350px,100%)!important;min-height:40px}
+.ux-cash-page .left-content>form button{min-height:40px}
+.ux-cash-page .left-content>form button[title="Gerar Relatório"]{width:42px!important}
+.ux-cash-list{overflow-x:auto;-webkit-overflow-scrolling:touch}
+.ux-cash-list .table{vertical-align:middle}
+.ux-cash-list .table th{white-space:nowrap}
+.ux-cash-modal .modal-content{border-radius:16px;overflow:hidden}
+.ux-cash-modal .modal-body{max-height:calc(100dvh - 175px);overflow-y:auto;overflow-x:hidden;padding:20px}
+.ux-cash-modal .modal-body .row{row-gap:10px}
+.ux-cash-modal .modal-body [class*="col-"]{min-width:0}
+.ux-cash-modal .modal-body label{display:block;font-weight:650;color:#334155;margin-bottom:6px}
+.ux-cash-modal .modal-body .form-control,.ux-cash-modal .modal-body .form-select{max-width:100%;min-height:40px;border-radius:9px}
+.ux-cash-modal .modal-body input[type="checkbox"],.ux-cash-modal .modal-body input[type="radio"]{min-height:initial}
+@media(max-width:767px){.ux-cash-page .left-content>form{align-items:stretch}.ux-cash-page .left-content>form>.esc{width:100%}.ux-cash-page .left-content>form #status-busca{width:100%!important}.ux-cash-modal .modal-body{padding:14px;max-height:calc(100dvh - 140px)}}
