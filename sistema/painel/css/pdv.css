@@ -430,3 +430,8 @@
 .pdv_body #listar .pdv-barcode-box { display:flex; flex-direction:column; align-items:flex-start; gap:3px; max-width:100%; margin:6px 0; }
 .pdv_body #listar .pdv-barcode { display:block; width:100%; max-width:155px; height:32px; }
 .pdv_body #listar .pdv-barcode-number { font-size:10px; color:#475569; overflow-wrap:anywhere; }
+
+/* Código de barras compacto como etiqueta: barras acima, código em negrito abaixo */
+.pdv_body #listar .pdv-barcode-box { align-items:flex-start; gap:2px; margin:5px 0 8px; }
+.pdv_body #listar .pdv-barcode { width:100%; max-width:100px; height:30px; }
+.pdv_body #listar .pdv-barcode-number { font-size:12px; font-weight:800; line-height:1.2; color:#142b48; letter-spacing:0; }
