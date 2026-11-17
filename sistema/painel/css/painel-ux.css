@@ -62,3 +62,14 @@ body.main-body{background:var(--ux-bg);color:var(--ux-ink)}
 .ux-orders-filters>.btn .badge{font-size:.72rem;min-width:23px}
 .ux-orders-filters .btn:focus-visible{outline:3px solid rgba(37,99,235,.5);outline-offset:2px}
 @media(max-width:767px){.ux-orders-filters{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px}.ux-orders-filters>.btn{width:100%;white-space:normal}.ux-orders-statusbar{align-items:stretch!important}.ux-orders-statusbar>div:last-child{margin-left:auto}}
+
+/* Listagem dinâmica de pedidos */
+#listar:has(.ux-orders-table){overflow-x:auto;-webkit-overflow-scrolling:touch}
+.ux-orders-table{margin-bottom:10px;border-collapse:separate;border-spacing:0;min-width:900px}
+.ux-orders-table thead th{position:sticky;top:0;z-index:1;background:#f1f5f9!important;padding:13px 10px!important;font-size:.76rem;letter-spacing:.02em;text-transform:uppercase}
+.ux-orders-table tbody td{padding:13px 10px!important;vertical-align:middle;line-height:1.5;white-space:nowrap}
+.ux-orders-table tbody td:first-child{min-width:250px;white-space:normal}
+.ux-orders-table tbody td:last-child{min-width:150px}
+.ux-orders-table tbody td:last-child .btn{margin:2px;min-width:32px;min-height:32px;display:inline-flex;align-items:center;justify-content:center}
+.ux-orders-table tbody tr:hover td{background:rgba(219,234,254,.28)}
+@media(max-width:767px){.ux-orders-table{min-width:820px}.ux-orders-table tbody td{padding:10px 8px!important}#listar:has(.ux-orders-table){border-radius:10px}}
