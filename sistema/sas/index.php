@@ -176,7 +176,7 @@ if (@count($res1) > 0) {
 					<div class="main-header-left ">
 						<div class="responsive-logo logo_painel">
 							<a href="index.php" class="header-logo">
-								<img src="../img/foto-painel.png" class="obile-logo dark-logo-1 logo_painel" alt="logo"
+								<img src="../img/foto-painel.png?v=<?php echo is_file("../img/foto-painel.png") ? filemtime("../img/foto-painel.png") : 0; ?>" class="obile-logo dark-logo-1 logo_painel" alt="logo"
 									style="margin-left: -120px !important">
 							</a>
 						</div>
@@ -186,8 +186,8 @@ if (@count($res1) > 0) {
 						</div>
 						<div class="logo-horizontal">
 							<a href="index.php" class="header-logo">
-								<img src="../img/foto-painel.png" class="mobile-logo logo-1" alt="logo">
-								<img src="../img/foto-painel.png" class="mobile-logo dark-logo-1" alt="logo">
+								<img src="../img/foto-painel.png?v=<?php echo is_file("../img/foto-painel.png") ? filemtime("../img/foto-painel.png") : 0; ?>" class="mobile-logo logo-1" alt="logo">
+								<img src="../img/foto-painel.png?v=<?php echo is_file("../img/foto-painel.png") ? filemtime("../img/foto-painel.png") : 0; ?>" class="mobile-logo dark-logo-1" alt="logo">
 							</a>
 						</div>
 						<div class="main-header-center ms-4 d-sm-none d-md-none d-lg-block form-group">
@@ -516,10 +516,10 @@ if (@count($res1) > 0) {
 				<aside class="app-sidebar">
 					<div class="main-sidebar-header active">
 						<a class="header-logo active" href="index.php">
-							<img src="../img/foto-painel.png" class="main-logo  desktop-logo" alt="logo">
-							<img src="../img/foto-painel.png" class="main-logo  desktop-dark" alt="logo">
-							<img src="../img/icone.png" class="main-logo  mobile-logo" alt="logo">
-							<img src="../img/icone.png" class="main-logo  mobile-dark" alt="logo">
+							<img src="../img/foto-painel.png?v=<?php echo is_file("../img/foto-painel.png") ? filemtime("../img/foto-painel.png") : 0; ?>" class="main-logo  desktop-logo" alt="logo">
+							<img src="../img/foto-painel.png?v=<?php echo is_file("../img/foto-painel.png") ? filemtime("../img/foto-painel.png") : 0; ?>" class="main-logo  desktop-dark" alt="logo">
+							<img src="../img/icone.png?v=<?php echo is_file("../img/icone.png") ? filemtime("../img/icone.png") : 0; ?>" class="main-logo  mobile-logo" alt="logo">
+							<img src="../img/icone.png?v=<?php echo is_file("../img/icone.png") ? filemtime("../img/icone.png") : 0; ?>" class="main-logo  mobile-dark" alt="logo">
 						</a>
 					</div>
 					<div class="main-sidemenu">
@@ -1365,7 +1365,7 @@ if (@count($res1) > 0) {
 						</div>
 						<div class="col-md-2">
 							<div id="divImg">
-								<img src="../img/icone.png" width="50px" id="target-icone">
+								<img src="../img/icone.png?v=<?php echo is_file("../img/icone.png") ? filemtime("../img/icone.png") : 0; ?>" width="50px" id="target-icone">
 							</div>
 						</div>
 					</div>
@@ -1379,7 +1379,7 @@ if (@count($res1) > 0) {
 						</div>
 						<div class="col-md-2">
 							<div id="divImg">
-								<img src="../img/logo.jpg" width="80px" id="target-logo-rel">
+								<img src="../img/logo.jpg?v=<?php echo is_file("../img/logo.jpg") ? filemtime("../img/logo.jpg") : 0; ?>" width="80px" id="target-logo-rel">
 							</div>
 						</div>
 						<div class="col-md-4">
@@ -1391,7 +1391,7 @@ if (@count($res1) > 0) {
 						</div>
 						<div class="col-md-2">
 							<div id="divImg">
-								<img src="../img/foto-painel.png" width="80px" id="target-painel">
+								<img src="../img/foto-painel.png?v=<?php echo is_file("../img/foto-painel.png") ? filemtime("../img/foto-painel.png") : 0; ?>" width="80px" id="target-painel">
 							</div>
 						</div>
 						<div class="col-md-4">
