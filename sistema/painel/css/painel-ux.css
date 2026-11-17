@@ -262,3 +262,12 @@ body.main-body{background:var(--ux-bg);color:var(--ux-ink)}
 .main-header .app-sidebar__toggle .open-toggle .header-icon{color:#253858!important;font-size:23px!important;opacity:1!important}
 .main-header .app-sidebar__toggle .close-toggle{display:none!important}
 }
+
+/* Alinhamento do botao de menu no centro vertical do cabecalho desktop. */
+@media(min-width:992px){
+.main-header .main-header-left{display:flex;align-items:center}
+.main-header .app-sidebar__toggle{align-self:center!important;top:0!important;transform:translateY(-18px)!important}
+.main-header .app-sidebar__toggle .open-toggle{line-height:1!important}
+/* Evita que Dashboard seja quebrado entre a letra final e o restante do nome. */
+.app-sidebar .side-menu__item .side-menu__label{white-space:nowrap!important;overflow-wrap:normal!important;word-break:normal!important;min-width:0}
+}
