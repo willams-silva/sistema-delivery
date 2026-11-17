@@ -112,6 +112,15 @@ if($linhas > 0){
 		$estoque_unit = 'Não';
 	}
 
+	// Tapiocas são vendidas por unidade no PDV, mesmo quando a unidade
+	// cadastrada anteriormente foi KG. Não altera outras categorias.
+	$nome_categoria_produto = trim((string)($res2[0]['nome'] ?? ''));
+	if (mb_stripos($nome_categoria_produto, 'TAPIOCA') !== false) {
+		$nome_unidade = 'Unidade';
+		$sigla_unidade = ' Un.';
+		$estoque_unit = 'Sim';
+	}
+
 	if($cat_ativo == 'Sim'){
 
 
