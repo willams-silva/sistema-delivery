@@ -386,14 +386,18 @@ a[href="/meus-pedidos"].btn-warning { background:#a85b24 !important; border-colo
     background: #f9e5df;
     color: #a9432b;
   }
-/* Evita que logos quadradas ampliem o cabeçalho e cubram o menu no celular. */
+/* Cabeçalho mobile compacto: mantém a logo legível e elimina espaço vazio antes do banner. */
 @media (max-width: 767px) {
+  .main-container > .navbar {
+    padding-top: 4px !important;
+    padding-bottom: 4px !important;
+  }
   .main-container > .navbar .navbar-brand .logo-loja-topo {
     display: block !important;
-    width: 64px !important;
-    height: 64px !important;
-    max-width: 64px !important;
-    max-height: 64px !important;
+    width: 56px !important;
+    height: 56px !important;
+    max-width: 56px !important;
+    max-height: 56px !important;
     object-fit: contain !important;
   }
   .main-container > .navbar .navbar-brand {
@@ -403,10 +407,10 @@ a[href="/meus-pedidos"].btn-warning { background:#a85b24 !important; border-colo
   }
   .main-container > .navbar .container-fluid {
     flex-wrap: nowrap !important;
-    min-height: 76px;
+    min-height: 60px;
   }
   .main-container > #slider {
-    margin-top: 88px !important;
+    margin-top: 72px !important;
   }
 }
 </style>
