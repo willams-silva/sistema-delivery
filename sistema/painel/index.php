@@ -1494,9 +1494,9 @@ if($linhas == 0){
 
 						<div class="col-md-10">
 							<label>Texto Fechamento <small>Fora do Horário</small></label>
-							<input maxlength="255" type="text" name="texto_fechamento_horario" class="form-control"
-								value="<?php echo @$texto_fechamento_horario ?>"
-								placeholder="Texto que vai aparecer quando o cliente tentar fazer pedido fora do horário de funcionamento">
+							<textarea maxlength="2000" name="texto_fechamento_horario" class="form-control" rows="5"
+								placeholder="Texto que vai aparecer quando o cliente tentar fazer pedido fora do horário de funcionamento"><?php echo htmlspecialchars((string) (@$texto_fechamento_horario ?? ''), ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8'); ?></textarea>
+							<small class="text-muted">Até 2.000 caracteres. Para salvar textos maiores, a coluna do banco precisa ser do tipo TEXT.</small>
 						</div>
 					</div>
 
