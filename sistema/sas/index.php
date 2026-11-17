@@ -156,15 +156,23 @@ if (@count($res1) > 0) {
 
 
 <style>
-/* Logo SAS: dimensão proporcional ao arquivo recortado, sem faixa branca. */
+/* SAS: cabeçalho compacto, logo centralizada e menu sem sobreposição. */
 @media (min-width: 992px) {
-  body:not(.sidenav-toggled) .app-sidebar .main-sidebar-header {height:138px!important;min-height:138px!important;display:flex!important;align-items:center!important;justify-content:center!important;padding:6px 12px!important;}
-  body:not(.sidenav-toggled) .app-sidebar .main-sidebar-header .header-logo {width:100%!important;height:100%!important;display:flex!important;align-items:center!important;justify-content:center!important;padding:0!important;}
+  body:not(.sidenav-toggled) .app-sidebar .main-sidebar-header {
+    height:112px!important;min-height:112px!important;
+    display:flex!important;align-items:center!important;justify-content:center!important;
+    padding:8px 12px!important;
+  }
+  body:not(.sidenav-toggled) .app-sidebar .main-sidebar-header .header-logo {
+    width:100%!important;height:100%!important;display:flex!important;
+    align-items:center!important;justify-content:center!important;padding:0!important;
+  }
   body:not(.sidenav-toggled) .app-sidebar .main-sidebar-header .header-logo img.desktop-logo,
-  body:not(.sidenav-toggled) .app-sidebar .main-sidebar-header .header-logo img.desktop-dark {width:auto!important;max-width:94%!important;height:118px!important;max-height:118px!important;object-fit:contain!important;}
-  /* O tema posiciona o menu abaixo do cabecalho padrao de 80px: compensar a logo maior. */
-  body:not(.sidenav-toggled) .app-sidebar .main-sidemenu {padding-top:60px!important;}
-
+  body:not(.sidenav-toggled) .app-sidebar .main-sidebar-header .header-logo img.desktop-dark {
+    width:auto!important;max-width:94%!important;height:92px!important;
+    max-height:92px!important;object-fit:contain!important;
+  }
+  body:not(.sidenav-toggled) .app-sidebar .main-sidemenu {padding-top:32px!important;}
 }
 </style>
 </head>
