@@ -285,7 +285,7 @@ $porcent_mesa = $linhas4 / 100;
 
 
 
-	<div class="row">
+	<div class="row ux-home-kpi-row">
 
 		<div class="col-xl-3 col-lg-12 col-md-6 col-xs-12">
 			<div class="card sales-card"
