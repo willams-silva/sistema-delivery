@@ -57,7 +57,7 @@ if (!empty($_FILES['foto-logo']['name'])) {
         echo 'A logo deve estar em formato PNG!';
         exit();
     }
-    if (!is_uploaded_file($imagem_temp) || @getimagesize($imagem_temp) === false || @exif_imagetype($imagem_temp) !== IMAGETYPE_PNG) {
+    if (!is_uploaded_file($imagem_temp) || ($imgInfo = @getimagesize($imagem_temp)) === false || ($imgInfo['mime'] ?? '') !== 'image/png') {
         echo 'Arquivo PNG inválido. Selecione uma imagem PNG válida.';
         exit();
     }
