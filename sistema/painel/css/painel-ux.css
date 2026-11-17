@@ -271,3 +271,20 @@ body.main-body{background:var(--ux-bg);color:var(--ux-ink)}
 /* Evita que Dashboard seja quebrado entre a letra final e o restante do nome. */
 .app-sidebar .side-menu__item .side-menu__label{white-space:nowrap!important;overflow-wrap:normal!important;word-break:normal!important;min-width:0}
 }
+
+/* Bora Comanda: identidade visual do painel administrativo */
+:root{--ux-primary:#ff8500;--ux-ink:#182b45;--ux-muted:#64748b;--ux-border:#e7eaf0;--ux-surface:#fff;--ux-bg:#f6f7fa}
+body.main-body{background:var(--ux-bg);color:var(--ux-ink)}
+.app-sidebar{background:#172b46!important}
+.app-sidebar .side-menu__item:hover{background:rgba(255,133,0,.15)!important}
+.app-sidebar .side-menu__item.active{background:rgba(255,133,0,.22)!important}
+.app-sidebar .side-menu__item.active .side-menu__label,.app-sidebar .side-menu__item.active .side-menu__icon{color:#ffae42!important}
+.main-content .btn-primary,.modal .btn-primary{background-color:#ff8500!important;border-color:#ff8500!important;color:#fff!important}
+.main-content .btn-primary:hover,.modal .btn-primary:hover{background-color:#e87500!important;border-color:#e87500!important}
+.main-content .form-control:focus,.main-content .form-select:focus{border-color:#ffb454!important;box-shadow:0 0 0 3px rgba(255,133,0,.14)!important}
+.ux-home-intro{background:linear-gradient(115deg,#fff0dd,#fff 75%);border-color:#ffe0b8}
+.ux-home-eyebrow{color:#d66b00}
+.ux-shortcut:hover{background:#fff5e9;border-color:#ffc27a;color:#bd5c00}
+:where(a,button,input,select,textarea):focus-visible{outline-color:rgba(255,133,0,.5)}
+.main-content .table tbody tr:hover{background:#fff9f1}
+.main-content .badge.bg-primary,.main-content .badge.text-bg-primary{background:#ff8500!important}
