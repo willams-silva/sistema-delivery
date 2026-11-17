@@ -254,3 +254,11 @@ body.main-body{background:var(--ux-bg);color:var(--ux-ink)}
 #listar:has(.ux-orders-table){overflow-x:visible!important}
 .ux-orders-scroll-region{max-width:100%;overflow-x:auto;overflow-y:hidden;-webkit-overflow-scrolling:touch;padding-bottom:12px;margin-bottom:16px;scrollbar-gutter:stable}
 .ux-orders-scroll-region .ux-orders-table{margin-bottom:0!important}
+
+/* Botao de recolher/expandir menu lateral: icone hamburguer visivel no desktop. */
+@media(min-width:992px){
+.main-header .app-sidebar__toggle{display:flex!important;align-items:center;justify-content:center;flex:0 0 42px;min-width:42px;min-height:42px;position:relative;z-index:10;margin:0 8px 0 0!important}
+.main-header .app-sidebar__toggle .open-toggle{display:flex!important;align-items:center;justify-content:center;width:42px;height:42px;color:#253858!important;opacity:1!important;visibility:visible!important}
+.main-header .app-sidebar__toggle .open-toggle .header-icon{color:#253858!important;font-size:23px!important;opacity:1!important}
+.main-header .app-sidebar__toggle .close-toggle{display:none!important}
+}
