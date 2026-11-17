@@ -201,7 +201,7 @@ echo '<div align="right" style="margin-top:10px; font-size:14px; border-top:1px 
 echo '<br>';
 echo '<span style="margin-right:10px;">'.$nome_mesa.'</span>';
 echo '<span style="margin-right:40px;">Itens: <b>('.$linhas.')</b></span>';
-echo '<span>Subtotal: </span>';
+echo '<span>Total: </span>';
 echo '<span style="font-weight:bold"> R$ ';
 echo $total_finalF;
 echo '</span>';
@@ -218,8 +218,9 @@ echo '</div>';
 
 <script type="text/javascript">
 	var itens = "<?=$linhas?>";
-	$('#valor_pago').val('<?=$total_final?>')
-	$('#subtotal_venda').val('<?=$total_final?>')
+	// O valor recebido em dinheiro é informado pelo operador.
+	$('#subtotal_venda').val('<?=$total_final?>');
+    if (typeof atualizarPagamentoPdv === 'function') atualizarPagamentoPdv();
 	if(itens > 0){
 		$("#btn_limpar").show();
 		$("#btn_venda").show();
