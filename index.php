@@ -284,7 +284,7 @@ if($id_empresa == 0){
       <!-- Dynamic Plans Section -->
       <div class="mb-12 md:mb-20" id="plans">
         <h2 class="text-2xl md:text-3xl font-bold text-center mb-6 md:mb-10 gsap-fade-up">Escolha o Plano Ideal para Seu Negócio</h2>
-        <?php if($modo_teste == 'Sim'){ ?>
+        <?php if(($modo_teste ?? 'Não') === 'Sim'){ ?>
         <p align="center">(PLANOS APENAS DEMONSTRATIVOS, ESSE É UM SITE DE DEMONSTRAÇÃO DO SISTEMA, NÃO COMPRAR PLANO AQUI)<br></p>
       <?php } ?>
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6" id="plans-container">
