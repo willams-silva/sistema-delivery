@@ -27,3 +27,13 @@ body.main-body{background:var(--ux-bg);color:var(--ux-ink)}
 :where(a,button,input,select,textarea):focus-visible{outline:3px solid rgba(37,99,235,.45);outline-offset:2px}
 @media(max-width:767px){.main-content .sales-card{min-height:115px}.main-content .card{border-radius:13px}.main-content .table-responsive{overflow-x:auto;-webkit-overflow-scrolling:touch}.main-content .btn{min-height:36px}.modal-dialog{margin:.65rem}}
 @media(prefers-reduced-motion:reduce){.main-content .sales-card,.main-content .btn,.app-sidebar .side-menu__item{transition:none!important;transform:none!important}}
+
+/* Cabeçalho contextual do dashboard */
+.ux-home-intro{display:flex;align-items:center;justify-content:space-between;gap:20px;flex-wrap:wrap;padding:25px 28px;margin:18px 0 22px;background:linear-gradient(115deg,#eff6ff,#fff 70%);border:1px solid #dbeafe;border-radius:18px}
+.ux-home-eyebrow{display:inline-flex;align-items:center;gap:7px;font-size:.77rem;font-weight:750;letter-spacing:.06em;text-transform:uppercase;color:#2563eb}
+.ux-home-intro h1{font-size:clamp(1.3rem,2.5vw,1.8rem);font-weight:750;margin:8px 0 6px;color:#17243b}
+.ux-home-intro p{color:#64748b;margin:0;max-width:540px;line-height:1.5}
+.ux-home-shortcuts{display:flex;gap:9px;flex-wrap:wrap}
+.ux-shortcut{display:inline-flex;align-items:center;gap:8px;padding:11px 14px;background:#fff;border:1px solid #dbe2ed;border-radius:11px;color:#1e3a5f;font-weight:650;text-decoration:none;transition:background .15s,border-color .15s}
+.ux-shortcut:hover{background:#eff6ff;border-color:#93c5fd;color:#1d4ed8}
+@media(max-width:767px){.ux-home-intro{padding:18px 16px;margin-top:12px}.ux-home-shortcuts{width:100%;display:grid;grid-template-columns:repeat(2,minmax(0,1fr))}.ux-shortcut{justify-content:center;padding:11px 8px;font-size:.87rem}}
