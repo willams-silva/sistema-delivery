@@ -345,7 +345,20 @@ $data_atual = date('Y-m-d');
 				<h4 class="modal-title" id="exampleModalLabel">Adicionar Cliente</h4>
 				<button id="btn-fechar-cliente" aria-label="Close" class="btn-close" data-bs-toggle="modal" data-bs-target="#modalForm" type="button"><span class="text-white" aria-hidden="true">&times;</span></button>
 			</div>
-			<form id="form-cliente">
+			<style>
+/* Campos obrigatórios do cadastro de clientes no PDV */
+#modalCliente #form-cliente #nome:invalid,
+#modalCliente #form-cliente #telefone:invalid,
+#modalCliente #form-cliente #cpf:invalid {
+    border: 1px solid #ff4d5a !important;
+}
+#modalCliente #form-cliente #nome:invalid:focus,
+#modalCliente #form-cliente #telefone:invalid:focus,
+#modalCliente #form-cliente #cpf:invalid:focus {
+    box-shadow: 0 0 0 .15rem rgba(255,77,90,.14) !important;
+}
+</style>
+<form id="form-cliente">
 			<div class="modal-body">
 				
 
