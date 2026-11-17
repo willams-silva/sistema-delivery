@@ -357,7 +357,7 @@ if($linhas == 0){
 
 
 						?>
-						<div style="font-size: 15px; color: #A9ABBD">
+						<div style="font-size: 15px; color: #253858">
 							<?php echo $saudacao . ' <b>' . $primeiroNome ?>
 						</div>
 
