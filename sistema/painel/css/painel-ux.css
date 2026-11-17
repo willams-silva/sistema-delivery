@@ -194,3 +194,19 @@ body.main-body{background:var(--ux-bg);color:var(--ux-ink)}
 .ux-cash-modal .modal-body .form-control,.ux-cash-modal .modal-body .form-select{max-width:100%;min-height:40px;border-radius:9px}
 .ux-cash-modal .modal-body input[type="checkbox"],.ux-cash-modal .modal-body input[type="radio"]{min-height:initial}
 @media(max-width:767px){.ux-cash-page .left-content>form{align-items:stretch}.ux-cash-page .left-content>form>.esc{width:100%}.ux-cash-page .left-content>form #status-busca{width:100%!important}.ux-cash-modal .modal-body{padding:14px;max-height:calc(100dvh - 140px)}}
+
+/* Relatórios existentes: filtros e emissão (sem alterar PHP) */
+.ux-report-modal .modal-dialog{max-width:min(820px,calc(100vw - 24px))}
+.ux-report-modal .modal-content{border:0;border-radius:16px;overflow:hidden}
+.ux-report-modal .modal-header{padding:17px 20px}
+.ux-report-modal .modal-title{font-size:1.12rem;line-height:1.5;overflow-wrap:anywhere}
+.ux-report-modal .modal-title small,.ux-report-modal .modal-title smdll{font-size:.75rem;font-weight:400}
+.ux-report-modal .modal-body{padding:20px;max-height:calc(100dvh - 190px);overflow-y:auto;overflow-x:hidden}
+.ux-report-modal .modal-body .row{row-gap:10px}
+.ux-report-modal .modal-body [class*="col-"]{min-width:0}
+.ux-report-modal .modal-body label{display:block;font-weight:650;color:#334155;margin-bottom:6px}
+.ux-report-modal .modal-body .form-control,.ux-report-modal .modal-body .form-select{max-width:100%;min-height:40px;border-radius:9px}
+.ux-report-modal .modal-body input[type="checkbox"],.ux-report-modal .modal-body input[type="radio"]{min-height:initial}
+.ux-report-modal .modal-footer{padding:14px 20px;gap:8px}
+.ux-report-modal .modal-footer .btn{min-height:40px}
+@media(max-width:767px){.ux-report-modal .modal-dialog{margin:10px auto;max-width:calc(100vw - 20px)}.ux-report-modal .modal-header{padding:14px}.ux-report-modal .modal-body{padding:14px;max-height:calc(100dvh - 145px)}.ux-report-modal .modal-footer{padding:12px 14px}.ux-report-modal .modal-title{font-size:1rem}}
