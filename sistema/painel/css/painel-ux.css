@@ -242,3 +242,6 @@ body.main-body{background:var(--ux-bg);color:var(--ux-ink)}
    A classe Bootstrap .row usa margens negativas e fazia os cards ultrapassarem o grafico. */
 @media(min-width:768px){.ux-home-secondary-row{margin-left:16px!important;margin-right:16px!important}}
 @media(max-width:767px){.ux-home-secondary-row{margin-left:0!important;margin-right:0!important}}
+
+/* Contraste dos titulos das colunas nas tabelas do painel. */
+.main-content table thead th,.main-content table thead th *, .main-content .table thead th,.main-content .table thead th *{color:#253858!important}
