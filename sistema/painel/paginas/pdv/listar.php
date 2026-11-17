@@ -11,22 +11,27 @@ $busca = @$_POST['p2'];
 
 $id_cat = @$_POST['p1'];
 
-if($id == ""){
-	$query = $pdo->query("SELECT * from categorias where ativo = 'Sim' and empresa = '$id_empresa' order by nome asc limit 1");
-$res = $query->fetchAll(PDO::FETCH_ASSOC);
-$id = @$res[0]['id'];
-$nome_cat = @$res[0]['nome'];
-}else{
-	$query = $pdo->query("SELECT * from categorias where id = '$id'");
-$res = $query->fetchAll(PDO::FETCH_ASSOC);
-$nome_cat = @$res[0]['nome'];
+$id = trim((string)$id);
+$busca = trim((string)$busca);
+$nome_cat = 'Todos os produtos';
+if ($id !== '') {
+    $stmtCategoria = $pdo->prepare("SELECT nome FROM categorias WHERE id = :id AND empresa = :empresa LIMIT 1");
+    $stmtCategoria->execute([':id' => $id, ':empresa' => $id_empresa]);
+    $nome_cat = $stmtCategoria->fetchColumn() ?: 'Produtos';
 }
-
-if($busca == ""){
-	$query = $pdo->query("SELECT * from $tabela where categoria = '$id' and ativo = 'Sim' and (estoque > 0 or tem_estoque = 'Não') and empresa = '$id_empresa' order by nome asc");
-}else{
-	$query = $pdo->query("SELECT * from $tabela where (nome LIKE '%$busca%' or codigo = '$busca') and ativo = 'Sim'  and (estoque > 0 or tem_estoque = 'Não') and empresa = '$id_empresa' order by nome asc");
+$sql = "SELECT p.* FROM produtos p INNER JOIN categorias c ON c.id = p.categoria AND c.empresa = p.empresa WHERE p.empresa = :empresa AND p.ativo = 'Sim' AND c.ativo = 'Sim' AND (p.estoque > 0 OR p.tem_estoque = 'Não')";
+$params = [':empresa' => $id_empresa];
+if ($busca !== '') {
+    $sql .= " AND (p.nome LIKE :busca OR p.codigo = :codigo)";
+    $params[':busca'] = '%' . $busca . '%';
+    $params[':codigo'] = $busca;
+} elseif ($id !== '') {
+    $sql .= " AND p.categoria = :categoria";
+    $params[':categoria'] = $id;
 }
+$sql .= " ORDER BY p.nome ASC";
+$query = $pdo->prepare($sql);
+$query->execute($params);
 
 $res = $query->fetchAll(PDO::FETCH_ASSOC);
 $linhas = @count($res);
@@ -37,6 +42,7 @@ if($linhas > 0){
 	$valor_venda = $res[$i]['valor_venda'];	
 	$estoque = $res[$i]['estoque'];			
 	$foto = $res[$i]['foto'];
+	$codigo_produto = trim((string)($res[$i]['codigo'] ?? ''));
 	$categoria = $res[$i]['categoria'];
 	$unidade = $res[$i]['unidade'];
 	$promocao = $res[$i]['promocao'];
@@ -126,6 +132,7 @@ echo <<<HTML
 			    </div>
 			    <div class="card-content">
 			      <h3 class="card-title">{$nomeF}</h3>
+			      <p class="pdv-product-code">Código: {$codigo_produto}</p>
 			      <p class="card-price">R$ {$valor_vendaF}</p>
 			      <p class="card-stock " style="min-height:20px; display:flex; align-items:center;"><span class="$possui_estoque">Estoque: ({$estoqueF}) {$sigla_unidade}</span></p>
 			      <button class="add-to-cart">
