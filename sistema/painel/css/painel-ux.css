@@ -73,3 +73,18 @@ body.main-body{background:var(--ux-bg);color:var(--ux-ink)}
 .ux-orders-table tbody td:last-child .btn{margin:2px;min-width:32px;min-height:32px;display:inline-flex;align-items:center;justify-content:center}
 .ux-orders-table tbody tr:hover td{background:rgba(219,234,254,.28)}
 @media(max-width:767px){.ux-orders-table{min-width:820px}.ux-orders-table tbody td{padding:10px 8px!important}#listar:has(.ux-orders-table){border-radius:10px}}
+
+/* Refinamento da leitura do painel e das ações de pedidos */
+.main-content .sales-card .row{align-items:center}
+.main-content .sales-card .row>[class*="col-"]{min-width:0}
+.main-content .sales-card .row h4,.main-content .sales-card .row h5{overflow-wrap:anywhere}
+.main-content .card .card-title{font-weight:700;letter-spacing:-.015em}
+.main-content .card .card-body{overflow-wrap:break-word}
+#modalDados .modal-dialog{max-width:min(680px,calc(100vw - 24px))}
+#modalDados #listar-pedido{line-height:1.65}
+#modalDados #listar-pedido img{max-width:100%;height:auto}
+#modalDados #listar-pedido table{width:100%;max-width:100%}
+#modalDados #listar-pedido .btn{min-height:36px}
+#modalBaixar .modal-body .row,#modalEntregador .modal-body .row,#modalDesconto .modal-body .row{align-items:end;row-gap:10px}
+#modalBaixar .modal-body button[type="submit"],#modalEntregador .modal-body button[type="submit"],#modalDesconto .modal-body button[type="submit"]{min-height:39px;width:100%}
+@media(max-width:767px){.main-content .sales-card{min-height:120px}.main-content .sales-card .ps-4{padding-left:14px!important}.main-content .sales-card .pe-3{padding-right:10px!important}#modalDados .modal-dialog{margin:12px auto}#modalDados #listar-pedido{padding:14px;overflow-x:auto}}
