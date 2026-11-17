@@ -452,7 +452,7 @@ if($total_reg > 0) {
             <img src="<?php echo $url_sistema ?>sistema/img/logos/<?php echo $logo ?>" alt="Logo" class="large-logo-footer h-16 md:h-20" />
           </div>
           <div class="text-center md:text-right">
-            <p class="text-gray-400 text-sm">&copy; <?php echo date('Y'); ?> <?php echo $nome_sistema ?>. Todos os direitos reservados.</p>
+            <p class="text-gray-300 text-sm">&copy; <?php echo date('Y'); ?> <strong style="color:#ffc400">Bora Comanda</strong> — Seu pedido, mais fácil! Todos os direitos reservados.</p>
             <p class="text-gray-500 text-xs md:text-sm mt-1 md:mt-2"><?php echo $nome_sistema ?> – Tecnologia que simplifica e acelera resultados!</p>
           </div>
         </div>
