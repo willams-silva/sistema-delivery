@@ -1179,3 +1179,26 @@ body{background:#f1f5fb;color:#091b37}
 .kanban-header{background:#061b3a!important;color:#fff!important}
 .kanban-title{color:#fff!important}
 @media(max-width:575px){.company-grid{grid-template-columns:minmax(0,1fr)!important;gap:14px!important}.company-card{width:100%;max-width:100%}.section-header{flex-direction:column;align-items:stretch}}
+
+
+/* Etapa 3: acabamento, acessibilidade e responsividade Bora Comanda */
+.bc-dashboard-heading{background:linear-gradient(110deg,#061b3a 0%,#103b66 76%,#1b4d73 100%);border-radius:20px;padding:23px 27px;color:#fff!important;box-shadow:0 8px 22px rgba(6,27,58,.12);margin-bottom:24px}
+.bc-dashboard-heading h1{color:#fff!important;letter-spacing:-.025em}
+.bc-dashboard-heading p{color:#d8e4f2!important}
+.bc-dashboard-symbol{width:56px;height:56px;flex:0 0 56px;display:flex;align-items:center;justify-content:center;background:#ffc400;border-radius:15px;color:#061b3a!important;font-size:25px}
+.stats-card:focus-within,.company-card:focus-visible{outline:3px solid #ffc400;outline-offset:3px}
+.company-card{display:flex;flex-direction:column}
+.company-card-content{display:flex;flex:1;flex-direction:column;min-width:0}
+.company-card-footer{margin-top:auto}
+.company-card-badge.text-success{color:#087c52!important}
+.company-card-badge.text-danger{color:#b42332!important}
+.company-card-action{min-height:44px;display:flex;align-items:center;justify-content:center;gap:10px}
+.company-card-action i{transition:transform .2s}
+.company-card:hover .company-card-action i{transform:translateX(4px)}
+.sas-company-search input:focus-visible{outline:none!important}
+.sas-company-search:focus-within{box-shadow:0 0 0 4px rgba(255,196,0,.23)!important}
+.section-title-large::before{background:#ffc400!important}
+.section-header{padding:0 0 12px}
+@media(max-width:991px){.bc-dashboard-heading{padding:18px 20px}.bc-dashboard-symbol{width:46px;height:46px;flex-basis:46px;font-size:21px}}
+@media(max-width:575px){.bc-dashboard-heading{border-radius:16px;padding:16px;gap:12px}.bc-dashboard-heading h1{font-size:24px}.bc-dashboard-heading p{font-size:12px}.stats-card{min-height:145px}.stats-card-content{padding:17px!important}.stats-card-title{max-width:75%}.sas-company-search{flex:1 1 100%!important;width:100%!important}.sas-company-count{justify-content:center}}
+@media(prefers-reduced-motion:reduce){.company-card,.company-card-action i,.stats-card{transition:none!important}.company-card:hover{transform:none!important}}
