@@ -114,7 +114,40 @@ body.checkout-cardapio { background:#fffaf5; color:#493425; }
 .checkout-cardapio .btn-success, .checkout-cardapio .btn-warning { background:#a85b24 !important; border-color:#a85b24 !important; color:#fff !important; border-radius:11px; font-weight:700; padding:11px 19px; }
 .checkout-cardapio .btn-success:hover, .checkout-cardapio .btn-warning:hover { background:#87441b !important; }
 .checkout-cardapio .btn-danger { background:#fff; border-color:#d8bba3; color:#7b4d2d; border-radius:11px; padding:11px 19px; }
-.checkout-cardapio .total-finalizar { background:#fffdf9; border-top:1px solid #ead7c3; box-shadow:0 -5px 20px rgba(95,54,25,.08); }
+.checkout-cardapio .total-finalizar {
+  background:#fffdf9;
+  border-top:1px solid #ead7c3;
+  box-shadow:0 -5px 20px rgba(95,54,25,.08);
+  padding:14px 16px calc(14px + env(safe-area-inset-bottom, 0px)) !important;
+  box-sizing:border-box !important;
+  left:0 !important;
+  right:0 !important;
+  width:100% !important;
+  max-width:none !important;
+  margin:0 !important;
+}
+.checkout-cardapio .total-finalizar .total-pedido {
+  min-height:0 !important;
+  height:auto !important;
+}
+.checkout-cardapio .total-finalizar .total-pedido > big {
+  display:flex !important;
+  justify-content:space-between !important;
+  align-items:center !important;
+  gap:8px !important;
+  flex-wrap:nowrap !important;
+  font-size:15px !important;
+  line-height:1.4 !important;
+}
+.checkout-cardapio .total-finalizar .total-pedido > big > span { font-size:inherit !important; }
+.checkout-cardapio .total-finalizar .total-pedido > big .direita {
+  float:none !important;
+  margin-left:auto !important;
+  white-space:nowrap !important;
+}
+@media(max-width:380px) {
+  .checkout-cardapio .total-finalizar .total-pedido > big { font-size:13px !important; }
+}
 .checkout-cardapio .total-pedido {
   box-sizing:border-box !important;
   width:min(100%,360px) !important;
@@ -573,55 +606,6 @@ body.checkout-cardapio { background:#fffaf5; color:#493425; }
 <input type="hidden" id="id_cliente">
 <input type="hidden" id="valor-cupom">
 
-
-<style>
-/* Alinhamento exclusivo do resumo de finalização */
-.total-finalizar {
-  width: calc(100% - 32px);
-  max-width: 560px;
-  margin-left: auto !important;
-  margin-right: auto !important;
-  box-sizing: border-box;
-}
-.total-finalizar .total-pedido {
-  width: 100%;
-  box-sizing: border-box;
-}
-.total-finalizar .total-pedido > big {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  flex-wrap: wrap;
-  gap: 8px 12px;
-  font-size: 16px;
-  line-height: 1.5;
-}
-.total-finalizar .total-pedido > big .direita {
-  float: none !important;
-  margin-left: auto;
-  font-size: 17px;
-  white-space: nowrap;
-}
-.total-finalizar #botao_finalizar {
-  width: 100%;
-  min-height: 52px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 12px;
-  box-sizing: border-box;
-  font-size: 17px;
-  line-height: 1.3;
-  text-align: center;
-}
-.total-finalizar #botao_finalizar i { flex: 0 0 auto; }
-@media (max-width: 480px) {
-  .total-finalizar { width: calc(100% - 28px); }
-  .total-finalizar .total-pedido > big { font-size: 15px; }
-  .total-finalizar .total-pedido > big .direita { font-size: 16px; }
-  .total-finalizar #botao_finalizar { font-size: 16px; }
-}
-</style>
 
 <div class="total-finalizar">
   <div class="total-pedido" style="border: solid 1px #ababab; border-radius: 10px;">
