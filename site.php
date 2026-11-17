@@ -386,6 +386,29 @@ a[href="/meus-pedidos"].btn-warning { background:#a85b24 !important; border-colo
     background: #f9e5df;
     color: #a9432b;
   }
+/* Evita que logos quadradas ampliem o cabeçalho e cubram o menu no celular. */
+@media (max-width: 767px) {
+  .main-container > .navbar .navbar-brand .logo-loja-topo {
+    display: block !important;
+    width: 64px !important;
+    height: 64px !important;
+    max-width: 64px !important;
+    max-height: 64px !important;
+    object-fit: contain !important;
+  }
+  .main-container > .navbar .navbar-brand {
+    margin-right: 0 !important;
+    padding: 0 !important;
+    flex: 0 0 auto;
+  }
+  .main-container > .navbar .container-fluid {
+    flex-wrap: nowrap !important;
+    min-height: 76px;
+  }
+  .main-container > #slider {
+    margin-top: 88px !important;
+  }
+}
 </style>
 
 
@@ -396,7 +419,7 @@ a[href="/meus-pedidos"].btn-warning { background:#a85b24 !important; border-colo
 
 
       <a class="navbar-brand" href="site/<?php echo $url_site ?>">
-        <img src="sistema/img/<?php echo $logo_sistema ?>" alt="" width="80px" class="d-inline-block align-text-top">
+        <img src="sistema/img/<?php echo $logo_sistema ?>" alt="" width="80" class="d-inline-block align-text-top logo-loja-topo">
         <small>
           <?php
           if ($id_mesa == "") {
