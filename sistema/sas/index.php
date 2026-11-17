@@ -162,6 +162,9 @@ if (@count($res1) > 0) {
   body:not(.sidenav-toggled) .app-sidebar .main-sidebar-header .header-logo {width:100%!important;height:100%!important;display:flex!important;align-items:center!important;justify-content:center!important;padding:0!important;}
   body:not(.sidenav-toggled) .app-sidebar .main-sidebar-header .header-logo img.desktop-logo,
   body:not(.sidenav-toggled) .app-sidebar .main-sidebar-header .header-logo img.desktop-dark {width:auto!important;max-width:94%!important;height:118px!important;max-height:118px!important;object-fit:contain!important;}
+  /* O tema posiciona o menu abaixo do cabecalho padrao de 80px: compensar a logo maior. */
+  body:not(.sidenav-toggled) .app-sidebar .main-sidemenu {padding-top:60px!important;}
+
 }
 </style>
 </head>
