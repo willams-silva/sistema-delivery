@@ -252,7 +252,7 @@ body#pagina .form-check-input:checked{background-color:#ffc400!important;border-
 							<div class="main-card-signin d-md-flex">
 								<div class="wd-100p">
 									<div align="center" class="d-flex mb-4 justify-content-center"><a href="index.php"><img
-												src="img/logo.png" class="sign-favicon" alt="logo" width="50%"></a></div>
+												src="img/logo.png?v=<?php echo is_file(__DIR__ . '/img/logo.png') ? filemtime(__DIR__ . '/img/logo.png') : time(); ?>" class="sign-favicon" alt="logo" width="50%"></a></div>
 									<div class="">
 										<div class="main-signup-header">
 
