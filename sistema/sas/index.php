@@ -1353,7 +1353,7 @@ if (@count($res1) > 0) {
 						</div>
 						<div class="col-md-2">
 							<div id="divImg">
-								<img src="../img/logo.png" width="80px" id="target-logo">
+								<img src="../img/logo.png?v=<?php echo is_file("../img/logo.png") ? filemtime("../img/logo.png") : 0; ?>" width="80px" id="target-logo">
 							</div>
 						</div>
 						<div class="col-md-4">
