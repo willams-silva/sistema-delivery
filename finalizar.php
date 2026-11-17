@@ -574,6 +574,55 @@ body.checkout-cardapio { background:#fffaf5; color:#493425; }
 <input type="hidden" id="valor-cupom">
 
 
+<style>
+/* Alinhamento exclusivo do resumo de finalização */
+.total-finalizar {
+  width: calc(100% - 32px);
+  max-width: 560px;
+  margin-left: auto !important;
+  margin-right: auto !important;
+  box-sizing: border-box;
+}
+.total-finalizar .total-pedido {
+  width: 100%;
+  box-sizing: border-box;
+}
+.total-finalizar .total-pedido > big {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 8px 12px;
+  font-size: 16px;
+  line-height: 1.5;
+}
+.total-finalizar .total-pedido > big .direita {
+  float: none !important;
+  margin-left: auto;
+  font-size: 17px;
+  white-space: nowrap;
+}
+.total-finalizar #botao_finalizar {
+  width: 100%;
+  min-height: 52px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  box-sizing: border-box;
+  font-size: 17px;
+  line-height: 1.3;
+  text-align: center;
+}
+.total-finalizar #botao_finalizar i { flex: 0 0 auto; }
+@media (max-width: 480px) {
+  .total-finalizar { width: calc(100% - 28px); }
+  .total-finalizar .total-pedido > big { font-size: 15px; }
+  .total-finalizar .total-pedido > big .direita { font-size: 16px; }
+  .total-finalizar #botao_finalizar { font-size: 16px; }
+}
+</style>
+
 <div class="total-finalizar">
   <div class="total-pedido" style="border: solid 1px #ababab; border-radius: 10px;">
 
