@@ -156,11 +156,12 @@ if (@count($res1) > 0) {
 
 
 <style>
-/* Identidade visual do SAS: ampliar a logo sem distorcer nem afetar o menu recolhido. */
+/* Logo SAS: dimensão proporcional ao arquivo recortado, sem faixa branca. */
 @media (min-width: 992px) {
-  .app-sidebar .main-sidebar-header .header-logo {display:flex;align-items:center;justify-content:center;width:100%;padding:6px 10px;}
-  .app-sidebar .main-sidebar-header .header-logo img.desktop-logo,
-  .app-sidebar .main-sidebar-header .header-logo img.desktop-dark {width:85%!important;max-width:265px!important;height:auto!important;max-height:68px!important;object-fit:contain!important;}
+  body:not(.sidenav-toggled) .app-sidebar .main-sidebar-header {height:138px!important;min-height:138px!important;display:flex!important;align-items:center!important;justify-content:center!important;padding:6px 12px!important;}
+  body:not(.sidenav-toggled) .app-sidebar .main-sidebar-header .header-logo {width:100%!important;height:100%!important;display:flex!important;align-items:center!important;justify-content:center!important;padding:0!important;}
+  body:not(.sidenav-toggled) .app-sidebar .main-sidebar-header .header-logo img.desktop-logo,
+  body:not(.sidenav-toggled) .app-sidebar .main-sidebar-header .header-logo img.desktop-dark {width:auto!important;max-width:94%!important;height:118px!important;max-height:118px!important;object-fit:contain!important;}
 }
 </style>
 </head>
