@@ -11,7 +11,7 @@ $pag = 'caixas';
 ?>
 
 
-<div class="justify-content-between" style="margin-top: 20px">
+<div class="justify-content-between ux-cash-page" style="margin-top: 20px">
 	<div class="left-content mt-2 mb-3">
 		<form action="rel/caixas_class.php" method="POST" target="_blank">
 
@@ -86,7 +86,7 @@ $pag = 'caixas';
 <div class="row row-sm" style="margin-top: 30px">
 	<div class="col-lg-12">
 		<div class="card custom-card">
-			<div class="card-body" id="listar">
+			<div class="card-body ux-cash-list" id="listar">
 
 			</div>
 		</div>
@@ -102,7 +102,7 @@ $pag = 'caixas';
 
 
 <!-- Modal -->
-<div class="modal fade" id="modalForm" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+<div class="modal fade ux-cash-modal" id="modalForm" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
 	aria-hidden="true">
 	<div class="modal-dialog modal-lg" role="document">
 		<div class="modal-content">
@@ -197,7 +197,7 @@ $pag = 'caixas';
 
 
 <!-- Modal Fcehamento-->
-<div class="modal fade" id="modalFechar" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+<div class="modal fade ux-cash-modal" id="modalFechar" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
 	aria-hidden="true">
 	<div class="modal-dialog" role="document">
 		<div class="modal-content">
@@ -264,7 +264,7 @@ $pag = 'caixas';
 
 
 <!-- Modal Sangria-->
-<div class="modal fade" id="modalSangria" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+<div class="modal fade ux-cash-modal" id="modalSangria" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
 	aria-hidden="true">
 	<div class="modal-dialog" role="document">
 		<div class="modal-content">
