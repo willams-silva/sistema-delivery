@@ -141,20 +141,20 @@ if($id_empresa == 0){
         extend: {
           colors: {
             primary: {
-              DEFAULT: '#2d4c63',
-              dark: '#1a2c3d',
-              light: '#3a6080'
+              DEFAULT: '#061b3a',
+              dark: '#041229',
+              light: '#17375b'
             },
             accent: {
-              DEFAULT: '#ffc107',
-              dark: '#e0a800',
-              light: '#ffcd38'
+              DEFAULT: '#ffc400',
+              dark: '#e5a900',
+              light: '#ffdb59'
             },
             success: '#10b981',
             warning: '#f59e0b',
             danger: '#ef4444',
-            customAzul: '#045d8a',
-            customGreen: '#2ba304', // Adicionando a cor personalizada
+            customAzul: '#123c68',
+            customGreen: '#ffc400', // Adicionando a cor personalizada
           },
           fontFamily: {
             poppins: ['Poppins', 'sans-serif'],
@@ -206,7 +206,7 @@ if($id_empresa == 0){
         <?php if($botao1 != "" || $botao2 != "" || $botao3 != ""){ ?>
         <div class="flex flex-col sm:flex-row justify-center gap-4 mb-6">
           <?php if($botao1 != ""){ ?>
-          <a href="#plans" class="inline-flex items-center justify-center px-6 py-3 border border-transparent text-base font-medium rounded-lg shadow-lg text-white bg-customGreen hover:bg-green-700 focus:outline-none animate-pulse-green transition-all duration-300">
+          <a href="#plans" class="inline-flex items-center justify-center px-6 py-3 border border-transparent text-base font-medium rounded-lg shadow-lg text-primary-dark bg-customGreen hover:bg-yellow-400 focus:outline-none animate-pulse-green transition-all duration-300">
             <i class="fas fa-rocket mr-2"></i> <?php echo $botao1 ?>
           </a>
         <?php } ?>
@@ -216,7 +216,7 @@ if($id_empresa == 0){
           </a>
            <?php } ?>
          <?php if($botao3 != ""){ ?>
-           <a href="<?php echo $link_painel ?>" class="inline-flex items-center justify-center px-6 py-3 border border-transparent text-base font-medium rounded-lg shadow-lg text-white bg-customAzul hover:bg-blue-700 focus:outline-none animate-pulse-blue transition-all duration-300">
+           <a href="<?php echo $link_painel ?>" class="inline-flex items-center justify-center px-6 py-3 border border-transparent text-base font-medium rounded-lg shadow-lg text-white bg-customAzul hover:bg-primary-light focus:outline-none animate-pulse-blue transition-all duration-300">
             <i class="fas fa-key mr-2"></i> <?php echo $botao3 ?>
           </a>
         <?php } ?>
@@ -265,7 +265,7 @@ if($id_empresa == 0){
    
            ?>
           <div class="bg-glass rounded-xl p-6 text-center feature-card gsap-stagger-item">
-            <div class="text-4xl mb-4 custom-green-icon" style="color: #2ba304;">
+            <div class="text-4xl mb-4 custom-green-icon" style="color: #ffc400;">
               <i class="<?php echo $icone ?>"></i>
             </div>
             <h3 class="text-xl font-semibold mb-3"><?php echo $titulo ?></h3>
