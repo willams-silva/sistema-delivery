@@ -154,6 +154,76 @@ if (@count($res1) > 0) {
     <link rel="stylesheet" href="../dist/plugins/colors/ui/trumbowyg.colors.min.css">
 	
 
+
+<style>
+/* SAS: logo integrada ao menu sem sobreposição e sem fundo imposto pelo CSS. */
+@media (min-width: 992px) {
+  body:not(.sidenav-toggled) .app-sidebar .main-sidebar-header {
+    position:relative!important; height:150px!important;min-height:150px!important;
+    display:flex!important;align-items:center!important;justify-content:center!important;
+    padding:10px 12px 12px!important;background:transparent!important;
+    border-bottom:1px solid rgba(255,255,255,.24)!important;
+  }
+  body:not(.sidenav-toggled) .app-sidebar .main-sidebar-header .header-logo {
+    display:flex!important;align-items:center!important;justify-content:center!important;
+    width:100%!important;height:100%!important;padding:0!important;background:transparent!important;
+  }
+  body:not(.sidenav-toggled) .app-sidebar .main-sidebar-header .header-logo img.desktop-logo,
+  body:not(.sidenav-toggled) .app-sidebar .main-sidebar-header .header-logo img.desktop-dark {
+    width:100%!important;max-width:285px!important;height:124px!important;
+    max-height:124px!important;object-fit:contain!important;background:transparent!important;
+  }
+  body:not(.sidenav-toggled) .app-sidebar .main-sidemenu {
+    padding-top:0!important;margin-top:0!important;
+  }
+  body:not(.sidenav-toggled) .app-sidebar .main-sidemenu .side-menu {margin-top:0!important;}
+}
+</style>
+
+<style id="bora-comanda-sas-theme">
+/* Identidade SaaS Bora Comanda — somente apresentação */
+:root{--bc-navy:#061b3a;--bc-dark:#07152d;--bc-yellow:#ffc400;--bc-orange:#ff8900}
+.app-sidebar,.app-sidebar .main-sidebar-header{background-color:var(--bc-dark)!important}
+.app-sidebar .side-menu__item{color:#f8fafc!important;border-radius:12px!important;transition:background .2s,color .2s}
+.app-sidebar .side-menu__icon,.app-sidebar .side-menu__angle{color:#f8fafc!important}
+.app-sidebar .side-menu__item:hover{background:#163354!important}
+.app-sidebar .side-menu__item.active,.app-sidebar .side-menu__item.active:hover,.app-sidebar .side-menu__item[aria-expanded="true"]{background:var(--bc-yellow)!important;color:var(--bc-dark)!important}
+.app-sidebar .side-menu__item.active .side-menu__icon,.app-sidebar .side-menu__item.active .side-menu__angle,.app-sidebar .side-menu__item[aria-expanded="true"] .side-menu__icon{color:var(--bc-dark)!important}
+.header,.app-header{background:linear-gradient(110deg,#06152d 0%,#061b3a 72%,#ffbd00 90%,#ff8900 100%)!important;color:#fff!important}
+.header .header-icon,.app-header .header-icon,.header .nav-link,.app-header .nav-link{color:#fff!important}
+.main-content,.app-content{background:#f1f5fb}
+@media(max-width:991px){.header,.app-header{background:#061b3a!important}}
+</style>
+
+<style id="bora-comanda-sas-internal">
+/* Etapa 4: padronização visual das páginas internas do SaaS. */
+:root{--bc-border:#dce5f0;--bc-muted:#64748b;--bc-surface:#fff}
+.main-header.side-header{background:#061b3a!important;border-bottom:3px solid #ffc400!important;box-shadow:0 3px 14px rgba(6,27,58,.13)}
+.main-header .main-header-left,.main-header .main-header-right{align-items:center}
+.main-header .nav-link,.main-header .header-icon,.main-header .main-header-center{color:#f8fafc!important}
+.main-header .dropdown-menu{background:#fff;color:#061b3a;border:1px solid var(--bc-border);border-radius:14px;box-shadow:0 15px 30px rgba(6,27,58,.13)}
+.main-header .dropdown-menu .dropdown-item{color:#14243d}
+.main-header .dropdown-menu .dropdown-item:hover{background:#fff8dd;color:#061b3a}
+.main-content .card,.app-content .card{border:1px solid var(--bc-border);border-radius:16px;box-shadow:0 4px 15px rgba(6,27,58,.055)}
+.main-content .card-header,.app-content .card-header{background:#fff;border-bottom:1px solid var(--bc-border);border-radius:16px 16px 0 0}
+.main-content .card-title,.app-content .card-title{color:#061b3a;font-weight:750}
+.main-content .table,.app-content .table{color:#14243d}
+.main-content .table thead th,.app-content .table thead th{background:#f1f5fb;color:#061b3a;font-weight:750;border-color:#dce5f0;vertical-align:middle}
+.main-content .table tbody td,.app-content .table tbody td{vertical-align:middle;border-color:#e8edf4}
+.main-content .table tbody tr:hover,.app-content .table tbody tr:hover{background:#fffbee}
+.main-content .form-control,.app-content .form-control,.main-content .form-select,.app-content .form-select{border:1px solid #cbd5e1;border-radius:10px;min-height:40px}
+.main-content .form-control:focus,.app-content .form-control:focus,.main-content .form-select:focus,.app-content .form-select:focus{border-color:#e7a900;box-shadow:0 0 0 3px rgba(255,196,0,.16)}
+.main-content .btn-primary,.app-content .btn-primary{background:#061b3a;border-color:#061b3a;color:#fff;border-radius:10px}
+.main-content .btn-primary:hover,.app-content .btn-primary:hover{background:#103b66;border-color:#103b66}
+.main-content .btn-warning,.app-content .btn-warning{background:#ffc400;border-color:#ffc400;color:#061b3a;border-radius:10px}
+.main-content .btn-warning:hover,.app-content .btn-warning:hover{background:#ffae00;border-color:#ffae00}
+.main-content .modal-content,.app-content .modal-content{border-radius:16px;border:1px solid var(--bc-border);overflow:hidden}
+.main-content .modal-header,.app-content .modal-header{background:#061b3a;color:#fff}
+.main-content .modal-header .modal-title,.app-content .modal-header .modal-title{color:#fff}
+.main-content .pagination .page-link,.app-content .pagination .page-link{color:#061b3a;border-color:#dce5f0}
+.main-content .pagination .active .page-link,.app-content .pagination .active .page-link{background:#061b3a;border-color:#061b3a;color:#fff}
+@media(max-width:767px){.main-content .card,.app-content .card{border-radius:12px}.main-content .table-responsive,.app-content .table-responsive{overflow-x:auto;-webkit-overflow-scrolling:touch}.main-header.side-header{border-bottom-width:2px!important}}
+</style>
 </head>
 
 <body class="ltr main-body app sidebar-mini">
@@ -176,7 +246,7 @@ if (@count($res1) > 0) {
 					<div class="main-header-left ">
 						<div class="responsive-logo logo_painel">
 							<a href="index.php" class="header-logo">
-								<img src="../img/foto-painel.png" class="obile-logo dark-logo-1 logo_painel" alt="logo"
+								<img src="../img/foto-painel.png?v=<?php echo is_file("../img/foto-painel.png") ? filemtime("../img/foto-painel.png") : 0; ?>" class="obile-logo dark-logo-1 logo_painel" alt="logo"
 									style="margin-left: -120px !important">
 							</a>
 						</div>
@@ -186,8 +256,8 @@ if (@count($res1) > 0) {
 						</div>
 						<div class="logo-horizontal">
 							<a href="index.php" class="header-logo">
-								<img src="../img/foto-painel.png" class="mobile-logo logo-1" alt="logo">
-								<img src="../img/foto-painel.png" class="mobile-logo dark-logo-1" alt="logo">
+								<img src="../img/foto-painel.png?v=<?php echo is_file("../img/foto-painel.png") ? filemtime("../img/foto-painel.png") : 0; ?>" class="mobile-logo logo-1" alt="logo">
+								<img src="../img/foto-painel.png?v=<?php echo is_file("../img/foto-painel.png") ? filemtime("../img/foto-painel.png") : 0; ?>" class="mobile-logo dark-logo-1" alt="logo">
 							</a>
 						</div>
 						<div class="main-header-center ms-4 d-sm-none d-md-none d-lg-block form-group">
@@ -516,10 +586,10 @@ if (@count($res1) > 0) {
 				<aside class="app-sidebar">
 					<div class="main-sidebar-header active">
 						<a class="header-logo active" href="index.php">
-							<img src="../img/foto-painel.png" class="main-logo  desktop-logo" alt="logo">
-							<img src="../img/foto-painel.png" class="main-logo  desktop-dark" alt="logo">
-							<img src="../img/icone.png" class="main-logo  mobile-logo" alt="logo">
-							<img src="../img/icone.png" class="main-logo  mobile-dark" alt="logo">
+							<img src="../img/foto-painel.png?v=<?php echo is_file("../img/foto-painel.png") ? filemtime("../img/foto-painel.png") : 0; ?>" class="main-logo  desktop-logo" alt="logo">
+							<img src="../img/foto-painel.png?v=<?php echo is_file("../img/foto-painel.png") ? filemtime("../img/foto-painel.png") : 0; ?>" class="main-logo  desktop-dark" alt="logo">
+							<img src="../img/icone.png?v=<?php echo is_file("../img/icone.png") ? filemtime("../img/icone.png") : 0; ?>" class="main-logo  mobile-logo" alt="logo">
+							<img src="../img/icone.png?v=<?php echo is_file("../img/icone.png") ? filemtime("../img/icone.png") : 0; ?>" class="main-logo  mobile-dark" alt="logo">
 						</a>
 					</div>
 					<div class="main-sidemenu">
@@ -1365,7 +1435,7 @@ if (@count($res1) > 0) {
 						</div>
 						<div class="col-md-2">
 							<div id="divImg">
-								<img src="../img/icone.png" width="50px" id="target-icone">
+								<img src="../img/icone.png?v=<?php echo is_file("../img/icone.png") ? filemtime("../img/icone.png") : 0; ?>" width="50px" id="target-icone">
 							</div>
 						</div>
 					</div>
@@ -1379,7 +1449,7 @@ if (@count($res1) > 0) {
 						</div>
 						<div class="col-md-2">
 							<div id="divImg">
-								<img src="../img/logo.jpg" width="80px" id="target-logo-rel">
+								<img src="../img/logo.jpg?v=<?php echo is_file("../img/logo.jpg") ? filemtime("../img/logo.jpg") : 0; ?>" width="80px" id="target-logo-rel">
 							</div>
 						</div>
 						<div class="col-md-4">
@@ -1391,7 +1461,7 @@ if (@count($res1) > 0) {
 						</div>
 						<div class="col-md-2">
 							<div id="divImg">
-								<img src="../img/foto-painel.png" width="80px" id="target-painel">
+								<img src="../img/foto-painel.png?v=<?php echo is_file("../img/foto-painel.png") ? filemtime("../img/foto-painel.png") : 0; ?>" width="80px" id="target-painel">
 							</div>
 						</div>
 						<div class="col-md-4">

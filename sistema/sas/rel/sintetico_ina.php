@@ -8,96 +8,40 @@ if ($token_rel != 'M543664') {
 
 
 ?>
-<!DOCTYPE html>
-<html>
-<head>
-
-<style>
-
-@import url('https://fonts.cdnfonts.com/css/tw-cen-mt-condensed');
-@page { margin: 145px 20px 25px 20px; }
-#header { position: fixed; left: 0px; top: -110px; bottom: 100px; right: 0px; height: 35px; text-align: center; padding-bottom: 100px; }
-#content {margin-top: 0px;}
-#footer { position: fixed; left: 0px; bottom: -60px; right: 0px; height: 80px; }
-#footer .page:after {content: counter(page, my-sec-counter);}
-body {font-family: 'Tw Cen MT', sans-serif;}
-
-.marca{
-	position:fixed;
-	left:50;
-	top:100;
-	width:80%;
-	opacity:8%;
-}
-
-</style>
-
-</head>
-<body>
-<?php 
-if($marca_dagua == 'Sim'){ ?>
-<img class="marca" src="<?php echo $url_sistema ?>sistema/img/logo.jpg">	
-<?php } ?>
-
-
-<div id="header" >
-
-	<div style="border-style: solid; font-size: 10px; height: 50px;">
-		<table style="width: 100%; border: 0px solid #ccc;">
-			<tr>
-				<td style="width: 7%; text-align: left;">
-					<img style="margin-top: 7px; margin-left: 7px;" id="imag" src="<?php echo $url_sistema ?>sistema/img/logo.jpg" width="110px">
-				</td>
-				<td style="width: 30%; text-align: left; font-size: 13px;">
-					
-				</td>
-				<td style="width: 1%; text-align: center; font-size: 13px;">
-				
-				</td>
-				<td style="width: 47%; text-align: right; font-size: 9px;padding-right: 10px;">
-						<b><big>RELATÓRIO DE  INADIMPLÊNTES</big></b><br>  <br> <?php echo @@mb_strtoupper($data_hoje) ?>
-				</td>
-			</tr>		
-		</table>
-	</div>
-
-<br>
-
-
-		<table id="cabecalhotabela" style="border-bottom-style: solid; font-size: 9px; margin-bottom:10px; width: 100%; table-layout: fixed;">
-			<thead>
-				
-				<tr id="cabeca" style="margin-left: 0px; background-color:#CCC">
-					<td style="width:40%">CLIENTE</td>
-					<td style="width:15%">TOTAL DÉBITO</td>
-					<td style="width:30%">EMAIL</td>						
-					<td style="width:15%">TELEFONE</td>
-					
-					
-				</tr>
-			</thead>
-		</table>
-</div>
-
-<div id="footer" class="row">
-<hr style="margin-bottom: 0;">
-	<table style="width:100%;">
-		<tr style="width:100%; background:#FFF">
-			<td style="width:60%; font-size: 10px; text-align: left;"><?php echo $nome_sistema ?> Telefone: <?php echo $telefone_sistema ?></td>
-			<td style="width:40%; font-size: 10px; text-align: right;"><p class="page">Página  </p></td>
-		</tr>
-	</table>
-</div>
-
-<div id="content" style="margin-top: 0;">
-
-
-
-		<table style="width: 100%; table-layout: fixed; font-size:9px; text-transform: uppercase;">
-			<thead>
-				<tbody>
-					<?php
-
+<?php
+require_once __DIR__ . '/identidade_pdf.php';
+$logo_relatorio = sasRelatorioLogo();
+?>
+<!DOCTYPE html><html><head><meta charset="UTF-8"><style>
+@page{margin:110px 28px 52px 28px}
+body{font-family:DejaVu Sans,sans-serif;color:#14243d;font-size:9px}
+#header{position:fixed;top:-89px;left:0;right:0;height:70px}
+.report-head{width:100%;border-collapse:collapse;border-bottom:3px solid #ffc400}
+.report-head td{padding:5px;vertical-align:middle}
+.report-logo{width:115px;height:55px}
+.report-logo img{max-width:105px;max-height:50px}
+.report-info{text-align:right;line-height:1.6;font-size:9px}
+.report-title{font-size:14px;font-weight:bold;color:#061b3a}
+.report-table{width:100%;table-layout:fixed;border-collapse:collapse}
+.report-table thead{display:table-header-group}
+.report-table th{background:#061b3a;color:#fff;text-align:left;padding:10px 7px;font-size:9px}
+.report-table td{padding:9px 7px;border-bottom:1px solid #dce5f0;vertical-align:top;overflow-wrap:break-word}
+.report-table tbody tr:nth-child(even){background:#f1f5fb}
+.report-table tbody tr{page-break-inside:avoid}
+.total-table{width:100%;border-collapse:collapse;margin-top:12px}
+.total-table td{text-align:right;padding:11px 7px;border-top:2px solid #ffc400;background:#e8eff8;font-weight:bold}
+#footer{position:fixed;bottom:-38px;left:0;right:0;border-top:1px solid #cbd5e1;padding-top:6px;color:#475569;font-size:8px}
+#footer .page:after{content:counter(page)}
+.marca{position:fixed;top:190px;left:90px;width:65%;opacity:.07}
+<?php echo sasRelatorioCss(); ?>
+</style></head><body>
+<?php if ($marca_dagua == 'Sim' && $logo_relatorio != '') { ?><img class="marca" src="<?php echo $logo_relatorio; ?>"><?php } ?>
+<div id="header"><table class="report-head"><tr><td class="report-logo"><?php if ($logo_relatorio != '') { ?><img src="<?php echo $logo_relatorio; ?>"><?php } ?></td><td class="report-info"><div class="report-title">RELATÓRIO DE INADIMPLENTES</div><div><?php echo htmlspecialchars(mb_strtoupper($data_hoje), ENT_QUOTES, 'UTF-8'); ?></div></td></tr></table></div>
+<div id="footer"><table width="100%"><tr><td><?php echo htmlspecialchars($nome_sistema . ' | Telefone: ' . $telefone_sistema, ENT_QUOTES, 'UTF-8'); ?></td><td align="right">Página <span class="page"></span></td></tr></table></div>
+<table class="report-table"><thead><tr>
+<th style="width:35%">CLIENTE</th><th style="width:18%">TOTAL DÉBITO</th><th style="width:30%">EMAIL</th><th style="width:17%">TELEFONE</th>
+</tr></thead><tbody>
+<?php
 $total_ina = 0;
 $total_inaF = 0;
 if($mostrar_registros == 'Não'){
@@ -157,50 +101,13 @@ $total_inaF = @number_format($total_ina, 2, ',', '.');
 
   	 
 <tr>
-<td style="width:40%">
-	<?php echo $nome_pessoa ?></td>
-<td style="width:15%; color:red">R$ <?php echo $total_valorF ?></td>
-<td style="width:30%; "><?php echo $email ?></td>
-<td style="width:15%; color:green"> <?php echo $tel_pessoa ?></td>
-    </tr>
+<td><?php echo htmlspecialchars((string)$nome_pessoa, ENT_QUOTES, 'UTF-8'); ?></td>
+<td style="color:#b42332;font-weight:bold">R$ <?php echo $total_valorF; ?></td>
+<td><?php echo htmlspecialchars((string)$email, ENT_QUOTES, 'UTF-8'); ?></td>
+<td><?php echo htmlspecialchars((string)$tel_pessoa, ENT_QUOTES, 'UTF-8'); ?></td>
+</tr>
 
-<?php } }  ?>
-				</tbody>
-	
-			</thead>
-		</table>
-	
-
-
-</div>
-
-
-<hr>
-		<table>
-			<thead>
-				<tbody>
-					<tr>
-
-						<td style="font-size: 10px; width:300px; text-align: right;"></td>
-
-						
-
-						<td style="font-size: 10px; width:70px; text-align: right;"></td>
-
-							<td style="font-size: 10px; width:70px; text-align: right;"></td>
-
-
-								<td style="font-size: 10px; width:140px; text-align: right;"></td>
-
-									<td style="font-size: 10px; width:120px; text-align: right;"><b>Total: <span style="color:red">R$ <?php echo $total_inaF ?></span></td>
-						
-					</tr>
-				</tbody>
-			</thead>
-		</table>
-		
-</body>
-
-</html>
-
-
+<?php } } ?>
+</tbody></table>
+<table class="total-table"><tr><td>TOTAL EM ATRASO: <span style="color:#b42332">R$ <?php echo $total_inaF; ?></span></td></tr></table>
+</body></html>

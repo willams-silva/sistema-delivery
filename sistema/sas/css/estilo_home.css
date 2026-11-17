@@ -1128,3 +1128,77 @@ body {
         overflow: hidden;
         text-overflow: ellipsis;
 }
+
+/* Bora Comanda — identidade visual do dashboard SAS (2026) */
+:root{--primary:#061b3a;--primary-light:#103b66;--primary-dark:#06152d;--accent:#ffc400;--warning:#ff8900;--neutral-900:#071a36}
+body{background:#f1f5fb;color:#091b37}
+.container{max-width:100%;padding:clamp(14px,2vw,28px)}
+.bc-dashboard-heading{display:flex;align-items:center;gap:16px;margin:0 0 20px;color:#071a36}
+.bc-dashboard-heading h1{font-size:clamp(25px,2.5vw,36px);font-weight:800;line-height:1.15;margin:0}
+.bc-dashboard-heading p{font-size:14px;margin:5px 0 0;color:#475569}
+.bc-dashboard-symbol{font-size:34px;color:#ffc400}
+.bc-dashboard-heading + div[style*="margin-bottom"]{display:none}
+.stats-card{border-radius:20px!important;border:1px solid #e4eaf2;box-shadow:0 7px 17px rgba(6,27,58,.10)!important;min-height:166px;position:relative}
+.stats-card::after{content:"";position:absolute;right:0;bottom:0;width:90px;height:9px;border-radius:100% 0 18px 0;background:#ffc400;transform:skewX(-35deg)}
+.stats-card-content{padding:22px!important;min-height:166px;justify-content:center}
+.stats-card-title{font-size:15px!important;font-weight:650!important;color:#14243d!important}
+.stats-card-value{font-size:clamp(24px,2.4vw,34px)!important;font-weight:800!important;line-height:1.2}
+.stats-card-icon{width:60px!important;height:60px!important;right:20px!important;top:20px!important;border-radius:14px!important;font-size:23px!important}
+.stats-card .icon-primary{background:#ffc400!important;color:#071a36!important}
+.stats-card .icon-success{background:#0aa86c!important}
+.stats-card .icon-danger{background:#ef293c!important}
+.stats-card .badge{border-radius:999px!important;padding:5px 10px!important}
+.stats-card.bg-white:first-child{background:#061b3a!important}
+.stats-card.bg-white:first-child .stats-card-title,.stats-card.bg-white:first-child .stats-card-subtitle{color:#fff!important}
+.stats-card.bg-white:first-child .stats-card-value{color:#ffc400!important}
+.section-header{gap:16px;margin-bottom:20px!important}
+.section-title-large{color:#071a36!important;font-size:clamp(23px,2vw,31px)!important;font-weight:800!important}
+.section-title-large i{color:#ffc400;margin-right:10px}
+.section-header::after{height:3px!important;background:linear-gradient(90deg,#ffc400,#ff8900,transparent)!important}
+.sas-company-search{border:2px solid #ffc400!important;border-radius:16px!important;min-height:48px!important;box-shadow:none!important}
+.sas-company-count{background:#ffc400!important;color:#061b3a!important;border-radius:15px!important}
+@media(max-width:767px){.bc-dashboard-heading{margin-top:4px}.stats-card-content{min-height:150px}.stats-card-icon{width:48px!important;height:48px!important}.section-header{align-items:stretch}.sas-company-tools{justify-content:flex-start}}
+
+
+/* Etapa 2: cartões de empresas e controles, identidade Bora Comanda */
+.company-grid{display:grid!important;grid-template-columns:repeat(auto-fill,minmax(min(100%,280px),1fr));gap:20px!important;align-items:stretch}
+.company-card{background:#fff!important;border:1px solid #e2e8f0!important;border-radius:20px!important;overflow:hidden;box-shadow:0 6px 20px rgba(6,27,58,.09)!important;transition:transform .2s ease,box-shadow .2s ease!important;cursor:pointer;min-width:0}
+.company-card:hover{transform:translateY(-3px);box-shadow:0 12px 28px rgba(6,27,58,.16)!important}
+.company-card-banner{background:linear-gradient(120deg,#061b3a 0%,#103b66 73%,#ffc400 100%)!important;min-height:100px;position:relative}
+.company-card-badge{background:#fff!important;border-radius:999px!important;padding:5px 12px!important;box-shadow:0 2px 8px rgba(0,0,0,.1);font-size:12px!important;font-weight:700}
+.company-card-logo{background:#fff!important;border:3px solid #fff!important;border-radius:16px!important;box-shadow:0 4px 12px rgba(6,27,58,.12)!important}
+.company-card-logo img{object-fit:contain!important}
+.company-card-content{background:#fff!important;color:#061b3a!important}
+.company-card-title{color:#061b3a!important;font-weight:800!important;overflow-wrap:anywhere}
+.company-card-subtitle{color:#475569!important}
+.informacoes_card_empresa{display:flex;flex-wrap:wrap;gap:8px!important}
+.informacoes_card_empresa span{background:#f1f5fb;border-radius:9px;padding:5px 8px;color:#243750}
+.company-card-action{background:#ffc400!important;color:#061b3a!important;border-radius:12px!important;box-shadow:none!important;font-weight:800!important}
+.company-card-action:hover{background:#ffad00!important;color:#061b3a!important}
+.kanban-container{border-radius:20px!important;overflow:hidden}
+.kanban-header{background:#061b3a!important;color:#fff!important}
+.kanban-title{color:#fff!important}
+@media(max-width:575px){.company-grid{grid-template-columns:minmax(0,1fr)!important;gap:14px!important}.company-card{width:100%;max-width:100%}.section-header{flex-direction:column;align-items:stretch}}
+
+
+/* Etapa 3: acabamento, acessibilidade e responsividade Bora Comanda */
+.bc-dashboard-heading{background:linear-gradient(110deg,#061b3a 0%,#103b66 76%,#1b4d73 100%);border-radius:20px;padding:23px 27px;color:#fff!important;box-shadow:0 8px 22px rgba(6,27,58,.12);margin-bottom:24px}
+.bc-dashboard-heading h1{color:#fff!important;letter-spacing:-.025em}
+.bc-dashboard-heading p{color:#d8e4f2!important}
+.bc-dashboard-symbol{width:56px;height:56px;flex:0 0 56px;display:flex;align-items:center;justify-content:center;background:#ffc400;border-radius:15px;color:#061b3a!important;font-size:25px}
+.stats-card:focus-within,.company-card:focus-visible{outline:3px solid #ffc400;outline-offset:3px}
+.company-card{display:flex;flex-direction:column}
+.company-card-content{display:flex;flex:1;flex-direction:column;min-width:0}
+.company-card-footer{margin-top:auto}
+.company-card-badge.text-success{color:#087c52!important}
+.company-card-badge.text-danger{color:#b42332!important}
+.company-card-action{min-height:44px;display:flex;align-items:center;justify-content:center;gap:10px}
+.company-card-action i{transition:transform .2s}
+.company-card:hover .company-card-action i{transform:translateX(4px)}
+.sas-company-search input:focus-visible{outline:none!important}
+.sas-company-search:focus-within{box-shadow:0 0 0 4px rgba(255,196,0,.23)!important}
+.section-title-large::before{background:#ffc400!important}
+.section-header{padding:0 0 12px}
+@media(max-width:991px){.bc-dashboard-heading{padding:18px 20px}.bc-dashboard-symbol{width:46px;height:46px;flex-basis:46px;font-size:21px}}
+@media(max-width:575px){.bc-dashboard-heading{border-radius:16px;padding:16px;gap:12px}.bc-dashboard-heading h1{font-size:24px}.bc-dashboard-heading p{font-size:12px}.stats-card{min-height:145px}.stats-card-content{padding:17px!important}.stats-card-title{max-width:75%}.sas-company-search{flex:1 1 100%!important;width:100%!important}.sas-company-count{justify-content:center}}
+@media(prefers-reduced-motion:reduce){.company-card,.company-card-action i,.stats-card{transition:none!important}.company-card:hover{transform:none!important}}

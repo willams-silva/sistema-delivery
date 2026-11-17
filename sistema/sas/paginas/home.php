@@ -147,6 +147,8 @@ function getCardColor($index) {
    <div class="container">
       
 
+       <div class="bc-dashboard-heading"><span class="bc-dashboard-symbol"><i class="fa fa-bar-chart"></i></span><div><h1>Dashboard</h1><p>Visão geral do sistema SaaS</p></div></div>
+
        <!-- Espaçador entre o alerta e os cards -->
        <div style="margin-bottom: 2.5rem;"></div>
 
@@ -320,14 +322,27 @@ function getCardColor($index) {
        </div>
        <?php } ?>
 
+<style>
+/* Barra de busca do dashboard SAS: campo legível e contador separado. */
+.sas-company-tools{display:flex;align-items:center;gap:12px;flex-wrap:wrap;max-width:100%}
+.sas-company-search{display:flex;align-items:center;gap:10px;background:#fff;border:1px solid #cbd5e1;border-radius:12px;padding:0 14px;min-height:46px;width:320px;max-width:100%;margin:0;color:#64748b;box-shadow:0 2px 7px rgba(15,23,42,.04)}
+.sas-company-search:focus-within{border-color:#1d5b94;box-shadow:0 0 0 3px rgba(29,91,148,.12)}
+.sas-company-search input{width:100%;min-width:0;border:0!important;outline:0!important;background:transparent!important;color:#172b4d!important;font-size:14px;padding:10px 0}
+.sas-company-search input::placeholder{color:#94a3b8;opacity:1}
+.sas-company-count{display:inline-flex;align-items:center;gap:8px;border-radius:12px;background:#15548a;color:#fff;padding:11px 16px;white-space:nowrap;font-weight:600;min-height:46px}
+@media(max-width:767px){.sas-company-tools{width:100%;gap:8px}.sas-company-search{flex:1 1 190px;width:auto}.sas-company-count{padding:10px 12px}}
+</style>
        <!-- Grid de Empresas -->
        <div class="section">
            <div class="section-header">
-               <h2 class="section-title-large text-primary">Empresas Cadastradas</h2>
+               <h2 class="section-title-large text-primary"><i class="fa fa-building" aria-hidden="true"></i> Empresas Cadastradas</h2>
               
-               <div class="section-counter pulse-animation">
-                <input style="background: transparent; border:none; border-bottom: 1px solid #FFF; outline: none; color:#FFF; " type="text" id="buscar_empresas" onkeyup="buscar()"> <i class="fa fa-search me-2" ></i>
-                   <div style="margin-left:15px"><i class="fa fa-building me-2"></i> <?php echo $total_empresas ?> empresas</div>
+               <div class="sas-company-tools">
+                   <label class="sas-company-search" for="buscar_empresas">
+                       <i class="fa fa-search" aria-hidden="true"></i>
+                       <input type="search" id="buscar_empresas" placeholder="Buscar empresa..." aria-label="Buscar empresas cadastradas" oninput="buscar()" autocomplete="off">
+                   </label>
+                   <span class="sas-company-count"><i class="fa fa-building" aria-hidden="true"></i> <?php echo $total_empresas ?> empresas</span>
                </div>
            </div>
            
@@ -555,7 +570,7 @@ companyCards.forEach((card, index) => {
     
     card.addEventListener('mouseleave', () => {
         // Restaurar o background original
-        const originalColor = card.getAttribute('style').split('background-color: ')[1].split(';')[0];
+        const originalColor = window.getComputedStyle(card).backgroundColor;
         gsap.to(card, {
             backgroundColor: originalColor,
             duration: 0.3,

@@ -19,6 +19,26 @@ if (@$pag == 'ocultar') {
 
 ?>
 
+<style id="bc-receber-visual">
+/* Bora Comanda: indicadores de Contas a Receber, sem alterar filtros ou cálculos */
+.card-group:has(#total_vencidas){display:grid!important;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;margin-bottom:18px!important}
+.card-group:has(#total_vencidas)>.card{margin:0!important;width:auto!important;min-width:0;height:auto!important;min-height:110px;border:1px solid #e0e7f0!important;border-radius:15px!important;overflow:hidden;box-shadow:0 5px 14px rgba(6,27,58,.08)!important;background:#fff}
+.card-group:has(#total_vencidas)>.card>a{display:flex;flex-direction:column;height:100%;text-decoration:none!important}
+.card-group:has(#total_vencidas) .card-header{background:#061b3a!important;color:#fff!important;padding:12px 14px!important;font-weight:700;text-align:left;border-radius:0!important}
+.card-group:has(#total_vencidas)>.card:nth-child(1) .card-header{border-left:5px solid #ef4444}
+.card-group:has(#total_vencidas)>.card:nth-child(2) .card-header{border-left:5px solid #ff8900}
+.card-group:has(#total_vencidas)>.card:nth-child(3) .card-header{border-left:5px solid #64748b}
+.card-group:has(#total_vencidas)>.card:nth-child(4) .card-header{border-left:5px solid #16a34a}
+.card-group:has(#total_vencidas)>.card:nth-child(5) .card-header{border-left:5px solid #ffc400}
+.card-group:has(#total_vencidas)>.card:nth-child(6) .card-header{border-left:5px solid #dc2626}
+.card-group:has(#total_vencidas) .card-corpo{display:flex;align-items:center;justify-content:center;flex:1;padding:14px 10px}
+.card-group:has(#total_vencidas) .card-corpo p,.card-group:has(#total_vencidas) .card-corpo h5{margin:0!important}
+.card-group:has(#total_vencidas) .card-corpo h5{font-size:clamp(16px,1.7vw,23px);font-weight:800}
+.card-group:has(#total_vencidas)>.card:focus-within{outline:3px solid #ffc400;outline-offset:2px}
+@media(max-width:1000px){.card-group:has(#total_vencidas){grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:575px){.card-group:has(#total_vencidas){grid-template-columns:minmax(0,1fr);gap:10px}.card-group:has(#total_vencidas)>.card{min-height:92px}}
+</style>
+
 <div class="justify-content-between">
 	<form action="rel/receber_class.php" target="_blank" method="POST">
 		<div class="left-content mt-2">
@@ -192,8 +212,16 @@ if (@$pag == 'ocultar') {
 									<span class="input-group-text">R$</span>
 								</div>
 								<input type="text" id="valor" name="valor" class="form-control" placeholder="R$ 0,00"
-									oninput="mascaraMoeda(this)">
+									oninput="mascaraMoeda(this); atualizarTotalFatura()">
 							</div>
+						</div>
+						<div class="col-md-3 col-6">
+							<label for="desconto-fatura">Desconto (R$)</label>
+							<input type="text" id="desconto-fatura" name="desconto_fatura" class="form-control" value="0,00" placeholder="0,00" oninput="mascaraMoeda(this); atualizarTotalFatura()">
+						</div>
+						<div class="col-md-3 col-12">
+							<label for="total-fatura">Total a receber</label>
+							<input type="text" id="total-fatura" class="form-control fw-bold" value="R$ 0,00" readonly aria-live="polite">
 						</div>
 						<div class="col-md-5 col-6">
 							<label>Forma Pgto</label>
@@ -1115,4 +1143,18 @@ $("#form_ajax").submit(function (event) {
         processData: false,
     });
 });
+</script><script>
+function valorMonetarioFatura(texto) {
+  var v = String(texto || '0').replace(/[^0-9,.-]/g, '').replace(/\./g, '').replace(',', '.');
+  return Number(v) || 0;
+}
+function atualizarTotalFatura() {
+  var valor = valorMonetarioFatura($('#valor').val());
+  var desconto = valorMonetarioFatura($('#desconto-fatura').val());
+  var invalido = desconto < 0 || desconto > valor;
+  $('#desconto-fatura').toggleClass('is-invalid', invalido);
+  $('#total-fatura').val((Math.max(0, valor - desconto)).toLocaleString('pt-BR', {style:'currency',currency:'BRL'}));
+  return !invalido;
+}
+$(document).on('input', '#valor, #desconto-fatura', atualizarTotalFatura);
 </script>

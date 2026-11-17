@@ -17,6 +17,26 @@ if (@count($res2) > 0) {
 
 ?>
 
+<style id="bc-pagar-visual">
+/* Bora Comanda — indicadores de Contas a Pagar; mantém eventos e filtros originais */
+.card-group:has(#total_vencidas){display:grid!important;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;margin-bottom:18px!important}
+.card-group:has(#total_vencidas)>.card{margin:0!important;width:auto!important;min-width:0;height:auto!important;min-height:110px;border:1px solid #e0e7f0!important;border-radius:15px!important;overflow:hidden;box-shadow:0 5px 14px rgba(6,27,58,.08)!important;background:#fff}
+.card-group:has(#total_vencidas)>.card>a{display:flex;flex-direction:column;height:100%;text-decoration:none!important}
+.card-group:has(#total_vencidas) .card-header{background:#061b3a!important;color:#fff!important;padding:12px 14px!important;font-weight:700;text-align:left;border-radius:0!important}
+.card-group:has(#total_vencidas)>.card:nth-child(1) .card-header{border-left:5px solid #ef4444}
+.card-group:has(#total_vencidas)>.card:nth-child(2) .card-header{border-left:5px solid #ff8900}
+.card-group:has(#total_vencidas)>.card:nth-child(3) .card-header{border-left:5px solid #64748b}
+.card-group:has(#total_vencidas)>.card:nth-child(4) .card-header{border-left:5px solid #16a34a}
+.card-group:has(#total_vencidas)>.card:nth-child(5) .card-header{border-left:5px solid #ffc400}
+.card-group:has(#total_vencidas)>.card:nth-child(6) .card-header{border-left:5px solid #dc2626}
+.card-group:has(#total_vencidas) .card-corpo{display:flex;align-items:center;justify-content:center;flex:1;padding:14px 10px}
+.card-group:has(#total_vencidas) .card-corpo p,.card-group:has(#total_vencidas) .card-corpo h5{margin:0!important}
+.card-group:has(#total_vencidas) .card-corpo h5{font-size:clamp(16px,1.7vw,23px);font-weight:800}
+.card-group:has(#total_vencidas)>.card:focus-within{outline:3px solid #ffc400;outline-offset:2px}
+@media(max-width:1000px){.card-group:has(#total_vencidas){grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:575px){.card-group:has(#total_vencidas){grid-template-columns:minmax(0,1fr);gap:10px}.card-group:has(#total_vencidas)>.card{min-height:92px}}
+</style>
+
 <div class="justify-content-between">
 	<form action="rel/pagar_class.php" target="_blank" method="POST">
 		<div class="left-content mt-2">

@@ -46,6 +46,15 @@ if ($quant_recorrencia > 0 and $frequencia == '0') {
 $valor = str_replace('.', '', $valor);
 $valor = str_replace(',', '.', $valor);
 
+$desconto_input = trim((string)($_POST['desconto_fatura'] ?? '0'));
+$desconto_normalizado = str_replace(',', '.', str_replace('.', '', $desconto_input));
+if (!is_numeric($desconto_normalizado)) { echo 'Desconto inválido!'; exit(); }
+$desconto_fatura = round((float)$desconto_normalizado, 2);
+if ($desconto_fatura < 0 || $desconto_fatura > (float)$valor) {
+    echo 'O desconto deve estar entre zero e o valor da fatura!'; exit();
+}
+$total_fatura = round((float)$valor - $desconto_fatura, 2);
+
 $valorF = @number_format($valor, 2, ',', '.');
 
 if ($cliente == "") {
@@ -181,7 +190,7 @@ if (@count($res1) > 0) {
 // 
 
 if ($id == "") {
-	$query = $pdo->prepare("INSERT INTO $tabela SET descricao = :descricao, cliente = :cliente, valor = :valor, vencimento = '$vencimento' $pgto, data_lanc = curDate(), forma_pgto = '$forma_pgto', frequencia = '$frequencia', obs = :obs, arquivo = '$foto', subtotal = :valor, usuario_lanc = '$id_usuario' $usu_pgto, pago = '$pago', referencia = 'Conta', hora = curTime(), quant_recorrencia = :quant_recorrencia, caixa = '$id_caixa' ");
+	$query = $pdo->prepare("INSERT INTO $tabela SET descricao = :descricao, cliente = :cliente, valor = :valor, vencimento = '$vencimento' $pgto, data_lanc = curDate(), forma_pgto = '$forma_pgto', frequencia = '$frequencia', obs = :obs, arquivo = '$foto', subtotal = :total_fatura, desconto = :desconto_fatura, usuario_lanc = '$id_usuario' $usu_pgto, pago = '$pago', referencia = 'Conta', hora = curTime(), quant_recorrencia = :quant_recorrencia, caixa = '$id_caixa' ");
 
 
 	$data_venc = $vencimento;
@@ -253,7 +262,7 @@ if ($id == "") {
 	}
 
 } else {
-	$query = $pdo->prepare("UPDATE $tabela SET descricao = :descricao, cliente = :cliente, valor = :valor, vencimento = '$vencimento' $pgto, forma_pgto = '$forma_pgto', frequencia = '$frequencia', obs = :obs, arquivo = '$foto', subtotal = :valor, quant_recorrencia = :quant_recorrencia where id = '$id'");
+	$query = $pdo->prepare("UPDATE $tabela SET descricao = :descricao, cliente = :cliente, valor = :valor, vencimento = '$vencimento' $pgto, forma_pgto = '$forma_pgto', frequencia = '$frequencia', obs = :obs, arquivo = '$foto', subtotal = :total_fatura, desconto = :desconto_fatura, quant_recorrencia = :quant_recorrencia where id = '$id'");
 
 
 	if ($vencimento_antiga != $vencimento) {
@@ -312,6 +321,8 @@ $query->bindValue(":cliente", "$cliente");
 $query->bindValue(":valor", "$valor");
 $query->bindValue(":obs", "$obs");
 $query->bindValue(":quant_recorrencia", "$quant_recorrencia");
+$query->bindValue(":total_fatura", $total_fatura);
+$query->bindValue(":desconto_fatura", $desconto_fatura);
 $query->execute();
 $ultimo_id = $pdo->lastInsertId();
 
@@ -420,7 +431,7 @@ if ($quant_recorrencia > 0) {
 
 
 
-		$query = $pdo->prepare("INSERT INTO $tabela SET descricao = :descricao, cliente = '$cliente', valor = :valor, vencimento = '$novo_vencimento', data_lanc = curDate(), frequencia = '0', forma_pgto = '$forma_pgto', obs = :obs, arquivo = '$foto', subtotal = :valor, usuario_lanc = '$id_usuario', pago = 'Não', referencia = 'Conta', hora = curTime() $usu_pgto, id_recorrencia = '$ultimo_id' ");
+		$query = $pdo->prepare("INSERT INTO $tabela SET descricao = :descricao, cliente = '$cliente', valor = :valor, vencimento = '$novo_vencimento', data_lanc = curDate(), frequencia = '0', forma_pgto = '$forma_pgto', obs = :obs, arquivo = '$foto', subtotal = :total_fatura, desconto = :desconto_fatura, usuario_lanc = '$id_usuario', pago = 'Não', referencia = 'Conta', hora = curTime() $usu_pgto, id_recorrencia = '$ultimo_id' ");
 
 
 

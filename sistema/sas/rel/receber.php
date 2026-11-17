@@ -82,6 +82,23 @@ tr:nth-child(even) { /* Linhas pares */
 }
 
 
+
+/* Bora Comanda: cabeçalho e tabela dos relatórios financeiros (compatível com Dompdf). */
+body{font-family:DejaVu Sans,sans-serif;color:#14243d}
+#header>div:first-child{border:1px solid #cbd5e1!important;border-left:5px solid #ffc400!important;border-radius:4px;background:#fff;height:58px!important}
+#header>div:first-child>table{border-collapse:collapse}
+#header>div:first-child>table td{vertical-align:middle}
+#header #imag{max-width:110px;max-height:43px;width:auto;height:auto;object-fit:contain;margin-top:4px!important}
+#header #cabecalhotabela{border-bottom:2px solid #ffc400!important;border-collapse:collapse;font-size:8px!important;margin-top:3px}
+#header #cabecalhotabela #cabeca{background:#061b3a!important;color:#fff!important}
+#header #cabecalhotabela #cabeca td{padding:7px 3px!important;font-weight:bold;vertical-align:middle}
+#content table{border-collapse:collapse}
+#content table td{padding:5px 3px;overflow-wrap:break-word}
+#content table tr:nth-child(odd){background:#f1f5fb}
+#content table tr:nth-child(even){background:#fff}
+#footer{color:#475569;font-size:9px}
+#footer hr{border:0;border-top:1px solid #cbd5e1}
+
 </style>
 
 </head>
