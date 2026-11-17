@@ -72,14 +72,14 @@ if ($total_reg > 0) {
 
 	echo <<<HTML
 	<small>
-	<table class="table table-bordered text-nowrap border-bottom dt-responsive" id="">
+	<table class="table table-bordered text-nowrap border-bottom dt-responsive ux-orders-table" id="">
 	<thead> 
 	<tr> 
 	<th>Cliente</th>	
 	<th>Valor</th> 	
 	<th>Total Pago</th> 
 	<th>Troco</th>	
-	<th>Forma PGTO</th> 	
+	<th>Pagamento</th> 	
 	<th>Status</th>	 	
 	<th>Hora</th>		
 	<th>Ações</th>
