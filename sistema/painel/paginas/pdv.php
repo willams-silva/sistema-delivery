@@ -179,7 +179,7 @@ $data_atual = date('Y-m-d');
   </a>
 </div>
             
-            <select class="form-select" id="saida" name="saida" required="" onchange="chamarPix()">
+            <select class="form-select" id="saida" name="saida" required="" onchange="chamarPix(); atualizarPagamentoPdv()">
               <option value="">Forma de Pgto</option>
               						<?php if($token_mp != ""){ ?>
 											<option value="pix_mp">Pix QRCode</option>
@@ -210,7 +210,7 @@ $data_atual = date('Y-m-d');
            <div class="grid grid-cols-2 gap-4 mb-4">            
             <div>
               <label class="block text-sm font-medium text-dark mb-1">Valor Pago</label>
-              <input type="text" class="form-control" id="valor_pago" name="valor_pago" value="0" onkeyup="FormaPg()" readonly="">
+              <input type="text" class="form-control" id="valor_pago" name="valor_pago" value="0" oninput="atualizarPagamentoPdv()" readonly="">
             </div>
 
              <div>
@@ -229,8 +229,9 @@ $data_atual = date('Y-m-d');
             </div>
 
             <div>
-              <label class="block text-sm font-medium text-dark mb-1">Troco Para</label>
-              <input type="number" class="form-control" id="troco" placeholder="R$" name="troco" onkeyup="listarVendas()">
+              <label class="block text-sm font-medium text-dark mb-1">Troco</label>
+              <input type="text" class="form-control" id="troco_resultado" placeholder="R$ 0,00" readonly aria-label="Troco calculado">
+              <input type="hidden" id="troco" name="troco" value="0">
             </div>
 
 
@@ -767,7 +768,9 @@ $("#form_venda").submit(function (event) {
 				$("#cliente").val('').change();
 				$("#quantidade").val('1');
 				$("#desconto").val('');
-				$("#troco").val('');
+				$("#troco").val('0');
+                $("#troco_resultado").val('R$ 0,00');
+                $("#valor_pago").removeData('pdv-dinheiro');
 				$("#frete").val('');
 				$("#data").val('<?=$data_atual?>');
 				$("#cliente_input").val('');
@@ -907,6 +910,29 @@ function tipoDesc(p){
 
 
 
+function atualizarPagamentoPdv(){
+    var forma = ($('#saida').val() || '').trim().toLowerCase();
+    var dinheiro = forma === 'dinheiro' || forma === 'espécie' || forma === 'especie';
+    var total = parseFloat($('#subtotal_venda').val()) || 0;
+    var campo = $('#valor_pago');
+    var pago = parseFloat(String(campo.val()).replace(',', '.')) || 0;
+    if (dinheiro) {
+        campo.prop('readonly', false).attr('placeholder', 'Valor recebido em dinheiro');
+        // Não sobrescrever o dinheiro digitado quando o carrinho for atualizado.
+        if (!campo.data('pdv-dinheiro')) {
+            campo.val('');
+            pago = 0;
+            campo.data('pdv-dinheiro', true);
+        }
+        $('#troco').val(pago > 0 ? pago.toFixed(2) : '0');
+        $('#troco_resultado').val('R$ ' + Math.max(0, pago - total).toFixed(2).replace('.', ','));
+    } else {
+        campo.data('pdv-dinheiro', false).prop('readonly', true).val(total.toFixed(2));
+        $('#troco').val('0');
+        $('#troco_resultado').val('R$ 0,00');
+    }
+    FormaPg();
+}
 function FormaPg(){
 	var valor_pago = $('#valor_pago').val();
 	var subtotal_venda = $('#subtotal_venda').val();
@@ -925,7 +951,7 @@ function FormaPg(){
 		subtotal_venda = 0;
 	}
 
-	var total_restante = parseFloat(subtotal_venda) - parseFloat(valor_pago);
+	var total_restante = Math.max(0, parseFloat(subtotal_venda) - parseFloat(valor_pago));
 	$('#total_restante').text(total_restante.toFixed(2));
 	$('#valor_restante').val(total_restante);
 }
