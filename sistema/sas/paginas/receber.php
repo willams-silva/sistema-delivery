@@ -192,8 +192,16 @@ if (@$pag == 'ocultar') {
 									<span class="input-group-text">R$</span>
 								</div>
 								<input type="text" id="valor" name="valor" class="form-control" placeholder="R$ 0,00"
-									oninput="mascaraMoeda(this)">
+									oninput="mascaraMoeda(this); atualizarTotalFatura()">
 							</div>
+						</div>
+						<div class="col-md-3 col-6">
+							<label for="desconto-fatura">Desconto (R$)</label>
+							<input type="text" id="desconto-fatura" name="desconto_fatura" class="form-control" value="0,00" placeholder="0,00" oninput="mascaraMoeda(this); atualizarTotalFatura()">
+						</div>
+						<div class="col-md-3 col-12">
+							<label for="total-fatura">Total a receber</label>
+							<input type="text" id="total-fatura" class="form-control fw-bold" value="R$ 0,00" readonly aria-live="polite">
 						</div>
 						<div class="col-md-5 col-6">
 							<label>Forma Pgto</label>
@@ -1115,4 +1123,18 @@ $("#form_ajax").submit(function (event) {
         processData: false,
     });
 });
+</script><script>
+function valorMonetarioFatura(texto) {
+  var v = String(texto || '0').replace(/[^0-9,.-]/g, '').replace(/\./g, '').replace(',', '.');
+  return Number(v) || 0;
+}
+function atualizarTotalFatura() {
+  var valor = valorMonetarioFatura($('#valor').val());
+  var desconto = valorMonetarioFatura($('#desconto-fatura').val());
+  var invalido = desconto < 0 || desconto > valor;
+  $('#desconto-fatura').toggleClass('is-invalid', invalido);
+  $('#total-fatura').val((Math.max(0, valor - desconto)).toLocaleString('pt-BR', {style:'currency',currency:'BRL'}));
+  return !invalido;
+}
+$(document).on('input', '#valor, #desconto-fatura', atualizarTotalFatura);
 </script>
