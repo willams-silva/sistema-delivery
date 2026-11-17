@@ -186,7 +186,7 @@ if (@$mensagem_auto == 'Sim' and strtotime($data_cobranca) != strtotime($data_at
 <style id="bora-comanda-login-theme">
 :root{--bc-navy:#061b3a;--bc-dark:#041229;--bc-yellow:#ffc400;--bc-light:#f5f8fd}
 body#pagina{background-color:var(--bc-dark)!important;color:var(--bc-navy);min-height:100vh}
-body#pagina:not([style*="background: url"]){background:radial-gradient(ellipse at 20% 15%,#17375b 0%,#061b3a 48%,#041229 100%)!important}
+body#pagina{background:radial-gradient(ellipse at 20% 15%,#17375b 0%,#061b3a 48%,#041229 100%)!important;background-image:radial-gradient(ellipse at 20% 15%,#17375b 0%,#061b3a 48%,#041229 100%)!important}
 body#pagina .square-box{opacity:.14;pointer-events:none}
 body#pagina .page-single{min-height:100vh;display:flex;align-items:center}
 body#pagina .card-sigin-main{max-width:510px;width:100%;padding:12px!important}
@@ -217,12 +217,7 @@ body#pagina .form-check-input:checked{background-color:#ffc400!important;border-
 </div>
 <!-- /GLOBAL-LOADER -->
 
-<?php 
-if($fundo_login != "" and $fundo_login != "sem-foto.png"){ ?>
-<body class="ltr error-page1 bg-primary" id="pagina" style="background: url('img/<?php echo $fundo_login ?>') no-repeat center center fixed; background-size: cover;">
-<?php }else{ ?>
-<body class="ltr error-page1 bg-primary" id="pagina" >
-<?php } ?>
+<body class="ltr error-page1 bg-primary" id="pagina">
 
 
 	<div class="square-box">
