@@ -458,19 +458,8 @@ if($saldo_dezembro > 0){
 $total_receber_ano = $receber_janeiro + $receber_fevereiro + $receber_marco + $receber_abril + $receber_maio + $receber_junho + $receber_julho + $receber_agosto + $receber_setembro + $receber_outubro + $receber_novembro + $receber_dezembro;
 $total_pagar_ano = $pagar_janeiro + $pagar_fevereiro + $pagar_marco + $pagar_abril + $pagar_maio + $pagar_junho + $pagar_julho + $pagar_agosto + $pagar_setembro + $pagar_outubro + $pagar_novembro + $pagar_dezembro;
 $total_saldo_ano = $total_receber_ano - $total_pagar_ano;
-$logo_relatorio = '';
-// O painel salva a logo de relatório em sistema/img/logo.jpg.
-$logo_path = __DIR__ . '/../../img/logo.jpg';
-if (is_file($logo_path) && is_readable($logo_path)) {
-    $logo_bytes = file_get_contents($logo_path);
-    if ($logo_bytes !== false && $logo_bytes !== '') {
-        $logo_info = @getimagesize($logo_path);
-        $logo_mime = isset($logo_info['mime']) ? $logo_info['mime'] : '';
-        if (in_array($logo_mime, array('image/jpeg', 'image/png', 'image/gif'), true)) {
-            $logo_relatorio = 'data:' . $logo_mime . ';base64,' . base64_encode($logo_bytes);
-        }
-    }
-}
+require_once __DIR__ . '/identidade_pdf.php';
+$logo_relatorio = sasRelatorioLogo();
 ?>
 <!DOCTYPE html><html><head><meta charset="UTF-8">
 <style>
@@ -494,6 +483,7 @@ body{font-family:DejaVu Sans,sans-serif;color:#14243d;font-size:10px}
 #footer{position:fixed;bottom:-38px;left:0;right:0;border-top:1px solid #cbd5e1;padding-top:6px;color:#475569;font-size:8px}
 #footer .page:after{content:counter(page)}
 .marca{position:fixed;top:180px;left:90px;width:65%;opacity:.07}
+<?php echo sasRelatorioCss(); ?>
 </style></head><body>
 <?php if ($marca_dagua == 'Sim' && $logo_relatorio != '') { ?><img class="marca" src="<?php echo $logo_relatorio; ?>"><?php } ?>
 <div id="header"><table class="report-head"><tr><td class="report-logo"><?php if ($logo_relatorio != '') { ?><img src="<?php echo $logo_relatorio; ?>"><?php } ?></td><td class="report-info"><div class="report-title">BALANÇO ANUAL</div><div class="report-year">Exercício <?php echo htmlspecialchars((string)$ano_atual, ENT_QUOTES, 'UTF-8'); ?></div><div><?php echo htmlspecialchars(mb_strtoupper($data_hoje), ENT_QUOTES, 'UTF-8'); ?></div></td></tr></table></div>
