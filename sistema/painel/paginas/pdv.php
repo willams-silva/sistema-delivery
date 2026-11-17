@@ -115,7 +115,7 @@ $data_atual = date('Y-m-d');
 
 				if($produtos > 0){
 					?>
-	            <button type="button" onclick="<?php echo (strcasecmp($mais_sabores,'Sim')===0) ? "pizza('".htmlspecialchars($id,ENT_QUOTES)."', '".htmlspecialchars($nome,ENT_QUOTES)."')" : "listar('".htmlspecialchars($id,ENT_QUOTES)."')"; ?>" class="category-pill flex flex-col items-center px-3 py-2 rounded-xl bg-white text-secondary text-sm font-medium whitespace-nowrap shadow-sm">
+	            <button type="button" onclick="listar('<?php echo htmlspecialchars($id, ENT_QUOTES, 'UTF-8'); ?>')" class="category-pill flex flex-col items-center px-3 py-2 rounded-xl bg-white text-secondary text-sm font-medium whitespace-nowrap shadow-sm">
 				  <div class="w-12 h-12 rounded-full bg-neutral-100 flex items-center justify-center mb-1 overflow-hidden">
 				    <img src="images/categorias/<?php echo $foto ?>" class="w-full h-full object-cover rounded-full">
 				  </div>
