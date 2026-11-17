@@ -94,92 +94,65 @@ if($filtro_tipo == 'receber'){
 <head>
 
 <style>
-
-@import url('https://fonts.cdnfonts.com/css/tw-cen-mt-condensed');
-@page { margin: 145px 20px 25px 20px; }
-#header { position: fixed; left: 0px; top: -110px; bottom: 100px; right: 0px; height: 35px; text-align: center; padding-bottom: 100px; }
-#content {margin-top: 0px;}
-#footer { position: fixed; left: 0px; bottom: -60px; right: 0px; height: 80px; }
-#footer .page:after {content: counter(page, my-sec-counter);}
-body {font-family: 'Tw Cen MT', sans-serif;}
-
-.marca{
-	position:fixed;
-	left:50;
-	top:100;
-	width:80%;
-	opacity:8%;
-}
-
+@page { margin: 115px 28px 55px 28px; }
+body { font-family: DejaVu Sans, sans-serif; font-size: 9px; color: #14243d; }
+#header { position: fixed; top: -94px; left: 0; right: 0; height: 76px; }
+.report-head { width: 100%; border-collapse: collapse; border-bottom: 3px solid #ffc400; }
+.report-head td { vertical-align: middle; padding: 6px; }
+.report-logo { width: 115px; height: 58px; text-align: left; }
+.report-logo img { max-width: 105px; max-height: 55px; }
+.report-info { text-align: right; font-size: 8px; line-height: 1.5; }
+.report-title { color: #061b3a; font-size: 13px; font-weight: bold; }
+.report-subtitle { font-size: 10px; font-weight: bold; color: #167347; }
+#content { margin: 0; }
+.report-table { width: 100%; border-collapse: collapse; table-layout: fixed; font-size: 8px; }
+.report-table thead { display: table-header-group; }
+.report-table thead th { background: #061b3a; color: #fff; text-align: left; font-size: 7px; padding: 8px 3px; border-right: 1px solid #294562; }
+.report-table tbody td { padding: 7px 3px; vertical-align: top; border-bottom: 1px solid #e2e8f0; overflow-wrap: break-word; }
+.report-table tbody tr:nth-child(even) { background: #f1f5fb; }
+.report-table tbody tr { page-break-inside: avoid; }
+.status-dot { font-size: 11px; font-weight: bold; }
+#footer { position: fixed; bottom: -39px; left: 0; right: 0; border-top: 1px solid #cbd5e1; padding-top: 5px; color: #475569; font-size: 8px; }
+#footer .page:after { content: counter(page); }
+.summary-table { width: 100%; margin-top: 15px; border-top: 2px solid #ffc400; border-collapse: collapse; }
+.summary-table td { padding: 10px 4px; text-align: right; font-size: 9px; }
+.marca { position: fixed; top: 220px; left: 90px; width: 65%; opacity: .07; }
 </style>
 
 </head>
 <body>
-<?php 
-if($marca_dagua == 'Sim'){ ?>
-<img class="marca" src="<?php echo $url_sistema ?>sistema/img/logo.jpg">	
+<?php
+// Imagens locais incorporadas evitam ícones quebrados no Dompdf.
+$logo_relatorio = '';
+$logo_path = realpath(__DIR__ . '/../../img/logo.jpg');
+if ($logo_path && is_file($logo_path) && is_readable($logo_path)) {
+    $logo_bytes = file_get_contents($logo_path);
+    if ($logo_bytes !== false) {
+        $logo_relatorio = 'data:image/jpeg;base64,' . base64_encode($logo_bytes);
+    }
+}
+?>
+<?php if ($marca_dagua == 'Sim' && $logo_relatorio != '') { ?>
+<img class="marca" src="<?php echo $logo_relatorio; ?>">
 <?php } ?>
-
-
-<div id="header" >
-
-	<div style="border-style: solid; font-size: 10px; height: 50px;">
-		<table style="width: 100%; border: 0px solid #ccc;">
-			<tr>
-				<td style="width: 7%; text-align: left;">
-					<img style="margin-top: 7px; margin-left: 7px;" id="imag" src="<?php echo $url_sistema ?>sistema/img/logo.jpg" width="110px">
-				</td>
-				<td style="width: 30%; text-align: left; font-size: 13px;">
-					
-				</td>
-				<td style="width: 1%; text-align: center; font-size: 13px;">
-				
-				</td>
-				<td style="width: 47%; text-align: right; font-size: 9px;padding-right: 10px;">
-						<b><big>RELATÓRIO DE <span style="color:<?php echo $classe_entradas ?>"><?php echo $filtro_tipoF ?> <?php if($filtro_lancamentoF != ""){ echo '('. @@mb_strtoupper($filtro_lancamentoF).')'; } ?></span></big></b><br> <?php echo @@mb_strtoupper($texto_filtro) ?> <br> <?php echo @@mb_strtoupper($data_hoje) ?>
-				</td>
-			</tr>		
-		</table>
-	</div>
-
-<br>
-
-
-		<table id="cabecalhotabela" style="border-bottom-style: solid; font-size: 8px; margin-bottom:10px; width: 100%; table-layout: fixed;">
-			<thead>
-				
-				<tr id="cabeca" style="margin-left: 0px; background-color:#CCC">
-					<td style="width:22%">DESCRIÇÃO</td>
-					<td style="width:10%">VALOR</td>
-					<td style="width:12%">DATA LANÇAMENTO</td>
-					<td style="width:12%">DATA VENCIMENTO</td>
-					<td style="width:12%">DATA PAGAMENTO</td>
-					<td style="width:17%">RECEBIDO POR</td>	
-					<td style="width:15%">REFERÊNCIA</td>		
-					
-				</tr>
-			</thead>
-		</table>
+<div id="header">
+  <table class="report-head"><tr>
+    <td class="report-logo"><?php if ($logo_relatorio != '') { ?><img src="<?php echo $logo_relatorio; ?>"><?php } ?></td>
+    <td class="report-info">
+      <div class="report-title">RELATÓRIO FINANCEIRO</div>
+      <div class="report-subtitle"><?php echo htmlspecialchars($filtro_tipoF, ENT_QUOTES, 'UTF-8'); ?><?php if ($filtro_lancamentoF != '') { echo ' (' . htmlspecialchars(mb_strtoupper($filtro_lancamentoF), ENT_QUOTES, 'UTF-8') . ')'; } ?></div>
+      <div><?php echo htmlspecialchars(mb_strtoupper($texto_filtro), ENT_QUOTES, 'UTF-8'); ?></div>
+      <div><?php echo htmlspecialchars(mb_strtoupper($data_hoje), ENT_QUOTES, 'UTF-8'); ?></div>
+    </td>
+  </tr></table>
 </div>
-
-<div id="footer" class="row">
-<hr style="margin-bottom: 0;">
-	<table style="width:100%;">
-		<tr style="width:100%; background:#FFF">
-			<td style="width:60%; font-size: 10px; text-align: left;"><?php echo $nome_sistema ?> Telefone: <?php echo $telefone_sistema ?></td>
-			<td style="width:40%; font-size: 10px; text-align: right;"><p class="page">Página  </p></td>
-		</tr>
-	</table>
-</div>
-
-<div id="content" style="margin-top: 0;">
-
-
-
-		<table style="width: 100%; table-layout: fixed; font-size:8px; text-transform: uppercase;">
-			<thead>
-				<tbody>
-					<?php
+<div id="footer"><table width="100%"><tr><td><?php echo htmlspecialchars($nome_sistema . ' | Telefone: ' . $telefone_sistema, ENT_QUOTES, 'UTF-8'); ?></td><td align="right">Página <span class="page"></span></td></tr></table></div>
+<div id="content">
+<table class="report-table">
+<thead><tr>
+<th style="width:22%">DESCRIÇÃO</th><th style="width:10%">VALOR</th><th style="width:12%">LANÇAMENTO</th><th style="width:12%">VENCIMENTO</th><th style="width:12%">PAGAMENTO</th><th style="width:17%">RECEBIDO POR</th><th style="width:15%">REFERÊNCIA</th>
+</tr></thead><tbody>
+<?php
 
 $total_valor = 0;
 $total_valorF = 0;
@@ -250,53 +223,21 @@ if($data_pgtoF == '00/00/0000'){
 
   	 
       <tr>
-<td style="width:22%">
-<img style="margin-top: 0px" src="<?php echo $url_sistema ?>painel/images/<?php echo $classe_pago ?>" width="8px">
-	<?php echo $descricao ?></td>
+<td style="width:22%"><span class="status-dot" style="color:<?php echo $pago == 'Sim' ? '#15803d' : '#dc2626'; ?>">&#9679;</span> <?php echo htmlspecialchars($descricao, ENT_QUOTES, 'UTF-8'); ?></td>
 <td style="width:10%">R$ <?php echo $valorF ?></td>
 <td style="width:12%"><?php echo $data_lancF ?></td>
 <td style="width:12%"><?php echo $data_vencF ?></td>
 <td style="width:12%"><?php echo $data_pgtoF ?></td>
-<td style="width:17%"><?php echo $nome_usu_pgto ?></td>
-<td style="width:15%"><?php echo $referencia ?></td>
-
-    </tr>
+<td style="width:17%"><?php echo htmlspecialchars($nome_usu_pgto, ENT_QUOTES, 'UTF-8'); ?></td>
+<td style="width:15%"><?php echo htmlspecialchars($referencia, ENT_QUOTES, 'UTF-8'); ?></td>
+</tr>
 
 <?php } } ?>
-				</tbody>
-	
-			</thead>
-		</table>
-	
-
-
-</div>
-<hr>
-		<table>
-			<thead>
-				<tbody>
-					<tr>
-
-						<td style="font-size: 10px; width:300px; text-align: right;"></td>
-
-						
-
-						<td style="font-size: 10px; width:70px; text-align: right;"><b>Pendentes: <span style="color:red"><?php echo $pendentes ?></span></td>
-
-							<td style="font-size: 10px; width:70px; text-align: right;"><b>Pagas: <span style="color:green"><?php echo $pagas ?></span></td>
-
-
-								<td style="font-size: 10px; width:140px; text-align: right;"><b>Pendentes: <span style="color:red">R$ <?php echo $total_pendentesF ?></span></td>
-
-									<td style="font-size: 10px; width:120px; text-align: right;"><b>Pagas: <span style="color:green">R$ <?php echo $total_pagasF ?></span></td>
-						
-					</tr>
-				</tbody>
-			</thead>
-		</table>
-
-</body>
-
-</html>
-
-
+</tbody></table></div>
+<table class="summary-table"><tr>
+<td><b>Pendentes: <span style="color:#dc2626"><?php echo $pendentes ?></span></b></td>
+<td><b>Pagas: <span style="color:#15803d"><?php echo $pagas ?></span></b></td>
+<td><b>Pendentes: <span style="color:#dc2626">R$ <?php echo $total_pendentesF ?></span></b></td>
+<td><b>Pagas: <span style="color:#15803d">R$ <?php echo $total_pagasF ?></span></b></td>
+</tr></table>
+</body></html>
