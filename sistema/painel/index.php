@@ -267,7 +267,7 @@ if($linhas == 0){
 	<link href="../assets/css/animate.css" rel="stylesheet">
 	<link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
 	<link href="../assets/css/custom.css" rel="stylesheet" />
-	<link href="css/painel-ux.css?v=20261117-7" rel="stylesheet" />
+	<link href="css/painel-ux.css?v=20261117-8" rel="stylesheet" />
 	<script src="js/jquery-1.11.1.min.js"></script>
 	<script src="js/modernizr.custom.js"></script>
 
@@ -2085,7 +2085,7 @@ if($linhas == 0){
 
 
 <!-- Modal Rel Financeiro -->
-<div class="modal fade" id="modalRelFin" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+<div class="modal fade ux-report-modal" id="modalRelFin" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
 	<div class="modal-dialog modal-lg">
 		<div class="modal-content">
 			<div class="modal-header bg-primary text-white">
@@ -2183,7 +2183,7 @@ if($linhas == 0){
 
 
 <!-- Modal Rel Sintético Despesas -->
-<div class="modal fade" id="modalRelSinDesp" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+<div class="modal fade ux-report-modal" id="modalRelSinDesp" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
 	<div class="modal-dialog modal-lg">
 		<div class="modal-content">
 			<div class="modal-header bg-primary text-white">
@@ -2273,7 +2273,7 @@ if($linhas == 0){
 
 
 <!-- Modal Rel Sintético Recebimentos -->
-<div class="modal fade" id="modalRelSinRec" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+<div class="modal fade ux-report-modal" id="modalRelSinRec" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
 	<div class="modal-dialog modal-lg">
 		<div class="modal-content">
 			<div class="modal-header bg-primary text-white">
@@ -2356,7 +2356,7 @@ if($linhas == 0){
 
 
 <!-- Modal Rel Lucro -->
-<div class="modal fade" id="modalRelLucro" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+<div class="modal fade ux-report-modal" id="modalRelLucro" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
 	<div class="modal-dialog ">
 		<div class="modal-content">
 			<div class="modal-header bg-primary text-white">
@@ -2411,7 +2411,7 @@ if($linhas == 0){
 
 
 <!-- Modal Rel Vendas -->
-<div class="modal fade" id="RelVen" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+<div class="modal fade ux-report-modal" id="RelVen" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
 	<div class="modal-dialog modal-lg" role="document">
 		<div class="modal-content">
 			<div class="modal-header bg-primary text-white">
