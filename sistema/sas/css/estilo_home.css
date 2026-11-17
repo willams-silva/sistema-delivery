@@ -1128,3 +1128,33 @@ body {
         overflow: hidden;
         text-overflow: ellipsis;
 }
+
+/* Bora Comanda — identidade visual do dashboard SAS (2026) */
+:root{--primary:#061b3a;--primary-light:#103b66;--primary-dark:#06152d;--accent:#ffc400;--warning:#ff8900;--neutral-900:#071a36}
+body{background:#f1f5fb;color:#091b37}
+.container{max-width:100%;padding:clamp(14px,2vw,28px)}
+.bc-dashboard-heading{display:flex;align-items:center;gap:16px;margin:0 0 20px;color:#071a36}
+.bc-dashboard-heading h1{font-size:clamp(25px,2.5vw,36px);font-weight:800;line-height:1.15;margin:0}
+.bc-dashboard-heading p{font-size:14px;margin:5px 0 0;color:#475569}
+.bc-dashboard-symbol{font-size:34px;color:#ffc400}
+.bc-dashboard-heading + div[style*="margin-bottom"]{display:none}
+.stats-card{border-radius:20px!important;border:1px solid #e4eaf2;box-shadow:0 7px 17px rgba(6,27,58,.10)!important;min-height:166px;position:relative}
+.stats-card::after{content:"";position:absolute;right:0;bottom:0;width:90px;height:9px;border-radius:100% 0 18px 0;background:#ffc400;transform:skewX(-35deg)}
+.stats-card-content{padding:22px!important;min-height:166px;justify-content:center}
+.stats-card-title{font-size:15px!important;font-weight:650!important;color:#14243d!important}
+.stats-card-value{font-size:clamp(24px,2.4vw,34px)!important;font-weight:800!important;line-height:1.2}
+.stats-card-icon{width:60px!important;height:60px!important;right:20px!important;top:20px!important;border-radius:14px!important;font-size:23px!important}
+.stats-card .icon-primary{background:#ffc400!important;color:#071a36!important}
+.stats-card .icon-success{background:#0aa86c!important}
+.stats-card .icon-danger{background:#ef293c!important}
+.stats-card .badge{border-radius:999px!important;padding:5px 10px!important}
+.stats-card.bg-white:first-child{background:#061b3a!important}
+.stats-card.bg-white:first-child .stats-card-title,.stats-card.bg-white:first-child .stats-card-subtitle{color:#fff!important}
+.stats-card.bg-white:first-child .stats-card-value{color:#ffc400!important}
+.section-header{gap:16px;margin-bottom:20px!important}
+.section-title-large{color:#071a36!important;font-size:clamp(23px,2vw,31px)!important;font-weight:800!important}
+.section-title-large i{color:#ffc400;margin-right:10px}
+.section-header::after{height:3px!important;background:linear-gradient(90deg,#ffc400,#ff8900,transparent)!important}
+.sas-company-search{border:2px solid #ffc400!important;border-radius:16px!important;min-height:48px!important;box-shadow:none!important}
+.sas-company-count{background:#ffc400!important;color:#061b3a!important;border-radius:15px!important}
+@media(max-width:767px){.bc-dashboard-heading{margin-top:4px}.stats-card-content{min-height:150px}.stats-card-icon{width:48px!important;height:48px!important}.section-header{align-items:stretch}.sas-company-tools{justify-content:flex-start}}
