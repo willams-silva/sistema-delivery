@@ -543,7 +543,7 @@ HTML;
 <div class="row ux-home-secondary-row">
 
 
-	<div class="col-xl-6 col-lg-12 col-md-6 col-xs-12">
+	<div class="col-12 col-md-6 col-lg-6 col-xl-6">
 		<a href="tarefas">
 			<div class="card sales-card " style="box-shadow: 2px 2px 0px 0px rgba(0, 0, 0, 0.1);">
 				<div class="row">
@@ -578,7 +578,7 @@ HTML;
 		</a>
 	</div>
 
-	<div class="col-sm-12 col-lg-12 col-xl-6 col-xxl-12">
+	<div class="col-12 col-md-6 col-lg-6 col-xl-6">
 		<div class="card">
 			<div class="card-header pb-3">
 				<h3 class="card-title mb-2">Vendas / DELIVERY</h3>
