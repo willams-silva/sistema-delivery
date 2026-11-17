@@ -1,8 +1,8 @@
 /* Estilos base */
     :root {
-      --primary-color: #2d4c63;
-      --secondary-color: #1a2c3d;
-      --accent-color: #ffc107;
+      --primary-color: #061b3a;
+      --secondary-color: #041229;
+      --accent-color: #ffc400;
       --silver-color: #c0c0c0;
       --gold-color: #ffd700;
       --diamond-color: #b9f2ff;
@@ -11,7 +11,7 @@
       --border-radius: 10px;
       --box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
       --transition: all 0.3s ease;
-      --custom-green: #2ba304; /* Adicionando a cor personalizada */
+      --custom-green: #ffc400; /* Adicionando a cor personalizada */
     }
     body {
       font-family: "Poppins", sans-serif;
@@ -22,9 +22,9 @@
     }
     /* Animações */
     @keyframes pulse {
-      0% { box-shadow: 0 0 0 0 rgba(255, 193, 7, 0.7); }
-      70% { box-shadow: 0 0 0 10px rgba(255, 193, 7, 0); }
-      100% { box-shadow: 0 0 0 0 rgba(255, 193, 7, 0); }
+      0% { box-shadow: 0 0 0 0 rgba(255, 196, 0, 0.7); }
+      70% { box-shadow: 0 0 0 10px rgba(255, 196, 0, 0); }
+      100% { box-shadow: 0 0 0 0 rgba(255, 196, 0, 0); }
     }
     .animate-pulse-button {
       animation: pulse 2s infinite;
@@ -65,7 +65,7 @@
     }
     @keyframes logoGlow {
       from { filter: drop-shadow(0 0 5px rgba(255, 255, 255, 0.3)); }
-      to { filter: drop-shadow(0 0 15px rgba(255, 193, 7, 0.5)); }
+      to { filter: drop-shadow(0 0 15px rgba(255, 196, 0, 0.5)); }
     }
     /* Estilo para o badge de lançamento */
     .launch-badge {
@@ -87,14 +87,14 @@
     .feature-card:hover {
       transform: translateY(-5px);
       box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
-      border-color: rgba(255, 193, 7, 0.3);
+      border-color: rgba(255, 196, 0, 0.3);
     }
     .feature-icon {
-      color: #2ba304; /* Verde personalizado */
+      color: #ffc400; /* Verde personalizado */
     }
     /* Estilo para a seção de chamada à ação */
     .cta-section {
-      background: linear-gradient(135deg, rgba(45, 76, 99, 0.8), rgba(26, 44, 61, 0.8)), url('img/pattern.png');
+      background: linear-gradient(135deg, rgba(6, 27, 58, 0.85), rgba(4, 18, 41, 0.88)), url('img/pattern.png');
       background-size: cover;
       background-position: center;
     }
@@ -108,7 +108,7 @@
       top: -20px;
       left: 20px;
       font-size: 80px;
-      color: rgba(255, 193, 7, 0.2);
+      color: rgba(255, 196, 0, 0.2);
       font-family: serif;
       line-height: 1;
     }
@@ -123,7 +123,7 @@
       bottom: 0;
       left: 50%;
       width: 2px;
-      background-color: rgba(255, 193, 7, 0.5);
+      background-color: rgba(255, 196, 0, 0.5);
       transform: translateX(-50%);
     }
     .timeline-item {
@@ -136,7 +136,7 @@
       left: 50%;
       width: 16px;
       height: 16px;
-      background-color: #ffc107;
+      background-color: #ffc400;
       border-radius: 50%;
       transform: translate(-50%, -50%);
       z-index: 1;
@@ -147,7 +147,7 @@
     }
     .social-icon:hover {
       transform: translateY(-3px) scale(1.1);
-      color: #ffc107;
+      color: #ffc400;
     }
     /* Ajustes responsivos */
     @media (max-width: 640px) {
@@ -194,8 +194,8 @@
       transition: all 0.2s ease !important;
     }
     .form-input:focus {
-      border-color: #ffc107 !important;
-      box-shadow: 0 0 0 3px rgba(255, 193, 7, 0.25) !important;
+      border-color: #ffc400 !important;
+      box-shadow: 0 0 0 3px rgba(255, 196, 0, 0.25) !important;
       outline: none !important;
     }
     .form-input::placeholder {
@@ -218,8 +218,8 @@
       transition: all 0.2s ease !important;
     }
     .form-select:focus {
-      border-color: #ffc107 !important;
-      box-shadow: 0 0 0 3px rgba(255, 193, 7, 0.25) !important;
+      border-color: #ffc400 !important;
+      box-shadow: 0 0 0 3px rgba(255, 196, 0, 0.25) !important;
       outline: none !important;
     }
     /* Botões */
@@ -242,8 +242,8 @@
 
 /* Botão verde personalizado */
 .btn-green {
-  background-color: #2ba304;
-  border-color: #2ba304;
+  background-color: #ffc400;
+  border-color: #ffc400;
   color: white;
   font-weight: 600;
   padding: 10px 25px;
@@ -253,16 +253,16 @@
 }
 
 .btn-green:hover {
-  background-color: #239003;
-  border-color: #239003;
+  background-color: #e5a900;
+  border-color: #e5a900;
   transform: translateY(-3px);
   animation: none;
 }
 
 @keyframes pulseGreen {
-  0% { box-shadow: 0 0 0 0 rgba(43, 163, 4, 0.7); }
-  70% { box-shadow: 0 0 0 10px rgba(43, 163, 4, 0); }
-  100% { box-shadow: 0 0 0 0 rgba(43, 163, 4, 0); }
+  0% { box-shadow: 0 0 0 0 rgba(255, 196, 0, 0.45); }
+  70% { box-shadow: 0 0 0 10px rgba(255, 196, 0, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(255, 196, 0, 0); }
 }
 
 .animate-pulse-green {
@@ -292,11 +292,11 @@
     }
     /* Efeito de brilho */
     .glow {
-      box-shadow: 0 0 15px rgba(255, 193, 7, 0.5);
+      box-shadow: 0 0 15px rgba(255, 196, 0, 0.5);
     }
     /* Efeito de gradiente no texto */
     .text-gradient {
-      background: linear-gradient(90deg, #ffc107, #ffcd38);
+      background: linear-gradient(90deg, #ffc400, #ffcd38);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
     }
@@ -332,7 +332,7 @@
     }
     @keyframes logoFooterGlow {
       from { filter: drop-shadow(0 0 3px rgba(255, 255, 255, 0.2)); }
-      to { filter: drop-shadow(0 0 10px rgba(255, 193, 7, 0.4)); }
+      to { filter: drop-shadow(0 0 10px rgba(255, 196, 0, 0.4)); }
     }
     /* Ajustes responsivos para dispositivos móveis */
     @media (max-width: 640px) {
@@ -391,9 +391,19 @@
     }
     /* Cor personalizada para os ícones */
     .custom-green-icon {
-      color: #2ba304 !important;
+      color: #ffc400 !important;
     }
 
 
 
 
+
+/* Paleta institucional Bora Comanda: landing page pública */
+:root{--primary-color:#061b3a;--secondary-color:#041229;--accent-color:#ffc400;--custom-green:#ffc400}
+body{background:linear-gradient(145deg,#041229 0%,#061b3a 55%,#102e51 100%)}
+.bg-glass{background:rgba(255,255,255,.075);border:1px solid rgba(255,196,0,.17)}
+.feature-card:hover{border-color:rgba(255,196,0,.55)}
+.custom-green-icon,.feature-icon{color:#ffc400!important}
+.btn-green{background-color:#ffc400;border-color:#ffc400;color:#041229}
+.btn-green:hover{background-color:#ffdb59;border-color:#ffdb59;color:#041229}
+.form-input:focus,.form-select:focus{border-color:#ffc400!important;box-shadow:0 0 0 3px rgba(255,196,0,.2)!important}
