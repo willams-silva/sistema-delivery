@@ -267,7 +267,7 @@ if($linhas == 0){
 	<link href="../assets/css/animate.css" rel="stylesheet">
 	<link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
 	<link href="../assets/css/custom.css" rel="stylesheet" />
-	<link href="css/painel-ux.css?v=20261117-3" rel="stylesheet" />
+	<link href="css/painel-ux.css?v=20261117-4" rel="stylesheet" />
 	<script src="js/jquery-1.11.1.min.js"></script>
 	<script src="js/modernizr.custom.js"></script>
 
