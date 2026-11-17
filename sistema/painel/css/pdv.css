@@ -435,3 +435,10 @@
 .pdv_body #listar .pdv-barcode-box { align-items:flex-start; gap:2px; margin:5px 0 8px; }
 .pdv_body #listar .pdv-barcode { width:100%; max-width:100px; height:30px; }
 .pdv_body #listar .pdv-barcode-number { font-size:12px; font-weight:800; line-height:1.2; color:#142b48; letter-spacing:0; }
+
+/* Correção do espaçamento excessivo após inserir SVG de código de barras */
+.pdv_body #listar { align-items: start !important; grid-auto-rows: max-content; }
+.pdv_body #listar > a { align-self: start; height: auto !important; }
+.pdv_body #listar .product-card { height: auto !important; min-height: 0; }
+.pdv_body #listar .pdv-barcode-box { flex: none; min-height: 0; }
+.pdv_body #listar .pdv-barcode { flex: none; width: 100px !important; height: 30px !important; max-height: 30px; overflow: hidden; }
