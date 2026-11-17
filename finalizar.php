@@ -116,7 +116,24 @@ body.checkout-cardapio { background:#fffaf5; color:#493425; }
 .checkout-cardapio .btn-danger { background:#fff; border-color:#d8bba3; color:#7b4d2d; border-radius:11px; padding:11px 19px; }
 .checkout-cardapio .total-finalizar { background:#fffdf9; border-top:1px solid #ead7c3; box-shadow:0 -5px 20px rgba(95,54,25,.08); }
 .checkout-cardapio .total-pedido { background:#fff; border-color:#ecd9c5 !important; }
-.checkout-cardapio #botao_finalizar { width:100%; }
+.checkout-cardapio #botao_finalizar {
+  box-sizing:border-box !important;
+  display:inline-flex !important;
+  justify-content:center !important;
+  align-items:center !important;
+  gap:10px;
+  width:min(100%,360px) !important;
+  max-width:360px !important;
+  margin:0 auto !important;
+  padding:13px 12px !important;
+  border-radius:12px !important;
+  font-size:clamp(14px,3.8vw,20px) !important;
+  font-weight:750 !important;
+  white-space:nowrap;
+  text-align:center;
+}
+.checkout-cardapio .total-finalizar .abaixo { display:flex !important; justify-content:center !important; align-items:center !important; margin-top:18px !important; }
+.checkout-cardapio #botao_finalizar i { font-size:1.1em; line-height:1; }
 .checkout-cardapio #area-endereco button[title="Buscar Localização"] { background:#a85b24 !important; border-radius:9px; width:36px !important; height:36px !important; }
 .checkout-cardapio #area-endereco button[title="Buscar Localização"] i { color:#fff !important; }
 @media(max-width:767px) {
@@ -575,8 +592,7 @@ body.checkout-cardapio { background:#fffaf5; color:#493425; }
 
 
   <div class="d-grid gap-2 mt-4 abaixo">
-    <a href='javascript:void(0)' id="botao_finalizar" onclick="finalizarPedido()" class="btn btn-warning btn-lg">Concluir
-      Pedido</a>
+    <a href='javascript:void(0)' id="botao_finalizar" onclick="finalizarPedido()" class="btn btn-warning btn-lg">Concluir Pedido <i class="fal fa-long-arrow-right" aria-hidden="true"></i></a>
 
     <div align="center" id="div_img" style="display:none"><img src="img/loading.gif" width="100%" height="40px"></div>
   </div>
