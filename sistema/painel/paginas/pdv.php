@@ -71,6 +71,9 @@ $data_atual = date('Y-m-d');
 
 
 <link rel="stylesheet" type="text/css" href="css/pdv.css">
+<style>
+.pdv-product-code{font-size:12px;color:#475569;margin:5px 0;overflow-wrap:anywhere;font-weight:600}
+</style>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 
 <div class="pdv_body">
@@ -83,7 +86,7 @@ $data_atual = date('Y-m-d');
         <div class="bg-white rounded-xl shadow-sm p-4 mb-6">
           <div class="search-container mb-4">
             <i class="fas fa-search search-icon"></i>
-            <input style="font-weight: normal" onkeyup="buscar()" type="text" placeholder="Buscar produtos..." class="form-input" name="txt_buscar" id="txt_buscar">
+            <input style="font-weight: normal" onkeyup="buscar()" type="text" placeholder="Buscar por nome ou código / bipar produto..." class="form-input" name="txt_buscar" id="txt_buscar">
            
           </div>
           
