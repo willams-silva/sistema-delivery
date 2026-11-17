@@ -72,6 +72,7 @@ if ($total_reg > 0) {
 
 	echo <<<HTML
 	<small>
+	<div class="ux-orders-scroll-region">
 	<table class="table table-bordered text-nowrap border-bottom dt-responsive ux-orders-table" id="">
 	<thead> 
 	<tr> 
@@ -324,6 +325,7 @@ HTML;
 </tbody>
 <small><div align="center" id="mensagem-excluir"></div></small>
 </table>
+</div>
 
 <br>	
 <div align="right">Total de Pedidos: <span class=""> {$total_reg}</span> </div>
