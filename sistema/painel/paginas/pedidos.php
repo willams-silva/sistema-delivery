@@ -102,10 +102,9 @@ if (@$pausar_delivery == 'Sim') {
 ?>
 
 
-<div class="row mb-3" style="margin-top: -10px">
+<div class="row mb-3 ux-orders-status">
 	<div class="col-md-12">
-		<div class="d-flex justify-content-between align-items-center flex-wrap p-1" 
-			style="background:#f8f9fa; border:1px solid #e5e5e5; border-radius:8px;">
+		<div class="d-flex justify-content-between align-items-center flex-wrap gap-2 p-3 ux-orders-statusbar">
 
 			<div>				
 				<span class="badge bg-<?php echo $classe_status_delivery ?>" style="font-size:14px; padding:8px 12px;">
@@ -127,7 +126,7 @@ if (@$pausar_delivery == 'Sim') {
 </div>
 
 	<div class="row">
-		<div class="col-md-12" align="center">
+		<div class="col-md-12 ux-orders-filters" role="group" aria-label="Filtrar pedidos por situação">
 
 			<button style="font-size:11px;" type="button" class="btn btn-dark mt-1 mb-1" title="Todas os Pedidos" onclick="buscarContas('')">
 				<span>TODAS</span>
@@ -136,7 +135,7 @@ if (@$pausar_delivery == 'Sim') {
 
 
 			<button style="font-size:11px;" type="button" class="btn btn_iniciado mt-1 mb-1" title="Iniciado" onclick="buscarContas('Iniciado')">
-				<span>INCIADOS</span>
+				<span>INICIADOS</span>
 				<span class="badge bg-light rounded-pill ms-1" id="ini_pedidos">0</span>
 			</button>
 
@@ -172,7 +171,7 @@ if (@$pausar_delivery == 'Sim') {
         <span class="input-group-text bg-light border border-primary">
             <i class="fas fa-search text-secondary"></i>
         </span>
-        <input type="text" class="form-control border border-primary" id="busca" placeholder="Buscar..." onkeyup="listar()">
+        <input type="text" class="form-control border border-primary" id="busca" placeholder="Buscar pedidos..." aria-label="Buscar pedidos" onkeyup="listar()">
     </div>
 </div>
 
