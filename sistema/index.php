@@ -192,6 +192,11 @@ body#pagina .page-single{min-height:100vh;display:flex;align-items:center}
 body#pagina .card-sigin-main{max-width:510px;width:100%;padding:12px!important}
 body#pagina .card-sigin,body#pagina .main-card-signin{background:#fff!important;border-radius:22px!important;box-shadow:0 22px 70px rgba(0,0,0,.35)!important;border:1px solid rgba(255,196,0,.35)!important;overflow:hidden}
 body#pagina .main-card-signin{padding:22px 18px 15px}
+/* Remove o cartao externo e mantem apenas o formulario interno */
+body#pagina .card-sigin-main,body#pagina .card-sigin{background:transparent!important;border:0!important;box-shadow:none!important;border-radius:0!important;overflow:visible!important}
+body#pagina .card-sigin-main{padding:0!important}
+body#pagina .main-card-signin{background:#fff!important;border:1px solid rgba(255,196,0,.4)!important;border-radius:22px!important;box-shadow:0 22px 70px rgba(0,0,0,.3)!important;overflow:hidden!important}
+
 body#pagina .sign-favicon{width:100%!important;max-width:350px!important;height:auto!important;max-height:135px!important;object-fit:contain!important}
 body#pagina .main-signup-header label{color:#061b3a;font-weight:600;margin-bottom:8px}
 body#pagina .main-signup-header .form-control{background:#f7f9fc!important;color:#061b3a!important;border:1px solid #d5dfeb!important;border-radius:0 10px 10px 0!important;min-height:46px}
