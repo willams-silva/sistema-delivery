@@ -570,7 +570,7 @@ companyCards.forEach((card, index) => {
     
     card.addEventListener('mouseleave', () => {
         // Restaurar o background original
-        const originalColor = card.getAttribute('style').split('background-color: ')[1].split(';')[0];
+        const originalColor = window.getComputedStyle(card).backgroundColor;
         gsap.to(card, {
             backgroundColor: originalColor,
             duration: 0.3,
