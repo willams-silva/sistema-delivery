@@ -101,3 +101,18 @@ body.main-body{background:var(--ux-bg);color:var(--ux-ink)}
 .app-sidebar .side-menu__item .angle{margin-left:auto}
 @media(max-width:767px){.app-sidebar .side-menu__item{min-height:46px}.app-sidebar .slide-menu a{min-height:42px}}
 @media(prefers-reduced-motion:reduce){.app-sidebar .side-menu__item,.app-sidebar .slide-menu a{transition:none!important}}
+
+/* Configurações da empresa e perfil: formulários extensos */
+#modalConfig .modal-dialog{max-width:min(1160px,calc(100vw - 24px))}
+#modalConfig .modal-content,#modalPerfil .modal-content{border:0;border-radius:16px;overflow:hidden}
+#modalConfig .modal-header,#modalPerfil .modal-header{padding:18px 22px}
+#modalConfig .modal-body,#modalPerfil .modal-body{padding:20px 22px;max-height:calc(100dvh - 180px);overflow:auto}
+#modalConfig .modal-body .row,#modalPerfil .modal-body .row{row-gap:12px}
+#modalConfig .modal-body [class*="col-"],#modalPerfil .modal-body [class*="col-"]{min-width:0}
+#modalConfig label,#modalPerfil label{display:block;font-weight:650;color:#334155;margin-bottom:6px}
+#modalConfig .form-control,#modalConfig .form-select,#modalPerfil .form-control,#modalPerfil .form-select{width:100%;min-height:41px;border-radius:9px}
+#modalConfig input[type="checkbox"],#modalPerfil input[type="checkbox"]{min-height:unset;width:auto}
+#modalConfig .modal-body img,#modalPerfil .modal-body img{max-width:100%;height:auto}
+#modalConfig .modal-footer,#modalPerfil .modal-footer{padding:14px 22px;gap:9px}
+#modalConfig button[type="submit"],#modalPerfil button[type="submit"]{min-height:40px}
+@media(max-width:767px){#modalConfig .modal-dialog,#modalPerfil .modal-dialog{margin:10px auto;max-width:calc(100vw - 20px)}#modalConfig .modal-header,#modalPerfil .modal-header{padding:14px 16px}#modalConfig .modal-body,#modalPerfil .modal-body{padding:14px 16px;max-height:calc(100dvh - 135px)}#modalConfig .modal-body .row,#modalPerfil .modal-body .row{row-gap:8px}#modalConfig .modal-body [class*="col-"],#modalPerfil .modal-body [class*="col-"]{width:100%;flex:0 0 100%;max-width:100%}}
