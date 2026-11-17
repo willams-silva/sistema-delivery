@@ -493,7 +493,7 @@ if($linhas == 0){
 
 
 										<a class="new nav-link" data-bs-toggle="dropdown" href="javascript:void(0);">
-											<small><i class="fa fa-cutlery"></i></small>
+											<small><i class="fa fa-cutlery" style="color:#253858;"></i></small>
 											<span class="badge  header-badge" style="background: #FFA200"
 												id="total-dos-pedidos"><?php echo $total_reg ?></span>
 										</a>
@@ -569,7 +569,7 @@ if($linhas == 0){
 										?>
 
 										<a class="new nav-link" data-bs-toggle="dropdown" href="javascript:void(0);">
-											<small><i class="fa fa-dollar" style="color:#fff3f2;"></i></small>
+											<small><i class="fa fa-dollar" style="color:#253858;"></i></small>
 											<span class="badge  header-badge" style="background:green"><?php echo $linhas ?></span>
 										</a>
 
@@ -635,7 +635,7 @@ if($linhas == 0){
 
 
 										<a class="new nav-link" data-bs-toggle="dropdown" href="javascript:void(0);">
-											<small><i class="fa fa-dollar" style="color:#fff3f2;"></i></small>
+											<small><i class="fa fa-dollar" style="color:#253858;"></i></small>
 											<span class="badge  header-badge" style="background:red"><?php echo $linhas ?></span>
 										</a>
 
