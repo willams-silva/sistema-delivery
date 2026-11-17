@@ -37,3 +37,19 @@ body.main-body{background:var(--ux-bg);color:var(--ux-ink)}
 .ux-shortcut{display:inline-flex;align-items:center;gap:8px;padding:11px 14px;background:#fff;border:1px solid #dbe2ed;border-radius:11px;color:#1e3a5f;font-weight:650;text-decoration:none;transition:background .15s,border-color .15s}
 .ux-shortcut:hover{background:#eff6ff;border-color:#93c5fd;color:#1d4ed8}
 @media(max-width:767px){.ux-home-intro{padding:18px 16px;margin-top:12px}.ux-home-shortcuts{width:100%;display:grid;grid-template-columns:repeat(2,minmax(0,1fr))}.ux-shortcut{justify-content:center;padding:11px 8px;font-size:.87rem}}
+
+/* Telas internas: filtros, barras de ações e formulários */
+.main-content .breadcrumb-header{background:#fff;border:1px solid var(--ux-border);border-radius:15px;padding:15px 18px;margin-bottom:16px;box-shadow:0 4px 18px rgba(15,23,42,.035)}
+.main-content .breadcrumb-header .left-content{display:flex;flex-wrap:wrap;align-items:center;gap:10px;margin-top:0!important;min-width:0;width:100%}
+.main-content .breadcrumb-header .left-content>.btn,.main-content .breadcrumb-header .left-content>a.btn{position:static!important;margin:0!important;white-space:normal}
+.main-content .breadcrumb-header .left-content>.form-select{max-width:100%;width:min(350px,100%)!important}
+.main-content .widget-shadow{background:#fff;border:1px solid var(--ux-border);border-radius:15px;box-shadow:0 4px 18px rgba(15,23,42,.035)}
+.main-content .card-body{min-width:0}
+.main-content .dataTables_wrapper .dataTables_filter input,.main-content .dataTables_wrapper .dataTables_length select{border:1px solid #dbe2ed;border-radius:9px;padding:7px 10px;background:#fff;max-width:100%}
+.main-content .dataTables_wrapper .dataTables_paginate .paginate_button{border-radius:8px!important}
+.modal .modal-body label{font-weight:600;color:#334155;margin-bottom:5px}
+.modal .modal-body .form-control,.modal .modal-body .form-select{min-height:39px;border-radius:9px;border:1px solid #dbe2ed}
+.modal .modal-body .form-control:focus,.modal .modal-body .form-select:focus{border-color:#93b4f9;box-shadow:0 0 0 3px rgba(37,99,235,.12)}
+.modal .modal-body{max-height:calc(100dvh - 170px);overflow-y:auto}
+.modal .modal-footer{gap:8px}
+@media(max-width:767px){.main-content .breadcrumb-header{padding:12px}.main-content .breadcrumb-header .left-content{gap:8px}.main-content .breadcrumb-header .left-content>.btn{flex:1 1 auto}.main-content .breadcrumb-header .left-content>.form-select{flex:1 1 100%;width:100%!important}.main-content .dataTables_wrapper .dataTables_filter,.main-content .dataTables_wrapper .dataTables_length{text-align:left}.modal .modal-body{max-height:calc(100dvh - 145px)}}
