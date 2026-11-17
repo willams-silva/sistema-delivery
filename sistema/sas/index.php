@@ -159,9 +159,9 @@ if (@count($res1) > 0) {
 /* SAS: logo integrada ao menu sem sobreposição e sem fundo imposto pelo CSS. */
 @media (min-width: 992px) {
   body:not(.sidenav-toggled) .app-sidebar .main-sidebar-header {
-    position:relative!important; height:150px!important;min-height:150px!important;
+    position:relative!important; height:82px!important;min-height:82px!important;
     display:flex!important;align-items:center!important;justify-content:center!important;
-    padding:10px 12px 12px!important;background:transparent!important;
+    padding:5px 12px!important;background:transparent!important;
     border-bottom:1px solid rgba(255,255,255,.24)!important;
   }
   body:not(.sidenav-toggled) .app-sidebar .main-sidebar-header .header-logo {
@@ -170,8 +170,8 @@ if (@count($res1) > 0) {
   }
   body:not(.sidenav-toggled) .app-sidebar .main-sidebar-header .header-logo img.desktop-logo,
   body:not(.sidenav-toggled) .app-sidebar .main-sidebar-header .header-logo img.desktop-dark {
-    width:100%!important;max-width:285px!important;height:124px!important;
-    max-height:124px!important;object-fit:contain!important;background:transparent!important;
+    width:100%!important;max-width:260px!important;height:62px!important;
+    max-height:62px!important;object-fit:contain!important;background:transparent!important;
   }
   body:not(.sidenav-toggled) .app-sidebar .main-sidemenu {
     padding-top:0!important;margin-top:0!important;
@@ -783,9 +783,7 @@ if (@count($res1) > 0) {
 		<?php if ($pagina != 'vendas') { ?>
 			<div class="main-footer">
 				<div class="container-fluid pt-0 ht-100p">
-					Copyright © <?php echo date('Y'); ?> Desevolverdor <a href="https://sistemas.hugocursos.com.br" target="_blank"
-						class="text-primary"> Sistemas.com.br</a>. Todos
-					os direitos reservados
+					<span style="color:#061b3a;font-weight:500">© <?php echo date('Y'); ?> <strong style="color:#b88600">Bora Comanda</strong> — Seu pedido, mais fácil! Todos os direitos reservados.</span>
 				</div>
 			</div>
 		<?php } ?>

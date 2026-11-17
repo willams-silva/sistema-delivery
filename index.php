@@ -141,20 +141,20 @@ if($id_empresa == 0){
         extend: {
           colors: {
             primary: {
-              DEFAULT: '#2d4c63',
-              dark: '#1a2c3d',
-              light: '#3a6080'
+              DEFAULT: '#061b3a',
+              dark: '#041229',
+              light: '#17375b'
             },
             accent: {
-              DEFAULT: '#ffc107',
-              dark: '#e0a800',
-              light: '#ffcd38'
+              DEFAULT: '#ffc400',
+              dark: '#e5a900',
+              light: '#ffdb59'
             },
             success: '#10b981',
             warning: '#f59e0b',
             danger: '#ef4444',
-            customAzul: '#045d8a',
-            customGreen: '#2ba304', // Adicionando a cor personalizada
+            customAzul: '#123c68',
+            customGreen: '#ffc400', // Adicionando a cor personalizada
           },
           fontFamily: {
             poppins: ['Poppins', 'sans-serif'],
@@ -206,7 +206,7 @@ if($id_empresa == 0){
         <?php if($botao1 != "" || $botao2 != "" || $botao3 != ""){ ?>
         <div class="flex flex-col sm:flex-row justify-center gap-4 mb-6">
           <?php if($botao1 != ""){ ?>
-          <a href="#plans" class="inline-flex items-center justify-center px-6 py-3 border border-transparent text-base font-medium rounded-lg shadow-lg text-white bg-customGreen hover:bg-green-700 focus:outline-none animate-pulse-green transition-all duration-300">
+          <a href="#plans" class="inline-flex items-center justify-center px-6 py-3 border border-transparent text-base font-medium rounded-lg shadow-lg text-primary-dark bg-customGreen hover:bg-yellow-400 focus:outline-none animate-pulse-green transition-all duration-300">
             <i class="fas fa-rocket mr-2"></i> <?php echo $botao1 ?>
           </a>
         <?php } ?>
@@ -216,7 +216,7 @@ if($id_empresa == 0){
           </a>
            <?php } ?>
          <?php if($botao3 != ""){ ?>
-           <a href="<?php echo $link_painel ?>" class="inline-flex items-center justify-center px-6 py-3 border border-transparent text-base font-medium rounded-lg shadow-lg text-white bg-customAzul hover:bg-blue-700 focus:outline-none animate-pulse-blue transition-all duration-300">
+           <a href="<?php echo $link_painel ?>" class="inline-flex items-center justify-center px-6 py-3 border border-transparent text-base font-medium rounded-lg shadow-lg text-white bg-customAzul hover:bg-primary-light focus:outline-none animate-pulse-blue transition-all duration-300">
             <i class="fas fa-key mr-2"></i> <?php echo $botao3 ?>
           </a>
         <?php } ?>
@@ -265,7 +265,7 @@ if($id_empresa == 0){
    
            ?>
           <div class="bg-glass rounded-xl p-6 text-center feature-card gsap-stagger-item">
-            <div class="text-4xl mb-4 custom-green-icon" style="color: #2ba304;">
+            <div class="text-4xl mb-4 custom-green-icon" style="color: #ffc400;">
               <i class="<?php echo $icone ?>"></i>
             </div>
             <h3 class="text-xl font-semibold mb-3"><?php echo $titulo ?></h3>
@@ -452,7 +452,7 @@ if($total_reg > 0) {
             <img src="<?php echo $url_sistema ?>sistema/img/logos/<?php echo $logo ?>" alt="Logo" class="large-logo-footer h-16 md:h-20" />
           </div>
           <div class="text-center md:text-right">
-            <p class="text-gray-400 text-sm">&copy; <?php echo date('Y'); ?> <?php echo $nome_sistema ?>. Todos os direitos reservados.</p>
+            <p class="text-gray-300 text-sm">&copy; <?php echo date('Y'); ?> <strong style="color:#ffc400">Bora Comanda</strong> — Seu pedido, mais fácil! Todos os direitos reservados.</p>
             <p class="text-gray-500 text-xs md:text-sm mt-1 md:mt-2"><?php echo $nome_sistema ?> – Tecnologia que simplifica e acelera resultados!</p>
           </div>
         </div>
@@ -462,7 +462,14 @@ if($total_reg > 0) {
 
 
 
- <a title="Ir para o whatsapp" target="_blank" href="http://api.whatsapp.com/send?1=pt_BR&phone=<?php echo @$tel_whats ?>"><img src="<?php echo $url_sistema ?>sistema/img/logo_whats.png" width="50px" style="position:fixed; bottom:20px; right:20px; z-index: 100"></a>
+ <?php if (!empty($tel_whats)) { ?>
+ <a title="Conversar pelo WhatsApp" aria-label="Conversar pelo WhatsApp" target="_blank" rel="noopener noreferrer" href="https://api.whatsapp.com/send?phone=<?php echo preg_replace('/\\D+/', '', (string)$tel_whats); ?>" class="bc-whatsapp-float"><i class="fab fa-whatsapp" aria-hidden="true"></i></a>
+ <?php } ?>
+ <style>
+ .bc-whatsapp-float{position:fixed;right:20px;bottom:20px;z-index:1000;width:56px;height:56px;display:flex;align-items:center;justify-content:center;border-radius:50%;background:#25d366;color:#fff!important;font-size:32px;box-shadow:0 5px 18px rgba(0,0,0,.28);text-decoration:none;transition:transform .2s,box-shadow .2s}
+ .bc-whatsapp-float:hover,.bc-whatsapp-float:focus{transform:translateY(-3px);box-shadow:0 8px 22px rgba(0,0,0,.35);color:#fff!important}
+ @media(max-width:640px){.bc-whatsapp-float{right:16px;bottom:16px;width:52px;height:52px;font-size:30px}}
+ </style>
 
 
  <script src="assets/js/lgpd-cookie.js" type="module"></script>
