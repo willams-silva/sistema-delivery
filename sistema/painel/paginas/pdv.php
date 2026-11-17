@@ -356,8 +356,8 @@ $data_atual = date('Y-m-d');
 						</div>
 
 						<div class="col-md-3 col-6">
-							<label>Telefone</label>
-							<input type="text" class="form-control" id="telefone" name="telefone" placeholder="Telefone">
+							<label>Telefone <span class="text-danger" style="font-size: 9px">(Obrigatório)</span></label>
+							<input type="text" class="form-control" id="telefone" name="telefone" placeholder="(00) 00000-0000" required maxlength="15" inputmode="tel">
 						</div>
 
 						<div class="col-md-3 mb-2">
@@ -372,8 +372,8 @@ $data_atual = date('Y-m-d');
 					<div class="row">
 
 						<div class="col-md-3 mb-2 col-6">
-							<label>CPF</label>
-							<input type="text" class="form-control" id="cpf" name="cpf" placeholder="CPF">
+							<label>CPF <span class="text-danger" style="font-size: 9px">(Obrigatório)</span></label>
+							<input type="text" class="form-control" id="cpf" name="cpf" placeholder="000.000.000-00" required maxlength="14" inputmode="numeric">
 						</div>
 
 						<div class="col-md-6">
@@ -778,6 +778,45 @@ $("#form_venda").submit(function (event) {
 		</script>
 
 		<script type="text/javascript">
+	// Validação exclusiva do cadastro de clientes no PDV.
+	(function () {
+		const form = document.getElementById('form-cliente');
+		const phone = form.querySelector('#telefone');
+		const cpf = form.querySelector('#cpf');
+		const digits = value => value.replace(/\D/g, '');
+		function validCPF(value) {
+			const n = digits(value);
+			if (n.length !== 11 || /^(\d)\1{10}$/.test(n)) return false;
+			for (let t = 9; t < 11; t++) {
+				let sum = 0;
+				for (let i = 0; i < t; i++) sum += Number(n[i]) * (t + 1 - i);
+				if (Number(n[t]) !== ((sum * 10) % 11) % 10) return false;
+			}
+			return true;
+		}
+		phone.addEventListener('input', function () {
+			const n = digits(this.value).slice(0, 11);
+			const split = n.length > 10 ? 7 : 6;
+			this.value = n.length > split + 2 ? '(' + n.slice(0,2) + ') ' + n.slice(2,split+2) + '-' + n.slice(split+2)
+				: n.length > 2 ? '(' + n.slice(0,2) + ') ' + n.slice(2) : n;
+			this.setCustomValidity('');
+		});
+		cpf.addEventListener('input', function () {
+			const n = digits(this.value).slice(0,11);
+			this.value = n.slice(0,3) + (n.length > 3 ? '.' + n.slice(3,6) : '') + (n.length > 6 ? '.' + n.slice(6,9) : '') + (n.length > 9 ? '-' + n.slice(9) : '');
+			this.setCustomValidity('');
+		});
+		form.addEventListener('submit', function (event) {
+			const n = digits(phone.value);
+			phone.setCustomValidity(n.length === 10 || n.length === 11 ? '' : 'Informe telefone com DDD válido.');
+			cpf.setCustomValidity(validCPF(cpf.value) ? '' : 'Informe um CPF válido.');
+			if (!form.checkValidity()) {
+				event.preventDefault();
+				event.stopImmediatePropagation();
+				form.reportValidity();
+			}
+		}, true);
+	})();
 	$("#form-cliente").submit(function () { 
 
     $('#mensagem_cliente').text('Salvando!!');
