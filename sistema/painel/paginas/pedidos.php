@@ -36,6 +36,38 @@ $segundos = $tempo_atualizar * 1000;
 ?>
 
 <input type="hidden" name="pagina" id="pagina">
+<?php if (isset($nome_usuario) && $nome_usuario === 'Administrador'): ?>
+<div class="card mb-3" style="border-radius:14px;border:1px solid #dce4ee">
+ <div class="card-body">
+  <button type="button" class="btn btn-outline-primary btn-sm" data-bs-toggle="collapse" data-bs-target="#automacao-pedidos-painel" aria-expanded="false"><i class="fa fa-clock-o"></i> Automação de pedidos / tempos</button>
+  <div class="collapse mt-3" id="automacao-pedidos-painel">
+   <form id="form-automacao-pedidos">
+    <div class="row g-3 align-items-end">
+     <div class="col-md-3"><label class="form-label">Automação</label><select class="form-select" name="ativo"><option value="1">Ativada</option><option value="0">Desativada</option></select></div>
+     <div class="col-md-3"><label class="form-label">Iniciado → Aceito (minutos)</label><input class="form-control" type="number" min="1" max="60" step="1" name="aceitar_minutos" value="1" required></div>
+     <div class="col-md-3"><label class="form-label">Aceito → Preparando (minutos)</label><input class="form-control" type="number" min="1" max="60" step="1" name="preparar_minutos" value="2" required></div>
+     <div class="col-md-3"><label class="form-label">Fila de impressão</label><select class="form-select" name="imprimir_ao_aceitar"><option value="1">Enfileirar cupom</option><option value="0">Não enfileirar</option></select></div>
+    </div>
+    <p class="text-muted small mt-2">Os tempos são exclusivos desta empresa. O cron verifica a cada minuto. Enfileirar não imprime sem agente local configurado. Em rota continua manual.</p>
+    <button type="submit" class="btn btn-primary btn-sm">Salvar automação</button> <span id="mensagem-automacao-pedidos" role="status"></span>
+   </form>
+  </div>
+ </div>
+</div>
+<script>
+$(function(){
+ const form=$('#form-automacao-pedidos');
+ const msg=$('#mensagem-automacao-pedidos');
+ const url='paginas/pedidos/configurar-automacao.php';
+ $.getJSON(url,function(d){if(!d.ok)return; const c=d.config;form.find('[name=ativo]').val(String(c.ativo));form.find('[name=aceitar_minutos]').val(Number(c.aceitar_segundos)/60);form.find('[name=preparar_minutos]').val(Number(c.preparar_segundos)/60);form.find('[name=imprimir_ao_aceitar]').val(String(c.imprimir_ao_aceitar));}).fail(function(){msg.text('Não foi possível carregar as configurações.');});
+ form.on('submit',function(e){e.preventDefault();msg.text('Salvando...');
+ const a=Number(form.find('[name=aceitar_minutos]').val()),p=Number(form.find('[name=preparar_minutos]').val());
+ if(!Number.isInteger(a)||!Number.isInteger(p)||a<1||p<1||a>60||p>60){msg.text('Informe de 1 a 60 minutos.');return;}
+ $.ajax({url,type:'POST',dataType:'json',data:{ativo:form.find('[name=ativo]').val(),aceitar_segundos:a*60,preparar_segundos:p*60,imprimir_ao_aceitar:form.find('[name=imprimir_ao_aceitar]').val()}}).done(function(d){msg.text(d.ok?'Configurações salvas!':(d.erro||'Erro ao salvar'));}).fail(function(xhr){msg.text(xhr.responseJSON?.erro||'Erro ao salvar configurações');});
+ });
+});
+</script>
+<?php endif; ?>
 
 <div class="breadcrumb-header justify-content-between">
 	<div class="left-content mt-2">
