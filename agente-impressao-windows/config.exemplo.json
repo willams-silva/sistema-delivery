@@ -1,0 +1,9 @@
+{
+  "url": "https://maroon-quail-215556.hostingersite.com",
+  "empresa": 7,
+  "token": "SUBSTITUA_POR_UM_TOKEN_ALEATORIO_DE_64_CARACTERES",
+  "impressora": "NOME_EXATO_DA_IMPRESSORA_NO_WINDOWS",
+  "colunas": 32,
+  "encoding": "cp850",
+  "intervalo_segundos": 10
+}
