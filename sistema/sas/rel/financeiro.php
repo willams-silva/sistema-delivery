@@ -124,11 +124,15 @@ body { font-family: DejaVu Sans, sans-serif; font-size: 9px; color: #14243d; }
 <?php
 // Imagens locais incorporadas evitam ícones quebrados no Dompdf.
 $logo_relatorio = '';
-$logo_path = realpath(__DIR__ . '/../../img/logo.jpg');
+$nome_logo_relatorio = isset($logo_rel) && is_string($logo_rel) && $logo_rel !== '' ? basename($logo_rel) : 'logo.jpg';
+$logo_path = realpath(__DIR__ . '/../../img/' . $nome_logo_relatorio);
 if ($logo_path && is_file($logo_path) && is_readable($logo_path)) {
     $logo_bytes = file_get_contents($logo_path);
     if ($logo_bytes !== false) {
-        $logo_relatorio = 'data:image/jpeg;base64,' . base64_encode($logo_bytes);
+        $logo_mime = function_exists('mime_content_type') ? mime_content_type($logo_path) : 'image/jpeg';
+        if (in_array($logo_mime, array('image/jpeg', 'image/png', 'image/gif'), true)) {
+            $logo_relatorio = 'data:' . $logo_mime . ';base64,' . base64_encode($logo_bytes);
+        }
     }
 }
 ?>
