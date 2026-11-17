@@ -115,7 +115,26 @@ body.checkout-cardapio { background:#fffaf5; color:#493425; }
 .checkout-cardapio .btn-success:hover, .checkout-cardapio .btn-warning:hover { background:#87441b !important; }
 .checkout-cardapio .btn-danger { background:#fff; border-color:#d8bba3; color:#7b4d2d; border-radius:11px; padding:11px 19px; }
 .checkout-cardapio .total-finalizar { background:#fffdf9; border-top:1px solid #ead7c3; box-shadow:0 -5px 20px rgba(95,54,25,.08); }
-.checkout-cardapio .total-pedido { background:#fff; border-color:#ecd9c5 !important; }
+.checkout-cardapio .total-pedido {
+  box-sizing:border-box !important;
+  width:min(100%,360px) !important;
+  max-width:360px !important;
+  margin-left:auto !important;
+  margin-right:auto !important;
+  background:#fff !important;
+  border:1px solid #efddc9 !important;
+  border-radius:12px !important;
+  padding:12px 16px !important;
+  color:#503827 !important;
+}
+.checkout-cardapio .total-pedido::after { content:"";display:block;clear:both; }
+.checkout-cardapio .total-finalizar .abaixo {
+  box-sizing:border-box !important;
+  width:min(100%,360px) !important;
+  max-width:360px !important;
+  margin-left:auto !important;
+  margin-right:auto !important;
+}
 .checkout-cardapio #botao_finalizar {
   box-sizing:border-box !important;
   display:inline-flex !important;
