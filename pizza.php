@@ -109,12 +109,6 @@ if ($total_reg > 0) {
 	$descricao = $res[0]['descricao'];
 	$id = $res[0]['id'];
 	$mais_sabores = $res[0]['mais_sabores'];
-    // Fluxo exclusivo da categoria de tapiocas mistas; demais categorias não mudam.
-    if (($url_site ?? '') === 'rainhadastapiocas' && strtolower(trim($nome)) === 'tapiocas mistas') {
-        require __DIR__ . '/tapiocas-mistas.php';
-        exit;
-    }
-
 
 
 	$pdo->query("DELETE FROM temp where carrinho = 0 and sessao = '$sessao' and empresa = '$id_empresa' ");
@@ -436,6 +430,10 @@ body.selecao-cardapio { background:#fffaf5 !important; color:#503827; }
 			&& !empty($eh_tapiocas_com_adicionais_por_sabor)
 			&& isset($_GET['oferta']) && (int)$_GET['oferta'] > 0);
 		$sql_sabores = "SELECT * FROM produtos WHERE categoria = ? AND empresa = ? AND ativo = 'Sim' AND (tem_estoque = 'Não' OR estoque > 0)";
+        // Produtos mistos têm seu próprio montador e não devem aparecer como sabores tradicionais.
+        if (!empty($eh_tapiocas_salgadas)) {
+            $sql_sabores .= " AND NOT EXISTS (SELECT 1 FROM tapiocas_mistas_config mc WHERE mc.produto_id = produtos.id AND mc.empresa = produtos.empresa)";
+        }
 		if ($modo_ofertas_tapiocas) $sql_sabores .= " AND promocao = 'Sim' AND val_promocional > 0";
 		$query = $pdo->prepare($sql_sabores);
 		$query->execute([(int)$id, $id_empresa]);
@@ -690,7 +688,12 @@ body.selecao-cardapio { background:#fffaf5 !important; color:#503827; }
 			</div>
 
 	</ol>
-
+<?php
+// Mostra o montador das mistas junto das tradicionais, sem substituir a página.
+if (!empty($eh_tapiocas_salgadas)) {
+    require __DIR__ . '/tapiocas-mistas.php';
+}
+?>
 
 </div>
 

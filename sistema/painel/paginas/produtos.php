@@ -1599,7 +1599,7 @@ function excluirProduto(id) {
 (function(){
  function atualizarCampoMista(){
    var categoria = ($('#categoria option:selected').text() || '').trim().toLowerCase();
-   var mista = categoria === 'tapiocas mistas';
+   var mista = categoria === 'tapiocas salgadas';
    $('#config-tapioca-mista').toggle(mista);
    if (!mista) $('#limite_proteinas_mista').val('0');
  }

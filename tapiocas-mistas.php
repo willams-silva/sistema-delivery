@@ -1,5 +1,5 @@
 <?php
-// Incluído exclusivamente por pizza.php após identificar a categoria.
+// Montador exclusivo dos produtos com configuração individual de tapioca mista.
 $stmt_mistas = $pdo->prepare("SELECT p.id, p.nome, p.descricao, p.foto, p.valor_venda, p.val_promocional, p.promocao, m.limite_proteinas
  FROM produtos p INNER JOIN tapiocas_mistas_config m ON m.produto_id = p.id AND m.empresa = p.empresa
  WHERE p.categoria = ? AND p.empresa = ? AND p.ativo = 'Sim' AND (p.tem_estoque = 'Não' OR p.estoque > 0) ORDER BY p.nome");
@@ -9,9 +9,10 @@ $stmt_extras = $pdo->prepare("SELECT id, nome, valor, tipo FROM adicionais_cat W
 $stmt_extras->execute([(int)$id, $id_empresa]);
 $extras_mistos = $stmt_extras->fetchAll(PDO::FETCH_ASSOC);
 $proteinas_mistas = array_values(array_filter($extras_mistos, function($a){return ($a['tipo'] ?? '') === 'proteina';}));
-function escMista($x) { return htmlspecialchars((string)$x, ENT_QUOTES, 'UTF-8'); }
+if (!function_exists('escMista')) { function escMista($x) { return htmlspecialchars((string)$x, ENT_QUOTES, 'UTF-8'); } }
 ?>
-<main class="container" style="max-width:850px;padding:24px 12px 100px">
+<?php if ($produtos_mistos): ?>
+<div class="container" style="max-width:850px;padding:24px 12px 100px">
 <h2 style="color:#713c20;text-align:center">Monte sua tapioca mista</h2>
 <p style="text-align:center">Escolha uma tapioca, selecione as proteínas inclusas e acrescente extras, se desejar.</p>
 <?php if (!$produtos_mistos): ?><p class="alert alert-info">Ainda não há tapiocas mistas configuradas no painel.</p><?php endif; ?>
@@ -59,7 +60,7 @@ function escMista($x) { return htmlspecialchars((string)$x, ENT_QUOTES, 'UTF-8')
  </div>
 </section>
 <?php endforeach; ?>
-</main>
+</div>
 <script>
 (function(){
  document.querySelectorAll('[data-mista]').forEach(function(card){
@@ -88,4 +89,6 @@ function escMista($x) { return htmlspecialchars((string)$x, ENT_QUOTES, 'UTF-8')
  });
 })();
 </script>
-</body></html>
+
+
+<?php endif; ?>

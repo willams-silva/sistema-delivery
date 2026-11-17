@@ -9,7 +9,7 @@ $produto_id = (int)($_POST['produto'] ?? 0);
 $inclusas = json_decode($_POST['inclusas'] ?? '', true);
 $extras = json_decode($_POST['extras'] ?? '', true);
 if (!is_array($inclusas) || !is_array($extras) || !$produto_id || count($extras)>100) exit('Seleção inválida');
-$stmt = $pdo->prepare("SELECT p.*, m.limite_proteinas FROM produtos p JOIN categorias c ON c.id = p.categoria AND c.empresa = p.empresa JOIN tapiocas_mistas_config m ON m.produto_id = p.id AND m.empresa = p.empresa WHERE p.id = ? AND p.empresa = ? AND c.nome = 'TAPIOCAS MISTAS' AND p.ativo = 'Sim' AND (p.tem_estoque = 'Não' OR p.estoque > 0) LIMIT 1");
+$stmt = $pdo->prepare("SELECT p.*, m.limite_proteinas FROM produtos p JOIN categorias c ON c.id = p.categoria AND c.empresa = p.empresa JOIN tapiocas_mistas_config m ON m.produto_id = p.id AND m.empresa = p.empresa WHERE p.id = ? AND p.empresa = ? AND LOWER(TRIM(c.nome)) = 'tapiocas salgadas' AND p.ativo = 'Sim' AND (p.tem_estoque = 'Não' OR p.estoque > 0) LIMIT 1");
 $stmt->execute([$produto_id, $id_empresa]);
 $p = $stmt->fetch(PDO::FETCH_ASSOC);
 if (!$p) exit('Tapioca indisponível');
