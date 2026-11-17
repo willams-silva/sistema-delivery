@@ -73,38 +73,39 @@ if (!empty($_FILES['foto-logo']['name'])) {
 }
 
 
-//foto logo rel
-$caminho = '../img/logo.jpg';
-$imagem_temp = @$_FILES['foto-logo-rel']['tmp_name']; 
-
-if(@$_FILES['foto-logo-rel']['name'] != ""){
-	$ext = pathinfo(@$_FILES['foto-logo-rel']['name'], PATHINFO_EXTENSION);   
-	if($ext == 'jpg' || $ext == 'JPG' || $ext == 'png' || $ext == 'PNG'){ 	
-			
-		move_uploaded_file($imagem_temp, $caminho);
-	}else{
-		echo 'Extensão de Imagem não permitida!';
-		exit();
-	}
+// Logo de relatorio: converte PNG para JPEG, pois os relatorios leem logo.jpg.
+if (!empty($_FILES['foto-logo-rel']['name'])) {
+    $upload = $_FILES['foto-logo-rel'];
+    if (($upload['error'] ?? UPLOAD_ERR_NO_FILE) !== UPLOAD_ERR_OK || !is_uploaded_file($upload['tmp_name'])) {
+        echo 'Falha no upload da logo do relatório.'; exit();
+    }
+    $info = @getimagesize($upload['tmp_name']);
+    $mime = $info['mime'] ?? '';
+    $destino = '../img/logo.jpg';
+    if ($mime === 'image/jpeg') {
+        $ok = @move_uploaded_file($upload['tmp_name'], $destino);
+    } elseif ($mime === 'image/png') {
+        if (!function_exists('imagecreatefrompng')) { echo 'Servidor sem suporte a conversão PNG. Envie JPG para a logo do relatório.'; exit(); }
+        $origem = @imagecreatefrompng($upload['tmp_name']);
+        if (!$origem) { echo 'PNG inválido para logo do relatório.'; exit(); }
+        $fundo = imagecreatetruecolor(imagesx($origem), imagesy($origem));
+        $branco = imagecolorallocate($fundo, 255, 255, 255);
+        imagefill($fundo, 0, 0, $branco);
+        imagecopy($fundo, $origem, 0, 0, 0, 0, imagesx($origem), imagesy($origem));
+        $ok = @imagejpeg($fundo, $destino, 92);
+        imagedestroy($origem); imagedestroy($fundo);
+    } else { echo 'Logo do relatório deve ser PNG ou JPG.'; exit(); }
+    if (!$ok) { echo 'Não foi possível gravar a logo do relatório. Verifique permissões da pasta img.'; exit(); }
 }
 
-
-//foto icone
-$caminho = '../img/icone.jpg';
-$imagem_temp = $_FILES['foto-icone']['tmp_name'] ?? '';
-
-if(@$_FILES['foto-icone']['name'] != ""){
-	$ext = pathinfo(@$_FILES['foto-icone']['name'], PATHINFO_EXTENSION);   
-	if($ext == 'jpg' || $ext == 'JPG' || $ext == 'png' || $ext == 'PNG'){ 	
-			
-		move_uploaded_file($imagem_temp, $caminho);
-	}else{
-		echo 'Extensão de Imagem não permitida!';
-		exit();
-	}
+// Ícone: o SAS exibe icone.png, portanto salvar no mesmo arquivo.
+if (!empty($_FILES['foto-icone']['name'])) {
+    $upload = $_FILES['foto-icone'];
+    $info = @getimagesize($upload['tmp_name'] ?? '');
+    if (($upload['error'] ?? UPLOAD_ERR_NO_FILE) !== UPLOAD_ERR_OK || ($info['mime'] ?? '') !== 'image/png' || !@move_uploaded_file($upload['tmp_name'], '../img/icone.png')) {
+        echo 'Não foi possível salvar o ícone. Envie um PNG válido e verifique as permissões.'; exit();
+    }
 }
-
-
 
 //foto ass
 $caminho = '../img/assinatura.jpg';
@@ -122,24 +123,14 @@ if(@$_FILES['assinatura_rel']['name'] != ""){
 }
 
 
-//foto painel
-$caminho = '../img/foto-painel.png';
-$imagem_temp = @$_FILES['foto-painel']['tmp_name']; 
-
-if(@$_FILES['foto-painel']['name'] != ""){
-	$ext = pathinfo(@$_FILES['foto-painel']['name'], PATHINFO_EXTENSION);   
-	if($ext == 'png' || $ext == 'PNG'){ 	
-			
-		move_uploaded_file($imagem_temp, $caminho);
-	}else{
-		echo 'Extensão de Imagem não permitida!';
-		exit();
-	}
+// Logo do painel
+if (!empty($_FILES['foto-painel']['name'])) {
+    $upload = $_FILES['foto-painel'];
+    $info = @getimagesize($upload['tmp_name'] ?? '');
+    if (($upload['error'] ?? UPLOAD_ERR_NO_FILE) !== UPLOAD_ERR_OK || ($info['mime'] ?? '') !== 'image/png' || !@move_uploaded_file($upload['tmp_name'], '../img/foto-painel.png')) {
+        echo 'Não foi possível salvar a logo do painel. Envie um PNG válido e verifique as permissões.'; exit();
+    }
 }
-
-
-
-
 
 //foto fundo login
 $nome_img = date('d-m-Y H:i:s') . '-' . @$_FILES['fundo_login']['name'];
