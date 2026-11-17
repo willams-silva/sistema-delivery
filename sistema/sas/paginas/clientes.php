@@ -30,12 +30,12 @@ if (@$clientes == 'ocultar') {
 .bc-empresas-page #tabela tbody td:last-child .btn:focus-visible{outline:3px solid #ffc400;outline-offset:2px}
 .bc-empresas-page .dataTables_filter input,.bc-empresas-page .dataTables_length select{border:1px solid #cbd5e1;border-radius:9px;padding:6px 10px;background:#fff;color:#061b3a}
 .bc-empresas-page .dataTables_filter input:focus{outline:2px solid #ffc400;outline-offset:1px}
-.bc-empresas-page .modal-content{border-radius:18px;overflow:hidden}
-.bc-empresas-page .modal-header{background:#061b3a!important;color:#fff!important}
-.bc-empresas-page .modal-title{color:#fff!important}
-.bc-empresas-page .modal-body label{font-weight:650;color:#253958}
-.bc-empresas-page .modal-body .form-control,.bc-empresas-page .modal-body .form-select{border-radius:9px;min-height:40px}
-.bc-empresas-page .modal-body .form-control:focus,.bc-empresas-page .modal-body .form-select:focus{border-color:#ffc400;box-shadow:0 0 0 3px rgba(255,196,0,.16)}
+#modalForm .modal-content{border-radius:18px;overflow:hidden}
+#modalForm .modal-header{background:#061b3a!important;color:#fff!important}
+#modalForm .modal-title{color:#fff!important}
+#modalForm .modal-body label{font-weight:650;color:#253958}
+#modalForm .modal-body .form-control,#modalForm .modal-body .form-select{border-radius:9px;min-height:40px}
+#modalForm .modal-body .form-control:focus,#modalForm .modal-body .form-select:focus{border-color:#ffc400;box-shadow:0 0 0 3px rgba(255,196,0,.16)}
 @media(max-width:767px){.bc-empresas-page .breadcrumb-header{padding:12px}.bc-empresas-page .left-content{gap:8px}.bc-empresas-page .left-content>.btn{font-size:12px;padding:9px 12px}.bc-empresas-page .left-content>.btn-success{margin-left:0!important}.bc-empresas-page .card-body{padding:12px}.bc-empresas-page #tabela{font-size:12px}}
 </style>
 
@@ -61,6 +61,8 @@ if (@$clientes == 'ocultar') {
 	</div>
 </div>
 
+
+</div><!-- /bc-empresas-page: apenas barra e tabela -->
 
 <input type="hidden" id="ids">
 
@@ -1193,4 +1195,3 @@ return valor.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFraction
 			});
 		}
 	</script>
-</div><!-- /bc-empresas-page -->
