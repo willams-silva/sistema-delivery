@@ -147,6 +147,8 @@ function getCardColor($index) {
    <div class="container">
       
 
+       <div class="bc-dashboard-heading"><span class="bc-dashboard-symbol"><i class="fa fa-bar-chart"></i></span><div><h1>Dashboard</h1><p>Visão geral do sistema SaaS</p></div></div>
+
        <!-- Espaçador entre o alerta e os cards -->
        <div style="margin-bottom: 2.5rem;"></div>
 
@@ -333,7 +335,7 @@ function getCardColor($index) {
        <!-- Grid de Empresas -->
        <div class="section">
            <div class="section-header">
-               <h2 class="section-title-large text-primary">Empresas Cadastradas</h2>
+               <h2 class="section-title-large text-primary"><i class="fa fa-building" aria-hidden="true"></i> Empresas Cadastradas</h2>
               
                <div class="sas-company-tools">
                    <label class="sas-company-search" for="buscar_empresas">
