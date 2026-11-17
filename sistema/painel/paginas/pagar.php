@@ -28,7 +28,7 @@ if ($linhas > 0) {
 ?>
 
 
-<div class="justify-content-between">
+<div class="justify-content-between ux-finance-page">
 	<form action="rel/pagar_class.php" target="_blank" method="POST">
 		<div class="left-content mt-2">
 
@@ -189,7 +189,7 @@ if ($linhas > 0) {
 <div class="row row-sm">
 	<div class="col-lg-12">
 		<div class="card custom-card">
-			<div class="card-body" id="listar">
+			<div class="card-body ux-finance-list" id="listar">
 
 			</div>
 		</div>
@@ -201,7 +201,7 @@ if ($linhas > 0) {
 <input type="hidden" id="ids">
 
 <!-- Modal Principal -->
-<div class="modal fade" id="modalForm" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+<div class="modal fade ux-finance-modal" id="modalForm" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
 	<div class="modal-dialog modal-lg">
 		<div class="modal-content">
 			<div class="modal-header bg-primary text-white">
@@ -358,7 +358,7 @@ if ($linhas > 0) {
 
 
 <!-- Modal Dados -->
-<div class="modal fade" id="modalDados" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+<div class="modal fade ux-finance-modal" id="modalDados" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
 	<div class="modal-dialog modal-lg">
 		<div class="modal-content">
 			<div class="modal-header bg-primary text-white">
@@ -489,7 +489,7 @@ if ($linhas > 0) {
 
 
 <!-- Modal Parcelar -->
-<div class="modal fade" id="modalParcelar" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+<div class="modal fade ux-finance-modal" id="modalParcelar" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
 	<div class="modal-dialog" role="document">
 		<div class="modal-content">
 			<div class="modal-header bg-primary text-white">
@@ -574,7 +574,7 @@ if ($linhas > 0) {
 
 
 <!-- Modal Baixar-->
-<div class="modal fade" id="modalBaixar" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+<div class="modal fade ux-finance-modal" id="modalBaixar" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
 	<div class="modal-dialog">
 		<div class="modal-content">
 			<div class="modal-header bg-primary text-white">
@@ -690,7 +690,7 @@ if ($linhas > 0) {
 
 
 <!-- Modal Resíduo-->
-<div class="modal fade" id="modalResiduos" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+<div class="modal fade ux-finance-modal" id="modalResiduos" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
 	<div class="modal-dialog">
 		<div class="modal-content">
 			<div class="modal-header bg-primary text-white">
@@ -712,7 +712,7 @@ if ($linhas > 0) {
 
 
 <!-- Modal Arquivos -->
-<div class="modal fade" id="modalArquivos" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+<div class="modal fade ux-finance-modal" id="modalArquivos" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
 	<div class="modal-dialog modal-lg">
 		<div class="modal-content">
 			<div class="modal-header bg-primary text-white">
