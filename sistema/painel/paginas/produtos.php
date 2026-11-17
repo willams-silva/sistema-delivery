@@ -17,7 +17,7 @@ $pag = 'produtos';
 		<a class="btn btn-danger" href="#" onclick="deletarSelProdutos()" title="Excluir" id="btn-deletar" style="display:none"><i class="fe fe-trash-2"></i> Deletar</a>
 
 		<select class="form-select sel7" name="categoria" id="busca" style="width:350px" onchange="buscar()">
-			<option value="">Buscasr por Categoria</option>
+			<option value="">Buscar por categoria</option>
 			<?php
 			$query = $pdo->query("SELECT * from categorias where empresa = '$id_empresa' order by id desc");
 			$res = $query->fetchAll(PDO::FETCH_ASSOC);
