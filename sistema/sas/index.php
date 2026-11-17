@@ -156,23 +156,27 @@ if (@count($res1) > 0) {
 
 
 <style>
-/* SAS: cabeçalho compacto, logo centralizada e menu sem sobreposição. */
+/* SAS: logo integrada ao menu sem sobreposição e sem fundo imposto pelo CSS. */
 @media (min-width: 992px) {
   body:not(.sidenav-toggled) .app-sidebar .main-sidebar-header {
-    height:112px!important;min-height:112px!important;
+    position:relative!important; height:150px!important;min-height:150px!important;
     display:flex!important;align-items:center!important;justify-content:center!important;
-    padding:8px 12px!important;
+    padding:10px 12px 12px!important;background:transparent!important;
+    border-bottom:1px solid rgba(255,255,255,.24)!important;
   }
   body:not(.sidenav-toggled) .app-sidebar .main-sidebar-header .header-logo {
-    width:100%!important;height:100%!important;display:flex!important;
-    align-items:center!important;justify-content:center!important;padding:0!important;
+    display:flex!important;align-items:center!important;justify-content:center!important;
+    width:100%!important;height:100%!important;padding:0!important;background:transparent!important;
   }
   body:not(.sidenav-toggled) .app-sidebar .main-sidebar-header .header-logo img.desktop-logo,
   body:not(.sidenav-toggled) .app-sidebar .main-sidebar-header .header-logo img.desktop-dark {
-    width:auto!important;max-width:94%!important;height:92px!important;
-    max-height:92px!important;object-fit:contain!important;
+    width:100%!important;max-width:285px!important;height:124px!important;
+    max-height:124px!important;object-fit:contain!important;background:transparent!important;
   }
-  body:not(.sidenav-toggled) .app-sidebar .main-sidemenu {padding-top:32px!important;}
+  body:not(.sidenav-toggled) .app-sidebar .main-sidemenu {
+    padding-top:0!important;margin-top:0!important;
+  }
+  body:not(.sidenav-toggled) .app-sidebar .main-sidemenu .side-menu {margin-top:0!important;}
 }
 </style>
 </head>
