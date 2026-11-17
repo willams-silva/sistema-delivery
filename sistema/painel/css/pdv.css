@@ -411,3 +411,22 @@
 .swal-whatsapp-container {
     z-index: 9999999999 !important; /* Maior que o z-index padrão das modais Bootstrap (1050) */
 }
+/* PDV: títulos sem recorte ou sobreposição no hover */
+.pdv_body #listar > a { min-width: 0; display: block; color: inherit; text-decoration: none; }
+.pdv_body #listar .product-card { height: 100%; overflow: hidden; }
+.pdv_body #listar .product-card .card-content { min-width: 0; padding-bottom: 45px; }
+.pdv_body #listar .product-card .card-title {
+  display: block; position: static; transform: none !important;
+  width: 100%; max-width: 100%; min-height: 2.8em;
+  white-space: normal; overflow-wrap: anywhere; word-break: normal;
+  overflow: visible; line-height: 1.4; margin: 0 0 6px;
+  font-size: 12px; font-weight: 600; color: #1e293b;
+}
+.pdv_body #listar .product-card:hover .card-title,
+.pdv_body #listar > a:hover .card-title {
+  transform: none !important; white-space: normal; overflow-wrap: anywhere;
+  color: #1e293b; text-overflow: clip;
+}
+.pdv_body #listar .pdv-barcode-box { display:flex; flex-direction:column; align-items:flex-start; gap:3px; max-width:100%; margin:6px 0; }
+.pdv_body #listar .pdv-barcode { display:block; width:100%; max-width:155px; height:32px; }
+.pdv_body #listar .pdv-barcode-number { font-size:10px; color:#475569; overflow-wrap:anywhere; }
