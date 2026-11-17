@@ -449,7 +449,7 @@ HTML;
 
 <td><a href="images/contas/{$arquivo}" target="_blank"><img src="images/contas/{$tumb_arquivo}" width="25px"></a></td>
 <td>
-	<a class="btn btn-info-light btn-sm {$ocultar}" href="#" onclick="editar('{$id}','{$descricao}','{$valor}','{$cliente}','{$vencimento}','{$data_pgto}','{$forma_pgto}','{$frequencia}','{$obs}','{$tumb_arquivo}','{$quant_recorrencia}')" title="Editar Dados"><i class="fa fa-edit"></i></a>
+	<a class="btn btn-info-light btn-sm {$ocultar}" href="#" onclick="editar('{$id}','{$descricao}','{$valor}','{$cliente}','{$vencimento}','{$data_pgto}','{$forma_pgto}','{$frequencia}','{$obs}','{$tumb_arquivo}','{$quant_recorrencia}','{$descontoF}')" title="Editar Dados"><i class="fa fa-edit"></i></a>
 
 <a class="btn btn-danger-light btn-sm {$ocultar}" href="#" onclick="excluirConta('{$id}')" title="Excluir"><i class="fa fa-trash-can"></i></a>
 
@@ -539,13 +539,14 @@ HTML;
 
 
 <script type="text/javascript">
-	function editar(id, descricao, valor, cliente, vencimento, data_pgto, forma_pgto, frequencia, obs, arquivo, quant_recorrencia) {
+	function editar(id, descricao, valor, cliente, vencimento, data_pgto, forma_pgto, frequencia, obs, arquivo, quant_recorrencia, desconto) {
 		$('#mensagem').text('');
 		$('#titulo_inserir').text('Editar Registro');
 
 		$('#id').val(id);
 		$('#descricao').val(descricao);
 		$('#valor').val(valor);
+		$('#desconto-fatura').val(desconto || '0,00');
 		mascaraMoeda(document.getElementById('valor'));
 		$('#cliente').val(cliente).change();
 		$('#vencimento').val(vencimento);
@@ -554,6 +555,7 @@ HTML;
 		$('#frequencia').val(frequencia).change();
 		$('#obs').val(obs);
 		$('#quant_recorrencia').val(quant_recorrencia);
+		atualizarTotalFatura();
 
 		$('#arquivo').val('');
 		$('#target').attr('src', 'images/contas/' + arquivo);
@@ -597,6 +599,8 @@ HTML;
 		$('#id').val('');
 		$('#descricao').val('');
 		$('#valor').val('0,00');
+		$('#desconto-fatura').val('0,00');
+		atualizarTotalFatura();
 		$('#vencimento').val("<?= $data_atual ?>");
 		$('#data_pgto').val('');
 		$('#obs').val('');
