@@ -1,4 +1,5 @@
-<?php 
+<?php
+require_once __DIR__ . '/identidade_pdf.php'; 
 include('data_formatada.php');
 
 if ($token_rel != 'M543664') {
@@ -97,7 +98,7 @@ body{font-family:DejaVu Sans,sans-serif;font-size:9px;color:#14243d}
 </head>
 <body>
 <?php
-require_once __DIR__ . '/identidade_pdf.php';
+
 $logo_relatorio = sasRelatorioLogo();
 ?>
 <?php if ($marca_dagua == 'Sim' && $logo_relatorio != '') { ?><img class="marca" src="<?php echo $logo_relatorio; ?>"><?php } ?>
