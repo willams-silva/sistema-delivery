@@ -47,15 +47,29 @@ $juros_atraso = str_replace('%', '', $juros_atraso);
 $caminho = '../img/logo.png';
 $imagem_temp = @$_FILES['foto-logo']['tmp_name']; 
 
-if(@$_FILES['foto-logo']['name'] != ""){
-	$ext = pathinfo($_FILES['foto-logo']['name'], PATHINFO_EXTENSION);   
-	if($ext == 'png' || $ext == 'PNG'){ 	
-				
-		move_uploaded_file($imagem_temp, $caminho);
-	}else{
-		echo 'Extensão de Imagem não permitida!';
-		exit();
-	}
+if (!empty($_FILES['foto-logo']['name'])) {
+    if (($_FILES['foto-logo']['error'] ?? UPLOAD_ERR_NO_FILE) !== UPLOAD_ERR_OK) {
+        echo 'Falha ao receber a logo. Verifique o tamanho do arquivo e tente novamente.';
+        exit();
+    }
+    $ext = strtolower(pathinfo($_FILES['foto-logo']['name'], PATHINFO_EXTENSION));
+    if ($ext !== 'png') {
+        echo 'A logo deve estar em formato PNG!';
+        exit();
+    }
+    if (!is_uploaded_file($imagem_temp) || @getimagesize($imagem_temp) === false || @exif_imagetype($imagem_temp) !== IMAGETYPE_PNG) {
+        echo 'Arquivo PNG inválido. Selecione uma imagem PNG válida.';
+        exit();
+    }
+    if (!is_dir(dirname($caminho)) || !is_writable(dirname($caminho))) {
+        echo 'A pasta sistema/img não permite gravação. Verifique as permissões na Hostinger.';
+        exit();
+    }
+    if (!move_uploaded_file($imagem_temp, $caminho)) {
+        echo 'Não foi possível salvar a logo em sistema/img/logo.png. Verifique as permissões.';
+        exit();
+    }
+    clearstatcache(true, $caminho);
 }
 
 
