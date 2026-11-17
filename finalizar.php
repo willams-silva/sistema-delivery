@@ -90,7 +90,118 @@ if($somente_pix_delivery == 'Sim'){
     color: #888; /* opcional, muda a cor do placeholder */
   }
 </style>
+<style>
+/* Checkout: identidade visual acolhedora do cardápio, isolada desta página. */
+body.checkout-cardapio { background:#fffaf5; color:#493425; }
+.checkout-cardapio .main-container { max-width:1050px; margin:0 auto; padding:0 14px; }
+.checkout-cardapio .navbar { background:#fffdf9 !important; border-bottom:1px solid #f0dfce; box-shadow:0 3px 16px rgba(94,53,25,.09) !important; }
+.checkout-cardapio .navbar-brand { color:#753d1e; font-weight:750; display:flex; align-items:center; gap:12px; font-size:clamp(15px,2.5vw,20px); }
+.checkout-cardapio .navbar-brand img { width:64px; max-height:58px; object-fit:contain; }
+.checkout-cardapio #accordionExample { margin-top:90px !important; margin-bottom:215px !important; overflow:visible !important; height:auto !important; display:grid; gap:14px; }
+.checkout-cardapio .accordion-item { border:1px solid #efddc9; border-radius:16px !important; overflow:hidden; background:#fff; box-shadow:0 4px 20px rgba(100,58,29,.055); }
+.checkout-cardapio .accordion-button { padding:19px 22px; font-size:15px !important; font-weight:750; color:#75401f; background:#fff; box-shadow:none; }
+.checkout-cardapio .accordion-button:not(.collapsed) { background:#fff2e4; color:#8d4a20; box-shadow:none; }
+.checkout-cardapio .accordion-button:focus { box-shadow:0 0 0 2px #e5b88c; }
+.checkout-cardapio .accordion-button::after { filter:sepia(1) saturate(1.5); }
+.checkout-cardapio .accordion-body { padding:22px; }
+.checkout-cardapio .list-group { padding-left:0; gap:9px; }
+.checkout-cardapio .list-group-item { border:1px solid #eedfce; border-radius:12px !important; padding:16px; cursor:pointer; color:#553b2a; background:#fffdfb; }
+.checkout-cardapio .list-group-item:hover { background:#fff2e5; }
+.checkout-cardapio .form-check-input:checked { background-color:#a85b24; border-color:#a85b24; }
+.checkout-cardapio .group .input { color:#50392b; border-bottom-color:#cbb29a; }
+.checkout-cardapio .group .label { color:#87674d; }
+.checkout-cardapio .group .input:focus { border-bottom-color:#a85b24; }
+.checkout-cardapio .btn-success, .checkout-cardapio .btn-warning { background:#a85b24 !important; border-color:#a85b24 !important; color:#fff !important; border-radius:11px; font-weight:700; padding:11px 19px; }
+.checkout-cardapio .btn-success:hover, .checkout-cardapio .btn-warning:hover { background:#87441b !important; }
+.checkout-cardapio .btn-danger { background:#fff; border-color:#d8bba3; color:#7b4d2d; border-radius:11px; padding:11px 19px; }
+.checkout-cardapio .total-finalizar {
+  background:#fffdf9;
+  border-top:1px solid #ead7c3;
+  box-shadow:0 -5px 20px rgba(95,54,25,.08);
+  padding:14px 16px calc(14px + env(safe-area-inset-bottom, 0px)) !important;
+  box-sizing:border-box !important;
+  left:0 !important;
+  right:0 !important;
+  width:100% !important;
+  max-width:none !important;
+  margin:0 !important;
+}
+.checkout-cardapio .total-finalizar .total-pedido {
+  min-height:0 !important;
+  height:auto !important;
+}
+.checkout-cardapio .total-finalizar .total-pedido > big {
+  display:flex !important;
+  justify-content:space-between !important;
+  align-items:center !important;
+  gap:8px !important;
+  flex-wrap:nowrap !important;
+  font-size:15px !important;
+  line-height:1.4 !important;
+}
+.checkout-cardapio .total-finalizar .total-pedido > big > span { font-size:inherit !important; }
+.checkout-cardapio .total-finalizar .total-pedido > big .direita {
+  float:none !important;
+  margin-left:auto !important;
+  white-space:nowrap !important;
+}
+@media(max-width:380px) {
+  .checkout-cardapio .total-finalizar .total-pedido > big { font-size:13px !important; }
+}
+.checkout-cardapio .total-pedido {
+  box-sizing:border-box !important;
+  width:min(100%,360px) !important;
+  max-width:360px !important;
+  margin-left:auto !important;
+  margin-right:auto !important;
+  background:#fff !important;
+  border:1px solid #efddc9 !important;
+  border-radius:12px !important;
+  padding:12px 16px !important;
+  color:#503827 !important;
+}
+.checkout-cardapio .total-pedido::after { content:"";display:block;clear:both; }
+.checkout-cardapio .total-finalizar .abaixo {
+  box-sizing:border-box !important;
+  width:min(100%,360px) !important;
+  max-width:360px !important;
+  margin-left:auto !important;
+  margin-right:auto !important;
+}
+.checkout-cardapio #botao_finalizar {
+  box-sizing:border-box !important;
+  display:inline-flex !important;
+  justify-content:center !important;
+  align-items:center !important;
+  gap:10px;
+  width:min(100%,360px) !important;
+  max-width:360px !important;
+  margin:0 auto !important;
+  padding:13px 12px !important;
+  border-radius:12px !important;
+  font-size:clamp(14px,3.8vw,20px) !important;
+  font-weight:750 !important;
+  white-space:nowrap;
+  text-align:center;
+}
+.checkout-cardapio .total-finalizar .abaixo { display:flex !important; justify-content:center !important; align-items:center !important; margin-top:18px !important; }
+.checkout-cardapio #botao_finalizar i { font-size:1.1em; line-height:1; }
+.checkout-cardapio #area-endereco button[title="Buscar Localização"] { background:#a85b24 !important; border-radius:9px; width:36px !important; height:36px !important; }
+.checkout-cardapio #area-endereco button[title="Buscar Localização"] i { color:#fff !important; }
+@media(max-width:767px) {
+  .checkout-cardapio .main-container { padding:0 10px; }
+  .checkout-cardapio #accordionExample { margin-top:77px !important; margin-bottom:240px !important; gap:10px; }
+  .checkout-cardapio .accordion-body { padding:16px 13px; }
+  .checkout-cardapio .accordion-button { padding:16px 13px; font-size:13px !important; }
+  .checkout-cardapio .navbar-brand img { width:47px; }
+  .checkout-cardapio .navbar-brand { gap:7px; }
+  .checkout-cardapio #area-endereco .col-4 { width:55%; }
+  .checkout-cardapio #area-endereco .col-7 { min-width:0; }
+  .checkout-cardapio #area-endereco .group .input { max-width:100%; }
+}
+</style>
 
+<script>document.body.classList.add("checkout-cardapio");</script>
 <div class="main-container">
 
   <nav class="navbar bg-light fixed-top" style="box-shadow: 0px 3px 5px rgba(0, 0, 0, 0.20);">
@@ -218,11 +329,11 @@ if($somente_pix_delivery == 'Sim'){
 
           <div id="area-endereco">
 
-            <?php if ($entrega_distancia == "Sim" and $chave_api_maps != "") { ?>
+            <?php // CEP obrigatório em qualquer modalidade de entrega Delivery. ?>
               <div class="row">
                 <div class="col-4">
                   <div class="group">
-                    <input type="text" class="input" name="cep" id="cep" required onblur="calcularFreteDistancia()">
+                    <input type="text" class="input" name="cep" id="cep" required inputmode="numeric" maxlength="9" autocomplete="postal-code" onblur="if (<?= json_encode($entrega_distancia == 'Sim' && $chave_api_maps != '') ?>) calcularFreteDistancia()">
                     <span class="highlight"></span>
                     <span class="bar"></span>
                     <label class="label">CEP*</label>
@@ -231,7 +342,7 @@ if($somente_pix_delivery == 'Sim'){
 
 
               </div>
-            <?php } ?>
+            <?php // Fim do campo CEP. ?>
 
             <div class="row">
               <div class="col-7">
@@ -533,8 +644,7 @@ if($somente_pix_delivery == 'Sim'){
 
 
   <div class="d-grid gap-2 mt-4 abaixo">
-    <a href='javascript:void(0)' id="botao_finalizar" onclick="finalizarPedido()" class="btn btn-warning btn-lg">Concluir
-      Pedido</a>
+    <a href='javascript:void(0)' id="botao_finalizar" onclick="finalizarPedido()" class="btn btn-warning btn-lg">Concluir Pedido <i class="fal fa-long-arrow-right" aria-hidden="true"></i></a>
 
     <div align="center" id="div_img" style="display:none"><img src="img/loading.gif" width="100%" height="40px"></div>
   </div>
@@ -901,18 +1011,12 @@ if($somente_pix_delivery == 'Sim'){
     var chave_api_maps = "<?= $chave_api_maps ?>";
     var entrega_distancia = "<?= $entrega_distancia ?>";
 
-    if (chave_api_maps == "" || entrega_distancia != "Sim") {
-      var cep = "";
-      var cidade = "";
-    } else {
-      var cep = $('#cep').val();
-      var cidade = $('#cidade').val();
-    }
+    var cep = ($('#cep').val() || '').replace(/\D/g, '');
+    var cidade = $('#cidade').val() || '';
 
-
-    if (entrega == "Delivery" && entrega_distancia == 'Sim') {
-      if (cep == "") {
-        alertWarning("Preencha o CEP");
+    if (entrega == "Delivery") {
+      if (cep.length !== 8) {
+        alertWarning("Preencha um CEP válido com 8 dígitos");
         $('#cep').focus();
         $('#botao_finalizar').show();
         $('#div_img').hide();
@@ -922,8 +1026,8 @@ if($somente_pix_delivery == 'Sim'){
 
 
 
-    if (taxa_entrega == "") {
-      alertWarning("Digite um CEP válido para receber seu Pedido, ou atualize a chave da api do google maps para o calculo de frete por distância!");
+    if (entrega == "Delivery" && taxa_entrega == "") {
+      alertWarning("Selecione um bairro válido para calcular a taxa de entrega.");
       $('#botao_finalizar').show();
       $('#div_img').hide();
       $('#colapse-').click();
@@ -1347,11 +1451,9 @@ if($somente_pix_delivery == 'Sim'){
 
 
   document.getElementById('cep').addEventListener('input', function(event) {
-    var cep = event.target.value.replace(/\D/g, '');
-
-    if (cep.length === 8) {
-      fetchAddressData(cep);
-    }
+    var cep = event.target.value.replace(/\D/g, '').slice(0, 8);
+    event.target.value = cep.length > 5 ? cep.slice(0, 5) + '-' + cep.slice(5) : cep;
+    if (cep.length === 8) fetchAddressData(cep);
   });
 
   function calcularFreteDistancia() {
@@ -1359,7 +1461,6 @@ if($somente_pix_delivery == 'Sim'){
     var chave_api = "<?= $chave_api_maps ?>";
     var distancia_km = "<?= $distancia_entrega_km ?>";
 
-    event.preventDefault();
     var cep = document.getElementById('cep').value;
     var address = document.getElementById('rua').value;
     var number = document.getElementById('numero').value;
@@ -1424,9 +1525,20 @@ if($somente_pix_delivery == 'Sim'){
       })
       .then(function(data) {
         if (!data.erro) {
-          document.getElementById('rua').value = data.logradouro;
-          document.getElementById('bairro').value = data.bairro;
-          document.getElementById('cidade').value = data.localidade;
+          if (document.getElementById('cep').value.replace(/\D/g, '') !== cep) return;
+          if (data.logradouro) document.getElementById('rua').value = data.logradouro;
+          var bairroInput = document.getElementById('bairro');
+          if (bairroInput.tagName === 'SELECT') {
+            // A taxa permanece vinculada ao bairro cadastrado, não ao CEP.
+            var opcao = Array.from(bairroInput.options).find(function(item) {
+              return item.value.trim().toLocaleLowerCase('pt-BR') === (data.bairro || '').trim().toLocaleLowerCase('pt-BR');
+            });
+            if (opcao) { bairroInput.value = opcao.value; $(bairroInput).trigger('change'); }
+          } else {
+            bairroInput.value = data.bairro || '';
+          }
+          var cidadeInput = document.getElementById('cidade');
+          if (cidadeInput) cidadeInput.value = data.localidade || '';
           document.getElementById('numero').focus();
 
         }
@@ -1537,49 +1649,43 @@ if($somente_pix_delivery == 'Sim'){
 
 <script type="text/javascript">
   function geo(latitude, longitude) {
+    $.getJSON('https://nominatim.openstreetmap.org/reverse?format=json&addressdetails=1&zoom=18&lat=' +
+      encodeURIComponent(latitude) + '&lon=' + encodeURIComponent(longitude), function(res) {
+      var endereco = res.address || {};
+      var rua = endereco.road || endereco.pedestrian || endereco.residential || endereco.street || '';
+      var numero = endereco.house_number || '';
+      var cep = (endereco.postcode || '').replace(/\D/g, '').slice(0, 8);
+      var bairro = endereco.suburb || endereco.neighbourhood || endereco.quarter || '';
+      var cidade = endereco.city || endereco.town || endereco.village || endereco.municipality || '';
 
-    $.getJSON('https://nominatim.openstreetmap.org/reverse?format=json&lat=' + latitude + '&lon=' + longitude, function(res) {
-
-      var entrega_distancia = "<?= $entrega_distancia ?>";
-
-      //rua
-      $("#rua").val(res.address.road);
-
-
-
-      //cidade ver qual
-      var cidade = res.address.city;
-
-      if (cidade == "" || cidade == null) {
-        //TENTAR PEGAR POR TOWN
-        var cidade = res.address.town;
-
-        if (cidade == "" || cidade == null) {
-          var cidade = res.address.village;
+      if (rua) $('#rua').val(rua);
+      // Número só é preenchido quando o mapa informa explicitamente.
+      if (numero) $('#numero').val(numero);
+      if (cidade) $('#cidade').val(cidade);
+      if (cep.length === 8) {
+        $('#cep').val(cep.slice(0, 5) + '-' + cep.slice(5));
+      }
+      var bairroInput = document.getElementById('bairro');
+      if (bairroInput && bairro) {
+        if (bairroInput.tagName === 'SELECT') {
+          var opcao = Array.from(bairroInput.options).find(function(item) {
+            return item.value.trim().toLocaleLowerCase('pt-BR') === bairro.trim().toLocaleLowerCase('pt-BR');
+          });
+          if (opcao) $(bairroInput).val(opcao.value).trigger('change');
+        } else {
+          $(bairroInput).val(bairro);
         }
       }
-
-
-      //cep
-      $("#cep").val(res.address.postcode);
-
-      //cidade
-      $("#cidade").val(cidade);
-
-
-      //bairo
-      if (entrega_distancia == 'Sim') {
-        $("#bairro").val(res.address.suburb);
-        calcularFreteDistancia()
-      } else {
-        //$("#bairro").val(res.address.suburb).change();
+      if ("<?= $entrega_distancia ?>" === 'Sim' && "<?= $chave_api_maps ?>" !== '' && cep.length === 8) {
+        calcularFreteDistancia();
       }
-
-
-
-
+      if (!numero) $('#numero').focus();
+    }).fail(function() {
+      alertWarning('Não foi possível obter o endereço pela localização. Preencha manualmente.');
+      $('#rua').val('');
     });
   };
+
 </script>
 
 

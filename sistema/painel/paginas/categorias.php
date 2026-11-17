@@ -6,7 +6,7 @@ if (@$categorias == 'ocultar') {
 }
 $pag = 'categorias';
 ?>
-<div class="breadcrumb-header justify-content-between">
+<div class="breadcrumb-header justify-content-between ux-admin-register-toolbar">
 	<div class="left-content mt-2">
 		<a class="btn ripple btn-primary text-white" onclick="inserir()" type="button"><i class="fe fe-plus me-1"></i> Adicionar <?php echo ucfirst($pag); ?></a>
 
@@ -20,7 +20,7 @@ $pag = 'categorias';
 
 
 
-<div class="bs-example widget-shadow" style="padding:15px" id="listar">
+<div class="bs-example widget-shadow ux-admin-register-list" style="padding:15px" id="listar">
 
 </div>
 
@@ -29,7 +29,7 @@ $pag = 'categorias';
 
 
 <!-- MODAL CATEGORIAS-->
-<div class="modal fade" id="modalForm" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+<div class="modal fade ux-admin-register-modal" id="modalForm" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
 	<div class="modal-dialog" role="document">
 		<div class="modal-content">
 			<div class="modal-header bg-primary text-white">
@@ -234,6 +234,14 @@ $pag = 'categorias';
 						</div>
 
 						<div class="col-md-3">
+							<div class="form-group" id="grupo-tipo-adc" style="display:none">
+								<label for="tipo_adc">Tipo</label>
+								<select class="form-select" name="tipo" id="tipo_adc">
+									<option value="adicional">Adicional</option>
+									<option value="opcional">Opcional (retirar, grátis)</option>
+									<option value="proteina">Proteína</option>
+								</select>
+							</div>
 							<button id="btn_editar_adc" type="submit" class="btn btn-primary">Salvar</button>
 
 						</div>
@@ -324,6 +332,7 @@ $pag = 'categorias';
 
 <script type="text/javascript">
 	var pag = "<?= $pag ?>"
+	window.lojaRainhaTapiocas = <?= json_encode(($url_site ?? "") === "rainhadastapiocas") ?>;
 </script>
 <script src="js/ajax.js"></script>
 
@@ -482,6 +491,7 @@ $pag = 'categorias';
 
 		$('#nome_adc').val('');
 		$('#valor_adc').val('');
+		$('#tipo_adc').val('adicional').trigger('change');
 
 	}
 
@@ -501,6 +511,7 @@ $pag = 'categorias';
 
 
 	function listarAdicionais(id) {
+		$('#grupo-tipo-adc').toggle(window.categoriaSalgadaRainha === true);
 		$.ajax({
 			url: 'paginas/' + pag + "/listar-adicionais.php",
 			method: 'POST',
@@ -704,9 +715,17 @@ $pag = 'categorias';
 
 
 
-	function editarAdc(id, nome, valor) {
+	// Opcionais são retiradas gratuitas: o painel não permite atribuir cobrança.
+	$('#tipo_adc').on('change', function () {
+		var retirar = $(this).val() === 'opcional';
+		if (retirar) $('#valor_adc').val('0,00');
+		$('#valor_adc').prop('readonly', retirar);
+	});
+
+	function editarAdc(id, nome, valor, tipo) {
 		$('#nome_adc').val(nome);
 		$('#valor_adc').val(valor);
+		$('#tipo_adc').val(tipo || 'adicional').trigger('change');
 		$('#id_adc_editar').val(id);
 
 		$('#btn_editar_adc').text('Editar');

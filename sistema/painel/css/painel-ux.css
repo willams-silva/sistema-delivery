@@ -1,0 +1,273 @@
+/* Modernização visual progressiva do painel - sem alterar fluxos PHP/JS */
+:root{--ux-primary:#2563eb;--ux-ink:#17243b;--ux-muted:#64748b;--ux-border:#e6eaf1;--ux-surface:#fff;--ux-bg:#f5f7fb}
+body.main-body{background:var(--ux-bg);color:var(--ux-ink)}
+.main-header,.app-header{background:var(--ux-surface)!important;border-bottom:1px solid var(--ux-border);box-shadow:0 2px 16px rgba(15,23,42,.035)}
+.app-sidebar{box-shadow:4px 0 24px rgba(15,23,42,.055)}
+.app-sidebar .side-menu__item{border-radius:10px;margin:3px 10px;transition:background .18s,color .18s,transform .18s}
+.app-sidebar .side-menu__item:hover{background:rgba(37,99,235,.09);transform:translateX(2px)}
+.app-sidebar .side-menu__item.active{background:rgba(37,99,235,.13)}
+.main-content .card,.main-content .sales-card,.main-content .table-responsive{border:1px solid var(--ux-border);border-radius:16px;box-shadow:0 5px 24px rgba(15,23,42,.045)}
+.main-content .sales-card{height:auto!important;min-height:132px;transition:transform .18s,box-shadow .18s}
+.main-content .sales-card:hover{transform:translateY(-3px);box-shadow:0 10px 28px rgba(15,23,42,.10)}
+.main-content .sales-card a{display:block;color:inherit;text-decoration:none}
+.main-content .sales-card h4{font-size:clamp(1.15rem,2vw,1.55rem);overflow-wrap:anywhere}
+.main-content .card-header{border-bottom:1px solid var(--ux-border);background:transparent}
+.main-content .table{vertical-align:middle}
+.main-content .table thead th{background:#f8fafc;color:#475569;font-weight:700;white-space:nowrap}
+.main-content .table tbody tr{transition:background .15s}
+.main-content .table tbody tr:hover{background:#f8fafc}
+.main-content .btn{border-radius:9px;transition:transform .15s,box-shadow .15s}
+.main-content .btn:hover{transform:translateY(-1px)}
+.main-content .form-control,.main-content .form-select,.main-content .select2-selection{border-radius:9px!important;border-color:#dbe2ed}
+.main-content .form-control:focus,.main-content .form-select:focus{border-color:#93b4f9;box-shadow:0 0 0 3px rgba(37,99,235,.12)}
+.main-content .badge{border-radius:7px;padding:.4em .65em}
+.modal-content{border:0;border-radius:18px;box-shadow:0 20px 65px rgba(15,23,42,.18)}
+.modal-header{border-bottom:1px solid var(--ux-border)}
+.modal-footer{border-top:1px solid var(--ux-border)}
+:where(a,button,input,select,textarea):focus-visible{outline:3px solid rgba(37,99,235,.45);outline-offset:2px}
+@media(max-width:767px){.main-content .sales-card{min-height:115px}.main-content .card{border-radius:13px}.main-content .table-responsive{overflow-x:auto;-webkit-overflow-scrolling:touch}.main-content .btn{min-height:36px}.modal-dialog{margin:.65rem}}
+@media(prefers-reduced-motion:reduce){.main-content .sales-card,.main-content .btn,.app-sidebar .side-menu__item{transition:none!important;transform:none!important}}
+
+/* Cabeçalho contextual do dashboard */
+.ux-home-intro{display:flex;align-items:center;justify-content:space-between;gap:20px;flex-wrap:wrap;padding:25px 28px;margin:18px 0 22px;background:linear-gradient(115deg,#eff6ff,#fff 70%);border:1px solid #dbeafe;border-radius:18px}
+.ux-home-eyebrow{display:inline-flex;align-items:center;gap:7px;font-size:.77rem;font-weight:750;letter-spacing:.06em;text-transform:uppercase;color:#2563eb}
+.ux-home-intro h1{font-size:clamp(1.3rem,2.5vw,1.8rem);font-weight:750;margin:8px 0 6px;color:#17243b}
+.ux-home-intro p{color:#64748b;margin:0;max-width:540px;line-height:1.5}
+.ux-home-shortcuts{display:flex;gap:9px;flex-wrap:wrap}
+.ux-shortcut{display:inline-flex;align-items:center;gap:8px;padding:11px 14px;background:#fff;border:1px solid #dbe2ed;border-radius:11px;color:#1e3a5f;font-weight:650;text-decoration:none;transition:background .15s,border-color .15s}
+.ux-shortcut:hover{background:#eff6ff;border-color:#93c5fd;color:#1d4ed8}
+@media(max-width:767px){.ux-home-intro{padding:18px 16px;margin-top:12px}.ux-home-shortcuts{width:100%;display:grid;grid-template-columns:repeat(2,minmax(0,1fr))}.ux-shortcut{justify-content:center;padding:11px 8px;font-size:.87rem}}
+
+/* Telas internas: filtros, barras de ações e formulários */
+.main-content .breadcrumb-header{background:#fff;border:1px solid var(--ux-border);border-radius:15px;padding:15px 18px;margin-bottom:16px;box-shadow:0 4px 18px rgba(15,23,42,.035)}
+.main-content .breadcrumb-header .left-content{display:flex;flex-wrap:wrap;align-items:center;gap:10px;margin-top:0!important;min-width:0;width:100%}
+.main-content .breadcrumb-header .left-content>.btn,.main-content .breadcrumb-header .left-content>a.btn{position:static!important;margin:0!important;white-space:normal}
+.main-content .breadcrumb-header .left-content>.form-select{max-width:100%;width:min(350px,100%)!important}
+.main-content .widget-shadow{background:#fff;border:1px solid var(--ux-border);border-radius:15px;box-shadow:0 4px 18px rgba(15,23,42,.035)}
+.main-content .card-body{min-width:0}
+.main-content .dataTables_wrapper .dataTables_filter input,.main-content .dataTables_wrapper .dataTables_length select{border:1px solid #dbe2ed;border-radius:9px;padding:7px 10px;background:#fff;max-width:100%}
+.main-content .dataTables_wrapper .dataTables_paginate .paginate_button{border-radius:8px!important}
+.modal .modal-body label{font-weight:600;color:#334155;margin-bottom:5px}
+.modal .modal-body .form-control,.modal .modal-body .form-select{min-height:39px;border-radius:9px;border:1px solid #dbe2ed}
+.modal .modal-body .form-control:focus,.modal .modal-body .form-select:focus{border-color:#93b4f9;box-shadow:0 0 0 3px rgba(37,99,235,.12)}
+.modal .modal-body{max-height:calc(100dvh - 170px);overflow-y:auto}
+.modal .modal-footer{gap:8px}
+@media(max-width:767px){.main-content .breadcrumb-header{padding:12px}.main-content .breadcrumb-header .left-content{gap:8px}.main-content .breadcrumb-header .left-content>.btn{flex:1 1 auto}.main-content .breadcrumb-header .left-content>.form-select{flex:1 1 100%;width:100%!important}.main-content .dataTables_wrapper .dataTables_filter,.main-content .dataTables_wrapper .dataTables_length{text-align:left}.modal .modal-body{max-height:calc(100dvh - 145px)}}
+
+/* Gestão de pedidos: status, filtros e busca */
+.ux-orders-statusbar{background:#f8fafc;border:1px solid #e2e8f0;border-radius:12px}
+.ux-orders-statusbar .badge{font-size:.86rem!important;padding:9px 13px!important;letter-spacing:.02em}
+.ux-orders-filters{display:flex;justify-content:center;align-items:center;flex-wrap:wrap;gap:8px;margin:7px 0 17px}
+.ux-orders-filters>.btn{margin:0!important;display:inline-flex;align-items:center;justify-content:center;gap:6px;padding:10px 12px;min-height:41px;font-size:.8rem!important;font-weight:700;white-space:nowrap}
+.ux-orders-filters>.btn .badge{font-size:.72rem;min-width:23px}
+.ux-orders-filters .btn:focus-visible{outline:3px solid rgba(37,99,235,.5);outline-offset:2px}
+@media(max-width:767px){.ux-orders-filters{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px}.ux-orders-filters>.btn{width:100%;white-space:normal}.ux-orders-statusbar{align-items:stretch!important}.ux-orders-statusbar>div:last-child{margin-left:auto}}
+
+/* Listagem dinâmica de pedidos */
+#listar:has(.ux-orders-table){overflow-x:auto;-webkit-overflow-scrolling:touch}
+.ux-orders-table{margin-bottom:10px;border-collapse:separate;border-spacing:0;min-width:900px}
+.ux-orders-table thead th{position:sticky;top:0;z-index:1;background:#f1f5f9!important;padding:13px 10px!important;font-size:.76rem;letter-spacing:.02em;text-transform:uppercase}
+.ux-orders-table tbody td{padding:13px 10px!important;vertical-align:middle;line-height:1.5;white-space:nowrap}
+.ux-orders-table tbody td:first-child{min-width:250px;white-space:normal}
+.ux-orders-table tbody td:last-child{min-width:150px}
+.ux-orders-table tbody td:last-child .btn{margin:2px;min-width:32px;min-height:32px;display:inline-flex;align-items:center;justify-content:center}
+.ux-orders-table tbody tr:hover td{background:rgba(219,234,254,.28)}
+@media(max-width:767px){.ux-orders-table{min-width:820px}.ux-orders-table tbody td{padding:10px 8px!important}#listar:has(.ux-orders-table){border-radius:10px}}
+
+/* Refinamento da leitura do painel e das ações de pedidos */
+.main-content .sales-card .row{align-items:center}
+.main-content .sales-card .row>[class*="col-"]{min-width:0}
+.main-content .sales-card .row h4,.main-content .sales-card .row h5{overflow-wrap:anywhere}
+.main-content .card .card-title{font-weight:700;letter-spacing:-.015em}
+.main-content .card .card-body{overflow-wrap:break-word}
+#modalDados .modal-dialog{max-width:min(680px,calc(100vw - 24px))}
+#modalDados #listar-pedido{line-height:1.65}
+#modalDados #listar-pedido img{max-width:100%;height:auto}
+#modalDados #listar-pedido table{width:100%;max-width:100%}
+#modalDados #listar-pedido .btn{min-height:36px}
+#modalBaixar .modal-body .row,#modalEntregador .modal-body .row,#modalDesconto .modal-body .row{align-items:end;row-gap:10px}
+#modalBaixar .modal-body button[type="submit"],#modalEntregador .modal-body button[type="submit"],#modalDesconto .modal-body button[type="submit"]{min-height:39px;width:100%}
+@media(max-width:767px){.main-content .sales-card{min-height:120px}.main-content .sales-card .ps-4{padding-left:14px!important}.main-content .sales-card .pe-3{padding-right:10px!important}#modalDados .modal-dialog{margin:12px auto}#modalDados #listar-pedido{padding:14px;overflow-x:auto}}
+
+/* Navegação administrativa: leitura, foco e toque */
+.app-sidebar .side-menu{padding-bottom:24px}
+.app-sidebar .side-menu__item{min-height:43px;display:flex;align-items:center;gap:8px;padding-top:10px;padding-bottom:10px}
+.app-sidebar .side-menu__label{line-height:1.35;white-space:normal;overflow-wrap:anywhere}
+.app-sidebar .side-menu__icon{flex-shrink:0}
+.app-sidebar .side-menu__item:focus-visible{outline:3px solid rgba(37,99,235,.5);outline-offset:1px}
+.app-sidebar .slide-menu a{min-height:36px;display:flex;align-items:center;line-height:1.35;border-radius:8px;transition:background .15s}
+.app-sidebar .slide-menu a:hover{background:rgba(37,99,235,.08)}
+.app-sidebar .slide-menu a:focus-visible{outline:2px solid rgba(37,99,235,.5);outline-offset:1px}
+.app-sidebar .side-menu__item .angle{margin-left:auto}
+@media(max-width:767px){.app-sidebar .side-menu__item{min-height:46px}.app-sidebar .slide-menu a{min-height:42px}}
+@media(prefers-reduced-motion:reduce){.app-sidebar .side-menu__item,.app-sidebar .slide-menu a{transition:none!important}}
+
+/* Configurações da empresa e perfil: formulários extensos */
+#modalConfig .modal-dialog{max-width:min(1160px,calc(100vw - 24px))}
+#modalConfig .modal-content,#modalPerfil .modal-content{border:0;border-radius:16px;overflow:hidden}
+#modalConfig .modal-header,#modalPerfil .modal-header{padding:18px 22px}
+#modalConfig .modal-body,#modalPerfil .modal-body{padding:20px 22px;max-height:calc(100dvh - 180px);overflow:auto}
+#modalConfig .modal-body .row,#modalPerfil .modal-body .row{row-gap:12px}
+#modalConfig .modal-body [class*="col-"],#modalPerfil .modal-body [class*="col-"]{min-width:0}
+#modalConfig label,#modalPerfil label{display:block;font-weight:650;color:#334155;margin-bottom:6px}
+#modalConfig .form-control,#modalConfig .form-select,#modalPerfil .form-control,#modalPerfil .form-select{width:100%;min-height:41px;border-radius:9px}
+#modalConfig input[type="checkbox"],#modalPerfil input[type="checkbox"]{min-height:unset;width:auto}
+#modalConfig .modal-body img,#modalPerfil .modal-body img{max-width:100%;height:auto}
+#modalConfig .modal-footer,#modalPerfil .modal-footer{padding:14px 22px;gap:9px}
+#modalConfig button[type="submit"],#modalPerfil button[type="submit"]{min-height:40px}
+@media(max-width:767px){#modalConfig .modal-dialog,#modalPerfil .modal-dialog{margin:10px auto;max-width:calc(100vw - 20px)}#modalConfig .modal-header,#modalPerfil .modal-header{padding:14px 16px}#modalConfig .modal-body,#modalPerfil .modal-body{padding:14px 16px;max-height:calc(100dvh - 135px)}#modalConfig .modal-body .row,#modalPerfil .modal-body .row{row-gap:8px}#modalConfig .modal-body [class*="col-"],#modalPerfil .modal-body [class*="col-"]{width:100%;flex:0 0 100%;max-width:100%}}
+
+/* Cadastros de produtos e clientes: sem interferir no processamento */
+#form_produtos .modal-body,#modalForm #form .modal-body{padding:20px 22px;max-height:calc(100dvh - 190px);overflow-y:auto;overflow-x:hidden}
+#form_produtos .modal-body .row,#modalForm #form .modal-body .row{row-gap:12px}
+#form_produtos .modal-body [class*="col-"],#modalForm #form .modal-body [class*="col-"]{min-width:0}
+#form_produtos label,#modalForm #form label{display:block;font-weight:650;color:#334155;margin-bottom:6px}
+#form_produtos .form-control,#form_produtos .form-select,#modalForm #form .form-control,#modalForm #form .form-select{max-width:100%;min-height:40px;border-radius:9px}
+#form_produtos textarea,#modalForm #form textarea{min-height:95px;resize:vertical}
+#form_produtos input[type="checkbox"],#modalForm #form input[type="checkbox"],#form_produtos input[type="radio"],#modalForm #form input[type="radio"]{min-height:initial}
+#form_produtos img,#modalForm #form img{max-width:100%;height:auto}
+#form_produtos .modal-footer,#modalForm #form .modal-footer{gap:8px}
+#form_produtos button[type="submit"],#modalForm #form button[type="submit"]{min-height:40px}
+.ux-catalog-toolbar .left-content,.ux-customers-toolbar .left-content{display:flex;align-items:center;flex-wrap:wrap;gap:10px}
+.ux-catalog-toolbar .left-content>.btn,.ux-customers-toolbar .left-content>.btn{margin:0}
+.ux-catalog-toolbar #busca{width:min(350px,100%)!important;min-height:40px}
+.ux-customers-toolbar .left-content>a[href*="excel_clientes"]{position:static!important;margin-left:auto}
+@media(max-width:767px){#form_produtos .modal-body,#modalForm #form .modal-body{padding:14px;max-height:calc(100dvh - 145px)}#form_produtos .modal-body .row,#modalForm #form .modal-body .row{row-gap:8px}.ux-catalog-toolbar .left-content,.ux-customers-toolbar .left-content{align-items:stretch}.ux-catalog-toolbar #busca{width:100%!important}.ux-customers-toolbar .left-content>a[href*="excel_clientes"]{margin-left:0}.ux-catalog-toolbar .left-content>.btn,.ux-customers-toolbar .left-content>.btn{min-height:40px}}
+
+/* Cadastros auxiliares: categorias, fornecedores e funcionários */
+.ux-admin-register-toolbar .left-content{display:flex;flex-wrap:wrap;align-items:center;gap:10px}
+.ux-admin-register-toolbar .left-content>.btn,.ux-admin-register-toolbar .left-content>big{margin:0}
+.ux-admin-register-toolbar .left-content>big .btn{margin:0}
+.ux-admin-register-toolbar .left-content>.btn,.ux-admin-register-toolbar .left-content>big .btn{min-height:40px;display:inline-flex;align-items:center;justify-content:center;gap:5px}
+.ux-admin-register-list{overflow-x:auto;-webkit-overflow-scrolling:touch}
+.ux-admin-register-list .table{vertical-align:middle}
+.ux-admin-register-list .table th{font-size:.8rem;letter-spacing:.01em}
+.ux-admin-register-list .table td{padding:11px 10px}
+.ux-admin-register-list .table .btn{min-height:32px;min-width:32px}
+.ux-admin-register-modal .modal-content{border-radius:16px;overflow:hidden}
+.ux-admin-register-modal .modal-body{padding:20px;max-height:calc(100dvh - 180px);overflow-y:auto;overflow-x:hidden}
+.ux-admin-register-modal .modal-body .row{row-gap:10px}
+.ux-admin-register-modal .modal-body [class*="col-"]{min-width:0}
+.ux-admin-register-modal .modal-body label{display:block;font-weight:650;color:#334155;margin-bottom:6px}
+.ux-admin-register-modal .modal-body .form-control,.ux-admin-register-modal .modal-body .form-select{max-width:100%;min-height:40px;border-radius:9px}
+.ux-admin-register-modal .modal-body input[type="checkbox"],.ux-admin-register-modal .modal-body input[type="radio"]{min-height:initial}
+.ux-admin-register-modal .modal-body img{max-width:100%;height:auto}
+@media(max-width:767px){.ux-admin-register-toolbar .left-content{align-items:stretch}.ux-admin-register-modal .modal-body{padding:14px;max-height:calc(100dvh - 140px)}.ux-admin-register-modal .modal-body .row{row-gap:8px}.ux-admin-register-list .table td{padding:9px 8px}}
+
+/* Financeiro: indicadores, filtros e registros */
+.ux-finance-page .left-content>.btn{min-height:40px}
+.ux-finance-page .left-content .form-control2{min-height:38px;max-width:100%;border:1px solid #dbe2ed;border-radius:9px;padding:7px 9px;background:#fff;color:#17243b}
+.ux-finance-page .card-group{gap:10px;flex-wrap:wrap;margin-bottom:14px!important}
+.ux-finance-page .card-group>.card{min-width:150px;flex:1 1 170px;width:auto!important;margin:0 0 10px!important;height:auto!important;min-height:92px;border-radius:13px!important;overflow:hidden}
+.ux-finance-page .card-group>.card .card-header{padding:9px 12px;font-weight:700}
+.ux-finance-page .card-group>.card .card-corpo{padding:10px 12px}
+.ux-finance-page .card-group>.card .card-corpo h5{margin:0;overflow-wrap:anywhere}
+.ux-finance-list{overflow-x:auto;-webkit-overflow-scrolling:touch}
+.ux-finance-list .table{vertical-align:middle}
+.ux-finance-list .table th{white-space:nowrap}
+.ux-finance-modal .modal-content{border-radius:16px;overflow:hidden}
+.ux-finance-modal .modal-body{max-height:calc(100dvh - 175px);overflow-y:auto;overflow-x:hidden;padding:20px}
+.ux-finance-modal .modal-body .row{row-gap:10px}
+.ux-finance-modal .modal-body [class*="col-"]{min-width:0}
+.ux-finance-modal .modal-body label{font-weight:650;color:#334155;margin-bottom:5px}
+.ux-finance-modal .modal-body .form-control,.ux-finance-modal .modal-body .form-select{max-width:100%;min-height:40px;border-radius:9px}
+.ux-finance-modal .modal-body input[type="checkbox"],.ux-finance-modal .modal-body input[type="radio"]{min-height:initial}
+.ux-finance-modal .modal-body img{max-width:100%;height:auto}
+@media(max-width:767px){.ux-finance-page .card-group>.card{flex-basis:calc(50% - 10px);min-width:130px}.ux-finance-page .left-content .form-control2{font-size:14px}.ux-finance-modal .modal-body{padding:14px;max-height:calc(100dvh - 140px)}}
+
+/* Caixa: filtros, tabela e operações de abertura/fechamento */
+.ux-cash-page .left-content{margin-bottom:16px}
+.ux-cash-page .left-content>form{display:flex;align-items:center;flex-wrap:wrap;gap:10px}
+.ux-cash-page .left-content>form>.esc,.ux-cash-page .left-content>form>div{float:none!important;position:static!important;margin:0!important}
+.ux-cash-page .left-content>form>.esc .form-control{min-height:40px;max-width:100%;border-radius:9px}
+.ux-cash-page .left-content>form #status-busca{width:min(350px,100%)!important;min-height:40px}
+.ux-cash-page .left-content>form button{min-height:40px}
+.ux-cash-page .left-content>form button[title="Gerar Relatório"]{width:42px!important}
+.ux-cash-list{overflow-x:auto;-webkit-overflow-scrolling:touch}
+.ux-cash-list .table{vertical-align:middle}
+.ux-cash-list .table th{white-space:nowrap}
+.ux-cash-modal .modal-content{border-radius:16px;overflow:hidden}
+.ux-cash-modal .modal-body{max-height:calc(100dvh - 175px);overflow-y:auto;overflow-x:hidden;padding:20px}
+.ux-cash-modal .modal-body .row{row-gap:10px}
+.ux-cash-modal .modal-body [class*="col-"]{min-width:0}
+.ux-cash-modal .modal-body label{display:block;font-weight:650;color:#334155;margin-bottom:6px}
+.ux-cash-modal .modal-body .form-control,.ux-cash-modal .modal-body .form-select{max-width:100%;min-height:40px;border-radius:9px}
+.ux-cash-modal .modal-body input[type="checkbox"],.ux-cash-modal .modal-body input[type="radio"]{min-height:initial}
+@media(max-width:767px){.ux-cash-page .left-content>form{align-items:stretch}.ux-cash-page .left-content>form>.esc{width:100%}.ux-cash-page .left-content>form #status-busca{width:100%!important}.ux-cash-modal .modal-body{padding:14px;max-height:calc(100dvh - 140px)}}
+
+/* Relatórios existentes: filtros e emissão (sem alterar PHP) */
+.ux-report-modal .modal-dialog{max-width:min(820px,calc(100vw - 24px))}
+.ux-report-modal .modal-content{border:0;border-radius:16px;overflow:hidden}
+.ux-report-modal .modal-header{padding:17px 20px}
+.ux-report-modal .modal-title{font-size:1.12rem;line-height:1.5;overflow-wrap:anywhere}
+.ux-report-modal .modal-title small,.ux-report-modal .modal-title smdll{font-size:.75rem;font-weight:400}
+.ux-report-modal .modal-body{padding:20px;max-height:calc(100dvh - 190px);overflow-y:auto;overflow-x:hidden}
+.ux-report-modal .modal-body .row{row-gap:10px}
+.ux-report-modal .modal-body [class*="col-"]{min-width:0}
+.ux-report-modal .modal-body label{display:block;font-weight:650;color:#334155;margin-bottom:6px}
+.ux-report-modal .modal-body .form-control,.ux-report-modal .modal-body .form-select{max-width:100%;min-height:40px;border-radius:9px}
+.ux-report-modal .modal-body input[type="checkbox"],.ux-report-modal .modal-body input[type="radio"]{min-height:initial}
+.ux-report-modal .modal-footer{padding:14px 20px;gap:8px}
+.ux-report-modal .modal-footer .btn{min-height:40px}
+@media(max-width:767px){.ux-report-modal .modal-dialog{margin:10px auto;max-width:calc(100vw - 20px)}.ux-report-modal .modal-header{padding:14px}.ux-report-modal .modal-body{padding:14px;max-height:calc(100dvh - 145px)}.ux-report-modal .modal-footer{padding:12px 14px}.ux-report-modal .modal-title{font-size:1rem}}
+
+/* Indicadores da visão geral: quatro cards da mesma altura e ícones alinhados. */
+.ux-home-kpi-row{align-items:stretch;row-gap:20px}
+.ux-home-kpi-row>[class*="col-"]{display:flex}
+.ux-home-kpi-row .sales-card{width:100%;height:100%!important;min-height:210px;position:relative;margin-bottom:0}
+.ux-home-kpi-row .sales-card>a{display:block;width:100%;height:100%;padding-bottom:55px}
+.ux-home-kpi-row .sales-card .circle-icon{position:absolute!important;right:24px;bottom:0;margin:0!important;transform:none!important}
+@media(max-width:767px){.ux-home-kpi-row .sales-card{min-height:170px}}
+
+/* Segunda linha do dashboard: mesma grade e espaçamento dos KPIs superiores. */
+.ux-home-secondary-row{align-items:stretch;row-gap:20px}
+.ux-home-secondary-row>[class*="col-"]{display:flex;min-width:0}
+.ux-home-secondary-row .card{width:100%;height:100%;margin-bottom:0}
+.ux-home-secondary-row .sales-card{min-height:210px;position:relative}
+.ux-home-secondary-row .sales-card .circle-icon{position:absolute!important;right:24px;bottom:0;margin:0!important;transform:none!important}
+.ux-home-secondary-row .sales-card .row{min-height:165px}
+.ux-home-secondary-row .sales-card .row>[class*="col-"]{min-width:0}
+.ux-home-secondary-row .card-header{min-height:58px}
+.ux-home-secondary-row .customers{padding:14px 22px 18px!important}
+.ux-home-secondary-row .customers .d-flex{flex-wrap:wrap;gap:4px}
+.ux-home-secondary-row .customers .ms-auto{margin-left:auto!important}
+@media(max-width:767px){.ux-home-secondary-row .sales-card{min-height:170px}.ux-home-secondary-row .customers{padding:14px!important}}
+
+/* Mantém os dois cards inferiores com largura idêntica dentro das colunas Bootstrap. */
+.ux-home-secondary-row>[class*="col-"]>a{display:block;width:100%;height:100%;min-width:0}
+.ux-home-secondary-row>[class*="col-"]>.card{flex:1;min-width:0}
+.ux-home-secondary-row .sales-card{width:100%}
+
+/* Alinha as bordas externas dos dois cards inferiores com o grafico superior.
+   A classe Bootstrap .row usa margens negativas e fazia os cards ultrapassarem o grafico. */
+@media(min-width:768px){.ux-home-secondary-row{margin-left:16px!important;margin-right:16px!important}}
+@media(max-width:767px){.ux-home-secondary-row{margin-left:0!important;margin-right:0!important}}
+
+/* Contraste dos titulos das colunas nas tabelas do painel. */
+.main-content table thead th,.main-content table thead th *, .main-content .table thead th,.main-content .table thead th *{color:#253858!important}
+
+/* Pedidos: cliente, modalidade e atalhos sempre na mesma linha; rolagem horizontal em telas estreitas. */
+.ux-orders-table td.ux-order-customer-nowrap{white-space:nowrap!important;min-width:max-content!important;overflow-wrap:normal!important;word-break:normal!important}
+.ux-orders-table td.ux-order-customer-nowrap form,.ux-orders-table td.ux-order-customer-nowrap a{vertical-align:middle}
+
+/* Rolagem exclusiva da tabela de pedidos: paginação permanece abaixo, sem sobreposição. */
+#listar:has(.ux-orders-table){overflow-x:visible!important}
+.ux-orders-scroll-region{max-width:100%;overflow-x:auto;overflow-y:hidden;-webkit-overflow-scrolling:touch;padding-bottom:12px;margin-bottom:16px;scrollbar-gutter:stable}
+.ux-orders-scroll-region .ux-orders-table{margin-bottom:0!important}
+
+/* Botao de recolher/expandir menu lateral: icone hamburguer visivel no desktop. */
+@media(min-width:992px){
+.main-header .app-sidebar__toggle{display:flex!important;align-items:center;justify-content:center;flex:0 0 42px;min-width:42px;min-height:42px;position:relative;z-index:10;margin:0 8px 0 0!important}
+.main-header .app-sidebar__toggle .open-toggle{display:flex!important;align-items:center;justify-content:center;width:42px;height:42px;color:#253858!important;opacity:1!important;visibility:visible!important}
+.main-header .app-sidebar__toggle .open-toggle .header-icon{color:#253858!important;font-size:23px!important;opacity:1!important}
+.main-header .app-sidebar__toggle .close-toggle{display:none!important}
+}
+
+/* Alinhamento do botao de menu no centro vertical do cabecalho desktop. */
+@media(min-width:992px){
+.main-header .main-header-left{display:flex;align-items:center}
+.main-header .app-sidebar__toggle{align-self:center!important;top:0!important;transform:translateY(-18px)!important}
+.main-header .app-sidebar__toggle .open-toggle{line-height:1!important}
+/* Evita que Dashboard seja quebrado entre a letra final e o restante do nome. */
+.app-sidebar .side-menu__item .side-menu__label{white-space:nowrap!important;overflow-wrap:normal!important;word-break:normal!important;min-width:0}
+}

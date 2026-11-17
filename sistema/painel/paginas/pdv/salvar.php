@@ -52,7 +52,7 @@ $frete = $_POST['frete'];
 $mesa = @$_POST['mesa'];
 $entrega = @$_POST['entrega'];
 
-if($entrega != "" and $cliente == ""){
+if($entrega != "" and ($cliente == "" || $cliente == "0")){
 	echo 'Para qualquer opcao do delivery precisa selecionar um cliente!';
 	exit();
 }
@@ -90,6 +90,14 @@ if($cliente == ""){
 	$cliente = 0;
 }
 
+if ($cliente !== '' && $cliente !== '0') {
+    $validarCliente = $pdo->prepare('SELECT id FROM clientes WHERE id = :id AND empresa = :empresa LIMIT 1');
+    $validarCliente->execute([':id' => $cliente, ':empresa' => $id_empresa]);
+    if (!$validarCliente->fetch(PDO::FETCH_ASSOC)) {
+        echo 'Cliente não encontrado nesta empresa!';
+        exit();
+    }
+}
 $total_cartoes_cliente = 0;
 $query = $pdo->query("SELECT * FROM clientes where id = '$cliente'");
 $res = $query->fetchAll(PDO::FETCH_ASSOC);

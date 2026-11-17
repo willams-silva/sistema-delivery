@@ -72,14 +72,15 @@ if ($total_reg > 0) {
 
 	echo <<<HTML
 	<small>
-	<table class="table table-bordered text-nowrap border-bottom dt-responsive" id="">
+	<div class="ux-orders-scroll-region">
+	<table class="table table-bordered text-nowrap border-bottom dt-responsive ux-orders-table" id="">
 	<thead> 
 	<tr> 
 	<th>Cliente</th>	
 	<th>Valor</th> 	
 	<th>Total Pago</th> 
 	<th>Troco</th>	
-	<th>Forma PGTO</th> 	
+	<th>Pagamento</th> 	
 	<th>Status</th>	 	
 	<th>Hora</th>		
 	<th>Ações</th>
@@ -258,7 +259,7 @@ HTML;
 
 		echo <<<HTML
 <tr style="background: {$classe_pago2}">
-<td><sapn style="color:{$classe_alerta}"><i class="fa fa-square"></i></sapn> <b>Pedido ({$pedido})</b> / {$nome_cliente} <span class="{$classe_entrega}"><small>({$entrega}) {$span_balcao} </small></span>
+<td class="ux-order-customer-nowrap"><span style="color:{$classe_alerta}"><i class="fa fa-square"></i></span> <b>Pedido ({$pedido})</b> / {$nome_cliente} <span class="{$classe_entrega}"><small>({$entrega}) {$span_balcao} </small></span>
 
 
 
@@ -324,6 +325,7 @@ HTML;
 </tbody>
 <small><div align="center" id="mensagem-excluir"></div></small>
 </table>
+</div>
 
 <br>	
 <div align="right">Total de Pedidos: <span class=""> {$total_reg}</span> </div>

@@ -167,6 +167,158 @@ if($id_edicao == ""){
 <script src="js/main.js"></script>
 
 
+
+<style>
+/* Cardápio público: identidade consistente com checkout e seleção de produtos. */
+body.cardapio-unificado { background:#fffaf5 !important; color:#503827; }
+.cardapio-unificado .tpsection__sub-title,.cardapio-unificado .section-title { color:#753d1e !important; font-weight:800 !important; }
+.cardapio-unificado .tpsection__sub-title { font-size:clamp(22px,3vw,30px); letter-spacing:-.4px; }
+.cardapio-unificado .category-area,.cardapio-unificado .blog-area,.cardapio-unificado .product-area { background:transparent !important; }
+.cardapio-unificado .category-area,.cardapio-unificado .blog-area { padding-left:10px; padding-right:10px; }
+.cardapio-unificado .category-area .swiper-slide,.cardapio-unificado .blog-area .swiper-slide { border-radius:16px; }
+.cardapio-unificado .category-area .swiper-slide > a,.cardapio-unificado .blog-area .swiper-slide > a { border-radius:16px; }
+.cardapio-unificado .category-area img,.cardapio-unificado .blog-area img { border-radius:13px; }
+.cardapio-unificado .nav-pills .nav-link { border-radius:12px !important; color:#82451f !important; transition:background .2s ease; }
+.cardapio-unificado .nav-pills .nav-link.active,.cardapio-unificado .nav-pills .show > .nav-link { background:#a85b24 !important; color:#fff !important; }
+.cardapio-unificado .nav-pills .nav-link:hover { background:#fff2e4; }
+.cardapio-unificado .btn-primary,.cardapio-unificado .btn-warning,.cardapio-unificado .btn-success { background:#a85b24 !important; border-color:#a85b24 !important; color:#fff !important; border-radius:11px; font-weight:750; }
+.cardapio-unificado .btn-outline-primary { color:#a85b24 !important; border-color:#a85b24 !important; border-radius:11px; }
+.cardapio-unificado .btn-outline-primary:hover { background:#a85b24 !important; color:#fff !important; }
+.cardapio-unificado .blog-area .tpblog__item,.cardapio-unificado .blog-area .tpblog__content,.cardapio-unificado .category-area .tpcategory__item { border-radius:16px; }
+.cardapio-unificado .blog-area .tpblog__item { background:#fffdf9; border:1px solid #efddc9; box-shadow:0 5px 20px rgba(100,58,29,.07); overflow:hidden; }
+.cardapio-unificado a:hover { color:#a85b24; }
+.cardapio-unificado .scroll-top { background:#a85b24 !important; color:#fff !important; border-radius:50%; }
+@media(max-width:767px) {
+ .cardapio-unificado .tpsection__sub-title { font-size:22px; }
+ .cardapio-unificado .category-area,.cardapio-unificado .blog-area { padding-left:6px; padding-right:6px; }
+ .cardapio-unificado .nav-pills .nav-link { padding:9px 7px; }
+}
+</style>
+<script>document.body.classList.add('cardapio-unificado');</script>
+
+
+<style>
+/* Ajuste específico dos elementos efetivamente usados na vitrine principal. */
+body.cardapio-unificado .container-xxl .section-title span { color:#82451f !important; }
+body.cardapio-unificado .container-xxl .nav-pills { border-bottom:1px solid #ead7c3 !important; padding-bottom:12px; }
+body.cardapio-unificado .container-xxl .nav-pills .nav-item > a { background:#fffdf9; border:1px solid #efddc9; border-radius:15px !important; padding:12px 10px !important; margin:0 6px !important; min-height:83px; box-shadow:0 4px 15px rgba(100,58,29,.06); }
+body.cardapio-unificado .container-xxl .nav-pills .titulo_icones { color:#753d1e !important; font-weight:750; }
+body.cardapio-unificado .container-xxl .nav-pills .subtitulo_icones { color:#9a6949 !important; }
+body.cardapio-unificado .container-xxl .nav-pills .icone-tapioca-personalizado,
+body.cardapio-unificado .container-xxl .nav-pills .icone-combo-personalizado,
+body.cardapio-unificado .container-xxl .nav-pills .icone-promocao-personalizado { background:#fff2e4 !important; color:#a85b24 !important; border-radius:13px !important; }
+body.cardapio-unificado a[href="/meus-pedidos"].btn { background:#a85b24 !important; border-color:#a85b24 !important; color:#fff !important; border-radius:24px !important; }
+body.cardapio-unificado #buscar { background:#fffdf9 !important; border:1px solid #ddc4ad !important; border-radius:12px !important; padding:13px 16px !important; margin-top:0 !important; color:#503827; }
+body.cardapio-unificado #buscar:focus { border-color:#a85b24 !important; box-shadow:0 0 0 3px rgba(168,91,36,.1); }
+body.cardapio-unificado .category-area .tpsection__sub-title,
+body.cardapio-unificado .blog-area .tpsection__sub-title { color:#753d1e !important; }
+body.cardapio-unificado .category-area .tpbrandproduct__item,
+body.cardapio-unificado .category-area .tpcategory__item,
+body.cardapio-unificado .category-area .tpblog__item,
+body.cardapio-unificado .blog-area .tpbrandproduct__item { background:#fffdf9 !important; border:1px solid #efddc9 !important; border-radius:16px !important; box-shadow:0 5px 20px rgba(100,58,29,.07) !important; overflow:hidden; }
+body.cardapio-unificado .category-area .tpbrandproduct__item a,
+body.cardapio-unificado .category-area .tpbrandproduct__item span,
+body.cardapio-unificado .category-area .tpbrandproduct__item h5,
+body.cardapio-unificado .category-area .tpbrandproduct__item h6 { color:#82451f !important; }
+body.cardapio-unificado .category-area .swiper-slide img { border-radius:12px !important; }
+body.cardapio-unificado .rodape { background:#fffdf9 !important; border-top:1px solid #efddc9; color:#604837 !important; }
+@media(max-width:767px) {
+ body.cardapio-unificado .container-xxl .nav-pills .nav-item > a { margin:0 3px !important; padding:9px 5px !important; min-height:75px; }
+ body.cardapio-unificado .container-xxl .nav-pills .titulo_icones { font-size:12px !important; }
+ body.cardapio-unificado .container-xxl .nav-pills .subtitulo_icones { font-size:10px !important; }
+}
+</style>
+
+<?php if ($url_site == 'rainhadastapiocas') { ?>
+<style>
+/* Menu de atalhos: impedir que os títulos ultrapassem os cards no celular. */
+@media (max-width: 767px) {
+  .container-xxl .tab-class > .nav-pills {
+    display: flex !important;
+    flex-wrap: nowrap !important;
+    width: 100% !important;
+  }
+  .container-xxl .tab-class > .nav-pills > .nav-item {
+    flex: 1 1 0 !important;
+    width: 0 !important;
+    min-width: 0 !important;
+  }
+  .container-xxl .tab-class > .nav-pills > .nav-item > a {
+    box-sizing: border-box;
+    width: calc(100% - 4px);
+    margin: 0 2px !important;
+    padding: 9px 3px !important;
+    min-width: 0;
+    gap: 3px;
+  }
+  .container-xxl .tab-class > .nav-pills > .nav-item > a .icone_mobile {
+    width: 36px !important;
+    height: 36px !important;
+    min-width: 36px !important;
+    flex: 0 0 36px;
+    font-size: 20px;
+  }
+  .container-xxl .tab-class > .nav-pills > .nav-item > a > div {
+    min-width: 0;
+    padding-left: 0 !important;
+    overflow-wrap: anywhere;
+  }
+  .container-xxl .tab-class .titulo_icones {
+    display: block;
+    font-size: clamp(9px, 2.65vw, 12px) !important;
+    line-height: 1.2;
+    overflow-wrap: anywhere;
+  }
+  .container-xxl .tab-class .subtitulo_icones {
+    font-size: 10px !important;
+    line-height: 1.2;
+  }
+}
+</style>
+<?php } ?>
+
+
+<style>
+/* Vitrine principal: seletores diretos, sem depender de classe JS no body. */
+body { background:#fffaf5 !important; }
+.container-xxl .section-title span[style] { color:#753d1e !important; }
+.container-xxl .tab-class > .nav-pills { border-bottom:1px solid #ead7c3 !important; }
+.container-xxl .tab-class > .nav-pills .nav-item > a { background:#fffdf9 !important; border:1px solid #efddc9 !important; border-radius:15px !important; padding:12px 10px !important; margin:0 6px !important; box-shadow:0 4px 15px rgba(100,58,29,.07) !important; }
+.container-xxl .tab-class .titulo_icones { color:#753d1e !important; font-weight:750 !important; }
+.container-xxl .tab-class .subtitulo_icones { color:#9a6949 !important; }
+a[href="/meus-pedidos"].btn-warning { background:#a85b24 !important; border-color:#a85b24 !important; color:white !important; }
+.padding_input #buscar { background:#fffdf9 !important; border:1px solid #ddc4ad !important; border-radius:12px !important; padding:13px 16px !important; margin-top:0 !important; }
+.category-area .tpsection__sub-title,.blog-area .tpsection__sub-title { color:#753d1e !important; font-weight:800 !important; }
+.category-area .swiper-slide .tpbrandproduct__item,.category-area .swiper-slide .tpcategory__item,.category-area .swiper-slide .tpblog__item,.blog-area .swiper-slide .tpbrandproduct__item { background:#fffdf9 !important; border:1px solid #efddc9 !important; border-radius:16px !important; box-shadow:0 5px 20px rgba(100,58,29,.07) !important; overflow:hidden; }
+.category-area .swiper-slide a,.category-area .swiper-slide h5,.category-area .swiper-slide h6 { color:#82451f !important; }
+.rodape { background:#fffdf9 !important; border-top:1px solid #efddc9 !important; }
+@media(max-width:767px) { .container-xxl .tab-class > .nav-pills .nav-item > a { padding:9px 5px !important; margin:0 3px !important; } }
+</style>
+
+
+<style>
+/* Carrinho lateral da vitrine: mesmo visual do checkout. */
+/* Evita corte da primeira letra no texto de carrinho vazio. */
+.tpcart__product { padding-left:16px !important; padding-right:16px !important; box-sizing:border-box; }
+.tpcart__product p,.tpcart__product span,.tpcart__product div { text-indent:0 !important; }
+.tpcart__product p { margin-left:0 !important; overflow:visible !important; }
+
+.tpcartinfo,.tpcart,.tpcart__area { background:#fffdf9 !important; color:#503827 !important; }
+.tpcart__close,.tpcart__title { background:#fff2e4 !important; color:#753d1e !important; }
+.tpcart__title h4,.tpcart__title h5,.tpcart__title span,.tpcart__title strong { color:#753d1e !important; font-weight:800 !important; }
+.tpcart__close button,.tpcart__close a { color:#a85b24 !important; }
+.tpcart__product,.tpcart__item { border-color:#efddc9 !important; }
+.tpcart__item { background:#fffaf5 !important; border-radius:12px !important; padding:12px !important; margin-bottom:10px !important; }
+.tpcart__content-title,.tpcart__content-title a,.tpcart__cart-price,.tpcart__total-price { color:#503827 !important; }
+.tpcart__total-price { font-weight:800 !important; }
+.tpcart__checkout a,.tpcart__checkout button { background:#a85b24 !important; color:#fff !important; border:1px solid #a85b24 !important; border-radius:14px !important; font-weight:750 !important; }
+.tpcart__checkout a:hover,.tpcart__checkout button:hover { background:#87441b !important; border-color:#87441b !important; }
+.tpcart__del a,.tpcart__del button { color:#a85b24 !important; }
+.tpcart__total { border-top:1px solid #efddc9 !important; }
+.cartbody-overlay { background:rgba(53,33,20,.46) !important; }
+@media(max-width:575px){.tpcartinfo,.tpcart { max-width:100vw !important; }.tpcart__item{padding:10px !important;}}
+</style>
+
 <!-- BOTÃO Scroll-top -->
 <button class="scroll-top scroll-to-target mb-25" data-target="html">
   <i class="icon-chevrons-up"></i>
@@ -182,6 +334,15 @@ if($id_edicao == ""){
     bottom: 10px;
     left: 0;
     z-index: 300;
+  }
+
+  /* No celular o status já aparece no cabeçalho.
+     Ocultar apenas o selo flutuante evita cobrir categorias e rodapé. */
+  @media (max-width: 767px) {
+    .img-aberto {
+      display: none !important;
+      animation: none !important;
+    }
   }
 
   @keyframes slidein {
@@ -225,6 +386,38 @@ if($id_edicao == ""){
     background: #f9e5df;
     color: #a9432b;
   }
+/* O banner da vitrine deve aparecer também no desktop. */
+@media (min-width: 768px) {
+  body.cardapio-unificado #slider.ocultar-banner-web { display: block !important; }
+}
+
+/* Cabeçalho mobile compacto: mantém a logo legível e elimina espaço vazio antes do banner. */
+@media (max-width: 767px) {
+  .main-container > .navbar {
+    padding-top: 4px !important;
+    padding-bottom: 4px !important;
+  }
+  .main-container > .navbar .navbar-brand .logo-loja-topo {
+    display: block !important;
+    width: 56px !important;
+    height: 56px !important;
+    max-width: 56px !important;
+    max-height: 56px !important;
+    object-fit: contain !important;
+  }
+  .main-container > .navbar .navbar-brand {
+    margin-right: 0 !important;
+    padding: 0 !important;
+    flex: 0 0 auto;
+  }
+  .main-container > .navbar .container-fluid {
+    flex-wrap: nowrap !important;
+    min-height: 60px;
+  }
+  .main-container > #slider {
+    margin-top: 72px !important;
+  }
+}
 </style>
 
 
@@ -235,7 +428,7 @@ if($id_edicao == ""){
 
 
       <a class="navbar-brand" href="site/<?php echo $url_site ?>">
-        <img src="sistema/img/<?php echo $logo_sistema ?>" alt="" width="80px" class="d-inline-block align-text-top">
+        <img src="sistema/img/<?php echo $logo_sistema ?>" alt="" width="80" class="d-inline-block align-text-top logo-loja-topo">
         <small>
           <?php
           if ($id_mesa == "") {
@@ -383,13 +576,13 @@ if ($id_mesa == "" and $sessão_balcao == "") {
 
                 <div class="carousel-item <?php echo $ativo ?>">
                   <a href="<?php echo $url ?>">
-                    <img class="d-block w-100" src="sistema/painel/images/banner_rotativo/<?php echo $foto ?>" alt="First slide" width="100%">
+                    <img class="d-block w-100" src="/sistema/painel/images/banner_rotativo/<?php echo $foto ?>" alt="First slide" width="100%">
                   </a>
                 </div>
 
                 <li>
                   <a href="<?php echo $url ?>">
-                    <img src="sistema/painel/images/banner_rotativo/<?php echo $foto ?>" alt="" />
+                    <img src="/sistema/painel/images/banner_rotativo/<?php echo $foto ?>" alt="" />
                   </a>
                 </li>
 
@@ -578,7 +771,7 @@ if ($id_mesa == "" and $sessão_balcao == "") {
                   <div class="category__item mb-30" style="height: 200px; background: #f5f5f5; box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px">
                     <div class="quadrado">
                       <div class="fix">
-                        <img src="sistema/painel/images/categorias/<?php echo $foto ?>" alt="category-thumb" class="img-fluid w-100 h-100 object-fit-contain">
+                        <img src="/sistema/painel/images/categorias/<?php echo $foto ?>" alt="category-thumb" class="img-fluid w-100 h-100 object-fit-contain">
 
                       </div>
 
@@ -606,7 +799,7 @@ if ($id_mesa == "" and $sessão_balcao == "") {
 
 
             <?php
-            $query = $pdo->query("SELECT * FROM produtos where ativo = 'Sim' and combo = 'Sim' and delivery = 'Sim' and empresa = '$id_empresa'");
+            $query = $pdo->query("SELECT * FROM produtos where ativo = 'Sim' and combo = 'Sim' and delivery = 'Sim' and empresa = '$id_empresa' and (tem_estoque = 'Não' OR estoque > 0)");
             $res = $query->fetchAll(PDO::FETCH_ASSOC);
             $tem_produto = @count($res);
             $mostrar = 'ocultar';
@@ -657,6 +850,9 @@ if ($id_mesa == "" and $sessão_balcao == "") {
 
 
 
+
+
+
             ?>
 
 
@@ -666,7 +862,7 @@ if ($id_mesa == "" and $sessão_balcao == "") {
                     <div class="col-xl-4 col-lg-6">
                       <div class="tpbrandproduct__item d-flex mb-20">
                         <div class="tpbrandproduct__img p-relative">
-                          <img src="sistema/painel/images/produtos/<?php echo $foto ?>" alt="">
+                          <img src="/sistema/painel/images/produtos/<?php echo $foto ?>" alt="">
                           <div class="tpproduct__info bage tpbrandproduct__bage">
 
                           </div>
@@ -793,7 +989,7 @@ if ($id_mesa == "" and $sessão_balcao == "") {
                   <a href="<?php echo $link_cat ?>">
                     <div class="tpbrandproduct__item d-flex mb-10" style="box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;">
                       <div class="imgem-cat-div p-relative">
-                        <img class="imagem-cat" src="sistema/painel/images/categorias/<?php echo $foto ?>" alt="">
+                        <img class="imagem-cat" src="/sistema/painel/images/categorias/<?php echo $foto ?>" alt="">
                       </div>
 
                       <div class="tpbrandproduct__contact">
@@ -832,7 +1028,7 @@ if ($id_mesa == "" and $sessão_balcao == "") {
 
 
   <?php
-  $query = $pdo->query("SELECT * FROM produtos where ativo = 'Sim' and promocao = 'Sim'  and delivery = 'Sim' and empresa = '$id_empresa'");
+  $query = $pdo->query("SELECT * FROM produtos where ativo = 'Sim' and promocao = 'Sim'  and delivery = 'Sim' and empresa = '$id_empresa' and (tem_estoque = 'Não' OR estoque > 0)");
   $res = $query->fetchAll(PDO::FETCH_ASSOC);
   $tem_produto = @count($res);
   if ($tem_produto > 0) { ?>
@@ -854,7 +1050,7 @@ if ($id_mesa == "" and $sessão_balcao == "") {
           <div class="row">
 
             <?php
-            $query = $pdo->query("SELECT * FROM produtos where ativo = 'Sim' and promocao = 'Sim'  and delivery = 'Sim' and empresa = '$id_empresa'");
+            $query = $pdo->query("SELECT * FROM produtos where ativo = 'Sim' and promocao = 'Sim'  and delivery = 'Sim' and empresa = '$id_empresa' and (tem_estoque = 'Não' OR estoque > 0)");
             $res = $query->fetchAll(PDO::FETCH_ASSOC);
             $tem_produto = @count($res);
             $mostrar = 'ocultar';
@@ -911,6 +1107,20 @@ if ($id_mesa == "" and $sessão_balcao == "") {
                   }
                 }
 
+                // Ofertas da Rainha: abrir o configurador da categoria
+                // para permitir adicionais, opcionais e proteínas por sabor.
+                if ($url_site === 'rainhadastapiocas') {
+                  $stmt_cat_oferta = $pdo->prepare("SELECT nome, url FROM categorias WHERE id = ? AND empresa = ? LIMIT 1");
+                  $stmt_cat_oferta->execute([(int)$res[$i]['categoria'], $id_empresa]);
+                  $cat_oferta = $stmt_cat_oferta->fetch(PDO::FETCH_ASSOC);
+                  $nome_cat_oferta = mb_strtolower(trim((string)($cat_oferta['nome'] ?? '')), 'UTF-8');
+                  if (in_array($nome_cat_oferta, ['tapiocas doces', 'tapiocas salgadas'], true)
+                      && !empty($cat_oferta['url'])) {
+                    $url_produto = 'pizza.php?url=' . rawurlencode($cat_oferta['url']) . '&oferta=' . (int)$id_prod;
+                  }
+                }
+
+
 
 
 
@@ -926,7 +1136,7 @@ if ($id_mesa == "" and $sessão_balcao == "") {
                   <div class="tpbrandproduct__item d-flex mb-20" style="box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;">
                     <a href="<?php echo $url_produto ?>">
                       <div class="imgem-cat-div p-relative">
-                        <img src="sistema/painel/images/produtos/<?php echo $foto ?>" alt="">
+                        <img src="/sistema/painel/images/produtos/<?php echo $foto ?>" alt="">
                         <div class="tpproduct__info bage tpbrandproduct__bage">
                           <span class="tpproduct__info-discount bage__discount">-<?php echo $valor_porcentagemF ?></span>
                         </div>
@@ -972,7 +1182,7 @@ if ($id_mesa == "" and $sessão_balcao == "") {
 
 
   <?php
-  $query = $pdo->query("SELECT * FROM produtos where ativo = 'Sim' and combo = 'Sim' and delivery = 'Sim' and empresa = '$id_empresa'");
+  $query = $pdo->query("SELECT * FROM produtos where ativo = 'Sim' and combo = 'Sim' and delivery = 'Sim' and empresa = '$id_empresa' and (tem_estoque = 'Não' OR estoque > 0)");
   $res = $query->fetchAll(PDO::FETCH_ASSOC);
   $tem_produto = @count($res);
   $mostrar = 'ocultar';
@@ -995,7 +1205,7 @@ if ($id_mesa == "" and $sessão_balcao == "") {
 
 
             <?php
-            $query = $pdo->query("SELECT * FROM produtos where ativo = 'Sim' and combo = 'Sim'  and delivery = 'Sim' and empresa = '$id_empresa'");
+            $query = $pdo->query("SELECT * FROM produtos where ativo = 'Sim' and combo = 'Sim'  and delivery = 'Sim' and empresa = '$id_empresa' and (tem_estoque = 'Não' OR estoque > 0)");
             $res = $query->fetchAll(PDO::FETCH_ASSOC);
             $tem_produto = @count($res);
             $mostrar = 'ocultar';
@@ -1065,7 +1275,7 @@ if ($id_mesa == "" and $sessão_balcao == "") {
 
                         <div class="img_combo" style="height: 220px; width: 100%;">
                           <a href="<?php echo $url_produto ?>">
-                            <img src="sistema/painel/images/produtos/<?php echo $foto ?>" alt="" 
+                            <img src="/sistema/painel/images/produtos/<?php echo $foto ?>" alt="" 
                                  style="width: 100%; height: 100%; object-fit: cover; display: block;">
                           </a>
                         </div>

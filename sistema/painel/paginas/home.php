@@ -255,6 +255,18 @@ $porcent_mesa = $linhas4 / 100;
 ?>
 
 
+<section class="ux-home-intro" aria-label="Resumo do painel">
+  <div>
+    <span class="ux-home-eyebrow"><i class="fa fa-chart-line" aria-hidden="true"></i> Visão geral</span>
+    <h1>Seu negócio em um só lugar</h1>
+    <p>Acompanhe os resultados e acesse rapidamente as principais áreas do sistema.</p>
+  </div>
+  <div class="ux-home-shortcuts" aria-label="Atalhos">
+    <a href="clientes" class="ux-shortcut"><i class="fa fa-users" aria-hidden="true"></i> Clientes</a>
+    <a href="receber" class="ux-shortcut"><i class="fa fa-wallet" aria-hidden="true"></i> Recebimentos</a>
+    <a href="pagar" class="ux-shortcut"><i class="fa fa-file-invoice-dollar" aria-hidden="true"></i> Despesas</a>
+  </div>
+</section>
 <div class="mt-4 justify-content-between">
 
 
@@ -273,7 +285,7 @@ $porcent_mesa = $linhas4 / 100;
 
 
 
-	<div class="row">
+	<div class="row ux-home-kpi-row">
 
 		<div class="col-xl-3 col-lg-12 col-md-6 col-xs-12">
 			<div class="card sales-card"
@@ -528,10 +540,10 @@ HTML;
 
 
 
-<div class="row">
+<div class="row ux-home-secondary-row">
 
 
-	<div class="col-xl-6 col-lg-12 col-md-6 col-xs-12">
+	<div class="col-12 col-md-6 col-lg-6 col-xl-6">
 		<a href="tarefas">
 			<div class="card sales-card " style="box-shadow: 2px 2px 0px 0px rgba(0, 0, 0, 0.1);">
 				<div class="row">
@@ -566,7 +578,7 @@ HTML;
 		</a>
 	</div>
 
-	<div class="col-sm-12 col-lg-12 col-xl-6 col-xxl-12">
+	<div class="col-12 col-md-6 col-lg-6 col-xl-6">
 		<div class="card">
 			<div class="card-header pb-3">
 				<h3 class="card-title mb-2">Vendas / DELIVERY</h3>

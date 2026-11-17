@@ -8,7 +8,7 @@ if (@$funcionarios == 'ocultar') {
 }
 ?>
 
-<div class="breadcrumb-header justify-content-between">
+<div class="breadcrumb-header justify-content-between ux-admin-register-toolbar">
 	<div class="left-content mt-2">
 		<a class="btn ripple btn-primary text-white" onclick="inserir()" type="button"><i class="fe fe-user-plus me-1"></i>
 			Adicionar <?php echo ucfirst($pag); ?></a>
@@ -26,7 +26,7 @@ if (@$funcionarios == 'ocultar') {
 <div class="row row-sm">
 	<div class="col-lg-12">
 		<div class="card custom-card">
-			<div class="card-body" id="listar">
+			<div class="card-body ux-admin-register-list" id="listar">
 
 			</div>
 		</div>
@@ -38,7 +38,7 @@ if (@$funcionarios == 'ocultar') {
 
 
 <!-- Modal Padrão -->
-<div class="modal fade" id="modalForm" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+<div class="modal fade ux-admin-register-modal" id="modalForm" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
 	<div class="modal-dialog modal-lg">
 		<div class="modal-content">
 			<div class="modal-header bg-primary text-white">

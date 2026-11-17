@@ -173,6 +173,70 @@ if ($nome_mesa == '' and $pedido_balcao == "") {
   }
 </style>
 
+<style>
+/* Resumo do carrinho no mesmo padrão do checkout. */
+body { background:#fffaf5 !important; color:#493425; }
+.main-container { max-width:1360px; margin:0 auto; padding:0 14px; }
+.main-container .navbar { background:#fffdf9 !important; border-bottom:1px solid #efddc9; box-shadow:0 3px 16px rgba(94,53,25,.09) !important; }
+.main-container .navbar .container-fluid { max-width:1360px; margin:auto; }
+.main-container .navbar-brand { display:flex; align-items:center; gap:12px; color:#753d1e; font-weight:750; }
+.main-container .navbar-brand a { color:#a85b24; }
+.main-container .navbar-brand span { font-size:18px !important; margin-left:0 !important; }
+.main-container .btn-warning,.area-pedidos .btn-warning { background:#a85b24 !important; border:1px solid #a85b24 !important; color:#fff !important; font-weight:750; border-radius:11px; padding:10px 17px; }
+.main-container .btn-warning:hover,.area-pedidos .btn-warning:hover { background:#87441b !important; }
+#listar-itens-carrinho { margin-top:92px !important; margin-bottom:190px !important; padding:0; overflow:visible !important; height:auto !important; display:flex; flex-direction:column; gap:14px; }
+#listar-itens-carrinho > li,#listar-itens-carrinho > .list-group-item,#listar-itens-carrinho > div { background:#fff !important; border:1px solid #efddc9 !important; border-radius:16px !important; box-shadow:0 5px 20px rgba(100,58,29,.065) !important; padding:16px !important; }
+#listar-itens-carrinho .list-group-item { border-color:#efddc9 !important; }
+#listar-itens-carrinho .bg-light,#listar-itens-carrinho .bg-secondary { background:#fff2e4 !important; }
+#listar-itens-carrinho button { border-radius:9px; }
+#listar-itens-carrinho .btn-warning { background:#a85b24 !important; color:#fff !important; }
+#listar-itens-carrinho img { max-width:100%; object-fit:cover; }
+.area-pedidos { background:#fffdf9 !important; border-top:1px solid #efddc9 !important; box-shadow:0 -5px 20px rgba(95,54,25,.08); padding:12px max(14px,calc((100vw - 1360px)/2 + 14px)) !important; }
+.area-pedidos .total-pedido { background:#fff !important; border:1px solid #efddc9 !important; border-radius:12px !important; padding:12px 16px !important; color:#503827; }
+/* Subtotal e ação final usam exatamente a mesma largura e centro. */
+.area-pedidos .total-pedido,
+.area-pedidos .abaixo {
+  box-sizing:border-box !important;
+  width:min(100%, 360px) !important;
+  max-width:360px !important;
+  margin-left:auto !important;
+  margin-right:auto !important;
+}
+.area-pedidos .total-pedido::after { content:""; display:block; clear:both; }
+.area-pedidos .abaixo {
+  margin-top:18px !important;
+  display:flex !important;
+  justify-content:center !important;
+  align-items:stretch !important;
+}
+.area-pedidos .abaixo > .btn-lg {
+  box-sizing:border-box !important;
+  display:inline-flex !important;
+  align-items:center !important;
+  justify-content:center !important;
+  flex-wrap:nowrap !important;
+  gap:10px;
+  width:100% !important;
+  min-width:0 !important;
+  max-width:100% !important;
+  margin:0 !important;
+  padding:13px 12px !important;
+  font-size:clamp(14px, 3.8vw, 20px) !important;
+  white-space:nowrap;
+  text-align:center;
+}
+.area-pedidos .abaixo > .btn-lg i { flex-shrink:0; }
+@media(max-width:767px) {
+ .main-container { padding:0 10px; }
+ .main-container .navbar-brand { gap:6px; }
+ .main-container .navbar-brand span { font-size:13px !important; }
+ .main-container .btn-warning { font-size:12px; padding:8px 10px; }
+ #listar-itens-carrinho { margin-top:78px !important; margin-bottom:175px !important; gap:10px; }
+ #listar-itens-carrinho > li,#listar-itens-carrinho > .list-group-item,#listar-itens-carrinho > div { padding:12px !important; }
+ .area-pedidos { padding:10px !important; }
+}
+</style>
+
 <div class="main-container">
 
   <nav class="navbar bg-light fixed-top" style="box-shadow: 0px 3px 5px rgba(0, 0, 0, 0.20);">

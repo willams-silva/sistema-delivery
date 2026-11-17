@@ -7,18 +7,18 @@
 		@import url('https://fonts.cdnfonts.com/css/tw-cen-mt-condensed');
 
 		@page {
-			margin: 145px 20px 25px 20px;
+			margin: 135px 20px 35px 20px;
 		}
 
 		#header {
 			position: fixed;
 			left: 0px;
-			top: -110px;
-			bottom: 100px;
+			top: -115px;
+			bottom: auto;
 			right: 0px;
-			height: 35px;
+			height: 95px;
 			text-align: center;
-			padding-bottom: 100px;
+			padding-bottom: 0;
 		}
 
 		#content {
@@ -28,9 +28,9 @@
 		#footer {
 			position: fixed;
 			left: 0px;
-			bottom: -60px;
+			bottom: -30px;
 			right: 0px;
-			height: 80px;
+			height: 35px;
 		}
 
 		#footer .page:after {
@@ -46,7 +46,7 @@
 			left: 50;
 			top: 100;
 			width: 80%;
-			opacity: 10%;
+			opacity: .08;
 		}
 	</style>
 
@@ -61,15 +61,15 @@
 
 	<div id="header">
 
-		<div style="border-style: solid; font-size: 10px; height: 55px;">
+		<div style="border-bottom: 2px solid #475569; font-size: 9px; height: 88px;">
 			<table style="width: 100%; border: 0px solid #ccc;">
 				<tr>
-					<td style="border: 1px; solid #000; width: 25%; text-align: left;">
+					<td style="width: 20%; text-align: center; vertical-align: middle;">
 						<img style="margin-top: 0px; margin-left: 7px;" id="imag"
-							src="<?php echo $url_sistema ?>sistema/img/<?php echo $logo_sistema ?>" width="60%">
+							src="<?php echo $url_sistema ?>sistema/img/<?php echo $logo_sistema ?>" style="max-width:100px; max-height:60px; width:auto; height:auto;">
 					</td>
 
-					<td style="text-align: center; font-size: 10px; width: 40%;">
+					<td style="text-align: left; vertical-align: middle; line-height: 1.6; font-size: 9px; width: 45%;">
 
 						<b><?php echo mb_strtoupper($nome_sistema) ?></b><br>
 						<b>CNPJ: </b><?php echo mb_strtoupper($cnpj_sistema) ?><br>
@@ -77,7 +77,7 @@
 						<?php echo mb_strtoupper($endereco_sistema) ?>
 
 					</td>
-					<td style="width: 35%; text-align: right; font-size: 9px;padding-right: 10px;">
+					<td style="width: 35%; vertical-align: middle; text-align: right; line-height: 1.6; font-size: 9px;padding-right: 10px;">
 						<b><big>RELATÓRIO DE PRODUTOS</big></b><br> <?php echo mb_strtoupper($data_hoje) ?>
 					</td>
 				</tr>
@@ -117,7 +117,7 @@
 		</table>
 	</div>
 
-	<div id="content" style="margin-top: -10;">
+	<div id="content" style="margin-top: 0;">
 
 
 

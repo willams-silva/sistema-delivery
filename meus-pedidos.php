@@ -4,7 +4,7 @@ if (empty($_SESSION['url_site'])) {
   $url_site = $_GET['url'] ?? '';
   if ($url_site !== '') $_SESSION['url_site'] = $url_site;
 }
-require_once("cabecalho.php");
+
 
 // O logout precisa ser processado antes de calcular o estado de autenticação.
 if (isset($_GET['sair'])) {
@@ -16,6 +16,8 @@ if (isset($_GET['sair'])) {
   header('Location: /meus-pedidos');
   exit;
 }
+
+require_once("cabecalho.php");
 
 $telefone_autenticado = $_SESSION['meus_pedidos_telefone_autenticado'] ?? '';
 $empresa_autenticada = (int)($_SESSION['meus_pedidos_empresa_autenticada'] ?? 0);
@@ -61,6 +63,29 @@ $autenticado = (
 .mp-footer-link:hover{color:#fea116}
 .mp-message{margin-top:10px;font-size:13px;color:#777}
 @media(max-width:575px){.mp-page{padding:14px 10px 40px}.mp-topbar{padding:10px 12px}.mp-brand span{font-size:13px}.mp-hero h1{font-size:24px}.mp-panel,.mp-order{padding:17px}.mp-order-head{align-items:flex-start}}
+
+/* Identidade visual do checkout: creme, caramelo e marrom. */
+.mp-page{background:#fffaf5;color:#503827}
+.mp-topbar{background:#fffdf9;border:1px solid #efddc9;box-shadow:0 4px 18px rgba(100,58,29,.07)}
+.mp-brand,.mp-brand:hover{color:#753d1e}
+.mp-back,.mp-back:hover{color:#a85b24}
+.mp-hero-icon{background:#fff2e4;color:#a85b24}
+.mp-hero h1{color:#753d1e}
+.mp-hero p,.mp-muted,.mp-message{color:#80634e}
+.mp-panel,.mp-order{background:#fffdf9;border:1px solid #efddc9;box-shadow:0 6px 22px rgba(100,58,29,.07)}
+.mp-label,.mp-order-title,.mp-total{color:#503827}
+.mp-input{background:#fff;border-color:#ddc4ad;color:#503827}
+.mp-input:focus{border-color:#a85b24;box-shadow:0 0 0 3px rgba(168,91,36,.12)}
+.mp-btn{background:#a85b24;color:#fff;border-radius:11px}
+.mp-btn:hover{background:#87441b;color:#fff}
+.mp-btn-outline{background:#fff2e4;color:#82451f;border:1px solid #e8c9a9}
+.mp-btn-outline:hover{background:#f6e2cf;color:#753d1e}
+.mp-status{background:#fff2e4;color:#82451f}
+.mp-separator{border-top-color:#ead7c3}
+.mp-line{color:#604837}
+.mp-footer-link,.mp-footer-link:hover{color:#a85b24}
+@media(max-width:575px){.mp-topbar{gap:8px}.mp-back{font-size:12px}.mp-order-head{gap:8px}.mp-line{align-items:flex-start}.mp-line span:last-child{white-space:nowrap}}
+
 </style>
 
 <div class="mp-page">

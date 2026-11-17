@@ -46,7 +46,7 @@ if (@$_SESSION['nome_mesa'] != '') {
 
 
 			<?php
-			$query = $pdo->query("SELECT * FROM produtos where categoria = '$id' and ativo = 'Sim' and empresa = '$id_empresa' order by valor_venda asc");
+			$query = $pdo->query("SELECT * FROM produtos where categoria = '$id' and ativo = 'Sim' and empresa = '$id_empresa' and (tem_estoque = 'Não' OR estoque > 0) order by valor_venda asc");
 			$res = $query->fetchAll(PDO::FETCH_ASSOC);
 
 			// Na vitrine do delivery, considera somente produtos disponíveis para delivery.
@@ -208,12 +208,12 @@ if (@$_SESSION['nome_mesa'] != '') {
 			<?php }
 			} else { ?>
 				<li class="list-group-item text-center py-4 mb-2" style="border:1px solid #e9ecef; border-radius:10px; background:#f8f9fa;">
-					<div id="aviso-categoria-vazia" style="position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:100000;display:flex;align-items:center;justify-content:center;padding:20px;">
-						<div style="width:100%;max-width:360px;background:#fff;border-radius:16px;padding:28px 22px;text-align:center;box-shadow:0 12px 40px rgba(0,0,0,.25);">
-							<div style="font-size:38px;color:#f0a500;margin-bottom:8px;"><i class="bi bi-basket"></i></div>
-							<h5 style="font-weight:700;color:#333;">Categoria sem produtos</h5>
-							<p style="font-size:14px;color:#666;">Ainda não temos produtos disponíveis nesta categoria. Confira novamente em breve!</p>
-							<a href="site/<?php echo $url_site ?>" class="btn btn-warning">Voltar ao cardápio</a>
+					<div id="aviso-categoria-vazia" role="dialog" aria-modal="true" aria-labelledby="titulo-categoria-vazia" style="position:fixed;inset:0;background:rgba(53,33,20,.48);z-index:100000;display:flex;align-items:center;justify-content:center;padding:20px;">
+						<div style="width:100%;max-width:420px;background:#fffdf9;border:1px solid #efddc9;border-radius:20px;padding:34px 24px 28px;text-align:center;box-shadow:0 18px 55px rgba(78,43,20,.18);">
+							<div aria-hidden="true" style="font-size:42px;color:#a85b24;margin-bottom:14px;"><i class="bi bi-basket"></i></div>
+							<h5 id="titulo-categoria-vazia" style="font-size:23px;font-weight:750;color:#753d1e;margin-bottom:12px;">Categoria sem produtos</h5>
+							<p style="font-size:15px;color:#80634e;line-height:1.6;margin-bottom:24px;">Ainda não temos produtos disponíveis nesta categoria. Confira novamente em breve!</p>
+							<a href="site/<?php echo $url_site ?>" class="btn" style="display:inline-block;background:#a85b24;color:#fff;border:1px solid #a85b24;border-radius:11px;padding:12px 24px;font-weight:750;text-decoration:none;">Voltar ao cardápio</a>
 						</div>
 					</div>
 				</li>

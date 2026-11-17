@@ -10,7 +10,7 @@ if (@$clientes == 'ocultar') {
 
 
 
-<div class="breadcrumb-header justify-content-between">
+<div class="breadcrumb-header justify-content-between ux-customers-toolbar">
 	<div class="left-content mt-2">
 		<a class="btn ripple btn-primary text-white" onclick="inserir()" type="button"><i class="fe fe-user-plus me-1"></i>
 			Adicionar <?php echo ucfirst($pag); ?></a>

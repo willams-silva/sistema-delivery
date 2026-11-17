@@ -373,7 +373,20 @@ $mensagem .= '🧾 *_Detalhes do Pedido_* %0A%0A';
         $query3 = $pdo->query("SELECT * FROM $tabela_ad where id = '$id_item'");
         $res3 = $query3->fetchAll(PDO::FETCH_ASSOC);
         $total_reg3 = @count($res3);
-        $nome_adc = $res3[0]['nome'];
+        $nome_adc = $res3[0]['nome'] ?? '';
+        // Identificar retiradas e proteínas por sabor no pedido da Rainha.
+        if ($tabela_ad === 'adicionais_cat' && ($url_site ?? '') === 'rainhadastapiocas') {
+          $tipo_adc_pedido = $res3[0]['tipo'] ?? 'adicional';
+          $id_sabor_pedido = (int)($res2[$i2]['id_sabor'] ?? 0);
+          $nome_sabor_pedido = '';
+          if ($id_sabor_pedido > 0) {
+            $stmt_sabor_pedido = $pdo->prepare("SELECT nome FROM produtos WHERE id = ? AND empresa = ? LIMIT 1");
+            $stmt_sabor_pedido->execute([$id_sabor_pedido, $id_empresa]);
+            $nome_sabor_pedido = (string)$stmt_sabor_pedido->fetchColumn();
+          }
+          $nome_adc = ($tipo_adc_pedido === 'opcional' ? 'SEM ' : ($tipo_adc_pedido === 'proteina' ? 'PROTEÍNA EXTRA: ' : 'ADICIONAL: ')) . $nome_adc;
+          if ($nome_sabor_pedido !== '') $nome_adc .= ' (' . $nome_sabor_pedido . ')';
+        }
         if ($i2 < ($total_reg2 - 1)) {
           $nome_adc .= '%0A';
         }

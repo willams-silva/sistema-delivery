@@ -267,6 +267,7 @@ if($linhas == 0){
 	<link href="../assets/css/animate.css" rel="stylesheet">
 	<link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
 	<link href="../assets/css/custom.css" rel="stylesheet" />
+	<link href="css/painel-ux.css?v=20261117-17" rel="stylesheet" />
 	<script src="js/jquery-1.11.1.min.js"></script>
 	<script src="js/modernizr.custom.js"></script>
 
@@ -356,7 +357,7 @@ if($linhas == 0){
 
 
 						?>
-						<div style="font-size: 15px; color: #A9ABBD">
+						<div style="font-size: 15px; color: #253858">
 							<?php echo $saudacao . ' <b>' . $primeiroNome ?>
 						</div>
 
@@ -492,7 +493,7 @@ if($linhas == 0){
 
 
 										<a class="new nav-link" data-bs-toggle="dropdown" href="javascript:void(0);">
-											<small><i class="fa fa-cutlery"></i></small>
+											<small><i class="fa fa-cutlery" style="color:#253858;"></i></small>
 											<span class="badge  header-badge" style="background: #FFA200"
 												id="total-dos-pedidos"><?php echo $total_reg ?></span>
 										</a>
@@ -568,7 +569,7 @@ if($linhas == 0){
 										?>
 
 										<a class="new nav-link" data-bs-toggle="dropdown" href="javascript:void(0);">
-											<small><i class="fa fa-dollar" style="color:#fff3f2;"></i></small>
+											<small><i class="fa fa-dollar" style="color:#253858;"></i></small>
 											<span class="badge  header-badge" style="background:green"><?php echo $linhas ?></span>
 										</a>
 
@@ -634,7 +635,7 @@ if($linhas == 0){
 
 
 										<a class="new nav-link" data-bs-toggle="dropdown" href="javascript:void(0);">
-											<small><i class="fa fa-dollar" style="color:#fff3f2;"></i></small>
+											<small><i class="fa fa-dollar" style="color:#253858;"></i></small>
 											<span class="badge  header-badge" style="background:red"><?php echo $linhas ?></span>
 										</a>
 
@@ -1493,9 +1494,9 @@ if($linhas == 0){
 
 						<div class="col-md-10">
 							<label>Texto Fechamento <small>Fora do Horário</small></label>
-							<input maxlength="255" type="text" name="texto_fechamento_horario" class="form-control"
-								value="<?php echo @$texto_fechamento_horario ?>"
-								placeholder="Texto que vai aparecer quando o cliente tentar fazer pedido fora do horário de funcionamento">
+							<textarea maxlength="2000" name="texto_fechamento_horario" class="form-control" rows="5"
+								placeholder="Texto que vai aparecer quando o cliente tentar fazer pedido fora do horário de funcionamento"><?php echo htmlspecialchars((string) (@$texto_fechamento_horario ?? ''), ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8'); ?></textarea>
+							<small class="text-muted">Até 2.000 caracteres. Para salvar textos maiores, a coluna do banco precisa ser do tipo TEXT.</small>
 						</div>
 					</div>
 
@@ -2084,7 +2085,7 @@ if($linhas == 0){
 
 
 <!-- Modal Rel Financeiro -->
-<div class="modal fade" id="modalRelFin" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+<div class="modal fade ux-report-modal" id="modalRelFin" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
 	<div class="modal-dialog modal-lg">
 		<div class="modal-content">
 			<div class="modal-header bg-primary text-white">
@@ -2182,7 +2183,7 @@ if($linhas == 0){
 
 
 <!-- Modal Rel Sintético Despesas -->
-<div class="modal fade" id="modalRelSinDesp" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+<div class="modal fade ux-report-modal" id="modalRelSinDesp" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
 	<div class="modal-dialog modal-lg">
 		<div class="modal-content">
 			<div class="modal-header bg-primary text-white">
@@ -2272,7 +2273,7 @@ if($linhas == 0){
 
 
 <!-- Modal Rel Sintético Recebimentos -->
-<div class="modal fade" id="modalRelSinRec" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+<div class="modal fade ux-report-modal" id="modalRelSinRec" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
 	<div class="modal-dialog modal-lg">
 		<div class="modal-content">
 			<div class="modal-header bg-primary text-white">
@@ -2355,7 +2356,7 @@ if($linhas == 0){
 
 
 <!-- Modal Rel Lucro -->
-<div class="modal fade" id="modalRelLucro" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+<div class="modal fade ux-report-modal" id="modalRelLucro" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
 	<div class="modal-dialog ">
 		<div class="modal-content">
 			<div class="modal-header bg-primary text-white">
@@ -2410,7 +2411,7 @@ if($linhas == 0){
 
 
 <!-- Modal Rel Vendas -->
-<div class="modal fade" id="RelVen" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+<div class="modal fade ux-report-modal" id="RelVen" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
 	<div class="modal-dialog modal-lg" role="document">
 		<div class="modal-content">
 			<div class="modal-header bg-primary text-white">

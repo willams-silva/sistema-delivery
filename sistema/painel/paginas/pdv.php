@@ -71,6 +71,9 @@ $data_atual = date('Y-m-d');
 
 
 <link rel="stylesheet" type="text/css" href="css/pdv.css">
+<style>
+.pdv-product-code{font-size:12px;color:#475569;margin:5px 0;overflow-wrap:anywhere;font-weight:600}
+</style>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 
 <div class="pdv_body">
@@ -83,7 +86,7 @@ $data_atual = date('Y-m-d');
         <div class="bg-white rounded-xl shadow-sm p-4 mb-6">
           <div class="search-container mb-4">
             <i class="fas fa-search search-icon"></i>
-            <input style="font-weight: normal" onkeyup="buscar()" type="text" placeholder="Buscar produtos..." class="form-input" name="txt_buscar" id="txt_buscar">
+            <input style="font-weight: normal" onkeyup="buscar()" type="text" placeholder="Buscar por nome ou código / bipar produto..." class="form-input" name="txt_buscar" id="txt_buscar">
            
           </div>
           
@@ -646,7 +649,12 @@ $("#form_venda").submit(function (event) {
 		$("#img_loading").show();
 
 		var data = $("#data2").val();
-		var cliente = $("#cliente").val();
+		var cliente = $("#cliente_input").val();
+		if ($('#cliente').val() === 'cpf' && !cliente) {
+			alert('Busque e identifique o cliente pelo CPF antes de finalizar, ou escolha Consumidor Final.');
+			$('#img_loading').hide(); $('#btn_venda').show(); $('#btn_limpar').show(); envioEmAndamento = false;
+			return;
+		}
 		var data_atual = "<?=$data_atual?>";
 
 		if (data > data_atual && cliente == "") {
@@ -675,8 +683,8 @@ $("#form_venda").submit(function (event) {
 					$('#desconto').val('');
 					$('#troco').val('');
 					$('#frete').val('');
-					$('#cliente').val('').change();
-					$('#cliente_input').val('');
+					$('#cliente').val('0').change();
+					$('#cliente_input').val('0');
 					$('#data').val('<?=$data_atual?>');
 					$('#saida').val('');
 					$('#entrega').val('');
@@ -791,7 +799,7 @@ $("#form_venda").submit(function (event) {
 
                 $('#btn-fechar-cliente').click();
                 listar();
-                listarClientes('1'); 
+                listarClientes(); 
 
 
             } else {

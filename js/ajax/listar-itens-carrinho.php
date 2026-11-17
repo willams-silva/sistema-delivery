@@ -111,6 +111,65 @@ if($total_reg > 0){
 			}
 
 
+		// Resumo detalhado das TAPIOCAS DOCES e SALGADAS da Rainha das Tapiocas.
+		$exibir_resumo_tapioca = false;
+		$resumo_adicionais_tapioca = '';
+		$resumo_opcionais_tapioca = '';
+		$resumo_proteinas_tapioca = '';
+		$resumo_preco_tapioca = '';
+		if ($url_site === 'rainhadastapiocas' && (int)$categoria > 0) {
+			$stmt_categoria = $pdo->prepare("SELECT nome FROM categorias WHERE id = ? AND empresa = ? LIMIT 1");
+			$stmt_categoria->execute([(int)$categoria, $id_empresa]);
+			$exibir_resumo_tapioca = (in_array(strtolower(trim((string)$stmt_categoria->fetchColumn())), ['tapiocas doces', 'tapiocas salgadas'], true));
+		}
+		if ($exibir_resumo_tapioca) {
+			$stmt_extras = $pdo->prepare("SELECT t.quantidade, t.valor_item, t.id_sabor, a.nome, a.tipo, a.valor AS valor_cadastro, p.nome AS nome_sabor
+				FROM temp t
+				JOIN adicionais_cat a ON a.id = t.id_item AND a.empresa = ?
+				LEFT JOIN produtos p ON p.id = t.id_sabor
+				WHERE t.carrinho = ? AND t.tabela = 'adicionais' AND t.empresa = ? ORDER BY t.id_sabor, a.nome");
+			$stmt_extras->execute([$id_empresa, (int)$id, $id_empresa]);
+			$extras_tapioca = $stmt_extras->fetchAll(PDO::FETCH_ASSOC);
+			$total_extras_unidade = 0.0;
+			foreach ($extras_tapioca as $extra) {
+				$qtd_extra = max(0, (int)$extra['quantidade']);
+				$tipo_extra = (string)($extra['tipo'] ?? 'adicional');
+				$preco_extra = $tipo_extra === 'opcional' ? 0 : (float)$extra['valor_item'];
+				if ($preco_extra <= 0 && $tipo_extra !== 'opcional') $preco_extra = (float)$extra['valor_cadastro'];
+				$subtotal_extra = $qtd_extra * $preco_extra;
+				$total_extras_unidade += $subtotal_extra;
+				$nome_extra = htmlspecialchars((string)$extra['nome'], ENT_QUOTES, 'UTF-8');
+				$nome_sabor_extra = htmlspecialchars((string)$extra['nome_sabor'], ENT_QUOTES, 'UTF-8');
+				$texto_sabor = $nome_sabor_extra !== '' ? '<small class="text-muted"> · ' . $nome_sabor_extra . '</small>' : '';
+				$valor_extra_formatado = number_format($subtotal_extra * (float)$quantidade, 2, ',', '.');
+				if ($tipo_extra === 'opcional') {
+					$resumo_opcionais_tapioca .= '<div class="d-flex justify-content-between gap-2 py-1" style="font-size:13px"><span><i class="bi bi-dash-circle text-danger"></i> Sem ' . $nome_extra . $texto_sabor . '</span><strong>Sem custo</strong></div>';
+				} elseif ($tipo_extra === 'proteina') {
+					$resumo_proteinas_tapioca .= '<div class="d-flex justify-content-between gap-2 py-1" style="font-size:13px"><span><i class="bi bi-plus-circle-fill text-success"></i> ' . $qtd_extra . 'x ' . $nome_extra . $texto_sabor . '</span><strong>R$ ' . $valor_extra_formatado . '</strong></div>';
+				} else {
+					$resumo_adicionais_tapioca .= '<div class="d-flex justify-content-between gap-2 py-1" style="font-size:13px"><span><i class="bi bi-plus-circle-fill text-success"></i> ' . $qtd_extra . 'x ' . $nome_extra . $texto_sabor . '</span><strong>R$ ' . $valor_extra_formatado . '</strong></div>';
+				}
+			}
+			$valor_base_total = max(0, (float)$total_item - $total_extras_unidade * (float)$quantidade);
+			$valor_base_formatado = number_format($valor_base_total, 2, ',', '.');
+			$valor_extras_formatado = number_format($total_extras_unidade * (float)$quantidade, 2, ',', '.');
+			$observacao_tapioca = trim((string)$obs);
+			$resumo_observacao_tapioca = '';
+			if ($observacao_tapioca !== '') {
+				$resumo_observacao_tapioca = '<div class="mt-2 pt-2" style="border-top:1px solid #e9d5a7;font-size:13px">'
+					. '<div style="font-weight:700;margin-bottom:4px"><i class="bi bi-chat-left-text"></i> Observação</div>'
+					. '<div style="white-space:pre-wrap;overflow-wrap:anywhere;color:#555">' . htmlspecialchars($observacao_tapioca, ENT_QUOTES, 'UTF-8') . '</div></div>';
+			}
+			$resumo_preco_tapioca = '<div class="mt-3 p-3" style="background:#fff8e8;border-radius:12px;border:1px solid #f5e4ba">'
+				. '<div class="d-flex justify-content-between gap-2 pb-2" style="font-size:14px"><span>🫓 Tapioca (' . htmlspecialchars((string)$quantidade, ENT_QUOTES, 'UTF-8') . ' un.)</span><strong>R$ ' . $valor_base_formatado . '</strong></div>'
+				. ($resumo_adicionais_tapioca !== '' ? '<div class="fw-bold mt-2">Adicionais</div>' . $resumo_adicionais_tapioca : '')
+				. ($resumo_proteinas_tapioca !== '' ? '<div class="fw-bold mt-2">Proteínas</div>' . $resumo_proteinas_tapioca : '')
+				. ($resumo_opcionais_tapioca !== '' ? '<div class="fw-bold mt-2">Retirar do preparo</div>' . $resumo_opcionais_tapioca : '')
+				. $resumo_observacao_tapioca
+				. '<div class="d-flex justify-content-between gap-2 pt-2 mt-2" style="border-top:1px solid #e9d5a7;font-size:13px"><span>Subtotal dos adicionais</span><strong>R$ ' . $valor_extras_formatado . '</strong></div>'
+				. '</div>';
+		}
+
 		$ocultar_quantidades = '';
 			$sigla_unidade = '';
 			if($nome_unidade == 'Quilogramas' or $nome_unidade == 'Quilo' or $nome_unidade == 'Quilograma' or $nome_unidade == 'KG'){
@@ -121,6 +180,11 @@ if($total_reg > 0){
 			if($nome_unidade == 'Metros' or $nome_unidade == 'Metro' or $nome_unidade == 'M' or $nome_unidade == 'm'){
 				$sigla_unidade = ' (m)';
 				$ocultar_quantidades = 'ocultar';
+			}
+
+			if ($exibir_resumo_tapioca) {
+				$sigla_unidade = '';
+				$ocultar_quantidades = '';
 			}
 
 			if($nome_unidade == 'Litro' or $nome_unidade == 'Litros' or $nome_unidade == 'L'){
@@ -228,7 +292,7 @@ $query5 = $pdo->query("SELECT * FROM temp where carrinho = '$id' and tabela = 'a
 		$res5 = $query5->fetchAll(PDO::FETCH_ASSOC);
 		$total_reg5 = @count($res5);
 		if($total_reg5 > 0){
-			$classe_adc = '';
+			$classe_adc = $exibir_resumo_tapioca ? 'ocultar' : '';
 		}else{
 			$classe_adc = 'ocultar';
 		}
@@ -246,20 +310,19 @@ echo <<<HTML
 
 
 			
-			<a href="javascript:void(0)" onclick="excluir('{$id}')" class="link-neutro {$ocultar_excluir}"><i class="bi bi-x-lg direita"></i></a>
+			<a href="javascript:void(0)" onclick="excluir('{$id}')" class="link-neutro {$ocultar_excluir}" title="Remover produto" aria-label="Remover produto"><i class="bi bi-trash3 direita" style="color:#a85b24;font-size:19px;"></i></a>
 
-			<div id="popup-excluir{$id}" class="overlay-excluir">
-			<div class="popup">
-			<div class="row">
-			<div class="col-12">
-			Confirmar Exclusão? <a href="javascript:void(0)" onclick="excluirCarrinho('{$id}', '{$id_sabor}')" class="text-danger link-neutro">Sim</a>
-			</div>
-			<div class="col-3">
-			<a class="close" href="javascript:void(0)" onclick="fecharExcluir('{$id}')">&times;</a>
-			</div>
-			</div>
-
-			</div>
+			<div id="popup-excluir{$id}" class="overlay-excluir" role="dialog" aria-modal="true" aria-labelledby="titulo-excluir-{$id}" style="position:fixed;inset:0;z-index:100005;background:rgba(53,33,20,.52);align-items:center;justify-content:center;padding:18px;">
+				<div class="popup" style="position:relative;width:100%;max-width:390px;margin:auto;top:auto;left:auto;transform:none;background:#fffdf9;border:1px solid #efddc9;border-radius:20px;padding:28px 22px;box-shadow:0 18px 55px rgba(78,43,20,.18);text-align:center;color:#503827;">
+					<button type="button" onclick="fecharExcluir('{$id}')" aria-label="Fechar aviso" style="position:absolute;right:14px;top:10px;border:0;background:transparent;color:#82451f;font-size:27px;line-height:1;cursor:pointer;">&times;</button>
+					<div aria-hidden="true" style="width:58px;height:58px;margin:4px auto 16px;border-radius:50%;background:#fff2e4;color:#a85b24;display:flex;align-items:center;justify-content:center;font-size:27px;"><i class="bi bi-trash3"></i></div>
+					<h3 id="titulo-excluir-{$id}" style="font-size:22px;font-weight:750;color:#753d1e;margin:0 0 10px;">Remover este produto?</h3>
+					<p style="font-size:15px;color:#80634e;line-height:1.5;margin:0 0 22px;">O produto será retirado do seu carrinho.</p>
+					<div style="display:flex;flex-wrap:wrap;gap:10px;justify-content:center;">
+						<button type="button" onclick="fecharExcluir('{$id}')" style="flex:1 1 125px;min-height:46px;border:1px solid #e8c9a9;border-radius:11px;background:#fff2e4;color:#82451f;font-weight:700;cursor:pointer;">Cancelar</button>
+						<button type="button" onclick="excluirCarrinho('{$id}', '{$id_sabor}')" style="flex:1 1 125px;min-height:46px;border:1px solid #a85b24;border-radius:11px;background:#a85b24;color:#fff;font-weight:750;cursor:pointer;">Sim, remover</button>
+					</div>
+				</div>
 			</div>	
 
 
@@ -267,7 +330,7 @@ echo <<<HTML
 			<div class="carrinho-qtd">
 
 			<div class="itens-carrinho-qtd">
-				<a title="Observações do item" class="link-neutro" href="javascript:void(0)" onclick="obs('{$nome_produto}', '{$obs}', '{$id}')"><i class="bi bi-card-text {$classe_obs}"></i></a>
+				<a title="Observações do item" class="link-neutro" href="javascript:void(0)" onclick="obs('{$nome_produto}', '{$obs}', '{$id}')"><i class="bi bi-chat-left-text {$classe_obs}"></i></a>
 			</div>
 
 			<div class="itens-carrinho-qtd-adc {$classe_adc}">
@@ -302,7 +365,7 @@ echo <<<HTML
 			</div>
 
 			</div>
-
+			{$resumo_preco_tapioca}
 
 			</li>
 

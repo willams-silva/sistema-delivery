@@ -18,7 +18,7 @@
     <h4 class="tpcart__title">CARRINHO</h4>
     <div class="tpcart__product" style="display:flex;flex-direction:column;max-height:80vh;">
       <div class="tpcart__product-list" style="flex:1;min-height:0;overflow-y:auto;">
-        <ul id="listar-itens-carrinho-icone" style="margin-left:-40px;">
+        <ul id="listar-itens-carrinho-icone" style="margin:0;padding:0;list-style:none;">
           <!-- itens do carrinho aqui -->
         </ul>
       </div>

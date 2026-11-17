@@ -78,8 +78,13 @@ for($i=0; $i<$total_ids; $i++){
 			}
 			$id_variacao = $res[0]['id'];			
 		}else{
-			$valor_p = 0;
-			$id_variacao = "";		
+			// Algumas tapiocas têm preço direto no produto e não possuem
+			// registro correspondente em variacoes. Não zerar o preço base.
+			$valor_p = $valor_base_produto;
+			if ($promocao_produto == 'Sim' && $valor_promocional_produto > 0) {
+				$valor_p = $valor_promocional_produto;
+			}
+			$id_variacao = "";
 		}
 
 		$valor_produto_media += $valor_p;
@@ -106,11 +111,13 @@ $query_categoria = $pdo->prepare("SELECT nome FROM categorias WHERE id = ? AND e
 $query_categoria->execute([(int)$categoria, $id_empresa]);
 $dados_categoria = $query_categoria->fetch(PDO::FETCH_ASSOC);
 $eh_tapiocas_doces = $dados_categoria && strtolower(trim($dados_categoria['nome'])) === 'tapiocas doces';
+$eh_tapiocas_salgadas = ($url_site === 'rainhadastapiocas' && $dados_categoria && strtolower(trim($dados_categoria['nome'])) === 'tapiocas salgadas');
+$eh_tapiocas_com_adicionais_por_sabor = ($eh_tapiocas_doces || $eh_tapiocas_salgadas);
 
 // Somar somente os adicionais vinculados aos sabores selecionados.
 // Nas demais categorias, manter o comportamento antigo (id_sabor = 0).
 $total_adicionais = 0;
-if ($eh_tapiocas_doces) {
+if ($eh_tapiocas_com_adicionais_por_sabor) {
     $placeholders = implode(',', array_fill(0, count($separar), '?'));
     $sql_adc = "SELECT id_item, quantidade, valor_item FROM temp
                 WHERE carrinho = '0' AND sessao = ? AND tabela = 'adicionais'
@@ -128,9 +135,12 @@ $adicionais_selecionados = $stmt_adc->fetchAll(PDO::FETCH_ASSOC);
 foreach ($adicionais_selecionados as $adc) {
     $valor_unitario_adc = (float)$adc['valor_item'];
     if ($valor_unitario_adc <= 0) {
-        $stmt_valor = $pdo->prepare("SELECT valor FROM adicionais_cat WHERE id = ? LIMIT 1");
-        $stmt_valor->execute([(int)$adc['id_item']]);
-        $valor_unitario_adc = (float)$stmt_valor->fetchColumn();
+        $stmt_valor = $pdo->prepare("SELECT valor, tipo FROM adicionais_cat WHERE id = ? AND empresa = ? LIMIT 1");
+        $stmt_valor->execute([(int)$adc['id_item'], $id_empresa]);
+        $cadastro_adc = $stmt_valor->fetch(PDO::FETCH_ASSOC);
+        // Retirar ingredientes não pode gerar cobrança, mesmo com preço legado.
+        $valor_unitario_adc = ($cadastro_adc && ($cadastro_adc['tipo'] ?? '') !== 'opcional')
+            ? (float)$cadastro_adc['valor'] : 0.0;
     }
     $total_adicionais += $valor_unitario_adc * (int)$adc['quantidade'];
 }
@@ -180,7 +190,7 @@ echo 'Inserido com Sucesso';
 
 
 //limpar os ingredientes e adicionais
-if ($eh_tapiocas_doces) {
+if ($eh_tapiocas_com_adicionais_por_sabor) {
     $placeholders_temp = implode(',', array_fill(0, count($separar), '?'));
     $stmt_temp = $pdo->prepare("UPDATE temp SET carrinho = ? WHERE sessao = ? AND carrinho = '0' AND empresa = ? AND (tabela != 'adicionais' OR id_sabor IN ($placeholders_temp))");
     $stmt_temp->execute(array_merge([$id_carrinho, $sessao, $id_empresa], array_map('intval', $separar)));
