@@ -237,3 +237,8 @@ body.main-body{background:var(--ux-bg);color:var(--ux-ink)}
 .ux-home-secondary-row>[class*="col-"]>a{display:block;width:100%;height:100%;min-width:0}
 .ux-home-secondary-row>[class*="col-"]>.card{flex:1;min-width:0}
 .ux-home-secondary-row .sales-card{width:100%}
+
+/* Alinha as bordas externas dos dois cards inferiores com o grafico superior.
+   A classe Bootstrap .row usa margens negativas e fazia os cards ultrapassarem o grafico. */
+@media(min-width:768px){.ux-home-secondary-row{margin-left:16px!important;margin-right:16px!important}}
+@media(max-width:767px){.ux-home-secondary-row{margin-left:0!important;margin-right:0!important}}
