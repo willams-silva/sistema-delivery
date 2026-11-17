@@ -783,9 +783,7 @@ if (@count($res1) > 0) {
 		<?php if ($pagina != 'vendas') { ?>
 			<div class="main-footer">
 				<div class="container-fluid pt-0 ht-100p">
-					Copyright © <?php echo date('Y'); ?> Desevolverdor <a href="https://sistemas.hugocursos.com.br" target="_blank"
-						class="text-primary"> Sistemas.com.br</a>. Todos
-					os direitos reservados
+					<span style="color:#061b3a;font-weight:500">© <?php echo date('Y'); ?> <strong style="color:#b88600">Bora Comanda</strong> — Seu pedido, mais fácil! Todos os direitos reservados.</span>
 				</div>
 			</div>
 		<?php } ?>
