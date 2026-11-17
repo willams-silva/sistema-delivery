@@ -204,7 +204,7 @@ body { background:#fffaf5 !important; color:#493425; }
 }
 .area-pedidos .total-pedido::after { content:""; display:block; clear:both; }
 .area-pedidos .abaixo {
-  margin-top:10px !important;
+  margin-top:18px !important;
   display:flex !important;
   justify-content:center !important;
   align-items:stretch !important;
