@@ -63,7 +63,17 @@ if($pago != 'Sim'){
 
 	
 } else {
-	$pdo->query("UPDATE $tabela SET status = '$acao' where id = '$id'");
+	$pdo->query("UPDATE $tabela SET status = '$acao' where id = '$id' AND empresa = '$id_empresa'");
+    // Registra o momento do aceite manual para o segundo temporizador.
+    if ($acao === 'Aceito') {
+        try {
+            $registro = $pdo->prepare("INSERT INTO automacao_pedidos_estado (empresa,venda_id,aceito_em,imprimir_pendente) VALUES (?,?,NOW(),0) ON DUPLICATE KEY UPDATE aceito_em=VALUES(aceito_em)");
+            $registro->execute(array((int)$id_empresa, (int)$id));
+        } catch (PDOException $e) {
+            // Compatibilidade enquanto a migracao SQL ainda nao foi aplicada.
+            error_log('Automacao pedidos: ' . $e->getMessage());
+        }
+    }
 }
 
 $telefone = '55' . preg_replace('/[ ()-]+/', '', $telefone);
