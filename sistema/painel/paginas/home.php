@@ -540,7 +540,7 @@ HTML;
 
 
 
-<div class="row">
+<div class="row ux-home-secondary-row">
 
 
 	<div class="col-xl-6 col-lg-12 col-md-6 col-xs-12">
