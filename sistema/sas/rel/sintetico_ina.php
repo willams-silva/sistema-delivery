@@ -10,14 +10,17 @@ if ($token_rel != 'M543664') {
 ?>
 <?php
 $logo_relatorio = '';
-$nome_logo_relatorio = isset($logo_rel) && is_string($logo_rel) && $logo_rel !== '' ? basename($logo_rel) : 'logo.jpg';
-$logo_path = realpath(__DIR__ . '/../../img/' . $nome_logo_relatorio);
-if ($logo_path && is_file($logo_path) && is_readable($logo_path)) {
+// O painel salva a logo de relatório em sistema/img/logo.jpg.
+$logo_path = __DIR__ . '/../../img/logo.jpg';
+if (is_file($logo_path) && is_readable($logo_path)) {
     $logo_bytes = file_get_contents($logo_path);
-    if ($logo_bytes !== false) $logo_mime = function_exists('mime_content_type') ? mime_content_type($logo_path) : 'image/jpeg';
+    if ($logo_bytes !== false && $logo_bytes !== '') {
+        $logo_info = @getimagesize($logo_path);
+        $logo_mime = isset($logo_info['mime']) ? $logo_info['mime'] : '';
         if (in_array($logo_mime, array('image/jpeg', 'image/png', 'image/gif'), true)) {
             $logo_relatorio = 'data:' . $logo_mime . ';base64,' . base64_encode($logo_bytes);
         }
+    }
 }
 ?>
 <!DOCTYPE html><html><head><meta charset="UTF-8"><style>
