@@ -43,7 +43,7 @@ if($linhas > 0){
 	$estoque = $res[$i]['estoque'];			
 	$foto = $res[$i]['foto'];
 	$codigo_produto = trim((string)($res[$i]['codigo'] ?? ''));
-	$codigo_barras = trim((string)($res[$i]['codigo_barras'] ?? $res[$i]['codigo_barra'] ?? $res[$i]['cod_barras'] ?? ''));
+	$codigo_barras = trim((string)($res[$i]['codigo'] ?? ''));
 	$codigo_barras_html = htmlspecialchars($codigo_barras, ENT_QUOTES, 'UTF-8');
 	$codigo_barras_bloco = $codigo_barras !== '' ? '<div class="pdv-barcode-box"><svg class="pdv-barcode" data-barcode="' . $codigo_barras_html . '" aria-label="Código de barras ' . $codigo_barras_html . '"></svg><span class="pdv-barcode-number">' . $codigo_barras_html . '</span></div>' : '';
 
@@ -136,7 +136,6 @@ echo <<<HTML
 			    </div>
 			    <div class="card-content">
 			      <h3 class="card-title">{$nomeF}</h3>
-			      <p class="pdv-product-code">Código: {$codigo_produto}</p>
 			      {$codigo_barras_bloco}
 			      <p class="card-price">R$ {$valor_vendaF}</p>
 			      <p class="card-stock " style="min-height:20px; display:flex; align-items:center;"><span class="$possui_estoque">Estoque: ({$estoqueF}) {$sigla_unidade}</span></p>
@@ -164,7 +163,7 @@ HTML;
 		if (typeof JsBarcode === 'function') {
 			document.querySelectorAll('#listar .pdv-barcode[data-barcode]').forEach(function(svg) {
 				try {
-					JsBarcode(svg, svg.getAttribute('data-barcode'), {format:'CODE128', displayValue:false, height:30, width:1.3, margin:0});
+					JsBarcode(svg, svg.getAttribute('data-barcode'), {format:'CODE128', displayValue:false, height:30, width:1.1, margin:0});
 				} catch(e) { svg.style.display = 'none'; }
 			});
 		}
