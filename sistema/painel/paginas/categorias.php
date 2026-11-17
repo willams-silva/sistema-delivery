@@ -6,7 +6,7 @@ if (@$categorias == 'ocultar') {
 }
 $pag = 'categorias';
 ?>
-<div class="breadcrumb-header justify-content-between">
+<div class="breadcrumb-header justify-content-between ux-admin-register-toolbar">
 	<div class="left-content mt-2">
 		<a class="btn ripple btn-primary text-white" onclick="inserir()" type="button"><i class="fe fe-plus me-1"></i> Adicionar <?php echo ucfirst($pag); ?></a>
 
@@ -20,7 +20,7 @@ $pag = 'categorias';
 
 
 
-<div class="bs-example widget-shadow" style="padding:15px" id="listar">
+<div class="bs-example widget-shadow ux-admin-register-list" style="padding:15px" id="listar">
 
 </div>
 
@@ -29,7 +29,7 @@ $pag = 'categorias';
 
 
 <!-- MODAL CATEGORIAS-->
-<div class="modal fade" id="modalForm" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+<div class="modal fade ux-admin-register-modal" id="modalForm" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
 	<div class="modal-dialog" role="document">
 		<div class="modal-content">
 			<div class="modal-header bg-primary text-white">
