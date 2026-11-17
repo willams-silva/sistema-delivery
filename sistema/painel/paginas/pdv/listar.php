@@ -45,7 +45,7 @@ if($linhas > 0){
 	$codigo_produto = trim((string)($res[$i]['codigo'] ?? ''));
 	$codigo_barras = trim((string)($res[$i]['codigo'] ?? ''));
 	$codigo_barras_html = htmlspecialchars($codigo_barras, ENT_QUOTES, 'UTF-8');
-	$codigo_barras_bloco = $codigo_barras !== '' ? '<div class="pdv-barcode-box"><svg class="pdv-barcode" data-barcode="' . $codigo_barras_html . '" aria-label="Código de barras ' . $codigo_barras_html . '"></svg><span class="pdv-barcode-number">' . $codigo_barras_html . '</span></div>' : '';
+	$codigo_barras_bloco = $codigo_barras !== '' ? '<div class="pdv-barcode-box"><svg class="pdv-barcode" width="100" height="30" viewBox="0 0 100 30" data-barcode="' . $codigo_barras_html . '" aria-label="Código de barras ' . $codigo_barras_html . '"></svg><span class="pdv-barcode-number">' . $codigo_barras_html . '</span></div>' : '';
 
 	$categoria = $res[$i]['categoria'];
 	$unidade = $res[$i]['unidade'];
