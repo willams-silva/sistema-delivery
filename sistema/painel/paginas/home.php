@@ -255,6 +255,18 @@ $porcent_mesa = $linhas4 / 100;
 ?>
 
 
+<section class="ux-home-intro" aria-label="Resumo do painel">
+  <div>
+    <span class="ux-home-eyebrow"><i class="fa fa-chart-line" aria-hidden="true"></i> Visão geral</span>
+    <h1>Seu negócio em um só lugar</h1>
+    <p>Acompanhe os resultados e acesse rapidamente as principais áreas do sistema.</p>
+  </div>
+  <div class="ux-home-shortcuts" aria-label="Atalhos">
+    <a href="clientes" class="ux-shortcut"><i class="fa fa-users" aria-hidden="true"></i> Clientes</a>
+    <a href="receber" class="ux-shortcut"><i class="fa fa-wallet" aria-hidden="true"></i> Recebimentos</a>
+    <a href="pagar" class="ux-shortcut"><i class="fa fa-file-invoice-dollar" aria-hidden="true"></i> Despesas</a>
+  </div>
+</section>
 <div class="mt-4 justify-content-between">
 
 
