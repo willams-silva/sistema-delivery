@@ -133,3 +133,23 @@ body.main-body{background:var(--ux-bg);color:var(--ux-ink)}
 .ux-catalog-toolbar #busca{width:min(350px,100%)!important;min-height:40px}
 .ux-customers-toolbar .left-content>a[href*="excel_clientes"]{position:static!important;margin-left:auto}
 @media(max-width:767px){#form_produtos .modal-body,#modalForm #form .modal-body{padding:14px;max-height:calc(100dvh - 145px)}#form_produtos .modal-body .row,#modalForm #form .modal-body .row{row-gap:8px}.ux-catalog-toolbar .left-content,.ux-customers-toolbar .left-content{align-items:stretch}.ux-catalog-toolbar #busca{width:100%!important}.ux-customers-toolbar .left-content>a[href*="excel_clientes"]{margin-left:0}.ux-catalog-toolbar .left-content>.btn,.ux-customers-toolbar .left-content>.btn{min-height:40px}}
+
+/* Cadastros auxiliares: categorias, fornecedores e funcionários */
+.ux-admin-register-toolbar .left-content{display:flex;flex-wrap:wrap;align-items:center;gap:10px}
+.ux-admin-register-toolbar .left-content>.btn,.ux-admin-register-toolbar .left-content>big{margin:0}
+.ux-admin-register-toolbar .left-content>big .btn{margin:0}
+.ux-admin-register-toolbar .left-content>.btn,.ux-admin-register-toolbar .left-content>big .btn{min-height:40px;display:inline-flex;align-items:center;justify-content:center;gap:5px}
+.ux-admin-register-list{overflow-x:auto;-webkit-overflow-scrolling:touch}
+.ux-admin-register-list .table{vertical-align:middle}
+.ux-admin-register-list .table th{font-size:.8rem;letter-spacing:.01em}
+.ux-admin-register-list .table td{padding:11px 10px}
+.ux-admin-register-list .table .btn{min-height:32px;min-width:32px}
+.ux-admin-register-modal .modal-content{border-radius:16px;overflow:hidden}
+.ux-admin-register-modal .modal-body{padding:20px;max-height:calc(100dvh - 180px);overflow-y:auto;overflow-x:hidden}
+.ux-admin-register-modal .modal-body .row{row-gap:10px}
+.ux-admin-register-modal .modal-body [class*="col-"]{min-width:0}
+.ux-admin-register-modal .modal-body label{display:block;font-weight:650;color:#334155;margin-bottom:6px}
+.ux-admin-register-modal .modal-body .form-control,.ux-admin-register-modal .modal-body .form-select{max-width:100%;min-height:40px;border-radius:9px}
+.ux-admin-register-modal .modal-body input[type="checkbox"],.ux-admin-register-modal .modal-body input[type="radio"]{min-height:initial}
+.ux-admin-register-modal .modal-body img{max-width:100%;height:auto}
+@media(max-width:767px){.ux-admin-register-toolbar .left-content{align-items:stretch}.ux-admin-register-modal .modal-body{padding:14px;max-height:calc(100dvh - 140px)}.ux-admin-register-modal .modal-body .row{row-gap:8px}.ux-admin-register-list .table td{padding:9px 8px}}
