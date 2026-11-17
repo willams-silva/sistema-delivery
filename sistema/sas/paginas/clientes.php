@@ -10,6 +10,36 @@ if (@$clientes == 'ocultar') {
 
 
 
+<style id="bc-empresas-visual">
+/* Bora Comanda — cadastro de empresas: acabamento visual isolado */
+.bc-empresas-page .breadcrumb-header{background:#fff;border:1px solid #e2e8f0;border-radius:16px;padding:16px 18px;margin-bottom:18px;box-shadow:0 4px 14px rgba(6,27,58,.06)}
+.bc-empresas-page .left-content{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin-top:0!important}
+.bc-empresas-page .left-content>.btn{position:static!important;margin:0!important;min-height:42px;display:inline-flex;align-items:center;gap:7px;border-radius:10px;font-weight:700}
+.bc-empresas-page .left-content>.btn-primary{background:#ffc400!important;border-color:#ffc400!important;color:#061b3a!important}
+.bc-empresas-page .left-content>.btn-primary:hover{background:#ffad00!important;border-color:#ffad00!important}
+.bc-empresas-page .left-content>.btn-success{margin-left:auto!important}
+.bc-empresas-page #listar{overflow-x:auto;-webkit-overflow-scrolling:touch}
+.bc-empresas-page #tabela{width:100%!important}
+.bc-empresas-page #tabela thead th{background:#061b3a!important;color:#fff!important;border-color:#1c3658!important;padding:13px 10px;white-space:nowrap}
+.bc-empresas-page #tabela tbody td{padding:12px 10px;vertical-align:middle}
+.bc-empresas-page #tabela tbody td:nth-child(2) a{font-weight:700;color:#061b3a!important;text-decoration:none!important}
+.bc-empresas-page #tabela tbody td:nth-child(2) a:hover{text-decoration:underline!important}
+.bc-empresas-page #tabela tbody td .badge{border-radius:999px;padding:6px 10px;min-width:74px;justify-content:center}
+.bc-empresas-page #tabela tbody td:last-child{white-space:nowrap;min-width:255px}
+.bc-empresas-page #tabela tbody td:last-child .btn{display:inline-flex;align-items:center;justify-content:center;min-width:32px;min-height:32px;margin:2px;border-radius:8px;border:1px solid #e2e8f0}
+.bc-empresas-page #tabela tbody td:last-child .btn:focus-visible{outline:3px solid #ffc400;outline-offset:2px}
+.bc-empresas-page .dataTables_filter input,.bc-empresas-page .dataTables_length select{border:1px solid #cbd5e1;border-radius:9px;padding:6px 10px;background:#fff;color:#061b3a}
+.bc-empresas-page .dataTables_filter input:focus{outline:2px solid #ffc400;outline-offset:1px}
+.bc-empresas-page .modal-content{border-radius:18px;overflow:hidden}
+.bc-empresas-page .modal-header{background:#061b3a!important;color:#fff!important}
+.bc-empresas-page .modal-title{color:#fff!important}
+.bc-empresas-page .modal-body label{font-weight:650;color:#253958}
+.bc-empresas-page .modal-body .form-control,.bc-empresas-page .modal-body .form-select{border-radius:9px;min-height:40px}
+.bc-empresas-page .modal-body .form-control:focus,.bc-empresas-page .modal-body .form-select:focus{border-color:#ffc400;box-shadow:0 0 0 3px rgba(255,196,0,.16)}
+@media(max-width:767px){.bc-empresas-page .breadcrumb-header{padding:12px}.bc-empresas-page .left-content{gap:8px}.bc-empresas-page .left-content>.btn{font-size:12px;padding:9px 12px}.bc-empresas-page .left-content>.btn-success{margin-left:0!important}.bc-empresas-page .card-body{padding:12px}.bc-empresas-page #tabela{font-size:12px}}
+</style>
+
+<div class="bc-empresas-page">
 <div class="breadcrumb-header justify-content-between">
 	<div class="left-content mt-2">
 		<a class="btn ripple btn-primary text-white" onclick="inserir()" type="button"><i class="fe fe-user-plus me-1"></i>
@@ -1163,3 +1193,4 @@ return valor.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFraction
 			});
 		}
 	</script>
+</div><!-- /bc-empresas-page -->
