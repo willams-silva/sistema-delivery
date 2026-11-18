@@ -2,6 +2,8 @@
 $dataInicialF = implode('/', array_reverse(@explode('-', $dataInicial)));
 $dataFinalF = implode('/', array_reverse(@explode('-', $dataFinal)));
 
+$filtro_lancamentoF = 'PAGAMENTOS';
+$filtro_tabela = 'fornecedores';
 $filtro_tipoF = "";
 if ($filtro_tipo == "receber") {
 	$filtro_tipoF = 'ENTRADAS / GANHOS';
@@ -105,7 +107,31 @@ $texto_filtro = $filtro_dataF . ' : ' . $datas . ' ' . $filtro_pendentesF;
 			width: 80%;
 			opacity: 8%;
 		}
-	</style>
+	
+/* Bora Comanda: impressão sintética em A4 */
+@page { size: A4 portrait; margin: 18mm 12mm 17mm 12mm; }
+body { font-family: DejaVu Sans, sans-serif !important; color: #263238; font-size: 8px; margin: 0; }
+#header { position: static !important; height: auto !important; bottom: auto !important; padding: 0 !important; margin: 0 0 12px !important; text-align: left !important; }
+#header > div:first-child { border: none !important; border-bottom: 2px solid #475569 !important; height: auto !important; min-height: 75px; padding-bottom: 10px; }
+#header > div:first-child table { width: 100%; border-collapse: collapse; table-layout: fixed; }
+#header > div:first-child td { border: none !important; vertical-align: middle; line-height: 1.5; overflow-wrap: break-word; }
+#header > div:first-child td:first-child { width: 19% !important; text-align: center !important; }
+#header > div:first-child td:nth-child(2) { width: 46% !important; text-align: left !important; }
+#header > div:first-child td:last-child { width: 35% !important; text-align: right !important; }
+#header img#imag { max-width: 95px !important; max-height: 60px !important; width: auto !important; height: auto !important; margin: 0 !important; }
+#header big { font-size: 12px; color: #172b4d; font-weight: bold; }
+#content { margin: 0 !important; }
+#relatorio-dados { width: 100%; border-collapse: collapse; table-layout: fixed; font-size: 8px !important; }
+#relatorio-dados thead { display: table-header-group; }
+#relatorio-dados th { background: #e9eef5; padding: 8px 4px; border-bottom: 1px solid #94a3b8; text-align: left; font-weight: bold; }
+#relatorio-dados td { padding: 8px 4px; border-bottom: 1px solid #e2e8f0; vertical-align: top; overflow-wrap: break-word; }
+#relatorio-dados tr { page-break-inside: avoid; }
+#relatorio-dados tbody tr:nth-child(even) { background: #f8fafc; }
+#footer { bottom: -11mm !important; height: 20px !important; border-top: 1px solid #cbd5e1; color: #64748b; }
+#footer hr { display: none; }
+.marca { opacity: .07 !important; }
+
+</style>
 
 </head>
 
@@ -121,12 +147,12 @@ $texto_filtro = $filtro_dataF . ' : ' . $datas . ' ' . $filtro_pendentesF;
 		<div style="border-style: solid; font-size: 10px; height: 55px;">
 			<table style="width: 100%; border: 0px solid #ccc;">
 				<tr>
-					<td style="border: 1px; solid #000; width: 25%; text-align: left;">
+					<td style="width:19%; text-align:center;">
 						<img style="margin-top: 0px; margin-left: 7px;" id="imag"
-							src="<?php echo $url_sistema ?>sistema/img/<?php echo $logo_sistema ?>" width="60%">
+							src="<?php echo $url_sistema ?>sistema/img/<?php echo $logo_sistema ?>" style="max-width:95px; max-height:60px; width:auto; height:auto;">
 					</td>
 
-					<td style="text-align: center; font-size: 10px; width: 40%;">
+					<td style="text-align:left; font-size:9px; width:46%;">
 
 						<b><?php echo mb_strtoupper($nome_sistema) ?></b><br>
 						<b>CNPJ: </b><?php echo mb_strtoupper($cnpj_sistema) ?><br>
@@ -144,21 +170,7 @@ $texto_filtro = $filtro_dataF . ' : ' . $datas . ' ' . $filtro_pendentesF;
 		<br>
 
 
-		<table id="cabecalhotabela" style="border-bottom-style: solid; font-size: 9px; margin-bottom:10px; width: 100%; table-layout: fixed;">
-			<thead>
-
-				<tr id="cabeca" style="margin-left: 0px; background-color:#CCC">
-					<td style="width:30%">NOME</td>
-					<td style="width:10%">VALOR TOTAL</td>
-					<td style="width:10%">PENDENTES</td>
-					<td style="width:10%">PAGAS</td>
-					<td style="width:10%">CONTAS</td>
-					<td style="width:30%">CHAVE PIX</td>
-
-
-				</tr>
-			</thead>
-		</table>
+		
 	</div>
 
 	<div id="footer" class="row">
@@ -177,8 +189,17 @@ $texto_filtro = $filtro_dataF . ' : ' . $datas . ' ' . $filtro_pendentesF;
 
 
 
-		<table style="width: 100%; table-layout: fixed; font-size:9px; text-transform: uppercase;">
-			<thead>
+		<table id="relatorio-dados" style="width: 100%; table-layout: fixed; font-size:9px; text-transform: uppercase;">
+			<thead><tr  style="margin-left: 0px; background-color:#CCC">
+					<th style="width:30%">NOME</th>
+					<th style="width:10%">VALOR TOTAL</th>
+					<th style="width:10%">PENDENTES</th>
+					<th style="width:10%">PAGAS</th>
+					<th style="width:10%">CONTAS</th>
+					<th style="width:30%">CHAVE PIX</th>
+
+
+				</tr></thead>
 			<tbody>
 				<?php
 
@@ -277,14 +298,8 @@ $texto_filtro = $filtro_dataF . ' : ' . $datas . ' ' . $filtro_pendentesF;
 				<?php }
 				}  ?>
 			</tbody>
-
-			</thead>
-		</table>
-
-
-
-	</div>
-	<hr>
+</table>
+</div>
 
 </body>
 
