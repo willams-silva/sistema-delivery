@@ -39,10 +39,10 @@ $mesa=(int)($_SESSION['id_ab_mesa']??0);
 $status=$p['preparado']!=='Não'?'Aguardando':'';
 try{
  $pdo->beginTransaction();
- // Mesma estrutura de INSERT já utilizada pelo fluxo de tapiocas mistas.
- // O valor_unitario é atualizado depois, sem depender de colunas opcionais no INSERT.
- $stmt=$pdo->prepare("INSERT INTO carrinho (sessao,cliente,produto,quantidade,total_item,obs,pedido,id_sabor,data,variacao,mesa,nome_cliente,sabores,nome_produto,borda,categoria,status,hora,empresa) VALUES (?,0,?,1,?,'',?,0,curDate(),0,?,'',0,'',0,?,?,curTime(),?)");
- if (!$stmt->execute([$sessao,$produto,$total,$pedido,$mesa,(int)$p['categoria'],$status,$empresa])) {
+ // No PDV, carrinho.sessao recebe o ID do operador (listar_vendas.php),
+ // enquanto temp.sessao mantém a sessão do cliente usada para os adicionais.
+ $stmt=$pdo->prepare("INSERT INTO carrinho (sessao,cliente,produto,quantidade,total_item,obs,pedido,data,mesa,nome_cliente,valor_unitario,status,hora,empresa) VALUES (?,0,?,1,?,'',?,curDate(),?,'',?,?,curTime(),?)");
+ if (!$stmt->execute([(string)$usuario,$produto,$total,$pedido,$mesa,$total,$status,$empresa])) {
   throw new RuntimeException('Falha ao inserir produto no carrinho: '.implode(' ', $stmt->errorInfo()));
  }
  $idCarrinho=(int)$pdo->lastInsertId();
