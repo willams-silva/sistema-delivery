@@ -498,6 +498,15 @@ $data_atual = date('Y-m-d');
 
 
 
+<!-- Personalização de tapiocas no PDV -->
+<div class="modal fade" id="modalPdvExtras" tabindex="-1" aria-hidden="true">
+ <div class="modal-dialog modal-dialog-scrollable"><div class="modal-content">
+  <div class="modal-header bg-primary text-white"><h5 class="modal-title">Personalizar: <span id="pdvExtrasNome"></span></h5><button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button></div>
+  <div class="modal-body"><p class="small text-muted">Selecione os adicionais e as proteínas extras. Opcionais não têm custo.</p><div id="pdvExtrasItens"></div></div>
+  <div class="modal-footer"><button type="button" class="btn btn-outline-secondary" id="pdvExtrasSem">Sem adicionais</button><button type="button" class="btn btn-primary" id="pdvExtrasSalvar">Adicionar à comanda</button></div>
+ </div></div>
+</div>
+
 <!-- Modal Quantidade -->
 <div class="modal fade" id="modalQuantidade" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
 	<div class="modal-dialog ">
@@ -1101,6 +1110,49 @@ function FormaPg(){
   </script>
 
 
+<script>
+(function(){
+ var produtoAtual=null, modal=null;
+ function aviso(m){ if(typeof alertWarning==='function') alertWarning(m); else alert(m); }
+ function abrirNormal(){
+   if(!produtoAtual) return;
+   var p=produtoAtual;
+   bootstrap.Modal.getOrCreateInstance(document.getElementById('modalPdvExtras')).hide();
+   window.pdvExtrasIgnorar=true;
+   try { addVenda(p.id,p.estoque,p.nome,p.unidade,p.grade); } finally {window.pdvExtrasIgnorar=false;}
+ }
+ window.abrirPdvExtras=function(id,nome,estoque,unidade,grade){
+   produtoAtual={id:id,nome:nome,estoque:estoque,unidade:unidade,grade:grade};
+   $.ajax({url:'paginas/'+pag+'/listar_personalizacoes.php',type:'POST',dataType:'json',data:{produto:id},success:function(r){
+     if(!r || !r.personalizavel || !r.itens || !r.itens.length){abrirNormal();return;}
+     $('#pdvExtrasNome').text(nome);
+     var area=$('#pdvExtrasItens').empty();
+     r.itens.forEach(function(item){
+       var linha=$('<div class="d-flex align-items-center justify-content-between border-bottom py-2 gap-2"></div>');
+       var texto=$('<div></div>').text(item.nome+' ('+item.tipo+') — R$ '+Number(item.valor).toFixed(2).replace('.',','));
+       var campo=$('<input type="number" class="form-control pdv-extra-qtd" style="width:85px" min="0" max="20" step="1" value="0">').attr('data-id',item.id);
+       if(item.tipo==='opcional')campo.attr('max','1');
+       linha.append(texto,campo);area.append(linha);
+     });
+     bootstrap.Modal.getOrCreateInstance(document.getElementById('modalPdvExtras')).show();
+   },error:function(){aviso('Não foi possível carregar os adicionais.');}});
+ };
+ $('#pdvExtrasSem').on('click',abrirNormal);
+ $('#pdvExtrasSalvar').on('click',function(){
+   if(!produtoAtual)return;
+   var extras={},valido=true;
+   $('#pdvExtrasItens .pdv-extra-qtd').each(function(){var n=Number(this.value);if(!Number.isInteger(n)||n<0||n>Number(this.max)){valido=false;return;}if(n>0)extras[$(this).attr('data-id')]=n;});
+   if(!valido){aviso('Confira as quantidades dos adicionais.');return;}
+   var botao=$(this).prop('disabled',true);
+   $.ajax({url:'paginas/'+pag+'/salvar_personalizacao.php',type:'POST',data:{produto:produtoAtual.id,extras:JSON.stringify(extras)},success:function(r){
+     if(String(r).trim()==='Inserido com Sucesso'){
+       bootstrap.Modal.getOrCreateInstance(document.getElementById('modalPdvExtras')).hide();listarVendas();limparCampos();
+     }else aviso(r);
+   },error:function(xhr){aviso(xhr.responseText||'Erro ao adicionar a tapioca.');},complete:function(){botao.prop('disabled',false);}});
+ });
+})();
+</script>
+
   <script type="text/javascript">
   // Processa o Enter somente no campo do leitor, sem disparar durante formulários.
   $('#txt_buscar').on('keydown', function(e) {
@@ -1186,6 +1238,11 @@ function FormaPg(){
 
 <script type="text/javascript">
 	function addVenda(id_produto, estoque, produto, unidade, tem_grade){
+				if (id_produto && tem_grade !== 'Sim' && !window.pdvExtrasIgnorar) {
+					abrirPdvExtras(id_produto, produto, estoque, unidade, tem_grade);
+					return;
+				}
+
 
 				if(tem_grade == 'Sim'){
 					gradeProduto(id_produto, estoque, produto, unidade);
