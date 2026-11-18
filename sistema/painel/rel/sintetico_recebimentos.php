@@ -3,6 +3,8 @@
 $dataInicialF = implode('/', array_reverse(@explode('-', $dataInicial)));
 $dataFinalF = implode('/', array_reverse(@explode('-', $dataFinal)));
 
+$filtro_lancamentoF = 'RECEBIMENTOS';
+$filtro_tabela = 'clientes';
 $filtro_tipoF = "";
 if ($filtro_tipo == "receber") {
 	$filtro_tipoF = 'ENTRADAS / GANHOS';
@@ -102,7 +104,31 @@ $texto_filtro = $filtro_dataF . ' : ' . $datas . ' ' . $filtro_pendentesF;
 			width: 80%;
 			opacity: 8%;
 		}
-	</style>
+	
+/* Bora Comanda: layout de impressão padronizado */
+@page { size: A4 portrait; margin: 18mm 12mm 17mm 12mm; }
+body { font-family: DejaVu Sans, sans-serif !important; font-size: 8px; color: #263238; margin: 0; }
+#header { position: static !important; height: auto !important; padding: 0 !important; margin: 0 0 12px !important; text-align: left !important; }
+#header > div:first-child { border: none !important; border-bottom: 2px solid #475569 !important; height: auto !important; min-height: 75px; padding-bottom: 10px; }
+#header > div:first-child table { border-collapse: collapse; width: 100%; table-layout: fixed; }
+#header > div:first-child td { border: none !important; vertical-align: middle; line-height: 1.6; overflow-wrap: break-word; }
+#header > div:first-child td:first-child { width: 19% !important; text-align: center !important; }
+#header > div:first-child td:nth-child(2) { width: 46% !important; text-align: left !important; }
+#header > div:first-child td:last-child { width: 35% !important; text-align: right !important; }
+#header img#imag { width: auto !important; height: auto !important; max-width: 95px; max-height: 60px; margin: 0 !important; }
+#header big { font-size: 12px; font-weight: bold; color: #172b4d; }
+#cabecalhotabela { width: 100%; border-collapse: collapse; table-layout: fixed; margin: 0 !important; border: none !important; }
+#cabecalhotabela td { background: #e9eef5; font-weight: bold; padding: 8px 4px; border-bottom: 1px solid #94a3b8; }
+#content { margin: 0 !important; }
+#relatorio-dados th { background: #e9eef5; font-weight: bold; padding: 8px 4px; border-bottom: 1px solid #94a3b8; text-align: left; }\n#relatorio-dados thead { display: table-header-group; }\n#content table { border-collapse: collapse; width: 100%; table-layout: fixed; font-size: 8px !important; }
+#content td { padding: 8px 4px; border-bottom: 1px solid #e2e8f0; vertical-align: top; overflow-wrap: break-word; }
+#content tr { page-break-inside: avoid; }
+#content tbody tr:nth-child(even) { background: #f8fafc; }
+#footer { bottom: -11mm !important; height: 20px !important; border-top: 1px solid #cbd5e1; color: #64748b; }
+#footer hr { display: none; }
+.marca { opacity: .07 !important; }
+
+</style>
 
 </head>
 
@@ -118,12 +144,12 @@ $texto_filtro = $filtro_dataF . ' : ' . $datas . ' ' . $filtro_pendentesF;
 		<div style="border-style: solid; font-size: 10px; height: 55px;">
 			<table style="width: 100%; border: 0px solid #ccc;">
 				<tr>
-					<td style="border: 1px; solid #000; width: 25%; text-align: left;">
+					<td style="width:19%; text-align:center;">
 						<img style="margin-top: 0px; margin-left: 7px;" id="imag"
-							src="<?php echo $url_sistema ?>sistema/img/<?php echo $logo_sistema ?>" width="60%">
+							src="<?php echo $url_sistema ?>sistema/img/<?php echo $logo_sistema ?>" style="max-width:95px; max-height:60px; width:auto; height:auto;">
 					</td>
 
-					<td style="text-align: center; font-size: 10px; width: 40%;">
+					<td style="text-align:left; font-size: 9px; width:46%;">
 
 						<b><?php echo mb_strtoupper($nome_sistema) ?></b><br>
 						<b>CNPJ: </b><?php echo mb_strtoupper($cnpj_sistema) ?><br>
@@ -131,7 +157,7 @@ $texto_filtro = $filtro_dataF . ' : ' . $datas . ' ' . $filtro_pendentesF;
 						<?php echo mb_strtoupper($endereco_sistema) ?>
 
 					</td>
-					<td style="width: 35%; text-align: right; font-size: 9px;padding-right: 10px;">
+					<td style="width:35%; text-align:right; font-size:9px; padding-right:4px;">
 						<b><big>RELATÓRIO DE <?php echo mb_strtoupper($filtro_lancamentoF) ?></big></b><br> <?php echo mb_strtoupper($texto_filtro) ?> <br> <?php echo mb_strtoupper($data_hoje) ?>
 					</td>
 				</tr>
@@ -141,41 +167,25 @@ $texto_filtro = $filtro_dataF . ' : ' . $datas . ' ' . $filtro_pendentesF;
 		<br>
 
 
-		<table id="cabecalhotabela" style="border-bottom-style: solid; font-size: 9px; margin-bottom:10px; width: 100%; table-layout: fixed;">
-			<thead>
 
-				<tr id="cabeca" style="margin-left: 0px; background-color:#CCC">
-					<td style="width:30%">NOME</td>
-					<td style="width:10%">VALOR TOTAL</td>
-					<td style="width:10%">PENDENTES</td>
-					<td style="width:10%">PAGAS</td>
-					<td style="width:10%">CONTAS</td>
-					<td style="width:30%">TELEFONE</td>
-
-
-				</tr>
-			</thead>
-		</table>
 	</div>
 
-	<div id="footer" class="row">
-		<hr style="margin-bottom: 0;">
-		<table style="width:100%;">
-			<tr style="width:100%;">
-				<td style="width:60%; font-size: 10px; text-align: left;"><?php echo $nome_sistema ?> Telefone: <?php echo $telefone_sistema ?></td>
-				<td style="width:40%; font-size: 10px; text-align: right;">
-					<p class="page">Página </p>
-				</td>
-			</tr>
-		</table>
-	</div>
-
-	<div id="content" style="margin-top: -10;">
+	<div id="footer" class="row"><table style="width:100%"><tr><td style="width:70%"><?php echo htmlspecialchars((string)$nome_sistema, ENT_QUOTES, 'UTF-8'); ?> · Telefone: <?php echo htmlspecialchars((string)$telefone_sistema, ENT_QUOTES, 'UTF-8'); ?></td><td style="text-align:right">Relatório sintético de recebimentos</td></tr></table></div>
+<div id="content" style="margin-top: -10;">
 
 
 
-		<table style="width: 100%; table-layout: fixed; font-size:9px; text-transform: uppercase;">
-			<thead>
+		<table id="relatorio-dados" style="width: 100%; table-layout: fixed; font-size:9px; text-transform: uppercase;">
+			<thead><tr  style="margin-left: 0px; background-color:#CCC">
+					<th style="width:30%">NOME</th>
+					<th style="width:10%">VALOR TOTAL</th>
+					<th style="width:10%">PENDENTES</th>
+					<th style="width:10%">PAGAS</th>
+					<th style="width:10%">CONTAS</th>
+					<th style="width:30%">TELEFONE</th>
+
+
+				</tr></thead>
 			<tbody>
 				<?php
 
@@ -278,14 +288,8 @@ $texto_filtro = $filtro_dataF . ' : ' . $datas . ' ' . $filtro_pendentesF;
 				<?php }
 				}  ?>
 			</tbody>
-
-			</thead>
-		</table>
-
-
-
-	</div>
-	<hr>
+</table>
+</div>
 
 </body>
 
