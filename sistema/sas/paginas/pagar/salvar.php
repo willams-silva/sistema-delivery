@@ -219,7 +219,7 @@ if ($id == "") {
 		$nova_data_vencimento = date('Y/m/d', strtotime("+6 month", strtotime($vencimento)));
 
 	} else if ($dias_frequencia == 360 || $dias_frequencia == 365) {
-		date('Y/m/d', strtotime("+6 month", strtotime($vencimento)));
+		$nova_data_vencimento = date('Y/m/d', strtotime("+12 months", strtotime($vencimento)));
 	} else {
 		$nova_data_vencimento = date('Y/m/d', strtotime("+$dias_frequencia days", strtotime($vencimento)));
 	}
