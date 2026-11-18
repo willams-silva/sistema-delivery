@@ -502,7 +502,7 @@ $data_atual = date('Y-m-d');
 <div class="modal fade" id="modalPdvExtras" tabindex="-1" aria-hidden="true">
  <div class="modal-dialog modal-dialog-scrollable"><div class="modal-content">
   <div class="modal-header bg-primary text-white"><h5 class="modal-title">Personalizar: <span id="pdvExtrasNome"></span></h5><button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button></div>
-  <div class="modal-body"><p class="small text-muted">Selecione os adicionais e as proteínas extras. Opcionais não têm custo.</p><div id="pdvExtrasItens"></div></div>
+  <div class="modal-body"><p class="small text-muted">Selecione os adicionais e as proteínas extras. Opcionais não têm custo.</p><div id="pdvExtrasItens"></div><div id="pdvExtrasErro" class="alert alert-danger mt-3" role="alert" style="display:none"></div></div>
   <div class="modal-footer"><button type="button" class="btn btn-outline-secondary" id="pdvExtrasSem">Sem adicionais</button><button type="button" class="btn btn-primary" id="pdvExtrasSalvar">Adicionar à comanda</button></div>
  </div></div>
 </div>
@@ -1125,7 +1125,8 @@ function FormaPg(){
    produtoAtual={id:id,nome:nome,estoque:estoque,unidade:unidade,grade:grade};
    $.ajax({url:'paginas/'+pag+'/listar_personalizacoes.php',type:'POST',dataType:'json',data:{produto:id},success:function(r){
      if(!r || !r.personalizavel || !r.itens || !r.itens.length){abrirNormal();return;}
-     $('#pdvExtrasNome').text(nome);
+     $('#pdvExtrasErro').hide().text('');
+   $('#pdvExtrasNome').text(nome);
      var area=$('#pdvExtrasItens').empty();
      r.itens.forEach(function(item){
        var linha=$('<div class="d-flex align-items-center justify-content-between border-bottom py-2 gap-2"></div>');
@@ -1138,17 +1139,36 @@ function FormaPg(){
    },error:function(){aviso('Não foi possível carregar os adicionais.');}});
  };
  $('#pdvExtrasSem').on('click',abrirNormal);
- $('#pdvExtrasSalvar').on('click',function(){
-   if(!produtoAtual)return;
+ function erroExtras(m){
+   var texto=String(m||'Erro desconhecido ao adicionar a tapioca.').replace(/<[^>]*>/g,' ').trim();
+   $('#pdvExtrasErro').text(texto).show();
+   console.error('[Bora Comanda PDV] Personalização:',texto);
+ }
+ $('#pdvExtrasSalvar').on('click',function(e){
+   e.preventDefault();
+   if(!produtoAtual){erroExtras('Produto não selecionado.');return;}
+   $('#pdvExtrasErro').hide().text('');
    var extras={},valido=true;
-   $('#pdvExtrasItens .pdv-extra-qtd').each(function(){var n=Number(this.value);if(!Number.isInteger(n)||n<0||n>Number(this.max)){valido=false;return;}if(n>0)extras[$(this).attr('data-id')]=n;});
-   if(!valido){aviso('Confira as quantidades dos adicionais.');return;}
-   var botao=$(this).prop('disabled',true);
-   $.ajax({url:'paginas/'+pag+'/salvar_personalizacao.php',type:'POST',data:{produto:produtoAtual.id,extras:JSON.stringify(extras)},success:function(r){
-     if(String(r).trim()==='Inserido com Sucesso'){
-       bootstrap.Modal.getOrCreateInstance(document.getElementById('modalPdvExtras')).hide();listarVendas();limparCampos();
-     }else aviso(r);
-   },error:function(xhr){aviso(xhr.responseText||'Erro ao adicionar a tapioca.');},complete:function(){botao.prop('disabled',false);}});
+   $('#pdvExtrasItens .pdv-extra-qtd').each(function(){
+     var n=Number(this.value),max=Number($(this).attr('max')||20);
+     if(this.value===''||!Number.isInteger(n)||n<0||n>max){valido=false;return;}
+     if(n>0)extras[String($(this).attr('data-id'))]=n;
+   });
+   if(!valido){erroExtras('Confira as quantidades dos adicionais.');return;}
+   var botao=$(this).prop('disabled',true).text('Adicionando...');
+   $.ajax({url:'paginas/'+pag+'/salvar_personalizacao.php',type:'POST',dataType:'text',timeout:15000,
+     data:{produto:produtoAtual.id,extras:JSON.stringify(extras)},
+     success:function(r){
+       if(String(r).trim()==='Inserido com Sucesso'){
+         bootstrap.Modal.getOrCreateInstance(document.getElementById('modalPdvExtras')).hide();
+         listarVendas();limparCampos();
+       }else erroExtras(r||'O servidor não confirmou a gravação do produto.');
+     },
+     error:function(xhr,status){
+       erroExtras('Falha ao salvar (HTTP '+xhr.status+'): '+(xhr.responseText||status||'Sem resposta do servidor'));
+     },
+     complete:function(){botao.prop('disabled',false).text('Adicionar à comanda');}
+   });
  });
 })();
 </script>
