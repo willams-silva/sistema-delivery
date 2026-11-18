@@ -4,7 +4,8 @@ require_once('../../../conexao.php');
 $empresa=(int)($_SESSION['empresa']??0);
 $usuario=(int)($_SESSION['id']??0);
 $sessao=(string)($_SESSION['sessao_usuario']??'');
-if (!$empresa || !$usuario || $sessao==='') { http_response_code(403); exit('Sessão expirada'); }
+if (!$empresa || !$usuario) { http_response_code(403); exit('Sessão do operador expirada'); }
+if ($sessao==='') $sessao=(string)$usuario;
 $produto=(int)($_POST['produto']??0);
 $extras=json_decode((string)($_POST['extras']??''),true);
 if (!$produto || !is_array($extras) || count($extras)>100) exit('Seleção inválida');
@@ -66,5 +67,5 @@ try{
 }catch(Throwable $e){
  if($pdo->inTransaction()) $pdo->rollBack();
  error_log('[PDV personalizacao] empresa='.$empresa.' produto='.$produto.' erro='.$e->getMessage());
- http_response_code(500);echo 'Não foi possível adicionar o item. Consulte o log PHP da Hostinger.';
+ http_response_code(500);echo 'Erro ao salvar personalização (PDV-500). Consulte o log PHP da Hostinger.';
 }
