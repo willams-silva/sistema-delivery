@@ -447,423 +447,100 @@ if ($saldo_dezembro > 0) {
 	$classe_dezembro = 'red';
 }
 ?>
+<?php
+$meses_balanco = [
+ ['Janeiro', $receber_janeiro, $pagar_janeiro, $saldo_janeiro],
+ ['Fevereiro', $receber_fevereiro, $pagar_fevereiro, $saldo_fevereiro],
+ ['Março', $receber_marco, $pagar_marco, $saldo_marco],
+ ['Abril', $receber_abril, $pagar_abril, $saldo_abril],
+ ['Maio', $receber_maio, $pagar_maio, $saldo_maio],
+ ['Junho', $receber_junho, $pagar_junho, $saldo_junho],
+ ['Julho', $receber_julho, $pagar_julho, $saldo_julho],
+ ['Agosto', $receber_agosto, $pagar_agosto, $saldo_agosto],
+ ['Setembro', $receber_setembro, $pagar_setembro, $saldo_setembro],
+ ['Outubro', $receber_outubro, $pagar_outubro, $saldo_outubro],
+ ['Novembro', $receber_novembro, $pagar_novembro, $saldo_novembro],
+ ['Dezembro', $receber_dezembro, $pagar_dezembro, $saldo_dezembro],
+];
+$esc_balanco = static function ($v) { return htmlspecialchars((string)($v ?? ''), ENT_QUOTES, 'UTF-8'); };
+$moeda_balanco = static function ($v) { return 'R$ ' . number_format((float)$v, 2, ',', '.'); };
+$total_recebimentos_balanco = 0;
+$total_pagamentos_balanco = 0;
+$max_saldo_balanco = 0;
+foreach ($meses_balanco as $mes_balanco) {
+ $total_recebimentos_balanco += (float)$mes_balanco[1];
+ $total_pagamentos_balanco += (float)$mes_balanco[2];
+ $max_saldo_balanco = max($max_saldo_balanco, abs((float)$mes_balanco[3]));
+}
+$logo_balanco = rtrim((string)$url_sistema, '/') . '/sistema/img/' . rawurlencode((string)$logo_sistema);
+?>
 <!DOCTYPE html>
-<html>
-
-<head>
-
-	<style>
-		@import url('https://fonts.cdnfonts.com/css/tw-cen-mt-condensed');
-
-		@page {
-			margin: 145px 20px 25px 20px;
-		}
-
-		#header {
-			position: fixed;
-			left: 0px;
-			top: -110px;
-			bottom: 100px;
-			right: 0px;
-			height: 35px;
-			text-align: center;
-			padding-bottom: 100px;
-		}
-
-		#content {
-			margin-top: 0px;
-		}
-
-		#footer {
-			position: fixed;
-			left: 0px;
-			bottom: -60px;
-			right: 0px;
-			height: 80px;
-		}
-
-		#footer .page:after {
-			content: counter(page, my-sec-counter);
-		}
-
-		body {
-			font-family: 'Tw Cen MT', sans-serif;
-		}
-
-		.marca {
-			position: fixed;
-			left: 50;
-			top: 100;
-			width: 80%;
-			opacity: 8%;
-		}
-	
-/* Padronização visual Bora Comanda: somente apresentação, sem alterar consultas. */
-@page { margin: 145px 24px 45px 24px; }
-body { font-family: DejaVu Sans, sans-serif !important; color: #263238; }
-#header { top: -125px !important; height: 108px !important; padding-bottom: 0 !important; bottom: auto !important; text-align: left !important; }
-#header > div:first-child { height: 80px !important; border: none !important; border-bottom: 2px solid #475569 !important; padding-bottom: 6px !important; }
-#header > div:first-child table { width: 100% !important; border-collapse: collapse !important; table-layout: fixed; }
-#header > div:first-child table td { vertical-align: middle !important; border: none !important; line-height: 1.5; overflow-wrap: break-word; }
-#header img#imag { max-width: 95px !important; max-height: 58px !important; width: auto !important; height: auto !important; margin: 0 6px !important; }
-#header > div:first-child table td:first-child { width: 20% !important; text-align: center !important; }
-#header > div:first-child table td:last-child { width: 35% !important; text-align: right !important; font-size: 9px !important; }
-#header > div:first-child table td:last-child big { font-size: 12px !important; font-weight: bold; color: #172b4d; }
-#cabecalhotabela { border-bottom: 1px solid #94a3b8 !important; margin-bottom: 6px !important; }
-#cabecalhotabela #cabeca { background: #e9eef5 !important; }
-#cabecalhotabela td { padding: 6px 3px !important; font-weight: bold; }
-#content table { border-collapse: collapse; }
-#content td { padding-top: 5px; padding-bottom: 5px; overflow-wrap: break-word; }
-#footer { bottom: -34px !important; height: 26px !important; border-top: 1px solid #cbd5e1; color: #64748b; }
-#footer hr { display: none; }
-.marca { opacity: .07 !important; }
-
-</style>
-
-</head>
-
-<body>
-	<?php
-	if ($marca_dagua == 'Sim' and $tipo_rel != 'HTML') { ?>
-		<img class="marca" src="<?php echo $url_sistema ?>sistema/img/<?php echo $logo_sistema ?>">
-	<?php } ?>
-
-
-	<div id="header">
-
-		<div style="border-style: solid; font-size: 10px; height: 55px;">
-			<table style="width: 100%; border: 0px solid #ccc;">
-				<tr>
-					<td style="border: 1px; solid #000; width: 25%; text-align: left;">
-						<img style="margin-top: 0px; margin-left: 7px;" id="imag"
-							src="<?php echo $url_sistema ?>sistema/img/<?php echo $logo_sistema ?>" width="60%">
-					</td>
-
-					<td style="text-align: center; font-size: 10px; width: 40%;">
-
-						<b><?php echo mb_strtoupper($nome_sistema) ?></b><br>
-						<b>CNPJ: </b><?php echo mb_strtoupper($cnpj_sistema) ?><br>
-						<b>INSTAGRAM:</b> <?php echo mb_strtoupper($instagram_sistema) ?><br>
-						<?php echo mb_strtoupper($endereco_sistema) ?>
-
-					</td>
-					<td style="width: 1%; text-align: center; font-size: 13px;">
-
-					</td>
-					<td style="width: 35%; text-align: right; font-size: 9px;padding-right: 10px;">
-						<b><big>RELATÓRIO DE BALANÇO ANUAL</big></b><br> <br> <?php echo mb_strtoupper($data_hoje) ?>
-					</td>
-				</tr>
-			</table>
-		</div>
-
-		<br>
-
-
-		<table id="cabecalhotabela" style="border-bottom-style: solid; font-size: 11px; margin-bottom:10px; width: 100%; table-layout: fixed;">
-			<thead>
-
-				<tr id="cabeca" style="margin-left: 0px; background-color:#fff">
-					<td style="width:20%; font-weight: bold; color:<?php echo $classe_janeiro ?>">JANEIRO</td>
-					<td style="width:27%">RECEBIMENTOS R$ <?php echo $receber_janeiroF ?></td>
-					<td style="width:27%">PAGAMENTOS R$ <?php echo $pagar_janeiroF ?></td>
-					<td style="width:26%">SALDO <span style="color:<?php echo $classe_janeiro ?>"><b>R$ <?php echo $saldo_janeiroF ?></b></span></td>
-
-				</tr>
-
-				<tr id="cabeca" style="margin-left: 0px; background-color:#fff">
-					<td style="width:20%; font-weight: bold; color:<?php echo $classe_fevereiro ?>">FEVEREIRO</td>
-					<td style="width:27%">RECEBIMENTOS R$ <?php echo $receber_fevereiroF ?></td>
-					<td style="width:27%">PAGAMENTOS R$ <?php echo $pagar_fevereiroF ?></td>
-					<td style="width:26%">SALDO <span style="color:<?php echo $classe_fevereiro ?>"><b>R$ <?php echo $saldo_fevereiroF ?></b></span></td>
-
-				</tr>
-
-
-
-				<tr id="cabeca" style="margin-left: 0px; background-color:#fff">
-					<td style="width:20%; font-weight: bold; color:<?php echo $classe_marco ?>">MARÇO</td>
-					<td style="width:27%">RECEBIMENTOS R$ <?php echo $receber_marcoF ?></td>
-					<td style="width:27%">PAGAMENTOS R$ <?php echo $pagar_marcoF ?></td>
-					<td style="width:26%">SALDO <span style="color:<?php echo $classe_marco ?>"><b>R$ <?php echo $saldo_marcoF ?></b></span></td>
-
-				</tr>
-
-
-				<tr id="cabeca" style="margin-left: 0px; background-color:#fff">
-					<td style="width:20%; font-weight: bold; color:<?php echo $classe_abril ?>">ABRIL</td>
-					<td style="width:27%">RECEBIMENTOS R$ <?php echo $receber_abrilF ?></td>
-					<td style="width:27%">PAGAMENTOS R$ <?php echo $pagar_abrilF ?></td>
-					<td style="width:26%">SALDO <span style="color:<?php echo $classe_abril ?>"><b>R$ <?php echo $saldo_abrilF ?></b></span></td>
-
-				</tr>
-
-
-				<tr id="cabeca" style="margin-left: 0px; background-color:#fff">
-					<td style="width:20%; font-weight: bold; color:<?php echo $classe_maio ?>">MAIO</td>
-					<td style="width:27%">RECEBIMENTOS R$ <?php echo $receber_maioF ?></td>
-					<td style="width:27%">PAGAMENTOS R$ <?php echo $pagar_maioF ?></td>
-					<td style="width:26%">SALDO <span style="color:<?php echo $classe_maio ?>"><b>R$ <?php echo $saldo_maioF ?></b></span></td>
-
-				</tr>
-
-
-				<tr id="cabeca" style="margin-left: 0px; background-color:#fff">
-					<td style="width:20%; font-weight: bold; color:<?php echo $classe_junho ?>">JUNHO</td>
-					<td style="width:27%">RECEBIMENTOS R$ <?php echo $receber_junhoF ?></td>
-					<td style="width:27%">PAGAMENTOS R$ <?php echo $pagar_junhoF ?></td>
-					<td style="width:26%">SALDO <span style="color:<?php echo $classe_junho ?>"><b>R$ <?php echo $saldo_junhoF ?></b></span></td>
-				</tr>
-
-
-				<tr id="cabeca" style="margin-left: 0px; background-color:#fff">
-					<td style="width:20%; font-weight: bold; color:<?php echo $classe_julho ?>">JULHO</td>
-					<td style="width:27%">RECEBIMENTOS R$ <?php echo $receber_julhoF ?></td>
-					<td style="width:27%">PAGAMENTOS R$ <?php echo $pagar_julhoF ?></td>
-					<td style="width:26%">SALDO <span style="color:<?php echo $classe_julho ?>"><b>R$ <?php echo $saldo_julhoF ?></b></span></td>
-				</tr>
-
-
-
-				<tr id="cabeca" style="margin-left: 0px; background-color:#fff">
-					<td style="width:20%; font-weight: bold; color:<?php echo $classe_agosto ?>">AGOSTO</td>
-					<td style="width:27%">RECEBIMENTOS R$ <?php echo $receber_agostoF ?></td>
-					<td style="width:27%">PAGAMENTOS R$ <?php echo $pagar_agostoF ?></td>
-					<td style="width:26%">SALDO <span style="color:<?php echo $classe_agosto ?>"><b>R$ <?php echo $saldo_agostoF ?></b></span></td>
-				</tr>
-
-
-				<tr id="cabeca" style="margin-left: 0px; background-color:#fff">
-					<td style="width:20%; font-weight: bold; color:<?php echo $classe_setembro ?>">SETEMBRO</td>
-					<td style="width:27%">RECEBIMENTOS R$ <?php echo $receber_setembroF ?></td>
-					<td style="width:27%">PAGAMENTOS R$ <?php echo $pagar_setembroF ?></td>
-					<td style="width:26%">SALDO <span style="color:<?php echo $classe_setembro ?>"><b>R$ <?php echo $saldo_setembroF ?></b></span></td>
-				</tr>
-
-
-				<tr id="cabeca" style="margin-left: 0px; background-color:#fff">
-					<td style="width:20%; font-weight: bold; color:<?php echo $classe_outubro ?>">OUTUBRO</td>
-					<td style="width:27%">RECEBIMENTOS R$ <?php echo $receber_outubroF ?></td>
-					<td style="width:27%">PAGAMENTOS R$ <?php echo $pagar_outubroF ?></td>
-					<td style="width:26%">SALDO <span style="color:<?php echo $classe_outubro ?>"><b>R$ <?php echo $saldo_outubroF ?></b></span></td>
-				</tr>
-
-
-				<tr id="cabeca" style="margin-left: 0px; background-color:#fff">
-					<td style="width:20%; font-weight: bold; color:<?php echo $classe_novembro ?>">NOVEMBRO</td>
-					<td style="width:27%">RECEBIMENTOS R$ <?php echo $receber_novembroF ?></td>
-					<td style="width:27%">PAGAMENTOS R$ <?php echo $pagar_novembroF ?></td>
-					<td style="width:26%">SALDO <span style="color:<?php echo $classe_novembro ?>"><b>R$ <?php echo $saldo_novembroF ?></b></span></td>
-				</tr>
-
-
-				<tr id="cabeca" style="margin-left: 0px; background-color:#fff">
-					<td style="width:20%; font-weight: bold; color:<?php echo $classe_dezembro ?>">DEZEMBRO</td>
-					<td style="width:27%">RECEBIMENTOS R$ <?php echo $receber_dezembroF ?></td>
-					<td style="width:27%">PAGAMENTOS R$ <?php echo $pagar_dezembroF ?></td>
-					<td style="width:26%">SALDO <span style="color:<?php echo $classe_dezembro ?>"><b>R$ <?php echo $saldo_dezembroF ?></b></span></td>
-				</tr>
-
-
-			</thead>
-		</table>
-	</div>
-
-
-
-
-	<section id="stats-subtitle" style="margin-top: 200px">
-
-
-		<style type="text/css">
-			#principal {
-				width: 100%;
-				height: 600px;
-				margin-left: 10px;
-				font-family: Verdana, Helvetica, sans-serif;
-				font-size: 14px;
-
-			}
-
-			#barra {
-				margin: 0 2px;
-				vertical-align: bottom;
-				display: inline-block;
-				padding: 2px;
-				text-align: center;
-				width: 50px;
-
-
-			}
-
-			.cor1,
-			.cor2,
-			.cor3,
-			.cor4,
-			.cor5,
-			.cor6,
-			.cor7,
-			.cor8,
-			.cor9,
-			.cor10,
-			.cor11,
-			.cor12 {
-				color: #FFF;
-				padding: 5px;
-			}
-
-			.cor1 {
-				background-color: <?php echo $classe_janeiro ?>;
-			}
-
-			.cor2 {
-				background-color: <?php echo $classe_fevereiro ?>;
-			}
-
-			.cor3 {
-				background-color: <?php echo $classe_marco ?>;
-			}
-
-			.cor4 {
-				background-color: <?php echo $classe_abril ?>;
-			}
-
-			.cor5 {
-				background-color: <?php echo $classe_maio ?>;
-			}
-
-			.cor6 {
-				background-color: <?php echo $classe_junho ?>;
-			}
-
-			.cor7 {
-				background-color: <?php echo $classe_julho ?>;
-			}
-
-			.cor8 {
-				background-color: <?php echo $classe_agosto ?>;
-			}
-
-			.cor9 {
-				background-color: <?php echo $classe_setembro ?>;
-			}
-
-			.cor10 {
-				background-color: <?php echo $classe_outubro ?>;
-			}
-
-			.cor11 {
-				background-color: <?php echo $classe_novembro ?>;
-			}
-
-			.cor12 {
-				background-color: <?php echo $classe_dezembro ?>;
-			}
-		</style>
-
-		<div id="principal">
-			<p>Lucros no Ano de <?php echo $ano_atual ?></p>
-
-			<?php
-			$divisao_barra = 1;
-			?>
-
-			<div id="barra">
-				<div class="cor1" style="height:<?php echo $saldo_janeiro / $divisao_barra + 25 ?>px; font-size: 9px; max-height: 600px"><?php echo $saldo_janeiroF ?> </div>
-				<div style="font-size: 10px">JANEIRO</div>
-			</div>
-
-			<div id="barra">
-				<div class="cor2" style="height:<?php echo $saldo_fevereiro / $divisao_barra + 25 ?>px; font-size: 9px; max-height: 600px"><?php echo $saldo_fevereiroF ?> </div>
-				<div style="font-size: 10px">FEVEREIRO</div>
-			</div>
-
-			<div id="barra">
-				<div class="cor3" style="height:<?php echo $saldo_marco / $divisao_barra + 25 ?>px; font-size: 9px; max-height: 600px"><?php echo $saldo_marcoF ?> </div>
-				<div style="font-size: 10px">MARÇO</div>
-			</div>
-
-			<div id="barra">
-				<div class="cor4" style="height:<?php echo $saldo_abril / $divisao_barra + 25 ?>px; font-size: 9px; max-height: 600px"><?php echo $saldo_abrilF ?> </div>
-				<div style="font-size: 10px">ABRIL</div>
-			</div>
-
-
-			<div id="barra">
-				<div class="cor5" style="height:<?php echo $saldo_maio / $divisao_barra + 25 ?>px; font-size: 9px; max-height: 600px">R$ <?php echo $saldo_maioF ?> </div>
-				<div style="font-size: 10px">MAIO</div>
-			</div>
-
-
-			<div id="barra">
-				<div class="cor6" style="height:<?php echo $saldo_junho / $divisao_barra + 25 ?>px; font-size: 9px; max-height: 600px"><?php echo $saldo_junhoF ?> </div>
-				<div style="font-size: 10px">JUNHO</div>
-			</div>
-
-
-			<div id="barra">
-				<div class="cor7" style="height:<?php echo $saldo_julho / $divisao_barra + 25 ?>px; font-size: 9px; max-height: 600px"><?php echo $saldo_julhoF ?> </div>
-				<div style="font-size: 10px">JULHO</div>
-			</div>
-
-
-			<div id="barra">
-				<div class="cor8" style="height:<?php echo $saldo_agosto / $divisao_barra + 25 ?>px; font-size: 9px; max-height: 600px"><?php echo $saldo_agostoF ?> </div>
-				<div style="font-size: 10px">AGOSTO</div>
-			</div>
-
-
-			<div id="barra">
-				<div class="cor9" style="height:<?php echo $saldo_setembro / $divisao_barra + 25 ?>px; font-size: 9px; max-height: 600px"><?php echo $saldo_setembroF ?> </div>
-				<div style="font-size: 10px">SETEMBRO</div>
-			</div>
-
-
-
-			<div id="barra">
-				<div class="cor10" style="height:<?php echo $saldo_outubro / $divisao_barra + 25 ?>px; font-size: 9px; max-height: 600px"><?php echo $saldo_outubroF ?> </div>
-				<div style="font-size: 10px">OUTUBRO</div>
-			</div>
-
-
-			<div id="barra">
-				<div class="cor11" style="height:<?php echo $saldo_novembro / $divisao_barra + 25 ?>px; font-size: 9px; max-height: 600px"><?php echo $saldo_novembroF ?> </div>
-				<div style="font-size: 10px">NOVEMBRO</div>
-			</div>
-
-			<div id="barra">
-				<div class="cor12" style="height:<?php echo $saldo_dezembro / $divisao_barra + 25 ?>px; font-size: 9px; max-height: 600px"><?php echo $saldo_dezembroF ?> </div>
-				<div style="font-size: 10px">DEZEMBRO</div>
-			</div>
-
-
-
-		</div>
-
-
-
-	</section>
-
-
-
-	<div id="footer" class="row">
-		<hr style="margin-bottom: 0;">
-		<table style="width:100%;">
-			<tr style="width:100%;">
-				<td style="width:60%; font-size: 10px; text-align: left;"><?php echo $nome_sistema ?> Telefone: <?php echo $telefone_sistema ?></td>
-				<td style="width:40%; font-size: 10px; text-align: right;">
-					<p class="page">Página </p>
-				</td>
-			</tr>
-		</table>
-	</div>
-
-
-
-
-
-
-
-</body>
-
-</html>
+<html lang="pt-BR"><head><meta charset="UTF-8">
+<style>
+@page { size: A4 portrait; margin: 17mm 13mm 17mm 13mm; }
+body { margin: 0; font-family: DejaVu Sans, sans-serif; color: #263238; font-size: 9px; }
+.header { border-bottom: 2px solid #475569; padding-bottom: 10px; margin-bottom: 14px; }
+.header table { width: 100%; border-collapse: collapse; }
+.header td { vertical-align: middle; }
+.logo-cell { width: 19%; text-align: center; }
+.logo { max-width: 95px; max-height: 60px; width: auto; height: auto; }
+.company { width: 46%; padding: 0 10px; line-height: 1.55; overflow-wrap: break-word; }
+.company strong { font-size: 11px; color: #172b4d; }
+.report { width: 35%; text-align: right; line-height: 1.7; }
+.report strong { font-size: 12px; color: #172b4d; }
+.report small { color: #64748b; }
+.section-title { font-size: 11px; font-weight: bold; color: #172b4d; margin: 12px 0 8px; }
+.data { width: 100%; border-collapse: collapse; table-layout: fixed; }
+.data th { background: #e9eef5; padding: 9px 7px; border-bottom: 1px solid #94a3b8; text-align: left; }
+.data td { padding: 8px 7px; border-bottom: 1px solid #e2e8f0; }
+.data tbody tr:nth-child(even) { background: #f8fafc; }
+.data tr { page-break-inside: avoid; }
+.num { text-align: right !important; white-space: nowrap; }
+.negative { color: #b91c1c; font-weight: bold; }
+.positive { color: #15803d; font-weight: bold; }
+.total td { background: #e9eef5; font-weight: bold; border-top: 2px solid #94a3b8; }
+.chart { margin-top: 18px; page-break-inside: avoid; }
+.chart-row { width: 100%; border-collapse: collapse; margin-bottom: 5px; }
+.chart-label { width: 18%; font-size: 8px; }
+.chart-track { width: 57%; background: #eef2f7; height: 12px; }
+.chart-bar { height: 12px; background: #64748b; }
+.chart-bar.negative-bar { background: #b91c1c; }
+.chart-value { width: 25%; text-align: right; font-size: 8px; }
+.footer { position: fixed; bottom: -11mm; left: 0; right: 0; border-top: 1px solid #cbd5e1; padding-top: 5px; color: #64748b; font-size: 7px; }
+.watermark { position: fixed; top: 35%; left: 18%; width: 64%; opacity: .07; z-index: -1; }
+</style></head><body>
+<?php if (($marca_dagua ?? '') === 'Sim' && ($tipo_rel ?? '') !== 'HTML'): ?><img class="watermark" src="<?php echo $esc_balanco($logo_balanco); ?>" alt=""><?php endif; ?>
+<div class="header"><table><tr>
+<td class="logo-cell"><img class="logo" src="<?php echo $esc_balanco($logo_balanco); ?>" alt="Logo"></td>
+<td class="company"><strong><?php echo $esc_balanco(mb_strtoupper((string)$nome_sistema)); ?></strong>
+<?php if (!empty($cnpj_sistema)): ?><div>CNPJ: <?php echo $esc_balanco($cnpj_sistema); ?></div><?php endif; ?>
+<?php if (!empty($instagram_sistema)): ?><div>Instagram: <?php echo $esc_balanco($instagram_sistema); ?></div><?php endif; ?>
+<?php if (!empty($endereco_sistema)): ?><div><?php echo $esc_balanco($endereco_sistema); ?></div><?php endif; ?>
+</td>
+<td class="report"><strong>BALANÇO ANUAL</strong><div>Ano: <?php echo $esc_balanco($ano_atual); ?></div><small><?php echo $esc_balanco($data_hoje ?? date('d/m/Y')); ?></small></td>
+</tr></table></div>
+<div class="section-title">Resumo financeiro mensal</div>
+<table class="data"><colgroup><col style="width:20%"><col style="width:27%"><col style="width:27%"><col style="width:26%"></colgroup>
+<thead><tr><th>MÊS</th><th class="num">RECEBIMENTOS</th><th class="num">PAGAMENTOS</th><th class="num">SALDO</th></tr></thead>
+<tbody>
+<?php foreach ($meses_balanco as $mes_balanco): ?>
+<tr><td><?php echo $esc_balanco($mes_balanco[0]); ?></td>
+<td class="num"><?php echo $moeda_balanco($mes_balanco[1]); ?></td>
+<td class="num"><?php echo $moeda_balanco($mes_balanco[2]); ?></td>
+<td class="num <?php echo $mes_balanco[3] < 0 ? 'negative' : 'positive'; ?>"><?php echo $moeda_balanco($mes_balanco[3]); ?></td></tr>
+<?php endforeach; ?>
+<tr class="total"><td>TOTAL ANUAL</td><td class="num"><?php echo $moeda_balanco($total_recebimentos_balanco); ?></td><td class="num"><?php echo $moeda_balanco($total_pagamentos_balanco); ?></td><td class="num"><?php echo $moeda_balanco($total_recebimentos_balanco - $total_pagamentos_balanco); ?></td></tr>
+</tbody></table>
+<div class="chart"><div class="section-title">Comparativo de saldos por mês</div>
+<?php foreach ($meses_balanco as $mes_balanco):
+$largura_balanco = $max_saldo_balanco > 0 ? round(abs((float)$mes_balanco[3]) / $max_saldo_balanco * 100, 1) : 0;
+?>
+<table class="chart-row"><tr>
+<td class="chart-label"><?php echo $esc_balanco($mes_balanco[0]); ?></td>
+<td class="chart-track"><div class="chart-bar <?php echo $mes_balanco[3] < 0 ? 'negative-bar' : ''; ?>" style="width:<?php echo $largura_balanco; ?>%;"></div></td>
+<td class="chart-value"><?php echo $moeda_balanco($mes_balanco[3]); ?></td>
+</tr></table>
+<?php endforeach; ?>
+</div>
+<div class="footer"><?php echo $esc_balanco($nome_sistema); ?><?php if (!empty($telefone_sistema)): ?> · Telefone: <?php echo $esc_balanco($telefone_sistema); ?><?php endif; ?></div>
+</body></html>
