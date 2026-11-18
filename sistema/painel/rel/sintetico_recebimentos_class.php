@@ -32,7 +32,7 @@ use Dompdf\Dompdf;
 use Dompdf\Options;
 
 header("Content-Transfer-Encoding: binary");
-header("Content-Type: image/png");
+// Dompdf envia application/pdf no stream.
 
 //INICIALIZAR A CLASSE DO DOMPDF
 $options = new Options();
