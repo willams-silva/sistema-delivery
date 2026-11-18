@@ -44,6 +44,16 @@ if(@count($res) > 0){
 		$estoque_unit = 'Não';
 	}
 
+	// Mesma regra da listagem do PDV: tapiocas são vendidas por unidade,
+	// mesmo quando a unidade antiga do cadastro é Quilogramas.
+	$stmtCategoria = $pdo->prepare("SELECT nome FROM categorias WHERE id = :categoria AND empresa = :empresa LIMIT 1");
+	$stmtCategoria->execute([':categoria' => $categoria, ':empresa' => $id_empresa]);
+	$nomeCategoria = trim((string)$stmtCategoria->fetchColumn());
+	if (mb_stripos($nomeCategoria, 'TAPIOCA') !== false) {
+		$nome_unidade = 'Unidade';
+		$estoque_unit = 'Sim';
+	}
+
 	echo $id.','.$estoque_unit.','.$nome.','.$nome_unidade;
 }else{
 	echo 'Código do Produto não encontrado!';
