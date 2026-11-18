@@ -1,0 +1,17 @@
+/* Tema exclusivo Rainha das Tapiocas: carregado apenas para a empresa com url_site correspondente. */
+:root { --rainha-cacau:#512c24; --rainha-cacau-escuro:#351b17; --rainha-caramelo:#b87542; --rainha-creme:#fff8ee; --rainha-borda:#ead9c7; }
+body { background:var(--rainha-creme)!important; }
+.app-sidebar, .main-sidebar-header, .main-sidebar-header.active { background:var(--rainha-cacau)!important; }
+.app-sidebar .side-menu__item, .app-sidebar .side-menu__label, .app-sidebar .side-menu__icon { color:#fff4e7!important; }
+.app-sidebar .side-menu__item:hover, .app-sidebar .side-menu__item.active, .app-sidebar .side-menu__item:focus { background:var(--rainha-cacau-escuro)!important; border-radius:10px; }
+.app-sidebar .side-menu__item.active .side-menu__label { font-weight:700; }
+.main-header, .app-header, .header { background:#fffaf3!important; border-bottom:1px solid var(--rainha-borda)!important; }
+.card { border:1px solid var(--rainha-borda)!important; border-radius:14px!important; box-shadow:0 4px 16px rgba(65,33,22,.06)!important; }
+.card-header { background:#fffaf3!important; border-bottom:1px solid var(--rainha-borda)!important; }
+.btn-primary, .btn-success:not(.btn-outline-success), .page-item.active .page-link { background:var(--rainha-cacau)!important; border-color:var(--rainha-cacau)!important; color:white!important; }
+.btn-primary:hover, .btn-success:not(.btn-outline-success):hover { background:var(--rainha-cacau-escuro)!important; border-color:var(--rainha-cacau-escuro)!important; }
+a:not(.btn):not(.side-menu__item) { color:var(--rainha-cacau); }
+.form-control:focus, .form-select:focus { border-color:var(--rainha-caramelo)!important; box-shadow:0 0 0 .18rem rgba(184,117,66,.16)!important; }
+.table thead th { background:#fff1df!important; color:var(--rainha-cacau)!important; }
+.modal-content { border-radius:16px!important; border:1px solid var(--rainha-borda)!important; }
+@media(max-width:767px){ .card { border-radius:12px!important; } .app-sidebar .side-menu__item { min-height:42px; } }
