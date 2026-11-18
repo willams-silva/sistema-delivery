@@ -268,6 +268,10 @@ if($linhas == 0){
 	<link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
 	<link href="../assets/css/custom.css" rel="stylesheet" />
 	<link href="css/painel-ux.css?v=20261117-17" rel="stylesheet" />
+	<?php // Tema visual exclusivo, baseado no slug da empresa autenticada. ?>
+	<?php if (strtolower(trim((string)($config['url_site'] ?? ''))) === 'rainhadastapiocas'): ?>
+	<link href="css/tema-rainha-tapiocas.css?v=20261118-1" rel="stylesheet" />
+	<?php endif; ?>
 	<script src="js/jquery-1.11.1.min.js"></script>
 	<script src="js/modernizr.custom.js"></script>
 
