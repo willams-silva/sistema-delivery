@@ -45,7 +45,23 @@ if($linhas > 0){
 	$codigo_produto = trim((string)($res[$i]['codigo'] ?? ''));
 	$codigo_barras = trim((string)($res[$i]['codigo'] ?? ''));
 	$codigo_barras_html = htmlspecialchars($codigo_barras, ENT_QUOTES, 'UTF-8');
-	$codigo_barras_bloco = $codigo_barras !== '' ? '<div class="pdv-barcode-box"><svg class="pdv-barcode" width="100" height="30" viewBox="0 0 100 30" data-barcode="' . $codigo_barras_html . '" aria-label="Código de barras ' . $codigo_barras_html . '"></svg><span class="pdv-barcode-number">' . $codigo_barras_html . '</span></div>' : '';
+	// Usar EAN somente em refrigerantes e água mineral com dígito verificador válido.
+	$cat_barra = $pdo->prepare("SELECT nome FROM categorias WHERE id = :id AND empresa = :empresa LIMIT 1");
+	$cat_barra->execute([':id' => $res[$i]['categoria'], ':empresa' => $id_empresa]);
+	$nome_categoria_barra = mb_strtolower(trim((string)$cat_barra->fetchColumn()), 'UTF-8');
+	$eh_bebida_ean = mb_strpos($nome_categoria_barra, 'refrigerante') !== false || mb_strpos($nome_categoria_barra, 'água mineral') !== false || mb_strpos($nome_categoria_barra, 'agua mineral') !== false;
+	$formato_barra = 'CODE128';
+	if ($eh_bebida_ean && preg_match('/^(?:[0-9]{8}|[0-9]{13})$/D', $codigo_barras)) {
+		$digitos = str_split($codigo_barras);
+		$soma = 0;
+		for ($j = count($digitos) - 2, $peso = 3; $j >= 0; $j--, $peso = ($peso === 3 ? 1 : 3)) {
+			$soma += (int)$digitos[$j] * $peso;
+		}
+		if (((10 - ($soma % 10)) % 10) === (int)end($digitos)) {
+			$formato_barra = strlen($codigo_barras) === 8 ? 'EAN8' : 'EAN13';
+		}
+	}
+	$codigo_barras_bloco = $codigo_barras !== '' ? '<div class="pdv-barcode-box"><svg class="pdv-barcode" width="100" height="30" viewBox="0 0 100 30" data-barcode="' . $codigo_barras_html . '" data-format="' . $formato_barra . '" aria-label="Código de barras ' . $codigo_barras_html . '"></svg><span class="pdv-barcode-number">' . $codigo_barras_html . '</span></div>' : '';
 
 	$categoria = $res[$i]['categoria'];
 	$unidade = $res[$i]['unidade'];
@@ -172,7 +188,7 @@ HTML;
 		if (typeof JsBarcode === 'function') {
 			document.querySelectorAll('#listar .pdv-barcode[data-barcode]').forEach(function(svg) {
 				try {
-					JsBarcode(svg, svg.getAttribute('data-barcode'), {format:'CODE128', displayValue:false, height:30, width:1.1, margin:0});
+					JsBarcode(svg, svg.getAttribute('data-barcode'), {format:svg.getAttribute('data-format') || 'CODE128', displayValue:false, height:30, width:1.1, margin:0});
 				} catch(e) { svg.style.display = 'none'; }
 			});
 		}
