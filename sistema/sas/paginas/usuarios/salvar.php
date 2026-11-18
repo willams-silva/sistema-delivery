@@ -2,7 +2,7 @@
 $tabela = 'usuarios';
 require_once("../../../conexao.php");
 
-if($modo_teste == 'Sim'){
+if(($modo_teste ?? 'Não') == 'Sim'){
 	echo 'Em modo de teste esse recurso fica desabilitado!';
 	exit();
 }
@@ -13,7 +13,7 @@ $telefone = $_POST['telefone'];
 $nivel = $_POST['nivel'];
 $endereco = $_POST['endereco'];
 $id = $_POST['id'];
-$mostrar_registros = $_POST['mostrar_registros'];
+$mostrar_registros = $_POST['mostrar_registros'] ?? null;
 $numero = @ $_POST['numero'];
 $bairro = @$_POST['bairro'];
 $cidade = @$_POST['cidade'];
@@ -72,6 +72,18 @@ if ($data_nasc == "") {
 
 }
 
+
+// Preserva a preferência existente quando o formulário não envia o campo.
+if ($mostrar_registros === null) {
+    if ($id !== '') {
+        $consulta_preferencia = $pdo->prepare("SELECT mostrar_registros FROM $tabela WHERE id = :id");
+        $consulta_preferencia->execute([':id' => $id]);
+        $mostrar_registros = $consulta_preferencia->fetchColumn();
+    }
+    if ($mostrar_registros === null || $mostrar_registros === false) {
+        $mostrar_registros = 'Não';
+    }
+}
 
 //validar troca da foto
 $query = $pdo->query("SELECT * FROM $tabela where id = '$id'");
