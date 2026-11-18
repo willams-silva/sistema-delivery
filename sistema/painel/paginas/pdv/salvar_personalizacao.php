@@ -39,11 +39,20 @@ $mesa=(int)($_SESSION['id_ab_mesa']??0);
 $status=$p['preparado']!=='Não'?'Aguardando':'';
 try{
  $pdo->beginTransaction();
- $stmt=$pdo->prepare("INSERT INTO carrinho (sessao,cliente,produto,quantidade,total_item,obs,pedido,id_sabor,data,variacao,mesa,nome_cliente,sabores,nome_produto,borda,categoria,status,hora,empresa,valor_unitario) VALUES (?,0,?,1,?,'',?,0,curDate(),0,?,'',0,'',0,?,?,curTime(),?,?)");
- $stmt->execute([$sessao,$produto,$total,$pedido,$mesa,(int)$p['categoria'],$status,$empresa,$total]);
+ // Mesma estrutura de INSERT já utilizada pelo fluxo de tapiocas mistas.
+ // O valor_unitario é atualizado depois, sem depender de colunas opcionais no INSERT.
+ $stmt=$pdo->prepare("INSERT INTO carrinho (sessao,cliente,produto,quantidade,total_item,obs,pedido,id_sabor,data,variacao,mesa,nome_cliente,sabores,nome_produto,borda,categoria,status,hora,empresa) VALUES (?,0,?,1,?,'',?,0,curDate(),0,?,'',0,'',0,?,?,curTime(),?)");
+ if (!$stmt->execute([$sessao,$produto,$total,$pedido,$mesa,(int)$p['categoria'],$status,$empresa])) {
+  throw new RuntimeException('Falha ao inserir produto no carrinho: '.implode(' ', $stmt->errorInfo()));
+ }
  $idCarrinho=(int)$pdo->lastInsertId();
+ if ($idCarrinho<=0) throw new RuntimeException('Carrinho não gerado');
  $stmt=$pdo->prepare("INSERT INTO temp (sessao,tabela,id_item,id_sabor,carrinho,data,categoria,quantidade,valor_item,empresa) VALUES (?,'adicionais',?,0,?,curDate(),'Sim',?,?,?)");
- foreach($selecionados as $a) $stmt->execute([$sessao,$a['id'],$idCarrinho,$a['qtd'],$a['valor'],$empresa]);
+ foreach($selecionados as $a) {
+  if (!$stmt->execute([$sessao,$a['id'],$idCarrinho,$a['qtd'],$a['valor'],$empresa])) {
+   throw new RuntimeException('Falha ao registrar adicional: '.implode(' ', $stmt->errorInfo()));
+  }
+ }
  if($pedido){
   $stmt=$pdo->prepare("SELECT valor,total_pago FROM vendas WHERE id=? AND empresa=? FOR UPDATE");
   $stmt->execute([$pedido,$empresa]);$v=$stmt->fetch(PDO::FETCH_ASSOC);
@@ -56,5 +65,6 @@ try{
  echo 'Inserido com Sucesso';
 }catch(Throwable $e){
  if($pdo->inTransaction()) $pdo->rollBack();
- http_response_code(500);echo 'Não foi possível adicionar o item';
+ error_log('[PDV personalizacao] empresa='.$empresa.' produto='.$produto.' erro='.$e->getMessage());
+ http_response_code(500);echo 'Não foi possível adicionar o item. Consulte o log PHP da Hostinger.';
 }
