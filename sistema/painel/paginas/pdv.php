@@ -503,7 +503,7 @@ $data_atual = date('Y-m-d');
  <div class="modal-dialog modal-dialog-scrollable"><div class="modal-content">
   <div class="modal-header bg-primary text-white"><h5 class="modal-title">Personalizar: <span id="pdvExtrasNome"></span></h5><button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button></div>
   <div class="modal-body"><p class="small text-muted">Selecione os adicionais e as proteínas extras. Opcionais não têm custo.</p><div id="pdvExtrasItens"></div><div id="pdvExtrasErro" class="alert alert-danger mt-3" role="alert" style="display:none"></div></div>
-  <div class="modal-footer"><button type="button" class="btn btn-outline-secondary" id="pdvExtrasSem">Sem adicionais</button><button type="button" class="btn btn-primary" id="pdvExtrasSalvar">Adicionar à comanda</button></div>
+  <div class="modal-footer"><button type="button" class="btn btn-outline-secondary" id="pdvExtrasSem">Sem adicionais</button><button type="button" class="btn btn-primary" id="pdvExtrasSalvar" onclick="return window.pdvSalvarExtrasClique(event, this)">Adicionar à comanda</button></div>
  </div></div>
 </div>
 
@@ -1144,7 +1144,11 @@ function FormaPg(){
    $('#pdvExtrasErro').text(texto).show();
    console.error('[Bora Comanda PDV] Personalização:',texto);
  }
- $(document).off('click.pdvExtrasSalvar', '#pdvExtrasSalvar').on('click.pdvExtrasSalvar', '#pdvExtrasSalvar', function(e){
+ window.pdvSalvarExtrasClique=function(e,botaoClicado){
+   if(e) e.preventDefault();
+   $('#pdvExtrasErro').hide().text('');
+   var botao=$(botaoClicado||'#pdvExtrasSalvar');
+   botao.text('Validando...');
    e.preventDefault();
    if(!produtoAtual){erroExtras('Produto não selecionado.');return;}
    $('#pdvExtrasErro').hide().text('');
@@ -1155,7 +1159,7 @@ function FormaPg(){
      if(n>0)extras[String($(this).attr('data-id'))]=n;
    });
    if(!valido){erroExtras('Confira as quantidades dos adicionais.');return;}
-   var botao=$(this).prop('disabled',true).text('Adicionando...');
+   botao.prop('disabled',true).text('Adicionando...');
    $('#pdvExtrasErro').hide();
    $.ajax({url:'paginas/'+pag+'/salvar_personalizacao.php',type:'POST',dataType:'text',timeout:15000,
      data:{produto:produtoAtual.id,extras:JSON.stringify(extras)},
@@ -1170,7 +1174,8 @@ function FormaPg(){
      },
      complete:function(){botao.prop('disabled',false).text('Adicionar à comanda');}
    });
- });
+   return false;
+ };
 })();
 </script>
 
