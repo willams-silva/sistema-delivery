@@ -24,7 +24,7 @@ use Dompdf\Dompdf;
 use Dompdf\Options;
 
 header("Content-Transfer-Encoding: binary");
-header("Content-Type: image/png");
+// O Dompdf define o Content-Type correto (application/pdf) ao enviar o documento.
 
 //INICIALIZAR A CLASSE DO DOMPDF
 $options = new Options();
