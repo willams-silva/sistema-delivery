@@ -1120,7 +1120,7 @@ function FormaPg(){
           return;
         }
         var partes = result.split(',');
-        if (partes.length < 4 || !/^\\d+$/.test(partes[0])) {
+        if (partes.length < 4 || !/^\d+$/.test(partes[0])) {
           alertWarning('Não foi possível identificar o produto pelo código.');
           return;
         }
