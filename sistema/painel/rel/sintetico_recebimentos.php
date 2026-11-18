@@ -120,7 +120,9 @@ body { font-family: DejaVu Sans, sans-serif !important; font-size: 8px; color: #
 #cabecalhotabela { width: 100%; border-collapse: collapse; table-layout: fixed; margin: 0 !important; border: none !important; }
 #cabecalhotabela td { background: #e9eef5; font-weight: bold; padding: 8px 4px; border-bottom: 1px solid #94a3b8; }
 #content { margin: 0 !important; }
-#relatorio-dados th { background: #e9eef5; font-weight: bold; padding: 8px 4px; border-bottom: 1px solid #94a3b8; text-align: left; }\n#relatorio-dados thead { display: table-header-group; }\n#content table { border-collapse: collapse; width: 100%; table-layout: fixed; font-size: 8px !important; }
+#relatorio-dados th { background: #e9eef5; font-weight: bold; padding: 8px 4px; border-bottom: 1px solid #94a3b8; text-align: left; }
+#relatorio-dados thead { display: table-header-group; }
+#content table { border-collapse: collapse; width: 100%; table-layout: fixed; font-size: 8px !important; }
 #content td { padding: 8px 4px; border-bottom: 1px solid #e2e8f0; vertical-align: top; overflow-wrap: break-word; }
 #content tr { page-break-inside: avoid; }
 #content tbody tr:nth-child(even) { background: #f8fafc; }
