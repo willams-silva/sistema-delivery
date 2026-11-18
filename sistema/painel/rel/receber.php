@@ -66,13 +66,34 @@ body {font-family: 'Tw Cen MT', sans-serif;}
 	opacity:8%;
 }
 
+
+/* Padronização visual Bora Comanda: somente apresentação, sem alterar consultas. */
+@page { margin: 145px 24px 45px 24px; }
+body { font-family: DejaVu Sans, sans-serif !important; color: #263238; }
+#header { top: -125px !important; height: 108px !important; padding-bottom: 0 !important; bottom: auto !important; text-align: left !important; }
+#header > div:first-child { height: 80px !important; border: none !important; border-bottom: 2px solid #475569 !important; padding-bottom: 6px !important; }
+#header > div:first-child table { width: 100% !important; border-collapse: collapse !important; table-layout: fixed; }
+#header > div:first-child table td { vertical-align: middle !important; border: none !important; line-height: 1.5; overflow-wrap: break-word; }
+#header img#imag { max-width: 95px !important; max-height: 58px !important; width: auto !important; height: auto !important; margin: 0 6px !important; }
+#header > div:first-child table td:first-child { width: 20% !important; text-align: center !important; }
+#header > div:first-child table td:last-child { width: 35% !important; text-align: right !important; font-size: 9px !important; }
+#header > div:first-child table td:last-child big { font-size: 12px !important; font-weight: bold; color: #172b4d; }
+#cabecalhotabela { border-bottom: 1px solid #94a3b8 !important; margin-bottom: 6px !important; }
+#cabecalhotabela #cabeca { background: #e9eef5 !important; }
+#cabecalhotabela td { padding: 6px 3px !important; font-weight: bold; }
+#content table { border-collapse: collapse; }
+#content td { padding-top: 5px; padding-bottom: 5px; overflow-wrap: break-word; }
+#footer { bottom: -34px !important; height: 26px !important; border-top: 1px solid #cbd5e1; color: #64748b; }
+#footer hr { display: none; }
+.marca { opacity: .07 !important; }
+
 </style>
 
 </head>
 <body>
 <?php 
 if($marca_dagua == 'Sim'){ ?>
-<img class="imagem" src="<?php echo $url_sistema ?>img/<?php echo $logo_sistema ?>"  style="width: 200px;">
+<img class="imagem" src="<?php echo $url_sistema ?>sistema/img/<?php echo $logo_sistema ?>"  style="width: 200px;">
 <?php } ?>
 
 
