@@ -1102,51 +1102,37 @@ function FormaPg(){
 
 
   <script type="text/javascript">
-  $(document).keyup(function(e) {
-  		if(e.keyCode === 13){
-
-  			var codigo = $("#txt_buscar").val(); 
-  			if(codigo == ""){
-  				return;
-  			}  
-            
-            $.ajax({
-		        url: 'paginas/' + pag + "/buscar_produto.php",
-		        method: 'POST',
-		        data: {codigo},
-		        dataType: "html",
-
-		        success:function(result){
-
-		            if(result.trim() === 'Código do Produto não encontrado!'){
-		            	limparCampos();
-		            	alertCodigo(result)
-
-		            }else{
-		            	// Faz o split separando por vírgula
-						var partes = result.split(',');
-
-						// Agora cada valor está separado:
-						var id = partes[0];
-						var estoque_unit = partes[1];
-						var nome = partes[2];
-						var nome_unidade = partes[3];
-		            	addVenda(id, estoque_unit, nome, nome_unidade);
-
-		            	if(estoque_unit != 'Não'){
-		            		var audio = new Audio('../img/barCode.wav');
-					         audio.addEventListener('canplaythrough', function() {
-					          audio.play();
-					        });
-
-					         //limparCampos();
-		            	}
-		            	
-		            }        
-		        }
-		    });
-
+  // Processa o Enter somente no campo do leitor, sem disparar durante formulários.
+  $('#txt_buscar').on('keydown', function(e) {
+    if (e.key !== 'Enter') return;
+    e.preventDefault();
+    var codigo = String($(this).val() || '').trim();
+    if (!codigo) return;
+    $.ajax({
+      url: 'paginas/' + pag + '/buscar_produto.php',
+      method: 'POST',
+      data: {codigo: codigo},
+      dataType: 'html',
+      success: function(result) {
+        result = String(result).trim();
+        if (result === 'Código do Produto não encontrado!') {
+          alertCodigo(result);
+          return;
         }
+        var partes = result.split(',');
+        if (partes.length < 4 || !/^\\d+$/.test(partes[0])) {
+          alertWarning('Não foi possível identificar o produto pelo código.');
+          return;
+        }
+        // addVenda verifica grades e unidades antes de inserir o item.
+        addVenda(partes[0], partes[1], partes.slice(2, -1).join(','), partes[partes.length - 1]);
+        if (partes[1] !== 'Não') {
+          var audio = new Audio('../img/barCode.wav');
+          audio.play().catch(function() {});
+        }
+      },
+      error: function() { alertWarning('Erro ao consultar o código de barras.'); }
+    });
   });
   </script>
 
