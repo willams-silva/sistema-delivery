@@ -175,6 +175,28 @@ if($linhas > 0){
     <span class="'.$ocultar_temp.'"><a title="Ver Grade" onclick="verGrade('.$id.')"><i class="fa fa-file text-info"></i></a></span>
     <br>';
 
+    // Mostrar personalizações efetivamente vinculadas a este item da comanda.
+    // A consulta inclui empresa e carrinho para não misturar extras de outros pedidos.
+    $stmtExtras = $pdo->prepare("SELECT a.nome, a.tipo, t.quantidade, t.valor_item
+        FROM temp t INNER JOIN adicionais_cat a ON a.id = t.id_item AND a.empresa = t.empresa
+        WHERE t.carrinho = ? AND t.empresa = ? AND t.tabela = 'adicionais'
+        ORDER BY a.tipo, a.nome");
+    $stmtExtras->execute([(int)$id, (int)$id_empresa]);
+    $extrasDaComanda = $stmtExtras->fetchAll(PDO::FETCH_ASSOC);
+    if ($extrasDaComanda) {
+        echo '<div class="small text-muted mt-1" style="line-height:1.5">';
+        foreach ($extrasDaComanda as $extra) {
+            $qtdExtra = (int)$extra['quantidade'];
+            $nomeExtra = htmlspecialchars((string)$extra['nome'], ENT_QUOTES, 'UTF-8');
+            $rotulo = $extra['tipo'] === 'opcional' ? 'Opcional' : ($extra['tipo'] === 'proteina' ? 'Proteína extra' : 'Adicional');
+            $precoExtra = (float)$extra['valor_item'] * $qtdExtra;
+            echo '<div>+ ' . $qtdExtra . '× ' . $nomeExtra . ' (' . $rotulo . ')';
+            if ($precoExtra > 0) echo ' — R$ ' . number_format($precoExtra, 2, ',', '.');
+            echo '</div>';
+        }
+        echo '</div>';
+    }
+
     echo '<div class="text-dark" style="font-size:12px; margin-top:0;">'; // mantém 12px e sem margin-left
       echo '<a class="'.$ocultar_quantidades.'" href="#" onclick="diminuir('.$id.', '.$quantidadeF.')"><big><i class="fa fa-minus-circle text-danger"></i></big></a>
       <input type="text" value="'.$quantidadeF.'" style="background:transparent; border:none; outline:none; width:28px; text-align:center" id="input_quant_'.$id.'" onblur="alterarQuantidade('.$id.', '.$quantidadeF.')"> '.$sigla_unidade.'
