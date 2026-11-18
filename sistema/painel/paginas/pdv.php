@@ -1138,13 +1138,13 @@ function FormaPg(){
      bootstrap.Modal.getOrCreateInstance(document.getElementById('modalPdvExtras')).show();
    },error:function(){aviso('Não foi possível carregar os adicionais.');}});
  };
- $('#pdvExtrasSem').on('click',abrirNormal);
+ $(document).off('click.pdvExtrasSem', '#pdvExtrasSem').on('click.pdvExtrasSem', '#pdvExtrasSem', abrirNormal);
  function erroExtras(m){
    var texto=String(m||'Erro desconhecido ao adicionar a tapioca.').replace(/<[^>]*>/g,' ').trim();
    $('#pdvExtrasErro').text(texto).show();
    console.error('[Bora Comanda PDV] Personalização:',texto);
  }
- $('#pdvExtrasSalvar').on('click',function(e){
+ $(document).off('click.pdvExtrasSalvar', '#pdvExtrasSalvar').on('click.pdvExtrasSalvar', '#pdvExtrasSalvar', function(e){
    e.preventDefault();
    if(!produtoAtual){erroExtras('Produto não selecionado.');return;}
    $('#pdvExtrasErro').hide().text('');
@@ -1156,6 +1156,7 @@ function FormaPg(){
    });
    if(!valido){erroExtras('Confira as quantidades dos adicionais.');return;}
    var botao=$(this).prop('disabled',true).text('Adicionando...');
+   $('#pdvExtrasErro').hide();
    $.ajax({url:'paginas/'+pag+'/salvar_personalizacao.php',type:'POST',dataType:'text',timeout:15000,
      data:{produto:produtoAtual.id,extras:JSON.stringify(extras)},
      success:function(r){
