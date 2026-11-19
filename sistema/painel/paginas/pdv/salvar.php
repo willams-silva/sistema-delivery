@@ -125,6 +125,17 @@ $res = $query->fetchAll(PDO::FETCH_ASSOC);
 $id_saida = @$res[0]['id'];
 
 
+// Valida o caixa e a forma de pagamento antes de alterar estoque ou criar vendas.
+if (($_SERVER['REQUEST_METHOD'] ?? '') !== 'POST') { http_response_code(405); exit('Método inválido.'); }
+if (!ctype_digit((string)$id_empresa) || (int)$id_empresa < 1 || !ctype_digit((string)$id_usuario) || (int)$id_usuario < 1) {
+    http_response_code(403); exit('Sessão inválida.');
+}
+$consultaCaixa=$pdo->prepare('SELECT id FROM caixas WHERE operador=:usuario AND empresa=:empresa AND data_fechamento IS NULL ORDER BY id DESC LIMIT 1');
+$consultaCaixa->execute([':usuario'=>(int)$id_usuario,':empresa'=>(int)$id_empresa]);
+$id_caixa=(int)($consultaCaixa->fetchColumn() ?: 0);
+if (!$id_caixa) { http_response_code(409); exit('Abra um caixa antes de finalizar a venda no PDV.'); }
+if (!$id_saida) { http_response_code(400); exit('Forma de pagamento não cadastrada para esta empresa.'); }
+
 $total_carrinho = 0;
 $query = $pdo->query("SELECT * FROM carrinho where sessao = '$sessao' and pedido = 0 and mesa = '' and empresa = '$id_empresa'");
 $res = $query->fetchAll(PDO::FETCH_ASSOC);
@@ -225,13 +236,10 @@ if($troco > 0){
 	$troco = $total_final;
 }
 
-//verificar caixa aberto
-$query1 = $pdo->query("SELECT * from caixas where operador = '$id_usuario' and data_fechamento is null order by id desc limit 1");
-$res1 = $query1->fetchAll(PDO::FETCH_ASSOC);
-if(@count($res1) > 0){
-	$id_caixa = @$res1[0]['id'];
-}else{
-	$id_caixa = 0;
+// Revalida o vínculo antes de persistir a venda.
+$consultaCaixa->execute([':usuario'=>(int)$id_usuario,':empresa'=>(int)$id_empresa]);
+if ((int)($consultaCaixa->fetchColumn() ?: 0) !== $id_caixa) {
+    http_response_code(409); exit('O caixa foi alterado durante a venda. Atualize o PDV.');
 }
 
 
