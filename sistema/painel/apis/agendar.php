@@ -38,6 +38,36 @@ try {
         throw new Exception('Data agendada vazia.');
     }
 
+    // Para contas a pagar, agenda o lembrete com antecedência por empresa.
+    // A data recebida dos chamadores continua sendo a data do vencimento.
+    if ($referencia_agendamento === 'pagar') {
+        $dias = 7;
+        try {
+            $config = $pdo->prepare('SELECT dias_antecedencia FROM alertas_vencimento_pagar WHERE empresa=:empresa');
+            $config->execute([':empresa'=>(int)$id_empresa]);
+            $preferencia = $config->fetchColumn();
+            if ($preferencia !== false) $dias = max(1, min(30, (int)$preferencia));
+        } catch (Throwable $e) {
+            error_log('Agendar lembrete pagar - configuração: '.$e->getMessage());
+        }
+        $vencimentoAgendamento = DateTimeImmutable::createFromFormat('!Y-m-d H:i:s', $data_agendada);
+        if (!$vencimentoAgendamento || $vencimentoAgendamento->format('Y-m-d H:i:s') !== $data_agendada) {
+            throw new RuntimeException('Data de vencimento inválida para lembrete.');
+        }
+        $antecipado = $vencimentoAgendamento->modify('-'.$dias.' days');
+        // Não cria tarefas retroativas: evita disparos inesperados ao cadastrar contas antigas.
+        if ($antecipado <= new DateTimeImmutable('now')) {
+            $hash = '';
+            return;
+        }
+        $data_agendada = $antecipado->format('Y-m-d H:i:s');
+        $mensagem = str_replace(
+            ['_Queremos lembrar que sua Conta Vencendo Hoje_', '_Queremos lembrar que sua Conta Vencendo Hoje_'],
+            '_Lembrete: sua conta vencerá em '.$dias.' dia(s)_',
+            $mensagem
+        );
+    }
+
     // Evita repetir agendamentos pendentes para a mesma conta e vencimento.
     // Restringe a proteção ao Contas a Pagar para preservar outros fluxos.
     if ($referencia_agendamento === 'pagar' && (int)$ultimo_id > 0) {
