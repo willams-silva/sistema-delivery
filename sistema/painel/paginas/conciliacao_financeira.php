@@ -134,6 +134,32 @@ if ($liquidacoesDisponiveisConc) {
 }
 $filtroPendenciasConc=(string)($_GET['situacao_liquidacao']??'todas');
 if (!in_array($filtroPendenciasConc,['todas','Pendente','Conferido','Crédito acima','Sem taxa'],true)) $filtroPendenciasConc='todas';
+// Previsão gerencial por baixa: usa dias corridos, não inclui feriados, estornos ou antecipações.
+$prazosRepasseConc=[];$prazosDisponiveisConc=false;$previsoesRepasseConc=[];
+try {
+ $stP=$pdo->prepare('SELECT forma_pgto,prazo_dias FROM prazos_repasse_financeiro WHERE empresa=:empresa');
+ $stP->execute([':empresa'=>$empresaConc]);
+ foreach($stP->fetchAll(PDO::FETCH_ASSOC) as $p) $prazosRepasseConc[(int)$p['forma_pgto']]=(int)$p['prazo_dias'];
+ $prazosDisponiveisConc=true;
+} catch(PDOException $e) {error_log('Prazos de repasse indisponiveis: '.$e->getMessage());}
+if ($prazosDisponiveisConc) {
+ $stPrev=$pdo->prepare("SELECT r.id,r.data_pgto,r.valor,fp.id AS forma_id,fp.nome AS forma, t.taxa_percentual
+ FROM receber r
+ INNER JOIN formas_pgto fp ON fp.id=r.forma_pgto AND fp.empresa=r.empresa
+ LEFT JOIN taxas_formas_pagamento t ON t.forma_pgto=fp.id AND t.empresa=r.empresa
+ WHERE r.empresa=:empresa AND r.pago='Sim' AND r.data_pgto BETWEEN :inicio AND :fim
+ ORDER BY r.data_pgto DESC,r.id DESC LIMIT 100");
+ $stPrev->execute($paramsConc);
+ foreach($stPrev->fetchAll(PDO::FETCH_ASSOC) as $movPrev) {
+  $formaPrev=(int)$movPrev['forma_id'];
+  if (!array_key_exists($formaPrev,$prazosRepasseConc)) continue;
+  $prazoPrev=$prazosRepasseConc[$formaPrev];
+  $dataPrev=(new DateTimeImmutable($movPrev['data_pgto']))->modify('+'.$prazoPrev.' days')->format('Y-m-d');
+  $taxaPrev=$movPrev['taxa_percentual'];
+  $liquidoPrev=$taxaPrev===null?null:round((float)$movPrev['valor']*(1-(float)$taxaPrev/100),2);
+  $previsoesRepasseConc[]=['id'=>(int)$movPrev['id'],'forma'=>$movPrev['forma'],'data_baixa'=>$movPrev['data_pgto'],'previsao'=>$dataPrev,'liquido'=>$liquidoPrev,'bruto'=>(float)$movPrev['valor'],'prazo'=>$prazoPrev];
+ }
+}
 $totalConc=$somarConc($gruposConc); $totalPendenteConc=$somarConc($pendentesConc);
 $moedaConc=static function($v){return 'R$ '.number_format((float)$v,2,',','.');};
 $escConc=static function($v){return htmlspecialchars((string)$v,ENT_QUOTES,'UTF-8');};
@@ -205,6 +231,41 @@ Líquido estimado apenas dessas formas: <strong><?php echo $moedaConc($totalLiqu
 <?php endif; endforeach; ?>
 </form>
 <p class="bc-conc-note">Para salvar, primeiro clique em Calcular estimativa e depois em Salvar taxas do estabelecimento. As taxas salvas serão usadas em futuras consultas.</p>
+<?php endif; ?>
+</div>
+<div class="bc-conc-card">
+<h5><i class="fa fa-calendar"></i> Prazos e previsão de repasses</h5>
+<p class="bc-conc-note">Configure o prazo em dias corridos para cada forma de pagamento. A previsão é calculada a partir da data da baixa e não representa confirmação de crédito.</p>
+<?php if (!$prazosDisponiveisConc): ?>
+<div class="alert alert-warning">Execute o SQL prazos_repasse_financeiro.sql para habilitar este recurso.</div>
+<?php else: ?>
+<?php if(isset($_GET['prazos_salvos'])): ?><div class="alert alert-success">Prazos de repasse salvos.</div><?php endif; ?>
+<form method="post" action="paginas/salvar_prazos_repasse.php">
+<input type="hidden" name="csrf_conc" value="<?php echo $escConc($_SESSION['csrf_conc']); ?>">
+<div class="bc-conc-table"><table><thead><tr><th>Forma de pagamento</th><th>Prazo (dias corridos)</th></tr></thead><tbody>
+<?php
+$formasPrazosConc=$pdo->prepare('SELECT id,nome FROM formas_pgto WHERE empresa=:empresa ORDER BY nome');
+$formasPrazosConc->execute([':empresa'=>$empresaConc]);
+foreach($formasPrazosConc->fetchAll(PDO::FETCH_ASSOC) as $formaPrazoConc): ?>
+<tr><td><?php echo $escConc($formaPrazoConc['nome']); ?></td><td>
+<input type="number" min="0" max="365" step="1" name="prazos[<?php echo (int)$formaPrazoConc['id']; ?>]" value="<?php echo isset($prazosRepasseConc[(int)$formaPrazoConc['id']]) ? (int)$prazosRepasseConc[(int)$formaPrazoConc['id']] : ''; ?>" placeholder="Não configurado" aria-label="Prazo de <?php echo $escConc($formaPrazoConc['nome']); ?>">
+</td></tr>
+<?php endforeach; ?>
+</tbody></table></div>
+<button class="btn btn-primary mt-3" type="submit">Salvar prazos</button>
+</form>
+<h6 class="mt-4">Previsões de recebimento — até 100 baixas do período</h6>
+<div class="bc-conc-table"><table><thead><tr><th>Baixa</th><th>Forma</th><th>Prazo</th><th>Previsão</th><th>Bruto</th><th>Líquido estimado</th></tr></thead><tbody>
+<?php foreach($previsoesRepasseConc as $prevConc): ?>
+<tr><td>#<?php echo $prevConc['id']; ?> — <?php echo $escConc(date('d/m/Y',strtotime($prevConc['data_baixa']))); ?></td>
+<td><?php echo $escConc($prevConc['forma']); ?></td><td><?php echo (int)$prevConc['prazo']; ?> dias</td>
+<td><?php echo $escConc(date('d/m/Y',strtotime($prevConc['previsao']))); ?></td>
+<td><?php echo $moedaConc($prevConc['bruto']); ?></td>
+<td><?php echo $prevConc['liquido']===null?'Taxa não configurada':$moedaConc($prevConc['liquido']); ?></td></tr>
+<?php endforeach; ?>
+<?php if (!$previsoesRepasseConc): ?><tr><td colspan="6">Sem baixas com prazo configurado neste período.</td></tr><?php endif; ?>
+</tbody></table></div>
+<p class="bc-conc-note">Datas previstas não são vinculadas automaticamente aos créditos registrados. A conferência continua agrupada por forma e data de referência.</p>
 <?php endif; ?>
 </div>
 <div class="bc-conc-card">
