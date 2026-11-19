@@ -132,7 +132,9 @@ HTML;
 		if ($codigo_pix != "" and $pago != "Sim") {
 			require("verificar_pgto.php");
 			if (@$status_api == 'approved') {
-				$pdo->query("UPDATE vendas set pago = 'Sim', tipo_pgto = 'Pix' where id = '$id'");
+				$atualizaPix=$pdo->prepare("UPDATE vendas SET pago='Sim', tipo_pgto='Pix'
+                    WHERE id=:id AND empresa=:empresa AND pago<>'Sim'");
+                $atualizaPix->execute([':id'=>(int)$id,':empresa'=>(int)$id_empresa]);
 			}
 		}
 
@@ -240,7 +242,9 @@ HTML;
 		if ($status == 'Iniciado' and $impressao_automatica == 'Site' and $impressao != "Sim") {
 			$ids .= $id . '-';
 			//coloco a impressao = sim
-			$pdo->query("UPDATE $tabela SET impressao = 'Sim' where id = '$id'");
+			$marcaImpressao=$pdo->prepare("UPDATE vendas SET impressao='Sim'
+                WHERE id=:id AND empresa=:empresa AND (impressao IS NULL OR impressao<>'Sim')");
+            $marcaImpressao->execute([':id'=>(int)$id,':empresa'=>(int)$id_empresa]);
 		}
 
 
