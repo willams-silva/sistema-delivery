@@ -139,7 +139,7 @@ try {
  foreach($stS->fetchAll(PDO::FETCH_ASSOC) as $l) $liquidacoesPorFormaConc[(int)$l['forma_pgto']]=(float)$l['total'];
  $liquidacoesDisponiveisConc=true;
 } catch(PDOException $e) {error_log('Liquidacoes indisponiveis: '.$e->getMessage());}
-$auditoriaDesvinculosExtratoConc=[];$auditoriaVinculosExtratoConc=[];$extratoLinhasConc=[];$vinculosConc=[];$resumoVinculosConc=[];$auditoriaImportacoesConc=[];$auditoriaDesvinculosConc=[];
+$indicadoresExtratoConc=['total'=>0,'vinculados'=>0,'pendentes'=>0,'valor_vinculado'=>0,'valor_pendente'=>0,'divergentes'=>0];$auditoriaDesvinculosExtratoConc=[];$auditoriaVinculosExtratoConc=[];$extratoLinhasConc=[];$vinculosConc=[];$resumoVinculosConc=[];$auditoriaImportacoesConc=[];$auditoriaDesvinculosConc=[];
 $buscaExtratoConc=trim((string)($_GET['extrato_busca']??''));
 if(mb_strlen($buscaExtratoConc)>120)$buscaExtratoConc=mb_substr($buscaExtratoConc,0,120);
 $situacaoExtratoConc=(string)($_GET['extrato_situacao']??'todos');
@@ -147,6 +147,16 @@ if(!in_array($situacaoExtratoConc,['todos','pendentes','vinculados'],true))$situ
 $paginaExtratoConc=filter_var($_GET['extrato_pagina']??1,FILTER_VALIDATE_INT,['options'=>['min_range'=>1]])?:1;
 $totalExtratoConc=0;$paginasExtratoConc=1;$porPaginaExtratoConc=25;
 try {
+ // Indicadores do extrato por data de movimentação; vínculo não significa aprovação contábil.
+ $stIndic=$pdo->prepare("SELECT COUNT(*) AS total,
+ COALESCE(SUM(CASE WHEN e.liquidacao_id IS NOT NULL THEN 1 ELSE 0 END),0) AS vinculados,
+ COALESCE(SUM(CASE WHEN e.liquidacao_id IS NULL THEN 1 ELSE 0 END),0) AS pendentes,
+ COALESCE(SUM(CASE WHEN e.liquidacao_id IS NOT NULL AND e.valor>0 THEN e.valor ELSE 0 END),0) AS valor_vinculado,
+ COALESCE(SUM(CASE WHEN e.liquidacao_id IS NULL AND e.valor>0 THEN e.valor ELSE 0 END),0) AS valor_pendente,
+ COALESCE(SUM(CASE WHEN e.liquidacao_id IS NOT NULL AND (l.id IS NULL OR l.cancelado_em IS NOT NULL OR e.valor<>l.valor_creditado) THEN 1 ELSE 0 END),0) AS divergentes
+ FROM conciliacao_extrato_linhas e LEFT JOIN conciliacao_liquidacoes l ON l.id=e.liquidacao_id AND l.empresa=e.empresa
+ WHERE e.empresa=:empresa AND e.data_movimento BETWEEN :inicio AND :fim");
+ $stIndic->execute($paramsConc);$indicadoresExtratoConc=$stIndic->fetch(PDO::FETCH_ASSOC)?:$indicadoresExtratoConc;
  $whereExtratoConc=" WHERE e.empresa=:empresa AND e.data_movimento BETWEEN :inicio AND :fim";
  $paramsExtratoConc=$paramsConc;
  if($buscaExtratoConc!==''){
@@ -570,6 +580,16 @@ $linhasPendenciaExibidasConc++; ?>
 <?php if(isset($_GET['liquidacao_duplicada'])): ?><div class="alert alert-warning" role="alert"><strong>Possível crédito duplicado.</strong> Já existe um lançamento com o mesmo identificador para esta forma de pagamento, ou com a mesma forma, datas e valor. Nenhum novo crédito foi registrado. Confira o histórico antes de tentar novamente.</div><?php endif; ?>
 <?php if(isset($_GET['extrato_importado'])): ?><div class="alert alert-info"><?php echo (int)$_GET['extrato_importado']; ?> movimentação(ões) nova(s) importada(s) para conferência. Nenhum crédito foi criado automaticamente.</div><?php endif; ?>
 <?php if(isset($_GET['vinculo_salvo'])): ?><div class="alert alert-success">Recebimento vinculado ao crédito para conferência manual. O vínculo não confirma igualdade de valores líquidos.</div><?php endif; ?>
+<div class="bc-conc-card">
+<h5>Indicadores de vínculos bancários</h5>
+<p class="bc-conc-note">Período selecionado: <?php echo $escConc($inicioConc); ?> a <?php echo $escConc($fimConc); ?>. Os indicadores são de vínculos entre extrato e créditos, não de conciliação contábil aprovada. Movimentações negativas entram na contagem, mas não nos totais de créditos.</p>
+<div class="bc-conc-table"><table><thead><tr><th>Movimentações</th><th>Vinculadas</th><th>Sem vínculo</th><th>Valor positivo vinculado</th><th>Valor positivo pendente</th><th>Divergências em vínculos</th><th>Taxa de vínculo</th></tr></thead><tbody>
+<tr><td><?php echo (int)$indicadoresExtratoConc['total']; ?></td><td><?php echo (int)$indicadoresExtratoConc['vinculados']; ?></td><td><?php echo (int)$indicadoresExtratoConc['pendentes']; ?></td>
+<td><?php echo $moedaConc($indicadoresExtratoConc['valor_vinculado']); ?></td><td><?php echo $moedaConc($indicadoresExtratoConc['valor_pendente']); ?></td>
+<td><?php echo (int)$indicadoresExtratoConc['divergentes']; ?></td><td><?php echo (int)$indicadoresExtratoConc['total']>0?number_format(100*(int)$indicadoresExtratoConc['vinculados']/(int)$indicadoresExtratoConc['total'],1,',','.').'%':'0,0%'; ?></td></tr>
+</tbody></table></div>
+<p class="bc-conc-note">Divergência: crédito cancelado, inexistente ou com valor diferente. A ausência de divergência não significa que o vínculo foi conferido ou aprovado.</p>
+</div>
 <div class="bc-conc-card">
 <h5>Importar extrato bancário (CSV / OFX)</h5>
 <p class="bc-conc-note">Importação em área separada, sem alterar caixa, recebimentos ou créditos. CSV: colunas data;valor;descricao;identificador (opcional), com cabeçalho. OFX: movimentações STMTTRN. Até 2 MB e 5.000 linhas por arquivo. Confira as linhas antes de conciliar.</p>
