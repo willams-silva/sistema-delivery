@@ -928,6 +928,7 @@ if($linhas == 0){
 									<!-- Auditoria Financeira: publicação 2026-11-19 -->
 									<li><a class="slide-item" href="index.php?pagina=conciliacao_financeira"><i class="fa fa-check-square-o me-1"></i> Conciliação Financeira</a></li>
 									<li><a class="slide-item" href="index.php?pagina=auditoria_financeira"><i class="fa fa-history me-1"></i> Auditoria Financeira</a></li>
+									<li><a class="slide-item" href="index.php?pagina=gestao_caixas"><i class="fa fa-briefcase me-1"></i> Gestão de Caixas</a></li>
 									<li class="<?php echo @$pagar ?> "><a class="slide-item" href="pagar"><i class="fa fa-file-text-o me-1" aria-hidden="true"></i> Contas a Pagar</a></li>
 
 									<li class="<?php echo @$receber ?> "><a class="slide-item" href="receber"><i class="fa fa-money me-1" aria-hidden="true"></i> Contas a Receber</a></li>
