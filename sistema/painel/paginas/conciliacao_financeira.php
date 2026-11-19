@@ -309,6 +309,11 @@ foreach($formasPrazosConc->fetchAll(PDO::FETCH_ASSOC) as $formaPrazoConc): ?>
 <?php endif; ?>
 </div>
 <div class="bc-conc-card">
+<h5><i class="fa fa-download"></i> Exportar créditos informados</h5>
+<p class="bc-conc-note">Baixe um CSV com todas as liquidações cadastradas no período selecionado (data de referência), incluindo forma, valor, data do crédito e identificador. O arquivo não é um extrato bancário.</p>
+<a class="btn btn-outline-primary" href="paginas/exportar_liquidacoes_conciliacao.php?inicio=<?php echo urlencode($inicioConc); ?>&amp;fim=<?php echo urlencode($fimConc); ?>"><i class="fa fa-file-excel-o"></i> Exportar liquidações (CSV)</a>
+</div>
+<div class="bc-conc-card">
 <h5><i class="fa fa-clock-o"></i> Repasses potencialmente atrasados</h5>
 <p class="bc-conc-note">Verificação por forma e dia de referência, usando prazos em dias corridos. Só considera datas previstas anteriores a hoje, taxas cadastradas e créditos informados. Não comprova atraso contratual nem identifica depósitos não cadastrados.</p>
 <?php if (!$prazosDisponiveisConc || !$liquidacoesDisponiveisConc): ?>
