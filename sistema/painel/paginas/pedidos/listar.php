@@ -1,6 +1,10 @@
 <?php
 @session_start();
-$id_empresa = $_SESSION['empresa'];
+$id_empresa = filter_var($_SESSION['empresa'] ?? null, FILTER_VALIDATE_INT, ['options'=>['min_range'=>1]]);
+if (!$id_empresa || !filter_var($_SESSION['id'] ?? null, FILTER_VALIDATE_INT, ['options'=>['min_range'=>1]])) {
+    http_response_code(403);
+    exit('Sessão expirada. Entre novamente no painel.');
+}
 require_once("../../../conexao.php");
 require_once("../../buscar_config.php");
 $tabela = 'vendas';
