@@ -475,9 +475,13 @@ if (@$pausar_delivery == 'Sim') {
 <script src="js/ajax.js"></script>
 
 <script type="text/javascript">
-	var seg = '<?= $segundos ?>';
+	// O intervalo configurado é em milissegundos; evita polling excessivo.
+    var seg = Math.max(3000, Number(<?= json_encode($segundos ?? 10000) ?>) || 10000);
 	$(document).ready(function() {
 		setInterval(() => {
+            if (document.hidden || $('.modal.show').length ||
+                $('#listar').find(':focus').length) return;
+            if (requisicaoPedidosAtual && requisicaoPedidosAtual.readyState !== 4) return;
 			listar();
 		}, seg);
 	});
