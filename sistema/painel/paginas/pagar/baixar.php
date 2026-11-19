@@ -86,9 +86,8 @@ $hash = $res[0]['hash'];
 $vencimento = $res[0]['vencimento'];
 
 $referencia_agendamento = 'pagar';
-if ($hash != "") {
-	require("../../apis/cancelar_agendamento.php");
-}
+// Cancela pendências mesmo quando o hash legado está vazio.
+require("../../apis/cancelar_agendamento.php");
 
 if ($fornecedor == "") {
 	$fornecedor = 0;
@@ -192,6 +191,7 @@ if ($valor == $valor_antigo) {
 			$mensagem_whatsapp .= '*Valor:* ' . $valorF . ' %0A';
 
 			$data_agd = $nova_data_vencimento . ' 08:00:00';
+			$ultimo_id = (int)$id_ult_registro;
 			require('../../apis/agendar.php');
 
 			$pdo->query("UPDATE $tabela SET hash = '$hash' where id = '$id_ult_registro'");
@@ -238,6 +238,7 @@ if ($valor == $valor_antigo) {
 		$mensagem_whatsapp .= '*Valor:* ' . $valorF . ' %0A';
 
 		$data_agd = $vencimento . ' 08:00:00';
+		$ultimo_id = (int)$id;
 		require('../../apis/agendar.php');
 
 		$pdo->query("UPDATE $tabela SET hash = '$hash' where id = '$id' AND empresa = '$id_empresa' AND pago <> 'Sim'");
