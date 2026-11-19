@@ -368,24 +368,30 @@ if (@$pausar_delivery == 'Sim') {
 <script src="js/ajax.js"></script>
 
 <script type="text/javascript">
-	var seg = '<?= $segundos ?>';
-	$(document).ready(function() {
-		setInterval(() => {
-			listar();
-		}, seg);
-	});
+	var seg = Math.max(3000, Number(<?= json_encode($segundos ?? 10000) ?>) || 10000);
+    $(document).ready(function() {
+        setInterval(function() {
+            if (document.hidden || $('.modal.show').length) return;
+            if (requisicaoEsteira && requisicaoEsteira.readyState !== 4) return;
+            listar();
+        }, seg);
+    });
 </script>
 
 
 
 
 <script type="text/javascript">
-	function listar() {
+    var requisicaoEsteira = null;
+    var sequenciaEsteira = 0;
+    function listar() {
 
 		var status = $('#buscar-contas').val();
 		var ult_pedido = $('#id_pedido').val();
 
-		$.ajax({
+        const sequencia = ++sequenciaEsteira;
+        if (requisicaoEsteira && requisicaoEsteira.readyState !== 4) requisicaoEsteira.abort();
+		requisicaoEsteira = $.ajax({
 			url: 'paginas/' + pag + "/listar_esteira.php",
 			method: 'POST',
 			data: {
@@ -395,9 +401,15 @@ if (@$pausar_delivery == 'Sim') {
 			dataType: "html",
 
 			success: function(result) {
+                if (sequencia !== sequenciaEsteira) return;
+                if ($('.modal.show').length || $('#listar').find(':focus').length) return;
 				$("#listar").html(result);
 				$('#mensagem-excluir').text('');
-			}
+			},
+            error: function(xhr, status) {
+                if (status !== 'abort' && sequencia === sequenciaEsteira)
+                    console.warn('Falha ao atualizar a esteira de pedidos.');
+            }
 		});
 	}
 </script>
