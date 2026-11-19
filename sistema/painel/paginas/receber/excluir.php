@@ -15,6 +15,11 @@ try {
     $busca->execute([':id'=>$id, ':empresa'=>$id_empresa]);
     $conta = $busca->fetch(PDO::FETCH_ASSOC);
     if (!$conta) { $pdo->rollBack(); http_response_code(404); exit('Conta não encontrada neste estabelecimento.'); }
+    // Lançamentos ligados a vendas só podem ser tratados pelo estorno da venda.
+    // Excluir uma parcela pendente isoladamente deixaria a venda inconsistente.
+    if ((int)($conta['venda_id'] ?? 0) > 0) {
+        throw new RuntimeException('Parcela vinculada a uma venda: utilize o cancelamento conciliado da venda.');
+    }
     // Não permitir apagar lançamentos com movimentação financeira ou dependências.
     // O estorno deve recompor o saldo antes de qualquer exclusão.
     if (($conta['pago'] ?? '') === 'Sim' || ($conta['residuo'] ?? '') === 'Sim') {
