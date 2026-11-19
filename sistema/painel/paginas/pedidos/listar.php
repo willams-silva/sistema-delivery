@@ -376,7 +376,7 @@ HTML;
 
 
 <div class="" align="center">
-<a href="#" onclick="listar('{$busca}', 0)" class="btn btn-outline-primary "><i class="fa fa-chevron-left"></i></a>
+<a href="#" onclick="listar(undefined, 0)" class="btn btn-outline-primary "><i class="fa fa-chevron-left"></i></a>
 HTML;
 
 for($i = 0; $i < @$num_paginas; $i++){
@@ -389,14 +389,14 @@ for($i = 0; $i < @$num_paginas; $i++){
 
 	if($pagina >= ($i - 2) && $pagina <= ($i + 2)){ 
 echo <<<HTML
-		<a style="width:35px" href="#" onclick="listar('{$busca}', '{$i}')" class="btn btn btn-outline-primary {$estilo}">{$pagina_cont}</a>   
+		<a style="width:35px" href="#" onclick="listar(undefined, '{$i}')" class="btn btn btn-outline-primary {$estilo}">{$pagina_cont}</a>   
 HTML;                  
 
 }
 
 }
 echo <<<HTML
-<a href="#" onclick="listar('{$busca}', '{$ultima_pagina}')" class="btn btn-outline-primary "><i class="fa fa-chevron-right"></i></a>
+<a href="#" onclick="listar(undefined, '{$ultima_pagina}')" class="btn btn-outline-primary "><i class="fa fa-chevron-right"></i></a>
 </div>
 
 HTML;
