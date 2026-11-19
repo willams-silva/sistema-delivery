@@ -21,6 +21,19 @@ try {
  $validar=$pdo->prepare('SELECT id FROM formas_pgto WHERE id=:forma AND empresa=:empresa LIMIT 1');
  $validar->execute([':forma'=>$forma,':empresa'=>$empresa]);
  if (!$validar->fetchColumn()) {http_response_code(403);exit('Forma de pagamento inválida.');}
+ // Verificação preventiva de duplicidade. Sem índice único, não substitui proteção transacional no banco.
+ $duplicado=$pdo->prepare("SELECT id FROM conciliacao_liquidacoes
+ WHERE empresa=:empresa AND forma_pgto=:forma
+ AND ((:idf1 <> '' AND identificador=:idf2)
+      OR (data_referencia=:ref AND data_credito=:credito AND valor_creditado=:valor))
+ LIMIT 1");
+ $duplicado->execute([':empresa'=>$empresa,':forma'=>$forma,':idf1'=>$idf,':idf2'=>$idf,
+ ':ref'=>$dataRef,':credito'=>$dataCred,':valor'=>$valor]);
+ $idDuplicado=$duplicado->fetchColumn();
+ if ($idDuplicado) {
+  header('Location: ../index.php?pagina=conciliacao_financeira&aba=liquidacoes&liquidacao_duplicada=1&inicio='.rawurlencode($dataRef).'&fim='.rawurlencode($dataRef),true,303);
+  exit;
+ }
  $st=$pdo->prepare('INSERT INTO conciliacao_liquidacoes (empresa,forma_pgto,data_referencia,data_credito,valor_creditado,identificador,observacao,usuario_id) VALUES (:empresa,:forma,:ref,:credito,:valor,:identificador,:obs,:usuario)');
  $st->execute([':empresa'=>$empresa,':forma'=>$forma,':ref'=>$dataRef,':credito'=>$dataCred,':valor'=>$valor,':identificador'=>$idf?:null,':obs'=>$obs?:null,':usuario'=>$usuario?:null]);
  header('Location: ../index.php?pagina=conciliacao_financeira&inicio='.rawurlencode($dataRef).'&fim='.rawurlencode($dataRef).'&liquidacao_salva=1',true,303);
