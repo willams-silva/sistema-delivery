@@ -271,6 +271,24 @@ $dashboardCaixasResumo=$pdo->prepare("SELECT
     FROM caixas WHERE empresa=:empresa");
 $dashboardCaixasResumo->execute([':empresa'=>(int)$id_empresa]);
 $dashboardCaixas=$dashboardCaixasResumo->fetch(PDO::FETCH_ASSOC);
+// Período independente dos indicadores históricos do painel.
+$dashboardPeriodo=$_GET['periodo_dash'] ?? 'hoje';
+$dashboardDias=['hoje'=>0,'7dias'=>6,'30dias'=>29];
+if (!array_key_exists($dashboardPeriodo,$dashboardDias)) $dashboardPeriodo='hoje';
+$dashboardInicio=(new DateTimeImmutable('today'))->modify('-'.$dashboardDias[$dashboardPeriodo].' days')->format('Y-m-d');
+$dashboardFim=(new DateTimeImmutable('today'))->format('Y-m-d');
+$dashboardFaturamentoSt=$pdo->prepare("SELECT COUNT(*) quantidade,COALESCE(SUM(valor),0) total
+ FROM vendas WHERE empresa=:empresa AND data BETWEEN :inicio AND :fim
+ AND (status IS NULL OR status<>'Cancelado')");
+$dashboardFaturamentoSt->execute([':empresa'=>(int)$id_empresa,':inicio'=>$dashboardInicio,':fim'=>$dashboardFim]);
+$dashboardFaturamento=$dashboardFaturamentoSt->fetch(PDO::FETCH_ASSOC);
+$dashboardRecebidoSt=$pdo->prepare("SELECT COUNT(*) quantidade,COALESCE(SUM(COALESCE(subtotal,valor)),0) total
+ FROM receber WHERE empresa=:empresa AND pago='Sim' AND data_pgto BETWEEN :inicio AND :fim");
+$dashboardRecebidoSt->execute([':empresa'=>(int)$id_empresa,':inicio'=>$dashboardInicio,':fim'=>$dashboardFim]);
+$dashboardRecebido=$dashboardRecebidoSt->fetch(PDO::FETCH_ASSOC);
+$dashboardTicketPeriodo=(int)$dashboardFaturamento['quantidade']>0
+ ? (float)$dashboardFaturamento['total']/(int)$dashboardFaturamento['quantidade'] : 0.0;
+
 $dashboardTicketMedio=(int)$dashboardResumoHoje['quantidade']>0
     ? (float)$dashboardResumoHoje['total']/(int)$dashboardResumoHoje['quantidade'] : 0.0;
 
@@ -291,6 +309,32 @@ $dashboardTicketMedio=(int)$dashboardResumoHoje['quantidade']>0
     <a href="pagar" class="ux-shortcut"><i class="fa fa-file-invoice-dollar" aria-hidden="true"></i> Despesas</a>
   </div>
 </section>
+<form method="get" class="d-flex flex-wrap align-items-center gap-2 mt-3 mb-2" aria-label="Filtrar indicadores financeiros">
+  <label for="periodo_dash" class="fw-semibold mb-0">Período dos indicadores:</label>
+  <select name="periodo_dash" id="periodo_dash" class="form-select form-select-sm" style="width:auto">
+    <option value="hoje" <?php echo $dashboardPeriodo==='hoje'?'selected':''; ?>>Hoje</option>
+    <option value="7dias" <?php echo $dashboardPeriodo==='7dias'?'selected':''; ?>>Últimos 7 dias</option>
+    <option value="30dias" <?php echo $dashboardPeriodo==='30dias'?'selected':''; ?>>Últimos 30 dias</option>
+  </select>
+  <button class="btn btn-primary btn-sm" type="submit">Aplicar</button>
+</form>
+<div class="row g-3 mb-3" aria-label="Resumo financeiro do período">
+  <div class="col-12 col-md-4"><div class="card h-100 p-3">
+    <div class="small text-muted">Faturamento (vendas realizadas)</div>
+    <div class="fs-5 fw-bold">R$ <?php echo number_format((float)$dashboardFaturamento['total'],2,',','.'); ?></div>
+    <div class="small text-muted"><?php echo (int)$dashboardFaturamento['quantidade']; ?> vendas, sem canceladas</div>
+  </div></div>
+  <div class="col-12 col-md-4"><div class="card h-100 p-3">
+    <div class="small text-muted">Recebimentos confirmados</div>
+    <div class="fs-5 fw-bold">R$ <?php echo number_format((float)$dashboardRecebido['total'],2,',','.'); ?></div>
+    <div class="small text-muted">Inclui contas recebidas no período</div>
+  </div></div>
+  <div class="col-12 col-md-4"><div class="card h-100 p-3">
+    <div class="small text-muted">Ticket médio do período</div>
+    <div class="fs-5 fw-bold">R$ <?php echo number_format($dashboardTicketPeriodo,2,',','.'); ?></div>
+    <div class="small text-muted">Faturamento dividido pelas vendas</div>
+  </div></div>
+</div>
 <div class="row g-3 mt-2 mb-3" aria-label="Resumo operacional">
   <div class="col-12 col-md-4">
     <div class="card h-100 p-3">
