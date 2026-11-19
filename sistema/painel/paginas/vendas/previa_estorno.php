@@ -108,6 +108,20 @@ try {
             || (float)$itemVenda['quantidade']<=0) $itensInvalidos++;
     }
     if (!$itensVenda || $itensInvalidos>0) $motivosBloqueio[]='Itens ou produtos sem rastreabilidade de estoque';
+    // Conferência cruzada: venda marcada como paga precisa ter o valor
+    // integralmente conciliado, sem saldo pendente.
+    if (($venda['pago'] ?? '')==='Sim' && ($pendente>0.009 || abs(round((float)$venda['valor']-$recebido,2))>0.009)) {
+        $motivosBloqueio[]='Venda marcada como paga mas com recebimentos inconsistentes';
+    }
+    // Filhos de parcelas que ficaram sem venda_id não aparecem na soma
+    // principal; precisam ser sinalizados antes de autorizar qualquer estorno.
+    $st=$pdo->prepare("SELECT COUNT(*) FROM receber filho
+        INNER JOIN receber origem ON origem.id=filho.id_ref AND origem.empresa=filho.empresa
+        WHERE origem.empresa=:empresa AND origem.venda_id=:venda
+          AND (filho.venda_id IS NULL OR filho.venda_id<>:venda2)");
+    $st->execute([':empresa'=>$empresa,':venda'=>$vendaId,':venda2'=>$vendaId]);
+    $dependenciasExternas=(int)$st->fetchColumn();
+    if ($dependenciasExternas>0) $motivosBloqueio[]='Existem recebimentos derivados sem vínculo com esta venda';
     $divergencia=round((float)$venda['valor']-$recebido-$pendente,2);
     if (abs($divergencia)>0.009) $motivosBloqueio[]='Valores recebidos e pendentes não conciliam com a venda';
     echo json_encode([
@@ -123,6 +137,7 @@ try {
       'residuos_sem_origem'=>$residuosSemOrigem,
       'formas_de_pagamento_recebidas'=>$formasRecebidas,
       'recebimentos_parciais_sem_vinculo'=>$parciaisLegados,
+      'dependencias_financeiras_externas'=>$dependenciasExternas,
       'estorno_existente'=>$estornoExistente?:null,
       'requer_revisao'=>!$parcelas || count($motivosBloqueio)>0,
       'motivos_bloqueio'=>$motivosBloqueio,
