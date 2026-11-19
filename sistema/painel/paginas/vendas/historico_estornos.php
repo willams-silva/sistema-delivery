@@ -50,6 +50,15 @@ try {
         $pagina=$totalPaginas;
         $offset=($pagina-1)*$limite;
     }
+    // Total efetivamente concluído, considerando todos os registros filtrados,
+    // não apenas a página visível. Evita contar estornos pendentes/cancelados.
+    $resumo=$pdo->prepare("SELECT COALESCE(SUM(er.valor_devolvido),0)
+        FROM estornos_vendas e
+        INNER JOIN estornos_vendas_recebimentos er
+          ON er.estorno_id=e.id AND er.empresa=e.empresa
+        WHERE e.empresa=:empresa AND e.status='Concluido' $filtro");
+    $resumo->execute($parametros);
+    $totalDevolvidoConcluido=round((float)$resumo->fetchColumn(),2);
     $consulta=$pdo->prepare("SELECT e.id,e.venda_id,e.caixa_estorno_id,e.usuario_id,
         e.motivo,e.valor_venda,e.valor_recebido,e.valor_pendente,e.status,e.criado_em,
         COALESCE(SUM(er.valor_devolvido),0) AS valor_devolvido_registrado,
@@ -65,6 +74,7 @@ try {
         'pagina'=>$pagina,'por_pagina'=>$limite,'total'=>$total,
         'filtros'=>['venda_id'=>$venda,'status'=>$status],
         'total_paginas'=>$totalPaginas,
+        'total_devolvido_concluido'=>$totalDevolvidoConcluido,
         'estornos'=>$consulta->fetchAll(PDO::FETCH_ASSOC),
         'somente_leitura'=>true
     ],JSON_UNESCAPED_UNICODE|JSON_THROW_ON_ERROR);
