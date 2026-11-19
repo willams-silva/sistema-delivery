@@ -79,6 +79,23 @@ $totalRegSt->execute([
 ]);
 $num_total=(int)$totalRegSt->fetchColumn();
 $num_paginas=(int)ceil($num_total/$itens_paginacao);
+// Se o filtro mudou e a página anterior não existe mais, retorna à primeira.
+if ($num_total>0 && $pagina>=$num_paginas) {
+    $pagina=0;
+    $limite=0;
+    $queryPedidos=$pdo->prepare("SELECT * FROM vendas
+        WHERE empresa=:empresa AND status NOT IN ('Finalizado','Cancelado')
+          AND status LIKE :status AND nome_cliente LIKE :busca
+          $sqlFiltroBalcao ORDER BY hora ASC,id ASC LIMIT 0,$itens_paginacao");
+    $queryPedidos->execute([
+        ':empresa'=>(int)$id_empresa,
+        ':status'=>'%'.$statusFiltro.'%',
+        ':busca'=>'%'.$busca.'%'
+    ]);
+    $res=$queryPedidos->fetchAll(PDO::FETCH_ASSOC);
+    $total_reg=count($res);
+}
+
 
 if ($total_reg > 0) {
 
@@ -264,7 +281,12 @@ HTML;
 
 		// Total de páginas já calculado fora do loop, sem consultas por pedido.
 
-		$span_balcao = '';
+		// Escapa textos exibidos no HTML da tabela.
+        $nome_cliente=htmlspecialchars((string)$nome_cliente,ENT_QUOTES|ENT_SUBSTITUTE,'UTF-8');
+        $tipo_pgto=htmlspecialchars((string)$tipo_pgto,ENT_QUOTES|ENT_SUBSTITUTE,'UTF-8');
+        $entrega=htmlspecialchars((string)$entrega,ENT_QUOTES|ENT_SUBSTITUTE,'UTF-8');
+        $pedido=htmlspecialchars((string)$pedido,ENT_QUOTES|ENT_SUBSTITUTE,'UTF-8');
+        $span_balcao = '';
 		if($tipo_pedido == 'Balcão'){
 			$span_balcao = '<span style="font-size:10px; color:gray">(Balcão)</span>';
 		}
