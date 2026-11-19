@@ -61,6 +61,13 @@ if ($dataInicial == "") {
 if ($dataFinal == "") {
 	$dataFinal = $data_final_mes;
 }
+foreach (['inicial'=>$dataInicial,'final'=>$dataFinal] as $rotulo=>$dataFiltro) {
+    $dataValida = DateTimeImmutable::createFromFormat('!Y-m-d', (string)$dataFiltro);
+    if (!$dataValida || $dataValida->format('Y-m-d') !== $dataFiltro) {
+        http_response_code(400); exit('Data '.$rotulo.' inválida.');
+    }
+}
+if ($dataInicial > $dataFinal) { http_response_code(400); exit('Período inválido.'); }
 
 
 $total_valor = 0;
@@ -193,7 +200,8 @@ if ($filtro == 'Vencidas') {
 } else if ($filtro == 'Pedentes') {
 	$query = $pdo->query("SELECT * from $tabela where pago = 'Não' and empresa = '$id_empresa' order by id desc ");
 } else {
-	$query = $pdo->query("SELECT * from $tabela WHERE $tipo_data >= '$dataInicial' and vencimento <= '$dataFinal' and empresa = '$id_empresa' order by id desc ");
+	$query = $pdo->prepare("SELECT * FROM receber WHERE $tipo_data >= :inicio AND $tipo_data <= :fim AND empresa = :empresa ORDER BY id DESC");
+    $query->execute([':inicio'=>$dataInicial, ':fim'=>$dataFinal, ':empresa'=>(int)$id_empresa]);
 }
 
 
