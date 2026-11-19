@@ -24,7 +24,12 @@ try {
     $pagina=min($pagina,10000);
     $limite=20;
     $offset=($pagina-1)*$limite;
-    $venda=filter_var($_GET['venda_id'] ?? null,FILTER_VALIDATE_INT,['options'=>['min_range'=>1]]) ?: null;
+    $vendaRaw=trim((string)($_GET['venda_id'] ?? ''));
+    $venda=$vendaRaw==='' ? null : filter_var($vendaRaw,FILTER_VALIDATE_INT,['options'=>['min_range'=>1]]);
+    if ($vendaRaw!=='' && $venda===false) {
+        http_response_code(422);
+        exit(json_encode(['erro'=>'Número da venda inválido.']));
+    }
     $status=trim((string)($_GET['status'] ?? ''));
     $statusPermitidos=['Registrado','Concluido','Cancelado'];
     if ($status!=='' && !in_array($status,$statusPermitidos,true)) {
