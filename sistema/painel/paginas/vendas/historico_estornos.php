@@ -59,6 +59,11 @@ try {
         WHERE e.empresa=:empresa AND e.status='Concluido' $filtro");
     $resumo->execute($parametros);
     $totalDevolvidoConcluido=round((float)$resumo->fetchColumn(),2);
+    // Resumo de pendências: não confundir estorno registrado com devolução concluída.
+    $pendencias=$pdo->prepare("SELECT COUNT(*) FROM estornos_vendas e
+        WHERE e.empresa=:empresa AND e.status='Registrado' $filtro");
+    $pendencias->execute($parametros);
+    $totalPendentes=(int)$pendencias->fetchColumn();
     $consulta=$pdo->prepare("SELECT e.id,e.venda_id,e.caixa_estorno_id,e.usuario_id,
         e.motivo,e.valor_venda,e.valor_recebido,e.valor_pendente,e.status,e.criado_em,
         COALESCE(SUM(er.valor_devolvido),0) AS valor_devolvido_registrado,
@@ -75,6 +80,7 @@ try {
         'filtros'=>['venda_id'=>$venda,'status'=>$status],
         'total_paginas'=>$totalPaginas,
         'total_devolvido_concluido'=>$totalDevolvidoConcluido,
+        'estornos_pendentes'=>$totalPendentes,
         'estornos'=>$consulta->fetchAll(PDO::FETCH_ASSOC),
         'somente_leitura'=>true
     ],JSON_UNESCAPED_UNICODE|JSON_THROW_ON_ERROR);
