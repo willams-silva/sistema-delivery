@@ -1,9 +1,9 @@
 <?php
 @session_start();
-$id_empresa = $_SESSION['empresa'];
+$id_empresa = $_SESSION['empresa'] ?? null;
 require_once("../../../conexao.php");
 require_once("../../buscar_config.php");
-if (!isset($_SESSION['id']) || !ctype_digit((string)$_SESSION['id'])) { http_response_code(403); exit('Sessão inválida.'); }
+if (!ctype_digit((string)($_SESSION['id'] ?? '')) || (int)$_SESSION['id'] < 1 || !ctype_digit((string)$id_empresa) || (int)$id_empresa < 1) { http_response_code(403); exit('Sessão inválida.'); }
 if($id_empresa == ""){
 	echo 'Sem Sessão da Empresa, refaça o Login!';
 	exit();
@@ -110,7 +110,8 @@ if($descricao == ""){
 }
 
 //validar troca da foto
-$query = $pdo->query("SELECT * FROM $tabela where id = '$id' and empresa = '$id_empresa'");
+$query = $pdo->prepare("SELECT * FROM receber WHERE id=:id AND empresa=:empresa");
+$query->execute([':id'=>(int)$id,':empresa'=>(int)$id_empresa]);
 $res = $query->fetchAll(PDO::FETCH_ASSOC);
 $total_reg = @count($res);
 if($total_reg > 0){
@@ -160,7 +161,8 @@ if(@$_FILES['foto']['name'] != ""){
 
 
 //verificar caixa aberto
-$query1 = $pdo->query("SELECT * from caixas where operador = '$id_usuario' and data_fechamento is null and empresa = '$id_empresa' order by id desc limit 1");
+$query1 = $pdo->prepare("SELECT * FROM caixas WHERE operador=:usuario AND data_fechamento IS NULL AND empresa=:empresa ORDER BY id DESC LIMIT 1");
+$query1->execute([':usuario'=>(int)$id_usuario,':empresa'=>(int)$id_empresa]);
 $res1 = $query1->fetchAll(PDO::FETCH_ASSOC);
 if(@count($res1) > 0){
 	$id_caixa = @$res1[0]['id'];
@@ -229,7 +231,8 @@ $query = $pdo->prepare("INSERT INTO $tabela SET descricao = :descricao, cliente 
 
 			require('../../apis/agendar.php');
 
-			$pdo->query("UPDATE $tabela SET hash = '$hash' where id = '$id_ult_registro'");
+			$stHash=$pdo->prepare("UPDATE receber SET hash=:hash WHERE id=:id AND empresa=:empresa");
+            $stHash->execute([':hash'=>$hash,':id'=>(int)$id_ult_registro,':empresa'=>(int)$id_empresa]);
 		}
 
 
@@ -244,7 +247,8 @@ $query = $pdo->prepare("UPDATE $tabela SET descricao = :descricao, cliente = :cl
 	if ($vencimento_antiga != $vencimento) {
 
 
-		$query4 = $pdo->query("SELECT * FROM $tabela where id = '$id' and empresa = '$id_empresa'");
+		$query4 = $pdo->prepare("SELECT * FROM receber WHERE id=:id AND empresa=:empresa");
+        $query4->execute([':id'=>(int)$id,':empresa'=>(int)$id_empresa]);
 		$res4 = $query4->fetchAll(PDO::FETCH_ASSOC);
 		$hash = @$res4[0]['hash'];
 
@@ -284,7 +288,8 @@ $query = $pdo->prepare("UPDATE $tabela SET descricao = :descricao, cliente = :cl
 			$ultimo_id = $id;
 			require('../../apis/agendar.php');
 
-			$pdo->query("UPDATE $tabela SET hash = '$hash' where id = '$id' and empresa = '$id_empresa'");
+			$stHash=$pdo->prepare("UPDATE receber SET hash=:hash WHERE id=:id AND empresa=:empresa");
+            $stHash->execute([':hash'=>$hash,':id'=>(int)$id,':empresa'=>(int)$id_empresa]);
 		}
 	}
 
@@ -355,7 +360,8 @@ if($api_whatsapp != 'Não' and $telefone_cliente != ''  and $id == "" and $data_
 	$data_agd = $vencimento.' 09:00:00';
 	require('../../apis/agendar.php');
 
-	$pdo->query("UPDATE $tabela SET hash = '$hash' where id = '$ultimo_id'");
+	$stHash=$pdo->prepare("UPDATE receber SET hash=:hash WHERE id=:id AND empresa=:empresa");
+    $stHash->execute([':hash'=>$hash,':id'=>(int)$ultimo_id,':empresa'=>(int)$id_empresa]);
 	
 }
 
