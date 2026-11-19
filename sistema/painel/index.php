@@ -915,6 +915,7 @@ if($linhas == 0){
 										class="angle fe fe-chevron-right"></i></a>
 								<ul class="slide-menu">
 
+									<li><a class="slide-item" href="index.php?pagina=visao_financeira"><i class="fa fa-line-chart me-1"></i> Visão Financeira</a></li>
 									<li class="<?php echo @$pagar ?> "><a class="slide-item" href="pagar">Contas a Pagar</a></li>
 
 									<li class="<?php echo @$receber ?> "><a class="slide-item" href="receber">Contas a Receber</a></li>
