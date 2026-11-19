@@ -26,42 +26,29 @@ if($pedidos_pdv_delivery != 'Sim'){
 	$sql_pedido_balcao = " and tipo_pedido != 'Balcão' and empresa = '$id_empresa' ";
 }
 
-//TOTAIS DOS PEDIDOS
-$query = $pdo->query("SELECT * FROM $tabela where status = 'Iniciado' $sql_pedido_balcao ");
-$res = $query->fetchAll(PDO::FETCH_ASSOC);
-$total_ini = @count($res);
-
-$query = $pdo->query("SELECT * FROM $tabela where status = 'Aceito' $sql_pedido_balcao ");
-$res = $query->fetchAll(PDO::FETCH_ASSOC);
-$total_ace = @count($res);
-
-$query = $pdo->query("SELECT * FROM $tabela where status = 'Preparando' $sql_pedido_balcao ");
-$res = $query->fetchAll(PDO::FETCH_ASSOC);
-$total_prep = @count($res);
-
-$query = $pdo->query("SELECT * FROM $tabela where status = 'Entrega' $sql_pedido_balcao ");
-$res = $query->fetchAll(PDO::FETCH_ASSOC);
-$total_ent = @count($res);
-
-$query = $pdo->query("SELECT * FROM $tabela where status != 'Finalizado' and status != 'Cancelado' $sql_pedido_balcao ");
-$res = $query->fetchAll(PDO::FETCH_ASSOC);
-$total_pedidos = @count($res);
-
-
-$query = $pdo->query("SELECT * FROM $tabela where status != 'Finalizado' and status != 'Cancelado' $sql_pedido_balcao order by id desc limit 1");
-$res = $query->fetchAll(PDO::FETCH_ASSOC);
-$id_ult_pedido = @$res[0]['id'];
-
-if ($ult_ped < $id_ult_pedido and $ult_ped != "") {
-	echo '<audio autoplay="true">
-<source src="../../img/audio.mp3" type="audio/mpeg" />
-</audio>';
-}
-
-if ($ult_ped == "" and $id_ult_pedido != "") {
-	echo '<audio autoplay="true">
-<source src="../../img/audio.mp3" type="audio/mpeg" />
-</audio>';
+// Contadores em uma consulta agregada, sem carregar todas as vendas na memória.
+$mostrarBalcao = $pedidos_pdv_delivery === 'Sim';
+$condicaoBalcao = $mostrarBalcao ? '' : " AND tipo_pedido != 'Balcão'";
+$contagemSt = $pdo->prepare("SELECT
+ COALESCE(SUM(CASE WHEN status='Iniciado' THEN 1 ELSE 0 END),0) iniciados,
+ COALESCE(SUM(CASE WHEN status='Aceito' THEN 1 ELSE 0 END),0) aceitos,
+ COALESCE(SUM(CASE WHEN status='Preparando' THEN 1 ELSE 0 END),0) preparando,
+ COALESCE(SUM(CASE WHEN status='Entrega' THEN 1 ELSE 0 END),0) entrega,
+ COALESCE(SUM(CASE WHEN status NOT IN ('Finalizado','Cancelado') THEN 1 ELSE 0 END),0) abertos,
+ COALESCE(MAX(CASE WHEN status NOT IN ('Finalizado','Cancelado') THEN id ELSE NULL END),0) ultimo
+ FROM vendas WHERE empresa=:empresa $condicaoBalcao");
+$contagemSt->execute([':empresa'=>(int)$id_empresa]);
+$contagem=$contagemSt->fetch(PDO::FETCH_ASSOC);
+$total_ini=(int)$contagem['iniciados'];
+$total_ace=(int)$contagem['aceitos'];
+$total_prep=(int)$contagem['preparando'];
+$total_ent=(int)$contagem['entrega'];
+$total_pedidos=(int)$contagem['abertos'];
+$id_ult_pedido=(int)$contagem['ultimo'];
+// Não tocar som no primeiro carregamento: só há pedido novo quando
+// o navegador já enviou o último ID observado.
+if (filter_var($ult_ped,FILTER_VALIDATE_INT) && (int)$ult_ped<$id_ult_pedido) {
+ echo '<audio autoplay="true"><source src="../../img/audio.mp3" type="audio/mpeg" /></audio>';
 }
 
 $ids = '';
