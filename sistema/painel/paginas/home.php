@@ -323,6 +323,18 @@ $dashboardSerieSt=$pdo->prepare("SELECT data,COUNT(*) quantidade,COALESCE(SUM(va
  AND (status IS NULL OR status<>'Cancelado') GROUP BY data ORDER BY data");
 $dashboardSerieSt->execute([':empresa'=>(int)$id_empresa,':inicio'=>$dashboardInicio,':fim'=>$dashboardFim]);
 $dashboardSerie=$dashboardSerieSt->fetchAll(PDO::FETCH_ASSOC);
+// Preenche dias sem vendas para o gráfico representar todo o intervalo,
+ // inclusive quando o faturamento é zero.
+$dashboardSeriePorData=[];
+foreach ($dashboardSerie as $ponto) $dashboardSeriePorData[$ponto['data']]=$ponto;
+$dashboardSerie=[];
+$dashboardDiaCursor=new DateTimeImmutable($dashboardInicio);
+$dashboardDiaFim=new DateTimeImmutable($dashboardFim);
+while ($dashboardDiaCursor<=$dashboardDiaFim) {
+    $diaChave=$dashboardDiaCursor->format('Y-m-d');
+    $dashboardSerie[]=$dashboardSeriePorData[$diaChave] ?? ['data'=>$diaChave,'quantidade'=>0,'total'=>0];
+    $dashboardDiaCursor=$dashboardDiaCursor->modify('+1 day');
+}
 $dashboardSerieMax=1.0;
 foreach ($dashboardSerie as $ponto) $dashboardSerieMax=max($dashboardSerieMax,(float)$ponto['total']);
 $dashboardFormasSt=$pdo->prepare("SELECT f.nome,COUNT(*) quantidade,COALESCE(SUM(COALESCE(r.subtotal,r.valor)),0) total
