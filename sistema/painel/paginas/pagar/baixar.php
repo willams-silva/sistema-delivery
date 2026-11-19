@@ -3,6 +3,7 @@
 $id_empresa = $_SESSION['empresa'];
 require_once("../../../conexao.php");
 require_once("../../buscar_config.php");
+require_once __DIR__ . '/../../includes/auditoria_financeira.php';
 if($id_empresa == ""){
 	echo 'Sem Sessão da Empresa, refaça o Login!';
 	exit();
@@ -66,6 +67,7 @@ $res = $consultaConta->fetchAll(PDO::FETCH_ASSOC);
 if (!$res) { throw new RuntimeException('Conta não encontrada neste estabelecimento.'); }
 if (($res[0]['pago'] ?? '') === 'Sim') { throw new RuntimeException('Esta conta já foi baixada.'); }
 
+$auditoriaAntes = array_intersect_key($res[0], array_flip(['descricao','valor','vencimento','data_pgto','forma_pgto','pago','subtotal','frequencia']));
 $descricao = $res[0]['descricao'];
 $fornecedor = $res[0]['fornecedor'];
 $funcionario = $res[0]['funcionario'];
@@ -242,6 +244,11 @@ if ($valor == $valor_antigo) {
 	}
 }
 
+$buscaAuditoria = $pdo->prepare("SELECT descricao,valor,vencimento,data_pgto,forma_pgto,pago,subtotal,frequencia FROM pagar WHERE id=:id AND empresa=:empresa");
+$buscaAuditoria->execute([':id'=>(int)$id,':empresa'=>(int)$id_empresa]);
+$auditoriaDepois = $buscaAuditoria->fetch(PDO::FETCH_ASSOC);
+if (!$auditoriaDepois) throw new RuntimeException('Conta não localizada após a baixa.');
+registrarAuditoriaFinanceira($pdo,(int)$id_empresa,'pagar',(int)$id,'BAIXAR',(int)$id_usuario,$auditoriaAntes,$auditoriaDepois);
 $pdo->commit();
 echo 'Baixado com Sucesso';
 } catch (Throwable $e) {
