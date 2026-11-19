@@ -198,6 +198,18 @@ if (@$pausar_delivery == 'Sim') {
 	</div>
 
 
+        <div class="d-flex flex-wrap gap-2 align-items-end mb-3">
+            <label for="tipo-pedido-filtro" class="form-label mb-0">Tipo de pedido
+                <select id="tipo-pedido-filtro" class="form-select" onchange="$('#pagina').val(0); listar(undefined,0)">
+                    <option value="">Todos os tipos</option>
+                    <?php if ($pedidos_pdv_delivery == 'Sim'): ?>
+                    <option value="Balcão">Balcão</option>
+                    <?php endif; ?>
+                    <option value="Delivery">Delivery</option>
+                    <option value="Retirar">Retirar</option>
+                </select>
+            </label>
+        </div>
 		<div class="d-flex justify-content-end me-2" style="max-width: 300px; margin-left: auto; margin-bottom: 10px">
     <div class="input-group">
         <span class="input-group-text bg-light border border-primary">
@@ -488,6 +500,7 @@ if (@$pausar_delivery == 'Sim') {
 
 		var status = $('#buscar-contas').val();
 		var ult_pedido = $('#id_pedido').val();
+        var tipo_pedido = $('#tipo-pedido-filtro').val() || '';
 
 		$.ajax({
 			url: 'paginas/' + pag + "/listar.php",
@@ -496,7 +509,8 @@ if (@$pausar_delivery == 'Sim') {
 				p1,
 				p2,
 				status,
-				ult_pedido
+				ult_pedido,
+                tipo_pedido
 			},
 			dataType: "html",
 
