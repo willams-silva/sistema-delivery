@@ -479,7 +479,7 @@ if (@$pausar_delivery == 'Sim') {
 
 <script>
 $(document).on('change', '#pgto', function(){
- const pix = /\\bpix\\b/i.test(String($(this).val() || ''));
+ const pix = /\bpix\b/i.test(String($(this).val() || ''));
  $('#aviso-pix-manual').toggle(pix);
  if (!pix) $('#pix_conferido').prop('checked', false);
 });
