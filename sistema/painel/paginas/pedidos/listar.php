@@ -54,25 +54,29 @@ $limite = $pagina * $itens_paginacao;
 $busca = trim((string)$busca);
 $statusFiltro = trim((string)($_POST['status'] ?? ''));
 $sqlFiltroBalcao = $pedidos_pdv_delivery != 'Sim' ? " AND tipo_pedido != 'Balcão'" : '';
-$queryPedidos = $pdo->prepare("SELECT * FROM vendas
-    WHERE empresa=:empresa AND status NOT IN ('Finalizado','Cancelado')
-      AND status LIKE :status AND nome_cliente LIKE :busca
-      $sqlFiltroBalcao ORDER BY hora ASC, id ASC LIMIT $limite, $itens_paginacao");
-$queryPedidos->execute([
+// Filtro opcional por tipo de pedido, restrito aos tipos utilizados pelo sistema.
+$tipoFiltro=trim((string)($_POST['tipo_pedido'] ?? ''));
+$tiposPermitidos=['Balcão','Delivery','Retirar'];
+if (!in_array($tipoFiltro,$tiposPermitidos,true)) $tipoFiltro='';
+if ($tipoFiltro==='Balcão' && $pedidos_pdv_delivery!='Sim') $tipoFiltro='';
+$sqlFiltroTipo=$tipoFiltro!=='' ? ' AND tipo_pedido=:tipo_pedido' : '';
+$parametrosPedidos=[
     ':empresa'=>(int)$id_empresa,
     ':status'=>'%'.$statusFiltro.'%',
     ':busca'=>'%'.$busca.'%'
-]);
+];
+if ($tipoFiltro!=='') $parametrosPedidos[':tipo_pedido']=$tipoFiltro;
+$queryPedidos = $pdo->prepare("SELECT * FROM vendas
+    WHERE empresa=:empresa AND status NOT IN ('Finalizado','Cancelado')
+      AND status LIKE :status AND nome_cliente LIKE :busca
+      $sqlFiltroBalcao $sqlFiltroTipo ORDER BY hora ASC, id ASC LIMIT $limite, $itens_paginacao");
+$queryPedidos->execute($parametrosPedidos);
 $res = $queryPedidos->fetchAll(PDO::FETCH_ASSOC);
 $total_reg = @count($res);
 $totalRegSt=$pdo->prepare("SELECT COUNT(*) FROM vendas
     WHERE empresa=:empresa AND status NOT IN ('Finalizado','Cancelado')
-      AND status LIKE :status AND nome_cliente LIKE :busca $sqlFiltroBalcao");
-$totalRegSt->execute([
-    ':empresa'=>(int)$id_empresa,
-    ':status'=>'%'.$statusFiltro.'%',
-    ':busca'=>'%'.$busca.'%'
-]);
+      AND status LIKE :status AND nome_cliente LIKE :busca $sqlFiltroBalcao $sqlFiltroTipo");
+$totalRegSt->execute($parametrosPedidos);
 $num_total=(int)$totalRegSt->fetchColumn();
 $num_paginas=(int)ceil($num_total/$itens_paginacao);
 // Se o filtro mudou e a página anterior não existe mais, retorna à primeira.
@@ -82,12 +86,8 @@ if ($num_total>0 && $pagina>=$num_paginas) {
     $queryPedidos=$pdo->prepare("SELECT * FROM vendas
         WHERE empresa=:empresa AND status NOT IN ('Finalizado','Cancelado')
           AND status LIKE :status AND nome_cliente LIKE :busca
-          $sqlFiltroBalcao ORDER BY hora ASC,id ASC LIMIT 0,$itens_paginacao");
-    $queryPedidos->execute([
-        ':empresa'=>(int)$id_empresa,
-        ':status'=>'%'.$statusFiltro.'%',
-        ':busca'=>'%'.$busca.'%'
-    ]);
+          $sqlFiltroBalcao $sqlFiltroTipo ORDER BY hora ASC,id ASC LIMIT 0,$itens_paginacao");
+    $queryPedidos->execute($parametrosPedidos);
     $res=$queryPedidos->fetchAll(PDO::FETCH_ASSOC);
     $total_reg=count($res);
 }
