@@ -258,9 +258,8 @@ if ($id == "") {
 		$hash = @$res4[0]['hash'];
 
 		$referencia_agendamento = 'pagar';
-		if ($hash != "") {
-			require("../../apis/cancelar_agendamento.php");
-		}
+		// Remove pendências antigas mesmo quando o hash está vazio.
+		require("../../apis/cancelar_agendamento.php");
 
 
 		//enviar whatsapp
@@ -280,7 +279,8 @@ if ($id == "") {
 			$referencia_agendamento = 'pagar';
 			require('../../apis/agendar.php');
 
-			$pdo->query("UPDATE $tabela SET hash = '$hash' where id = '$id_ultimo_alt'");
+			$atualizaHash = $pdo->prepare("UPDATE pagar SET hash=:hash WHERE id=:id AND empresa=:empresa");
+			$atualizaHash->execute([':hash'=>$hash,':id'=>(int)$id,':empresa'=>(int)$id_empresa]);
 		}
 
 
@@ -338,9 +338,11 @@ try {
 		$data_agd = $vencimento . ' 09:00:00';
 
 		$referencia_agendamento = 'pagar';
+		$ultimo_id = (int)$ultimo_id;
 		require('../../apis/agendar.php');
 
-		$pdo->query("UPDATE $tabela SET hash = '$hash' where id = '$ultimo_id'");
+		$atualizaHash = $pdo->prepare("UPDATE pagar SET hash=:hash WHERE id=:id AND empresa=:empresa");
+		$atualizaHash->execute([':hash'=>$hash,':id'=>$ultimo_id,':empresa'=>(int)$id_empresa]);
 	}
 
 
