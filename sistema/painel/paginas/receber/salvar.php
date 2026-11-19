@@ -167,71 +167,6 @@ if(@count($res1) > 0){
 if($id == ""){
 $query = $pdo->prepare("INSERT INTO receber SET descricao=:descricao, cliente=:cliente, valor=:valor, vencimento=:vencimento, data_pgto=:data_pgto, data_lanc=CURDATE(), forma_pgto=:forma_pgto, frequencia=:frequencia, obs=:obs, arquivo=:arquivo, foto=:foto, subtotal=:subtotal, usuario_lanc=:usuario_lanc, usuario_pgto=:usuario_pgto, pago=:pago, referencia='Conta', caixa=:caixa, hora=CURTIME(), empresa=:empresa");
 
-
-
-	$data_venc = $vencimento;
-
-	################# CRIAR A PRÓXIMA CONTA A RECEBER CASO TENHA SIDO PAGA #################
-	$dias_frequencia = $frequencia;
-
-	if ($dias_frequencia == 30 || $dias_frequencia == 31) {
-		$nova_data_vencimento = date('Y/m/d', strtotime("+1 month", strtotime($vencimento)));
-	} else if ($dias_frequencia == 90) {
-		$nova_data_vencimento = date('Y/m/d', strtotime("+3 month", strtotime($vencimento)));
-	} else if ($dias_frequencia == 180) {
-		$nova_data_vencimento = date('Y/m/d', strtotime("+6 month", strtotime($vencimento)));
-	} else if ($dias_frequencia == 360 || $dias_frequencia == 365) {
-		$nova_data_vencimento = date('Y/m/d', strtotime("+1 year", strtotime($vencimento)));
-	} else {
-		$nova_data_vencimento = date('Y/m/d', strtotime("+$dias_frequencia days", strtotime($vencimento)));
-	}
-
-	if (@$dias_frequencia > 0 and $data_pgto != '') {
-
-		$pdo->query("INSERT INTO $tabela SET descricao = '$descricao', cliente = '$cliente', valor = '$valor', data_lanc = curDate(), vencimento = '$nova_data_vencimento', frequencia = '$frequencia', forma_pgto = '$forma_pgto', arquivo = '$foto', pago = 'Não', referencia = 'Conta', usuario_lanc = '$id_usuario', hora = curTime(), obs = '$obs', caixa = '$id_caixa', empresa = '$id_empresa' ");
-		$id_ult_registro = $pdo->lastInsertId();
-
-
-		if ($api_whatsapp != 'Não' and $telefone_cliente != '') {
-
-
-			$valorF = @number_format($valor, 2, ',', '.');
-			$telefone_envio = '55' . preg_replace('/[ ()-]+/', '', $telefone_cliente);
-			$nova_data_vencimentoF = implode('/', array_reverse(explode('-', $nova_data_vencimento)));
-
-
-			############## AGENDAR MENSAGEM PARA RENOVAÇÃO ###########################
-			$mensagem_whatsapp = '🔔_Lembrete Automático de Vencimento!_ %0A%0A';
-
-			$mensagem_whatsapp .= $saudacao . ' *' . $primeiroNome[0] . '* tudo bem? 😀%0A%0A';
-
-			$mensagem_whatsapp .= '_Queremos lembrar que você tem uma Conta Vencendo Hoje_ %0A%0A';
-			$mensagem_whatsapp .= 'Empresa: *' . $nome_sistema . '* %0A';
-			$mensagem_whatsapp .= 'Nome: *' . $nome_cliente . '* %0A';
-			$mensagem_whatsapp .= 'Valor: *R$ ' . $valorF . '* %0A';
-			$mensagem_whatsapp .= 'Data de Vencimento: *' . $nova_data_vencimentoF . '* %0A%0A';
-			$mensagem_whatsapp .= '_Entre em contato conosco para acertar o pagamento!_ %0A%0A';
-
-			if ($dados_pagamento != "") {
-				$mensagem_whatsapp .= '*Dados para o Pagamento:* %0A';
-				$mensagem_whatsapp .= $dados_pagamento;
-			}
-
-			$mensagem_whatsapp .= '%0A';
-			$mensagem_whatsapp .= '🤖 _Esta é uma mensagem automática!_';
-
-			$data_agd = $nova_data_vencimento . ' 09:00:00';
-
-			require('../../apis/agendar.php');
-
-			$stHash=$pdo->prepare("UPDATE receber SET hash=:hash WHERE id=:id AND empresa=:empresa");
-            $stHash->execute([':hash'=>$hash,':id'=>(int)$id_ult_registro,':empresa'=>(int)$id_empresa]);
-		}
-
-
-
-}
-	
 }else{
 $query = $pdo->prepare("UPDATE receber SET descricao=:descricao, cliente=:cliente, valor=:valor, vencimento=:vencimento, data_pgto=:data_pgto, forma_pgto=:forma_pgto, frequencia=:frequencia, obs=:obs, arquivo=:arquivo, foto=:foto, subtotal=:subtotal, usuario_pgto=:usuario_pgto, pago=:pago WHERE id=:id AND empresa=:empresa AND (pago IS NULL OR pago <> 'Sim')");
 
@@ -324,6 +259,29 @@ try {
     $pdo->beginTransaction();
     $query->execute();
     $ultimo_id = $id === '' ? (int)$pdo->lastInsertId() : (int)$id;
+    // A recorrência nasce somente depois da conta original, na mesma transação.
+    if ($id === '' && $data_pgto !== '' && (int)$frequencia > 0) {
+        $base = DateTimeImmutable::createFromFormat('!Y-m-d', $vencimento);
+        if (!$base || $base->format('Y-m-d') !== $vencimento) {
+            throw new RuntimeException('Vencimento inválido para recorrência.');
+        }
+        $meses = [30=>1,31=>1,90=>3,180=>6,360=>12,365=>12];
+        if (isset($meses[(int)$frequencia])) {
+            $primeiro = $base->modify('first day of this month')->modify('+'.$meses[(int)$frequencia].' months');
+            $dia = min((int)$base->format('d'), (int)$primeiro->format('t'));
+            $proximoVencimento = $primeiro->setDate((int)$primeiro->format('Y'),(int)$primeiro->format('m'),$dia)->format('Y-m-d');
+        } else {
+            $proximoVencimento = $base->modify('+'.(int)$frequencia.' days')->format('Y-m-d');
+        }
+        $insereRecorrencia = $pdo->prepare("INSERT INTO receber (id_ref,descricao,cliente,valor,data_lanc,vencimento,frequencia,forma_pgto,arquivo,foto,pago,referencia,usuario_lanc,hora,obs,caixa,empresa) VALUES (:origem,:descricao,:cliente,:valor,CURDATE(),:vencimento,:frequencia,:forma,:arquivo,:foto,'Não','Conta',:usuario,CURTIME(),:obs,:caixa,:empresa)");
+        $insereRecorrencia->execute([
+            ':origem'=>$ultimo_id, ':descricao'=>$descricao, ':cliente'=>(int)$cliente,
+            ':valor'=>$valor, ':vencimento'=>$proximoVencimento, ':frequencia'=>(int)$frequencia,
+            ':forma'=>$forma_pgto, ':arquivo'=>$foto, ':foto'=>$foto, ':usuario'=>(int)$id_usuario,
+            ':obs'=>$obs, ':caixa'=>(int)$id_caixa, ':empresa'=>(int)$id_empresa
+        ]);
+    }
+
     $auditoriaBuscaDepois = $pdo->prepare("SELECT descricao, valor, vencimento, data_pgto, forma_pgto, pago, subtotal, frequencia FROM ${tabela} WHERE id = :id AND empresa = :empresa");
     $auditoriaBuscaDepois->execute([':id'=>$ultimo_id, ':empresa'=>(int)$id_empresa]);
     $auditoriaDepois = $auditoriaBuscaDepois->fetch(PDO::FETCH_ASSOC);
