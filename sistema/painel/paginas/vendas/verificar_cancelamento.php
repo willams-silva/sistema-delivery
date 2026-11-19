@@ -45,6 +45,23 @@ try {
           AND pago='Sim' AND (caixa IS NULL OR caixa=0)");
     $st->execute([':empresa'=>$empresa,':venda'=>$id]);
     $pagosSemCaixa=(int)$st->fetchColumn();
+    // Conferência de integridade: recebimentos parciais precisam apontar
+    // para uma parcela-mãe da mesma empresa e da mesma venda.
+    $st=$pdo->prepare("SELECT COUNT(*) FROM receber r
+        LEFT JOIN receber origem ON origem.id=r.id_ref AND origem.empresa=r.empresa
+        WHERE r.empresa=:empresa AND r.venda_id=:venda AND r.residuo='Sim'
+          AND (r.id_ref IS NULL OR r.id_ref=0 OR origem.id IS NULL
+               OR origem.venda_id IS NULL OR origem.venda_id<>r.venda_id)");
+    $st->execute([':empresa'=>$empresa,':venda'=>$id]);
+    $parciaisSemOrigem=(int)$st->fetchColumn();
+    // Pagamentos vinculados a caixas inexistentes não podem ser estornados
+    // por um fluxo automático sem conciliação manual.
+    $st=$pdo->prepare("SELECT COUNT(*) FROM receber r
+        LEFT JOIN caixas c ON c.id=r.caixa AND c.empresa=r.empresa
+        WHERE r.empresa=:empresa AND r.venda_id=:venda AND r.pago='Sim'
+          AND c.id IS NULL");
+    $st->execute([':empresa'=>$empresa,':venda'=>$id]);
+    $pagosSemCaixaValido=(int)$st->fetchColumn();
     $legado=(int)$financeiro['quantidade']===0;
     $cancelada=$venda['status']==='Cancelado';
     echo json_encode([
@@ -58,9 +75,11 @@ try {
         'parcelas_pagas_em_caixas_fechados'=>(int)$caixasFechados['parcelas_em_caixa_fechado'],
         'recebido_em_caixas_fechados'=>round((float)$caixasFechados['recebido_em_caixa_fechado'],2),
         'parcelas_pagas_sem_caixa'=>$pagosSemCaixa,
+        'parcelas_pagas_sem_caixa_valido'=>$pagosSemCaixaValido,
+        'recebimentos_parciais_sem_origem_valida'=>$parciaisSemOrigem,
         'venda_legada_sem_vinculo'=>$legado,
         'cancelamento_liberado'=>false,
-        'motivo'=>$cancelada?'Venda já cancelada.':($legado?'Venda sem parcelas vinculadas: requer conciliação manual.':'Estorno transacional ainda não habilitado.')
+        'motivo'=>$cancelada?'Venda já cancelada.':($legado?'Venda sem parcelas vinculadas: requer conciliação manual.':($parciaisSemOrigem || $pagosSemCaixaValido ? 'Inconsistência financeira: conciliação manual necessária.' : 'Estorno transacional ainda não habilitado.'))
     ],JSON_THROW_ON_ERROR|JSON_UNESCAPED_UNICODE);
 } catch (Throwable $e) {
     error_log('Pré-validação cancelamento: '.$e->getMessage());
