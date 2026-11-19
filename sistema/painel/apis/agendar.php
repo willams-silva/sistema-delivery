@@ -38,6 +38,25 @@ try {
         throw new Exception('Data agendada vazia.');
     }
 
+    // Evita repetir agendamentos pendentes para a mesma conta e vencimento.
+    // Restringe a proteção ao Contas a Pagar para preservar outros fluxos.
+    if ($referencia_agendamento === 'pagar' && (int)$ultimo_id > 0) {
+        $verifica = $pdo->prepare("SELECT id FROM whatsapp_agendamentos
+            WHERE empresa=:empresa AND referencia='pagar' AND id_ref=:id_ref
+              AND data_agendada=:data AND status='Pendente'
+            ORDER BY id DESC LIMIT 1");
+        $verifica->execute([
+            ':empresa'=>(int)$id_empresa,
+            ':id_ref'=>(int)$ultimo_id,
+            ':data'=>$data_agendada
+        ]);
+        $existente = $verifica->fetchColumn();
+        if ($existente !== false) {
+            $hash = (string)$existente;
+            return;
+        }
+    }
+
     $stmt = $pdo->prepare("
         INSERT INTO whatsapp_agendamentos
         (empresa, telefone, mensagem, data_agendada, status, tentativas, referencia, id_ref)
