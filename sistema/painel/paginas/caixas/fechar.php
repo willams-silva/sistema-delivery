@@ -1,95 +1,58 @@
-<?php 
+<?php
 @session_start();
-$id_empresa = $_SESSION['empresa'];
-require_once("../../../conexao.php");
-require_once("../../buscar_config.php");
-if($id_empresa == ""){
-	echo 'Sem Sessão da Empresa, refaça o Login!';
-	exit();
+require_once('../../../conexao.php');
+require_once('../../buscar_config.php');
+
+if (($_SERVER['REQUEST_METHOD'] ?? '') !== 'POST') {
+    http_response_code(405); exit('Método inválido.');
 }
-$tabela = 'caixas';
-
-
-$id_usuario = $_SESSION['id'];
-$data_atual = 'Y-m-d';
-
-$id = $_POST['id'];
-$total_caixa_fechar = $_POST['total_caixa_fechar'];
-$valor_abertura_fechar = $_POST['valor_abertura_fechar'];
-
-$total_caixa_fechar = str_replace(',', '.', $total_caixa_fechar);
-$valor_abertura_fechar = str_replace(',', '.', $valor_abertura_fechar);
-
-
-$query2 = $pdo->query("SELECT * FROM caixas where id = '$id'");
-$res2 = $query2->fetchAll(PDO::FETCH_ASSOC);
-$operador = @$res2[0]['operador'];
-$data_abertura = @$res2[0]['data_abertura'];
-
-
-
-
-//pegar a forma de pagamento dinheiro
-$query2 = $pdo->query("SELECT * FROM formas_pgto where nome LIKE '%Dinheiro%' and empresa = '$id_empresa' ");
-$res2 = $query2->fetchAll(PDO::FETCH_ASSOC);
-$pgto_dinheiro = $res2[0]['id'];
-
-
-
-//pegar a forma de pagamento dinheiro
-$query2 = $pdo->query("SELECT * FROM formas_pgto where nome LIKE '%Dinheiro%' and empresa = '$id_empresa'");
-$res2 = $query2->fetchAll(PDO::FETCH_ASSOC);
-$pgto_dinheiro = $res2[0]['id'];
-
-//buscar total movimentado pelo caixa
-//totalizar recebimentos
-$total_recebido = 0;
-$query2 = $pdo->query("SELECT * FROM receber where usuario_pgto = '$operador' and data_pgto >= '$data_abertura' and data_pgto <= curDate() and forma_pgto = '$pgto_dinheiro' and caixa = '$id' and forma_pgto = '$pgto_dinheiro'");
-$res2 = $query2->fetchAll(PDO::FETCH_ASSOC);
-if(@count($res2) > 0){
-	for($i2=0; $i2 < @count($res2); $i2++){
-		$valor_rec = $res2[$i2]['valor'];
-		$total_recebido += $valor_rec;
-	}
+$empresa = filter_var($_SESSION['empresa'] ?? null, FILTER_VALIDATE_INT, ['options'=>['min_range'=>1]]);
+$usuario = filter_var($_SESSION['id'] ?? null, FILTER_VALIDATE_INT, ['options'=>['min_range'=>1]]);
+$id = filter_var($_POST['id'] ?? null, FILTER_VALIDATE_INT, ['options'=>['min_range'=>1]]);
+$informado = str_replace(',', '.', (string)($_POST['total_caixa_fechar'] ?? ''));
+if (!$empresa || !$usuario || !$id) { http_response_code(403); exit('Sessão ou caixa inválido.'); }
+if (!is_numeric($informado) || !is_finite((float)$informado) || (float)$informado < 0) {
+    http_response_code(400); exit('Valor de fechamento inválido.');
 }
+$informado = round((float)$informado, 2);
+try {
+    $pdo->beginTransaction();
+    $st = $pdo->prepare('SELECT id, operador, valor_abertura, data_fechamento FROM caixas WHERE id=:id AND empresa=:empresa FOR UPDATE');
+    $st->execute([':id'=>$id, ':empresa'=>$empresa]);
+    $caixa = $st->fetch(PDO::FETCH_ASSOC);
+    if (!$caixa) throw new RuntimeException('Caixa não encontrado.');
+    if (!empty($caixa['data_fechamento'])) throw new RuntimeException('Caixa já fechado.');
 
-//totalizar saidas
-$total_saidas = 0;
-$query2 = $pdo->query("SELECT * FROM pagar where usuario_pgto = '$operador' and data_pgto >= '$data_abertura' and data_pgto <= curDate() and caixa = '$id' and forma_pgto = '$pgto_dinheiro'");
-$res2 = $query2->fetchAll(PDO::FETCH_ASSOC);
-if(@count($res2) > 0){
-	for($i2=0; $i2 < @count($res2); $i2++){
-		$valor_sai = $res2[$i2]['valor'];
-		$total_saidas += $valor_sai;
-	}
+    $nivel = $_SESSION['nivel'] ?? '';
+    if ((int)$caixa['operador'] !== $usuario && !in_array($nivel, ['Administrador','Gerente'], true)) {
+        throw new RuntimeException('Operador não autorizado para este caixa.');
+    }
+    $dinheiro = $pdo->prepare("SELECT id FROM formas_pgto WHERE empresa=:empresa AND nome LIKE '%Dinheiro%' ORDER BY id LIMIT 1");
+    $dinheiro->execute([':empresa'=>$empresa]);
+    $forma = $dinheiro->fetchColumn();
+    if (!$forma) throw new RuntimeException('Forma de pagamento Dinheiro não cadastrada.');
+
+    $total = function($tabela) use ($pdo,$empresa,$id,$forma) {
+        $st = $pdo->prepare("SELECT COALESCE(SUM(COALESCE(subtotal,valor)),0) FROM $tabela WHERE empresa=:empresa AND caixa=:caixa AND forma_pgto=:forma AND pago='Sim'");
+        $st->execute([':empresa'=>$empresa,':caixa'=>$id,':forma'=>$forma]);
+        return (float)$st->fetchColumn();
+    };
+    $entradas = $total('receber');
+    $saidas = $total('pagar');
+    $sangrias = $pdo->prepare('SELECT COALESCE(SUM(valor),0) FROM sangrias WHERE empresa=:empresa AND caixa=:caixa');
+    $sangrias->execute([':empresa'=>$empresa,':caixa'=>$id]);
+    $retiradas = (float)$sangrias->fetchColumn();
+    $esperado = round((float)$caixa['valor_abertura'] + $entradas - $saidas - $retiradas, 2);
+    $quebra = round($informado - $esperado, 2);
+
+    $atualiza = $pdo->prepare('UPDATE caixas SET data_fechamento=CURDATE(), valor_fechamento=:valor, quebra=:quebra, usuario_fechamento=:usuario WHERE id=:id AND empresa=:empresa AND data_fechamento IS NULL');
+    $atualiza->execute([':valor'=>$informado,':quebra'=>$quebra,':usuario'=>$usuario,':id'=>$id,':empresa'=>$empresa]);
+    if ($atualiza->rowCount() !== 1) throw new RuntimeException('Fechamento não confirmado.');
+    $pdo->commit();
+    echo 'Salvo com Sucesso';
+} catch (Throwable $e) {
+    if ($pdo->inTransaction()) $pdo->rollBack();
+    error_log('Fechamento de caixa: '.$e->getMessage());
+    http_response_code(409);
+    echo 'Não foi possível fechar o caixa. Verifique o status, o operador e as movimentações.';
 }
-
-
-//totalizar sangrias
-$total_sangrias = 0;
-$query2 = $pdo->query("SELECT * FROM sangrias where caixa = '$id'");
-$res2 = $query2->fetchAll(PDO::FETCH_ASSOC);
-if(@count($res2) > 0){
-	for($i2=0; $i2 < @count($res2); $i2++){
-		$valor_s = $res2[$i2]['valor'];
-		$total_sangrias += $valor_s;
-	}
-}
-$total_sangriasF = number_format($total_sangrias, 2, ',', '.');
-
-
-$total_do_caixa = $total_recebido - $total_saidas + $valor_abertura_fechar - $total_sangrias;
-$valor_quebra = $total_caixa_fechar - $total_do_caixa;
-
-
-
-$pdo->query("UPDATE $tabela SET data_fechamento = curDate(), valor_fechamento = '$total_caixa_fechar', quebra = '$valor_quebra', usuario_fechamento = '$id_usuario' where id = '$id'");
-
-
-echo 'Salvo com Sucesso';
-
-
-?>
-
-
-
