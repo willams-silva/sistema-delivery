@@ -96,6 +96,18 @@ try {
     if ($caixasInvalidos>0) $motivosBloqueio[]='Recebimento associado a caixa inexistente nesta empresa';
     // O registro de estorno não é comprovante de devolução PIX/cartão.
     // Nenhuma autorização financeira é inferida desta prévia.
+    // Inventário da venda precisa ser rastreável antes de qualquer reversão.
+    $st=$pdo->prepare("SELECT c.produto,c.quantidade,p.id produto_encontrado,p.tem_estoque
+        FROM carrinho c LEFT JOIN produtos p ON p.id=c.produto AND p.empresa=c.empresa
+        WHERE c.empresa=:empresa AND c.pedido=:venda");
+    $st->execute([':empresa'=>$empresa,':venda'=>$vendaId]);
+    $itensVenda=$st->fetchAll(PDO::FETCH_ASSOC);
+    $itensInvalidos=0;
+    foreach ($itensVenda as $itemVenda) {
+        if (!$itemVenda['produto_encontrado'] || !is_numeric($itemVenda['quantidade'])
+            || (float)$itemVenda['quantidade']<=0) $itensInvalidos++;
+    }
+    if (!$itensVenda || $itensInvalidos>0) $motivosBloqueio[]='Itens ou produtos sem rastreabilidade de estoque';
     $divergencia=round((float)$venda['valor']-$recebido-$pendente,2);
     if (abs($divergencia)>0.009) $motivosBloqueio[]='Valores recebidos e pendentes não conciliam com a venda';
     echo json_encode([
@@ -106,6 +118,8 @@ try {
       'caixa_atual_para_devolucao'=>$caixaAtual ?: null,
       'pagamentos_sem_rastreabilidade'=>$pagamentosSemRastreio,
       'caixas_originais_invalidos'=>$caixasInvalidos,
+      'quantidade_itens_venda'=>count($itensVenda),
+      'itens_sem_rastreabilidade'=>$itensInvalidos,
       'residuos_sem_origem'=>$residuosSemOrigem,
       'formas_de_pagamento_recebidas'=>$formasRecebidas,
       'recebimentos_parciais_sem_vinculo'=>$parciaisLegados,
