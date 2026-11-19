@@ -177,8 +177,17 @@ if ($filtro == 'Vencidas') {
 } else if ($filtro == 'Amanha') {
 	$query = $pdo->query("SELECT * from $tabela where $tipo_data = '$data_amanha' and pago = 'Não' and empresa = '$id_empresa' order by id desc ");
 } else if ($filtro == 'Proximos7') {
-    $query = $pdo->prepare("SELECT * FROM receber WHERE empresa=:empresa AND (pago IS NULL OR pago <> 'Sim') AND vencimento > CURDATE() AND vencimento <= DATE_ADD(CURDATE(), INTERVAL 7 DAY) ORDER BY vencimento ASC, id DESC");
-    $query->execute([':empresa'=>(int)$id_empresa]);
+    $diasAlerta=7;
+    try {
+        $config=$pdo->prepare("SELECT dias_antecedencia FROM alertas_vencimento_receber WHERE empresa=:empresa");
+        $config->execute([':empresa'=>(int)$id_empresa]);
+        $diasSalvos=$config->fetchColumn();
+        if ($diasSalvos!==false) $diasAlerta=max(1,min(30,(int)$diasSalvos));
+    } catch(Throwable $e) { error_log('Filtro de alertas receber: '.$e->getMessage()); }
+    $query = $pdo->prepare("SELECT * FROM receber WHERE empresa=:empresa AND (pago IS NULL OR pago <> 'Sim') AND vencimento > CURDATE() AND vencimento <= DATE_ADD(CURDATE(), INTERVAL :dias DAY) ORDER BY vencimento ASC, id DESC");
+    $query->bindValue(':empresa',(int)$id_empresa,PDO::PARAM_INT);
+    $query->bindValue(':dias',$diasAlerta,PDO::PARAM_INT);
+    $query->execute();
 } else if ($filtro == 'Todas') {
 	$query = $pdo->query("SELECT * from $tabela where empresa = '$id_empresa' order by id desc ");
 } else if ($filtro == 'Pedentes') {
