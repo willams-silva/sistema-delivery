@@ -70,6 +70,7 @@ try {
     // venda cancelada, com fidelidade ou sem pagamentos efetivos.
     $motivosBloqueio=[];
     if ($venda['status']==='Cancelado') $motivosBloqueio[]='Venda já cancelada';
+    if (($venda['pago'] ?? '')!=='Sim') $motivosBloqueio[]='Venda não consta como integralmente paga';
     if ((int)$venda['cliente']>0) $motivosBloqueio[]='Venda com fidelidade exige revisão';
     if (!$parcelas) $motivosBloqueio[]='Venda sem parcelas financeiras vinculadas';
     if ($recebido<=0) $motivosBloqueio[]='Nenhum valor recebido para devolver';
@@ -153,6 +154,12 @@ try {
         }
     }
     if ($recebimentosInvalidos>0) $motivosBloqueio[]='Parcelas com valores inválidos para devolução';
+    // A prévia não pode classificar como apto um registro com
+    // total de venda nulo, negativo ou não numérico.
+    if (!is_numeric($venda['valor']) || !is_finite((float)$venda['valor'])
+        || (float)$venda['valor']<=0) {
+        $motivosBloqueio[]='Valor da venda inválido para estorno';
+    }
     // Prévia não substitui o comprovante de devolução: nenhuma ação de escrita.
     $candidatoEstornoDinheiro=count($parcelas)>0 && count($motivosBloqueio)===0
         && abs($divergencia)<0.01 && $pendente<0.01
