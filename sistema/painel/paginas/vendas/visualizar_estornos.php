@@ -27,7 +27,7 @@ th{background:#f1f4f7}.pager{display:flex;gap:12px;align-items:center;margin-top
 <section class="card">
 <form id="filtros"><label>Venda <input id="venda" type="number" min="1" placeholder="Número da venda"></label>
 <label>Status <select id="filtro-status"><option value="">Todos</option><option>Registrado</option><option>Concluido</option><option>Cancelado</option></select></label>
-<button type="submit">Pesquisar</button></form>
+<button type="submit">Pesquisar</button><button type="button" id="limpar">Limpar filtros</button></form>
 <p id="status" role="status"></p><p id="resumo-devolvido" aria-live="polite"></p><p id="resumo-pendentes" aria-live="polite"></p><p id="error" role="alert"></p>
 <div class="table-wrap"><table><thead><tr><th>Data</th><th>Venda</th><th>Status</th><th>Motivo</th><th>Valor da venda</th><th>Devolução registrada</th><th>Caixa</th></tr></thead><tbody id="linhas"></tbody></table></div>
 <div class="pager"><button id="anterior" type="button">Anterior</button><span id="pagina-info"></span><button id="proximo" type="button">Próxima</button></div>
@@ -36,6 +36,12 @@ let pagina=1,totalPaginas=0,carregamentoAtual=0;
 const el=id=>document.getElementById(id);
 const moeda=v=>new Intl.NumberFormat('pt-BR',{style:'currency',currency:'BRL'}).format(Number(v)||0);
 function celula(tr,valor){const td=document.createElement('td');td.textContent=String(valor??'');tr.appendChild(td)}
+el('limpar').addEventListener('click',function(){
+ el('venda').value='';
+ el('filtro-status').value='';
+ pagina=1;
+ carregar();
+});
 async function carregar(){
  const sequencia=++carregamentoAtual;
  el('error').textContent='';el('status').textContent='Carregando...';
