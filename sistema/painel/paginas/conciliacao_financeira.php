@@ -139,7 +139,7 @@ try {
  foreach($stS->fetchAll(PDO::FETCH_ASSOC) as $l) $liquidacoesPorFormaConc[(int)$l['forma_pgto']]=(float)$l['total'];
  $liquidacoesDisponiveisConc=true;
 } catch(PDOException $e) {error_log('Liquidacoes indisponiveis: '.$e->getMessage());}
-$indicadoresExtratoConc=['total'=>0,'vinculados'=>0,'pendentes'=>0,'valor_vinculado'=>0,'valor_pendente'=>0,'divergentes'=>0];$auditoriaDesvinculosExtratoConc=[];$auditoriaVinculosExtratoConc=[];$extratoLinhasConc=[];$vinculosConc=[];$resumoVinculosConc=[];$auditoriaImportacoesConc=[];$auditoriaDesvinculosConc=[];
+$indicadoresExtratoConc=['total'=>0,'vinculados'=>0,'pendentes'=>0,'valor_vinculado'=>0,'valor_pendente'=>0,'divergentes'=>0];$alertasExtratoConc=[];$auditoriaDesvinculosExtratoConc=[];$auditoriaVinculosExtratoConc=[];$extratoLinhasConc=[];$vinculosConc=[];$resumoVinculosConc=[];$auditoriaImportacoesConc=[];$auditoriaDesvinculosConc=[];
 $buscaExtratoConc=trim((string)($_GET['extrato_busca']??''));
 if(mb_strlen($buscaExtratoConc)>120)$buscaExtratoConc=mb_substr($buscaExtratoConc,0,120);
 $situacaoExtratoConc=(string)($_GET['extrato_situacao']??'todos');
@@ -157,6 +157,13 @@ try {
  FROM conciliacao_extrato_linhas e LEFT JOIN conciliacao_liquidacoes l ON l.id=e.liquidacao_id AND l.empresa=e.empresa
  WHERE e.empresa=:empresa AND e.data_movimento BETWEEN :inicio AND :fim");
  $stIndic->execute($paramsConc);$indicadoresExtratoConc=$stIndic->fetch(PDO::FETCH_ASSOC)?:$indicadoresExtratoConc;
+ // Alertas de conferência: somente leitura, limitados ao período e empresa.
+ $stAlertasExt=$pdo->prepare("SELECT
+ COALESCE(SUM(CASE WHEN e.valor>0 AND e.liquidacao_id IS NULL AND e.data_movimento<DATE_SUB(CURDATE(),INTERVAL 3 DAY) THEN 1 ELSE 0 END),0) AS creditos_antigos,
+ COALESCE(SUM(CASE WHEN e.valor>0 AND e.liquidacao_id IS NULL AND e.data_movimento>=DATE_SUB(CURDATE(),INTERVAL 3 DAY) THEN 1 ELSE 0 END),0) AS creditos_recentes,
+ COALESCE(SUM(CASE WHEN e.valor<0 AND e.liquidacao_id IS NULL THEN 1 ELSE 0 END),0) AS debitos_conferencia
+ FROM conciliacao_extrato_linhas e WHERE e.empresa=:empresa AND e.data_movimento BETWEEN :inicio AND :fim");
+ $stAlertasExt->execute($paramsConc);$alertasExtratoConc=$stAlertasExt->fetch(PDO::FETCH_ASSOC)?:[];
  $whereExtratoConc=" WHERE e.empresa=:empresa AND e.data_movimento BETWEEN :inicio AND :fim";
  $paramsExtratoConc=$paramsConc;
  if($buscaExtratoConc!==''){
@@ -589,6 +596,19 @@ $linhasPendenciaExibidasConc++; ?>
 <td><?php echo (int)$indicadoresExtratoConc['divergentes']; ?></td><td><?php echo (int)$indicadoresExtratoConc['total']>0?number_format(100*(int)$indicadoresExtratoConc['vinculados']/(int)$indicadoresExtratoConc['total'],1,',','.').'%':'0,0%'; ?></td></tr>
 </tbody></table></div>
 <p class="bc-conc-note">Divergência: crédito cancelado, inexistente ou com valor diferente. A ausência de divergência não significa que o vínculo foi conferido ou aprovado.</p>
+</div>
+<div class="bc-conc-card">
+<h5>Alertas de conferência bancária</h5>
+<p class="bc-conc-note">Avisos informativos calculados a partir do extrato importado no período. Não alteram valores, vínculos ou situação de conciliação.</p>
+<?php if((int)$indicadoresExtratoConc['total']===0): ?>
+<div class="alert alert-info">Nenhuma movimentação importada no período. Importe um extrato para visualizar os alertas.</div>
+<?php else: ?>
+<?php if((int)($alertasExtratoConc['creditos_antigos']??0)>0): ?><div class="alert alert-warning"><strong>Atenção:</strong> <?php echo (int)$alertasExtratoConc['creditos_antigos']; ?> crédito(s) bancário(s) positivo(s) sem vínculo há mais de 3 dias. Confira os lançamentos.</div><?php endif; ?>
+<?php if((int)($alertasExtratoConc['creditos_recentes']??0)>0): ?><div class="alert alert-info"><?php echo (int)$alertasExtratoConc['creditos_recentes']; ?> crédito(s) positivo(s) recente(s) ainda sem vínculo.</div><?php endif; ?>
+<?php if((int)$indicadoresExtratoConc['divergentes']>0): ?><div class="alert alert-danger"><strong>Divergência:</strong> <?php echo (int)$indicadoresExtratoConc['divergentes']; ?> vínculo(s) com valor diferente, crédito cancelado ou inexistente. Exige revisão manual.</div><?php endif; ?>
+<?php if((int)($alertasExtratoConc['debitos_conferencia']??0)>0): ?><div class="alert alert-secondary"><?php echo (int)$alertasExtratoConc['debitos_conferencia']; ?> débito(s) bancário(s) sem vínculo, disponíveis para conferência manual.</div><?php endif; ?>
+<?php if((int)($alertasExtratoConc['creditos_antigos']??0)===0&&(int)($alertasExtratoConc['creditos_recentes']??0)===0&&(int)$indicadoresExtratoConc['divergentes']===0&&(int)($alertasExtratoConc['debitos_conferencia']??0)===0): ?><div class="alert alert-success">Nenhuma pendência identificada pelas regras automáticas neste período. Isso não substitui a conferência financeira.</div><?php endif; ?>
+<?php endif; ?>
 </div>
 <div class="bc-conc-card">
 <h5>Importar extrato bancário (CSV / OFX)</h5>
