@@ -230,7 +230,7 @@ $pag = 'caixas';
 							<div class="form-group">
 								<label for="total_caixa_fechar">Valor contado em dinheiro (R$)</label>
                                 <input type="text" class="form-control" name="total_caixa_fechar" id="total_caixa_fechar" inputmode="decimal" autocomplete="off" placeholder="Ex.: 125,50" required>
-                                <small class="text-muted">Informe o dinheiro realmente contado na gaveta, não o valor sugerido pelo sistema.</small>
+                                <small class="text-muted">Informe o valor contado fisicamente.</small>
 							</div>
 						</div>
 					</div>
