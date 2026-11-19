@@ -82,7 +82,7 @@ try {
     if ($valorPendentePositivo) $motivosBloqueio[]='Venda parcialmente paga: conciliação manual necessária';
     $pagamentosNaoDinheiro=0;
     foreach ($formasRecebidas as $forma) {
-        $nomeForma=mb_strtolower(trim((string)$forma['nome']),'UTF-8');
+        $nomeForma=strtolower(trim((string)$forma['nome']));
         if (!in_array($nomeForma,['dinheiro','espécie','especie'],true)
             && strpos($nomeForma,'dinheiro')===false) $pagamentosNaoDinheiro++;
     }
@@ -139,6 +139,18 @@ try {
     if (!$parcelasSimples) $motivosBloqueio[]='Recebimentos não são parcelas simples integralmente quitadas';
     $divergencia=round((float)$venda['valor']-$recebido-$pendente,2);
     if (abs($divergencia)>0.009) $motivosBloqueio[]='Valores recebidos e pendentes não conciliam com a venda';
+    // Valores devolvidos precisam ser estritamente positivos e nunca
+    // ultrapassar o total da venda; bloqueia valores inválidos ou legados.
+    $recebimentosInvalidos=0;
+    foreach ($parcelas as $parcela) {
+        $valorBase=$parcela['pago']==='Sim'
+            ? ($parcela['subtotal']??$parcela['valor']) : $parcela['valor'];
+        if (!is_numeric($valorBase) || !is_finite((float)$valorBase)
+            || (float)$valorBase<=0 || (float)$valorBase>(float)$venda['valor']+0.009) {
+            $recebimentosInvalidos++;
+        }
+    }
+    if ($recebimentosInvalidos>0) $motivosBloqueio[]='Parcelas com valores inválidos para devolução';
     $candidatoEstornoDinheiro=count($parcelas)>0 && count($motivosBloqueio)===0
         && abs($divergencia)<0.01 && $pendente<0.01
         && $pagamentosNaoDinheiro===0 && $parcelasSimples;
@@ -156,6 +168,7 @@ try {
       'formas_de_pagamento_recebidas'=>$formasRecebidas,
       'recebimentos_parciais_sem_vinculo'=>$parciaisLegados,
       'dependencias_financeiras_externas'=>$dependenciasExternas,
+      'recebimentos_com_valores_invalidos'=>$recebimentosInvalidos,
       'estorno_existente'=>$estornoExistente?:null,
       'requer_revisao'=>!$parcelas || count($motivosBloqueio)>0,
       'motivos_bloqueio'=>$motivosBloqueio,
