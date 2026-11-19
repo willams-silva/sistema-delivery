@@ -13,13 +13,9 @@ $ult_ped = @$_POST['ult_pedido'];
 $total_vendas = 0;
 
 $busca = @$_POST['p1'];
-$pagina = @$_POST['p2'];
-
-if($pagina == ""){
-	$pagina = 0;
-}
+$pagina = min(10000,max(0,(int)($_POST['p2'] ?? 0)));
 $itens_paginacao = 10;
-$limite = $pagina * @$itens_paginacao;
+$limite = $pagina * $itens_paginacao;
 
 $sql_pedido_balcao = " and empresa = '$id_empresa' ";
 if($pedidos_pdv_delivery != 'Sim'){
@@ -163,9 +159,12 @@ HTML;
 		$dataF = implode('/', array_reverse(explode('-', $data)));
 		//$horaF = date("H:i", strtotime($hora));	
 
-		$hora_pedido = date('H:i', strtotime("+$previsao_entrega minutes", strtotime($hora)));
-
-		if ($hora_pedido < date('H:i')) {
+		$dataHoraPedido=strtotime($data.' '.$hora);
+        $prazoPedido=$dataHoraPedido!==false
+            ? strtotime('+'.max(0,(int)$previsao_entrega).' minutes',$dataHoraPedido)
+            : false;
+        $hora_pedido=$prazoPedido!==false ? date('H:i',$prazoPedido) : '';
+        if ($prazoPedido!==false && $prazoPedido<time()) {
 			$classe_pago2 = '#ffdddd';
 		} else {
 			$classe_pago2 = '';
