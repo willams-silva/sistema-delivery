@@ -17,6 +17,9 @@ try {
  $vinculos=$pdo->prepare("SELECT COUNT(*) FROM conciliacao_vinculos_recebimentos WHERE empresa=:empresa AND liquidacao_id=:id");
  $vinculos->execute([':empresa'=>$empresa,':id'=>$id]);
  if((int)$vinculos->fetchColumn()>0){$pdo->rollBack();http_response_code(409);exit('Este crédito possui recebimentos vinculados. Revise os vínculos antes de cancelar. Nenhum dado foi alterado.');}
+ $extratos=$pdo->prepare("SELECT COUNT(*) FROM conciliacao_extrato_linhas WHERE empresa=:empresa AND liquidacao_id=:id");
+ $extratos->execute([':empresa'=>$empresa,':id'=>$id]);
+ if((int)$extratos->fetchColumn()>0){$pdo->rollBack();http_response_code(409);exit('Este crédito possui movimentação bancária vinculada. Desvincule o extrato com justificativa antes de cancelar. Nenhum dado foi alterado.');}
  $st=$pdo->prepare("UPDATE conciliacao_liquidacoes SET cancelado_em=NOW(),cancelado_por=:usuario,motivo_cancelamento=:motivo WHERE id=:id AND empresa=:empresa AND cancelado_em IS NULL");
  $st->execute([':usuario'=>$usuario?:null,':motivo'=>$motivo,':id'=>$id,':empresa'=>$empresa]);
  if($st->rowCount()!==1){$pdo->rollBack();http_response_code(409);exit('Crédito inexistente ou já cancelado.');}
