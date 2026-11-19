@@ -45,7 +45,7 @@ $auditorias = [];
 if ($caixas) {
     $ids = array_map(static function($c){return (int)$c['id'];},$caixas);
     $marcadores = implode(',',array_fill(0,count($ids),'?'));
-    $sql = "SELECT a.caixa,a.usuario,a.criado_em,a.saldo_esperado,a.valor_informado,a.diferenca,u.nome AS responsavel FROM auditoria_caixas a LEFT JOIN usuarios u ON u.id=a.usuario AND u.empresa=a.empresa INNER JOIN (SELECT caixa,MAX(id) AS ultimo FROM auditoria_caixas WHERE empresa=? AND evento='FECHAMENTO' AND caixa IN ($marcadores) GROUP BY caixa) ult ON ult.ultimo=a.id WHERE a.empresa=?";
+    $sql = "SELECT a.caixa,a.usuario,a.criado_em,a.saldo_esperado,a.valor_informado,a.diferenca,a.detalhes,u.nome AS responsavel FROM auditoria_caixas a LEFT JOIN usuarios u ON u.id=a.usuario AND u.empresa=a.empresa INNER JOIN (SELECT caixa,MAX(id) AS ultimo FROM auditoria_caixas WHERE empresa=? AND evento='FECHAMENTO' AND caixa IN ($marcadores) GROUP BY caixa) ult ON ult.ultimo=a.id WHERE a.empresa=?";
     $st=$pdo->prepare($sql);
     $st->execute(array_merge([(int)$empresa],$ids,[(int)$empresa]));
     foreach($st->fetchAll(PDO::FETCH_ASSOC) as $evento) {
@@ -98,7 +98,7 @@ $moeda=static function($v){return 'R$ '.number_format((float)$v,2,',','.');};
 <?php if($aud): ?>
 <strong><?= $h($aud['responsavel'] ?: 'Usuário #'.$aud['usuario']) ?></strong>
 <div class="text-muted small"><?= $h($aud['criado_em']) ?></div>
-<?php else: ?><span class="text-muted">Sem registro de auditoria</span><?php endif; ?>
+<?php else: ?><span class="text-muted"><?= $fechado ? 'Fechamento anterior à auditoria' : 'Caixa ainda aberto' ?></span><?php endif; ?>
 </td>
 <td><button class="btn btn-outline-primary btn-sm" type="button" data-bs-toggle="collapse" data-bs-target="#gc-detalhe-<?= (int)$c['id'] ?>" aria-expanded="false" aria-controls="gc-detalhe-<?= (int)$c['id'] ?>">Detalhar</button></td>
 </tr>
@@ -113,10 +113,38 @@ $moeda=static function($v){return 'R$ '.number_format((float)$v,2,',','.');};
  <?php if(empty($detalhes[(int)$c['id']][$tipo])): ?><li class="list-group-item text-muted">Sem movimentações pagas.</li><?php endif; ?>
  </ul></div>
  <?php endforeach; ?>
+ <?php
+ $dadosAuditados = null;
+ if ($aud && !empty($aud['detalhes'])) {
+     $json = json_decode($aud['detalhes'],true);
+     if (is_array($json) && isset($json['entradas_dinheiro'],$json['saidas_dinheiro'],$json['sangrias'])) {
+         $dadosAuditados=$json;
+     }
+ }
+ ?>
+ <div class="col-12 mt-3">
+ <div class="border rounded p-3">
+ <strong><i class="fa fa-calculator me-1"></i> Conferência do numerário</strong>
+ <?php if ($dadosAuditados): ?>
+ <small class="d-block text-muted mb-2">Valores registrados no momento do fechamento (auditoria).</small>
+ <div class="row g-2">
+ <div class="col-md-2">Saldo inicial<br><strong><?= $moeda($c['valor_abertura']) ?></strong></div>
+ <div class="col-md-2">+ Entradas em dinheiro<br><strong><?= $moeda($dadosAuditados['entradas_dinheiro']) ?></strong></div>
+ <div class="col-md-2">− Saídas em dinheiro<br><strong><?= $moeda($dadosAuditados['saidas_dinheiro']) ?></strong></div>
+ <div class="col-md-2">− Sangrias<br><strong><?= $moeda($dadosAuditados['sangrias']) ?></strong></div>
+ <div class="col-md-2">= Saldo esperado<br><strong><?= $moeda($aud['saldo_esperado']) ?></strong></div>
+ <div class="col-md-2">Contado / diferença<br><strong><?= $moeda($aud['valor_informado']) ?></strong><br><small><?= $moeda($aud['diferenca']) ?></small></div>
+ </div>
+ <?php elseif ($fechado): ?>
+ <p class="text-muted mb-0 mt-2">Fechamento anterior à auditoria: não existe memória de cálculo confiável para reconstruir os valores da época.</p>
+ <?php else: ?>
+ <p class="text-muted mb-0 mt-2">Caixa em aberto. A conferência definitiva será registrada no fechamento.</p>
+ <?php endif; ?>
+ </div></div>
  <div class="col-md-2"><strong>Sangrias</strong><p class="mt-2 mb-0"><?= $moeda($detalhes[(int)$c['id']]['sangrias']['total'] ?? 0) ?></p><small><?= (int)($detalhes[(int)$c['id']]['sangrias']['quantidade'] ?? 0) ?> retirada(s)</small></div>
  </div>
 </td></tr>
 <?php endforeach; ?>
-<?php if(!$caixas): ?><tr><td colspan="9" class="text-center text-muted">Nenhum caixa encontrado no período.</td></tr><?php endif; ?>
+<?php if(!$caixas): ?><tr><td colspan="10" class="text-center text-muted">Nenhum caixa encontrado no período.</td></tr><?php endif; ?>
 </tbody></table><small class="text-muted">Exibindo até 300 caixas no período. Diferença positiva indica sobra; negativa indica falta.</small>
 </div></div>
