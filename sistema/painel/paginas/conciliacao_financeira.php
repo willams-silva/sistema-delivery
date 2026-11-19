@@ -139,7 +139,7 @@ try {
  foreach($stS->fetchAll(PDO::FETCH_ASSOC) as $l) $liquidacoesPorFormaConc[(int)$l['forma_pgto']]=(float)$l['total'];
  $liquidacoesDisponiveisConc=true;
 } catch(PDOException $e) {error_log('Liquidacoes indisponiveis: '.$e->getMessage());}
-$extratoLinhasConc=[];$vinculosConc=[];$resumoVinculosConc=[];$auditoriaImportacoesConc=[];
+$extratoLinhasConc=[];$vinculosConc=[];$resumoVinculosConc=[];$auditoriaImportacoesConc=[];$auditoriaDesvinculosConc=[];
 $buscaExtratoConc=trim((string)($_GET['extrato_busca']??''));
 if(mb_strlen($buscaExtratoConc)>120)$buscaExtratoConc=mb_substr($buscaExtratoConc,0,120);
 $situacaoExtratoConc=(string)($_GET['extrato_situacao']??'todos');
@@ -165,8 +165,10 @@ try {
  $stExt->execute($paramsExtratoConc);$extratoLinhasConc=$stExt->fetchAll(PDO::FETCH_ASSOC);
  $stImportAud=$pdo->prepare("SELECT i.id,i.nome_arquivo,i.formato,i.usuario_id,i.criado_em,COUNT(e.id) AS linhas_novas FROM conciliacao_extrato_importacoes i LEFT JOIN conciliacao_extrato_linhas e ON e.importacao_id=i.id AND e.empresa=i.empresa WHERE i.empresa=:empresa GROUP BY i.id,i.nome_arquivo,i.formato,i.usuario_id,i.criado_em ORDER BY i.id DESC LIMIT 30");
  $stImportAud->execute([':empresa'=>$empresaConc]);$auditoriaImportacoesConc=$stImportAud->fetchAll(PDO::FETCH_ASSOC);
- $stVin=$pdo->prepare("SELECT v.receber_id,v.liquidacao_id,v.valor_vinculado,v.criado_em FROM conciliacao_vinculos_recebimentos v INNER JOIN conciliacao_liquidacoes l ON l.id=v.liquidacao_id AND l.empresa=v.empresa WHERE v.empresa=:empresa AND l.data_referencia BETWEEN :inicio AND :fim ORDER BY v.id DESC LIMIT 50");
+ $stVin=$pdo->prepare("SELECT v.id,v.receber_id,v.liquidacao_id,v.valor_vinculado,v.criado_em FROM conciliacao_vinculos_recebimentos v INNER JOIN conciliacao_liquidacoes l ON l.id=v.liquidacao_id AND l.empresa=v.empresa WHERE v.empresa=:empresa AND l.data_referencia BETWEEN :inicio AND :fim ORDER BY v.id DESC LIMIT 50");
  $stVin->execute($paramsConc);$vinculosConc=$stVin->fetchAll(PDO::FETCH_ASSOC);
+ $stDesvAud=$pdo->prepare("SELECT receber_id,liquidacao_id,valor_vinculado,desvinculado_por,motivo,desvinculado_em FROM conciliacao_vinculos_auditoria WHERE empresa=:empresa ORDER BY id DESC LIMIT 30");
+ $stDesvAud->execute([':empresa'=>$empresaConc]);$auditoriaDesvinculosConc=$stDesvAud->fetchAll(PDO::FETCH_ASSOC);
  $stResumoVin=$pdo->prepare("SELECT l.id,l.valor_creditado,COALESCE(SUM(v.valor_vinculado),0) AS bruto_vinculado,COUNT(v.id) AS quantidade FROM conciliacao_liquidacoes l LEFT JOIN conciliacao_vinculos_recebimentos v ON v.liquidacao_id=l.id AND v.empresa=l.empresa WHERE l.empresa=:empresa AND l.cancelado_em IS NULL AND l.data_referencia BETWEEN :inicio AND :fim GROUP BY l.id,l.valor_creditado HAVING COUNT(v.id)>0 ORDER BY l.id DESC LIMIT 50");
  $stResumoVin->execute($paramsConc);$resumoVinculosConc=$stResumoVin->fetchAll(PDO::FETCH_ASSOC);
 } catch(PDOException $e){error_log('Extrato/vinculos indisponiveis: '.$e->getMessage());}
@@ -592,9 +594,21 @@ $linhasPendenciaExibidasConc++; ?>
 <div><label for="vinc-credito">ID do crédito</label><input id="vinc-credito" type="number" min="1" name="liquidacao_id" required></div>
 <button class="btn btn-primary" type="submit">Vincular para conferência</button>
 </form>
-<div class="bc-conc-table mt-3"><table><thead><tr><th>Recebimento</th><th>Crédito</th><th>Valor bruto</th><th>Vinculado em</th></tr></thead><tbody>
-<?php foreach($vinculosConc as $v): ?><tr><td>#<?php echo (int)$v['receber_id']; ?></td><td>#<?php echo (int)$v['liquidacao_id']; ?></td><td><?php echo $moedaConc($v['valor_vinculado']); ?></td><td><?php echo $escConc($v['criado_em']); ?></td></tr><?php endforeach; ?>
-<?php if(!$vinculosConc): ?><tr><td colspan="4">Nenhum vínculo registrado no período.</td></tr><?php endif; ?>
+<div class="bc-conc-table mt-3"><table><thead><tr><th>Recebimento</th><th>Crédito</th><th>Valor bruto</th><th>Vinculado em</th><th>Correção</th></tr></thead><tbody>
+<?php foreach($vinculosConc as $v): ?><tr><td>#<?php echo (int)$v['receber_id']; ?></td><td>#<?php echo (int)$v['liquidacao_id']; ?></td><td><?php echo $moedaConc($v['valor_vinculado']); ?></td><td><?php echo $escConc($v['criado_em']); ?></td><td>
+<details><summary class="btn btn-sm btn-outline-danger">Desvincular</summary>
+<form method="post" action="paginas/desvincular_recebimento_conciliacao.php">
+<input type="hidden" name="csrf_conc" value="<?php echo $escConc($_SESSION['csrf_conc']); ?>">
+<input type="hidden" name="vinculo_id" value="<?php echo (int)$v['id']; ?>">
+<label>Justificativa (10 a 500 caracteres)</label><textarea class="form-control" name="motivo" minlength="10" maxlength="500" required></textarea>
+<button type="submit" class="btn btn-sm btn-outline-danger mt-2">Confirmar desvínculo</button></form></details></td></tr><?php endforeach; ?>
+<?php if(!$vinculosConc): ?><tr><td colspan="5">Nenhum vínculo registrado no período.</td></tr><?php endif; ?>
+</tbody></table></div>
+<h6 class="mt-4">Histórico de desvínculos</h6>
+<p class="bc-conc-note">Operações desfeitas permanecem registradas com motivo, responsável e data. O recebimento volta a ficar disponível para vínculo.</p>
+<div class="bc-conc-table"><table><thead><tr><th>Recebimento</th><th>Crédito</th><th>Valor</th><th>Responsável</th><th>Data</th><th>Motivo</th></tr></thead><tbody>
+<?php foreach($auditoriaDesvinculosConc as $a): ?><tr><td>#<?php echo (int)$a['receber_id']; ?></td><td>#<?php echo (int)$a['liquidacao_id']; ?></td><td><?php echo $moedaConc($a['valor_vinculado']); ?></td><td>#<?php echo (int)$a['desvinculado_por']; ?></td><td><?php echo $escConc($a['desvinculado_em']); ?></td><td><?php echo $escConc($a['motivo']); ?></td></tr><?php endforeach; ?>
+<?php if(!$auditoriaDesvinculosConc): ?><tr><td colspan="6">Nenhum desvínculo registrado.</td></tr><?php endif; ?>
 </tbody></table></div>
 <h6 class="mt-4">Conferência de valores vinculados</h6>
 <p class="bc-conc-note">O total vinculado corresponde ao valor bruto dos recebimentos. A diferença abaixo é apenas indicativa: taxas e repasses agrupados podem explicar divergências. Nenhum crédito é marcado automaticamente como conciliado.</p>
