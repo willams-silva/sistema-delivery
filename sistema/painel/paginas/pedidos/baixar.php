@@ -1,59 +1,67 @@
 <?php
 @session_start();
-$id_empresa = $_SESSION['empresa'];
-require_once("../../../conexao.php");
-require_once("../../buscar_config.php");
-if($id_empresa == ""){
-  echo 'Sem Sessão da Empresa, refaça o Login!';
-  exit();
+header('Content-Type: text/plain; charset=utf-8');
+header('Cache-Control: no-store, private');
+$empresa=filter_var($_SESSION['empresa']??null,FILTER_VALIDATE_INT,['options'=>['min_range'=>1]]);
+$usuario=filter_var($_SESSION['id']??null,FILTER_VALIDATE_INT,['options'=>['min_range'=>1]]);
+$vendaId=filter_var($_POST['id']??null,FILTER_VALIDATE_INT,['options'=>['min_range'=>1]]);
+$forma=trim((string)($_POST['pgto']??''));
+if (($_SERVER['REQUEST_METHOD']??'')!=='POST') {http_response_code(405);exit('Método inválido');}
+if (!$empresa || !$usuario || !$vendaId) {http_response_code(403);exit('Sessão ou venda inválida');}
+if ($forma==='' || strlen($forma)>100) {http_response_code(422);exit('Forma de pagamento inválida');}
+require_once('../../../conexao.php');
+try {
+    $pdo->beginTransaction();
+    $st=$pdo->prepare('SELECT id,valor,entrega,cliente,custo,pago,ref_api FROM vendas WHERE id=:id AND empresa=:empresa FOR UPDATE');
+    $st->execute([':id'=>$vendaId,':empresa'=>$empresa]);
+    $venda=$st->fetch(PDO::FETCH_ASSOC);
+    if (!$venda) {throw new DomainException('Pedido não encontrado nesta empresa');}
+    if ($venda['pago']==='Sim') {throw new DomainException('Pedido já está pago; nenhuma baixa duplicada foi criada');}
+    // Pedidos PIX com referência externa devem ser conciliados pelo provedor,
+    // nunca quitados manualmente como outra forma.
+    if (trim((string)($venda['ref_api']??''))!=='') {
+        throw new DomainException('Pedido PIX pendente: confirme pelo Mercado Pago');
+    }
+    if (!is_numeric($venda['valor']) || (float)$venda['valor']<=0) {
+        throw new DomainException('Valor do pedido inválido');
+    }
+    $st=$pdo->prepare('SELECT id FROM formas_pgto WHERE empresa=:empresa AND nome=:nome LIMIT 1');
+    $st->execute([':empresa'=>$empresa,':nome'=>$forma]);
+    $formaId=(int)$st->fetchColumn();
+    if (!$formaId) {throw new DomainException('Forma de pagamento não cadastrada');}
+    $st=$pdo->prepare('SELECT id FROM caixas WHERE empresa=:empresa AND operador=:usuario AND data_fechamento IS NULL ORDER BY id DESC LIMIT 1');
+    $st->execute([':empresa'=>$empresa,':usuario'=>$usuario]);
+    $caixa=(int)$st->fetchColumn();
+    if (!$caixa) {throw new DomainException('Abra seu caixa antes de receber pagamentos');}
+    $st=$pdo->prepare('SELECT COUNT(*) FROM receber WHERE empresa=:empresa AND venda_id=:venda');
+    $st->execute([':empresa'=>$empresa,':venda'=>$vendaId]);
+    if ((int)$st->fetchColumn()>0) {
+        throw new DomainException('Já existem recebimentos vinculados: revise a venda antes da baixa');
+    }
+    $st=$pdo->prepare("INSERT INTO receber
+        (descricao,cliente,valor,subtotal,data_lanc,hora,pago,usuario_pgto,vencimento,data_pgto,
+         foto,arquivo,forma_pgto,caixa,referencia,custo,empresa,venda_id)
+        VALUES (:descricao,:cliente,:valor,:subtotal,CURDATE(),CURTIME(),'Sim',:usuario,
+                CURDATE(),CURDATE(),'sem-foto.png','sem-foto.png',:forma,:caixa,:referencia,:custo,:empresa,:venda)");
+    $st->execute([
+        ':descricao'=>$venda['entrega'],':cliente'=>$venda['cliente'],
+        ':valor'=>$venda['valor'],':subtotal'=>$venda['valor'],':usuario'=>$usuario,
+        ':forma'=>$formaId,':caixa'=>$caixa,':referencia'=>$venda['entrega'],
+        ':custo'=>$venda['custo'],':empresa'=>$empresa,':venda'=>$vendaId
+    ]);
+    $st=$pdo->prepare("UPDATE vendas SET pago='Sim',usuario_baixa=:usuario,tipo_pgto=:forma
+        WHERE id=:venda AND empresa=:empresa AND pago<>'Sim'");
+    $st->execute([':usuario'=>$usuario,':forma'=>$forma,':venda'=>$vendaId,':empresa'=>$empresa]);
+    if ($st->rowCount()!==1) throw new RuntimeException('A venda foi alterada durante a baixa');
+    $pdo->commit();
+    echo 'Baixado com Sucesso';
+} catch (DomainException $e) {
+    if ($pdo->inTransaction()) $pdo->rollBack();
+    http_response_code(409);
+    echo $e->getMessage();
+} catch (Throwable $e) {
+    if ($pdo->inTransaction()) $pdo->rollBack();
+    error_log('Baixa de pedido: '.$e->getMessage());
+    http_response_code(500);
+    echo 'Não foi possível registrar o pagamento';
 }
-$tabela = 'vendas';
-
-$id_usuario = $_SESSION['id'];
-
-if($id_usuario == ""){
-    echo 'Sua sessão expirou, Faça Login novamente no sistema para dar baixa!';
-    exit();
-}
-
-
-
-$id = @$_POST['id'];
-$pgto = $_POST['pgto'];
-
-$custo = 0;
-
-$query = $pdo->query("SELECT * FROM vendas where id = '$id'");
-$res = $query->fetchAll(PDO::FETCH_ASSOC);
-$total_reg = @count($res);
-if ($total_reg > 0) {
-  $valor = $res[0]['valor'];
-  $entrega = $res[0]['entrega'];
-  $cliente = $res[0]['cliente'];
-  $custo = $res[0]['custo'];
-}
-
-
-  $query2 = $pdo->query("SELECT * FROM formas_pgto WHERE nome = '$pgto' and empresa = '$id_empresa' ");
-  $res2 = $query2->fetchAll(PDO::FETCH_ASSOC);
-  if (@count($res2) > 0) {
-    $id_tipo_pgto = @$res2[0]['id'];
-  }
-
-
-
-$pdo->query("UPDATE $tabela SET pago = 'Sim', usuario_baixa = '$id_usuario', tipo_pgto = '$pgto' where id = '$id'");
-
-
-//verificar caixa aberto
-$query1 = $pdo->query("SELECT * from caixas where operador = '$id_usuario' and data_fechamento is null order by id desc limit 1");
-$res1 = $query1->fetchAll(PDO::FETCH_ASSOC);
-if (@count($res1) > 0) {
-  $id_caixa = @$res1[0]['id'];
-} else {
-  $id_caixa = 0;
-}
-
-$pdo->query("INSERT INTO receber SET descricao = '$entrega', cliente = '$cliente', valor = '$valor', subtotal = '$valor', data_lanc = curDate(), hora = curTime(), pago = 'Sim', usuario_pgto = '$id_usuario', vencimento = curDate(), data_pgto = curDate(), foto = 'sem-foto.png', arquivo = 'sem-foto.png', forma_pgto = '$id_tipo_pgto', caixa = '$id_caixa', referencia = '$entrega', custo = '$custo', empresa = '$id_empresa' ");
-
-echo 'Baixado com Sucesso';
