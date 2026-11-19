@@ -1,6 +1,6 @@
 <?php
 @session_start();
-$id_empresa = $_SESSION['empresa'];
+$id_empresa = $_SESSION['empresa'] ?? null;
 require_once("../../../conexao.php");
 require_once("../../buscar_config.php");
 if($id_empresa == ""){
@@ -9,38 +9,38 @@ if($id_empresa == ""){
 }
 $tabela = 'receber';
 
-$id_usuario = $_SESSION['id'];
+$id_usuario = $_SESSION['id'] ?? null;
 
-$id = $_POST['id-baixar'];
+$id = ($_POST['id-baixar'] ?? '');
 $data_atual = date('Y-m-d');
 	$dia = date('d');
 	$mes = date('m');
 	$ano = date('Y');
 
-$valor = $_POST['valor-baixar'];
+$valor = ($_POST['valor-baixar'] ?? '');
 $valor = str_replace(',', '.', $valor);
 
-$taxa = $_POST['valor-taxa'];
+$taxa = ($_POST['valor-taxa'] ?? '');
 $taxa = str_replace(',', '.', $taxa);
 
-$multa = $_POST['valor-multa'];
+$multa = ($_POST['valor-multa'] ?? '');
 $multa = str_replace(',', '.', $multa);
 
-$desconto = $_POST['valor-desconto'];
+$desconto = ($_POST['valor-desconto'] ?? '');
 $desconto = str_replace(',', '.', $desconto);
 
-$juros = $_POST['valor-juros'];
+$juros = ($_POST['valor-juros'] ?? '');
 $juros = str_replace(',', '.', $juros);
 
-$valor = $_POST['valor-baixar'];
+$valor = ($_POST['valor-baixar'] ?? '');
 $valor = str_replace(',', '.', $valor);
 $valor_padrao = $valor;
 
-$subtotal = $_POST['subtotal'];
+$subtotal = ($_POST['subtotal'] ?? '');
 $subtotal = str_replace(',', '.', $subtotal);
 
-$saida = $_POST['saida-baixar'];
-$data_baixar = $_POST['data-baixar'];
+$saida = ($_POST['saida-baixar'] ?? '');
+$data_baixar = ($_POST['data-baixar'] ?? '');
 
 if($juros == ""){
 	$juros = 0;
@@ -123,15 +123,6 @@ if (abs($subtotal-round($valor+$taxa+$juros+$multa-$desconto,2))>0.009) throw ne
 $dataObj = DateTimeImmutable::createFromFormat('!Y-m-d',(string)$data_baixar);
 if (!$dataObj || $dataObj->format('Y-m-d')!==$data_baixar) throw new RuntimeException('Data de recebimento inválida.');
 
-if($valor > $valor_antigo){
-	echo 'O valor a ser pago não pode ser superior ao valor da conta! O valor da conta é de R$ '.$valor_antigo;
-	exit();
-}
-
-if($valor <= 0){
-	echo 'O precisa ser maior que 0 ';
-	exit();
-}
 
 
 //verificar caixa aberto
@@ -261,7 +252,7 @@ echo 'Baixado com Sucesso';
  if ($pdo->inTransaction()) $pdo->rollBack();
  error_log('Baixa de conta a receber: '.$e->getMessage());
  http_response_code(409);
- echo 'Não foi possível baixar a conta: '.$e->getMessage();
+ echo 'Não foi possível concluir o recebimento. Confira os valores e tente novamente.';
 }
 
 ?>
