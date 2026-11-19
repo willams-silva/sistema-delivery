@@ -287,11 +287,11 @@ $id_pedido_feito = $pdo->lastInsertId();
 
 
 //lançar nas contas a receber
-$receberSt=$pdo->prepare("INSERT INTO receber SET descricao='Nova Venda',cliente=:cliente,valor=:valor,vencimento=:vencimento,data_pgto=:data_pgto,data_lanc=CURDATE(),forma_pgto=:forma,frequencia=0,arquivo='sem-foto.jpg',foto='sem-foto.jpg',subtotal=:subtotal,usuario_lanc=:usuario,usuario_pgto=:usuario_pgto,pago=:pago,referencia='Venda',caixa=:caixa,hora=CURTIME(),tipo='Balcão',custo=:custo,empresa=:empresa");
-$receberSt->execute([':cliente'=>$cliente,':valor'=>$primeiraParcela,':vencimento'=>$data,':data_pgto'=>$primeiraDataPgto ?: null,':forma'=>$id_saida,':subtotal'=>$primeiraParcela,':usuario'=>(int)$id_usuario,':usuario_pgto'=>$primeiroUsuarioPgto ?: null,':pago'=>$primeiraPaga,':caixa'=>$id_caixa,':custo'=>$total_compra,':empresa'=>(int)$id_empresa]);
+$receberSt=$pdo->prepare("INSERT INTO receber SET descricao='Nova Venda',cliente=:cliente,valor=:valor,vencimento=:vencimento,data_pgto=:data_pgto,data_lanc=CURDATE(),forma_pgto=:forma,frequencia=0,arquivo='sem-foto.jpg',foto='sem-foto.jpg',subtotal=:subtotal,usuario_lanc=:usuario,usuario_pgto=:usuario_pgto,pago=:pago,referencia='Venda',venda_id=:venda_id,caixa=:caixa,hora=CURTIME(),tipo='Balcão',custo=:custo,empresa=:empresa");
+$receberSt->execute([':cliente'=>$cliente,':valor'=>$primeiraParcela,':vencimento'=>$data,':data_pgto'=>$primeiraDataPgto ?: null,':forma'=>$id_saida,':subtotal'=>$primeiraParcela,':usuario'=>(int)$id_usuario,':usuario_pgto'=>$primeiroUsuarioPgto ?: null,':pago'=>$primeiraPaga,':venda_id'=>(int)$id_pedido,':caixa'=>$id_caixa,':custo'=>$total_compra,':empresa'=>(int)$id_empresa]);
 if ($parcialSolicitado) {
     $segundaPaga=$data_restante===$data_atual ? 'Sim' : 'Não';
-    $receberSt->execute([':cliente'=>$cliente,':valor'=>$segundaParcela,':vencimento'=>$data_restante,':data_pgto'=>$segundaPaga==='Sim' ? $data_restante : null,':forma'=>$idForma2,':subtotal'=>$segundaParcela,':usuario'=>(int)$id_usuario,':usuario_pgto'=>$segundaPaga==='Sim' ? (int)$id_usuario : null,':pago'=>$segundaPaga,':caixa'=>$id_caixa,':custo'=>0,':empresa'=>(int)$id_empresa]);
+    $receberSt->execute([':cliente'=>$cliente,':valor'=>$segundaParcela,':vencimento'=>$data_restante,':data_pgto'=>$segundaPaga==='Sim' ? $data_restante : null,':forma'=>$idForma2,':subtotal'=>$segundaParcela,':usuario'=>(int)$id_usuario,':usuario_pgto'=>$segundaPaga==='Sim' ? (int)$id_usuario : null,':pago'=>$segundaPaga,':venda_id'=>(int)$id_pedido,':caixa'=>$id_caixa,':custo'=>0,':empresa'=>(int)$id_empresa]);
 }
 
 
