@@ -3,6 +3,7 @@
 $id_empresa = $_SESSION['empresa'];
 require_once("../../../conexao.php");
 require_once("../../buscar_config.php");
+if (!isset($_SESSION['id']) || !ctype_digit((string)$_SESSION['id'])) { http_response_code(403); exit('Sessão inválida.'); }
 if($id_empresa == ""){
 	echo 'Sem Sessão da Empresa, refaça o Login!';
 	exit();
@@ -36,6 +37,14 @@ $forma_pgto = $_POST['forma_pgto'];
 $frequencia = $_POST['frequencia'];
 $obs = $_POST['obs'];
 $id = $_POST['id'];
+// Não permitir editar lançamentos de outro estabelecimento.
+if ($id !== '' && (!ctype_digit((string)$id) || (int)$id <= 0)) { http_response_code(400); exit('Lançamento inválido.'); }
+if ($id !== '') {
+    $verificaEmpresa = $pdo->prepare("SELECT id FROM ${tabela} WHERE id = :id AND empresa = :empresa LIMIT 1");
+    $verificaEmpresa->execute([':id'=>(int)$id, ':empresa'=>(int)$id_empresa]);
+    if (!$verificaEmpresa->fetchColumn()) { http_response_code(403); exit('Lançamento não pertence à empresa.'); }
+}
+
 
 
 
@@ -89,7 +98,7 @@ if($descricao == ""){
 }
 
 //validar troca da foto
-$query = $pdo->query("SELECT * FROM $tabela where id = '$id'");
+$query = $pdo->query("SELECT * FROM $tabela where id = '$id' and empresa = '$id_empresa'");
 $res = $query->fetchAll(PDO::FETCH_ASSOC);
 $total_reg = @count($res);
 if($total_reg > 0){
@@ -139,7 +148,7 @@ if(@$_FILES['foto']['name'] != ""){
 
 
 //verificar caixa aberto
-$query1 = $pdo->query("SELECT * from caixas where operador = '$id_usuario' and data_fechamento is null order by id desc limit 1");
+$query1 = $pdo->query("SELECT * from caixas where operador = '$id_usuario' and data_fechamento is null and empresa = '$id_empresa' order by id desc limit 1");
 $res1 = $query1->fetchAll(PDO::FETCH_ASSOC);
 if(@count($res1) > 0){
 	$id_caixa = @$res1[0]['id'];
@@ -216,14 +225,14 @@ $query = $pdo->prepare("INSERT INTO $tabela SET descricao = :descricao, cliente 
 }
 	
 }else{
-$query = $pdo->prepare("UPDATE $tabela SET descricao = :descricao, cliente = :cliente, valor = :valor, vencimento = '$vencimento' $pgto, forma_pgto = '$forma_pgto', frequencia = '$frequencia', obs = :obs, arquivo = '$foto', foto = '$foto', subtotal = :valor where id = '$id'");
+$query = $pdo->prepare("UPDATE $tabela SET descricao = :descricao, cliente = :cliente, valor = :valor, vencimento = '$vencimento' $pgto, forma_pgto = '$forma_pgto', frequencia = '$frequencia', obs = :obs, arquivo = '$foto', foto = '$foto', subtotal = :valor where id = '$id' and empresa = '$id_empresa'");
 
 
 
 	if ($vencimento_antiga != $vencimento) {
 
 
-		$query4 = $pdo->query("SELECT * FROM $tabela where id = '$id'");
+		$query4 = $pdo->query("SELECT * FROM $tabela where id = '$id' and empresa = '$id_empresa'");
 		$res4 = $query4->fetchAll(PDO::FETCH_ASSOC);
 		$hash = @$res4[0]['hash'];
 
@@ -263,7 +272,7 @@ $query = $pdo->prepare("UPDATE $tabela SET descricao = :descricao, cliente = :cl
 			$ultimo_id = $id;
 			require('../../apis/agendar.php');
 
-			$pdo->query("UPDATE $tabela SET hash = '$hash' where id = '$id'");
+			$pdo->query("UPDATE $tabela SET hash = '$hash' where id = '$id' and empresa = '$id_empresa'");
 		}
 	}
 
