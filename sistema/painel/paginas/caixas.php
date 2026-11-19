@@ -228,14 +228,19 @@ $pag = 'caixas';
 
 						<div class="col-md-4">
 							<div class="form-group">
-								<label>R$ Valor do Caixa</label>
-								<input type="text" class="form-control" name="total_caixa_fechar" id="total_caixa_fechar" required>
+								<label for="total_caixa_fechar">Valor contado em dinheiro (R$)</label>
+                                <input type="text" class="form-control" name="total_caixa_fechar" id="total_caixa_fechar" inputmode="decimal" autocomplete="off" placeholder="Ex.: 125,50" required>
+                                <small class="text-muted">Informe o dinheiro realmente contado na gaveta, não o valor sugerido pelo sistema.</small>
 							</div>
 						</div>
 					</div>
 
 
-					<input type="hidden" name="id" id="id_fechar">
+					<div class="alert alert-light border mt-3 mb-2" role="status">
+                        <strong>Saldo esperado em dinheiro:</strong> <span id="saldo_esperado_visual">—</span>
+                        <div class="small text-muted">Valor de referência para conferência; não preenche automaticamente o dinheiro contado.</div>
+                    </div>
+                    <input type="hidden" name="id" id="id_fechar">
 					<small>
 						<div id="mensagem_fechar" align="center" class="mt-3"></div>
 					</small>
