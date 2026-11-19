@@ -917,6 +917,7 @@ if($linhas == 0){
 
 									<li><a class="slide-item" href="index.php?pagina=visao_financeira"><i class="fa fa-line-chart me-1"></i> Visão Financeira</a></li>
 									<!-- Auditoria Financeira: publicação 2026-11-19 -->
+									<li><a class="slide-item" href="index.php?pagina=conciliacao_financeira"><i class="fa fa-check-square-o me-1"></i> Conciliação Financeira</a></li>
 									<li><a class="slide-item" href="index.php?pagina=auditoria_financeira"><i class="fa fa-history me-1"></i> Auditoria Financeira</a></li>
 									<li class="<?php echo @$pagar ?> "><a class="slide-item" href="pagar">Contas a Pagar</a></li>
 
