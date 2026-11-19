@@ -251,6 +251,22 @@ $porcent_mesa = $linhas4 / 100;
 
 
 
+$dashboardCaixa=$pdo->prepare("SELECT id,data_abertura FROM caixas
+    WHERE empresa=:empresa AND operador=:operador AND data_fechamento IS NULL
+    ORDER BY id DESC LIMIT 1");
+$dashboardCaixa->execute([':empresa'=>(int)$id_empresa,':operador'=>(int)$id_usuario]);
+$dashboardCaixaAberto=$dashboardCaixa->fetch(PDO::FETCH_ASSOC);
+$dashboardVendasHoje=$pdo->prepare("SELECT COUNT(*) quantidade,COALESCE(SUM(valor),0) total
+    FROM vendas WHERE empresa=:empresa AND data=CURDATE()
+    AND (status IS NULL OR status<>'Cancelado')");
+$dashboardVendasHoje->execute([':empresa'=>(int)$id_empresa]);
+$dashboardResumoHoje=$dashboardVendasHoje->fetch(PDO::FETCH_ASSOC);
+$dashboardReceberHoje=$pdo->prepare("SELECT COUNT(*) quantidade,COALESCE(SUM(valor),0) total
+    FROM receber WHERE empresa=:empresa AND vencimento=CURDATE() AND pago<>'Sim'");
+$dashboardReceberHoje->execute([':empresa'=>(int)$id_empresa]);
+$dashboardPendenciasHoje=$dashboardReceberHoje->fetch(PDO::FETCH_ASSOC);
+
+
 ?>
 
 
@@ -266,6 +282,29 @@ $porcent_mesa = $linhas4 / 100;
     <a href="pagar" class="ux-shortcut"><i class="fa fa-file-invoice-dollar" aria-hidden="true"></i> Despesas</a>
   </div>
 </section>
+<div class="row g-3 mt-2 mb-3" aria-label="Resumo operacional">
+  <div class="col-12 col-md-4">
+    <div class="card h-100 p-3">
+      <div class="text-muted small"><i class="fa fa-cash-register me-2"></i>Meu caixa</div>
+      <div class="fs-5 fw-bold mt-1"><?php echo $dashboardCaixaAberto ? 'Aberto' : 'Fechado'; ?></div>
+      <div class="small text-muted"><?php echo $dashboardCaixaAberto ? 'Caixa #'.(int)$dashboardCaixaAberto['id'] : 'Nenhum caixa aberto para seu usuário'; ?></div>
+    </div>
+  </div>
+  <div class="col-12 col-md-4">
+    <div class="card h-100 p-3">
+      <div class="text-muted small"><i class="fa fa-shopping-cart me-2"></i>Vendas de hoje</div>
+      <div class="fs-5 fw-bold mt-1">R$ <?php echo number_format((float)$dashboardResumoHoje['total'],2,',','.'); ?></div>
+      <div class="small text-muted"><?php echo (int)$dashboardResumoHoje['quantidade']; ?> venda(s), sem canceladas</div>
+    </div>
+  </div>
+  <div class="col-12 col-md-4">
+    <div class="card h-100 p-3">
+      <div class="text-muted small"><i class="fa fa-clock me-2"></i>Recebimentos vencendo hoje</div>
+      <div class="fs-5 fw-bold mt-1">R$ <?php echo number_format((float)$dashboardPendenciasHoje['total'],2,',','.'); ?></div>
+      <div class="small text-muted"><?php echo (int)$dashboardPendenciasHoje['quantidade']; ?> conta(s) ainda pendente(s)</div>
+    </div>
+  </div>
+</div>
 <div class="mt-4 justify-content-between">
 
 
