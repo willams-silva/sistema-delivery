@@ -189,6 +189,7 @@ try {
    FROM conciliacao_extrato_linhas e
    LEFT JOIN conciliacao_liquidacoes l ON l.empresa=e.empresa
     AND l.cancelado_em IS NULL AND l.valor_creditado=e.valor
+    AND NOT EXISTS (SELECT 1 FROM conciliacao_extrato_linhas ocupado WHERE ocupado.empresa=l.empresa AND ocupado.liquidacao_id=l.id)
     AND l.data_credito BETWEEN DATE_SUB(e.data_movimento,INTERVAL 3 DAY) AND DATE_ADD(e.data_movimento,INTERVAL 3 DAY)
    WHERE e.empresa=? AND e.id IN (".$marksExt.") AND e.valor>0 AND e.liquidacao_id IS NULL
    GROUP BY e.id";
