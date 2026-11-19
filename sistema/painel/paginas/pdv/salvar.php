@@ -71,9 +71,13 @@ $valor_pago = $_POST['valor_pago'];
 $data_restante = $_POST['data_restante'];
 $forma_pgto2 = $_POST['forma_pgto2'];
 
-if($valor_restante > 0 and $forma_pgto2 == "" and $data_restante == $data_atual){
-	echo 'Você precisa selecionar uma forma de pagamento para o valor restante!';
-	exit();
+// O formulário legado envia campos de pagamento parcial, mas ainda não registra
+// corretamente duas formas em contas a receber. Não confirmar como quitada.
+$parcialSolicitado = is_numeric(str_replace(',', '.', (string)$valor_restante))
+    && (float)str_replace(',', '.', (string)$valor_restante) > 0.009;
+if ($parcialSolicitado) {
+    http_response_code(409);
+    exit('Pagamento dividido ainda não está habilitado. Utilize uma forma de pagamento por venda.');
 }
 
 $dataF = implode('/', array_reverse(explode('-', $data)));
