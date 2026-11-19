@@ -164,51 +164,18 @@ HTML;
 		}
 
 
-		//pegar a forma de pagamento dinheiro
-		$query2 = $pdo->query("SELECT * FROM formas_pgto where nome LIKE '%Dinheiro%' and empresa = '$id_empresa'");
-		$res2 = $query2->fetchAll(PDO::FETCH_ASSOC);
-		$pgto_dinheiro = $res2[0]['id'];
-
-
-		//buscar total movimentado pelo caixa
-		//totalizar recebimentos
-		$total_recebido = 0;
-		$query2 = $pdo->query("SELECT * FROM receber where usuario_pgto = '$operador' and data_pgto >= '$data_abertura' and data_pgto <= '$data_fechamento_consulta' and caixa = '$id' and forma_pgto = '$pgto_dinheiro'");
-		$res2 = $query2->fetchAll(PDO::FETCH_ASSOC);
-		if (@count($res2) > 0) {
-			for ($i2 = 0; $i2 < @count($res2); $i2++) {
-				$valor_rec = $res2[$i2]['valor'];
-				$total_recebido += $valor_rec;
-			}
-		}
-
-
-		//totalizar saidas
-		$total_saidas = 0;
-		$query2 = $pdo->query("SELECT * FROM pagar where usuario_pgto = '$operador' and data_pgto >= '$data_abertura' and data_pgto <= '$data_fechamento_consulta' and caixa = '$id' and forma_pgto = '$pgto_dinheiro'");
-		$res2 = $query2->fetchAll(PDO::FETCH_ASSOC);
-		if (@count($res2) > 0) {
-			for ($i2 = 0; $i2 < @count($res2); $i2++) {
-				$valor_sai = $res2[$i2]['valor'];
-				$total_saidas += $valor_sai;
-			}
-		}
-
-
-		//totalizar sangrias
-		$total_sangrias = 0;
-		$query2 = $pdo->query("SELECT * FROM sangrias where caixa = '$id'");
-		$res2 = $query2->fetchAll(PDO::FETCH_ASSOC);
-		if (@count($res2) > 0) {
-			for ($i2 = 0; $i2 < @count($res2); $i2++) {
-				$valor_s = $res2[$i2]['valor'];
-				$total_sangrias += $valor_s;
-			}
-		}
-		$total_sangriasF = @number_format($total_sangrias, 2, ',', '.');
-
-
-		$total_caixa = $total_recebido - $total_saidas + $valor_abertura - $total_sangrias;
+        // Mesmo cálculo utilizado na confirmação do fechamento.
+        require_once __DIR__ . '/calculo_saldo.php';
+        try {
+            $resumoCaixa = calcularSaldoCaixa($pdo, (int)$id_empresa, (int)$id, (float)$valor_abertura);
+            $total_sangriasF = number_format($resumoCaixa['sangrias'], 2, ',', '.');
+            $total_caixa = $resumoCaixa['esperado'];
+        } catch (Throwable $erroSaldo) {
+            error_log('Saldo caixa na listagem: '.$erroSaldo->getMessage());
+            $total_sangriasF = 'Indisponível';
+            $total_caixa = 0;
+            $ocultar = 'ocultar'; // Não oferecer fechamento com saldo não calculado.
+        }
 
 
 		echo <<<HTML
