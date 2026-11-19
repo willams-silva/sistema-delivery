@@ -1,31 +1,34 @@
 <?php
-@session_start();
-require_once("../../../conexao.php");
-
-$id_empresa = @$_SESSION['empresa'];
-if($id_empresa == ""){
-    echo 'Sem Sessão da Empresa, acesse novamente!';
-    exit();
-}
-require_once("../../buscar_config.php");
-
-$access_token = $api_merc;
-//$ref_api = '58970903187';
-$curl = curl_init();
-    curl_setopt_array($curl, array(
-        CURLOPT_URL => 'https://api.mercadopago.com/v1/payments/'.$codigo_pix,
+// Consulta de pagamento Mercado Pago, sem alterar vendas ou recebimentos.
+$status_api = null;
+$pagamento_pix_validado = false;
+$codigoPagamento = trim((string)($codigo_pix ?? ''));
+$tokenPagamento = trim((string)($api_merc ?? ''));
+if ($codigoPagamento !== '' && preg_match('/^[0-9]{1,30}$/D', $codigoPagamento)
+    && $tokenPagamento !== '' && function_exists('curl_init')) {
+    $curl = curl_init('https://api.mercadopago.com/v1/payments/' . rawurlencode($codigoPagamento));
+    curl_setopt_array($curl, [
         CURLOPT_RETURNTRANSFER => true,
-        CURLOPT_CUSTOMREQUEST => 'GET',
-    CURLOPT_HTTPHEADER => array(
-        'accept: application/json',
-        'content-type: application/json',
-        'Authorization: Bearer '.$access_token
-    ),
-    ));
+        CURLOPT_HTTPGET => true,
+        CURLOPT_CONNECTTIMEOUT => 3,
+        CURLOPT_TIMEOUT => 7,
+        CURLOPT_FOLLOWLOCATION => false,
+        CURLOPT_HTTPHEADER => [
+            'Accept: application/json',
+            'Authorization: Bearer ' . $tokenPagamento
+        ]
+    ]);
     $response = curl_exec($curl);
-    $resultado = json_decode($response);
-curl_close($curl);
-//echo $resultado->status;
-$status_api = @$resultado->status;
-//var_dump($resultado);
-
+    $httpCode = (int)curl_getinfo($curl, CURLINFO_HTTP_CODE);
+    curl_close($curl);
+    if ($response !== false && $httpCode === 200) {
+        $resultado = json_decode($response);
+        // Nunca confiar somente no status: conferir também a identidade.
+        if (is_object($resultado)
+            && (string)($resultado->id ?? '') === $codigoPagamento
+            && ($resultado->status ?? '') === 'approved') {
+            $status_api = 'approved';
+            $pagamento_pix_validado = true;
+        }
+    }
+}
