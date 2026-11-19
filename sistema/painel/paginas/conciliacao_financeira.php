@@ -388,6 +388,12 @@ $escConc=static function($v){return htmlspecialchars((string)$v,ENT_QUOTES,'UTF-
 @media(prefers-reduced-motion:reduce){.bc-conc .bc-conc-card,.bc-conc-tabs button{transition:none}}
 
 
+
+/* Painéis recolhíveis: melhoria progressiva, sem depender de JavaScript para exibir dados. */
+.bc-conc-card.bc-conc-foldable > h5{display:flex;align-items:center;justify-content:space-between;gap:12px}
+.bc-conc-fold-toggle{font:inherit;font-size:13px;font-weight:600;border:1px solid #cbd5e1;border-radius:8px;background:#f8fafc;color:#334155;padding:7px 11px;cursor:pointer;white-space:nowrap}
+.bc-conc-fold-toggle:focus-visible{outline:3px solid #2563eb;outline-offset:2px}
+.bc-conc-fold-body[hidden]{display:none!important}
 </style>
 <div class="bc-conc">
 <nav class="bc-conc-tabs" aria-label="Seções da conciliação financeira" id="bc-conc-tabs">
@@ -855,6 +861,29 @@ if($audUsuarioConc!=='')$queryAudConc['cancel_usuario']=$audUsuarioConc;
 </tbody></table></div>
 <p class="bc-conc-note">A simulação de taxas acima não substitui a conciliação bancária. A importação automática de extratos e a conciliação bancária transacional ainda não estão disponíveis.</p>
 </div></div>
+<script>
+(function(){
+ const root=document.querySelector('.bc-conc');if(!root)return;
+ const targets=new Set([
+  'Importar extrato bancário (CSV / OFX)',
+  'Histórico de desvínculos bancários',
+  'Auditoria dos vínculos do extrato',
+  'Auditoria de importações bancárias'
+ ]);
+ let seq=0;
+ root.querySelectorAll('.bc-conc-card').forEach(card=>{
+  const heading=Array.from(card.children).find(el=>el.tagName==='H5');
+  if(!heading||!targets.has(heading.textContent.trim()))return;
+  const body=document.createElement('div');body.className='bc-conc-fold-body';
+  while(heading.nextSibling)body.appendChild(heading.nextSibling);
+  card.appendChild(body);card.classList.add('bc-conc-foldable');
+  const btn=document.createElement('button');btn.type='button';btn.className='bc-conc-fold-toggle';
+  btn.setAttribute('aria-controls','bc-conc-fold-'+(++seq));body.id='bc-conc-fold-'+seq;
+  function toggle(open){body.hidden=!open;btn.setAttribute('aria-expanded',String(open));btn.textContent=open?'Recolher':'Mostrar detalhes';}
+  btn.addEventListener('click',()=>toggle(body.hidden));heading.appendChild(btn);toggle(false);
+ });
+})();
+</script>
 <script>
 (function(){
  const root=document.querySelector('.bc-conc');
