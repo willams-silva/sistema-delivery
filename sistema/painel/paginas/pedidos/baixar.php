@@ -27,7 +27,7 @@ try {
     }
     // PIX estático (Nubank ou outro banco) não possui confirmação automática.
     // A confirmação manual exige declaração expressa de conferência no extrato.
-    $pixManual = preg_match('/\\bpix\\b/i', $forma) === 1;
+    $pixManual = preg_match('/\bpix\b/i', $forma) === 1;
     if ($pixManual && ($_POST['pix_conferido'] ?? '') !== '1') {
         throw new DomainException('Confira o crédito no extrato bancário e marque a confirmação do PIX');
     }
