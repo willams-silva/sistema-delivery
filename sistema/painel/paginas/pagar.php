@@ -30,6 +30,8 @@ if ($linhas > 0) {
 
 <?php
 // Resumo de vencimentos apenas do estabelecimento autenticado.
+$diasAlerta = 7;
+try { $stDias = $pdo->prepare('SELECT dias_antecedencia FROM alertas_vencimento_pagar WHERE empresa=:empresa'); $stDias->execute([':empresa'=>(int)$id_empresa]); $diasSalvos=$stDias->fetchColumn(); if($diasSalvos!==false) $diasAlerta=max(1,min(30,(int)$diasSalvos)); } catch(Throwable $e) { error_log('Config alertas pagar: '.$e->getMessage()); }
 $resumoVencimentos = ['atrasadas'=>['qtd'=>0,'total'=>0], 'hoje'=>['qtd'=>0,'total'=>0], 'proximas'=>['qtd'=>0,'total'=>0]];
 try {
     $consultaVencimentos = $pdo->prepare("SELECT
@@ -39,9 +41,11 @@ try {
       COUNT(*) AS qtd, COALESCE(SUM(valor),0) AS total
       FROM pagar
       WHERE empresa = :empresa AND (pago IS NULL OR pago <> 'Sim')
-        AND vencimento <= DATE_ADD(CURDATE(), INTERVAL 7 DAY)
+        AND vencimento <= DATE_ADD(CURDATE(), INTERVAL :dias DAY)
       GROUP BY faixa");
-    $consultaVencimentos->execute([':empresa'=>(int)$id_empresa]);
+    $consultaVencimentos->bindValue(':empresa',(int)$id_empresa,PDO::PARAM_INT);
+    $consultaVencimentos->bindValue(':dias',$diasAlerta,PDO::PARAM_INT);
+    $consultaVencimentos->execute();
     foreach ($consultaVencimentos->fetchAll(PDO::FETCH_ASSOC) as $item) {
         $resumoVencimentos[$item['faixa']] = ['qtd'=>(int)$item['qtd'],'total'=>(float)$item['total']];
     }
@@ -52,11 +56,31 @@ try {
 <section class="card mb-3" id="alertas-vencimentos-pagar">
  <div class="card-body">
   <h5 class="mb-3"><i class="fe fe-bell me-2"></i>Alertas de vencimento</h5>
-  <div class="row g-3">
+  <div class="d-flex align-items-end gap-2 flex-wrap mb-3">
+  <div><label for="dias-alerta-pagar" class="form-label mb-1">Avisar com antecedência de</label><select class="form-select form-select-sm" id="dias-alerta-pagar"><?php foreach ([1,3,5,7,10,15,20,30] as $opcao): ?><option value="<?php echo $opcao; ?>" <?php echo $diasAlerta===$opcao?'selected':''; ?>><?php echo $opcao; ?> dias</option><?php endforeach; ?></select></div>
+  <button type="button" class="btn btn-outline-primary btn-sm" id="salvar-dias-alerta">Salvar configuração</button>
+  <span id="retorno-dias-alerta" role="status" class="small"></span>
+ </div>
+ <script>
+ (function(){
+  const btn=document.getElementById('salvar-dias-alerta'),ret=document.getElementById('retorno-dias-alerta');
+  btn.addEventListener('click',async function(){
+   btn.disabled=true;ret.textContent='Salvando...';
+   try{
+    const body=new URLSearchParams({dias:document.getElementById('dias-alerta-pagar').value});
+    const resp=await fetch('paginas/pagar/alertas_config_salvar.php',{method:'POST',credentials:'same-origin',headers:{'Content-Type':'application/x-www-form-urlencoded'},body});
+    const data=await resp.json();if(!resp.ok)throw new Error(data.erro||'Falha ao salvar');
+    ret.textContent='Configuração salva. Atualize a página para aplicar os novos valores.';
+   }catch(e){ret.textContent=e.message||'Erro ao salvar';}
+   finally{btn.disabled=false;}
+  });
+ })();
+ </script>
+ <div class="row g-3">
    <?php foreach ([
       ['chave'=>'atrasadas','titulo'=>'Contas atrasadas','cor'=>'danger'],
       ['chave'=>'hoje','titulo'=>'Vencem hoje','cor'=>'warning'],
-      ['chave'=>'proximas','titulo'=>'Próximos 7 dias','cor'=>'info']
+      ['chave'=>'proximas','titulo'=>'Próximos '.$diasAlerta.' dias','cor'=>'info']
    ] as $alerta):
       $resumo = $resumoVencimentos[$alerta['chave']];
    ?>
@@ -71,7 +95,7 @@ try {
    </div>
    <?php endforeach; ?>
   </div>
-  <small class="text-muted d-block mt-2">Somente contas em aberto. O período de 7 dias não inclui as vencidas nem as que vencem hoje.</small>
+  <small class="text-muted d-block mt-2">Somente contas em aberto. O período configurado não inclui as vencidas nem as que vencem hoje.</small>
  </div>
 </section>
 
