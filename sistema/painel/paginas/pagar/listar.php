@@ -162,8 +162,22 @@ if ($total_am > 0) {
 if ($filtro == 'Vencidas') {
 	$query = $pdo->query("SELECT * from $tabela where $tipo_data < curDate() and pago = 'Não' and empresa = '$id_empresa' order by id desc ");
 } else if ($filtro == 'Proximos7') {
-    $query = $pdo->prepare("SELECT * FROM pagar WHERE empresa = :empresa AND pago = 'Não' AND vencimento > CURDATE() AND vencimento <= DATE_ADD(CURDATE(), INTERVAL 7 DAY) ORDER BY vencimento ASC, id DESC");
-    $query->execute([':empresa'=>(int)$id_empresa]);
+    // Mantém a listagem sincronizada com a antecedência definida por empresa.
+    $diasAlerta = 7;
+    try {
+        $configAlerta = $pdo->prepare("SELECT dias_antecedencia FROM alertas_vencimento_pagar WHERE empresa = :empresa");
+        $configAlerta->execute([':empresa'=>(int)$id_empresa]);
+        $diasConfigurados = $configAlerta->fetchColumn();
+        if ($diasConfigurados !== false) {
+            $diasAlerta = max(1, min(30, (int)$diasConfigurados));
+        }
+    } catch (Throwable $erroConfig) {
+        error_log('Filtro vencimentos pagar: '.$erroConfig->getMessage());
+    }
+    $query = $pdo->prepare("SELECT * FROM pagar WHERE empresa = :empresa AND (pago IS NULL OR pago <> 'Sim') AND vencimento > CURDATE() AND vencimento <= DATE_ADD(CURDATE(), INTERVAL :dias DAY) ORDER BY vencimento ASC, id DESC");
+    $query->bindValue(':empresa',(int)$id_empresa,PDO::PARAM_INT);
+    $query->bindValue(':dias',$diasAlerta,PDO::PARAM_INT);
+    $query->execute();
 } else if ($filtro == 'Recebidas') {
 	$query = $pdo->query("SELECT * from $tabela where pago = 'Sim' and empresa = '$id_empresa' order by id desc ");
 } else if ($filtro == 'Hoje') {
