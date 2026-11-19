@@ -244,6 +244,9 @@ if(strtotime($data) > strtotime($data_atual)){
 }
 
 
+// Uma parcela futura mantém a venda pendente até sua quitação.
+if ($parcialSolicitado && $data_restante > $data_atual) $pago = 'Não';
+
 // Serializa a numeração por empresa e dia, inclusive entre caixas diferentes.
 $lockPedidoNome='pdv_pedido_'.(int)$id_empresa.'_'.date('Ymd');
 $lockPedidoSt=$pdo->prepare('SELECT GET_LOCK(:nome,10)');
@@ -256,10 +259,10 @@ $ultimoPedidoSt->execute([':empresa'=>(int)$id_empresa]);
 $pedido=(int)$ultimoPedidoSt->fetchColumn()+1;
 
 $troco_calculado = 0;
-if($troco > 0){
-	$troco_calculado = $troco - $primeiraParcela;
-}else{
-	$troco = $total_final;
+if ($formaDinheiro && $troco > 0) {
+    $troco_calculado = round($troco - $primeiraParcela, 2);
+} else {
+    $troco = $total_final;
 }
 
 // Revalida o vínculo antes de persistir a venda.
