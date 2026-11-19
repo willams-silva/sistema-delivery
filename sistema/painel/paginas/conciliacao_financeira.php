@@ -76,6 +76,9 @@ unset($grupoConc);
 $liquidacoesConc=[];$liquidacoesPorFormaConc=[];$liquidacoesDisponiveisConc=false;
 $resumoAuditoriaConc=['ativos'=>0,'cancelados'=>0,'valor_ativo'=>0.0,'valor_cancelado'=>0.0];
 $filtroHistoricoConc=(string)($_GET['historico']??'todos');
+$porPaginaLiqConc=25;
+$paginaLiqConc=filter_var($_GET['liq_pagina']??1,FILTER_VALIDATE_INT,['options'=>['min_range'=>1]])?:1;
+$totalLiqConc=0;$paginasLiqConc=1;
 if(!in_array($filtroHistoricoConc,['todos','ativos','cancelados'],true))$filtroHistoricoConc='todos';
 
 $auditoriaCancelamentosConc=[];
@@ -109,7 +112,15 @@ try {
  $auditoriaCancelamentosConc=$stAudCancel->fetchAll(PDO::FETCH_ASSOC);
 } catch(PDOException $e){error_log('Auditoria de cancelamentos indisponivel: '.$e->getMessage());}
 try {
- $stL=$pdo->prepare("SELECT l.id,l.forma_pgto,l.data_referencia,l.data_credito,l.valor_creditado,l.identificador,l.observacao,l.cancelado_em,l.cancelado_por,l.motivo_cancelamento,fp.nome AS forma FROM conciliacao_liquidacoes l INNER JOIN formas_pgto fp ON fp.id=l.forma_pgto AND fp.empresa=l.empresa WHERE l.empresa=:empresa AND l.data_referencia BETWEEN :inicio AND :fim ORDER BY l.data_referencia DESC,l.id DESC LIMIT 100");
+ $filtroSqlLiqConc=$filtroHistoricoConc==='ativos'?' AND l.cancelado_em IS NULL':($filtroHistoricoConc==='cancelados'?' AND l.cancelado_em IS NOT NULL':'');
+ $stCountLiqConc=$pdo->prepare("SELECT COUNT(*) FROM conciliacao_liquidacoes l WHERE l.empresa=:empresa AND l.data_referencia BETWEEN :inicio AND :fim".$filtroSqlLiqConc);
+ $stCountLiqConc->execute($paramsConc);
+ $totalLiqConc=(int)$stCountLiqConc->fetchColumn();
+ $paginasLiqConc=max(1,(int)ceil($totalLiqConc/$porPaginaLiqConc));
+ $paginaLiqConc=min($paginaLiqConc,$paginasLiqConc);
+ $offsetLiqConc=($paginaLiqConc-1)*$porPaginaLiqConc;
+ $sqlLiqConc="SELECT l.id,l.forma_pgto,l.data_referencia,l.data_credito,l.valor_creditado,l.identificador,l.observacao,l.cancelado_em,l.cancelado_por,l.motivo_cancelamento,fp.nome AS forma FROM conciliacao_liquidacoes l INNER JOIN formas_pgto fp ON fp.id=l.forma_pgto AND fp.empresa=l.empresa WHERE l.empresa=:empresa AND l.data_referencia BETWEEN :inicio AND :fim".$filtroSqlLiqConc." ORDER BY l.data_referencia DESC,l.id DESC LIMIT ".$porPaginaLiqConc." OFFSET ".$offsetLiqConc;
+ $stL=$pdo->prepare($sqlLiqConc);
  $stL->execute($paramsConc);$liquidacoesConc=$stL->fetchAll(PDO::FETCH_ASSOC);
  $stAud=$pdo->prepare("SELECT
  SUM(CASE WHEN cancelado_em IS NULL THEN 1 ELSE 0 END) AS ativos,
@@ -581,9 +592,9 @@ if($audUsuarioConc!=='')$queryAudConc['cancel_usuario']=$audUsuarioConc;
 <option value="cancelados" <?php echo $filtroHistoricoConc==='cancelados'?'selected':''; ?>>Somente cancelados</option>
 </select></div><button class="btn btn-primary" type="submit">Filtrar histórico</button>
 </form>
-<h6 class="mt-4">Últimos 100 créditos informados no período</h6><p class="bc-conc-note">O filtro atua nos 100 registros mais recentes carregados. O CSV contém todos os lançamentos do período.</p>
+<h6 class="mt-4">Histórico de liquidações</h6><p class="bc-conc-note">25 registros por página. Filtro aplicado em todo o período selecionado; o CSV exporta o período completo.</p>
 <div class="bc-conc-table"><table><thead><tr><th>Referência</th><th>Crédito</th><th>Forma</th><th>Valor</th><th>Identificador</th><th>Situação / Ação</th></tr></thead><tbody>
-<?php foreach($liquidacoesConc as $l): if($filtroHistoricoConc==='ativos' && !empty($l['cancelado_em']))continue; if($filtroHistoricoConc==='cancelados' && empty($l['cancelado_em']))continue; ?><tr>
+<?php foreach($liquidacoesConc as $l): ?><tr>
 <td><?php echo $escConc($l['data_referencia']); ?></td><td><?php echo $escConc($l['data_credito']); ?></td><td><?php echo $escConc($l['forma']); ?></td><td><?php echo $moedaConc($l['valor_creditado']); ?></td><td><?php echo $escConc($l['identificador']??''); ?></td>
 <td><?php if(!empty($l['cancelado_em'])): ?>
 <span class="text-danger">Cancelado em <?php echo $escConc($l['cancelado_em']); ?></span>
@@ -598,8 +609,18 @@ if($audUsuarioConc!=='')$queryAudConc['cancel_usuario']=$audUsuarioConc;
 <button type="submit" class="btn btn-danger btn-sm mt-2">Confirmar cancelamento</button>
 </form></details>
 <?php endif; ?></td></tr><?php endforeach; ?>
-<?php if(!$liquidacoesConc): ?><tr><td colspan="6">Nenhum crédito informado.</td></tr><?php endif; ?>
+<?php if(!$liquidacoesConc): ?><tr><td colspan="6">Nenhum crédito encontrado para o filtro.</td></tr><?php endif; ?>
 </tbody></table></div>
+<?php $queryLiqConc=['pagina'=>'conciliacao_financeira','aba'=>'liquidacoes','inicio'=>$inicioConc,'fim'=>$fimConc,'historico'=>$filtroHistoricoConc]; ?>
+<div class="bc-conc-filter mt-3" role="navigation" aria-label="Paginação do histórico de liquidações">
+<span class="bc-conc-note">Página <?php echo $paginaLiqConc; ?> de <?php echo $paginasLiqConc; ?> — <?php echo $totalLiqConc; ?> crédito(s).</span>
+<?php if($paginaLiqConc>1): $queryLiqConc['liq_pagina']=$paginaLiqConc-1; ?>
+<a class="btn btn-outline-primary btn-sm" href="index.php?<?php echo $escConc(http_build_query($queryLiqConc)); ?>">Anterior</a>
+<?php endif; ?>
+<?php if($paginaLiqConc<$paginasLiqConc): $queryLiqConc['liq_pagina']=$paginaLiqConc+1; ?>
+<a class="btn btn-outline-primary btn-sm" href="index.php?<?php echo $escConc(http_build_query($queryLiqConc)); ?>">Próxima</a>
+<?php endif; ?>
+</div>
 <?php endif; ?>
 </div>
 <div class="bc-conc-card"><h5>Pendências por forma de pagamento</h5>
