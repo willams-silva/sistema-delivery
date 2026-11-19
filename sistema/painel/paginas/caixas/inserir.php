@@ -35,7 +35,8 @@ try {
         $caixa=$st->fetch(PDO::FETCH_ASSOC);
         if (!$caixa || !empty($caixa['data_fechamento'])) throw new RuntimeException('Caixa fechado ou não encontrado.');
         foreach (['receber','pagar','sangrias'] as $tabela) {
-            $verifica=$pdo->prepare("SELECT COUNT(*) FROM $tabela WHERE caixa=:id AND empresa=:empresa");
+            $sql = $tabela === 'sangrias' ? "SELECT COUNT(*) FROM sangrias s INNER JOIN caixas c ON c.id=s.caixa WHERE c.id=:id AND c.empresa=:empresa" : "SELECT COUNT(*) FROM $tabela WHERE caixa=:id AND empresa=:empresa";
+            $verifica=$pdo->prepare($sql);
             $verifica->execute([':id'=>$id,':empresa'=>$empresa]);
             if ((int)$verifica->fetchColumn()>0) throw new RuntimeException('Caixa com movimentações não pode ter abertura alterada.');
         }
