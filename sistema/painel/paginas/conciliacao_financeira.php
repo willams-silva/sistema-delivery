@@ -76,6 +76,8 @@ unset($grupoConc);
 $liquidacoesConc=[];$liquidacoesPorFormaConc=[];$liquidacoesDisponiveisConc=false;
 $resumoAuditoriaConc=['ativos'=>0,'cancelados'=>0,'valor_ativo'=>0.0,'valor_cancelado'=>0.0];
 $filtroHistoricoConc=(string)($_GET['historico']??'todos');
+$buscaLiqConc=trim((string)($_GET['liq_busca']??''));
+if(mb_strlen($buscaLiqConc)>120)$buscaLiqConc=mb_substr($buscaLiqConc,0,120);
 $porPaginaLiqConc=25;
 $paginaLiqConc=filter_var($_GET['liq_pagina']??1,FILTER_VALIDATE_INT,['options'=>['min_range'=>1]])?:1;
 $totalLiqConc=0;$paginasLiqConc=1;
@@ -113,15 +115,17 @@ try {
 } catch(PDOException $e){error_log('Auditoria de cancelamentos indisponivel: '.$e->getMessage());}
 try {
  $filtroSqlLiqConc=$filtroHistoricoConc==='ativos'?' AND l.cancelado_em IS NULL':($filtroHistoricoConc==='cancelados'?' AND l.cancelado_em IS NOT NULL':'');
+ $paramsLiqConc=$paramsConc;
+ if($buscaLiqConc!==''){$filtroSqlLiqConc.=" AND (l.identificador LIKE :busca ESCAPE '!' OR CAST(l.id AS CHAR) = :idbusca)";$paramsLiqConc[':busca']='%'.str_replace(['!','%','_'],['!!','!%','!_'],$buscaLiqConc).'%';$paramsLiqConc[':idbusca']=$buscaLiqConc;}
  $stCountLiqConc=$pdo->prepare("SELECT COUNT(*) FROM conciliacao_liquidacoes l WHERE l.empresa=:empresa AND l.data_referencia BETWEEN :inicio AND :fim".$filtroSqlLiqConc);
- $stCountLiqConc->execute($paramsConc);
+ $stCountLiqConc->execute($paramsLiqConc);
  $totalLiqConc=(int)$stCountLiqConc->fetchColumn();
  $paginasLiqConc=max(1,(int)ceil($totalLiqConc/$porPaginaLiqConc));
  $paginaLiqConc=min($paginaLiqConc,$paginasLiqConc);
  $offsetLiqConc=($paginaLiqConc-1)*$porPaginaLiqConc;
  $sqlLiqConc="SELECT l.id,l.forma_pgto,l.data_referencia,l.data_credito,l.valor_creditado,l.identificador,l.observacao,l.cancelado_em,l.cancelado_por,l.motivo_cancelamento,fp.nome AS forma FROM conciliacao_liquidacoes l INNER JOIN formas_pgto fp ON fp.id=l.forma_pgto AND fp.empresa=l.empresa WHERE l.empresa=:empresa AND l.data_referencia BETWEEN :inicio AND :fim".$filtroSqlLiqConc." ORDER BY l.data_referencia DESC,l.id DESC LIMIT ".$porPaginaLiqConc." OFFSET ".$offsetLiqConc;
  $stL=$pdo->prepare($sqlLiqConc);
- $stL->execute($paramsConc);$liquidacoesConc=$stL->fetchAll(PDO::FETCH_ASSOC);
+ $stL->execute($paramsLiqConc);$liquidacoesConc=$stL->fetchAll(PDO::FETCH_ASSOC);
  $stAud=$pdo->prepare("SELECT
  SUM(CASE WHEN cancelado_em IS NULL THEN 1 ELSE 0 END) AS ativos,
  SUM(CASE WHEN cancelado_em IS NOT NULL THEN 1 ELSE 0 END) AS cancelados,
@@ -586,6 +590,7 @@ if($audUsuarioConc!=='')$queryAudConc['cancel_usuario']=$audUsuarioConc;
 <input type="hidden" name="aba" value="liquidacoes">
 <input type="hidden" name="inicio" value="<?php echo $escConc($inicioConc); ?>">
 <input type="hidden" name="fim" value="<?php echo $escConc($fimConc); ?>">
+<div><label for="conc-liq-busca">NSU / Identificador / ID</label><input id="conc-liq-busca" name="liq_busca" class="form-control" maxlength="120" value="<?php echo $escConc($buscaLiqConc); ?>" placeholder="Pesquisar crédito"></div>
 <div><label for="conc-historico">Exibir histórico</label><select id="conc-historico" name="historico" class="form-control">
 <option value="todos" <?php echo $filtroHistoricoConc==='todos'?'selected':''; ?>>Todos</option>
 <option value="ativos" <?php echo $filtroHistoricoConc==='ativos'?'selected':''; ?>>Somente ativos</option>
@@ -611,7 +616,7 @@ if($audUsuarioConc!=='')$queryAudConc['cancel_usuario']=$audUsuarioConc;
 <?php endif; ?></td></tr><?php endforeach; ?>
 <?php if(!$liquidacoesConc): ?><tr><td colspan="6">Nenhum crédito encontrado para o filtro.</td></tr><?php endif; ?>
 </tbody></table></div>
-<?php $queryLiqConc=['pagina'=>'conciliacao_financeira','aba'=>'liquidacoes','inicio'=>$inicioConc,'fim'=>$fimConc,'historico'=>$filtroHistoricoConc]; ?>
+<?php $queryLiqConc=['pagina'=>'conciliacao_financeira','aba'=>'liquidacoes','inicio'=>$inicioConc,'fim'=>$fimConc,'historico'=>$filtroHistoricoConc,'liq_busca'=>$buscaLiqConc]; ?>
 <div class="bc-conc-filter mt-3" role="navigation" aria-label="Paginação do histórico de liquidações">
 <span class="bc-conc-note">Página <?php echo $paginaLiqConc; ?> de <?php echo $paginasLiqConc; ?> — <?php echo $totalLiqConc; ?> crédito(s).</span>
 <?php if($paginaLiqConc>1): $queryLiqConc['liq_pagina']=$paginaLiqConc-1; ?>
