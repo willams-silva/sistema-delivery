@@ -17,7 +17,7 @@ $paramsConc=[':empresa'=>$empresaConc,':inicio'=>$inicioConc,':fim'=>$fimConc];
 $consultaConc = static function($pdo,$sql,$params) {
  $st=$pdo->prepare($sql); $st->execute($params); return $st->fetchAll(PDO::FETCH_ASSOC);
 };
-$gruposConc=$consultaConc($pdo, "SELECT COALESCE(fp.nome,'Não identificada') AS forma,
+$gruposConc=$consultaConc($pdo, "SELECT COALESCE(fp.nome,'Não identificada') AS forma, fp.id AS forma_id,
  COUNT(r.id) AS quantidade, COALESCE(SUM(r.valor),0) AS total
  FROM receber r LEFT JOIN formas_pgto fp ON fp.id=r.forma_pgto AND fp.empresa=r.empresa
  WHERE r.empresa=:empresa AND r.pago='Sim' AND r.data_pgto BETWEEN :inicio AND :fim
@@ -33,6 +33,33 @@ $movimentosConc=$consultaConc($pdo, "SELECT r.id,r.descricao,r.valor,r.data_pgto
  WHERE r.empresa=:empresa AND r.pago='Sim' AND r.data_pgto BETWEEN :inicio AND :fim
  ORDER BY r.data_pgto DESC,r.id DESC LIMIT 100", $paramsConc);
 $somarConc=static function($lista) {return array_sum(array_map(static function($r){return (float)$r['total'];},$lista));};
+// Taxas são simulações informadas pelo operador, não taxas contratadas nem liquidações.
+$taxasConc = [];
+$entradaTaxas = $_GET['taxas'] ?? [];
+if (is_array($entradaTaxas)) {
+ foreach ($entradaTaxas as $chave=>$valor) {
+  if (!ctype_digit((string)$chave) || !is_scalar($valor)) continue;
+  $texto = str_replace(',', '.', trim((string)$valor));
+  if (!preg_match('/^\d{1,3}(?:\.\d{1,4})?$/', $texto)) continue;
+  $taxa = (float)$texto;
+  if ($taxa >= 0 && $taxa <= 100) $taxasConc[(int)$chave]=$taxa;
+ }
+}
+$totalTaxasEstimadasConc=0.0;
+$totalLiquidoEstimadoConc=0.0;
+$formasSimuladasConc=0;
+foreach ($gruposConc as &$grupoConc) {
+ $idFormaConc = (int)($grupoConc['forma_id'] ?? 0);
+ $grupoConc['taxa_informada'] = $idFormaConc > 0 && array_key_exists($idFormaConc,$taxasConc) ? $taxasConc[$idFormaConc] : null;
+ $grupoConc['desconto_estimado'] = $grupoConc['taxa_informada'] === null ? null : round((float)$grupoConc['total']*$grupoConc['taxa_informada']/100,2);
+ $grupoConc['liquido_estimado'] = $grupoConc['desconto_estimado'] === null ? null : round((float)$grupoConc['total']-$grupoConc['desconto_estimado'],2);
+ if ($grupoConc['desconto_estimado'] !== null) {
+  $formasSimuladasConc++;
+  $totalTaxasEstimadasConc += $grupoConc['desconto_estimado'];
+  $totalLiquidoEstimadoConc += $grupoConc['liquido_estimado'];
+ }
+}
+unset($grupoConc);
 $totalConc=$somarConc($gruposConc); $totalPendenteConc=$somarConc($pendentesConc);
 $moedaConc=static function($v){return 'R$ '.number_format((float)$v,2,',','.');};
 $escConc=static function($v){return htmlspecialchars((string)$v,ENT_QUOTES,'UTF-8');};
@@ -67,6 +94,30 @@ $escConc=static function($v){return htmlspecialchars((string)$v,ENT_QUOTES,'UTF-
 <?php foreach($gruposConc as $linha): ?><tr><td><?php echo $escConc($linha['forma']); ?></td><td><?php echo (int)$linha['quantidade']; ?></td><td><?php echo $moedaConc($linha['total']); ?></td></tr><?php endforeach; ?>
 <?php if (!$gruposConc): ?><tr><td colspan="3">Sem recebimentos baixados no período.</td></tr><?php endif; ?>
 </tbody><tfoot><tr><th>Total</th><th></th><th><?php echo $moedaConc($totalConc); ?></th></tr></tfoot></table></div></div>
+<div class="bc-conc-card">
+<h5>Simulador de taxas por forma de pagamento</h5>
+<p class="bc-conc-note">Informe a taxa percentual contratada para cada forma. O cálculo é apenas uma estimativa sobre recebimentos baixados; não confirma depósitos. Campos em branco não entram no total líquido estimado. As taxas não são salvas no banco.</p>
+<form method="get" action="index.php">
+<input type="hidden" name="pagina" value="conciliacao_financeira">
+<input type="hidden" name="inicio" value="<?php echo $escConc($inicioConc); ?>">
+<input type="hidden" name="fim" value="<?php echo $escConc($fimConc); ?>">
+<div class="bc-conc-table"><table>
+<thead><tr><th>Forma</th><th>Bruto</th><th>Taxa (%)</th><th>Taxa estimada</th><th>Líquido estimado</th></tr></thead><tbody>
+<?php foreach($gruposConc as $linha): ?>
+<tr><td><?php echo $escConc($linha['forma']); ?></td><td><?php echo $moedaConc($linha['total']); ?></td>
+<td><?php if ((int)$linha['forma_id']>0): ?>
+<input style="width:105px" aria-label="Taxa de <?php echo $escConc($linha['forma']); ?>" type="number" min="0" max="100" step="0.0001" name="taxas[<?php echo (int)$linha['forma_id']; ?>]" value="<?php echo $linha['taxa_informada'] === null ? '' : $escConc($linha['taxa_informada']); ?>" placeholder="Não informada">
+<?php else: ?>Não identificada<?php endif; ?></td>
+<td><?php echo $linha['desconto_estimado'] === null ? '—' : $moedaConc($linha['desconto_estimado']); ?></td>
+<td><?php echo $linha['liquido_estimado'] === null ? '—' : $moedaConc($linha['liquido_estimado']); ?></td></tr>
+<?php endforeach; ?>
+<?php if (!$gruposConc): ?><tr><td colspan="5">Sem recebimentos para simular.</td></tr><?php endif; ?>
+</tbody></table></div>
+<button class="btn btn-primary mt-3" type="submit">Calcular estimativa</button>
+<p class="bc-conc-note mt-2">Formas calculadas: <?php echo $formasSimuladasConc; ?> de <?php echo count($gruposConc); ?>.
+Taxas estimadas nas formas preenchidas: <strong><?php echo $moedaConc($totalTaxasEstimadasConc); ?></strong>.
+Líquido estimado apenas dessas formas: <strong><?php echo $moedaConc($totalLiquidoEstimadoConc); ?></strong>.</p>
+</form></div>
 <div class="bc-conc-card"><h5>Pendências por forma de pagamento</h5>
 <div class="bc-conc-table"><table><thead><tr><th>Forma</th><th>Quantidade</th><th>Valor pendente</th></tr></thead><tbody>
 <?php foreach($pendentesConc as $linha): ?><tr><td><?php echo $escConc($linha['forma']); ?></td><td><?php echo (int)$linha['quantidade']; ?></td><td><?php echo $moedaConc($linha['total']); ?></td></tr><?php endforeach; ?>
@@ -80,5 +131,5 @@ $escConc=static function($v){return htmlspecialchars((string)$v,ENT_QUOTES,'UTF-
 </tr><?php endforeach; ?>
 <?php if (!$movimentosConc): ?><tr><td colspan="5">Nenhuma baixa encontrada.</td></tr><?php endif; ?>
 </tbody></table></div>
-<p class="bc-conc-note">Próxima etapa: integrar taxas de cartão, extratos e datas de liquidação para apurar diferenças bancárias reais. Não são aplicadas taxas presumidas.</p>
+<p class="bc-conc-note">A simulação de taxas acima não substitui a conciliação bancária. A integração com extratos, liquidações e taxas persistidas continua pendente.</p>
 </div></div>
