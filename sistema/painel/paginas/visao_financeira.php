@@ -70,6 +70,22 @@ $formasRecebidas = $formasSt->fetchAll(PDO::FETCH_ASSOC);
 $totalConferido = array_sum(array_map(static function ($item) { return (float)$item['total']; }, $formasRecebidas));
 $diferencaConferencia = round($entradas - $totalConferido, 2);
 
+
+// Rastreabilidade consultiva: autores e baixadores já registrados nas contas.
+$historicoSt = $pdo->prepare("SELECT mov.tipo, mov.id, mov.descricao, mov.valor, mov.data_pgto, mov.usuario_lanc, mov.usuario_pgto,
+ ul.nome AS lancado_por, up.nome AS baixado_por FROM (
+ SELECT 'Recebimento' tipo, id, descricao, valor, data_pgto, usuario_lanc, usuario_pgto, empresa FROM receber
+ WHERE empresa=:empresa1 AND pago='Sim' AND data_pgto BETWEEN :inicio1 AND :fim1
+ UNION ALL
+ SELECT 'Pagamento' tipo, id, descricao, valor, data_pgto, usuario_lanc, usuario_pgto, empresa FROM pagar
+ WHERE empresa=:empresa2 AND pago='Sim' AND data_pgto BETWEEN :inicio2 AND :fim2
+) mov
+LEFT JOIN usuarios ul ON ul.id=mov.usuario_lanc AND ul.empresa=mov.empresa
+LEFT JOIN usuarios up ON up.id=mov.usuario_pgto AND up.empresa=mov.empresa
+ORDER BY mov.data_pgto DESC, mov.id DESC LIMIT 100");
+$historicoSt->execute([':empresa1'=>$empresaFinanceira, ':inicio1'=>$inicioFinanceiro, ':fim1'=>$fimFinanceiro, ':empresa2'=>$empresaFinanceira, ':inicio2'=>$inicioFinanceiro, ':fim2'=>$fimFinanceiro]);
+$historicoFinanceiro = $historicoSt->fetchAll(PDO::FETCH_ASSOC);
+
 $saldoPeriodo = $entradas - $saidas;
 ?>
 <style>
@@ -163,5 +179,21 @@ foreach ($diarioFinanceiro as $dia => $m):
 <tr><th>Diferença frente às entradas realizadas</th><th></th><th><?php echo $valorFinanceiro($diferencaConferencia); ?></th></tr></tfoot></table></div>
 <p class="bc-note mt-2">A conciliação bancária completa ainda depende de taxas de cartão, antecipações e confirmação das liquidações.</p>
 </div>
+<div class="bc-card mt-3">
+<h5>Rastreabilidade dos lançamentos baixados</h5>
+<p class="bc-note">Últimos 100 registros do período, com responsáveis informados pelo sistema. Esta consulta não é um log de alterações.</p>
+<div class="table-responsive"><table><thead><tr><th>Data da baixa</th><th>Tipo</th><th>Descrição</th><th>Valor</th><th>Lançado por</th><th>Baixado por</th></tr></thead><tbody>
+<?php foreach ($historicoFinanceiro as $registro): ?>
+<tr>
+<td><?php echo htmlspecialchars(date('d/m/Y', strtotime($registro['data_pgto'])), ENT_QUOTES, 'UTF-8'); ?></td>
+<td><?php echo htmlspecialchars($registro['tipo'], ENT_QUOTES, 'UTF-8'); ?></td>
+<td><?php echo htmlspecialchars((string)$registro['descricao'], ENT_QUOTES, 'UTF-8'); ?></td>
+<td><?php echo $valorFinanceiro($registro['valor']); ?></td>
+<td><?php echo htmlspecialchars((string)($registro['lancado_por'] ?: 'Não identificado'), ENT_QUOTES, 'UTF-8'); ?></td>
+<td><?php echo htmlspecialchars((string)($registro['baixado_por'] ?: 'Não identificado'), ENT_QUOTES, 'UTF-8'); ?></td>
+</tr>
+<?php endforeach; ?>
+<?php if (!$historicoFinanceiro): ?><tr><td colspan="6" style="text-align:center">Nenhum lançamento baixado no período.</td></tr><?php endif; ?>
+</tbody></table></div></div>
 <p class="bc-note mt-3">Importante: saldo acumulado calculado apenas com contas baixadas em receber/pagar. Não representa necessariamente o saldo bancário ou o dinheiro físico no caixa. Conciliação por forma de pagamento e auditoria de alterações exigem integração adicional.</p>
 </div>
