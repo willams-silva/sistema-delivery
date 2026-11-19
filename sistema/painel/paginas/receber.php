@@ -29,6 +29,55 @@ if ($linhas > 0) {
 
 ?>
 
+<?php
+// Indicadores de contas em aberto, isolados por estabelecimento.
+$resumoReceber = ['vencidas'=>['qtd'=>0,'total'=>0], 'hoje'=>['qtd'=>0,'total'=>0], 'proximas'=>['qtd'=>0,'total'=>0]];
+try {
+    $consultaResumo = $pdo->prepare("SELECT CASE WHEN vencimento < CURDATE() THEN 'vencidas' WHEN vencimento = CURDATE() THEN 'hoje' ELSE 'proximas' END AS faixa, COUNT(*) AS qtd, COALESCE(SUM(valor),0) AS total FROM receber WHERE empresa=:empresa AND (pago IS NULL OR pago <> 'Sim') AND vencimento <= DATE_ADD(CURDATE(), INTERVAL 7 DAY) GROUP BY faixa");
+    $consultaResumo->execute([':empresa'=>(int)$id_empresa]);
+    foreach ($consultaResumo->fetchAll(PDO::FETCH_ASSOC) as $item) {
+        if (isset($resumoReceber[$item['faixa']])) $resumoReceber[$item['faixa']] = ['qtd'=>(int)$item['qtd'], 'total'=>(float)$item['total']];
+    }
+} catch (Throwable $e) { error_log('Resumo contas a receber: '.$e->getMessage()); }
+?>
+<section class="card mb-3" id="alertas-vencimentos-receber">
+ <div class="card-body">
+  <h5 class="mb-3"><i class="fe fe-bell me-2"></i>Alertas de recebimentos</h5>
+  <div class="row g-3">
+  <?php foreach ([
+    ['chave'=>'vencidas','titulo'=>'Vencidas','cor'=>'danger'],
+    ['chave'=>'hoje','titulo'=>'Vencem hoje','cor'=>'warning'],
+    ['chave'=>'proximas','titulo'=>'Próximos 7 dias','cor'=>'info']
+  ] as $alerta): $item=$resumoReceber[$alerta['chave']]; ?>
+   <div class="col-md-4">
+    <div class="border rounded p-3 h-100" role="button" tabindex="0" data-filtro-receber="<?php echo htmlspecialchars($alerta['chave'],ENT_QUOTES,'UTF-8'); ?>" title="Ver contas deste período">
+     <div class="d-flex justify-content-between align-items-center">
+      <strong><?php echo htmlspecialchars($alerta['titulo'],ENT_QUOTES,'UTF-8'); ?></strong>
+      <span class="badge bg-<?php echo $alerta['cor']; ?>"><?php echo $item['qtd']; ?></span>
+     </div>
+     <div class="mt-2 fw-bold">R$ <?php echo number_format($item['total'],2,',','.'); ?></div>
+    </div>
+   </div>
+  <?php endforeach; ?>
+  </div>
+  <small class="text-muted d-block mt-2">Somente valores ainda em aberto. Clique em um indicador para filtrar a listagem.</small>
+ </div>
+</section>
+<script>
+document.addEventListener('DOMContentLoaded',function(){
+ const filtros={vencidas:'Vencidas',hoje:'Hoje',proximas:'Proximos7'};
+ document.querySelectorAll('#alertas-vencimentos-receber [data-filtro-receber]').forEach(function(card){
+  function aplicar(){
+   if(typeof buscar!=='function')return;
+   document.getElementById('tipo_data_filtro').value=filtros[card.dataset.filtroReceber];
+   document.getElementById('pago').value='';
+   buscar();
+  }
+  card.addEventListener('click',aplicar);
+  card.addEventListener('keydown',function(e){if(e.key==='Enter'||e.key===' '){e.preventDefault();aplicar();}});
+ });
+});
+</script>
 <div class="justify-content-between ux-finance-page">
 	<form action="rel/receber_class.php" target="_blank" method="POST">
 		<div class="left-content mt-2">
