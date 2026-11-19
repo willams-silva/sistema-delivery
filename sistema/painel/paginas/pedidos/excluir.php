@@ -1,46 +1,24 @@
-<?php 
-require_once("../../../conexao.php");
-$tabela = 'vendas';
-
-$id = $_POST['id'];
-
-//remover os itens da venda do estoque
-$query = $pdo->query("SELECT * FROM carrinho where pedido = '$id'");
-$res = $query->fetchAll(PDO::FETCH_ASSOC);
-$total_reg = @count($res);
-for($i=0; $i < $total_reg; $i++){
-	$id_produto = $res[$i]['produto'];
-	$quantidade = $res[$i]['quantidade'];
-
-	$query2 = $pdo->query("SELECT * FROM produtos where id = '$id_produto'");
-	$res2 = $query2->fetchAll(PDO::FETCH_ASSOC);
-	$total_reg2 = @count($res2);
-	$estoque = $res2[0]['estoque'];
-	$tem_estoque = $res2[0]['tem_estoque'];
-
-	if($tem_estoque == 'Sim'){
-		$novo_estoque = $estoque + $quantidade;
-		$pdo->query("UPDATE produtos SET estoque = '$novo_estoque' where id = '$id_produto'");
-	}
+<?php
+@session_start();
+require_once('../../../conexao.php');
+$empresa=filter_var($_SESSION['empresa'] ?? null,FILTER_VALIDATE_INT,['options'=>['min_range'=>1]]);
+$usuario=filter_var($_SESSION['id'] ?? null,FILTER_VALIDATE_INT,['options'=>['min_range'=>1]]);
+$id=filter_var($_POST['id'] ?? null,FILTER_VALIDATE_INT,['options'=>['min_range'=>1]]);
+if (($_SERVER['REQUEST_METHOD'] ?? '')!=='POST') {http_response_code(405);exit('Método inválido.');}
+if (!$empresa || !$usuario || !$id) {http_response_code(403);exit('Sessão ou pedido inválido.');}
+try {
+    $pdo->setAttribute(PDO::ATTR_ERRMODE,PDO::ERRMODE_EXCEPTION);
+    $pdo->beginTransaction();
+    $st=$pdo->prepare('SELECT id,status,pago,caixa FROM vendas WHERE id=:id AND empresa=:empresa FOR UPDATE');
+    $st->execute([':id'=>$id,':empresa'=>$empresa]);
+    $venda=$st->fetch(PDO::FETCH_ASSOC);
+    if (!$venda) throw new RuntimeException('Pedido não encontrado nesta empresa.');
+    if ($venda['status']==='Cancelado') throw new RuntimeException('Este pedido já foi cancelado.');
+    // Excluir pedido sem conciliar recebimentos deixa receita órfã e permite
+    // devoluções repetidas de estoque e pontos de fidelidade.
+    throw new RuntimeException('Exclusão temporariamente bloqueada: pedido com fluxo financeiro requer cancelamento e estorno conciliados.');
+} catch (Throwable $e) {
+    if ($pdo->inTransaction()) $pdo->rollBack();
+    http_response_code(409);
+    echo $e->getMessage();
 }
-
-
-$query5 = $pdo->query("SELECT * FROM $tabela where id = '$id'");
-$res5 = $query5->fetchAll(PDO::FETCH_ASSOC);
-$cliente = $res5[0]['cliente'];
-
-//remover cartão
-	$query2 = $pdo->query("SELECT * FROM clientes where id = '$cliente'");
-	$res2 = $query2->fetchAll(PDO::FETCH_ASSOC);
-	$total_reg2 = @count($res2);
-	if($total_reg2 > 0){
-		$cartao = $res2[0]['cartoes'];
-		$total_cartao = $cartao - 1;
-
-		$pdo->query("UPDATE clientes SET cartoes = '$total_cartao' where id = '$cliente'");
-	}
-
-
-$pdo->query("DELETE from $tabela where id = '$id'");
-echo 'Excluído com Sucesso';
- ?>
