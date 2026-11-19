@@ -30,6 +30,13 @@ $saldoAnterior = $consultaFinanceira($pdo, "SELECT COALESCE(SUM(valor),0) FROM r
     - $consultaFinanceira($pdo, "SELECT COALESCE(SUM(valor),0) FROM pagar WHERE empresa=:empresa AND pago='Sim' AND data_pgto < :inicio", [':empresa'=>$empresaFinanceira, ':inicio'=>$inicioFinanceiro]);
 $pendenteReceber = $consultaFinanceira($pdo, "SELECT COALESCE(SUM(valor),0) FROM receber WHERE empresa=:empresa AND pago <> 'Sim' AND vencimento BETWEEN :inicio AND :fim", $parametros);
 $pendentePagar = $consultaFinanceira($pdo, "SELECT COALESCE(SUM(valor),0) FROM pagar WHERE empresa=:empresa AND pago <> 'Sim' AND vencimento BETWEEN :inicio AND :fim", $parametros);
+// Alertas de inadimplência: valores vencidos e ainda não baixados, restritos à empresa.
+$hojeFinanceiro = date('Y-m-d');
+$vencidoReceber = $consultaFinanceira($pdo, "SELECT COALESCE(SUM(valor),0) FROM receber WHERE empresa=:empresa AND pago='Não' AND vencimento < :hoje", [':empresa'=>$empresaFinanceira, ':hoje'=>$hojeFinanceiro]);
+$vencidoPagar = $consultaFinanceira($pdo, "SELECT COALESCE(SUM(valor),0) FROM pagar WHERE empresa=:empresa AND pago='Não' AND vencimento < :hoje", [':empresa'=>$empresaFinanceira, ':hoje'=>$hojeFinanceiro]);
+$quantidadeVencidaReceber = (int)$consultaFinanceira($pdo, "SELECT COUNT(*) FROM receber WHERE empresa=:empresa AND pago='Não' AND vencimento < :hoje", [':empresa'=>$empresaFinanceira, ':hoje'=>$hojeFinanceiro]);
+$quantidadeVencidaPagar = (int)$consultaFinanceira($pdo, "SELECT COUNT(*) FROM pagar WHERE empresa=:empresa AND pago='Não' AND vencimento < :hoje", [':empresa'=>$empresaFinanceira, ':hoje'=>$hojeFinanceiro]);
+
 $st = $pdo->prepare("SELECT dia, SUM(entrada) entrada, SUM(saida) saida FROM (
  SELECT data_pgto dia, valor entrada, 0 saida FROM receber WHERE empresa=:empresa1 AND pago='Sim' AND data_pgto BETWEEN :inicio1 AND :fim1
  UNION ALL
@@ -123,6 +130,17 @@ $saldoPeriodo = $entradas - $saidas;
 <div class="col-12 col-sm-6 col-xl-3"><div class="bc-card"><small><?php echo htmlspecialchars($card[0], ENT_QUOTES, 'UTF-8'); ?></small><strong><?php echo $valorFinanceiro($card[1]); ?></strong></div></div>
 <?php endforeach; ?>
 </div>
+<div class="bc-card mt-3">
+<h5>Alertas financeiros</h5>
+<p class="bc-note">Pendências vencidas até ontem, independentemente do período selecionado. Não incluem contas já baixadas.</p>
+<div class="row g-3">
+<div class="col-12 col-md-6"><div class="alert <?php echo $quantidadeVencidaReceber ? 'alert-warning' : 'alert-light'; ?> mb-0">
+<strong>Recebimentos em atraso</strong><p class="mb-1"><?php echo $valorFinanceiro($vencidoReceber); ?></p>
+<small><?php echo $quantidadeVencidaReceber; ?> título(s) vencido(s)</small></div></div>
+<div class="col-12 col-md-6"><div class="alert <?php echo $quantidadeVencidaPagar ? 'alert-danger' : 'alert-light'; ?> mb-0">
+<strong>Pagamentos em atraso</strong><p class="mb-1"><?php echo $valorFinanceiro($vencidoPagar); ?></p>
+<small><?php echo $quantidadeVencidaPagar; ?> título(s) vencido(s)</small></div></div>
+</div></div>
 <div class="row g-3 mt-1">
 <div class="col-12 col-lg-7"><div class="bc-card"><h5>Entradas e saídas por dia</h5><p class="bc-note">Verde: entradas · Vermelho: saídas</p>
 <?php $maxGrafico = 1; foreach ($movimentos as $m) { $maxGrafico = max($maxGrafico, (float)$m['entrada'], (float)$m['saida']); } ?>
