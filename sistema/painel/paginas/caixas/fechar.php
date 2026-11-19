@@ -46,7 +46,8 @@ try {
         ':detalhes'=>json_encode([
             'entradas_dinheiro'=>$resumo['entradas'],
             'saidas_dinheiro'=>$resumo['saidas'],
-            'sangrias'=>$resumo['sangrias']
+            'sangrias'=>$resumo['sangrias'],
+            'estornos_dinheiro'=>$resumo['estornos_dinheiro']
         ], JSON_THROW_ON_ERROR | JSON_UNESCAPED_UNICODE)
     ]);
     $pdo->commit();
