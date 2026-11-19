@@ -53,8 +53,16 @@ if ($desconto == "") {
 }
 
 
-$query = $pdo->query("SELECT * FROM $tabela where id = '$id'");
-$res = $query->fetchAll(PDO::FETCH_ASSOC);
+// Impede baixa de contas de outra empresa, identificadores inválidos e baixas repetidas.
+if (($_SERVER['REQUEST_METHOD'] ?? '') !== 'POST') { http_response_code(405); exit('Método inválido.'); }
+if (!ctype_digit((string)$id) || (int)$id < 1 || !ctype_digit((string)$id_empresa) || (int)$id_empresa < 1 || !ctype_digit((string)$id_usuario) || (int)$id_usuario < 1) {
+ http_response_code(400); exit('Conta ou sessão inválida.');
+}
+$consultaConta = $pdo->prepare("SELECT * FROM pagar WHERE id = :id AND empresa = :empresa LIMIT 1");
+$consultaConta->execute([':id' => (int)$id, ':empresa' => (int)$id_empresa]);
+$res = $consultaConta->fetchAll(PDO::FETCH_ASSOC);
+if (!$res) { http_response_code(404); exit('Conta não encontrada neste estabelecimento.'); }
+if (($res[0]['pago'] ?? '') === 'Sim') { http_response_code(409); exit('Esta conta já foi baixada.'); }
 
 $descricao = $res[0]['descricao'];
 $fornecedor = $res[0]['fornecedor'];
@@ -115,7 +123,7 @@ if (@count($res1) > 0) {
 
 if ($valor == $valor_antigo) {
 
-	$pdo->query("UPDATE $tabela set forma_pgto = '$saida', usuario_pgto = '$id_usuario', pago = 'Sim', subtotal = '$subtotal', juros = '$juros', multa = '$multa', desconto = '$desconto', data_pgto = '$data_baixar', caixa = '$id_caixa', hora = curTime() where id = '$id'");
+	$pdo->query("UPDATE $tabela set forma_pgto = '$saida', usuario_pgto = '$id_usuario', pago = 'Sim', subtotal = '$subtotal', juros = '$juros', multa = '$multa', desconto = '$desconto', data_pgto = '$data_baixar', caixa = '$id_caixa', hora = curTime() where id = '$id' AND empresa = '$id_empresa' AND pago <> 'Sim'");
 
 	//CRIAR A PRÓXIMA CONTA A PAGAR
 	$dias_frequencia = $frequencia;
@@ -179,7 +187,7 @@ if ($valor == $valor_antigo) {
 
 
 
-	$pdo->query("UPDATE $tabela set forma_pgto = '$saida', usuario_pgto = '$id_usuario', valor = '$valor_antigo', data_pgto = curDate() where id = '$id'");
+	$pdo->query("UPDATE $tabela set forma_pgto = '$saida', usuario_pgto = '$id_usuario', valor = '$valor_antigo', data_pgto = curDate() where id = '$id' AND empresa = '$id_empresa' AND pago <> 'Sim'");
 
 
 	if ($api_whatsapp != 'Não' and $telefone_sistema != '') {
@@ -198,7 +206,7 @@ if ($valor == $valor_antigo) {
 		$data_agd = $vencimento . ' 08:00:00';
 		require('../../apis/agendar.php');
 
-		$pdo->query("UPDATE $tabela SET hash = '$hash' where id = '$id'");
+		$pdo->query("UPDATE $tabela SET hash = '$hash' where id = '$id' AND empresa = '$id_empresa' AND pago <> 'Sim'");
 	}
 }
 
