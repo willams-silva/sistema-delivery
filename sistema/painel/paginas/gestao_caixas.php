@@ -17,8 +17,8 @@ if ($inicio > $fim) { [$inicio,$fim]=[$fim,$inicio]; }
 $consulta=$pdo->prepare("SELECT c.id,c.data_abertura,c.data_fechamento,c.valor_abertura,c.valor_fechamento,c.quebra,c.obs,u.nome AS operador_nome FROM caixas c LEFT JOIN usuarios u ON u.id=c.operador AND u.empresa=c.empresa WHERE c.empresa=:empresa AND c.data_abertura BETWEEN :inicio AND :fim ORDER BY c.id DESC LIMIT 300");
 $consulta->execute([':empresa'=>$empresa,':inicio'=>$inicio,':fim'=>$fim]);
 $caixas=$consulta->fetchAll(PDO::FETCH_ASSOC);
-$totalAbertos=0;$totalFechados=0;$totalDivergencia=0.0;
-foreach($caixas as $c){if(empty($c['data_fechamento']))$totalAbertos++;else{$totalFechados++;$totalDivergencia+=(float)$c['quebra'];}}
+$totalAbertos=0;$totalFechados=0;$totalDivergencia=0.0;$totalSobras=0.0;$totalFaltas=0.0;$caixasDivergentes=0;
+foreach($caixas as $c){if(empty($c['data_fechamento']))$totalAbertos++;else{$totalFechados++;$diferenca=round((float)$c['quebra'],2);$totalDivergencia+=$diferenca;if($diferenca>0){$totalSobras+=$diferenca;$caixasDivergentes++;}elseif($diferenca<0){$totalFaltas+=abs($diferenca);$caixasDivergentes++;}}}
 // Consolidação por forma de pagamento dos caixas exibidos, sem misturar empresas.
 $detalhes = [];
 if ($caixas) {
@@ -59,9 +59,20 @@ $moeda=static function($v){return 'R$ '.number_format((float)$v,2,',','.');};
  <div class="col-md-4"><div class="card card-body"><small>Caixas fechados</small><h3><?= $totalFechados ?></h3></div></div>
  <div class="col-md-4"><div class="card card-body"><small>Diferença líquida dos fechamentos</small><h3><?= $moeda($totalDivergencia) ?></h3></div></div>
 </div>
+<div class="row g-3 mb-3">
+ <div class="col-md-4"><div class="card card-body"><small>Caixas com divergência</small><h3 class="text-warning"><?= $caixasDivergentes ?></h3></div></div>
+ <div class="col-md-4"><div class="card card-body"><small>Total de sobras</small><h3 class="text-success"><?= $moeda($totalSobras) ?></h3></div></div>
+ <div class="col-md-4"><div class="card card-body"><small>Total de faltas</small><h3 class="text-danger"><?= $moeda($totalFaltas) ?></h3></div></div>
+</div>
 <div class="card"><div class="card-body table-responsive">
 <table class="table table-striped table-hover"><thead><tr><th>Caixa</th><th>Operador</th><th>Abertura</th><th>Fechamento</th><th>Saldo inicial</th><th>Valor informado</th><th>Diferença</th><th>Status</th><th>Detalhes</th></tr></thead><tbody>
 <?php foreach($caixas as $c): ?>
+<?php
+  $diferencaCaixa = round((float)$c['quebra'],2);
+  $fechado = !empty($c['data_fechamento']);
+  $situacao = !$fechado ? 'Em aberto' : ($diferencaCaixa > 0 ? 'Sobra' : ($diferencaCaixa < 0 ? 'Falta' : 'Conferido'));
+  $classeSituacao = !$fechado ? 'bg-primary' : ($diferencaCaixa > 0 ? 'bg-success' : ($diferencaCaixa < 0 ? 'bg-danger' : 'bg-secondary'));
+?>
 <tr>
 <td>#<?= (int)$c['id'] ?></td>
 <td><?= $h($c['operador_nome'] ?: 'Não identificado') ?></td>
@@ -69,8 +80,8 @@ $moeda=static function($v){return 'R$ '.number_format((float)$v,2,',','.');};
 <td><?= $h($c['data_fechamento'] ?: '—') ?></td>
 <td><?= $moeda($c['valor_abertura']) ?></td>
 <td><?= $c['data_fechamento'] ? $moeda($c['valor_fechamento']) : '—' ?></td>
-<td><?= $c['data_fechamento'] ? $moeda($c['quebra']) : '—' ?></td>
-<td><?= $c['data_fechamento'] ? '<span class="badge bg-secondary">Fechado</span>' : '<span class="badge bg-success">Aberto</span>' ?></td>
+<td class="<?= $fechado && $diferencaCaixa < 0 ? 'text-danger fw-bold' : ($fechado && $diferencaCaixa > 0 ? 'text-success fw-bold' : '') ?>"><?= $fechado ? $moeda($diferencaCaixa) : '—' ?></td>
+<td><span class="badge <?= $classeSituacao ?>"><?= $situacao ?></span></td>
 <td><button class="btn btn-outline-primary btn-sm" type="button" data-bs-toggle="collapse" data-bs-target="#gc-detalhe-<?= (int)$c['id'] ?>" aria-expanded="false" aria-controls="gc-detalhe-<?= (int)$c['id'] ?>">Detalhar</button></td>
 </tr>
 <tr class="collapse" id="gc-detalhe-<?= (int)$c['id'] ?>"><td colspan="9">
