@@ -169,6 +169,19 @@ try {
         }
     }
     if ($recebimentosInvalidos>0) $motivosBloqueio[]='Parcelas com valores inválidos para devolução';
+    // O caixa de devolução deve continuar aberto; a prévia não reserva saldo.
+    // Confere se cada parcela aponta para um recebimento financeiro único.
+    $idsReceber=array_map(static function($parcela){return (int)$parcela['id'];},$parcelas);
+    $idsDuplicados=count($idsReceber)-count(array_unique($idsReceber));
+    if ($idsDuplicados>0) $motivosBloqueio[]='Recebimentos duplicados na composição da venda';
+    // Confere se algum recebimento já aparece em estorno registrado,
+    // mesmo que o vínculo legado da venda esteja inconsistente.
+    $st=$pdo->prepare("SELECT COUNT(*) FROM estornos_vendas_recebimentos er
+        INNER JOIN receber r ON r.id=er.receber_id AND r.empresa=er.empresa
+        WHERE r.empresa=:empresa AND r.venda_id=:venda");
+    $st->execute([':empresa'=>$empresa,':venda'=>$vendaId]);
+    $recebimentosJaEstornados=(int)$st->fetchColumn();
+    if ($recebimentosJaEstornados>0) $motivosBloqueio[]='Recebimentos já vinculados a estorno anterior';
     // A prévia não pode classificar como apto um registro com
     // total de venda nulo, negativo ou não numérico.
     if (!is_numeric($venda['valor']) || !is_finite((float)$venda['valor'])
@@ -194,6 +207,8 @@ try {
       'recebimentos_parciais_sem_vinculo'=>$parciaisLegados,
       'dependencias_financeiras_externas'=>$dependenciasExternas,
       'recebimentos_com_valores_invalidos'=>$recebimentosInvalidos,
+      'recebimentos_ja_vinculados_a_estorno'=>$recebimentosJaEstornados,
+      'recebimentos_duplicados'=>$idsDuplicados,
       'estorno_existente'=>$estornoExistente?:null,
       'requer_revisao'=>!$parcelas || count($motivosBloqueio)>0,
       'motivos_bloqueio'=>$motivosBloqueio,
