@@ -61,7 +61,7 @@ try {
       $resumo = $resumoVencimentos[$alerta['chave']];
    ?>
    <div class="col-md-4">
-    <div class="border rounded p-3 h-100">
+    <div class="border rounded p-3 h-100" role="button" tabindex="0" data-filtro-vencimento="<?php echo htmlspecialchars($alerta['chave'], ENT_QUOTES, 'UTF-8'); ?>" title="Ver contas deste período">
      <div class="d-flex align-items-center justify-content-between gap-2">
       <strong><?php echo htmlspecialchars($alerta['titulo'], ENT_QUOTES, 'UTF-8'); ?></strong>
       <span class="badge bg-<?php echo $alerta['cor']; ?>"><?php echo $resumo['qtd']; ?></span>
@@ -75,6 +75,25 @@ try {
  </div>
 </section>
 
+<script>
+(function(){
+ const filtros={atrasadas:'Vencidas',hoje:'Hoje',proximas:'Proximos7'};
+ document.querySelectorAll('#alertas-vencimentos-pagar [data-filtro-vencimento]').forEach(function(card){
+  function abrir(){
+   const filtro=filtros[card.getAttribute('data-filtro-vencimento')];
+   if(!filtro || typeof buscar!=='function')return;
+   $('#tipo_data').val('vencimento');
+   $('#tipo_data_filtro').val(filtro);
+   $('#pago').val('');
+   buscar();
+   const lista=document.getElementById('listar');
+   if(lista)lista.scrollIntoView({behavior:'smooth',block:'start'});
+  }
+  card.addEventListener('click',abrir);
+  card.addEventListener('keydown',function(e){if(e.key==='Enter'||e.key===' '){e.preventDefault();abrir();}});
+ });
+})();
+</script>
 <section class="card mb-3" id="auditoria-pagar">
  <div class="card-body">
   <div class="d-flex justify-content-between align-items-center flex-wrap gap-2">
