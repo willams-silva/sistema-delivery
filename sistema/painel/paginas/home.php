@@ -303,6 +303,12 @@ $dashboardRecebidoSt=$pdo->prepare("SELECT COUNT(*) quantidade,COALESCE(SUM(COAL
  FROM receber WHERE empresa=:empresa AND pago='Sim' AND data_pgto BETWEEN :inicio AND :fim");
 $dashboardRecebidoSt->execute([':empresa'=>(int)$id_empresa,':inicio'=>$dashboardInicio,':fim'=>$dashboardFim]);
 $dashboardRecebido=$dashboardRecebidoSt->fetch(PDO::FETCH_ASSOC);
+$dashboardEstornosSt=$pdo->prepare("SELECT COUNT(*) quantidade,COALESCE(SUM(valor_recebido),0) total
+ FROM estornos_vendas WHERE empresa=:empresa AND status='Concluido'
+ AND DATE(criado_em) BETWEEN :inicio AND :fim");
+$dashboardEstornosSt->execute([':empresa'=>(int)$id_empresa,':inicio'=>$dashboardInicio,':fim'=>$dashboardFim]);
+$dashboardEstornos=$dashboardEstornosSt->fetch(PDO::FETCH_ASSOC);
+$dashboardRecebidoLiquido=(float)$dashboardRecebido['total']-(float)$dashboardEstornos['total'];
 $dashboardTicketPeriodo=(int)$dashboardFaturamento['quantidade']>0
  ? (float)$dashboardFaturamento['total']/(int)$dashboardFaturamento['quantidade'] : 0.0;
 
@@ -356,6 +362,18 @@ $dashboardTicketMedio=(int)$dashboardResumoHoje['quantidade']>0
     <div class="small text-muted">Ticket médio do período</div>
     <div class="fs-5 fw-bold">R$ <?php echo number_format($dashboardTicketPeriodo,2,',','.'); ?></div>
     <div class="small text-muted">Faturamento dividido pelas vendas</div>
+  </div></div>
+</div>
+<div class="row g-3 mb-3" aria-label="Estornos e recebimento líquido">
+  <div class="col-12 col-md-6"><div class="card h-100 p-3">
+    <div class="small text-muted">Estornos concluídos no período</div>
+    <div class="fs-5 fw-bold">R$ <?php echo number_format((float)$dashboardEstornos['total'],2,',','.'); ?></div>
+    <div class="small text-muted"><?php echo (int)$dashboardEstornos['quantidade']; ?> estorno(s) concluído(s)</div>
+  </div></div>
+  <div class="col-12 col-md-6"><div class="card h-100 p-3">
+    <div class="small text-muted">Recebimentos menos estornos concluídos</div>
+    <div class="fs-5 fw-bold">R$ <?php echo number_format($dashboardRecebidoLiquido,2,',','.'); ?></div>
+    <div class="small text-muted">Indicador gerencial; não equivale ao saldo de caixa</div>
   </div></div>
 </div>
 <div class="row g-3 mt-2 mb-3" aria-label="Resumo operacional">
