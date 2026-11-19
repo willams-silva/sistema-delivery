@@ -74,9 +74,21 @@ foreach ($gruposConc as &$grupoConc) {
 }
 unset($grupoConc);
 $liquidacoesConc=[];$liquidacoesPorFormaConc=[];$liquidacoesDisponiveisConc=false;
+$resumoAuditoriaConc=['ativos'=>0,'cancelados'=>0,'valor_ativo'=>0.0,'valor_cancelado'=>0.0];
+$filtroHistoricoConc=(string)($_GET['historico']??'todos');
+if(!in_array($filtroHistoricoConc,['todos','ativos','cancelados'],true))$filtroHistoricoConc='todos';
+
 try {
  $stL=$pdo->prepare("SELECT l.id,l.forma_pgto,l.data_referencia,l.data_credito,l.valor_creditado,l.identificador,l.observacao,l.cancelado_em,l.cancelado_por,l.motivo_cancelamento,fp.nome AS forma FROM conciliacao_liquidacoes l INNER JOIN formas_pgto fp ON fp.id=l.forma_pgto AND fp.empresa=l.empresa WHERE l.empresa=:empresa AND l.data_referencia BETWEEN :inicio AND :fim ORDER BY l.data_referencia DESC,l.id DESC LIMIT 100");
  $stL->execute($paramsConc);$liquidacoesConc=$stL->fetchAll(PDO::FETCH_ASSOC);
+ $stAud=$pdo->prepare("SELECT
+ SUM(CASE WHEN cancelado_em IS NULL THEN 1 ELSE 0 END) AS ativos,
+ SUM(CASE WHEN cancelado_em IS NOT NULL THEN 1 ELSE 0 END) AS cancelados,
+ COALESCE(SUM(CASE WHEN cancelado_em IS NULL THEN valor_creditado ELSE 0 END),0) AS valor_ativo,
+ COALESCE(SUM(CASE WHEN cancelado_em IS NOT NULL THEN valor_creditado ELSE 0 END),0) AS valor_cancelado
+ FROM conciliacao_liquidacoes WHERE empresa=:empresa AND data_referencia BETWEEN :inicio AND :fim");
+ $stAud->execute($paramsConc);
+ $resumoAuditoriaConc=$stAud->fetch(PDO::FETCH_ASSOC)?:$resumoAuditoriaConc;
  $stS=$pdo->prepare("SELECT forma_pgto,SUM(valor_creditado) AS total FROM conciliacao_liquidacoes WHERE empresa=:empresa AND cancelado_em IS NULL AND data_referencia BETWEEN :inicio AND :fim GROUP BY forma_pgto");
  $stS->execute($paramsConc);
  foreach($stS->fetchAll(PDO::FETCH_ASSOC) as $l) $liquidacoesPorFormaConc[(int)$l['forma_pgto']]=(float)$l['total'];
@@ -485,9 +497,25 @@ $liquido=$linha['liquido_estimado'];
 <?php endforeach; ?>
 </tbody></table></div>
 <p class="bc-conc-note">Diferenças podem resultar de prazos de repasse, antecipações, estornos ou taxas. A comparação é gerencial e não comprova conciliação bancária automática.</p>
-<h6 class="mt-4">Últimos 100 créditos informados no período</h6>
+<h6 class="mt-4">Auditoria de créditos e cancelamentos</h6>
+<div class="bc-conc-grid">
+<div class="bc-conc-card"><small>Créditos ativos</small><strong><?php echo (int)$resumoAuditoriaConc['ativos']; ?></strong><span class="bc-conc-note"><?php echo $moedaConc($resumoAuditoriaConc['valor_ativo']); ?></span></div>
+<div class="bc-conc-card"><small>Créditos cancelados</small><strong><?php echo (int)$resumoAuditoriaConc['cancelados']; ?></strong><span class="bc-conc-note"><?php echo $moedaConc($resumoAuditoriaConc['valor_cancelado']); ?> fora dos saldos conciliados</span></div>
+</div>
+<form method="get" action="index.php" class="bc-conc-filter mb-3">
+<input type="hidden" name="pagina" value="conciliacao_financeira">
+<input type="hidden" name="aba" value="liquidacoes">
+<input type="hidden" name="inicio" value="<?php echo $escConc($inicioConc); ?>">
+<input type="hidden" name="fim" value="<?php echo $escConc($fimConc); ?>">
+<div><label for="conc-historico">Exibir histórico</label><select id="conc-historico" name="historico" class="form-control">
+<option value="todos" <?php echo $filtroHistoricoConc==='todos'?'selected':''; ?>>Todos</option>
+<option value="ativos" <?php echo $filtroHistoricoConc==='ativos'?'selected':''; ?>>Somente ativos</option>
+<option value="cancelados" <?php echo $filtroHistoricoConc==='cancelados'?'selected':''; ?>>Somente cancelados</option>
+</select></div><button class="btn btn-primary" type="submit">Filtrar histórico</button>
+</form>
+<h6 class="mt-4">Últimos 100 créditos informados no período</h6><p class="bc-conc-note">O filtro atua nos 100 registros mais recentes carregados. O CSV contém todos os lançamentos do período.</p>
 <div class="bc-conc-table"><table><thead><tr><th>Referência</th><th>Crédito</th><th>Forma</th><th>Valor</th><th>Identificador</th><th>Situação / Ação</th></tr></thead><tbody>
-<?php foreach($liquidacoesConc as $l): ?><tr>
+<?php foreach($liquidacoesConc as $l): if($filtroHistoricoConc==='ativos' && !empty($l['cancelado_em']))continue; if($filtroHistoricoConc==='cancelados' && empty($l['cancelado_em']))continue; ?><tr>
 <td><?php echo $escConc($l['data_referencia']); ?></td><td><?php echo $escConc($l['data_credito']); ?></td><td><?php echo $escConc($l['forma']); ?></td><td><?php echo $moedaConc($l['valor_creditado']); ?></td><td><?php echo $escConc($l['identificador']??''); ?></td>
 <td><?php if(!empty($l['cancelado_em'])): ?>
 <span class="text-danger">Cancelado em <?php echo $escConc($l['cancelado_em']); ?></span>
