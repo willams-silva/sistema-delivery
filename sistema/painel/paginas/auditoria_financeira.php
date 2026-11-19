@@ -1,4 +1,5 @@
 <?php
+// Publicação de auditoria financeira: 2026-11-19
 // Consulta somente leitura da trilha financeira, isolada por estabelecimento.
 if (!in_array($_SESSION['nivel'] ?? '', ['Administrador', 'Gerente'], true)) {
     http_response_code(403);
