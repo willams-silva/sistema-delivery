@@ -487,6 +487,8 @@ if (@$pausar_delivery == 'Sim') {
 
 
 <script type="text/javascript">
+	var requisicaoPedidosAtual = null;
+    var sequenciaPedidos = 0;
 	function listar(p1, p2) {
 
 		if(p1 == "" || p1 == "undefined" || p1 == undefined){
@@ -502,7 +504,11 @@ if (@$pausar_delivery == 'Sim') {
 		var ult_pedido = $('#id_pedido').val();
         var tipo_pedido = $('#tipo-pedido-filtro').val() || '';
 
-		$.ajax({
+		const sequencia = ++sequenciaPedidos;
+        if (requisicaoPedidosAtual && requisicaoPedidosAtual.readyState !== 4) {
+            requisicaoPedidosAtual.abort();
+        }
+        requisicaoPedidosAtual = $.ajax({
 			url: 'paginas/' + pag + "/listar.php",
 			method: 'POST',
 			data: {
@@ -515,9 +521,17 @@ if (@$pausar_delivery == 'Sim') {
 			dataType: "html",
 
 			success: function(result) {
+                if (sequencia !== sequenciaPedidos) return;
+                // Não substituir botões ou formulários enquanto o operador os utiliza.
+                if ($('#listar').find(':focus').length || $('.modal.show').length) return;
 				$("#listar").html(result);
 				$('#mensagem-excluir').text('');
-			}
+			},
+            error: function(xhr, status) {
+                if (status !== 'abort' && sequencia === sequenciaPedidos) {
+                    console.warn('Não foi possível atualizar a lista de pedidos.');
+                }
+            }
 		});
 	}
 </script>
