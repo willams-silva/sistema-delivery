@@ -139,6 +139,13 @@ try {
  foreach($stS->fetchAll(PDO::FETCH_ASSOC) as $l) $liquidacoesPorFormaConc[(int)$l['forma_pgto']]=(float)$l['total'];
  $liquidacoesDisponiveisConc=true;
 } catch(PDOException $e) {error_log('Liquidacoes indisponiveis: '.$e->getMessage());}
+$extratoLinhasConc=[];$vinculosConc=[];
+try {
+ $stExt=$pdo->prepare("SELECT e.id,e.data_movimento,e.valor,e.descricao,e.identificador,e.liquidacao_id,i.nome_arquivo FROM conciliacao_extrato_linhas e INNER JOIN conciliacao_extrato_importacoes i ON i.id=e.importacao_id AND i.empresa=e.empresa WHERE e.empresa=:empresa AND e.data_movimento BETWEEN :inicio AND :fim ORDER BY e.data_movimento DESC,e.id DESC LIMIT 50");
+ $stExt->execute($paramsConc);$extratoLinhasConc=$stExt->fetchAll(PDO::FETCH_ASSOC);
+ $stVin=$pdo->prepare("SELECT v.receber_id,v.liquidacao_id,v.valor_vinculado,v.criado_em FROM conciliacao_vinculos_recebimentos v INNER JOIN conciliacao_liquidacoes l ON l.id=v.liquidacao_id AND l.empresa=v.empresa WHERE v.empresa=:empresa AND l.data_referencia BETWEEN :inicio AND :fim ORDER BY v.id DESC LIMIT 50");
+ $stVin->execute($paramsConc);$vinculosConc=$stVin->fetchAll(PDO::FETCH_ASSOC);
+} catch(PDOException $e){error_log('Extrato/vinculos indisponiveis: '.$e->getMessage());}
 // Alertas gerenciais: diferença por forma e falta de crédito informado.
 $alertasConc=[];$totalCreditoConc=0.0;$totalEsperadoComparavelConc=0.0;
 $limiarConc=0.01;
@@ -509,6 +516,35 @@ $linhasPendenciaExibidasConc++; ?>
 <?php if(isset($_GET['liquidacao_salva'])): ?><div class="alert alert-success">Crédito registrado com sucesso.</div><?php endif; ?>
 <?php if(isset($_GET['liquidacao_cancelada'])): ?><div class="alert alert-success">Crédito cancelado e preservado no histórico.</div><?php endif; ?>
 <?php if(isset($_GET['liquidacao_duplicada'])): ?><div class="alert alert-warning" role="alert"><strong>Possível crédito duplicado.</strong> Já existe um lançamento com o mesmo identificador para esta forma de pagamento, ou com a mesma forma, datas e valor. Nenhum novo crédito foi registrado. Confira o histórico antes de tentar novamente.</div><?php endif; ?>
+<?php if(isset($_GET['extrato_importado'])): ?><div class="alert alert-info"><?php echo (int)$_GET['extrato_importado']; ?> movimentação(ões) nova(s) importada(s) para conferência. Nenhum crédito foi criado automaticamente.</div><?php endif; ?>
+<?php if(isset($_GET['vinculo_salvo'])): ?><div class="alert alert-success">Recebimento vinculado ao crédito para conferência manual. O vínculo não confirma igualdade de valores líquidos.</div><?php endif; ?>
+<div class="bc-conc-card">
+<h5>Importar extrato bancário (CSV / OFX)</h5>
+<p class="bc-conc-note">Importação em área separada, sem alterar caixa, recebimentos ou créditos. CSV: colunas data;valor;descricao;identificador (opcional), com cabeçalho. OFX: movimentações STMTTRN. Até 2 MB e 5.000 linhas por arquivo. Confira as linhas antes de conciliar.</p>
+<form method="post" action="paginas/importar_extrato_conciliacao.php" enctype="multipart/form-data">
+<input type="hidden" name="csrf_conc" value="<?php echo $escConc($_SESSION['csrf_conc']); ?>">
+<input type="file" name="arquivo" accept=".csv,.ofx" required>
+<button type="submit" class="btn btn-primary">Importar para conferência</button>
+</form>
+<div class="bc-conc-table mt-3"><table><thead><tr><th>Data</th><th>Valor</th><th>Identificador</th><th>Descrição</th><th>Arquivo</th></tr></thead><tbody>
+<?php foreach($extratoLinhasConc as $ex): ?><tr><td><?php echo $escConc($ex['data_movimento']); ?></td><td><?php echo $moedaConc($ex['valor']); ?></td><td><?php echo $escConc($ex['identificador']); ?></td><td><?php echo $escConc($ex['descricao']); ?></td><td><?php echo $escConc($ex['nome_arquivo']); ?></td></tr><?php endforeach; ?>
+<?php if(!$extratoLinhasConc): ?><tr><td colspan="5">Nenhuma linha importada no período.</td></tr><?php endif; ?>
+</tbody></table></div>
+</div>
+<div class="bc-conc-card">
+<h5>Vincular recebimento a crédito</h5>
+<p class="bc-conc-note">Informe IDs existentes. O sistema valida a mesma empresa, forma de pagamento, recebimento pago e crédito ativo. Um recebimento só pode ser vinculado uma vez. O vínculo não constitui confirmação automática do valor líquido.</p>
+<form method="post" action="paginas/vincular_recebimento_conciliacao.php" class="bc-conc-filter">
+<input type="hidden" name="csrf_conc" value="<?php echo $escConc($_SESSION['csrf_conc']); ?>">
+<div><label for="vinc-receber">ID do recebimento</label><input id="vinc-receber" type="number" min="1" name="receber_id" required></div>
+<div><label for="vinc-credito">ID do crédito</label><input id="vinc-credito" type="number" min="1" name="liquidacao_id" required></div>
+<button class="btn btn-primary" type="submit">Vincular para conferência</button>
+</form>
+<div class="bc-conc-table mt-3"><table><thead><tr><th>Recebimento</th><th>Crédito</th><th>Valor bruto</th><th>Vinculado em</th></tr></thead><tbody>
+<?php foreach($vinculosConc as $v): ?><tr><td>#<?php echo (int)$v['receber_id']; ?></td><td>#<?php echo (int)$v['liquidacao_id']; ?></td><td><?php echo $moedaConc($v['valor_vinculado']); ?></td><td><?php echo $escConc($v['criado_em']); ?></td></tr><?php endforeach; ?>
+<?php if(!$vinculosConc): ?><tr><td colspan="4">Nenhum vínculo registrado no período.</td></tr><?php endif; ?>
+</tbody></table></div>
+</div>
 <form method="post" action="paginas/salvar_liquidacao_conciliacao.php">
 <input type="hidden" name="csrf_conc" value="<?php echo $escConc($_SESSION['csrf_conc']); ?>">
 <div class="bc-conc-filter">
