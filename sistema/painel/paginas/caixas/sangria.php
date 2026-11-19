@@ -18,6 +18,15 @@ try {
     if ((int)$registro['operador']!==$usuario && !in_array($_SESSION['nivel']??'', ['Administrador','Gerente'],true)) {
         throw new RuntimeException('Operador sem permissão.');
     }
+    // Sangria não pode retirar mais dinheiro que o saldo físico estimado.
+    // O bloqueio FOR UPDATE do caixa serializa sangrias e fechamentos.
+    require_once __DIR__ . '/calculo_saldo.php';
+    $aberturaSt=$pdo->prepare('SELECT valor_abertura FROM caixas WHERE id=:caixa AND empresa=:empresa');
+    $aberturaSt->execute([':caixa'=>$caixa,':empresa'=>$empresa]);
+    $saldo=calcularSaldoCaixa($pdo,(int)$empresa,(int)$caixa,(float)$aberturaSt->fetchColumn());
+    if (round((float)$valor,2) > $saldo['esperado']) {
+        throw new RuntimeException('Sangria superior ao dinheiro disponível no caixa.');
+    }
     $st=$pdo->prepare('INSERT INTO sangrias (usuario,valor,data,hora,caixa,feito_por) VALUES (:usuario,:valor,CURDATE(),CURTIME(),:caixa,:feito_por)');
     $st->execute([':usuario'=>$usuario,':valor'=>round((float)$valor,2),':caixa'=>$caixa,':feito_por'=>$usuario]);
     $pdo->commit();
