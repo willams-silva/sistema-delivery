@@ -22,29 +22,32 @@ if ($ultimo_valor_fechado == "") {
 	$ultimo_valor_fechado = 0;
 }
 
-$dataInicial = @$_POST['p1'];
-$dataFinal = @$_POST['p2'];
-$operador = @$_POST['p3'];
-
-if ($dataInicial == "") {
-	$dataInicial = $data_atual;
+$dataInicial = (string)($_POST['p1'] ?? $data_atual);
+$dataFinal = (string)($_POST['p2'] ?? $data_atual);
+$operador = (string)($_POST['p3'] ?? '');
+foreach (['dataInicial','dataFinal'] as $campo) {
+    if ($$campo === '') $$campo = $data_atual;
+    $data = DateTimeImmutable::createFromFormat('!Y-m-d', $$campo);
+    if (!$data || $data->format('Y-m-d') !== $$campo) {
+        http_response_code(400); exit('Período inválido.');
+    }
 }
-
-if ($dataFinal == "") {
-	$dataFinal = $data_atual;
+if ($dataInicial > $dataFinal) { http_response_code(400); exit('Período inválido.'); }
+if (!in_array($nivel_usuario, ['Administrador','Gerente'], true)) {
+    $operador = (string)$id_usuario;
 }
-
-
-if ($nivel_usuario != 'Administrador' and $nivel_usuario != 'Gerente') {
-	$operador = $id_usuario;
+if ($operador !== '' && (!ctype_digit($operador) || (int)$operador < 1)) {
+    http_response_code(400); exit('Operador inválido.');
 }
-
-if ($operador == "") {
-	$query = $pdo->query("SELECT * from $pagina WHERE data_abertura >= '$dataInicial' and data_abertura <= '$dataFinal' and empresa = '$id_empresa' order by id desc ");
-} else {
-	$query = $pdo->query("SELECT * from $pagina WHERE data_abertura >= '$dataInicial' and data_abertura <= '$dataFinal' and operador = '$operador' and empresa = '$id_empresa' order by id desc ");
+$sql = 'SELECT * FROM caixas WHERE data_abertura BETWEEN :inicio AND :fim AND empresa=:empresa';
+$parametros = [':inicio'=>$dataInicial, ':fim'=>$dataFinal, ':empresa'=>$id_empresa];
+if ($operador !== '') {
+    $sql .= ' AND operador=:operador';
+    $parametros[':operador']=(int)$operador;
 }
-
+$sql .= ' ORDER BY id DESC';
+$query=$pdo->prepare($sql);
+$query->execute($parametros);
 
 echo <<<HTML
 <small>
@@ -108,7 +111,8 @@ HTML;
 
 
 
-		$query2 = $pdo->query("SELECT * FROM usuarios where id = '$operador'");
+		$query2 = $pdo->prepare('SELECT nome FROM usuarios WHERE id=:id AND empresa=:empresa LIMIT 1');
+        $query2->execute([':id'=>$operador, ':empresa'=>$id_empresa]);
 		$res2 = $query2->fetchAll(PDO::FETCH_ASSOC);
 
 		if (@count($res2) > 0) {
@@ -121,7 +125,8 @@ HTML;
 
 
 
-		$query2 = $pdo->query("SELECT * FROM usuarios where id = '$usuario_abertura'");
+		$query2 = $pdo->prepare('SELECT nome FROM usuarios WHERE id=:id AND empresa=:empresa LIMIT 1');
+        $query2->execute([':id'=>$usuario_abertura, ':empresa'=>$id_empresa]);
 		$res2 = $query2->fetchAll(PDO::FETCH_ASSOC);
 		if (@count($res2) > 0) {
 			$nome_usu_abertura = $res2[0]['nome'];
@@ -132,7 +137,8 @@ HTML;
 
 
 
-		$query2 = $pdo->query("SELECT * FROM usuarios where id = '$usuario_fechamento'");
+		$query2 = $pdo->prepare('SELECT nome FROM usuarios WHERE id=:id AND empresa=:empresa LIMIT 1');
+        $query2->execute([':id'=>$usuario_fechamento, ':empresa'=>$id_empresa]);
 		$res2 = $query2->fetchAll(PDO::FETCH_ASSOC);
 		if (@count($res2) > 0) {
 			$nome_usu_fechamento = $res2[0]['nome'];
@@ -142,7 +148,7 @@ HTML;
 
 
 
-		if ($valor_fechamento == '') {
+		if (empty($data_fechamento)) {
 			$classe_aberto = 'text-danger';
 			$ocultar = '';
 		} else {
@@ -177,6 +183,13 @@ HTML;
             $ocultar = 'ocultar'; // Não oferecer fechamento com saldo não calculado.
         }
 
+        // Escape de valores vindos do banco antes de interpolar no HTML/JS.
+        $nome_operador = htmlspecialchars($nome_operador, ENT_QUOTES, 'UTF-8');
+        $nome_usu_abertura = htmlspecialchars($nome_usu_abertura, ENT_QUOTES, 'UTF-8');
+        $nome_usu_fechamento = htmlspecialchars($nome_usu_fechamento, ENT_QUOTES, 'UTF-8');
+        $obsJs = htmlspecialchars(json_encode((string)$obs, JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_TAG | JSON_HEX_AMP | JSON_UNESCAPED_UNICODE), ENT_QUOTES, 'UTF-8');
+        $nomeOperadorJs = htmlspecialchars(json_encode((string)$nome_operador, JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_TAG | JSON_HEX_AMP | JSON_UNESCAPED_UNICODE), ENT_QUOTES, 'UTF-8');
+
 
 		echo <<<HTML
 			<tr> 
@@ -193,13 +206,13 @@ HTML;
 				<td>{$nome_usu_fechamento}</td>
 				<td>
 
-		<big><a class="{$ocultar} btn btn-info-light btn-sm" href="#" onclick="editar('{$id}', '{$operador}', '{$data_abertura}','{$valor_abertura}','{$obs}')" title="Editar Dados"><i class="fa fa-edit "></i></a></big>
+		<big><a class="{$ocultar} btn btn-info-light btn-sm" href="#" onclick="editar('{$id}', '{$operador}', '{$data_abertura}','{$valor_abertura}',{$obsJs})" title="Editar Dados"><i class="fa fa-edit "></i></a></big>
 
 
 		<big><a href="#" class="btn btn-danger-light btn-sm {$ocultar}" onclick="excluirBusca('{$id}')" title="Excluir"><i class="fa fa-trash-can text-danger"></i></a></big>
 
 
-		<big><a class="{$ocultar} btn btn-success-light btn-sm" href="#" onclick="fechamento('{$id}', '{$nome_operador}', '{$valor_abertura}', '{$total_caixa}')" title="Fechar Caixa"><i class="fa fa-check-square"></i></a></big>
+		<big><a class="{$ocultar} btn btn-success-light btn-sm" href="#" onclick="fechamento('{$id}', {$nomeOperadorJs}, '{$valor_abertura}', '{$total_caixa}')" title="Fechar Caixa"><i class="fa fa-check-square"></i></a></big>
 
 
 		<big><a class="{$ocultar} btn btn-success-light btn-sm" href="#" onclick="sangria('{$id}')" title="Sangria"><i class="fa fa-money  "></i></a></big>
