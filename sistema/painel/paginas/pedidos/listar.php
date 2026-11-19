@@ -170,7 +170,9 @@ HTML;
 			$classe_pago2 = '';
 		}
 
-		$query2 = $pdo->query("SELECT * FROM usuarios where id = '$usuario_baixa'");
+		$consultaUsuario=$pdo->prepare("SELECT nome FROM usuarios WHERE id=:id AND empresa=:empresa LIMIT 1");
+        $consultaUsuario->execute([':id'=>(int)$usuario_baixa,':empresa'=>(int)$id_empresa]);
+        $query2=$consultaUsuario;
 		$res2 = $query2->fetchAll(PDO::FETCH_ASSOC);
 		$total_reg2 = @count($res2);
 		if ($total_reg2 > 0) {
@@ -180,7 +182,9 @@ HTML;
 		}
 
 
-		$query2 = $pdo->query("SELECT * FROM clientes where id = '$cliente'");
+		$consultaCliente=$pdo->prepare("SELECT nome,telefone FROM clientes WHERE id=:id AND empresa=:empresa LIMIT 1");
+        $consultaCliente->execute([':id'=>(int)$cliente,':empresa'=>(int)$id_empresa]);
+        $query2=$consultaCliente;
 		$res2 = $query2->fetchAll(PDO::FETCH_ASSOC);
 		$total_reg2 = @count($res2);
 		if ($total_reg2 > 0) {
