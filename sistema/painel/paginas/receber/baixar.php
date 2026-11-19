@@ -125,16 +125,14 @@ if (!$dataObj || $dataObj->format('Y-m-d')!==$data_baixar) throw new RuntimeExce
 
 
 
-//verificar caixa aberto
-$query1 = $pdo->prepare("SELECT * FROM caixas WHERE operador=:usuario AND empresa=:empresa AND data_fechamento IS NULL ORDER BY id DESC LIMIT 1");
-$query1->execute([':usuario'=>(int)$id_usuario,':empresa'=>(int)$id_empresa]);
-$res1 = $query1->fetchAll(PDO::FETCH_ASSOC);
-if(@count($res1) > 0){
-	$id_caixa = @$res1[0]['id'];
-}else{
-	$id_caixa = 0;
-}
-//  
+// Valida a forma de recebimento e bloqueia o caixa durante a baixa.
+$formaSt=$pdo->prepare('SELECT id FROM formas_pgto WHERE id=:forma AND empresa=:empresa LIMIT 1');
+$formaSt->execute([':forma'=>$saida,':empresa'=>(int)$id_empresa]);
+if (!$formaSt->fetchColumn()) throw new RuntimeException('Forma de recebimento inválida para esta empresa.');
+$consultaCaixa=$pdo->prepare("SELECT id FROM caixas WHERE operador=:usuario AND empresa=:empresa AND data_fechamento IS NULL ORDER BY id DESC LIMIT 1 FOR UPDATE");
+$consultaCaixa->execute([':usuario'=>(int)$id_usuario,':empresa'=>(int)$id_empresa]);
+$id_caixa=(int)($consultaCaixa->fetchColumn() ?: 0);
+if (!$id_caixa) throw new RuntimeException('Abra um caixa antes de registrar o recebimento.');
 
 if($valor == $valor_antigo){
 
