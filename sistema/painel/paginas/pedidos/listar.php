@@ -456,7 +456,8 @@ $total_dos_itens_pedidos=(int)$totalHojeSt->fetchColumn();
 			"ordering": false,
 			"stateSave": true
 		});
-		$('#tabela_filter label input').focus();
+        // Não roubar o foco do operador a cada atualização automática.
+        // A busca permanece disponível, mas o foco é escolhido pelo usuário.
 	});
 </script>
 
