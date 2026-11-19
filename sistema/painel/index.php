@@ -284,6 +284,15 @@ if($linhas == 0){
 	<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
 
+<style id="bc-finance-menu-clean">
+/* Apenas submenu Financeiro: remove os marcadores circulares herdados do tema. */
+.bc-finance-menu .slide-item::before,
+.bc-finance-menu .slide-item::after,
+.bc-finance-menu > li::before,
+.bc-finance-menu > li::after { content:none !important; display:none !important; }
+.bc-finance-menu .slide-item { display:flex; align-items:center; gap:8px; padding-left:14px !important; }
+.bc-finance-menu .slide-item > i.fa { width:18px; flex:0 0 18px; text-align:center; margin-right:0 !important; }
+</style>
 </head>
 
 <body class="ltr main-body app sidebar-mini">
@@ -913,24 +922,24 @@ if($linhas == 0){
 									<i class="fa fa-dollar text-white mt-1"></i>
 									<span class="side-menu__label" style="margin-left: 15px">Financeiro</span><i
 										class="angle fe fe-chevron-right"></i></a>
-								<ul class="slide-menu">
+								<ul class="slide-menu bc-finance-menu">
 
 									<li><a class="slide-item" href="index.php?pagina=visao_financeira"><i class="fa fa-line-chart me-1"></i> Visão Financeira</a></li>
 									<!-- Auditoria Financeira: publicação 2026-11-19 -->
 									<li><a class="slide-item" href="index.php?pagina=conciliacao_financeira"><i class="fa fa-check-square-o me-1"></i> Conciliação Financeira</a></li>
 									<li><a class="slide-item" href="index.php?pagina=auditoria_financeira"><i class="fa fa-history me-1"></i> Auditoria Financeira</a></li>
-									<li class="<?php echo @$pagar ?> "><a class="slide-item" href="pagar">Contas a Pagar</a></li>
+									<li class="<?php echo @$pagar ?> "><a class="slide-item" href="pagar"><i class="fa fa-file-text-o me-1" aria-hidden="true"></i> Contas a Pagar</a></li>
 
-									<li class="<?php echo @$receber ?> "><a class="slide-item" href="receber">Contas a Receber</a></li>
+									<li class="<?php echo @$receber ?> "><a class="slide-item" href="receber"><i class="fa fa-money me-1" aria-hidden="true"></i> Contas a Receber</a></li>
 
-									<li class="<?php echo @$vendas ?> "><a class="slide-item" href="vendas">Vendas / Pedidos</a></li>
+									<li class="<?php echo @$vendas ?> "><a class="slide-item" href="vendas"><i class="fa fa-shopping-cart me-1" aria-hidden="true"></i> Vendas / Pedidos</a></li>
 
 
-									<li class="<?php echo @$lista_pedidos_mesas ?> "><a class="slide-item" href="lista_pedidos_mesas">Lista Pedidos Mesas</a></li>
+									<li class="<?php echo @$lista_pedidos_mesas ?> "><a class="slide-item" href="lista_pedidos_mesas"><i class="fa fa-list-alt me-1" aria-hidden="true"></i> Lista Pedidos Mesas</a></li>
 
-									<li class="<?php echo @$compras ?> "><a class="slide-item" href="compras">Compras</a></li>
+									<li class="<?php echo @$compras ?> "><a class="slide-item" href="compras"><i class="fa fa-shopping-bag me-1" aria-hidden="true"></i> Compras</a></li>
 
-									<li class="<?php echo @$comissoes ?> "><a class="slide-item" href="comissoes"> Lista de Comissões</a></li>
+									<li class="<?php echo @$comissoes ?> "><a class="slide-item" href="comissoes"><i class="fa fa-percent me-1" aria-hidden="true"></i> Lista de Comissões</a></li>
 
 								</ul>
 							</li>
