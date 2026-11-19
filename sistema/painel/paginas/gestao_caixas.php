@@ -19,6 +19,27 @@ $consulta->execute([':empresa'=>$empresa,':inicio'=>$inicio,':fim'=>$fim]);
 $caixas=$consulta->fetchAll(PDO::FETCH_ASSOC);
 $totalAbertos=0;$totalFechados=0;$totalDivergencia=0.0;
 foreach($caixas as $c){if(empty($c['data_fechamento']))$totalAbertos++;else{$totalFechados++;$totalDivergencia+=(float)$c['quebra'];}}
+// Consolidação por forma de pagamento dos caixas exibidos, sem misturar empresas.
+$detalhes = [];
+if ($caixas) {
+    $ids = array_map(static function($c){return (int)$c['id'];},$caixas);
+    $marcadores = implode(',',array_fill(0,count($ids),'?'));
+    foreach (['receber'=>'entradas','pagar'=>'saidas'] as $tabela=>$tipo) {
+        $sql = "SELECT m.caixa, COALESCE(f.nome,'Não identificada') AS forma, SUM(COALESCE(m.subtotal,m.valor)) AS total, COUNT(*) AS quantidade FROM $tabela m INNER JOIN caixas c ON c.id=m.caixa AND c.empresa=m.empresa LEFT JOIN formas_pgto f ON f.id=m.forma_pgto AND f.empresa=m.empresa WHERE m.empresa=? AND m.pago='Sim' AND m.caixa IN ($marcadores) GROUP BY m.caixa,m.forma_pgto,f.nome";
+        $st=$pdo->prepare($sql);
+        $st->execute(array_merge([(int)$empresa],$ids));
+        foreach($st->fetchAll(PDO::FETCH_ASSOC) as $linha) {
+            $chave=(int)$linha['caixa'];
+            $detalhes[$chave][$tipo][]=$linha;
+        }
+    }
+    $sql="SELECT s.caixa, COALESCE(SUM(s.valor),0) AS total, COUNT(*) AS quantidade FROM sangrias s INNER JOIN caixas c ON c.id=s.caixa WHERE c.empresa=? AND s.caixa IN ($marcadores) GROUP BY s.caixa";
+    $st=$pdo->prepare($sql);
+    $st->execute(array_merge([(int)$empresa],$ids));
+    foreach($st->fetchAll(PDO::FETCH_ASSOC) as $linha) {
+        $detalhes[(int)$linha['caixa']]['sangrias']=$linha;
+    }
+}
 $h=static function($v){return htmlspecialchars((string)$v,ENT_QUOTES,'UTF-8');};
 $moeda=static function($v){return 'R$ '.number_format((float)$v,2,',','.');};
 ?>
@@ -39,7 +60,7 @@ $moeda=static function($v){return 'R$ '.number_format((float)$v,2,',','.');};
  <div class="col-md-4"><div class="card card-body"><small>Diferença líquida dos fechamentos</small><h3><?= $moeda($totalDivergencia) ?></h3></div></div>
 </div>
 <div class="card"><div class="card-body table-responsive">
-<table class="table table-striped table-hover"><thead><tr><th>Caixa</th><th>Operador</th><th>Abertura</th><th>Fechamento</th><th>Saldo inicial</th><th>Valor informado</th><th>Diferença</th><th>Status</th></tr></thead><tbody>
+<table class="table table-striped table-hover"><thead><tr><th>Caixa</th><th>Operador</th><th>Abertura</th><th>Fechamento</th><th>Saldo inicial</th><th>Valor informado</th><th>Diferença</th><th>Status</th><th>Detalhes</th></tr></thead><tbody>
 <?php foreach($caixas as $c): ?>
 <tr>
 <td>#<?= (int)$c['id'] ?></td>
@@ -50,8 +71,23 @@ $moeda=static function($v){return 'R$ '.number_format((float)$v,2,',','.');};
 <td><?= $c['data_fechamento'] ? $moeda($c['valor_fechamento']) : '—' ?></td>
 <td><?= $c['data_fechamento'] ? $moeda($c['quebra']) : '—' ?></td>
 <td><?= $c['data_fechamento'] ? '<span class="badge bg-secondary">Fechado</span>' : '<span class="badge bg-success">Aberto</span>' ?></td>
+<td><button class="btn btn-outline-primary btn-sm" type="button" data-bs-toggle="collapse" data-bs-target="#gc-detalhe-<?= (int)$c['id'] ?>" aria-expanded="false" aria-controls="gc-detalhe-<?= (int)$c['id'] ?>">Detalhar</button></td>
 </tr>
+<tr class="collapse" id="gc-detalhe-<?= (int)$c['id'] ?>"><td colspan="9">
+ <div class="row g-3">
+ <?php foreach (['entradas'=>'Recebimentos','saidas'=>'Pagamentos'] as $tipo=>$titulo): ?>
+ <div class="col-md-5"><strong><?= $h($titulo) ?> por forma</strong>
+ <ul class="list-group mt-2">
+ <?php foreach(($detalhes[(int)$c['id']][$tipo] ?? []) as $mov): ?>
+ <li class="list-group-item d-flex justify-content-between"><span><?= $h($mov['forma']) ?> (<?= (int)$mov['quantidade'] ?>)</span><strong><?= $moeda($mov['total']) ?></strong></li>
+ <?php endforeach; ?>
+ <?php if(empty($detalhes[(int)$c['id']][$tipo])): ?><li class="list-group-item text-muted">Sem movimentações pagas.</li><?php endif; ?>
+ </ul></div>
+ <?php endforeach; ?>
+ <div class="col-md-2"><strong>Sangrias</strong><p class="mt-2 mb-0"><?= $moeda($detalhes[(int)$c['id']]['sangrias']['total'] ?? 0) ?></p><small><?= (int)($detalhes[(int)$c['id']]['sangrias']['quantidade'] ?? 0) ?> retirada(s)</small></div>
+ </div>
+</td></tr>
 <?php endforeach; ?>
-<?php if(!$caixas): ?><tr><td colspan="8" class="text-center text-muted">Nenhum caixa encontrado no período.</td></tr><?php endif; ?>
+<?php if(!$caixas): ?><tr><td colspan="9" class="text-center text-muted">Nenhum caixa encontrado no período.</td></tr><?php endif; ?>
 </tbody></table><small class="text-muted">Exibindo até 300 caixas no período. Diferença positiva indica sobra; negativa indica falta.</small>
 </div></div>
