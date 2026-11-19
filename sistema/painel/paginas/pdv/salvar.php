@@ -120,6 +120,7 @@ if (!$id_saida) { http_response_code(400); exit('Forma de pagamento não cadastr
 $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 try {
 $pdo->beginTransaction();
+$lockPedidoNome=null;
 $lockCaixa=$pdo->prepare('SELECT id FROM caixas WHERE id=:id AND empresa=:empresa AND operador=:operador AND data_fechamento IS NULL FOR UPDATE');
 $lockCaixa->execute([':id'=>$id_caixa,':empresa'=>(int)$id_empresa,':operador'=>(int)$id_usuario]);
 if (!$lockCaixa->fetchColumn()) throw new RuntimeException('O caixa foi fechado. Abra um caixa para continuar.');
@@ -223,14 +224,16 @@ if(strtotime($data) > strtotime($data_atual)){
 }
 
 
-//recuperar número do pedido
-$query = $pdo->query("SELECT * FROM vendas where data = curDate() and empresa = '$id_empresa' order by id desc limit 1");
-$res = $query->fetchAll(PDO::FETCH_ASSOC);
-$num_pedido = @$res[0]['pedido'];
-if ($num_pedido == "") {
-  $num_pedido = 0;
+// Serializa a numeração por empresa e dia, inclusive entre caixas diferentes.
+$lockPedidoNome='pdv_pedido_'.(int)$id_empresa.'_'.date('Ymd');
+$lockPedidoSt=$pdo->prepare('SELECT GET_LOCK(:nome,10)');
+$lockPedidoSt->execute([':nome'=>$lockPedidoNome]);
+if ((int)$lockPedidoSt->fetchColumn() !== 1) {
+    throw new RuntimeException('Não foi possível reservar o número do pedido. Tente novamente.');
 }
-$pedido = $num_pedido + 1;
+$ultimoPedidoSt=$pdo->prepare('SELECT COALESCE(MAX(pedido),0) FROM vendas WHERE empresa=:empresa AND data=CURDATE()');
+$ultimoPedidoSt->execute([':empresa'=>(int)$id_empresa]);
+$pedido=(int)$ultimoPedidoSt->fetchColumn()+1;
 
 $troco_calculado = 0;
 if($troco > 0){
@@ -278,6 +281,15 @@ echo 'Salvo com Sucesso-'.$id_pedido;
     error_log('PDV finalizar venda: '.$e->getMessage());
     http_response_code($e instanceof RuntimeException ? 409 : 500);
     echo $e instanceof RuntimeException ? $e->getMessage() : 'Não foi possível finalizar a venda.';
+} finally {
+    if (!empty($lockPedidoNome)) {
+        try {
+            $liberarPedido=$pdo->prepare('SELECT RELEASE_LOCK(:nome)');
+            $liberarPedido->execute([':nome'=>$lockPedidoNome]);
+        } catch (Throwable $ignorado) {
+            error_log('PDV: falha ao liberar bloqueio de numeração.');
+        }
+    }
 }
 
  ?>
