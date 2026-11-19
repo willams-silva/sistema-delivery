@@ -331,6 +331,14 @@ $dashboardFormasSt=$pdo->prepare("SELECT f.nome,COUNT(*) quantidade,COALESCE(SUM
  GROUP BY f.id,f.nome ORDER BY total DESC");
 $dashboardFormasSt->execute([':empresa'=>(int)$id_empresa,':inicio'=>$dashboardInicio,':fim'=>$dashboardFim]);
 $dashboardFormas=$dashboardFormasSt->fetchAll(PDO::FETCH_ASSOC);
+$dashboardTopProdutosSt=$pdo->prepare("SELECT p.nome,COALESCE(SUM(c.quantidade),0) quantidade
+ FROM carrinho c INNER JOIN vendas v ON v.id=c.pedido AND v.empresa=c.empresa
+ INNER JOIN produtos p ON p.id=c.produto AND p.empresa=c.empresa
+ WHERE c.empresa=:empresa AND v.data BETWEEN :inicio AND :fim
+ AND (v.status IS NULL OR v.status<>'Cancelado')
+ GROUP BY p.id,p.nome ORDER BY quantidade DESC,p.nome ASC LIMIT 5");
+$dashboardTopProdutosSt->execute([':empresa'=>(int)$id_empresa,':inicio'=>$dashboardInicio,':fim'=>$dashboardFim]);
+$dashboardTopProdutos=$dashboardTopProdutosSt->fetchAll(PDO::FETCH_ASSOC);
 $dashboardTicketMedio=(int)$dashboardResumoHoje['quantidade']>0
     ? (float)$dashboardResumoHoje['total']/(int)$dashboardResumoHoje['quantidade'] : 0.0;
 
@@ -428,6 +436,19 @@ $dashboardTicketMedio=(int)$dashboardResumoHoje['quantidade']>0
     <?php if (!$dashboardFormas): ?><p class="text-muted">Sem recebimentos no período.</p><?php endif; ?>
   </section></div>
 </div>
+<section class="card p-3 mb-3" aria-label="Produtos mais vendidos">
+  <h5>Top 5 produtos mais vendidos</h5>
+  <div class="table-responsive"><table class="table table-sm align-middle mb-0">
+    <thead><tr><th scope="col">Posição</th><th scope="col">Produto</th><th scope="col" class="text-end">Quantidade</th></tr></thead>
+    <tbody>
+    <?php foreach ($dashboardTopProdutos as $posicao=>$produto): ?>
+      <tr><td><?php echo $posicao+1; ?>º</td>
+        <td><?php echo htmlspecialchars($produto['nome'],ENT_QUOTES,'UTF-8'); ?></td>
+        <td class="text-end"><?php echo number_format((float)$produto['quantidade'],2,',','.'); ?></td></tr>
+    <?php endforeach; ?>
+    <?php if (!$dashboardTopProdutos): ?><tr><td colspan="3" class="text-muted">Nenhum produto vendido no período.</td></tr><?php endif; ?>
+    </tbody></table></div>
+</section>
 <div class="row g-3 mt-2 mb-3" aria-label="Resumo operacional">
   <div class="col-12 col-md-4">
     <div class="card h-100 p-3">
