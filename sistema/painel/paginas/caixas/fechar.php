@@ -35,6 +35,20 @@ try {
     $atualiza = $pdo->prepare('UPDATE caixas SET data_fechamento=CURDATE(), valor_fechamento=:valor, quebra=:quebra, usuario_fechamento=:usuario WHERE id=:id AND empresa=:empresa AND data_fechamento IS NULL');
     $atualiza->execute([':valor'=>$informado,':quebra'=>$quebra,':usuario'=>$usuario,':id'=>$id,':empresa'=>$empresa]);
     if ($atualiza->rowCount() !== 1) throw new RuntimeException('Fechamento não confirmado.');
+    // Auditoria na mesma transação: falha no log impede fechamento sem rastreabilidade.
+    $auditoria = $pdo->prepare("INSERT INTO auditoria_caixas
+        (empresa,caixa,usuario,evento,valor_abertura,saldo_esperado,valor_informado,diferenca,detalhes)
+        VALUES (:empresa,:caixa,:usuario,'FECHAMENTO',:abertura,:esperado,:informado,:diferenca,:detalhes)");
+    $auditoria->execute([
+        ':empresa'=>$empresa, ':caixa'=>$id, ':usuario'=>$usuario,
+        ':abertura'=>$caixa['valor_abertura'], ':esperado'=>$esperado,
+        ':informado'=>$informado, ':diferenca'=>$quebra,
+        ':detalhes'=>json_encode([
+            'entradas_dinheiro'=>$resumo['entradas'],
+            'saidas_dinheiro'=>$resumo['saidas'],
+            'sangrias'=>$resumo['sangrias']
+        ], JSON_THROW_ON_ERROR | JSON_UNESCAPED_UNICODE)
+    ]);
     $pdo->commit();
     echo 'Salvo com Sucesso';
 } catch (Throwable $e) {
