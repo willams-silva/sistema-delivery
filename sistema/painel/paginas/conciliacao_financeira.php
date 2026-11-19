@@ -123,7 +123,7 @@ try {
  $paginasLiqConc=max(1,(int)ceil($totalLiqConc/$porPaginaLiqConc));
  $paginaLiqConc=min($paginaLiqConc,$paginasLiqConc);
  $offsetLiqConc=($paginaLiqConc-1)*$porPaginaLiqConc;
- $sqlLiqConc="SELECT l.id,l.forma_pgto,l.data_referencia,l.data_credito,l.valor_creditado,l.identificador,l.observacao,l.cancelado_em,l.cancelado_por,l.motivo_cancelamento,fp.nome AS forma FROM conciliacao_liquidacoes l INNER JOIN formas_pgto fp ON fp.id=l.forma_pgto AND fp.empresa=l.empresa WHERE l.empresa=:empresa AND l.data_referencia BETWEEN :inicio AND :fim".$filtroSqlLiqConc." ORDER BY l.data_referencia DESC,l.id DESC LIMIT ".$porPaginaLiqConc." OFFSET ".$offsetLiqConc;
+ $sqlLiqConc="SELECT l.id,l.forma_pgto,l.data_referencia,l.data_credito,l.valor_creditado,l.identificador,l.observacao,l.cancelado_em,l.cancelado_por,l.motivo_cancelamento,(SELECT COUNT(*) FROM conciliacao_vinculos_recebimentos v WHERE v.empresa=l.empresa AND v.liquidacao_id=l.id) AS total_vinculos,fp.nome AS forma FROM conciliacao_liquidacoes l INNER JOIN formas_pgto fp ON fp.id=l.forma_pgto AND fp.empresa=l.empresa WHERE l.empresa=:empresa AND l.data_referencia BETWEEN :inicio AND :fim".$filtroSqlLiqConc." ORDER BY l.data_referencia DESC,l.id DESC LIMIT ".$porPaginaLiqConc." OFFSET ".$offsetLiqConc;
  $stL=$pdo->prepare($sqlLiqConc);
  $stL->execute($paramsLiqConc);$liquidacoesConc=$stL->fetchAll(PDO::FETCH_ASSOC);
  $stAud=$pdo->prepare("SELECT
@@ -698,6 +698,8 @@ if($audUsuarioConc!=='')$queryAudConc['cancel_usuario']=$audUsuarioConc;
 <td><?php if(!empty($l['cancelado_em'])): ?>
 <span class="text-danger">Cancelado em <?php echo $escConc($l['cancelado_em']); ?></span>
 <div class="bc-conc-note">Motivo: <?php echo $escConc($l['motivo_cancelamento']??''); ?> | Usuário #<?php echo (int)$l['cancelado_por']; ?></div>
+<?php elseif((int)($l['total_vinculos']??0)>0): ?>
+<span class="bc-conc-note">Crédito com <?php echo (int)$l['total_vinculos']; ?> recebimento(s) vinculado(s). Revise os vínculos antes de cancelar.</span>
 <?php else: ?>
 <details><summary class="btn btn-sm btn-outline-danger">Cancelar</summary>
 <form method="post" action="paginas/cancelar_liquidacao_conciliacao.php" onsubmit="return confirm('Confirma o cancelamento deste crédito?');">
