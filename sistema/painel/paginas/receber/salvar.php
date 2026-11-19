@@ -165,7 +165,7 @@ if(@count($res1) > 0){
 
 
 if($id == ""){
-$query = $pdo->prepare("INSERT INTO $tabela SET descricao = :descricao, cliente = :cliente, valor = :valor, vencimento = '$vencimento' $pgto, data_lanc = curDate(), forma_pgto = '$forma_pgto', frequencia = '$frequencia', obs = :obs, arquivo = '$foto', foto = '$foto', subtotal = :valor, usuario_lanc = '$id_usuario' $usu_pgto, pago = '$pago', referencia = 'Conta', caixa = '$id_caixa', hora = curTime(), empresa = '$id_empresa' ");
+$query = $pdo->prepare("INSERT INTO receber SET descricao=:descricao, cliente=:cliente, valor=:valor, vencimento=:vencimento, data_pgto=:data_pgto, data_lanc=CURDATE(), forma_pgto=:forma_pgto, frequencia=:frequencia, obs=:obs, arquivo=:arquivo, foto=:foto, subtotal=:valor, usuario_lanc=:usuario_lanc, usuario_pgto=:usuario_pgto, pago=:pago, referencia='Conta', caixa=:caixa, hora=CURTIME(), empresa=:empresa");
 
 
 
@@ -233,7 +233,7 @@ $query = $pdo->prepare("INSERT INTO $tabela SET descricao = :descricao, cliente 
 }
 	
 }else{
-$query = $pdo->prepare("UPDATE $tabela SET descricao = :descricao, cliente = :cliente, valor = :valor, vencimento = '$vencimento' $pgto, forma_pgto = '$forma_pgto', frequencia = '$frequencia', obs = :obs, arquivo = '$foto', foto = '$foto', subtotal = :valor where id = '$id' and empresa = '$id_empresa'");
+$query = $pdo->prepare("UPDATE receber SET descricao=:descricao, cliente=:cliente, valor=:valor, vencimento=:vencimento, data_pgto=:data_pgto, forma_pgto=:forma_pgto, frequencia=:frequencia, obs=:obs, arquivo=:arquivo, foto=:foto, subtotal=:valor, usuario_pgto=:usuario_pgto, pago=:pago WHERE id=:id AND empresa=:empresa AND (pago IS NULL OR pago <> 'Sim')");
 
 
 
@@ -303,6 +303,21 @@ $query->bindValue(":descricao", "$descricao");
 $query->bindValue(":cliente", "$cliente");
 $query->bindValue(":valor", "$valor");
 $query->bindValue(":obs", "$obs");
+$query->bindValue(':vencimento',$vencimento);
+$query->bindValue(':data_pgto',$data_pgto !== '' ? $data_pgto : null);
+$query->bindValue(':forma_pgto',$forma_pgto);
+$query->bindValue(':frequencia',$frequencia);
+$query->bindValue(':arquivo',$foto);
+$query->bindValue(':foto',$foto);
+$query->bindValue(':usuario_pgto',$data_pgto !== '' ? (int)$id_usuario : null);
+$query->bindValue(':pago',$pago);
+$query->bindValue(':empresa',(int)$id_empresa,PDO::PARAM_INT);
+if ($id === '') {
+    $query->bindValue(':usuario_lanc',(int)$id_usuario,PDO::PARAM_INT);
+    $query->bindValue(':caixa',(int)$id_caixa,PDO::PARAM_INT);
+} else {
+    $query->bindValue(':id',(int)$id,PDO::PARAM_INT);
+}
 // Gravação e trilha de auditoria atômicas: erro em qualquer etapa desfaz ambas.
 try {
     $pdo->beginTransaction();
