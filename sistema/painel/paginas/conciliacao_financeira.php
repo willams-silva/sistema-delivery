@@ -450,6 +450,7 @@ $linhasPendenciaExibidasConc++; ?>
 <div class="alert alert-warning">Execute a migração SQL conciliacao_liquidacoes.sql para ativar este recurso.</div>
 <?php else: ?>
 <?php if(isset($_GET['liquidacao_salva'])): ?><div class="alert alert-success">Crédito registrado com sucesso.</div><?php endif; ?>
+<?php if(isset($_GET['liquidacao_duplicada'])): ?><div class="alert alert-warning" role="alert"><strong>Possível crédito duplicado.</strong> Já existe um lançamento com o mesmo identificador para esta forma de pagamento, ou com a mesma forma, datas e valor. Nenhum novo crédito foi registrado. Confira o histórico antes de tentar novamente.</div><?php endif; ?>
 <form method="post" action="paginas/salvar_liquidacao_conciliacao.php">
 <input type="hidden" name="csrf_conc" value="<?php echo $escConc($_SESSION['csrf_conc']); ?>">
 <div class="bc-conc-filter">
