@@ -52,6 +52,13 @@ if ($caixas) {
         $auditorias[(int)$evento['caixa']]=$evento;
     }
 }
+// Diagnóstico não destrutivo: recebimentos/pagamentos quitados sem caixa associado.
+$pendenciasVinculo = ['receber'=>0,'pagar'=>0];
+foreach (['receber','pagar'] as $origem) {
+    $st=$pdo->prepare("SELECT COUNT(*) FROM $origem m LEFT JOIN caixas c ON c.id=m.caixa AND c.empresa=m.empresa WHERE m.empresa=:empresa AND m.pago='Sim' AND (m.caixa IS NULL OR m.caixa=0 OR c.id IS NULL)");
+    $st->execute([':empresa'=>$empresa]);
+    $pendenciasVinculo[$origem]=(int)$st->fetchColumn();
+}
 $h=static function($v){return htmlspecialchars((string)$v,ENT_QUOTES,'UTF-8');};
 $moeda=static function($v){return 'R$ '.number_format((float)$v,2,',','.');};
 ?>
@@ -66,6 +73,13 @@ $moeda=static function($v){return 'R$ '.number_format((float)$v,2,',','.');};
  <div class="col-md-4"><label for="gc-fim" class="form-label">Até</label><input id="gc-fim" class="form-control" type="date" name="fim" value="<?= $h($fim) ?>"></div>
  <div class="col-md-4"><button class="btn btn-primary w-100" type="submit">Consultar</button></div>
 </div></form>
+<?php if (array_sum($pendenciasVinculo)>0): ?>
+<div class="alert alert-warning" role="alert">
+<strong><i class="fa fa-exclamation-triangle me-1"></i> Atenção à integração financeira</strong>
+<div>Existem <?= $pendenciasVinculo['receber'] ?> recebimento(s) e <?= $pendenciasVinculo['pagar'] ?> pagamento(s) quitado(s) sem vínculo válido com um caixa. Esses registros não entram no cálculo de nenhum fechamento.</div>
+<small>Diagnóstico de toda a empresa, não limitado ao período filtrado. Nenhum lançamento foi alterado.</small>
+</div>
+<?php endif; ?>
 <div class="row g-3 mb-3">
  <div class="col-md-4"><div class="card card-body"><small>Caixas abertos</small><h3><?= $totalAbertos ?></h3></div></div>
  <div class="col-md-4"><div class="card card-body"><small>Caixas fechados</small><h3><?= $totalFechados ?></h3></div></div>
