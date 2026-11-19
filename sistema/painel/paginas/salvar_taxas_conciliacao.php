@@ -1,6 +1,6 @@
 <?php
 @session_start();
-require_once('../../../conexao.php');
+require_once('../../conexao.php');
 if (!in_array($_SESSION['nivel'] ?? '', ['Administrador','Gerente'], true)) {
  http_response_code(403); exit('Acesso negado.');
 }
