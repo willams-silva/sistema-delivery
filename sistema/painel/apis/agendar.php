@@ -85,6 +85,14 @@ try {
             $hash = (string)$existente;
             return;
         }
+        // Substitui lembretes pendentes com datas antigas após uma alteração.
+        $limparPendentes = $pdo->prepare("DELETE FROM whatsapp_agendamentos
+            WHERE empresa=:empresa AND referencia='pagar' AND id_ref=:id_ref
+              AND status='Pendente'");
+        $limparPendentes->execute([
+            ':empresa'=>(int)$id_empresa,
+            ':id_ref'=>(int)$ultimo_id
+        ]);
     }
 
     $stmt = $pdo->prepare("
