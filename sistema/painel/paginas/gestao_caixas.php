@@ -40,6 +40,18 @@ if ($caixas) {
         $detalhes[(int)$linha['caixa']]['sangrias']=$linha;
     }
 }
+// Último evento de fechamento por caixa, com autor e data registrados.
+$auditorias = [];
+if ($caixas) {
+    $ids = array_map(static function($c){return (int)$c['id'];},$caixas);
+    $marcadores = implode(',',array_fill(0,count($ids),'?'));
+    $sql = "SELECT a.caixa,a.usuario,a.criado_em,a.saldo_esperado,a.valor_informado,a.diferenca,u.nome AS responsavel FROM auditoria_caixas a LEFT JOIN usuarios u ON u.id=a.usuario AND u.empresa=a.empresa INNER JOIN (SELECT caixa,MAX(id) AS ultimo FROM auditoria_caixas WHERE empresa=? AND evento='FECHAMENTO' AND caixa IN ($marcadores) GROUP BY caixa) ult ON ult.ultimo=a.id WHERE a.empresa=?";
+    $st=$pdo->prepare($sql);
+    $st->execute(array_merge([(int)$empresa],$ids,[(int)$empresa]));
+    foreach($st->fetchAll(PDO::FETCH_ASSOC) as $evento) {
+        $auditorias[(int)$evento['caixa']]=$evento;
+    }
+}
 $h=static function($v){return htmlspecialchars((string)$v,ENT_QUOTES,'UTF-8');};
 $moeda=static function($v){return 'R$ '.number_format((float)$v,2,',','.');};
 ?>
@@ -65,7 +77,7 @@ $moeda=static function($v){return 'R$ '.number_format((float)$v,2,',','.');};
  <div class="col-md-4"><div class="card card-body"><small>Total de faltas</small><h3 class="text-danger"><?= $moeda($totalFaltas) ?></h3></div></div>
 </div>
 <div class="card"><div class="card-body table-responsive">
-<table class="table table-striped table-hover"><thead><tr><th>Caixa</th><th>Operador</th><th>Abertura</th><th>Fechamento</th><th>Saldo inicial</th><th>Valor informado</th><th>Diferença</th><th>Status</th><th>Detalhes</th></tr></thead><tbody>
+<table class="table table-striped table-hover"><thead><tr><th>Caixa</th><th>Operador</th><th>Abertura</th><th>Fechamento</th><th>Saldo inicial</th><th>Valor informado</th><th>Diferença</th><th>Status</th><th>Responsável pelo fechamento</th><th>Detalhes</th></tr></thead><tbody>
 <?php foreach($caixas as $c): ?>
 <?php
   $diferencaCaixa = round((float)$c['quebra'],2);
@@ -82,9 +94,15 @@ $moeda=static function($v){return 'R$ '.number_format((float)$v,2,',','.');};
 <td><?= $c['data_fechamento'] ? $moeda($c['valor_fechamento']) : '—' ?></td>
 <td class="<?= $fechado && $diferencaCaixa < 0 ? 'text-danger fw-bold' : ($fechado && $diferencaCaixa > 0 ? 'text-success fw-bold' : '') ?>"><?= $fechado ? $moeda($diferencaCaixa) : '—' ?></td>
 <td><span class="badge <?= $classeSituacao ?>"><?= $situacao ?></span></td>
+<td><?php $aud=$auditorias[(int)$c['id']] ?? null; ?>
+<?php if($aud): ?>
+<strong><?= $h($aud['responsavel'] ?: 'Usuário #'.$aud['usuario']) ?></strong>
+<div class="text-muted small"><?= $h($aud['criado_em']) ?></div>
+<?php else: ?><span class="text-muted">Sem registro de auditoria</span><?php endif; ?>
+</td>
 <td><button class="btn btn-outline-primary btn-sm" type="button" data-bs-toggle="collapse" data-bs-target="#gc-detalhe-<?= (int)$c['id'] ?>" aria-expanded="false" aria-controls="gc-detalhe-<?= (int)$c['id'] ?>">Detalhar</button></td>
 </tr>
-<tr class="collapse" id="gc-detalhe-<?= (int)$c['id'] ?>"><td colspan="9">
+<tr class="collapse" id="gc-detalhe-<?= (int)$c['id'] ?>"><td colspan="10">
  <div class="row g-3">
  <?php foreach (['entradas'=>'Recebimentos','saidas'=>'Pagamentos'] as $tipo=>$titulo): ?>
  <div class="col-md-5"><strong><?= $h($titulo) ?> por forma</strong>
