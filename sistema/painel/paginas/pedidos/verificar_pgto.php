@@ -27,6 +27,9 @@ if ($codigoPagamento !== '' && preg_match('/^[0-9]{1,30}$/D', $codigoPagamento)
         if (is_object($resultado)
             && (string)($resultado->id ?? '') === $codigoPagamento
             && ($resultado->status ?? '') === 'approved'
+            // Não aceitar cartão ou boleto como PIX mesmo que estejam aprovados.
+            && strtolower((string)($resultado->payment_method_id ?? '')) === 'pix'
+            && strtolower((string)($resultado->payment_type_id ?? '')) === 'bank_transfer'
             // Não quitar venda com valor diferente ou moeda não BRL.
             && strtoupper((string)($resultado->currency_id ?? '')) === 'BRL'
             && isset($valor) && is_numeric($valor)
