@@ -163,6 +163,31 @@ if (@$pausar_delivery == 'Sim') {
 	</div>
 
 
+    <style>
+    .esteira-barra{display:flex;justify-content:space-between;gap:12px;align-items:center;flex-wrap:wrap;margin:12px 0}
+    .esteira-quadro{display:grid;grid-template-columns:repeat(4,minmax(240px,1fr));gap:12px;align-items:start;overflow-x:auto}
+    .esteira-coluna{background:#f4f6fa;border:1px solid #dce2e9;border-radius:12px;padding:12px;min-height:200px}
+    .esteira-coluna h3{font-size:15px;font-weight:700;display:flex;justify-content:space-between;margin:0 0 12px}
+    .esteira-coluna .esteira-cartao{display:block!important;width:100%!important;max-width:none!important;margin:0 0 12px;float:none!important;position:relative;border:1px solid #dfe4ea;border-radius:9px;background:#fff;box-shadow:0 2px 7px #00000012}
+    .esteira-coluna .esteira-cartao>div{border-radius:9px;padding:10px!important}
+    .esteira-tempo{font-size:12px;font-weight:600;display:block;margin:5px 0}
+    .esteira-atrasado{border:2px solid #d32f2f!important}
+    .esteira-atrasado .esteira-tempo{color:#b42318}
+    .esteira-coluna-vazia{font-size:13px;color:#697586}
+    @media(max-width:1000px){.esteira-quadro{grid-template-columns:repeat(2,minmax(240px,1fr))}}
+    @media(max-width:600px){.esteira-quadro{grid-template-columns:minmax(0,1fr)}}
+    </style>
+    <div class="esteira-barra">
+        <strong>Esteira de produção</strong>
+        <div class="d-flex gap-2 align-items-center">
+            <label for="esteira-origem" class="small mb-0">Origem</label>
+            <select id="esteira-origem" class="form-select form-select-sm" aria-label="Filtrar origem dos pedidos">
+                <option value="">Todas</option><option value="Delivery">Delivery</option>
+                <option value="Retirar">Retirada</option><option value="Balcão">Balcão</option>
+            </select>
+            <button type="button" class="btn btn-outline-primary btn-sm" id="esteira-tela-cheia">Tela cheia</button>
+        </div>
+    </div>
 	<hr>
 	<div id="listar">
 
@@ -401,6 +426,63 @@ $(document).on('show.bs.modal', '#modalBaixar', function(){
 
 
 <script type="text/javascript">
+    const colunasEsteira=[['Iniciado','Iniciados'],['Aceito','Aceitos'],['Preparando','Preparando'],['Entrega','Em rota / Prontos']];
+    function montarEsteira(){
+        const area=document.getElementById('listar');
+        if(!area)return;
+        const cards=Array.from(area.querySelectorAll('.esteira-cartao'));
+        if(!cards.length)return;
+        const quadro=document.createElement('div');
+        quadro.className='esteira-quadro';
+        colunasEsteira.forEach(function(col){
+            const sec=document.createElement('section');
+            sec.className='esteira-coluna';
+            sec.dataset.status=col[0];
+            const titulo=document.createElement('h3');
+            titulo.textContent=col[1];
+            const qtd=document.createElement('span');
+            qtd.className='badge bg-secondary';
+            titulo.appendChild(qtd);
+            sec.appendChild(titulo);
+            quadro.appendChild(sec);
+        });
+        cards.forEach(function(card){
+            const destino=quadro.querySelector('.esteira-coluna[data-status="'+card.dataset.status+'"]');
+            if(!destino)return;
+            const tempo=document.createElement('span');
+            tempo.className='esteira-tempo';
+            tempo.setAttribute('aria-live','off');
+            card.querySelector('div')?.appendChild(tempo);
+            destino.appendChild(card);
+        });
+        area.replaceChildren(quadro);
+        atualizarTemposEsteira();
+    }
+    function atualizarTemposEsteira(){
+        const filtro=document.getElementById('esteira-origem')?.value||'';
+        document.querySelectorAll('#listar .esteira-cartao').forEach(function(card){
+            const data=String(card.dataset.criado||'').replace(' ','T');
+            const instante=new Date(data);
+            const minutos=Number.isFinite(instante.getTime())?Math.max(0,Math.floor((Date.now()-instante.getTime())/60000)):null;
+            const tempo=card.querySelector('.esteira-tempo');
+            if(tempo)tempo.textContent=minutos===null?'Horário indisponível':'Aguardando há '+minutos+' min';
+            card.classList.toggle('esteira-atrasado',minutos!==null && minutos>=30 && card.dataset.status!=='Entrega');
+            card.style.display=(!filtro || card.dataset.tipo===filtro)?'':'none';
+        });
+        document.querySelectorAll('#listar .esteira-coluna').forEach(function(col){
+            const qtd=Array.from(col.querySelectorAll('.esteira-cartao')).filter(function(c){return c.style.display!=='none'}).length;
+            col.querySelector('.badge').textContent=String(qtd);
+            col.querySelector('.esteira-coluna-vazia')?.remove();
+            if(!qtd){const vazio=document.createElement('p');vazio.className='esteira-coluna-vazia';vazio.textContent='Nenhum pedido nesta etapa';col.appendChild(vazio);}
+        });
+    }
+    $(document).on('change','#esteira-origem',atualizarTemposEsteira);
+    $(document).on('click','#esteira-tela-cheia',function(){
+        const painel=document.getElementById('listar');
+        if(document.fullscreenElement){document.exitFullscreen?.();}
+        else if(painel?.requestFullscreen){painel.requestFullscreen();}
+    });
+    setInterval(function(){if(!document.hidden)atualizarTemposEsteira();},30000);
     var requisicaoEsteira = null;
     var sequenciaEsteira = 0;
     function listar() {
@@ -423,6 +505,7 @@ $(document).on('show.bs.modal', '#modalBaixar', function(){
                 if (sequencia !== sequenciaEsteira) return;
                 if ($('.modal.show').length || $('#listar').find(':focus').length) return;
 				$("#listar").html(result);
+                montarEsteira();
 				$('#mensagem-excluir').text('');
 			},
             error: function(xhr, status) {
