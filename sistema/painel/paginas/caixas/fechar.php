@@ -39,7 +39,7 @@ try {
     };
     $entradas = $total('receber');
     $saidas = $total('pagar');
-    $sangrias = $pdo->prepare('SELECT COALESCE(SUM(valor),0) FROM sangrias WHERE empresa=:empresa AND caixa=:caixa');
+    $sangrias = $pdo->prepare('SELECT COALESCE(SUM(s.valor),0) FROM sangrias s INNER JOIN caixas c ON c.id=s.caixa WHERE c.empresa=:empresa AND c.id=:caixa');
     $sangrias->execute([':empresa'=>$empresa,':caixa'=>$id]);
     $retiradas = (float)$sangrias->fetchColumn();
     $esperado = round((float)$caixa['valor_abertura'] + $entradas - $saidas - $retiradas, 2);
