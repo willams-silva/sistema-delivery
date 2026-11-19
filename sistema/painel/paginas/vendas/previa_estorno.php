@@ -122,8 +122,26 @@ try {
     $st->execute([':empresa'=>$empresa,':venda'=>$vendaId,':venda2'=>$vendaId]);
     $dependenciasExternas=(int)$st->fetchColumn();
     if ($dependenciasExternas>0) $motivosBloqueio[]='Existem recebimentos derivados sem vínculo com esta venda';
+    // Elegibilidade conservadora: somente dinheiro, quitação integral,
+    // parcela simples, caixa aberto e estoque rastreável.
+    // Isto NÃO executa nem habilita estorno; informa se a venda pode
+    // seguir para implementação/testes da rotina transacional.
+    $parcelasSimples=true;
+    foreach ($parcelas as $parcela) {
+        if (($parcela['referencia'] ?? '')!=='Venda'
+            || ($parcela['pago'] ?? '')!=='Sim'
+            || ($parcela['residuo'] ?? '')==='Sim'
+            || (int)($parcela['id_ref'] ?? 0)>0) {
+            $parcelasSimples=false;
+            break;
+        }
+    }
+    if (!$parcelasSimples) $motivosBloqueio[]='Recebimentos não são parcelas simples integralmente quitadas';
     $divergencia=round((float)$venda['valor']-$recebido-$pendente,2);
     if (abs($divergencia)>0.009) $motivosBloqueio[]='Valores recebidos e pendentes não conciliam com a venda';
+    $candidatoEstornoDinheiro=count($parcelas)>0 && count($motivosBloqueio)===0
+        && abs($divergencia)<0.01 && $pendente<0.01
+        && $pagamentosNaoDinheiro===0 && $parcelasSimples;
     echo json_encode([
       'venda_id'=>$vendaId,'valor_venda'=>(float)$venda['valor'],
       'total_recebido'=>round($recebido,2),'total_pendente'=>round($pendente,2),
@@ -141,6 +159,7 @@ try {
       'estorno_existente'=>$estornoExistente?:null,
       'requer_revisao'=>!$parcelas || count($motivosBloqueio)>0,
       'motivos_bloqueio'=>$motivosBloqueio,
+      'candidato_estorno_dinheiro'=>$candidatoEstornoDinheiro,
       'estorno_automatico_habilitado'=>false,
       'aviso'=>'Prévia informativa. Nenhuma devolução foi realizada.'
     ],JSON_THROW_ON_ERROR|JSON_UNESCAPED_UNICODE);
