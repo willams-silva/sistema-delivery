@@ -28,6 +28,60 @@ if ($linhas > 0) {
 ?>
 
 
+<section class="card mb-3" id="auditoria-pagar">
+ <div class="card-body">
+  <div class="d-flex justify-content-between align-items-center flex-wrap gap-2">
+   <h5 class="mb-0"><i class="fe fe-shield me-2"></i>Histórico de auditoria</h5>
+   <button class="btn btn-outline-primary btn-sm" type="button" id="auditoria-pagar-toggle" aria-expanded="false" aria-controls="auditoria-pagar-conteudo">Consultar histórico</button>
+  </div>
+  <div id="auditoria-pagar-conteudo" style="display:none" class="mt-3">
+   <div class="row g-2 mb-3">
+    <div class="col-md-3"><label for="auditoria-inicio">De</label><input id="auditoria-inicio" type="date" class="form-control"></div>
+    <div class="col-md-3"><label for="auditoria-fim">Até</label><input id="auditoria-fim" type="date" class="form-control"></div>
+    <div class="col-md-3"><label for="auditoria-acao">Operação</label><select id="auditoria-acao" class="form-select"><option value="">Todas</option><option>CRIAR</option><option>ALTERAR</option><option>BAIXAR</option><option>EXCLUIR</option><option>ESTORNAR</option></select></div>
+    <div class="col-md-3 d-flex align-items-end"><button type="button" id="auditoria-pesquisar" class="btn btn-primary w-100">Pesquisar</button></div>
+   </div>
+   <div id="auditoria-mensagem" role="status" class="small mb-2"></div>
+   <div class="table-responsive"><table class="table table-sm table-striped"><thead><tr><th>Data</th><th>Operação</th><th>Conta</th><th>Descrição</th><th>Usuário</th><th>Valor anterior</th><th>Valor novo</th></tr></thead><tbody id="auditoria-pagar-linhas"></tbody></table></div>
+   <small class="text-muted">Exibindo até 100 registros recentes por consulta.</small>
+  </div>
+ </div>
+</section>
+<script>
+(function(){
+ const raiz=document.getElementById('auditoria-pagar');
+ const botao=raiz.querySelector('#auditoria-pagar-toggle');
+ const conteudo=raiz.querySelector('#auditoria-pagar-conteudo');
+ const corpo=raiz.querySelector('#auditoria-pagar-linhas');
+ const aviso=raiz.querySelector('#auditoria-mensagem');
+ const texto=(valor)=>document.createTextNode(valor===null||valor===undefined?'—':String(valor));
+ const moeda=(valor)=>valor===null||valor===undefined?'—':Number(valor).toLocaleString('pt-BR',{style:'currency',currency:'BRL'});
+ async function carregar(){
+  aviso.textContent='Consultando histórico...';corpo.replaceChildren();
+  const params=new URLSearchParams();
+  for(const [campo,id] of [['inicio','auditoria-inicio'],['fim','auditoria-fim'],['acao','auditoria-acao']]){
+   const valor=raiz.querySelector('#'+id).value;if(valor)params.set(campo,valor);
+  }
+  try{
+   const resposta=await fetch('paginas/pagar/auditoria_listar.php?'+params.toString(),{credentials:'same-origin'});
+   const dados=await resposta.json();if(!resposta.ok)throw new Error(dados.erro||'Falha na consulta');
+   for(const registro of dados.registros||[]){
+    const tr=document.createElement('tr');
+    const valores=[registro.ocorrido_em,registro.acao,registro.registro_id,registro.descricao,registro.usuario_nome||registro.usuario_id,moeda(registro.valor_antes),moeda(registro.valor_depois)];
+    for(const valor of valores){const td=document.createElement('td');td.appendChild(texto(valor));tr.appendChild(td);}
+    corpo.appendChild(tr);
+   }
+   aviso.textContent=(dados.registros||[]).length?'':'Nenhum registro encontrado.';
+  }catch(erro){aviso.textContent=erro.message||'Não foi possível carregar o histórico.';}
+ }
+ botao.addEventListener('click',()=>{
+  const abrir=conteudo.style.display==='none';conteudo.style.display=abrir?'':'none';botao.setAttribute('aria-expanded',String(abrir));
+  if(abrir)carregar();
+ });
+ raiz.querySelector('#auditoria-pesquisar').addEventListener('click',carregar);
+})();
+</script>
+
 <div class="justify-content-between ux-finance-page">
 	<form action="rel/pagar_class.php" target="_blank" method="POST">
 		<div class="left-content mt-2">
