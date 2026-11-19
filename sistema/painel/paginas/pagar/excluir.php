@@ -8,14 +8,16 @@ $id=filter_var($_POST['id']??null,FILTER_VALIDATE_INT,['options'=>['min_range'=>
 if(!$id){http_response_code(400);exit('Conta inválida.');}
 require_once('../../../conexao.php');
 require_once('../../buscar_config.php');
+require_once __DIR__ . '/../../includes/auditoria_financeira.php';
 try{
  $pdo->beginTransaction();
- $st=$pdo->prepare('SELECT id,arquivo,hash FROM pagar WHERE id=:id AND empresa=:empresa FOR UPDATE');
+ $st=$pdo->prepare('SELECT id,arquivo,hash,descricao,valor,vencimento,data_pgto,forma_pgto,pago,subtotal,frequencia FROM pagar WHERE id=:id AND empresa=:empresa FOR UPDATE');
  $st->execute([':id'=>$id,':empresa'=>$id_empresa]);$conta=$st->fetch(PDO::FETCH_ASSOC);
  if(!$conta){$pdo->rollBack();http_response_code(404);exit('Conta não encontrada neste estabelecimento.');}
  $st=$pdo->prepare('DELETE FROM pagar WHERE id=:id AND empresa=:empresa');
  $st->execute([':id'=>$id,':empresa'=>$id_empresa]);
  if($st->rowCount()!==1)throw new RuntimeException('Exclusão não confirmada.');
+ registrarAuditoriaFinanceira($pdo,$id_empresa,'pagar',(int)$id,'EXCLUIR',$id_usuario,$conta,null);
  $pdo->commit();
 }catch(Throwable $e){
  if($pdo->inTransaction())$pdo->rollBack();
