@@ -57,6 +57,19 @@ foreach ($previsoes as $m) {
 }
 ksort($diarioFinanceiro);
 
+
+// Conferência por forma de pagamento: não soma vendas novamente às contas recebidas.
+$formasSt = $pdo->prepare("SELECT COALESCE(fp.nome, 'Não identificada') AS forma,
+ COUNT(r.id) AS quantidade, COALESCE(SUM(r.valor),0) AS total
+ FROM receber r
+ LEFT JOIN formas_pgto fp ON fp.id = r.forma_pgto AND fp.empresa = r.empresa
+ WHERE r.empresa = :empresa AND r.pago = 'Sim' AND r.data_pgto BETWEEN :inicio AND :fim
+ GROUP BY fp.id, fp.nome ORDER BY total DESC");
+$formasSt->execute($parametros);
+$formasRecebidas = $formasSt->fetchAll(PDO::FETCH_ASSOC);
+$totalConferido = array_sum(array_map(static function ($item) { return (float)$item['total']; }, $formasRecebidas));
+$diferencaConferencia = round($entradas - $totalConferido, 2);
+
 $saldoPeriodo = $entradas - $saidas;
 ?>
 <style>
@@ -137,5 +150,18 @@ foreach ($diarioFinanceiro as $dia => $m):
 <?php endforeach; ?>
 <?php if (!$diarioFinanceiro): ?><tr><td colspan="7" style="text-align:center">Sem lançamentos no período selecionado.</td></tr><?php endif; ?>
 </tbody></table></div></div>
+<div class="bc-card mt-3">
+<h5>Conferência de recebimentos por forma de pagamento</h5>
+<p class="bc-note">Agrupamento dos registros baixados em Contas a Receber. Não duplica vendas do PDV e não comprova depósito bancário.</p>
+<div class="table-responsive"><table><thead><tr><th>Forma de pagamento</th><th>Quantidade de lançamentos</th><th>Total registrado</th></tr></thead><tbody>
+<?php foreach ($formasRecebidas as $forma): ?>
+<tr><td><?php echo htmlspecialchars((string)$forma['forma'], ENT_QUOTES, 'UTF-8'); ?></td>
+<td><?php echo (int)$forma['quantidade']; ?></td><td><?php echo $valorFinanceiro($forma['total']); ?></td></tr>
+<?php endforeach; ?>
+<?php if (!$formasRecebidas): ?><tr><td colspan="3" style="text-align:center">Sem recebimentos baixados no período.</td></tr><?php endif; ?>
+</tbody><tfoot><tr><th>Total conferido</th><th></th><th><?php echo $valorFinanceiro($totalConferido); ?></th></tr>
+<tr><th>Diferença frente às entradas realizadas</th><th></th><th><?php echo $valorFinanceiro($diferencaConferencia); ?></th></tr></tfoot></table></div>
+<p class="bc-note mt-2">A conciliação bancária completa ainda depende de taxas de cartão, antecipações e confirmação das liquidações.</p>
+</div>
 <p class="bc-note mt-3">Importante: saldo acumulado calculado apenas com contas baixadas em receber/pagar. Não representa necessariamente o saldo bancário ou o dinheiro físico no caixa. Conciliação por forma de pagamento e auditoria de alterações exigem integração adicional.</p>
 </div>
