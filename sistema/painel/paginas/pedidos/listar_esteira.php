@@ -117,7 +117,8 @@ if ($total_reg > 0) {
 			$classe_pago2 = '#ffffff';
 		}
 
-		$query2 = $pdo->query("SELECT * FROM usuarios where id = '$usuario_baixa'");
+		$query2 = $pdo->prepare("SELECT * FROM usuarios WHERE id=:id AND empresa=:empresa");
+        $query2->execute([':id'=>(int)$usuario_baixa,':empresa'=>(int)$id_empresa]);
 		$res2 = $query2->fetchAll(PDO::FETCH_ASSOC);
 		$total_reg2 = @count($res2);
 		if ($total_reg2 > 0) {
@@ -127,7 +128,8 @@ if ($total_reg > 0) {
 		}
 
 
-		$query2 = $pdo->query("SELECT * FROM clientes where id = '$cliente'");
+		$query2 = $pdo->prepare("SELECT * FROM clientes WHERE id=:id AND empresa=:empresa");
+        $query2->execute([':id'=>(int)$cliente,':empresa'=>(int)$id_empresa]);
 		$res2 = $query2->fetchAll(PDO::FETCH_ASSOC);
 		$total_reg2 = @count($res2);
 		if ($total_reg2 > 0) {
