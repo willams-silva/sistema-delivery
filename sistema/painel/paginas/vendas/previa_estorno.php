@@ -40,15 +40,45 @@ try {
     $st=$pdo->prepare('SELECT COUNT(*) FROM receber filho INNER JOIN receber origem ON origem.id=filho.id_ref AND origem.empresa=filho.empresa WHERE origem.empresa=:empresa AND origem.venda_id=:venda AND (filho.venda_id IS NULL OR filho.venda_id<>:venda2)');
     $st->execute([':empresa'=>$empresa,':venda'=>$vendaId,':venda2'=>$vendaId]);
     $parciaisLegados=(int)$st->fetchColumn();
+    // Um estorno deve sair de um caixa atualmente aberto do operador,
+    // sem alterar o saldo histórico dos caixas de recebimento.
+    $st=$pdo->prepare("SELECT id FROM caixas WHERE empresa=:empresa AND operador=:operador
+        AND data_fechamento IS NULL ORDER BY id DESC LIMIT 1");
+    $st->execute([':empresa'=>$empresa,':operador'=>$usuario]);
+    $caixaAtual=(int)($st->fetchColumn() ?: 0);
+    $st=$pdo->prepare("SELECT COUNT(*) FROM receber r
+        LEFT JOIN formas_pgto f ON f.id=r.forma_pgto AND f.empresa=r.empresa
+        WHERE r.empresa=:empresa AND r.venda_id=:venda AND r.pago='Sim'
+          AND (f.id IS NULL OR r.caixa IS NULL OR r.caixa=0)");
+    $st->execute([':empresa'=>$empresa,':venda'=>$vendaId]);
+    $pagamentosSemRastreio=(int)$st->fetchColumn();
+    $st=$pdo->prepare("SELECT COUNT(*) FROM receber r
+        LEFT JOIN receber origem ON origem.id=r.id_ref AND origem.empresa=r.empresa
+        WHERE r.empresa=:empresa AND r.venda_id=:venda AND r.residuo='Sim'
+          AND (origem.id IS NULL OR origem.venda_id IS NULL OR origem.venda_id<>r.venda_id)");
+    $st->execute([':empresa'=>$empresa,':venda'=>$vendaId]);
+    $residuosSemOrigem=(int)$st->fetchColumn();
+    $formasRecebidas=[];
+    $st=$pdo->prepare("SELECT f.nome,COUNT(*) quantidade,
+        COALESCE(SUM(COALESCE(r.subtotal,r.valor)),0) total
+        FROM receber r INNER JOIN formas_pgto f ON f.id=r.forma_pgto AND f.empresa=r.empresa
+        WHERE r.empresa=:empresa AND r.venda_id=:venda AND r.pago='Sim'
+        GROUP BY f.id,f.nome");
+    $st->execute([':empresa'=>$empresa,':venda'=>$vendaId]);
+    $formasRecebidas=$st->fetchAll(PDO::FETCH_ASSOC);
     $divergencia=round((float)$venda['valor']-$recebido-$pendente,2);
     echo json_encode([
       'venda_id'=>$vendaId,'valor_venda'=>(float)$venda['valor'],
       'total_recebido'=>round($recebido,2),'total_pendente'=>round($pendente,2),
       'diferenca_conciliacao'=>$divergencia,
       'caixas_originais'=>$caixasOriginais,
+      'caixa_atual_para_devolucao'=>$caixaAtual ?: null,
+      'pagamentos_sem_rastreabilidade'=>$pagamentosSemRastreio,
+      'residuos_sem_origem'=>$residuosSemOrigem,
+      'formas_de_pagamento_recebidas'=>$formasRecebidas,
       'recebimentos_parciais_sem_vinculo'=>$parciaisLegados,
       'estorno_existente'=>$estornoExistente?:null,
-      'requer_revisao'=>!$parcelas || abs($divergencia)>0.009 || $parciaisLegados>0 || (bool)$estornoExistente,
+      'requer_revisao'=>!$parcelas || abs($divergencia)>0.009 || $parciaisLegados>0 || $residuosSemOrigem>0 || $pagamentosSemRastreio>0 || !$caixaAtual || (bool)$estornoExistente,
       'estorno_automatico_habilitado'=>false,
       'aviso'=>'Prévia informativa. Nenhuma devolução foi realizada.'
     ],JSON_THROW_ON_ERROR|JSON_UNESCAPED_UNICODE);
