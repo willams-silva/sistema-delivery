@@ -11,8 +11,7 @@ function calcularSaldoCaixa(PDO $pdo, int $empresa, int $caixa, float $abertura)
             FROM $tabela m
             INNER JOIN formas_pgto f ON f.id=m.forma_pgto AND f.empresa=m.empresa
             WHERE m.empresa=:empresa AND m.caixa=:caixa AND m.pago='Sim'
-              AND (LOWER(TRIM(f.nome)) IN ('dinheiro','espécie','especie')
-                   OR LOWER(f.nome) LIKE '%dinheiro%')");
+              AND LOWER(TRIM(f.nome)) IN ('dinheiro','espécie','especie','em dinheiro','pagamento em dinheiro')");
         $st->execute([':empresa'=>$empresa,':caixa'=>$caixa]);
         $totais[$chave]=(float)$st->fetchColumn();
     }
@@ -30,8 +29,7 @@ function calcularSaldoCaixa(PDO $pdo, int $empresa, int $caixa, float $abertura)
           ON f.id=d.forma_pgto_id AND f.empresa=e.empresa
         WHERE e.empresa=:empresa AND e.caixa_estorno_id=:caixa
           AND e.status='Concluido'
-          AND (LOWER(TRIM(f.nome)) IN ('dinheiro','espécie','especie')
-               OR LOWER(f.nome) LIKE '%dinheiro%')");
+          AND LOWER(TRIM(f.nome)) IN ('dinheiro','espécie','especie','em dinheiro','pagamento em dinheiro')");
     $st->execute([':empresa'=>$empresa,':caixa'=>$caixa]);
     $totais['estornos_dinheiro']=(float)$st->fetchColumn();
     $totais['esperado']=round($abertura+$totais['entradas']-$totais['saidas']-$totais['sangrias']-$totais['estornos_dinheiro'],2);
