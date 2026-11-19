@@ -62,6 +62,15 @@ try {
           AND c.id IS NULL");
     $st->execute([':empresa'=>$empresa,':venda'=>$id]);
     $pagosSemCaixaValido=(int)$st->fetchColumn();
+    // Conciliação: parcelas quitadas, resíduos e saldos abertos precisam
+    // somar exatamente o valor da venda, antes de qualquer estorno.
+    $totalConciliado=round(
+        (float)$financeiro['pago_direto']
+        +(float)$financeiro['pago_parcial']
+        +(float)$financeiro['pendente'], 2
+    );
+    $diferencaConciliacao=round((float)$venda['valor']-$totalConciliado,2);
+    $conciliacaoOk=abs($diferencaConciliacao)<0.01;
     $legado=(int)$financeiro['quantidade']===0;
     $cancelada=$venda['status']==='Cancelado';
     echo json_encode([
@@ -77,9 +86,12 @@ try {
         'parcelas_pagas_sem_caixa'=>$pagosSemCaixa,
         'parcelas_pagas_sem_caixa_valido'=>$pagosSemCaixaValido,
         'recebimentos_parciais_sem_origem_valida'=>$parciaisSemOrigem,
+        'total_financeiro_conciliado'=>$totalConciliado,
+        'diferenca_conciliacao'=>$diferencaConciliacao,
+        'conciliacao_valores_ok'=>$conciliacaoOk,
         'venda_legada_sem_vinculo'=>$legado,
         'cancelamento_liberado'=>false,
-        'motivo'=>$cancelada?'Venda já cancelada.':($legado?'Venda sem parcelas vinculadas: requer conciliação manual.':($parciaisSemOrigem || $pagosSemCaixaValido ? 'Inconsistência financeira: conciliação manual necessária.' : 'Estorno transacional ainda não habilitado.'))
+        'motivo'=>$cancelada?'Venda já cancelada.':($legado?'Venda sem parcelas vinculadas: requer conciliação manual.':($parciaisSemOrigem || $pagosSemCaixaValido || !$conciliacaoOk ? 'Inconsistência financeira: conciliação manual necessária.' : 'Estorno transacional ainda não habilitado.'))
     ],JSON_THROW_ON_ERROR|JSON_UNESCAPED_UNICODE);
 } catch (Throwable $e) {
     error_log('Pré-validação cancelamento: '.$e->getMessage());
