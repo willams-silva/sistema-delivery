@@ -34,6 +34,18 @@ $movimentosConc=$consultaConc($pdo, "SELECT r.id,r.descricao,r.valor,r.data_pgto
  ORDER BY r.data_pgto DESC,r.id DESC LIMIT 100", $paramsConc);
 $somarConc=static function($lista) {return array_sum(array_map(static function($r){return (float)$r['total'];},$lista));};
 // Taxas são simulações informadas pelo operador, não taxas contratadas nem liquidações.
+// Carrega taxas persistidas somente quando a migração estiver disponível.
+$taxasPersistidasConc=[];
+$tabelaTaxasDisponivelConc=false;
+try {
+ $stTaxas=$pdo->prepare('SELECT forma_pgto,taxa_percentual FROM taxas_formas_pagamento WHERE empresa=:empresa');
+ $stTaxas->execute([':empresa'=>$empresaConc]);
+ foreach ($stTaxas->fetchAll(PDO::FETCH_ASSOC) as $linhaTaxa) $taxasPersistidasConc[(int)$linhaTaxa['forma_pgto']]=(float)$linhaTaxa['taxa_percentual'];
+ $tabelaTaxasDisponivelConc=true;
+} catch (PDOException $e) {
+ error_log('Taxas de conciliação indisponíveis: '.$e->getMessage());
+}
+if (empty($_SESSION['csrf_conc'])) $_SESSION['csrf_conc']=bin2hex(random_bytes(32));
 $taxasConc = [];
 $entradaTaxas = $_GET['taxas'] ?? [];
 if (is_array($entradaTaxas)) {
@@ -45,6 +57,7 @@ if (is_array($entradaTaxas)) {
   if ($taxa >= 0 && $taxa <= 100) $taxasConc[(int)$chave]=$taxa;
  }
 }
+$taxasConc = array_replace($taxasPersistidasConc, $taxasConc);
 $totalTaxasEstimadasConc=0.0;
 $totalLiquidoEstimadoConc=0.0;
 $formasSimuladasConc=0;
@@ -94,6 +107,8 @@ $escConc=static function($v){return htmlspecialchars((string)$v,ENT_QUOTES,'UTF-
 <?php foreach($gruposConc as $linha): ?><tr><td><?php echo $escConc($linha['forma']); ?></td><td><?php echo (int)$linha['quantidade']; ?></td><td><?php echo $moedaConc($linha['total']); ?></td></tr><?php endforeach; ?>
 <?php if (!$gruposConc): ?><tr><td colspan="3">Sem recebimentos baixados no período.</td></tr><?php endif; ?>
 </tbody><tfoot><tr><th>Total</th><th></th><th><?php echo $moedaConc($totalConc); ?></th></tr></tfoot></table></div></div>
+<?php if (isset($_GET['taxas_salvas'])): ?><div class="alert alert-success">Taxas salvas para este estabelecimento.</div><?php endif; ?>
+<?php if (!$tabelaTaxasDisponivelConc): ?><div class="alert alert-warning">As taxas ainda não podem ser salvas. Execute a migração SQL taxas_formas_pagamento.sql no banco da Hostinger.</div><?php endif; ?>
 <div class="bc-conc-card">
 <h5>Simulador de taxas por forma de pagamento</h5>
 <p class="bc-conc-note">Informe a taxa percentual contratada para cada forma. O cálculo é apenas uma estimativa sobre recebimentos baixados; não confirma depósitos. Campos em branco não entram no total líquido estimado. As taxas não são salvas no banco.</p>
@@ -114,10 +129,23 @@ $escConc=static function($v){return htmlspecialchars((string)$v,ENT_QUOTES,'UTF-
 <?php if (!$gruposConc): ?><tr><td colspan="5">Sem recebimentos para simular.</td></tr><?php endif; ?>
 </tbody></table></div>
 <button class="btn btn-primary mt-3" type="submit">Calcular estimativa</button>
+<?php if ($tabelaTaxasDisponivelConc): ?>
+<button type="submit" class="btn btn-outline-primary mt-3" form="salvar-taxas-conc">Salvar taxas do estabelecimento</button>
+<?php endif; ?>
 <p class="bc-conc-note mt-2">Formas calculadas: <?php echo $formasSimuladasConc; ?> de <?php echo count($gruposConc); ?>.
 Taxas estimadas nas formas preenchidas: <strong><?php echo $moedaConc($totalTaxasEstimadasConc); ?></strong>.
 Líquido estimado apenas dessas formas: <strong><?php echo $moedaConc($totalLiquidoEstimadoConc); ?></strong>.</p>
-</form></div>
+</form>
+<?php if ($tabelaTaxasDisponivelConc): ?>
+<form id="salvar-taxas-conc" method="post" action="paginas/salvar_taxas_conciliacao.php">
+<input type="hidden" name="csrf_conc" value="<?php echo $escConc($_SESSION['csrf_conc']); ?>">
+<?php foreach ($gruposConc as $linha): if ((int)$linha['forma_id'] > 0): ?>
+<input type="hidden" name="taxas[<?php echo (int)$linha['forma_id']; ?>]" value="<?php echo $linha['taxa_informada'] === null ? '' : $escConc($linha['taxa_informada']); ?>">
+<?php endif; endforeach; ?>
+</form>
+<p class="bc-conc-note">Para salvar, primeiro clique em Calcular estimativa e depois em Salvar taxas do estabelecimento. As taxas salvas serão usadas em futuras consultas.</p>
+<?php endif; ?>
+</div>
 <div class="bc-conc-card"><h5>Pendências por forma de pagamento</h5>
 <div class="bc-conc-table"><table><thead><tr><th>Forma</th><th>Quantidade</th><th>Valor pendente</th></tr></thead><tbody>
 <?php foreach($pendentesConc as $linha): ?><tr><td><?php echo $escConc($linha['forma']); ?></td><td><?php echo (int)$linha['quantidade']; ?></td><td><?php echo $moedaConc($linha['total']); ?></td></tr><?php endforeach; ?>
