@@ -9,7 +9,7 @@ $fim=(string)($_GET['fim']??date('Y-m-d'));
 $validar=static function($d){return preg_match('/^\d{4}-\d{2}-\d{2}$/',$d) && checkdate((int)substr($d,5,2),(int)substr($d,8,2),(int)substr($d,0,4));};
 if (!$validar($inicio)||!$validar($fim)||$inicio>$fim) {http_response_code(400);exit('Período inválido.');}
 try {
- $st=$pdo->prepare("SELECT l.id,fp.nome AS forma,l.data_referencia,l.data_credito,l.valor_creditado,l.identificador,l.observacao,l.criado_em
+ $st=$pdo->prepare("SELECT l.id,fp.nome AS forma,l.data_referencia,l.data_credito,l.valor_creditado,l.identificador,l.observacao,l.criado_em,l.cancelado_em,l.cancelado_por,l.motivo_cancelamento
  FROM conciliacao_liquidacoes l
  INNER JOIN formas_pgto fp ON fp.id=l.forma_pgto AND fp.empresa=l.empresa
  WHERE l.empresa=:empresa AND l.data_referencia BETWEEN :inicio AND :fim
@@ -21,7 +21,7 @@ header('Content-Disposition: attachment; filename="liquidacoes_'.$inicio.'_a_'.$
 header('Cache-Control: no-store, private');
 $out=fopen('php://output','w');
 fwrite($out,"\xEF\xBB\xBF");
-fputcsv($out,['ID','Forma de pagamento','Data referência','Data crédito','Valor creditado (R$)','Identificador','Observação','Registrado em'],';');
+fputcsv($out,['ID','Forma de pagamento','Data referência','Data crédito','Valor creditado (R$)','Identificador','Observação','Registrado em','Situação','Cancelado em','Cancelado por','Justificativa'],';');
 $seguro=static function($v) {
  $s=(string)($v??'');
  // Evita interpretação de fórmulas ao abrir o CSV em planilhas.
@@ -32,7 +32,7 @@ while($row=$st->fetch(PDO::FETCH_ASSOC)) {
  fputcsv($out,[
   $row['id'],$seguro($row['forma']),$row['data_referencia'],$row['data_credito'],
   number_format((float)$row['valor_creditado'],2,',',''),
-  $seguro($row['identificador']),$seguro($row['observacao']),$row['criado_em']
+  $seguro($row['identificador']),$seguro($row['observacao']),$row['criado_em'], $row['cancelado_em']?'Cancelado':'Ativo',$row['cancelado_em'], $row['cancelado_por'],$seguro($row['motivo_cancelamento'])
  ],';');
 }
 fclose($out);
