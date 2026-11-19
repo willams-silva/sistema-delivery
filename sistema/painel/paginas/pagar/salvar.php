@@ -273,11 +273,39 @@ if ($id == "") {
 
 	}
 }
+// Captura do estado imediatamente anterior para auditoria de criação/edição.
+require_once __DIR__ . '/../../includes/auditoria_financeira.php';
+$auditoriaAnterior = null;
+if ($id !== '') {
+    $auditoriaBusca = $pdo->prepare("SELECT descricao, valor, vencimento, data_pgto, forma_pgto, pago, subtotal, frequencia FROM ${tabela} WHERE id = :id AND empresa = :empresa");
+    $auditoriaBusca->execute([':id'=>(int)$id, ':empresa'=>(int)$id_empresa]);
+    $auditoriaAnterior = $auditoriaBusca->fetch(PDO::FETCH_ASSOC);
+    if (!$auditoriaAnterior) { http_response_code(403); exit('Lançamento não encontrado para auditoria.'); }
+}
 $query->bindValue(":descricao", "$descricao");
 $query->bindValue(":valor", "$valor");
 $query->bindValue(":obs", "$obs");
-$query->execute();
-$ultimo_id = $pdo->lastInsertId();
+// Gravação e trilha de auditoria atômicas: erro em qualquer etapa desfaz ambas.
+try {
+    $pdo->beginTransaction();
+    $query->execute();
+    $ultimo_id = $id === '' ? (int)$pdo->lastInsertId() : (int)$id;
+    $auditoriaBuscaDepois = $pdo->prepare("SELECT descricao, valor, vencimento, data_pgto, forma_pgto, pago, subtotal, frequencia FROM ${tabela} WHERE id = :id AND empresa = :empresa");
+    $auditoriaBuscaDepois->execute([':id'=>$ultimo_id, ':empresa'=>(int)$id_empresa]);
+    $auditoriaDepois = $auditoriaBuscaDepois->fetch(PDO::FETCH_ASSOC);
+    if (!$auditoriaDepois) { throw new RuntimeException('Lançamento não localizado após gravação.'); }
+    $acaoAuditoria = $id === '' ? 'CRIAR' : 'ALTERAR';
+    if ($id !== '' && ($auditoriaAnterior['pago'] ?? '') !== ($auditoriaDepois['pago'] ?? '')) {
+        $acaoAuditoria = ($auditoriaDepois['pago'] ?? '') === 'Sim' ? 'BAIXAR' : 'ESTORNAR';
+    }
+    registrarAuditoriaFinanceira($pdo, (int)$id_empresa, $tabela, $ultimo_id, $acaoAuditoria, (int)$id_usuario, $auditoriaAnterior, $auditoriaDepois);
+    $pdo->commit();
+} catch (Throwable $erroAuditoria) {
+    if ($pdo->inTransaction()) { $pdo->rollBack(); }
+    error_log('Erro ao salvar lançamento financeiro com auditoria: ' . $erroAuditoria->getMessage());
+    http_response_code(500);
+    exit('Não foi possível salvar o lançamento financeiro. Nenhuma alteração foi confirmada.');
+}
 
 
 
