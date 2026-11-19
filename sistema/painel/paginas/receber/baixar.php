@@ -197,9 +197,9 @@ if ($baixa->rowCount() !== 1) throw new RuntimeException('Baixa não confirmada.
     // é uma linha de histórico vinculada por id_ref.
     $saldoRestante = round($valor_antigo - $valor, 2);
     if ($saldoRestante <= 0) throw new RuntimeException('Saldo residual inválido.');
-    $insereParcial = $pdo->prepare("INSERT INTO receber (id_ref,referencia,valor,data_pgto,vencimento,data_lanc,descricao,usuario_lanc,usuario_pgto,cliente,forma_pgto,frequencia,arquivo,subtotal,pago,taxa,multa,juros,desconto,residuo,caixa,hora,empresa) VALUES (:origem,:referencia,:valor,:data_pgto,:vencimento,CURDATE(),:descricao,:usuario_lanc,:usuario_pgto,:cliente,:forma,:frequencia,:arquivo,:subtotal,'Sim',:taxa,:multa,:juros,:desconto,'Sim',:caixa,CURTIME(),:empresa)");
+    $insereParcial = $pdo->prepare("INSERT INTO receber (id_ref,venda_id,referencia,valor,data_pgto,vencimento,data_lanc,descricao,usuario_lanc,usuario_pgto,cliente,forma_pgto,frequencia,arquivo,subtotal,pago,taxa,multa,juros,desconto,residuo,caixa,hora,empresa) VALUES (:origem,:venda_id,:referencia,:valor,:data_pgto,:vencimento,CURDATE(),:descricao,:usuario_lanc,:usuario_pgto,:cliente,:forma,:frequencia,:arquivo,:subtotal,'Sim',:taxa,:multa,:juros,:desconto,'Sim',:caixa,CURTIME(),:empresa)");
     $insereParcial->execute([
-        ':origem'=>(int)$id, ':referencia'=>$referencia, ':valor'=>$valor,
+        ':origem'=>(int)$id, ':venda_id'=>!empty($res[0]['venda_id']) ? (int)$res[0]['venda_id'] : null, ':referencia'=>$referencia, ':valor'=>$valor,
         ':data_pgto'=>$data_baixar, ':vencimento'=>$vencimento,
         ':descricao'=>$descricao, ':usuario_lanc'=>(int)$id_usuario,
         ':usuario_pgto'=>(int)$id_usuario, ':cliente'=>(int)$cliente,
