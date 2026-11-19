@@ -53,7 +53,7 @@ if (filter_var($ult_ped,FILTER_VALIDATE_INT) && (int)$ult_ped<$id_ult_pedido) {
 
 $ids = '';
 // Pesquisa parametrizada: impede que a busca do operador altere a consulta SQL.
-$pagina = max(0, (int)$pagina);
+$pagina = min(10000, max(0, (int)$pagina));
 $limite = $pagina * $itens_paginacao;
 $busca = trim((string)$busca);
 $statusFiltro = trim((string)($_POST['status'] ?? ''));
@@ -382,9 +382,10 @@ HTML;
 
 
 
-$query = $pdo->query("SELECT * FROM vendas where data = CurDate() and status = 'Iniciado'");
-$res = $query->fetchAll(PDO::FETCH_ASSOC);
-$total_dos_itens_pedidos = @count($res);
+$totalHojeSt=$pdo->prepare("SELECT COUNT(*) FROM vendas WHERE empresa=:empresa
+    AND data=CURDATE() AND status='Iniciado' $condicaoBalcao");
+$totalHojeSt->execute([':empresa'=>(int)$id_empresa]);
+$total_dos_itens_pedidos=(int)$totalHojeSt->fetchColumn();
 
 
 ?>
