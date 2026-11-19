@@ -215,7 +215,7 @@ if (@$pausar_delivery == 'Sim') {
         <span class="input-group-text bg-light border border-primary">
             <i class="fas fa-search text-secondary"></i>
         </span>
-        <input type="text" class="form-control border border-primary" id="busca" placeholder="Buscar pedidos..." aria-label="Buscar pedidos" onkeyup="listar()">
+        <input type="text" class="form-control border border-primary" id="busca" placeholder="Buscar pedidos..." aria-label="Buscar pedidos" autocomplete="off">
     </div>
 </div>
 
@@ -491,6 +491,15 @@ if (@$pausar_delivery == 'Sim') {
 
 
 <script type="text/javascript">
+    // Debounce da pesquisa: não modifica a automação do cron.
+    var temporizadorBuscaPedidos = null;
+    $(document).off('input.boraPedidosBusca','#busca').on('input.boraPedidosBusca','#busca',function(){
+        clearTimeout(temporizadorBuscaPedidos);
+        temporizadorBuscaPedidos=setTimeout(function(){
+            $('#pagina').val(0);
+            listar(undefined,0);
+        },350);
+    });
 	var requisicaoPedidosAtual = null;
     var sequenciaPedidos = 0;
 	function listar(p1, p2) {
