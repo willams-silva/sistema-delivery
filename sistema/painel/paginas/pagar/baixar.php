@@ -150,18 +150,19 @@ if ($valor == $valor_antigo) {
 	//CRIAR A PRÓXIMA CONTA A PAGAR
 	$dias_frequencia = $frequencia;
 
-	if ($dias_frequencia == 30 || $dias_frequencia == 31) {
-		$nova_data_vencimento = date('Y/m/d', strtotime("+1 month", strtotime($data_venc)));
-	} else if ($dias_frequencia == 90) {
-		$nova_data_vencimento = date('Y/m/d', strtotime("+3 month", strtotime($data_venc)));
-	} else if ($dias_frequencia == 180) {
-		$nova_data_vencimento = date('Y/m/d', strtotime("+6 month", strtotime($data_venc)));
-	} else if ($dias_frequencia == 360 || $dias_frequencia == 365) {
-		$nova_data_vencimento = date('Y/m/d', strtotime("+1 year", strtotime($data_venc)));
-	} else {
-		$nova_data_vencimento = date('Y/m/d', strtotime("+$dias_frequencia days", strtotime($data_venc)));
+	// Soma meses sem saltar para o mês seguinte em datas como 31/01.
+	$mesesRecorrencia = [30=>1,31=>1,90=>3,180=>6,360=>12,365=>12];
+	$dataBase = DateTimeImmutable::createFromFormat('!Y-m-d', (string)$data_venc);
+	if (!$dataBase || $dataBase->format('Y-m-d') !== $data_venc) {
+		throw new RuntimeException('Vencimento da conta inválido para recorrência.');
 	}
-
+	if (isset($mesesRecorrencia[(int)$dias_frequencia])) {
+		$primeiroDia = $dataBase->modify('first day of this month')->modify('+'.$mesesRecorrencia[(int)$dias_frequencia].' months');
+		$diaDestino = min((int)$dataBase->format('d'), (int)$primeiroDia->format('t'));
+		$nova_data_vencimento = $primeiroDia->setDate((int)$primeiroDia->format('Y'),(int)$primeiroDia->format('m'),$diaDestino)->format('Y-m-d');
+	} else {
+		$nova_data_vencimento = $dataBase->modify('+'.(int)$dias_frequencia.' days')->format('Y-m-d');
+	}
 
 	if (@$dias_frequencia > 0) {
 		$pdo->query("INSERT INTO $tabela set descricao = '$descricao', fornecedor = '$fornecedor', funcionario = '$funcionario', valor = '$valor_antigo', data_lanc = curDate(), vencimento = '$nova_data_vencimento', frequencia = '$frequencia', forma_pgto = '$saida_antiga', arquivo = '$arquivo', pago = 'Não', referencia = '$referencia', usuario_lanc = '$id_usuario', caixa = '$id_caixa', hora = curTime(), empresa = '$id_empresa' ");
