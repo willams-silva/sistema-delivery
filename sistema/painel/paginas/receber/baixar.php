@@ -95,7 +95,8 @@ if($cliente == ""){
 	$cliente = 0;
 }
 
-$query2 = $pdo->query("SELECT * FROM clientes where id = '$cliente'");
+$query2 = $pdo->prepare("SELECT * FROM clientes WHERE id=:cliente AND empresa=:empresa");
+$query2->execute([':cliente'=>(int)$cliente, ':empresa'=>(int)$id_empresa]);
 $res2 = $query2->fetchAll(PDO::FETCH_ASSOC);
 if(@count($res2) > 0){
 	$nome_cliente = $res2[0]['nome'];
@@ -146,30 +147,30 @@ if(@count($res1) > 0){
 
 if($valor == $valor_antigo){
 
-	$pdo->query("UPDATE $tabela set forma_pgto = '$saida', usuario_pgto = '$id_usuario', pago = 'Sim', subtotal = '$subtotal', taxa = '$taxa', juros = '$juros', multa = '$multa', desconto = '$desconto', data_pgto = '$data_baixar', caixa = '$id_caixa', hora = curTime() where id = '$id' AND empresa = '$id_empresa'");
+	$baixa = $pdo->prepare("UPDATE receber SET forma_pgto=:forma, usuario_pgto=:usuario, pago='Sim', subtotal=:subtotal, taxa=:taxa, juros=:juros, multa=:multa, desconto=:desconto, data_pgto=:data, caixa=:caixa, hora=CURTIME() WHERE id=:id AND empresa=:empresa AND pago <> 'Sim'");
+$baixa->execute([':forma'=>$saida,':usuario'=>(int)$id_usuario,':subtotal'=>$subtotal,':taxa'=>$taxa,':juros'=>$juros,':multa'=>$multa,':desconto'=>$desconto,':data'=>$data_baixar,':caixa'=>(int)$id_caixa,':id'=>(int)$id,':empresa'=>(int)$id_empresa]);
+if ($baixa->rowCount() !== 1) throw new RuntimeException('Baixa não confirmada.');
 
 	//CRIAR A PRÓXIMA CONTA A PAGAR
 	$dias_frequencia = $frequencia;
 
-	if($dias_frequencia == 30 || $dias_frequencia == 31){		
-		$nova_data_vencimento = date('Y/m/d', strtotime("+1 month",strtotime($data_venc)));
-
-	}else if($dias_frequencia == 90){
-		$nova_data_vencimento = date('Y/m/d', strtotime("+3 month",strtotime($data_venc)));
-
-	}else if($dias_frequencia == 180){ 
-		$nova_data_vencimento = date('Y/m/d', strtotime("+6 month",strtotime($data_venc)));
-
-	}else if($dias_frequencia == 360 || $dias_frequencia == 365){
-		$nova_data_vencimento = date('Y/m/d', strtotime("+1 year",strtotime($data_venc)));
-
-	}else{		
-		$nova_data_vencimento = date('Y/m/d', strtotime("+$dias_frequencia days",strtotime($data_venc))); 
-	}
-
+    $mesesRecorrencia = [30=>1,31=>1,90=>3,180=>6,360=>12,365=>12];
+    $dataBase = DateTimeImmutable::createFromFormat('!Y-m-d', (string)$data_venc);
+    if (!$dataBase || $dataBase->format('Y-m-d') !== $data_venc) throw new RuntimeException('Vencimento inválido.');
+    if (isset($mesesRecorrencia[(int)$dias_frequencia])) {
+        $primeiroDia = $dataBase->modify('first day of this month')->modify('+'.$mesesRecorrencia[(int)$dias_frequencia].' months');
+        $diaDestino = min((int)$dataBase->format('d'), (int)$primeiroDia->format('t'));
+        $nova_data_vencimento = $primeiroDia->setDate((int)$primeiroDia->format('Y'),(int)$primeiroDia->format('m'),$diaDestino)->format('Y-m-d');
+    } else {
+        $nova_data_vencimento = $dataBase->modify('+'.(int)$dias_frequencia.' days')->format('Y-m-d');
+    }
 
 	if(@$dias_frequencia > 0){
-		$pdo->query("INSERT INTO $tabela set descricao = '$descricao', cliente = '$cliente', valor = '$valor_antigo', data_lanc = curDate(), vencimento = '$nova_data_vencimento', frequencia = '$frequencia', forma_pgto = '$saida_antiga', arquivo = '$arquivo', pago = 'Não', referencia = '$referencia', usuario_lanc = '$id_usuario', caixa = '$id_caixa', hora = curTime(), empresa = '$id_empresa' ");
+        $verificaProxima = $pdo->prepare("SELECT id FROM receber WHERE empresa=:empresa AND id_ref=:origem AND vencimento=:vencimento AND (residuo IS NULL OR residuo <> 'Sim') LIMIT 1");
+        $verificaProxima->execute([':empresa'=>(int)$id_empresa, ':origem'=>(int)$id, ':vencimento'=>$nova_data_vencimento]);
+        if ($verificaProxima->fetchColumn()) throw new RuntimeException('Recorrência já gerada para este vencimento.');
+        $insereProxima = $pdo->prepare("INSERT INTO receber (id_ref,descricao,cliente,valor,data_lanc,vencimento,frequencia,forma_pgto,arquivo,pago,referencia,usuario_lanc,caixa,hora,empresa) VALUES (:origem,:descricao,:cliente,:valor,CURDATE(),:vencimento,:frequencia,:forma,:arquivo,'Não',:referencia,:usuario,:caixa,CURTIME(),:empresa)");
+        $insereProxima->execute([':origem'=>(int)$id, ':descricao'=>$descricao, ':cliente'=>(int)$cliente, ':valor'=>$valor_antigo, ':vencimento'=>$nova_data_vencimento, ':frequencia'=>$frequencia, ':forma'=>$saida_antiga, ':arquivo'=>$arquivo, ':referencia'=>$referencia, ':usuario'=>(int)$id_usuario, ':caixa'=>(int)$id_caixa, ':empresa'=>(int)$id_empresa]);
 				$id_ult_registro = $pdo->lastInsertId();	
 
 
@@ -216,6 +217,7 @@ if($valor == $valor_antigo){
 	}
 
 	$valor_antigo = round($valor_antigo - $valor, 2);
+    if ($valor_antigo <= 0) throw new RuntimeException('Saldo residual inválido.');
 
 	$pdo->query("INSERT INTO receber set id_ref = '$id', referencia = '$referencia', valor = '$valor_padrao', data_pgto = curDate(), vencimento = curDate(), data_lanc = curDate(), descricao = '$descricao', usuario_lanc = '$id_usuario', usuario_pgto = '$id_usuario', cliente = '$cliente', forma_pgto = '$saida', frequencia = '$frequencia', arquivo = '$arquivo', subtotal = '$subtotal', pago = 'Sim', taxa = '$taxa', multa = '$multa', juros = '$juros', desconto = '$desconto', residuo = 'Sim', caixa = '$id_caixa', hora = curTime(), empresa = '$id_empresa' ");
 
