@@ -66,6 +66,16 @@ try {
         GROUP BY f.id,f.nome");
     $st->execute([':empresa'=>$empresa,':venda'=>$vendaId]);
     $formasRecebidas=$st->fetchAll(PDO::FETCH_ASSOC);
+    // Bloqueios adicionais para que a interface não ofereça estorno de
+    // venda cancelada, com fidelidade ou sem pagamentos efetivos.
+    $motivosBloqueio=[];
+    if ($venda['status']==='Cancelado') $motivosBloqueio[]='Venda já cancelada';
+    if ((int)$venda['cliente']>0) $motivosBloqueio[]='Venda com fidelidade exige revisão';
+    if ($recebido<=0) $motivosBloqueio[]='Nenhum valor recebido para devolver';
+    if (!$caixaAtual) $motivosBloqueio[]='Operador sem caixa aberto';
+    if ($pagamentosSemRastreio>0) $motivosBloqueio[]='Pagamentos sem rastreabilidade';
+    if ($residuosSemOrigem>0 || $parciaisLegados>0) $motivosBloqueio[]='Pagamentos parciais com vínculo inconsistente';
+    if ($estornoExistente) $motivosBloqueio[]='Estorno já registrado';
     $divergencia=round((float)$venda['valor']-$recebido-$pendente,2);
     echo json_encode([
       'venda_id'=>$vendaId,'valor_venda'=>(float)$venda['valor'],
@@ -79,6 +89,7 @@ try {
       'recebimentos_parciais_sem_vinculo'=>$parciaisLegados,
       'estorno_existente'=>$estornoExistente?:null,
       'requer_revisao'=>!$parcelas || abs($divergencia)>0.009 || $parciaisLegados>0 || $residuosSemOrigem>0 || $pagamentosSemRastreio>0 || !$caixaAtual || (bool)$estornoExistente,
+      'motivos_bloqueio'=>$motivosBloqueio,
       'estorno_automatico_habilitado'=>false,
       'aviso'=>'Prévia informativa. Nenhuma devolução foi realizada.'
     ],JSON_THROW_ON_ERROR|JSON_UNESCAPED_UNICODE);
