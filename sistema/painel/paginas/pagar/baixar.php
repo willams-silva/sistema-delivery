@@ -134,19 +134,19 @@ if ($valor <= 0) {
 
 
 
-//verificar caixa aberto
-$query1 = $pdo->query("SELECT * from caixas where operador = '$id_usuario' and data_fechamento is null order by id desc limit 1");
-$res1 = $query1->fetchAll(PDO::FETCH_ASSOC);
-if (@count($res1) > 0) {
-	$id_caixa = @$res1[0]['id'];
-} else {
-	$id_caixa = 0;
-}
-//  
-
+// Vincula a baixa somente a um caixa aberto desta empresa.
+$consultaCaixa=$pdo->prepare("SELECT id FROM caixas WHERE operador=:usuario AND empresa=:empresa AND data_fechamento IS NULL ORDER BY id DESC LIMIT 1 FOR UPDATE");
+$consultaCaixa->execute([':usuario'=>(int)$id_usuario,':empresa'=>(int)$id_empresa]);
+$id_caixa=(int)($consultaCaixa->fetchColumn() ?: 0);
+$formaSt=$pdo->prepare("SELECT id FROM formas_pgto WHERE id=:id AND empresa=:empresa LIMIT 1");
+$formaSt->execute([':id'=>$saida,':empresa'=>(int)$id_empresa]);
+if (!$formaSt->fetchColumn()) throw new RuntimeException('Forma de pagamento inválida para esta empresa.');
+if (!$id_caixa) throw new RuntimeException('Abra um caixa antes de registrar a baixa.');
 if ($valor == $valor_antigo) {
 
-	$pdo->query("UPDATE $tabela set forma_pgto = '$saida', usuario_pgto = '$id_usuario', pago = 'Sim', subtotal = '$subtotal', juros = '$juros', multa = '$multa', desconto = '$desconto', data_pgto = '$data_baixar', caixa = '$id_caixa', hora = curTime() where id = '$id' AND empresa = '$id_empresa' AND pago <> 'Sim'");
+	$baixa=$pdo->prepare("UPDATE pagar SET forma_pgto=:forma, usuario_pgto=:usuario, pago='Sim', subtotal=:subtotal, juros=:juros, multa=:multa, desconto=:desconto, data_pgto=:data, caixa=:caixa, hora=CURTIME() WHERE id=:id AND empresa=:empresa AND pago <> 'Sim'");
+    $baixa->execute([':forma'=>$saida,':usuario'=>(int)$id_usuario,':subtotal'=>$subtotal,':juros'=>$juros,':multa'=>$multa,':desconto'=>$desconto,':data'=>$data_baixar,':caixa'=>$id_caixa,':id'=>(int)$id,':empresa'=>(int)$id_empresa]);
+    if ($baixa->rowCount() !== 1) throw new RuntimeException('Baixa não confirmada.');
 
 	//CRIAR A PRÓXIMA CONTA A PAGAR
 	$dias_frequencia = $frequencia;
@@ -217,11 +217,14 @@ if ($valor == $valor_antigo) {
 	$valor_antigo = round($valor_antigo - $valor, 2);
  if ($valor_antigo <= 0) { throw new RuntimeException('Saldo residual inválido. Confira o valor da baixa.'); }
 
-	$pdo->query("INSERT INTO $tabela set id_ref = '$id', referencia = '$referencia', valor = '$valor_padrao', data_pgto = curDate(), vencimento = curDate(), data_lanc = curDate(), descricao = '$descricao', usuario_lanc = '$id_usuario', usuario_pgto = '$id_usuario', fornecedor = '$fornecedor', funcionario = '$funcionario', forma_pgto = '$saida', frequencia = '$frequencia', arquivo = '$arquivo', subtotal = '$subtotal', pago = 'Sim', multa = '$multa', juros = '$juros', desconto = '$desconto', residuo = 'Sim', caixa = '$id_caixa', hora = curTime(), empresa = '$id_empresa' ");
+	$parcial=$pdo->prepare("INSERT INTO pagar (id_ref,referencia,valor,data_pgto,vencimento,data_lanc,descricao,usuario_lanc,usuario_pgto,fornecedor,funcionario,forma_pgto,frequencia,arquivo,subtotal,pago,multa,juros,desconto,residuo,caixa,hora,empresa) VALUES (:origem,:referencia,:valor,:data,CURDATE(),CURDATE(),:descricao,:usuario,:usuario,:fornecedor,:funcionario,:forma,:frequencia,:arquivo,:subtotal,'Sim',:multa,:juros,:desconto,'Sim',:caixa,CURTIME(),:empresa)");
+    $parcial->execute([':origem'=>(int)$id,':referencia'=>$referencia,':valor'=>$valor,':data'=>$data_baixar,':descricao'=>$descricao,':usuario'=>(int)$id_usuario,':fornecedor'=>$fornecedor,':funcionario'=>$funcionario,':forma'=>$saida,':frequencia'=>$frequencia,':arquivo'=>$arquivo,':subtotal'=>$subtotal,':multa'=>$multa,':juros'=>$juros,':desconto'=>$desconto,':caixa'=>$id_caixa,':empresa'=>(int)$id_empresa]);
 
 
 
-	$pdo->query("UPDATE $tabela set forma_pgto = '$saida', usuario_pgto = '$id_usuario', valor = '$valor_antigo', data_pgto = curDate() where id = '$id' AND empresa = '$id_empresa' AND pago <> 'Sim'");
+	$restante=$pdo->prepare("UPDATE pagar SET forma_pgto=:forma, usuario_pgto=:usuario, valor=:restante, data_pgto=:data WHERE id=:id AND empresa=:empresa AND pago <> 'Sim'");
+    $restante->execute([':forma'=>$saida,':usuario'=>(int)$id_usuario,':restante'=>$valor_antigo,':data'=>$data_baixar,':id'=>(int)$id,':empresa'=>(int)$id_empresa]);
+    if ($restante->rowCount() !== 1) throw new RuntimeException('Saldo residual não atualizado.');
 
 
 	if ($api_whatsapp != 'Não' and $telefone_sistema != '') {
