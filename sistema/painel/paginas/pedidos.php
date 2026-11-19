@@ -287,6 +287,14 @@ if (@$pausar_delivery == 'Sim') {
 							</select>
 
 							<input type="hidden" name="id" id="id_baixar">
+                        <div class="mt-2" id="aviso-pix-manual" style="display:none">
+                            <label class="form-label text-warning">PIX sem integração bancária</label>
+                            <p class="small mb-2">Confira o valor recebido no extrato do Nubank ou do banco da loja. Comprovante enviado pelo cliente não confirma crédito.</p>
+                            <label class="form-check-label">
+                                <input class="form-check-input" type="checkbox" name="pix_conferido" id="pix_conferido" value="1">
+                                Confirmo que o valor entrou na conta da empresa
+                            </label>
+                        </div>
 						</div>
 						<div class="col-md-4">
 							<button id="btn_confirmar" type="submit" class="btn btn-primary">Confirmar</button>
@@ -469,6 +477,17 @@ if (@$pausar_delivery == 'Sim') {
 	
 </script>
 
+<script>
+$(document).on('change', '#pgto', function(){
+ const pix = /\\bpix\\b/i.test(String($(this).val() || ''));
+ $('#aviso-pix-manual').toggle(pix);
+ if (!pix) $('#pix_conferido').prop('checked', false);
+});
+$(document).on('show.bs.modal', '#modalBaixar', function(){
+ $('#pix_conferido').prop('checked', false);
+ setTimeout(function(){ $('#pgto').trigger('change'); },0);
+});
+</script>
 <script type="text/javascript">
 	var pag = "<?= $pag ?>"
 </script>
