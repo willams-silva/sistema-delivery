@@ -265,6 +265,15 @@ $dashboardReceberHoje=$pdo->prepare("SELECT COUNT(*) quantidade,COALESCE(SUM(val
     FROM receber WHERE empresa=:empresa AND vencimento=CURDATE() AND pago<>'Sim'");
 $dashboardReceberHoje->execute([':empresa'=>(int)$id_empresa]);
 $dashboardPendenciasHoje=$dashboardReceberHoje->fetch(PDO::FETCH_ASSOC);
+$dashboardCaixasResumo=$pdo->prepare("SELECT
+    SUM(CASE WHEN data_fechamento IS NULL THEN 1 ELSE 0 END) abertos,
+    SUM(CASE WHEN data_fechamento=CURDATE() THEN 1 ELSE 0 END) fechados_hoje
+    FROM caixas WHERE empresa=:empresa");
+$dashboardCaixasResumo->execute([':empresa'=>(int)$id_empresa]);
+$dashboardCaixas=$dashboardCaixasResumo->fetch(PDO::FETCH_ASSOC);
+$dashboardTicketMedio=(int)$dashboardResumoHoje['quantidade']>0
+    ? (float)$dashboardResumoHoje['total']/(int)$dashboardResumoHoje['quantidade'] : 0.0;
+
 
 
 ?>
@@ -302,6 +311,22 @@ $dashboardPendenciasHoje=$dashboardReceberHoje->fetch(PDO::FETCH_ASSOC);
       <div class="text-muted small"><i class="fa fa-clock me-2"></i>Recebimentos vencendo hoje</div>
       <div class="fs-5 fw-bold mt-1">R$ <?php echo number_format((float)$dashboardPendenciasHoje['total'],2,',','.'); ?></div>
       <div class="small text-muted"><?php echo (int)$dashboardPendenciasHoje['quantidade']; ?> conta(s) ainda pendente(s)</div>
+    </div>
+  </div>
+</div>
+<div class="row g-3 mb-3" aria-label="Indicadores complementares">
+  <div class="col-12 col-md-6">
+    <div class="card h-100 p-3">
+      <div class="text-muted small"><i class="fa fa-receipt me-2"></i>Ticket médio de hoje</div>
+      <div class="fs-5 fw-bold mt-1">R$ <?php echo number_format($dashboardTicketMedio,2,',','.'); ?></div>
+      <div class="small text-muted">Valor médio por venda não cancelada</div>
+    </div>
+  </div>
+  <div class="col-12 col-md-6">
+    <div class="card h-100 p-3">
+      <div class="text-muted small"><i class="fa fa-cash-register me-2"></i>Caixas da empresa</div>
+      <div class="fs-5 fw-bold mt-1"><?php echo (int)$dashboardCaixas['abertos']; ?> aberto(s)</div>
+      <div class="small text-muted"><?php echo (int)$dashboardCaixas['fechados_hoje']; ?> fechado(s) hoje</div>
     </div>
   </div>
 </div>
