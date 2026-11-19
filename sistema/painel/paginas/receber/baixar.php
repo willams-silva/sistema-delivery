@@ -57,8 +57,20 @@ if($desconto == ""){
 }
 
 
-$query = $pdo->query("SELECT * FROM $tabela where id = '$id'");
-$res = $query->fetchAll(PDO::FETCH_ASSOC);
+// Validação e bloqueio transacional impedem baixa de outra empresa e duplicações.
+if (($_SERVER['REQUEST_METHOD'] ?? '') !== 'POST') { http_response_code(405); exit('Método inválido.'); }
+if (!ctype_digit((string)$id) || (int)$id < 1 || !ctype_digit((string)$id_empresa) || (int)$id_empresa < 1 || !ctype_digit((string)$id_usuario) || (int)$id_usuario < 1) {
+    http_response_code(400); exit('Conta ou sessão inválida.');
+}
+require_once __DIR__ . '/../../includes/auditoria_financeira.php';
+try {
+$pdo->beginTransaction();
+$consultaConta = $pdo->prepare("SELECT * FROM receber WHERE id=:id AND empresa=:empresa FOR UPDATE");
+$consultaConta->execute([':id'=>(int)$id,':empresa'=>(int)$id_empresa]);
+$res = $consultaConta->fetchAll(PDO::FETCH_ASSOC);
+if (!$res) throw new RuntimeException('Conta não encontrada neste estabelecimento.');
+if (($res[0]['pago'] ?? '') === 'Sim') throw new RuntimeException('Esta conta já foi recebida.');
+$auditoriaAntes = array_intersect_key($res[0], array_flip(['descricao','valor','vencimento','data_pgto','forma_pgto','pago','subtotal','frequencia']));
 
 $descricao = $res[0]['descricao'];
 $cliente = $res[0]['cliente'];
@@ -76,9 +88,8 @@ $referencia = $res[0]['referencia'];
 $hash = $res[0]['hash'];
 $vencimento = $res[0]['vencimento'];
 
-if($hash != ""){	
-	require("../../apis/cancelar_agendamento.php");
-}
+$referencia_agendamento = 'receber';
+require("../../apis/cancelar_agendamento.php");
 
 if($cliente == ""){
 	$cliente = 0;
@@ -99,6 +110,18 @@ if($usuario_pgto == ""){
 }
 
 
+foreach (['valor'=>$valor,'taxa'=>$taxa,'juros'=>$juros,'multa'=>$multa,'desconto'=>$desconto,'subtotal'=>$subtotal] as $campo=>$numero) {
+    if (!is_numeric($numero) || !is_finite((float)$numero) || (float)$numero < 0) throw new RuntimeException('Valor inválido: '.$campo);
+}
+$valor=round((float)$valor,2); $taxa=round((float)$taxa,2);
+$juros=round((float)$juros,2); $multa=round((float)$multa,2);
+$desconto=round((float)$desconto,2); $subtotal=round((float)$subtotal,2);
+$valor_antigo=round((float)$valor_antigo,2);
+if ($valor<=0 || $valor>$valor_antigo) throw new RuntimeException('Valor do recebimento fora do saldo da conta.');
+if (abs($subtotal-round($valor+$taxa+$juros+$multa-$desconto,2))>0.009) throw new RuntimeException('Total do recebimento divergente.');
+$dataObj = DateTimeImmutable::createFromFormat('!Y-m-d',(string)$data_baixar);
+if (!$dataObj || $dataObj->format('Y-m-d')!==$data_baixar) throw new RuntimeException('Data de recebimento inválida.');
+
 if($valor > $valor_antigo){
 	echo 'O valor a ser pago não pode ser superior ao valor da conta! O valor da conta é de R$ '.$valor_antigo;
 	exit();
@@ -111,7 +134,8 @@ if($valor <= 0){
 
 
 //verificar caixa aberto
-$query1 = $pdo->query("SELECT * from caixas where operador = '$id_usuario' and data_fechamento is null order by id desc limit 1");
+$query1 = $pdo->prepare("SELECT * FROM caixas WHERE operador=:usuario AND empresa=:empresa AND data_fechamento IS NULL ORDER BY id DESC LIMIT 1");
+$query1->execute([':usuario'=>(int)$id_usuario,':empresa'=>(int)$id_empresa]);
 $res1 = $query1->fetchAll(PDO::FETCH_ASSOC);
 if(@count($res1) > 0){
 	$id_caixa = @$res1[0]['id'];
@@ -122,7 +146,7 @@ if(@count($res1) > 0){
 
 if($valor == $valor_antigo){
 
-	$pdo->query("UPDATE $tabela set forma_pgto = '$saida', usuario_pgto = '$id_usuario', pago = 'Sim', subtotal = '$subtotal', taxa = '$taxa', juros = '$juros', multa = '$multa', desconto = '$desconto', data_pgto = '$data_baixar', caixa = '$id_caixa', hora = curTime() where id = '$id'");
+	$pdo->query("UPDATE $tabela set forma_pgto = '$saida', usuario_pgto = '$id_usuario', pago = 'Sim', subtotal = '$subtotal', taxa = '$taxa', juros = '$juros', multa = '$multa', desconto = '$desconto', data_pgto = '$data_baixar', caixa = '$id_caixa', hora = curTime() where id = '$id' AND empresa = '$id_empresa'");
 
 	//CRIAR A PRÓXIMA CONTA A PAGAR
 	$dias_frequencia = $frequencia;
@@ -165,6 +189,7 @@ if($valor == $valor_antigo){
 			}	
 	
 	$data_agd = $nova_data_vencimento.' 08:00:00';
+	$ultimo_id = (int)$id_ult_registro;
 	require('../../apis/agendar.php');
 
 	$pdo->query("UPDATE $tabela SET hash = '$hash' where id = '$id_ult_registro'");
@@ -179,7 +204,7 @@ if($valor == $valor_antigo){
 	$descricao = '(Resíduo) ' .$descricao;
 	//PEGAR RESIDUOS DA CONTA
 	$total_resid = 0;
-	$query = $pdo->query("SELECT * FROM receber WHERE id_ref = '$id' and residuo = 'Sim'");
+	$query = $pdo->query("SELECT * FROM receber WHERE id_ref = '$id' and residuo = 'Sim' AND empresa = '$id_empresa'");
 	$res = $query->fetchAll(PDO::FETCH_ASSOC);
 	if(@count($res) > 0){
 	
@@ -190,11 +215,11 @@ if($valor == $valor_antigo){
 		}
 	}
 
-	$valor_antigo = $valor_antigo - ($subtotal - $taxa - $multa - $juros);
+	$valor_antigo = round($valor_antigo - $valor, 2);
 
 	$pdo->query("INSERT INTO receber set id_ref = '$id', referencia = '$referencia', valor = '$valor_padrao', data_pgto = curDate(), vencimento = curDate(), data_lanc = curDate(), descricao = '$descricao', usuario_lanc = '$id_usuario', usuario_pgto = '$id_usuario', cliente = '$cliente', forma_pgto = '$saida', frequencia = '$frequencia', arquivo = '$arquivo', subtotal = '$subtotal', pago = 'Sim', taxa = '$taxa', multa = '$multa', juros = '$juros', desconto = '$desconto', residuo = 'Sim', caixa = '$id_caixa', hora = curTime(), empresa = '$id_empresa' ");
 
-	$pdo->query("UPDATE $tabela set forma_pgto = '$saida', usuario_pgto = '$id_usuario', valor = '$valor_antigo', data_pgto = curDate() where id = '$id'");
+	$pdo->query("UPDATE $tabela set forma_pgto = '$saida', usuario_pgto = '$id_usuario', valor = '$valor_antigo', data_pgto = curDate() where id = '$id' AND empresa = '$id_empresa'");
 
 
 	if($api_whatsapp != 'Não' and $telefone_cliente != ''){
@@ -213,16 +238,28 @@ if($valor == $valor_antigo){
 			}
 			
 			$data_agd = $vencimento.' 08:00:00';
+			$ultimo_id = (int)$id;
 			require('../../apis/agendar.php');
 
-			$pdo->query("UPDATE $tabela SET hash = '$hash' where id = '$id'");
+			$pdo->query("UPDATE $tabela SET hash = '$hash' where id = '$id' AND empresa = '$id_empresa'");
 			
 		}	
 
 
 }
 
+$buscaDepois = $pdo->prepare("SELECT descricao,valor,vencimento,data_pgto,forma_pgto,pago,subtotal,frequencia FROM receber WHERE id=:id AND empresa=:empresa");
+$buscaDepois->execute([':id'=>(int)$id,':empresa'=>(int)$id_empresa]);
+$auditoriaDepois = $buscaDepois->fetch(PDO::FETCH_ASSOC);
+registrarAuditoriaFinanceira($pdo,(int)$id_empresa,'receber',(int)$id,'BAIXAR',(int)$id_usuario,$auditoriaAntes,$auditoriaDepois);
+$pdo->commit();
 echo 'Baixado com Sucesso';
+} catch (Throwable $e) {
+ if ($pdo->inTransaction()) $pdo->rollBack();
+ error_log('Baixa de conta a receber: '.$e->getMessage());
+ http_response_code(409);
+ echo 'Não foi possível baixar a conta: '.$e->getMessage();
+}
 
 ?>
 
