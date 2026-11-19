@@ -27,22 +27,9 @@ try {
     if ((int)$caixa['operador'] !== $usuario && !in_array($nivel, ['Administrador','Gerente'], true)) {
         throw new RuntimeException('Operador não autorizado para este caixa.');
     }
-    $dinheiro = $pdo->prepare("SELECT id FROM formas_pgto WHERE empresa=:empresa AND nome LIKE '%Dinheiro%' ORDER BY id LIMIT 1");
-    $dinheiro->execute([':empresa'=>$empresa]);
-    $forma = $dinheiro->fetchColumn();
-    if (!$forma) throw new RuntimeException('Forma de pagamento Dinheiro não cadastrada.');
-
-    $total = function($tabela) use ($pdo,$empresa,$id,$forma) {
-        $st = $pdo->prepare("SELECT COALESCE(SUM(COALESCE(subtotal,valor)),0) FROM $tabela WHERE empresa=:empresa AND caixa=:caixa AND forma_pgto=:forma AND pago='Sim'");
-        $st->execute([':empresa'=>$empresa,':caixa'=>$id,':forma'=>$forma]);
-        return (float)$st->fetchColumn();
-    };
-    $entradas = $total('receber');
-    $saidas = $total('pagar');
-    $sangrias = $pdo->prepare('SELECT COALESCE(SUM(s.valor),0) FROM sangrias s INNER JOIN caixas c ON c.id=s.caixa WHERE c.empresa=:empresa AND c.id=:caixa');
-    $sangrias->execute([':empresa'=>$empresa,':caixa'=>$id]);
-    $retiradas = (float)$sangrias->fetchColumn();
-    $esperado = round((float)$caixa['valor_abertura'] + $entradas - $saidas - $retiradas, 2);
+    require_once __DIR__ . '/calculo_saldo.php';
+    $resumo = calcularSaldoCaixa($pdo, (int)$empresa, (int)$id, (float)$caixa['valor_abertura']);
+    $esperado = $resumo['esperado'];
     $quebra = round($informado - $esperado, 2);
 
     $atualiza = $pdo->prepare('UPDATE caixas SET data_fechamento=CURDATE(), valor_fechamento=:valor, quebra=:quebra, usuario_fechamento=:usuario WHERE id=:id AND empresa=:empresa AND data_fechamento IS NULL');
