@@ -69,6 +69,17 @@ $queryPedidos->execute([
 ]);
 $res = $queryPedidos->fetchAll(PDO::FETCH_ASSOC);
 $total_reg = @count($res);
+$totalRegSt=$pdo->prepare("SELECT COUNT(*) FROM vendas
+    WHERE empresa=:empresa AND status NOT IN ('Finalizado','Cancelado')
+      AND status LIKE :status AND nome_cliente LIKE :busca $sqlFiltroBalcao");
+$totalRegSt->execute([
+    ':empresa'=>(int)$id_empresa,
+    ':status'=>'%'.$statusFiltro.'%',
+    ':busca'=>'%'.$busca.'%'
+]);
+$num_total=(int)$totalRegSt->fetchColumn();
+$num_paginas=(int)ceil($num_total/$itens_paginacao);
+
 if ($total_reg > 0) {
 
 	echo <<<HTML
@@ -247,10 +258,7 @@ HTML;
 		}
 
 
-		$query2 = $pdo->query("SELECT * FROM $tabela where status LIKE '$status_busca' and status != 'Finalizado' and status != 'Cancelado' and nome_cliente like '%$busca%' $sql_pedido_balcao order by hora asc");
-		$res2 = $query2->fetchAll(PDO::FETCH_ASSOC);
-		$num_total = @count($res2);
-		$num_paginas = ceil($num_total/$itens_paginacao);
+		// Total de páginas já calculado fora do loop, sem consultas por pedido.
 
 		$span_balcao = '';
 		if($tipo_pedido == 'Balcão'){
@@ -329,7 +337,7 @@ HTML;
 </div>
 
 <br>	
-<div align="right">Total de Pedidos: <span class=""> {$total_reg}</span> </div>
+<div align="right">Total de Pedidos: <span class=""> {$num_total}</span> </div>
 
 </small>
 
