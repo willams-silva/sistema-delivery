@@ -26,7 +26,8 @@ try {
     if (!$caixa || !empty($caixa['data_fechamento'])) throw new RuntimeException('Caixa não encontrado ou já fechado.');
     if ((int)$caixa['operador'] !== (int)$_SESSION['id'] && !in_array($nivel_usuario,['Administrador','Gerente'],true)) throw new RuntimeException('Operador não autorizado.');
     foreach (['receber','pagar','sangrias'] as $origem) {
-        $consulta=$pdo->prepare("SELECT COUNT(*) FROM $origem WHERE caixa=:id AND empresa=:empresa");
+        $sql = $origem === 'sangrias' ? "SELECT COUNT(*) FROM sangrias s INNER JOIN caixas c ON c.id=s.caixa WHERE c.id=:id AND c.empresa=:empresa" : "SELECT COUNT(*) FROM $origem WHERE caixa=:id AND empresa=:empresa";
+        $consulta=$pdo->prepare($sql);
         $consulta->execute([':id'=>$id,':empresa'=>(int)$id_empresa]);
         if ((int)$consulta->fetchColumn() > 0) throw new RuntimeException('Caixa com movimentações.');
     }
