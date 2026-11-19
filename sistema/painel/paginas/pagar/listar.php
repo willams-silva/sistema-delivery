@@ -161,6 +161,9 @@ if ($total_am > 0) {
 
 if ($filtro == 'Vencidas') {
 	$query = $pdo->query("SELECT * from $tabela where $tipo_data < curDate() and pago = 'Não' and empresa = '$id_empresa' order by id desc ");
+} else if ($filtro == 'Proximos7') {
+    $query = $pdo->prepare("SELECT * FROM pagar WHERE empresa = :empresa AND pago = 'Não' AND vencimento > CURDATE() AND vencimento <= DATE_ADD(CURDATE(), INTERVAL 7 DAY) ORDER BY vencimento ASC, id DESC");
+    $query->execute([':empresa'=>(int)$id_empresa]);
 } else if ($filtro == 'Recebidas') {
 	$query = $pdo->query("SELECT * from $tabela where pago = 'Sim' and empresa = '$id_empresa' order by id desc ");
 } else if ($filtro == 'Hoje') {
