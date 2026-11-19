@@ -58,11 +58,13 @@ if (($_SERVER['REQUEST_METHOD'] ?? '') !== 'POST') { http_response_code(405); ex
 if (!ctype_digit((string)$id) || (int)$id < 1 || !ctype_digit((string)$id_empresa) || (int)$id_empresa < 1 || !ctype_digit((string)$id_usuario) || (int)$id_usuario < 1) {
  http_response_code(400); exit('Conta ou sessão inválida.');
 }
-$consultaConta = $pdo->prepare("SELECT * FROM pagar WHERE id = :id AND empresa = :empresa LIMIT 1");
+try {
+$pdo->beginTransaction();
+$consultaConta = $pdo->prepare("SELECT * FROM pagar WHERE id = :id AND empresa = :empresa LIMIT 1 FOR UPDATE");
 $consultaConta->execute([':id' => (int)$id, ':empresa' => (int)$id_empresa]);
 $res = $consultaConta->fetchAll(PDO::FETCH_ASSOC);
-if (!$res) { http_response_code(404); exit('Conta não encontrada neste estabelecimento.'); }
-if (($res[0]['pago'] ?? '') === 'Sim') { http_response_code(409); exit('Esta conta já foi baixada.'); }
+if (!$res) { throw new RuntimeException('Conta não encontrada neste estabelecimento.'); }
+if (($res[0]['pago'] ?? '') === 'Sim') { throw new RuntimeException('Esta conta já foi baixada.'); }
 
 $descricao = $res[0]['descricao'];
 $fornecedor = $res[0]['fornecedor'];
@@ -100,13 +102,11 @@ if ($usuario_pgto == "") {
 
 
 if ($valor > $valor_antigo) {
-	echo 'O valor a ser pago não pode ser superior ao valor da conta! O valor da conta é de R$ ' . $valor_antigo;
-	exit();
+	throw new RuntimeException('O valor a ser pago não pode ser superior ao valor da conta! O valor da conta é de R$ ' . $valor_antigo);
 }
 
 if ($valor <= 0) {
-	echo 'O precisa ser maior que 0 ';
-	exit();
+	throw new RuntimeException('O valor precisa ser maior que 0.');
 }
 
 
@@ -210,4 +210,11 @@ if ($valor == $valor_antigo) {
 	}
 }
 
+$pdo->commit();
 echo 'Baixado com Sucesso';
+} catch (Throwable $e) {
+ if ($pdo->inTransaction()) $pdo->rollBack();
+ error_log('Baixa de conta a pagar: '.$e->getMessage());
+ http_response_code($e instanceof RuntimeException ? 409 : 500);
+ echo $e instanceof RuntimeException ? $e->getMessage() : 'Não foi possível baixar a conta.';
+}
