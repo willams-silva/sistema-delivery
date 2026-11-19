@@ -163,6 +163,28 @@ try {
  $offsetExtratoConc=($paginaExtratoConc-1)*$porPaginaExtratoConc;
  $stExt=$pdo->prepare("SELECT e.id,e.data_movimento,e.valor,e.descricao,e.identificador,e.liquidacao_id,i.nome_arquivo FROM conciliacao_extrato_linhas e INNER JOIN conciliacao_extrato_importacoes i ON i.id=e.importacao_id AND i.empresa=e.empresa".$whereExtratoConc." ORDER BY e.data_movimento DESC,e.id DESC LIMIT ".$porPaginaExtratoConc." OFFSET ".$offsetExtratoConc);
  $stExt->execute($paramsExtratoConc);$extratoLinhasConc=$stExt->fetchAll(PDO::FETCH_ASSOC);
+ // Sugestões apenas de leitura: crédito positivo, mesmo valor e data de crédito em +/- 3 dias.
+ // Não vincula, não altera o caixa e não confirma a conciliação.
+ if($extratoLinhasConc){
+  $idsExt=array_map('intval',array_column($extratoLinhasConc,'id'));
+  $marksExt=implode(',',array_fill(0,count($idsExt),'?'));
+  $sqlSug="SELECT e.id AS extrato_id,COUNT(l.id) AS candidatos,MIN(l.id) AS credito_sugerido
+   FROM conciliacao_extrato_linhas e
+   LEFT JOIN conciliacao_liquidacoes l ON l.empresa=e.empresa
+    AND l.cancelado_em IS NULL AND l.valor_creditado=e.valor
+    AND l.data_credito BETWEEN DATE_SUB(e.data_movimento,INTERVAL 3 DAY) AND DATE_ADD(e.data_movimento,INTERVAL 3 DAY)
+   WHERE e.empresa=? AND e.id IN (".$marksExt.") AND e.valor>0 AND e.liquidacao_id IS NULL
+   GROUP BY e.id";
+  $stSug=$pdo->prepare($sqlSug);$stSug->execute(array_merge([$empresaConc],$idsExt));
+  $sugestoesExt=[];
+  foreach($stSug->fetchAll(PDO::FETCH_ASSOC) as $s)$sugestoesExt[(int)$s['extrato_id']]=$s;
+  foreach($extratoLinhasConc as &$ex){
+   $s=$sugestoesExt[(int)$ex['id']]??null;
+   $ex['candidatos']=$s?(int)$s['candidatos']:0;
+   $ex['credito_sugerido']=$ex['candidatos']===1?(int)$s['credito_sugerido']:null;
+  }
+  unset($ex);
+ }
  $stImportAud=$pdo->prepare("SELECT i.id,i.nome_arquivo,i.formato,i.usuario_id,i.criado_em,COUNT(e.id) AS linhas_novas FROM conciliacao_extrato_importacoes i LEFT JOIN conciliacao_extrato_linhas e ON e.importacao_id=i.id AND e.empresa=i.empresa WHERE i.empresa=:empresa GROUP BY i.id,i.nome_arquivo,i.formato,i.usuario_id,i.criado_em ORDER BY i.id DESC LIMIT 30");
  $stImportAud->execute([':empresa'=>$empresaConc]);$auditoriaImportacoesConc=$stImportAud->fetchAll(PDO::FETCH_ASSOC);
  $stVin=$pdo->prepare("SELECT v.id,v.receber_id,v.liquidacao_id,v.valor_vinculado,v.criado_em FROM conciliacao_vinculos_recebimentos v INNER JOIN conciliacao_liquidacoes l ON l.id=v.liquidacao_id AND l.empresa=v.empresa WHERE v.empresa=:empresa AND l.data_referencia BETWEEN :inicio AND :fim ORDER BY v.id DESC LIMIT 50");
@@ -562,9 +584,16 @@ $linhasPendenciaExibidasConc++; ?>
 <option value="vinculados" <?php echo $situacaoExtratoConc==='vinculados'?'selected':''; ?>>Com vínculo</option>
 </select></div><button type="submit" class="btn btn-primary">Filtrar extrato</button>
 </form>
-<div class="bc-conc-table mt-3"><table><thead><tr><th>Data</th><th>Valor</th><th>Identificador</th><th>Descrição</th><th>Arquivo</th></tr></thead><tbody>
-<?php foreach($extratoLinhasConc as $ex): ?><tr><td><?php echo $escConc($ex['data_movimento']); ?></td><td><?php echo $moedaConc($ex['valor']); ?></td><td><?php echo $escConc($ex['identificador']); ?></td><td><?php echo $escConc($ex['descricao']); ?></td><td><?php echo $escConc($ex['nome_arquivo']); ?></td></tr><?php endforeach; ?>
-<?php if(!$extratoLinhasConc): ?><tr><td colspan="5">Nenhuma movimentação encontrada para os filtros.</td></tr><?php endif; ?>
+<p class="bc-conc-note mt-3">Sugestões de conferência: o sistema procura créditos ativos com o mesmo valor e data de crédito até 3 dias antes ou depois da movimentação. Um único candidato é apenas uma possível correspondência, não uma conciliação confirmada.</p>
+<div class="bc-conc-table mt-3"><table><thead><tr><th>Data</th><th>Valor</th><th>Identificador</th><th>Descrição</th><th>Arquivo</th><th>Conferência sugerida</th></tr></thead><tbody>
+<?php foreach($extratoLinhasConc as $ex): ?><tr><td><?php echo $escConc($ex['data_movimento']); ?></td><td><?php echo $moedaConc($ex['valor']); ?></td><td><?php echo $escConc($ex['identificador']); ?></td><td><?php echo $escConc($ex['descricao']); ?></td><td><?php echo $escConc($ex['nome_arquivo']); ?></td><td>
+<?php if($ex['liquidacao_id']!==null): ?>Vinculado ao crédito #<?php echo (int)$ex['liquidacao_id']; ?>
+<?php elseif((float)$ex['valor']<=0): ?>Débito — conferência manual
+<?php elseif((int)($ex['candidatos']??0)===1): ?>Possível crédito #<?php echo (int)$ex['credito_sugerido']; ?> — conferir
+<?php elseif((int)($ex['candidatos']??0)>1): ?><?php echo (int)$ex['candidatos']; ?> créditos possíveis — conferir manualmente
+<?php else: ?>Sem correspondência por valor/data
+<?php endif; ?></td></tr><?php endforeach; ?>
+<?php if(!$extratoLinhasConc): ?><tr><td colspan="6">Nenhuma movimentação encontrada para os filtros.</td></tr><?php endif; ?>
 </tbody></table></div>
 <?php $queryExtratoConc=['pagina'=>'conciliacao_financeira','aba'=>'liquidacoes','inicio'=>$inicioConc,'fim'=>$fimConc,'extrato_busca'=>$buscaExtratoConc,'extrato_situacao'=>$situacaoExtratoConc]; ?>
 <div class="bc-conc-filter mt-3" role="navigation" aria-label="Paginação do extrato">
