@@ -235,7 +235,7 @@ if ($total_reg > 0) {
 		}
 
 		echo <<<HTML
-<div class="col-md-3 widget " style="display: inline-block;">
+<div class="col-md-3 widget esteira-cartao" data-status="{$status}" data-criado="{$data} {$hora}" data-tipo="{$tipo_pedido}" style="display: inline-block;">
 			<div class="" style="padding:4px; min-height: 100px; background: {$classe_pago2};">
 				<div style="border-bottom: 1px solid #000">
 					<span style="color:{$classe_alerta}"> <i class="fa fa-square"></i></span> Pedido <b>{$pedido}</b>
@@ -299,7 +299,8 @@ HTML;
 
 
 
-$query = $pdo->query("SELECT * FROM vendas where data = CurDate() and status = 'Iniciado'");
+$query = $pdo->prepare("SELECT id FROM vendas WHERE empresa=:empresa AND data=CURDATE() AND status='Iniciado'");
+$query->execute([':empresa'=>(int)$id_empresa]);
 $res = $query->fetchAll(PDO::FETCH_ASSOC);
 $total_dos_itens_pedidos = @count($res);
 
@@ -333,7 +334,7 @@ $total_dos_itens_pedidos = @count($res);
 		$('#total-dos-pedidos').text("<?= $total_dos_itens_pedidos ?>");
 
 		
-		$('#tabela_filter label input').focus();
+		// A esteira não deve roubar o foco do operador durante atualizações.
 	});
 </script>
 
