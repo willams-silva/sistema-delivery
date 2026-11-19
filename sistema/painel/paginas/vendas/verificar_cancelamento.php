@@ -30,6 +30,21 @@ try {
     $st=$pdo->prepare('SELECT data_fechamento FROM caixas WHERE id=:id AND empresa=:empresa LIMIT 1');
     $st->execute([':id'=>(int)$venda['caixa'],':empresa'=>$empresa]);
     $fechamento=$st->fetchColumn();
+    // Uma venda pode ter pagamentos registrados em caixas diferentes.
+    // O caixa original sozinho não é suficiente para decidir se há estorno possível.
+    $st=$pdo->prepare("SELECT COUNT(*) AS parcelas_em_caixa_fechado,
+        COALESCE(SUM(COALESCE(r.subtotal,r.valor)),0) AS recebido_em_caixa_fechado
+        FROM receber r
+        INNER JOIN caixas c ON c.id=r.caixa AND c.empresa=r.empresa
+        WHERE r.empresa=:empresa AND r.venda_id=:venda
+          AND r.pago='Sim' AND c.data_fechamento IS NOT NULL");
+    $st->execute([':empresa'=>$empresa,':venda'=>$id]);
+    $caixasFechados=$st->fetch(PDO::FETCH_ASSOC);
+    $st=$pdo->prepare("SELECT COUNT(*) FROM receber
+        WHERE empresa=:empresa AND venda_id=:venda
+          AND pago='Sim' AND (caixa IS NULL OR caixa=0)");
+    $st->execute([':empresa'=>$empresa,':venda'=>$id]);
+    $pagosSemCaixa=(int)$st->fetchColumn();
     $legado=(int)$financeiro['quantidade']===0;
     $cancelada=$venda['status']==='Cancelado';
     echo json_encode([
@@ -40,6 +55,9 @@ try {
         'total_recebido'=>round((float)$financeiro['pago_direto']+(float)$financeiro['pago_parcial'],2),
         'total_pendente'=>round((float)$financeiro['pendente'],2),
         'caixa_fechado'=>$fechamento!==false && $fechamento!==null && $fechamento!=='',
+        'parcelas_pagas_em_caixas_fechados'=>(int)$caixasFechados['parcelas_em_caixa_fechado'],
+        'recebido_em_caixas_fechados'=>round((float)$caixasFechados['recebido_em_caixa_fechado'],2),
+        'parcelas_pagas_sem_caixa'=>$pagosSemCaixa,
         'venda_legada_sem_vinculo'=>$legado,
         'cancelamento_liberado'=>false,
         'motivo'=>$cancelada?'Venda já cancelada.':($legado?'Venda sem parcelas vinculadas: requer conciliação manual.':'Estorno transacional ainda não habilitado.')
