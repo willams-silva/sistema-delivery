@@ -289,7 +289,7 @@ HTML;
 
 
 
-		$query2 = $pdo->query("SELECT * FROM usuarios where id = '$usuario_lanc'");
+		$query2 = $pdo->query("SELECT * FROM usuarios where id = '$usuario_lanc' AND empresa = '$id_empresa'");
 		$res2 = $query2->fetchAll(PDO::FETCH_ASSOC);
 		if (@count($res2) > 0) {
 			$nome_usu_lanc = $res2[0]['nome'];
@@ -298,7 +298,7 @@ HTML;
 		}
 
 
-		$query2 = $pdo->query("SELECT * FROM usuarios where id = '$usuario_pgto'");
+		$query2 = $pdo->query("SELECT * FROM usuarios where id = '$usuario_pgto' AND empresa = '$id_empresa'");
 		$res2 = $query2->fetchAll(PDO::FETCH_ASSOC);
 		if (@count($res2) > 0) {
 			$nome_usu_pgto = $res2[0]['nome'];
@@ -307,7 +307,7 @@ HTML;
 		}
 
 
-		$query2 = $pdo->query("SELECT * FROM frequencias where dias = '$frequencia'");
+		$query2 = $pdo->query("SELECT * FROM frequencias where dias = '$frequencia' AND empresa = '$id_empresa'");
 		$res2 = $query2->fetchAll(PDO::FETCH_ASSOC);
 		if (@count($res2) > 0) {
 			$nome_frequencia = $res2[0]['frequencia'];
@@ -315,7 +315,7 @@ HTML;
 			$nome_frequencia = 'Sem Registro';
 		}
 
-		$query2 = $pdo->query("SELECT * FROM formas_pgto where id = '$forma_pgto'");
+		$query2 = $pdo->query("SELECT * FROM formas_pgto where id = '$forma_pgto' AND empresa = '$id_empresa'");
 		$res2 = $query2->fetchAll(PDO::FETCH_ASSOC);
 		if (@count($res2) > 0) {
 			$nome_pgto = $res2[0]['nome'];
@@ -326,7 +326,7 @@ HTML;
 		}
 
 
-		$query2 = $pdo->query("SELECT * FROM clientes where id = '$cliente'");
+		$query2 = $pdo->query("SELECT * FROM clientes where id = '$cliente' AND empresa = '$id_empresa'");
 		$res2 = $query2->fetchAll(PDO::FETCH_ASSOC);
 		if (@count($res2) > 0) {
 			$nome_cliente = $res2[0]['nome'];
@@ -386,7 +386,7 @@ HTML;
 		//PEGAR RESIDUOS DA CONTA
 		$total_resid = 0;
 		$valor_com_residuos = 0;
-		$query2 = $pdo->query("SELECT * FROM receber WHERE id_ref = '$id' and residuo = 'Sim'");
+		$query2 = $pdo->query("SELECT * FROM receber WHERE id_ref = '$id' and residuo = 'Sim' AND empresa = '$id_empresa'");
 		$res2 = $query2->fetchAll(PDO::FETCH_ASSOC);
 		if (@count($res2) > 0) {
 
