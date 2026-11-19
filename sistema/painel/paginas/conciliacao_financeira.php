@@ -221,6 +221,40 @@ $escConc=static function($v){return htmlspecialchars((string)$v,ENT_QUOTES,'UTF-
 .bc-conc.js-tabs-ready [data-conc-panel].is-active{display:block}
 @media(max-width:600px){.bc-conc-card{padding:14px}.bc-conc-tabs button{padding:10px 12px}.bc-conc-filter>div{max-width:100%}}
 
+/* Refinamento visual: indicadores, hierarquia e navegação responsiva */
+.bc-conc{--bc-accent:#1d4ed8;--bc-ink:#0f172a;--bc-muted:#64748b;--bc-line:#e2e8f0}
+.bc-conc>.bc-conc-card:first-of-type{background:linear-gradient(135deg,#f8fbff,#fff);border-color:#dbeafe}
+.bc-conc h3{font-weight:750;letter-spacing:-.025em;color:var(--bc-ink);margin-bottom:9px}
+.bc-conc h5{font-weight:700;color:var(--bc-ink);margin-bottom:12px}
+.bc-conc .bc-conc-card{box-shadow:0 3px 16px rgba(15,23,42,.035);transition:box-shadow .15s ease}
+.bc-conc .bc-conc-card:focus-within{box-shadow:0 4px 20px rgba(29,78,216,.09)}
+.bc-conc [data-conc-panel]>.bc-conc-grid>.bc-conc-card{margin-bottom:0;min-height:106px;display:flex;flex-direction:column;justify-content:center;gap:8px;border-left:3px solid #60a5fa}
+.bc-conc [data-conc-panel]>.bc-conc-grid{margin-bottom:18px}
+.bc-conc [data-conc-panel]>.bc-conc-grid>.bc-conc-card strong{font-size:clamp(19px,2vw,27px);font-weight:750;line-height:1.2;color:var(--bc-ink);overflow-wrap:anywhere;font-variant-numeric:tabular-nums}
+.bc-conc-tabs{position:relative;gap:6px;padding:8px;background:#f1f5f9;border:1px solid #e2e8f0;border-radius:13px;margin-bottom:18px}
+.bc-conc-tabs button{border:0;background:transparent;border-radius:9px;transition:background .15s,color .15s,box-shadow .15s}
+.bc-conc-tabs button[aria-selected="true"]{background:#fff;color:#1d4ed8;box-shadow:0 1px 5px rgba(15,23,42,.13)}
+.bc-conc-tabs button:hover:not([aria-selected="true"]){background:#e2e8f0}
+.bc-conc-filter{row-gap:12px}
+.bc-conc-filter input,.bc-conc-filter select{min-height:39px}
+.bc-conc-table{border:1px solid #e2e8f0;border-radius:10px}
+.bc-conc-table th{font-size:12px;text-transform:uppercase;letter-spacing:.035em;white-space:nowrap;color:#475569}
+.bc-conc-table tbody tr:hover{background:#f8fafc}
+.bc-conc-table td{font-variant-numeric:tabular-nums}
+.bc-conc [data-conc-panel]::before{content:attr(aria-label);display:block;font-size:18px;font-weight:750;color:#0f172a;margin:4px 0 15px}
+@media(max-width:600px){
+.bc-conc{padding:10px 0}
+.bc-conc-tabs{margin:0 -4px 16px}
+.bc-conc-tabs button{font-size:13px}
+.bc-conc-grid{grid-template-columns:repeat(auto-fit,minmax(min(100%,155px),1fr));gap:10px}
+.bc-conc [data-conc-panel]>.bc-conc-grid>.bc-conc-card{min-height:94px}
+.bc-conc-filter>div{width:100%}
+.bc-conc-filter input,.bc-conc-filter select{width:100%;max-width:100%}
+.bc-conc-table th,.bc-conc-table td{padding:9px}
+}
+@media(prefers-reduced-motion:reduce){.bc-conc .bc-conc-card,.bc-conc-tabs button{transition:none}}
+
+
 </style>
 <div class="bc-conc">
 <nav class="bc-conc-tabs" aria-label="Seções da conciliação financeira" id="bc-conc-tabs">
@@ -260,7 +294,7 @@ $escConc=static function($v){return htmlspecialchars((string)$v,ENT_QUOTES,'UTF-
 <?php if (!$tabelaTaxasDisponivelConc): ?><div class="alert alert-warning">As taxas ainda não podem ser salvas. Execute a migração SQL taxas_formas_pagamento.sql no banco da Hostinger.</div><?php endif; ?>
 <div class="bc-conc-card">
 <h5>Simulador de taxas por forma de pagamento</h5>
-<p class="bc-conc-note">Informe a taxa percentual contratada para cada forma. O cálculo é apenas uma estimativa sobre recebimentos baixados; não confirma depósitos. Campos em branco não entram no total líquido estimado. As taxas não são salvas no banco.</p>
+<p class="bc-conc-note">Informe a taxa percentual contratada para cada forma. O cálculo é apenas uma estimativa sobre recebimentos baixados; não confirma depósitos. Campos em branco não entram no total líquido estimado. As taxas podem ser salvas para uso em consultas futuras.</p>
 <form method="get" action="index.php">
 <input type="hidden" name="pagina" value="conciliacao_financeira">
 <input type="hidden" name="inicio" value="<?php echo $escConc($inicioConc); ?>">
@@ -470,7 +504,7 @@ $liquido=$linha['liquido_estimado'];
 </tr><?php endforeach; ?>
 <?php if (!$movimentosConc): ?><tr><td colspan="5">Nenhuma baixa encontrada.</td></tr><?php endif; ?>
 </tbody></table></div>
-<p class="bc-conc-note">A simulação de taxas acima não substitui a conciliação bancária. A integração com extratos, liquidações e taxas persistidas continua pendente.</p>
+<p class="bc-conc-note">A simulação de taxas acima não substitui a conciliação bancária. A importação automática de extratos e a conciliação bancária transacional ainda não estão disponíveis.</p>
 </div></div>
 <script>
 (function(){
