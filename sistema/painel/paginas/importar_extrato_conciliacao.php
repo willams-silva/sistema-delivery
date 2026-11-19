@@ -17,12 +17,13 @@ if($ext==='csv'){
  $header=array_map(static function($v){return strtolower(trim(str_replace("\xEF\xBB\xBF",'',(string)$v)));},$header);
  $col=array_flip($header);
  foreach(['data','valor','descricao'] as $key)if(!isset($col[$key])){fclose($fp);http_response_code(400);exit('CSV precisa das colunas: data;valor;descricao;identificador (opcional).');}
- while(($row=fgetcsv($fp,0,$sep))!==false){if(count($linhas)>=5000)break;$data=$dataValida($row[$col['data']]??'');$valor=$valorValido($row[$col['valor']]??'');if(!$data||$valor===null)continue;$linhas[]=[$data,$valor,mb_substr(trim($row[$col['descricao']]??''),0,500),mb_substr(trim($row[$col['identificador']]??''),0,120)];}
+ while(($row=fgetcsv($fp,0,$sep))!==false){if(count($linhas)>=5000){fclose($fp);http_response_code(413);exit('Arquivo excede 5.000 movimentações. Divida o extrato.');}$data=$dataValida($row[$col['data']]??'');$valor=$valorValido($row[$col['valor']]??'');if(!$data||$valor===null)continue;$linhas[]=[$data,$valor,mb_substr(trim($row[$col['descricao']]??''),0,500),mb_substr(trim($row[$col['identificador']]??''),0,120)];}
  fclose($fp);
 }else{
  // OFX 1.x usa SGML sem fechamento de tags; extrai apenas blocos STMTTRN, sem executar entidades.
  if(preg_match_all('/<STMTTRN>(.*?)(?:<\/STMTTRN>|(?=<STMTTRN>)|$)/is',$raw,$matches)){
-  foreach(array_slice($matches[1],0,5000) as $block){
+  if(count($matches[1])>5000){http_response_code(413);exit('Arquivo excede 5.000 movimentações. Divida o extrato.');}
+  foreach($matches[1] as $block){
    $get=static function($tag)use($block){return preg_match('/<'.$tag.'>\s*([^<\r\n]+)/i',$block,$m)?trim($m[1]):'';};
    $data=$dataValida(substr($get('DTPOSTED'),0,8));$valor=$valorValido($get('TRNAMT'));
    if(!$data||$valor===null)continue;
