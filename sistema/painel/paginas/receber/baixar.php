@@ -193,7 +193,8 @@ if ($baixa->rowCount() !== 1) throw new RuntimeException('Baixa não confirmada.
 	$ultimo_id = (int)$id_ult_registro;
 	require('../../apis/agendar.php');
 
-	$pdo->query("UPDATE $tabela SET hash = '$hash' where id = '$id_ult_registro'");
+	$atualizaHash = $pdo->prepare("UPDATE receber SET hash=:hash WHERE id=:id AND empresa=:empresa");
+    $atualizaHash->execute([':hash'=>$hash,':id'=>(int)$id_ult_registro,':empresa'=>(int)$id_empresa]);
 	
 }				
 	}
@@ -203,26 +204,25 @@ if ($baixa->rowCount() !== 1) throw new RuntimeException('Baixa não confirmada.
 }else{
 
 	$descricao = '(Resíduo) ' .$descricao;
-	//PEGAR RESIDUOS DA CONTA
-	$total_resid = 0;
-	$query = $pdo->query("SELECT * FROM receber WHERE id_ref = '$id' and residuo = 'Sim' AND empresa = '$id_empresa'");
-	$res = $query->fetchAll(PDO::FETCH_ASSOC);
-	if(@count($res) > 0){
-	
-		for($i=0; $i < @count($res); $i++){
-		foreach ($res[$i] as $key => $value){} 
-			$valor_resid = $res[$i]['valor'];
-			$total_resid += $valor_resid;
-		}
-	}
-
-	$valor_antigo = round($valor_antigo - $valor, 2);
-    if ($valor_antigo <= 0) throw new RuntimeException('Saldo residual inválido.');
-
-	$pdo->query("INSERT INTO receber set id_ref = '$id', referencia = '$referencia', valor = '$valor_padrao', data_pgto = curDate(), vencimento = curDate(), data_lanc = curDate(), descricao = '$descricao', usuario_lanc = '$id_usuario', usuario_pgto = '$id_usuario', cliente = '$cliente', forma_pgto = '$saida', frequencia = '$frequencia', arquivo = '$arquivo', subtotal = '$subtotal', pago = 'Sim', taxa = '$taxa', multa = '$multa', juros = '$juros', desconto = '$desconto', residuo = 'Sim', caixa = '$id_caixa', hora = curTime(), empresa = '$id_empresa' ");
-
-	$pdo->query("UPDATE $tabela set forma_pgto = '$saida', usuario_pgto = '$id_usuario', valor = '$valor_antigo', data_pgto = curDate() where id = '$id' AND empresa = '$id_empresa'");
-
+    // O registro original representa o saldo aberto; cada pagamento parcial
+    // é uma linha de histórico vinculada por id_ref.
+    $saldoRestante = round($valor_antigo - $valor, 2);
+    if ($saldoRestante <= 0) throw new RuntimeException('Saldo residual inválido.');
+    $insereParcial = $pdo->prepare("INSERT INTO receber (id_ref,referencia,valor,data_pgto,vencimento,data_lanc,descricao,usuario_lanc,usuario_pgto,cliente,forma_pgto,frequencia,arquivo,subtotal,pago,taxa,multa,juros,desconto,residuo,caixa,hora,empresa) VALUES (:origem,:referencia,:valor,:data_pgto,:vencimento,CURDATE(),:descricao,:usuario_lanc,:usuario_pgto,:cliente,:forma,:frequencia,:arquivo,:subtotal,'Sim',:taxa,:multa,:juros,:desconto,'Sim',:caixa,CURTIME(),:empresa)");
+    $insereParcial->execute([
+        ':origem'=>(int)$id, ':referencia'=>$referencia, ':valor'=>$valor,
+        ':data_pgto'=>$data_baixar, ':vencimento'=>$vencimento,
+        ':descricao'=>$descricao, ':usuario_lanc'=>(int)$id_usuario,
+        ':usuario_pgto'=>(int)$id_usuario, ':cliente'=>(int)$cliente,
+        ':forma'=>$saida, ':frequencia'=>$frequencia, ':arquivo'=>$arquivo,
+        ':subtotal'=>$subtotal, ':taxa'=>$taxa, ':multa'=>$multa,
+        ':juros'=>$juros, ':desconto'=>$desconto,
+        ':caixa'=>(int)$id_caixa, ':empresa'=>(int)$id_empresa
+    ]);
+    $atualizaSaldo = $pdo->prepare("UPDATE receber SET valor=:saldo, usuario_pgto=:usuario, data_pgto=:data WHERE id=:id AND empresa=:empresa AND pago <> 'Sim'");
+    $atualizaSaldo->execute([':saldo'=>$saldoRestante, ':usuario'=>(int)$id_usuario, ':data'=>$data_baixar, ':id'=>(int)$id, ':empresa'=>(int)$id_empresa]);
+    if ($atualizaSaldo->rowCount() !== 1) throw new RuntimeException('Saldo da conta não atualizado.');
+    $valor_antigo = $saldoRestante;
 
 	if($api_whatsapp != 'Não' and $telefone_cliente != ''){
 
@@ -243,7 +243,8 @@ if ($baixa->rowCount() !== 1) throw new RuntimeException('Baixa não confirmada.
 			$ultimo_id = (int)$id;
 			require('../../apis/agendar.php');
 
-			$pdo->query("UPDATE $tabela SET hash = '$hash' where id = '$id' AND empresa = '$id_empresa'");
+			$atualizaHash = $pdo->prepare("UPDATE receber SET hash=:hash WHERE id=:id AND empresa=:empresa");
+            $atualizaHash->execute([':hash'=>$hash,':id'=>(int)$id,':empresa'=>(int)$id_empresa]);
 			
 		}	
 
