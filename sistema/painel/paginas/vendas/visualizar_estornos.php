@@ -4,6 +4,9 @@ $empresa=filter_var($_SESSION['empresa']??null,FILTER_VALIDATE_INT,['options'=>[
 $usuario=filter_var($_SESSION['id']??null,FILTER_VALIDATE_INT,['options'=>['min_range'=>1]]);
 if (!$empresa || !$usuario) { http_response_code(403); exit('Sessão inválida.'); }
 header('Content-Type: text/html; charset=utf-8');
+header('Cache-Control: no-store, no-cache, must-revalidate, private');
+header('Pragma: no-cache');
+header('X-Content-Type-Options: nosniff');
 ?>
 <!doctype html><html lang="pt-BR"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
@@ -20,7 +23,7 @@ th{background:#f1f4f7}.pager{display:flex;gap:12px;align-items:center;margin-top
 #error{color:#b42318}#status{min-height:20px}
 </style></head><body><main><h1>Histórico de estornos</h1>
 <p>Consulta financeira somente leitura. Este painel não realiza devoluções.</p>
-<p><a href="../../index.php?pagina=vendas" style="color:#233b59">Voltar ao painel</a></p>
+<p><a href="../../index.php?pagina=vendas" style="color:#233b59">Voltar às vendas</a></p>
 <section class="card">
 <form id="filtros"><label>Venda <input id="venda" type="number" min="1" placeholder="Número da venda"></label>
 <label>Status <select id="filtro-status"><option value="">Todos</option><option>Registrado</option><option>Concluido</option><option>Cancelado</option></select></label>
