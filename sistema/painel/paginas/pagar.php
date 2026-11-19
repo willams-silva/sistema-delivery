@@ -28,6 +28,53 @@ if ($linhas > 0) {
 ?>
 
 
+<?php
+// Resumo de vencimentos apenas do estabelecimento autenticado.
+$resumoVencimentos = ['atrasadas'=>['qtd'=>0,'total'=>0], 'hoje'=>['qtd'=>0,'total'=>0], 'proximas'=>['qtd'=>0,'total'=>0]];
+try {
+    $consultaVencimentos = $pdo->prepare("SELECT
+      CASE WHEN vencimento < CURDATE() THEN 'atrasadas'
+           WHEN vencimento = CURDATE() THEN 'hoje'
+           ELSE 'proximas' END AS faixa,
+      COUNT(*) AS qtd, COALESCE(SUM(valor),0) AS total
+      FROM pagar
+      WHERE empresa = :empresa AND (pago IS NULL OR pago <> 'Sim')
+        AND vencimento <= DATE_ADD(CURDATE(), INTERVAL 7 DAY)
+      GROUP BY faixa");
+    $consultaVencimentos->execute([':empresa'=>(int)$id_empresa]);
+    foreach ($consultaVencimentos->fetchAll(PDO::FETCH_ASSOC) as $item) {
+        $resumoVencimentos[$item['faixa']] = ['qtd'=>(int)$item['qtd'],'total'=>(float)$item['total']];
+    }
+} catch (Throwable $e) {
+    error_log('Resumo de vencimentos pagar: '.$e->getMessage());
+}
+?>
+<section class="card mb-3" id="alertas-vencimentos-pagar">
+ <div class="card-body">
+  <h5 class="mb-3"><i class="fe fe-bell me-2"></i>Alertas de vencimento</h5>
+  <div class="row g-3">
+   <?php foreach ([
+      ['chave'=>'atrasadas','titulo'=>'Contas atrasadas','cor'=>'danger'],
+      ['chave'=>'hoje','titulo'=>'Vencem hoje','cor'=>'warning'],
+      ['chave'=>'proximas','titulo'=>'Próximos 7 dias','cor'=>'info']
+   ] as $alerta):
+      $resumo = $resumoVencimentos[$alerta['chave']];
+   ?>
+   <div class="col-md-4">
+    <div class="border rounded p-3 h-100">
+     <div class="d-flex align-items-center justify-content-between gap-2">
+      <strong><?php echo htmlspecialchars($alerta['titulo'], ENT_QUOTES, 'UTF-8'); ?></strong>
+      <span class="badge bg-<?php echo $alerta['cor']; ?>"><?php echo $resumo['qtd']; ?></span>
+     </div>
+     <div class="mt-2 fw-bold">R$ <?php echo number_format($resumo['total'],2,',','.'); ?></div>
+    </div>
+   </div>
+   <?php endforeach; ?>
+  </div>
+  <small class="text-muted d-block mt-2">Somente contas em aberto. O período de 7 dias não inclui as vencidas nem as que vencem hoje.</small>
+ </div>
+</section>
+
 <section class="card mb-3" id="auditoria-pagar">
  <div class="card-body">
   <div class="d-flex justify-content-between align-items-center flex-wrap gap-2">
