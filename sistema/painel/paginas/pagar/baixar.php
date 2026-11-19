@@ -164,8 +164,16 @@ if ($valor == $valor_antigo) {
 		$nova_data_vencimento = $dataBase->modify('+'.(int)$dias_frequencia.' days')->format('Y-m-d');
 	}
 
-	if (@$dias_frequencia > 0) {
-		$pdo->query("INSERT INTO $tabela set descricao = '$descricao', fornecedor = '$fornecedor', funcionario = '$funcionario', valor = '$valor_antigo', data_lanc = curDate(), vencimento = '$nova_data_vencimento', frequencia = '$frequencia', forma_pgto = '$saida_antiga', arquivo = '$arquivo', pago = 'Não', referencia = '$referencia', usuario_lanc = '$id_usuario', caixa = '$id_caixa', hora = curTime(), empresa = '$id_empresa' ");
+	if ((int)$dias_frequencia > 0) {
+		// O registro de origem está bloqueado por FOR UPDATE durante toda a transação.
+		// id_ref identifica a origem desta recorrência, sem confundir com resíduos pagos.
+		$verificaProxima = $pdo->prepare("SELECT id FROM pagar WHERE empresa = :empresa AND id_ref = :origem AND vencimento = :vencimento AND (residuo IS NULL OR residuo <> 'Sim') LIMIT 1");
+		$verificaProxima->execute([':empresa'=>(int)$id_empresa, ':origem'=>(int)$id, ':vencimento'=>$nova_data_vencimento]);
+		if ($verificaProxima->fetchColumn()) {
+			throw new RuntimeException('Já existe uma recorrência gerada para este vencimento.');
+		}
+		$insereProxima = $pdo->prepare("INSERT INTO pagar (id_ref, descricao, fornecedor, funcionario, valor, data_lanc, vencimento, frequencia, forma_pgto, arquivo, pago, referencia, usuario_lanc, caixa, hora, empresa) VALUES (:origem, :descricao, :fornecedor, :funcionario, :valor, curDate(), :vencimento, :frequencia, :forma, :arquivo, 'Não', :referencia, :usuario, :caixa, curTime(), :empresa)");
+		$insereProxima->execute([':origem'=>(int)$id, ':descricao'=>$descricao, ':fornecedor'=>$fornecedor, ':funcionario'=>$funcionario, ':valor'=>$valor_antigo, ':vencimento'=>$nova_data_vencimento, ':frequencia'=>$frequencia, ':forma'=>$saida_antiga, ':arquivo'=>$arquivo, ':referencia'=>$referencia, ':usuario'=>(int)$id_usuario, ':caixa'=>(int)$id_caixa, ':empresa'=>(int)$id_empresa]);
 		$id_ult_registro = $pdo->lastInsertId();
 
 		if ($api_whatsapp != 'Não' and $telefone_sistema != '') {
