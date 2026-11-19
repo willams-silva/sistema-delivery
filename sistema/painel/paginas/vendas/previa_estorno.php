@@ -71,6 +71,7 @@ try {
     $motivosBloqueio=[];
     if ($venda['status']==='Cancelado') $motivosBloqueio[]='Venda já cancelada';
     if ((int)$venda['cliente']>0) $motivosBloqueio[]='Venda com fidelidade exige revisão';
+    if (!$parcelas) $motivosBloqueio[]='Venda sem parcelas financeiras vinculadas';
     if ($recebido<=0) $motivosBloqueio[]='Nenhum valor recebido para devolver';
     if (!$caixaAtual) $motivosBloqueio[]='Operador sem caixa aberto';
     if ($pagamentosSemRastreio>0) $motivosBloqueio[]='Pagamentos sem rastreabilidade';
@@ -87,6 +88,7 @@ try {
             && strpos($nomeForma,'dinheiro')===false) $pagamentosNaoDinheiro++;
     }
     if ($pagamentosNaoDinheiro>0) $motivosBloqueio[]='PIX, cartão ou outra forma exigem confirmação externa da devolução';
+    if (!$formasRecebidas && $recebido>0) $motivosBloqueio[]='Nenhuma forma de pagamento identificada para os recebimentos';
     // Confere a existência de todos os caixas de recebimento, inclusive
     // registros antigos que apontem para caixas de outra empresa.
     $caixasInvalidos=0;
@@ -151,6 +153,7 @@ try {
         }
     }
     if ($recebimentosInvalidos>0) $motivosBloqueio[]='Parcelas com valores inválidos para devolução';
+    // Prévia não substitui o comprovante de devolução: nenhuma ação de escrita.
     $candidatoEstornoDinheiro=count($parcelas)>0 && count($motivosBloqueio)===0
         && abs($divergencia)<0.01 && $pendente<0.01
         && $pagamentosNaoDinheiro===0 && $parcelasSimples;
