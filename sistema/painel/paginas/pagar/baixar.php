@@ -101,6 +101,28 @@ if ($usuario_pgto == "") {
 }
 
 
+// Valores financeiros devem ser coerentes com a conta e com o total calculado no servidor.
+foreach (['valor'=>$valor,'juros'=>$juros,'multa'=>$multa,'desconto'=>$desconto,'subtotal'=>$subtotal] as $campo=>$numero) {
+ if (!is_numeric($numero) || !is_finite((float)$numero) || (float)$numero < 0) {
+  throw new RuntimeException('Valor inválido no campo '.$campo.'.');
+ }
+}
+$valor=round((float)$valor,2);
+$juros=round((float)$juros,2);
+$multa=round((float)$multa,2);
+$desconto=round((float)$desconto,2);
+$subtotal=round((float)$subtotal,2);
+$valor_antigo=round((float)$valor_antigo,2);
+$totalCalculado=round($valor+$juros+$multa-$desconto,2);
+if ($totalCalculado<=0 || abs($subtotal-$totalCalculado)>0.009) {
+ throw new RuntimeException('Total do pagamento divergente. Recalcule os valores.');
+}
+if ($desconto>$valor+$juros+$multa) {
+ throw new RuntimeException('Desconto maior que o valor do pagamento.');
+}
+if (!preg_match('/^\\d{4}-\\d{2}-\\d{2}$/',(string)$data_baixar) || !($dataObj=DateTimeImmutable::createFromFormat('!Y-m-d',(string)$data_baixar)) || $dataObj->format('Y-m-d')!==$data_baixar) {
+ throw new RuntimeException('Data do pagamento inválida.');
+}
 if ($valor > $valor_antigo) {
 	throw new RuntimeException('O valor a ser pago não pode ser superior ao valor da conta! O valor da conta é de R$ ' . $valor_antigo);
 }
@@ -181,7 +203,8 @@ if ($valor == $valor_antigo) {
 		}
 	}
 
-	$valor_antigo = $valor_antigo - ($subtotal - $multa - $juros);
+	$valor_antigo = round($valor_antigo - $valor, 2);
+ if ($valor_antigo <= 0) { throw new RuntimeException('Saldo residual inválido. Confira o valor da baixa.'); }
 
 	$pdo->query("INSERT INTO $tabela set id_ref = '$id', referencia = '$referencia', valor = '$valor_padrao', data_pgto = curDate(), vencimento = curDate(), data_lanc = curDate(), descricao = '$descricao', usuario_lanc = '$id_usuario', usuario_pgto = '$id_usuario', fornecedor = '$fornecedor', funcionario = '$funcionario', forma_pgto = '$saida', frequencia = '$frequencia', arquivo = '$arquivo', subtotal = '$subtotal', pago = 'Sim', multa = '$multa', juros = '$juros', desconto = '$desconto', residuo = 'Sim', caixa = '$id_caixa', hora = curTime(), empresa = '$id_empresa' ");
 
