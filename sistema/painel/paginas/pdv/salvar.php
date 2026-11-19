@@ -136,8 +136,16 @@ $id_caixa=(int)($consultaCaixa->fetchColumn() ?: 0);
 if (!$id_caixa) { http_response_code(409); exit('Abra um caixa antes de finalizar a venda no PDV.'); }
 if (!$id_saida) { http_response_code(400); exit('Forma de pagamento não cadastrada para esta empresa.'); }
 
+// Operação atômica: estoque, venda, financeiro e carrinho.
+$pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+try {
+$pdo->beginTransaction();
+$lockCaixa=$pdo->prepare('SELECT id FROM caixas WHERE id=:id AND empresa=:empresa AND operador=:operador AND data_fechamento IS NULL FOR UPDATE');
+$lockCaixa->execute([':id'=>$id_caixa,':empresa'=>(int)$id_empresa,':operador'=>(int)$id_usuario]);
+if (!$lockCaixa->fetchColumn()) throw new RuntimeException('O caixa foi fechado. Abra um caixa para continuar.');
 $total_carrinho = 0;
-$query = $pdo->query("SELECT * FROM carrinho where sessao = '$sessao' and pedido = 0 and mesa = '' and empresa = '$id_empresa'");
+$query = $pdo->prepare("SELECT * FROM carrinho WHERE sessao=:sessao AND pedido=0 AND mesa='' AND empresa=:empresa FOR UPDATE");
+$query->execute([':sessao'=>(int)$sessao,':empresa'=>(int)$id_empresa]);
 $res = $query->fetchAll(PDO::FETCH_ASSOC);
 $total_reg = @count($res);
 if ($total_reg > 0) {
@@ -153,8 +161,10 @@ if ($total_reg > 0) {
     $total_carrinho += $total_item;
 
 
-    $query2 = $pdo->query("SELECT * FROM produtos where id = '$produto'");
+    $query2 = $pdo->prepare('SELECT * FROM produtos WHERE id=:id AND empresa=:empresa FOR UPDATE');
+    $query2->execute([':id'=>$produto,':empresa'=>(int)$id_empresa]);
     $res2 = $query2->fetchAll(PDO::FETCH_ASSOC);
+    if (!$res2) throw new RuntimeException('Produto não encontrado nesta empresa.');
     $id_categoria = $res2[0]['categoria'];
     $valor_produto = $res2[0]['valor_venda'];
     $estoque = $res2[0]['estoque'];
@@ -166,13 +176,13 @@ if ($total_reg > 0) {
 
     if ($tem_estoque == 'Sim') {
       $total_produtos = $estoque - $quantidade;
-      $pdo->query("UPDATE produtos SET estoque = '$total_produtos' where id = '$produto'");
+      $estoqueSt=$pdo->prepare('UPDATE produtos SET estoque=:estoque WHERE id=:id AND empresa=:empresa');
+      $estoqueSt->execute([':estoque'=>$total_produtos,':id'=>$produto,':empresa'=>(int)$id_empresa]);
     }
 
   }
 } else {
-  echo '0';
-  exit();
+  throw new RuntimeException('Carrinho vazio.');
 }
 
 
@@ -193,14 +203,12 @@ if($tipo_desconto == '%'){
 $total_final = $total_carrinho + $frete - $desconto;
 
 if($total_final <= 0){
-	echo 'O valor da Venda tem que ser maior que zero';
-	exit();
+	throw new RuntimeException('O valor da venda tem que ser maior que zero.');
 }
 
 
 if($troco < $total_final and $troco != ""){
-	echo 'O total a pagar não pode ser menor que o total da venda!';
-	exit();
+	throw new RuntimeException('O total a pagar não pode ser menor que o total da venda.');
 }
 
 if($troco == ""){
@@ -239,7 +247,7 @@ if($troco > 0){
 // Revalida o vínculo antes de persistir a venda.
 $consultaCaixa->execute([':usuario'=>(int)$id_usuario,':empresa'=>(int)$id_empresa]);
 if ((int)($consultaCaixa->fetchColumn() ?: 0) !== $id_caixa) {
-    http_response_code(409); exit('O caixa foi alterado durante a venda. Atualize o PDV.');
+    throw new RuntimeException('O caixa foi alterado durante a venda. Atualize o PDV.');
 }
 
 
@@ -248,22 +256,33 @@ if($entrega == ""){
 }
 
 
-$query = $pdo->prepare("INSERT INTO vendas SET cliente = '$cliente', valor = '$total_final', total_pago = '$troco', troco = '$troco_calculado', data = curDate(), hora = curTime(), status = 'Iniciado', pago = '$pago', obs = '', taxa_entrega = '$frete', tipo_pgto = '$saida', usuario_baixa = '0', entrega = '$entrega', mesa = '$mesa', nome_cliente = '$nome_cliente', cupom = '$desconto', pago_entregador = 'Não', pedido = '$pedido', ref_api = '', tipo_pedido = '$tipo_pedido', taxa_extra_pedido = '0', caixa = '$id_caixa', custo = '$total_compra', empresa = '$id_empresa' ");
-$query->execute();
+$query=$pdo->prepare("INSERT INTO vendas SET cliente=:cliente,valor=:valor,total_pago=:total_pago,troco=:troco,data=CURDATE(),hora=CURTIME(),status='Iniciado',pago=:pago,obs='',taxa_entrega=:frete,tipo_pgto=:forma,usuario_baixa=0,entrega=:entrega,mesa=:mesa,nome_cliente=:nome,cupom=:desconto,pago_entregador='Não',pedido=:pedido,ref_api='',tipo_pedido=:tipo,taxa_extra_pedido=0,caixa=:caixa,custo=:custo,empresa=:empresa");
+$query->execute([':cliente'=>$cliente,':valor'=>$total_final,':total_pago'=>$troco,':troco'=>$troco_calculado,':pago'=>$pago,':frete'=>$frete,':forma'=>$saida,':entrega'=>$entrega,':mesa'=>$mesa,':nome'=>$nome_cliente,':desconto'=>$desconto,':pedido'=>$pedido,':tipo'=>$tipo_pedido,':caixa'=>$id_caixa,':custo'=>$total_compra,':empresa'=>(int)$id_empresa]);
 $id_pedido = $pdo->lastInsertId();
 $id_pedido_feito = $pdo->lastInsertId();
 
 
 //lançar nas contas a receber
-$pdo->query("INSERT INTO receber SET descricao = 'Nova Venda', cliente = '$cliente', valor = '$total_final', vencimento = '$data', data_pgto = '$data', data_lanc = curDate(), forma_pgto = '$id_saida', frequencia = '0',  arquivo = 'sem-foto.jpg', foto = 'sem-foto.jpg', subtotal = '$total_final', usuario_lanc = '$id_usuario', usuario_pgto = '$usuario_pgto', pago = '$pago', referencia = 'Venda', caixa = '$id_caixa', hora = curTime(), tipo = 'Balcão', custo = '$total_compra', empresa = '$id_empresa' ");
+$receberSt=$pdo->prepare("INSERT INTO receber SET descricao='Nova Venda',cliente=:cliente,valor=:valor,vencimento=:vencimento,data_pgto=:data_pgto,data_lanc=CURDATE(),forma_pgto=:forma,frequencia=0,arquivo='sem-foto.jpg',foto='sem-foto.jpg',subtotal=:subtotal,usuario_lanc=:usuario,usuario_pgto=:usuario_pgto,pago=:pago,referencia='Venda',caixa=:caixa,hora=CURTIME(),tipo='Balcão',custo=:custo,empresa=:empresa");
+$receberSt->execute([':cliente'=>$cliente,':valor'=>$total_final,':vencimento'=>$data,':data_pgto'=>$data_pgto ?: null,':forma'=>$id_saida,':subtotal'=>$total_final,':usuario'=>(int)$id_usuario,':usuario_pgto'=>$usuario_pgto ?: null,':pago'=>$pago,':caixa'=>$id_caixa,':custo'=>$total_compra,':empresa'=>(int)$id_empresa]);
 
 
 //relacionar itens do carrinho com o pedido
-$pdo->query("UPDATE carrinho SET cliente = '$cliente', pedido = '$id_pedido' where sessao = '$id_usuario' and pedido = '0' and mesa = ''");
-$pdo->query("UPDATE temp SET pedido = '$id_pedido' where sessao = '$id_usuario' and pedido = '0'");
+$itensSt=$pdo->prepare("UPDATE carrinho SET cliente=:cliente,pedido=:pedido WHERE sessao=:sessao AND pedido=0 AND mesa='' AND empresa=:empresa");
+$itensSt->execute([':cliente'=>$cliente,':pedido'=>$id_pedido,':sessao'=>(int)$id_usuario,':empresa'=>(int)$id_empresa]);
+if ($itensSt->rowCount() !== $total_reg) throw new RuntimeException('O carrinho mudou durante a venda.');
+$tempSt=$pdo->prepare("UPDATE temp SET pedido=:pedido WHERE sessao=:sessao AND pedido=0");
+$tempSt->execute([':pedido'=>$id_pedido,':sessao'=>(int)$id_usuario]);
 
 
 
+$pdo->commit();
 echo 'Salvo com Sucesso-'.$id_pedido;
+} catch (Throwable $e) {
+    if ($pdo->inTransaction()) $pdo->rollBack();
+    error_log('PDV finalizar venda: '.$e->getMessage());
+    http_response_code($e instanceof RuntimeException ? 409 : 500);
+    echo $e instanceof RuntimeException ? $e->getMessage() : 'Não foi possível finalizar a venda.';
+}
 
  ?>
