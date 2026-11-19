@@ -82,6 +82,31 @@ try {
  foreach($stS->fetchAll(PDO::FETCH_ASSOC) as $l) $liquidacoesPorFormaConc[(int)$l['forma_pgto']]=(float)$l['total'];
  $liquidacoesDisponiveisConc=true;
 } catch(PDOException $e) {error_log('Liquidacoes indisponiveis: '.$e->getMessage());}
+// Alertas gerenciais: diferença por forma e falta de crédito informado.
+$alertasConc=[];$totalCreditoConc=0.0;$totalEsperadoComparavelConc=0.0;
+$limiarConc=0.01;
+if ($liquidacoesDisponiveisConc) {
+ foreach ($gruposConc as $linhaAlerta) {
+  $idAlerta=(int)($linhaAlerta['forma_id']??0);
+  $nomeAlerta=(string)$linhaAlerta['forma'];
+  $creditoAlerta=(float)($liquidacoesPorFormaConc[$idAlerta]??0);
+  $totalCreditoConc+=$creditoAlerta;
+  if ($linhaAlerta['liquido_estimado']===null) {
+   $alertasConc[]=['tipo'=>'warning','texto'=>'Taxa não configurada para '.$nomeAlerta.'. Não é possível calcular a diferença líquida estimada.'];
+   continue;
+  }
+  $esperadoAlerta=(float)$linhaAlerta['liquido_estimado'];
+  $totalEsperadoComparavelConc+=$esperadoAlerta;
+  $diferencaAlerta=round($creditoAlerta-$esperadoAlerta,2);
+  if ($creditoAlerta<=0 && $esperadoAlerta>0) {
+   $alertasConc[]=['tipo'=>'warning','texto'=>'Nenhum crédito informado para '.$nomeAlerta.' no período. Pode haver repasse futuro.'];
+  } elseif ($diferencaAlerta < -$limiarConc) {
+   $alertasConc[]=['tipo'=>'danger','texto'=>'Crédito informado abaixo do líquido estimado para '.$nomeAlerta.' (diferença: R$ '.number_format($diferencaAlerta,2,',','.').').'];
+  } elseif ($diferencaAlerta > $limiarConc) {
+   $alertasConc[]=['tipo'=>'warning','texto'=>'Crédito informado acima do líquido estimado para '.$nomeAlerta.' (diferença: R$ '.number_format($diferencaAlerta,2,',','.').').'];
+  }
+ }
+}
 $totalConc=$somarConc($gruposConc); $totalPendenteConc=$somarConc($pendentesConc);
 $moedaConc=static function($v){return 'R$ '.number_format((float)$v,2,',','.');};
 $escConc=static function($v){return htmlspecialchars((string)$v,ENT_QUOTES,'UTF-8');};
@@ -153,6 +178,21 @@ Líquido estimado apenas dessas formas: <strong><?php echo $moedaConc($totalLiqu
 <?php endif; endforeach; ?>
 </form>
 <p class="bc-conc-note">Para salvar, primeiro clique em Calcular estimativa e depois em Salvar taxas do estabelecimento. As taxas salvas serão usadas em futuras consultas.</p>
+<?php endif; ?>
+</div>
+<div class="bc-conc-card">
+<h5><i class="fa fa-exclamation-triangle"></i> Alertas de conferência</h5>
+<p class="bc-conc-note">Alertas baseados nos recebimentos baixados e créditos informados no período selecionado. Não significam automaticamente perda, fraude ou atraso: repasses podem ocorrer em datas posteriores.</p>
+<?php if (!$liquidacoesDisponiveisConc): ?>
+<div class="alert alert-warning">Conferência indisponível enquanto a tabela de liquidações não estiver acessível.</div>
+<?php elseif (!$gruposConc): ?>
+<div class="alert alert-info">Sem recebimentos baixados no período para comparar.</div>
+<?php elseif (!$alertasConc): ?>
+<div class="alert alert-success">Nenhuma divergência detectada nas formas comparáveis neste período. Confirme também os extratos e repasses futuros.</div>
+<?php else: ?>
+<?php foreach ($alertasConc as $alertaConc): ?>
+<div class="alert alert-<?php echo $escConc($alertaConc['tipo']); ?>"><?php echo $escConc($alertaConc['texto']); ?></div>
+<?php endforeach; ?>
 <?php endif; ?>
 </div>
 <div class="bc-conc-card">
