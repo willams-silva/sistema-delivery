@@ -202,41 +202,40 @@ if (@$home == 'ocultar') {
 }
 
 
-#####PUXAR TOTAL DE DELIVERY############################################
-$valor_delivery = 0;
-$query = $pdo->query("SELECT * from vendas where entrega = 'Delivery' and empresa = '$id_empresa' ");
-$res = $query->fetchAll(PDO::FETCH_ASSOC);
-$linhas1 = @count($res);
-for ($i6 = 0; $i6 < $linhas1; $i6++) {
-	$valor_delivery += $res[$i6]['valor'];
+##### TOTAIS POR TIPO DE ATENDIMENTO ###################################
+// Agregação no banco e exclusão de vendas canceladas.
+$tiposAtendimento = [
+    'Delivery' => ['quantidade' => 0, 'valor' => 0.0],
+    'Consumir Local' => ['quantidade' => 0, 'valor' => 0.0],
+    'Retirar' => ['quantidade' => 0, 'valor' => 0.0],
+];
+$totaisAtendimentoSt = $pdo->prepare("SELECT entrega, COUNT(*) quantidade,
+    COALESCE(SUM(valor),0) valor
+    FROM vendas WHERE empresa=:empresa
+    AND (status IS NULL OR status <> 'Cancelado')
+    AND entrega IN ('Delivery','Consumir Local','Retirar')
+    GROUP BY entrega");
+$totaisAtendimentoSt->execute([':empresa'=>(int)$id_empresa]);
+foreach ($totaisAtendimentoSt->fetchAll(PDO::FETCH_ASSOC) as $linhaAtendimento) {
+    $tipoAtendimento = $linhaAtendimento['entrega'];
+    $tiposAtendimento[$tipoAtendimento] = [
+        'quantidade' => (int)$linhaAtendimento['quantidade'],
+        'valor' => (float)$linhaAtendimento['valor']
+    ];
 }
-$valor_deliveryF = @number_format($valor_delivery, 2, ',', '.');
-$porcent_deli = $linhas1 / 100;
-
-
-
-#####PUXAR TOTAL DE CONSUMIR LOCAL############################################
-$valor_local = 0;
-$query = $pdo->query("SELECT * from vendas where entrega = 'Consumir Local' and empresa = '$id_empresa'");
-$res = $query->fetchAll(PDO::FETCH_ASSOC);
-$linhas2 = @count($res);
-for ($i6 = 0; $i6 < $linhas2; $i6++) {
-	$valor_local += $res[$i6]['valor'];
-}
-$valor_localF = @number_format($valor_local, 2, ',', '.');
-$porcent_local = $linhas2 / 100;
-
-
-#####PUXAR TOTAL DE CRETIRADA############################################
-$valor_retirada = 0;
-$query = $pdo->query("SELECT * from vendas where entrega = 'Retirar' and empresa = '$id_empresa'");
-$res = $query->fetchAll(PDO::FETCH_ASSOC);
-$linhas3 = @count($res);
-for ($i6 = 0; $i6 < $linhas3; $i6++) {
-	$valor_retirada += $res[$i6]['valor'];
-}
-$valor_retiradaF = @number_format($valor_retirada, 2, ',', '.');
-$porcent_retirada = $linhas3 / 100;
+$linhas1 = $tiposAtendimento['Delivery']['quantidade'];
+$linhas2 = $tiposAtendimento['Consumir Local']['quantidade'];
+$linhas3 = $tiposAtendimento['Retirar']['quantidade'];
+$valor_delivery = $tiposAtendimento['Delivery']['valor'];
+$valor_local = $tiposAtendimento['Consumir Local']['valor'];
+$valor_retirada = $tiposAtendimento['Retirar']['valor'];
+$valor_deliveryF = number_format($valor_delivery, 2, ',', '.');
+$valor_localF = number_format($valor_local, 2, ',', '.');
+$valor_retiradaF = number_format($valor_retirada, 2, ',', '.');
+$totalPedidosAtendimento = $linhas1 + $linhas2 + $linhas3;
+$porcent_deli = $totalPedidosAtendimento > 0 ? round($linhas1 * 100 / $totalPedidosAtendimento, 2) : 0;
+$porcent_local = $totalPedidosAtendimento > 0 ? round($linhas2 * 100 / $totalPedidosAtendimento, 2) : 0;
+$porcent_retirada = $totalPedidosAtendimento > 0 ? round($linhas3 * 100 / $totalPedidosAtendimento, 2) : 0;
 
 
 ##### PUXAR TOTAL DA MESA ############################################
