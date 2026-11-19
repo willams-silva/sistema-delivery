@@ -20,6 +20,7 @@ th{background:#f1f4f7}.pager{display:flex;gap:12px;align-items:center;margin-top
 #error{color:#b42318}#status{min-height:20px}
 </style></head><body><main><h1>Histórico de estornos</h1>
 <p>Consulta financeira somente leitura. Este painel não realiza devoluções.</p>
+<p><a href="../../vendas" style="color:#233b59">Voltar às vendas</a></p>
 <section class="card">
 <form id="filtros"><label>Venda <input id="venda" type="number" min="1" placeholder="Número da venda"></label>
 <label>Status <select id="filtro-status"><option value="">Todos</option><option>Registrado</option><option>Concluido</option><option>Cancelado</option></select></label>
@@ -28,18 +29,21 @@ th{background:#f1f4f7}.pager{display:flex;gap:12px;align-items:center;margin-top
 <div class="table-wrap"><table><thead><tr><th>Data</th><th>Venda</th><th>Status</th><th>Motivo</th><th>Valor da venda</th><th>Devolução registrada</th><th>Caixa</th></tr></thead><tbody id="linhas"></tbody></table></div>
 <div class="pager"><button id="anterior" type="button">Anterior</button><span id="pagina-info"></span><button id="proximo" type="button">Próxima</button></div>
 </section></main><script>
-let pagina=1,totalPaginas=0;
+let pagina=1,totalPaginas=0,carregamentoAtual=0;
 const el=id=>document.getElementById(id);
 const moeda=v=>new Intl.NumberFormat('pt-BR',{style:'currency',currency:'BRL'}).format(Number(v)||0);
 function celula(tr,valor){const td=document.createElement('td');td.textContent=String(valor??'');tr.appendChild(td)}
 async function carregar(){
+ const sequencia=++carregamentoAtual;
  el('error').textContent='';el('status').textContent='Carregando...';
  const q=new URLSearchParams({pagina:String(pagina)});
  if(el('venda').value)q.set('venda_id',el('venda').value);
  if(el('filtro-status').value)q.set('status',el('filtro-status').value);
  try{
   const res=await fetch('historico_estornos.php?'+q,{credentials:'same-origin',cache:'no-store'});
-  const dados=await res.json();if(!res.ok)throw new Error(dados.erro||'Falha na consulta');
+  const dados=await res.json();
+  if(sequencia!==carregamentoAtual)return;
+  if(!res.ok)throw new Error(dados.erro||'Falha na consulta');
   totalPaginas=dados.total_paginas;el('linhas').replaceChildren();
   for(const e of dados.estornos){
    const tr=document.createElement('tr');
@@ -51,7 +55,7 @@ async function carregar(){
   el('status').textContent=dados.total+' estorno(s) encontrado(s)';
   el('pagina-info').textContent='Página '+pagina+' de '+Math.max(1,totalPaginas);
   el('anterior').disabled=pagina<=1;el('proximo').disabled=pagina>=totalPaginas;
- }catch(e){el('status').textContent='';el('error').textContent=e.message}
+ }catch(e){if(sequencia===carregamentoAtual){el('status').textContent='';el('error').textContent=e.message}}
 }
 el('filtros').addEventListener('submit',e=>{e.preventDefault();pagina=1;carregar()});
 el('anterior').addEventListener('click',()=>{if(pagina>1){pagina--;carregar()}});
