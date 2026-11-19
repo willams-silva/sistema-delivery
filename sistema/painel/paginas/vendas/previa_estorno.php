@@ -87,6 +87,15 @@ try {
             && strpos($nomeForma,'dinheiro')===false) $pagamentosNaoDinheiro++;
     }
     if ($pagamentosNaoDinheiro>0) $motivosBloqueio[]='PIX, cartão ou outra forma exigem confirmação externa da devolução';
+    // Confere a existência de todos os caixas de recebimento, inclusive
+    // registros antigos que apontem para caixas de outra empresa.
+    $caixasInvalidos=0;
+    foreach ($caixasOriginais as $caixaOriginal) {
+        if (!$caixaOriginal['encontrado']) $caixasInvalidos++;
+    }
+    if ($caixasInvalidos>0) $motivosBloqueio[]='Recebimento associado a caixa inexistente nesta empresa';
+    // O registro de estorno não é comprovante de devolução PIX/cartão.
+    // Nenhuma autorização financeira é inferida desta prévia.
     $divergencia=round((float)$venda['valor']-$recebido-$pendente,2);
     if (abs($divergencia)>0.009) $motivosBloqueio[]='Valores recebidos e pendentes não conciliam com a venda';
     echo json_encode([
@@ -96,6 +105,7 @@ try {
       'caixas_originais'=>$caixasOriginais,
       'caixa_atual_para_devolucao'=>$caixaAtual ?: null,
       'pagamentos_sem_rastreabilidade'=>$pagamentosSemRastreio,
+      'caixas_originais_invalidos'=>$caixasInvalidos,
       'residuos_sem_origem'=>$residuosSemOrigem,
       'formas_de_pagamento_recebidas'=>$formasRecebidas,
       'recebimentos_parciais_sem_vinculo'=>$parciaisLegados,
