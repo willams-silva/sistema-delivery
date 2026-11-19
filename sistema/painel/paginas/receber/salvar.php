@@ -59,6 +59,20 @@ if ($id !== '') {
 
 
 
+// Validação dos dados antes de gravar lançamentos financeiros.
+if (($_SERVER['REQUEST_METHOD'] ?? '') !== 'POST') { http_response_code(405); exit('Método inválido.'); }
+if (!is_scalar($valor) || !is_numeric(str_replace(',', '.', (string)$valor)) || !is_finite((float)str_replace(',', '.', (string)$valor)) || (float)str_replace(',', '.', (string)$valor) <= 0) {
+    http_response_code(400); exit('Informe um valor válido maior que zero.');
+}
+foreach (['vencimento'=>$vencimento] + ($data_pgto !== '' ? ['data_pgto'=>$data_pgto] : []) as $campo=>$data) {
+    $dt = DateTimeImmutable::createFromFormat('!Y-m-d', (string)$data);
+    if (!$dt || $dt->format('Y-m-d') !== $data) { http_response_code(400); exit('Data inválida: '.$campo); }
+}
+foreach (['cliente'=>$cliente,'forma_pgto'=>$forma_pgto,'frequencia'=>$frequencia] as $campo=>$numero) {
+    if ($numero !== '' && (!ctype_digit((string)$numero) || (int)$numero < 0)) {
+        http_response_code(400); exit('Campo inválido: '.$campo);
+    }
+}
 $valor = str_replace(',', '.', $valor);
 
 $valorF = @number_format($valor, 2, ',', '.');
