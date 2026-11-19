@@ -31,10 +31,14 @@ if ($linhas > 0) {
 
 <?php
 // Indicadores de contas em aberto, isolados por estabelecimento.
+$diasAlertaReceber=7;
+try {$stDias=$pdo->prepare("SELECT dias_antecedencia FROM alertas_vencimento_receber WHERE empresa=:empresa");$stDias->execute([':empresa'=>(int)$id_empresa]);$diasSalvos=$stDias->fetchColumn();if($diasSalvos!==false)$diasAlertaReceber=max(1,min(30,(int)$diasSalvos));}catch(Throwable $e){error_log('Config alertas receber: '.$e->getMessage());}
 $resumoReceber = ['vencidas'=>['qtd'=>0,'total'=>0], 'hoje'=>['qtd'=>0,'total'=>0], 'proximas'=>['qtd'=>0,'total'=>0]];
 try {
-    $consultaResumo = $pdo->prepare("SELECT CASE WHEN vencimento < CURDATE() THEN 'vencidas' WHEN vencimento = CURDATE() THEN 'hoje' ELSE 'proximas' END AS faixa, COUNT(*) AS qtd, COALESCE(SUM(valor),0) AS total FROM receber WHERE empresa=:empresa AND (pago IS NULL OR pago <> 'Sim') AND vencimento <= DATE_ADD(CURDATE(), INTERVAL 7 DAY) GROUP BY faixa");
-    $consultaResumo->execute([':empresa'=>(int)$id_empresa]);
+    $consultaResumo = $pdo->prepare("SELECT CASE WHEN vencimento < CURDATE() THEN 'vencidas' WHEN vencimento = CURDATE() THEN 'hoje' ELSE 'proximas' END AS faixa, COUNT(*) AS qtd, COALESCE(SUM(valor),0) AS total FROM receber WHERE empresa=:empresa AND (pago IS NULL OR pago <> 'Sim') AND vencimento <= DATE_ADD(CURDATE(), INTERVAL :dias DAY) GROUP BY faixa");
+    $consultaResumo->bindValue(':empresa',(int)$id_empresa,PDO::PARAM_INT);
+    $consultaResumo->bindValue(':dias',$diasAlertaReceber,PDO::PARAM_INT);
+    $consultaResumo->execute();
     foreach ($consultaResumo->fetchAll(PDO::FETCH_ASSOC) as $item) {
         if (isset($resumoReceber[$item['faixa']])) $resumoReceber[$item['faixa']] = ['qtd'=>(int)$item['qtd'], 'total'=>(float)$item['total']];
     }
@@ -43,11 +47,12 @@ try {
 <section class="card mb-3" id="alertas-vencimentos-receber">
  <div class="card-body">
   <h5 class="mb-3"><i class="fe fe-bell me-2"></i>Alertas de recebimentos</h5>
+  <div class="d-flex align-items-end gap-2 flex-wrap mb-3"><div><label for="dias-alerta-receber" class="form-label mb-1">Antecedência</label><select id="dias-alerta-receber" class="form-select form-select-sm"><?php foreach([1,3,5,7,10,15,20,30] as $opcao): ?><option value="<?php echo $opcao; ?>" <?php echo $diasAlertaReceber===$opcao?'selected':''; ?>><?php echo $opcao; ?> dias</option><?php endforeach; ?></select></div><button type="button" id="salvar-alerta-receber" class="btn btn-outline-primary btn-sm">Salvar configuração</button><span id="retorno-alerta-receber" role="status" class="small"></span></div>
   <div class="row g-3">
   <?php foreach ([
     ['chave'=>'vencidas','titulo'=>'Vencidas','cor'=>'danger'],
     ['chave'=>'hoje','titulo'=>'Vencem hoje','cor'=>'warning'],
-    ['chave'=>'proximas','titulo'=>'Próximos 7 dias','cor'=>'info']
+    ['chave'=>'proximas','titulo'=>'Próximos '.$diasAlertaReceber.' dias','cor'=>'info']
   ] as $alerta): $item=$resumoReceber[$alerta['chave']]; ?>
    <div class="col-md-4">
     <div class="border rounded p-3 h-100" role="button" tabindex="0" data-filtro-receber="<?php echo htmlspecialchars($alerta['chave'],ENT_QUOTES,'UTF-8'); ?>" title="Ver contas deste período">
@@ -65,6 +70,8 @@ try {
 </section>
 <script>
 document.addEventListener('DOMContentLoaded',function(){
+ const btn=document.getElementById('salvar-alerta-receber'),ret=document.getElementById('retorno-alerta-receber');
+ btn.addEventListener('click',async function(){btn.disabled=true;ret.textContent='Salvando...';try{const resp=await fetch('paginas/receber/alertas_config_salvar.php',{method:'POST',credentials:'same-origin',headers:{'Content-Type':'application/x-www-form-urlencoded'},body:new URLSearchParams({dias:document.getElementById('dias-alerta-receber').value})});const dados=await resp.json();if(!resp.ok)throw new Error(dados.erro||'Falha ao salvar');ret.textContent='Configuração salva. Atualize a página para aplicar.';}catch(e){ret.textContent=e.message||'Erro ao salvar';}finally{btn.disabled=false;}});
  const filtros={vencidas:'Vencidas',hoje:'Hoje',proximas:'Proximos7'};
  document.querySelectorAll('#alertas-vencimentos-receber [data-filtro-receber]').forEach(function(card){
   function aplicar(){
@@ -78,6 +85,60 @@ document.addEventListener('DOMContentLoaded',function(){
  });
 });
 </script>
+<section class="card mb-3" id="auditoria-receber">
+ <div class="card-body">
+  <div class="d-flex justify-content-between align-items-center flex-wrap gap-2">
+   <h5 class="mb-0"><i class="fe fe-shield me-2"></i>Histórico de auditoria</h5>
+   <button class="btn btn-outline-primary btn-sm" type="button" id="auditoria-receber-toggle" aria-expanded="false" aria-controls="auditoria-receber-conteudo">Consultar histórico</button>
+  </div>
+  <div id="auditoria-receber-conteudo" style="display:none" class="mt-3">
+   <div class="row g-2 mb-3">
+    <div class="col-md-3"><label for="auditoria-inicio">De</label><input id="auditoria-inicio" type="date" class="form-control"></div>
+    <div class="col-md-3"><label for="auditoria-fim">Até</label><input id="auditoria-fim" type="date" class="form-control"></div>
+    <div class="col-md-3"><label for="auditoria-acao">Operação</label><select id="auditoria-acao" class="form-select"><option value="">Todas</option><option>CRIAR</option><option>ALTERAR</option><option>BAIXAR</option><option>EXCLUIR</option><option>ESTORNAR</option></select></div>
+    <div class="col-md-3 d-flex align-items-end"><button type="button" id="auditoria-pesquisar" class="btn btn-primary w-100">Pesquisar</button></div>
+   </div>
+   <div id="auditoria-mensagem" role="status" class="small mb-2"></div>
+   <div class="table-responsive"><table class="table table-sm table-striped"><thead><tr><th>Data</th><th>Operação</th><th>Conta</th><th>Descrição</th><th>Usuário</th><th>Valor anterior</th><th>Valor novo</th></tr></thead><tbody id="auditoria-receber-linhas"></tbody></table></div>
+   <small class="text-muted">Exibindo até 100 registros recentes por consulta.</small>
+  </div>
+ </div>
+</section>
+<script>
+(function(){
+ const raiz=document.getElementById('auditoria-receber');
+ const botao=raiz.querySelector('#auditoria-receber-toggle');
+ const conteudo=raiz.querySelector('#auditoria-receber-conteudo');
+ const corpo=raiz.querySelector('#auditoria-receber-linhas');
+ const aviso=raiz.querySelector('#auditoria-mensagem');
+ const texto=(valor)=>document.createTextNode(valor===null||valor===undefined?'—':String(valor));
+ const moeda=(valor)=>valor===null||valor===undefined?'—':Number(valor).toLocaleString('pt-BR',{style:'currency',currency:'BRL'});
+ async function carregar(){
+  aviso.textContent='Consultando histórico...';corpo.replaceChildren();
+  const params=new URLSearchParams();
+  for(const [campo,id] of [['inicio','auditoria-inicio'],['fim','auditoria-fim'],['acao','auditoria-acao']]){
+   const valor=raiz.querySelector('#'+id).value;if(valor)params.set(campo,valor);
+  }
+  try{
+   const resposta=await fetch('paginas/receber/auditoria_listar.php?'+params.toString(),{credentials:'same-origin'});
+   const dados=await resposta.json();if(!resposta.ok)throw new Error(dados.erro||'Falha na consulta');
+   for(const registro of dados.registros||[]){
+    const tr=document.createElement('tr');
+    const valores=[registro.ocorrido_em,registro.acao,registro.registro_id,registro.descricao,registro.usuario_nome||registro.usuario_id,moeda(registro.valor_antes),moeda(registro.valor_depois)];
+    for(const valor of valores){const td=document.createElement('td');td.appendChild(texto(valor));tr.appendChild(td);}
+    corpo.appendChild(tr);
+   }
+   aviso.textContent=(dados.registros||[]).length?'':'Nenhum registro encontrado.';
+  }catch(erro){aviso.textContent=erro.message||'Não foi possível carregar o histórico.';}
+ }
+ botao.addEventListener('click',()=>{
+  const abrir=conteudo.style.display==='none';conteudo.style.display=abrir?'':'none';botao.setAttribute('aria-expanded',String(abrir));
+  if(abrir)carregar();
+ });
+ raiz.querySelector('#auditoria-pesquisar').addEventListener('click',carregar);
+})();
+</script>
+
 <div class="justify-content-between ux-finance-page">
 	<form action="rel/receber_class.php" target="_blank" method="POST">
 		<div class="left-content mt-2">
