@@ -71,13 +71,12 @@ $valor_pago = $_POST['valor_pago'];
 $data_restante = $_POST['data_restante'];
 $forma_pgto2 = $_POST['forma_pgto2'];
 
-// O formulário legado envia campos de pagamento parcial, mas ainda não registra
-// corretamente duas formas em contas a receber. Não confirmar como quitada.
-$parcialSolicitado = is_numeric(str_replace(',', '.', (string)$valor_restante))
-    && (float)str_replace(',', '.', (string)$valor_restante) > 0.009;
-if ($parcialSolicitado) {
-    http_response_code(409);
-    exit('Pagamento dividido ainda não está habilitado. Utilize uma forma de pagamento por venda.');
+// Valores informados no navegador são revalidados contra o total calculado no servidor.
+$valorPagoInformado = str_replace(',', '.', trim((string)$valor_pago));
+$restanteInformado = str_replace(',', '.', trim((string)$valor_restante));
+$parcialSolicitado = is_numeric($restanteInformado) && (float)$restanteInformado > 0.009;
+if ($parcialSolicitado && (!is_numeric($valorPagoInformado) || (float)$valorPagoInformado <= 0)) {
+    http_response_code(409); exit('Informe um valor válido para o primeiro pagamento.');
 }
 
 $dataF = implode('/', array_reverse(explode('-', $data)));
@@ -205,13 +204,29 @@ $total_final = round($total_carrinho + (float)$frete - $descontoAplicado, 2);
 if($total_final <= 0){
 	throw new RuntimeException('O valor da venda tem que ser maior que zero.');
 }
+$primeiraParcela = $total_final;
+$segundaParcela = 0.0;
+$idForma2 = 0;
+if ($parcialSolicitado) {
+    $primeiraParcela = round((float)$valorPagoInformado,2);
+    $segundaParcela = round($total_final - $primeiraParcela,2);
+    if ($primeiraParcela <= 0 || $segundaParcela <= 0) throw new RuntimeException('Divisão de pagamento inválida.');
+    if (abs((float)$restanteInformado-$segundaParcela) > 0.02) throw new RuntimeException('Total da divisão mudou. Atualize o carrinho.');
+    if (trim((string)$forma_pgto2) === '') throw new RuntimeException('Selecione a segunda forma de pagamento.');
+    $segundaFormaSt=$pdo->prepare('SELECT id FROM formas_pgto WHERE nome=:nome AND empresa=:empresa LIMIT 1');
+    $segundaFormaSt->execute([':nome'=>$forma_pgto2,':empresa'=>(int)$id_empresa]);
+    $idForma2=(int)($segundaFormaSt->fetchColumn() ?: 0);
+    if (!$idForma2) throw new RuntimeException('Segunda forma de pagamento inválida.');
+    if ($data_restante < $data_atual || !preg_match('/^\\d{4}-\\d{2}-\\d{2}$/',(string)$data_restante)) throw new RuntimeException('Data do segundo pagamento inválida.');
+}
+
 
 
 // Troco só é permitido quando o pagamento principal é em dinheiro.
 $formaDinheiro = in_array(mb_strtolower(trim((string)$saida), 'UTF-8'), ['dinheiro','espécie','especie'], true);
 if (!is_numeric($troco) || (float)$troco < 0) throw new RuntimeException('Valor recebido inválido.');
 if (!$formaDinheiro && (float)$troco > 0.009) throw new RuntimeException('Troco só pode ser informado em pagamentos em dinheiro.');
-if ($formaDinheiro && (float)$troco > 0.009 && (float)$troco + 0.009 < $total_final) {
+if ($formaDinheiro && (float)$troco > 0.009 && (float)$troco + 0.009 < $primeiraParcela) {
     throw new RuntimeException('Valor recebido insuficiente. Para dividir o pagamento, utilize o fluxo específico.');
 }
 if (!$formaDinheiro) $troco = 0;
@@ -242,7 +257,7 @@ $pedido=(int)$ultimoPedidoSt->fetchColumn()+1;
 
 $troco_calculado = 0;
 if($troco > 0){
-	$troco_calculado = $troco - $total_final;
+	$troco_calculado = $troco - $primeiraParcela;
 }else{
 	$troco = $total_final;
 }
@@ -267,7 +282,11 @@ $id_pedido_feito = $pdo->lastInsertId();
 
 //lançar nas contas a receber
 $receberSt=$pdo->prepare("INSERT INTO receber SET descricao='Nova Venda',cliente=:cliente,valor=:valor,vencimento=:vencimento,data_pgto=:data_pgto,data_lanc=CURDATE(),forma_pgto=:forma,frequencia=0,arquivo='sem-foto.jpg',foto='sem-foto.jpg',subtotal=:subtotal,usuario_lanc=:usuario,usuario_pgto=:usuario_pgto,pago=:pago,referencia='Venda',caixa=:caixa,hora=CURTIME(),tipo='Balcão',custo=:custo,empresa=:empresa");
-$receberSt->execute([':cliente'=>$cliente,':valor'=>$total_final,':vencimento'=>$data,':data_pgto'=>$data_pgto ?: null,':forma'=>$id_saida,':subtotal'=>$total_final,':usuario'=>(int)$id_usuario,':usuario_pgto'=>$usuario_pgto ?: null,':pago'=>$pago,':caixa'=>$id_caixa,':custo'=>$total_compra,':empresa'=>(int)$id_empresa]);
+$receberSt->execute([':cliente'=>$cliente,':valor'=>$primeiraParcela,':vencimento'=>$data,':data_pgto'=>$data_pgto ?: null,':forma'=>$id_saida,':subtotal'=>$primeiraParcela,':usuario'=>(int)$id_usuario,':usuario_pgto'=>$usuario_pgto ?: null,':pago'=>$pago,':caixa'=>$id_caixa,':custo'=>$total_compra,':empresa'=>(int)$id_empresa]);
+if ($parcialSolicitado) {
+    $segundaPaga=$data_restante===$data_atual ? 'Sim' : 'Não';
+    $receberSt->execute([':cliente'=>$cliente,':valor'=>$segundaParcela,':vencimento'=>$data_restante,':data_pgto'=>$segundaPaga==='Sim' ? $data_restante : null,':forma'=>$idForma2,':subtotal'=>$segundaParcela,':usuario'=>(int)$id_usuario,':usuario_pgto'=>$segundaPaga==='Sim' ? (int)$id_usuario : null,':pago'=>$segundaPaga,':caixa'=>$id_caixa,':custo'=>0,':empresa'=>(int)$id_empresa]);
+}
 
 
 //relacionar itens do carrinho com o pedido
