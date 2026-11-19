@@ -44,9 +44,15 @@ $dataFinal = @$_POST['p3'];
 $filtro = @$_POST['p1'];
 $tipo_data = @$_POST['p4'];
 
-if ($tipo_data == "") {
-	$tipo_data = 'vencimento';
+// Apenas colunas permitidas podem ser utilizadas nos filtros SQL.
+if (!in_array($tipo_data, ['vencimento', 'data_pgto', 'data_lanc'], true)) {
+    $tipo_data = 'vencimento';
 }
+if (!ctype_digit((string)$id_empresa) || (int)$id_empresa < 1 || !ctype_digit((string)$id_usuario) || (int)$id_usuario < 1) {
+    http_response_code(403);
+    exit('Sessão inválida.');
+}
+
 
 if ($dataInicial == "") {
 	$dataInicial = $data_inicio_mes;
