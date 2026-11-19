@@ -20,6 +20,13 @@ try {
     $venda=$st->fetch(PDO::FETCH_ASSOC);
     if (!$venda) throw new RuntimeException('Venda não encontrada nesta empresa.');
     if ($venda['status']==='Cancelado') throw new RuntimeException('Venda já cancelada.');
+    // Evita cancelar pela rotina antiga uma venda que já entrou no fluxo de estorno.
+    $st=$pdo->prepare('SELECT id,status FROM estornos_vendas WHERE empresa=:empresa AND venda_id=:venda LIMIT 1 FOR UPDATE');
+    $st->execute([':empresa'=>$empresa,':venda'=>$id]);
+    if ($st->fetch(PDO::FETCH_ASSOC)) {
+        throw new RuntimeException('Esta venda possui registro de estorno. Utilize a conciliação financeira.');
+    }
+
     // Não mexer em cartões de fidelidade sem histórico do saldo anterior.
     if ((int)($venda['cliente'] ?? 0)>0) throw new RuntimeException('Venda com fidelidade: cancelamento requer conciliação manual.');
     if (($venda['pago'] ?? '')==='Sim') throw new RuntimeException('Venda recebida: estorno financeiro obrigatório.');
