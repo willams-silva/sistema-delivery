@@ -235,7 +235,7 @@ if ($total_reg > 0) {
 		}
 
 		echo <<<HTML
-<div class="col-md-3 widget esteira-cartao" data-status="{$status}" data-criado="{$data} {$hora}" data-tipo="{$tipo_pedido}" style="display: inline-block;">
+<div class="col-md-3 widget esteira-cartao" data-status="{$status}" data-criado="{$data} {$hora}" data-tipo="{$entrega}" style="display: inline-block;">
 			<div class="" style="padding:4px; min-height: 100px; background: {$classe_pago2};">
 				<div style="border-bottom: 1px solid #000">
 					<span style="color:{$classe_alerta}"> <i class="fa fa-square"></i></span> Pedido <b>{$pedido}</b>
