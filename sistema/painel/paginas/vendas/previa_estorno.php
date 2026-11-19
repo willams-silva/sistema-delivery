@@ -76,7 +76,19 @@ try {
     if ($pagamentosSemRastreio>0) $motivosBloqueio[]='Pagamentos sem rastreabilidade';
     if ($residuosSemOrigem>0 || $parciaisLegados>0) $motivosBloqueio[]='Pagamentos parciais com vínculo inconsistente';
     if ($estornoExistente) $motivosBloqueio[]='Estorno já registrado';
+    // A divergência financeira e parcelas pendentes também exigem revisão.
+    // Não sugerir que uma prévia seja autorização para devolver dinheiro.
+    $valorPendentePositivo=$pendente>0.009;
+    if ($valorPendentePositivo) $motivosBloqueio[]='Venda parcialmente paga: conciliação manual necessária';
+    $pagamentosNaoDinheiro=0;
+    foreach ($formasRecebidas as $forma) {
+        $nomeForma=mb_strtolower(trim((string)$forma['nome']),'UTF-8');
+        if (!in_array($nomeForma,['dinheiro','espécie','especie'],true)
+            && strpos($nomeForma,'dinheiro')===false) $pagamentosNaoDinheiro++;
+    }
+    if ($pagamentosNaoDinheiro>0) $motivosBloqueio[]='PIX, cartão ou outra forma exigem confirmação externa da devolução';
     $divergencia=round((float)$venda['valor']-$recebido-$pendente,2);
+    if (abs($divergencia)>0.009) $motivosBloqueio[]='Valores recebidos e pendentes não conciliam com a venda';
     echo json_encode([
       'venda_id'=>$vendaId,'valor_venda'=>(float)$venda['valor'],
       'total_recebido'=>round($recebido,2),'total_pendente'=>round($pendente,2),
@@ -88,7 +100,7 @@ try {
       'formas_de_pagamento_recebidas'=>$formasRecebidas,
       'recebimentos_parciais_sem_vinculo'=>$parciaisLegados,
       'estorno_existente'=>$estornoExistente?:null,
-      'requer_revisao'=>!$parcelas || abs($divergencia)>0.009 || $parciaisLegados>0 || $residuosSemOrigem>0 || $pagamentosSemRastreio>0 || !$caixaAtual || (bool)$estornoExistente,
+      'requer_revisao'=>!$parcelas || count($motivosBloqueio)>0,
       'motivos_bloqueio'=>$motivosBloqueio,
       'estorno_automatico_habilitado'=>false,
       'aviso'=>'Prévia informativa. Nenhuma devolução foi realizada.'
