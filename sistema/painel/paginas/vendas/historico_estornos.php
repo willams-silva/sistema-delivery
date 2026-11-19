@@ -22,8 +22,16 @@ try {
     $limite=20;
     $offset=($pagina-1)*$limite;
     $venda=filter_var($_GET['venda_id'] ?? null,FILTER_VALIDATE_INT,['options'=>['min_range'=>1]]) ?: null;
+    $status=trim((string)($_GET['status'] ?? ''));
+    $statusPermitidos=['Registrado','Concluido','Cancelado'];
+    if ($status!=='' && !in_array($status,$statusPermitidos,true)) {
+        http_response_code(422);
+        exit(json_encode(['erro'=>'Filtro de status inválido.']));
+    }
     $filtro=$venda ? ' AND e.venda_id=:venda' : '';
+    if ($status!=='') $filtro.=' AND e.status=:status';
     $parametros=[':empresa'=>(int)$empresa];
+    if ($status!=='') $parametros[':status']=$status;
     if ($venda) $parametros[':venda']=$venda;
     $contagem=$pdo->prepare("SELECT COUNT(*) FROM estornos_vendas e WHERE e.empresa=:empresa $filtro");
     $contagem->execute($parametros);
@@ -41,6 +49,7 @@ try {
     $consulta->execute($parametros);
     echo json_encode([
         'pagina'=>$pagina,'por_pagina'=>$limite,'total'=>$total,
+        'filtros'=>['venda_id'=>$venda,'status'=>$status],
         'total_paginas'=>(int)ceil($total/$limite),
         'estornos'=>$consulta->fetchAll(PDO::FETCH_ASSOC),
         'somente_leitura'=>true
