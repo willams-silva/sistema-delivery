@@ -160,6 +160,46 @@ if ($prazosDisponiveisConc) {
   $previsoesRepasseConc[]=['id'=>(int)$movPrev['id'],'forma'=>$movPrev['forma'],'data_baixa'=>$movPrev['data_pgto'],'previsao'=>$dataPrev,'liquido'=>$liquidoPrev,'bruto'=>(float)$movPrev['valor'],'prazo'=>$prazoPrev];
  }
 }
+// Indicadores de repasse potencialmente atrasado: cálculo por forma e dia de baixa.
+// Créditos são agregados por data de referência; não existe vínculo transacional.
+$alertasPrazoConc=[];$totalPotencialAtrasoConc=0.0;
+if ($prazosDisponiveisConc && $liquidacoesDisponiveisConc) {
+ try {
+  $stDias=$pdo->prepare("SELECT r.forma_pgto AS forma_id, fp.nome AS forma, r.data_pgto AS dia,
+    SUM(r.valor) AS bruto, t.taxa_percentual
+    FROM receber r
+    INNER JOIN formas_pgto fp ON fp.id=r.forma_pgto AND fp.empresa=r.empresa
+    LEFT JOIN taxas_formas_pagamento t ON t.empresa=r.empresa AND t.forma_pgto=r.forma_pgto
+    WHERE r.empresa=:empresa AND r.pago='Sim' AND r.data_pgto BETWEEN :inicio AND :fim
+    GROUP BY r.forma_pgto,fp.nome,r.data_pgto,t.taxa_percentual
+    ORDER BY r.data_pgto DESC LIMIT 500");
+  $stDias->execute($paramsConc);
+  $stCreditosDia=$pdo->prepare("SELECT forma_pgto AS forma_id,data_referencia AS dia,
+    SUM(valor_creditado) AS total FROM conciliacao_liquidacoes
+    WHERE empresa=:empresa AND data_referencia BETWEEN :inicio AND :fim
+    GROUP BY forma_pgto,data_referencia");
+  $stCreditosDia->execute($paramsConc);
+  $creditoDiaConc=[];
+  foreach($stCreditosDia->fetchAll(PDO::FETCH_ASSOC) as $creditoDia) {
+   $creditoDiaConc[(int)$creditoDia['forma_id'].'|'.$creditoDia['dia']]=(float)$creditoDia['total'];
+  }
+  $hojePrazoConc=new DateTimeImmutable('today');
+  foreach($stDias->fetchAll(PDO::FETCH_ASSOC) as $diaConc) {
+   $idDiaConc=(int)$diaConc['forma_id'];
+   if (!array_key_exists($idDiaConc,$prazosRepasseConc) || $diaConc['taxa_percentual']===null) continue;
+   $prevDiaConc=(new DateTimeImmutable($diaConc['dia']))->modify('+'.$prazosRepasseConc[$idDiaConc].' days');
+   if ($prevDiaConc >= $hojePrazoConc) continue;
+   $liquidoDiaConc=round((float)$diaConc['bruto']*(1-(float)$diaConc['taxa_percentual']/100),2);
+   $creditadoDiaConc=$creditoDiaConc[$idDiaConc.'|'.$diaConc['dia']]??0.0;
+   $saldoDiaConc=round($liquidoDiaConc-$creditadoDiaConc,2);
+   if ($saldoDiaConc<=0.01) continue;
+   $totalPotencialAtrasoConc+=$saldoDiaConc;
+   $alertasPrazoConc[]=['forma'=>$diaConc['forma'],'referencia'=>$diaConc['dia'],
+    'previsao'=>$prevDiaConc->format('Y-m-d'),'saldo'=>$saldoDiaConc,
+    'dias'=>(int)$prevDiaConc->diff($hojePrazoConc)->days];
+  }
+ } catch(PDOException $e) {error_log('Falha nos alertas de repasse: '.$e->getMessage());$alertasPrazoConc=[];}
+}
 $totalConc=$somarConc($gruposConc); $totalPendenteConc=$somarConc($pendentesConc);
 $moedaConc=static function($v){return 'R$ '.number_format((float)$v,2,',','.');};
 $escConc=static function($v){return htmlspecialchars((string)$v,ENT_QUOTES,'UTF-8');};
@@ -266,6 +306,29 @@ foreach($formasPrazosConc->fetchAll(PDO::FETCH_ASSOC) as $formaPrazoConc): ?>
 <?php if (!$previsoesRepasseConc): ?><tr><td colspan="6">Sem baixas com prazo configurado neste período.</td></tr><?php endif; ?>
 </tbody></table></div>
 <p class="bc-conc-note">Datas previstas não são vinculadas automaticamente aos créditos registrados. A conferência continua agrupada por forma e data de referência.</p>
+<?php endif; ?>
+</div>
+<div class="bc-conc-card">
+<h5><i class="fa fa-clock-o"></i> Repasses potencialmente atrasados</h5>
+<p class="bc-conc-note">Verificação por forma e dia de referência, usando prazos em dias corridos. Só considera datas previstas anteriores a hoje, taxas cadastradas e créditos informados. Não comprova atraso contratual nem identifica depósitos não cadastrados.</p>
+<?php if (!$prazosDisponiveisConc || !$liquidacoesDisponiveisConc): ?>
+<div class="alert alert-warning">Configure a tabela de prazos e as liquidações para consultar possíveis atrasos.</div>
+<?php else: ?>
+<div class="bc-conc-grid">
+<div class="bc-conc-card"><small>Saldo potencialmente atrasado no período</small><strong><?php echo $moedaConc($totalPotencialAtrasoConc); ?></strong></div>
+<div class="bc-conc-card"><small>Dias e formas com divergência</small><strong><?php echo count($alertasPrazoConc); ?></strong></div>
+</div>
+<div class="bc-conc-table"><table><thead><tr><th>Forma</th><th>Referência</th><th>Previsão</th><th>Dias após previsão</th><th>Saldo a conferir</th></tr></thead><tbody>
+<?php foreach($alertasPrazoConc as $alertaPrazoConc): ?>
+<tr><td><?php echo $escConc($alertaPrazoConc['forma']); ?></td>
+<td><?php echo $escConc(date('d/m/Y',strtotime($alertaPrazoConc['referencia']))); ?></td>
+<td><?php echo $escConc(date('d/m/Y',strtotime($alertaPrazoConc['previsao']))); ?></td>
+<td><?php echo (int)$alertaPrazoConc['dias']; ?></td>
+<td><?php echo $moedaConc($alertaPrazoConc['saldo']); ?></td></tr>
+<?php endforeach; ?>
+<?php if (!$alertasPrazoConc): ?><tr><td colspan="5">Nenhum possível atraso encontrado entre os registros analisados.</td></tr><?php endif; ?>
+</tbody></table></div>
+<p class="bc-conc-note">A consulta examina até 500 combinações de forma e dia no período. Se houver mais registros, reduza o intervalo. Crédito parcial ou antecipado pode exigir conferência manual.</p>
 <?php endif; ?>
 </div>
 <div class="bc-conc-card">
