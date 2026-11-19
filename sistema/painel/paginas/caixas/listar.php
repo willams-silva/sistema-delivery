@@ -286,7 +286,9 @@ HTML;
 		$('#id_fechar').val(id);
 		$('#nome_operador').val(operador);
 		$('#valor_abertura_fechar').val(valor_abertura);
-		$('#total_caixa_fechar').val(total_caixa);
+		$('#total_caixa_fechar').val('');
+        const esperado = Number(total_caixa);
+        $('#saldo_esperado_visual').text(Number.isFinite(esperado) ? esperado.toLocaleString('pt-BR', {style:'currency',currency:'BRL'}) : 'Indisponível');
 
 		$('#tituloModalFechar').text('Fechar Caixa');
 		$('#modalFechar').modal('show');
