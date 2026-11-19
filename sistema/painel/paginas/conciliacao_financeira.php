@@ -107,6 +107,33 @@ if ($liquidacoesDisponiveisConc) {
   }
  }
 }
+// Pendências de conciliação por forma, sem presumir prazo de repasse.
+$pendenciasLiquidacaoConc=[];
+$totalPendenteLiquidacaoConc=0.0;
+$qtdePendenciasLiquidacaoConc=0;
+if ($liquidacoesDisponiveisConc) {
+ foreach ($gruposConc as $grupoPendenciaConc) {
+  $idFormaPendenciaConc=(int)($grupoPendenciaConc['forma_id']??0);
+  $esperadoPendenciaConc=$grupoPendenciaConc['liquido_estimado'];
+  $creditoPendenciaConc=(float)($liquidacoesPorFormaConc[$idFormaPendenciaConc]??0);
+  $diferencaPendenciaConc=$esperadoPendenciaConc===null ? null : round((float)$esperadoPendenciaConc-$creditoPendenciaConc,2);
+  $situacaoPendenciaConc=$esperadoPendenciaConc===null?'Sem taxa':($diferencaPendenciaConc>0.01?'Pendente':($diferencaPendenciaConc < -0.01?'Crédito acima':'Conferido'));
+  if ($situacaoPendenciaConc==='Pendente') {
+   $qtdePendenciasLiquidacaoConc++;
+   $totalPendenteLiquidacaoConc+=$diferencaPendenciaConc;
+  }
+  $pendenciasLiquidacaoConc[]=[
+   'forma'=>(string)$grupoPendenciaConc['forma'],
+   'bruto'=>(float)$grupoPendenciaConc['total'],
+   'esperado'=>$esperadoPendenciaConc,
+   'credito'=>$creditoPendenciaConc,
+   'diferenca'=>$diferencaPendenciaConc,
+   'situacao'=>$situacaoPendenciaConc
+  ];
+ }
+}
+$filtroPendenciasConc=(string)($_GET['situacao_liquidacao']??'todas');
+if (!in_array($filtroPendenciasConc,['todas','Pendente','Conferido','Crédito acima','Sem taxa'],true)) $filtroPendenciasConc='todas';
 $totalConc=$somarConc($gruposConc); $totalPendenteConc=$somarConc($pendentesConc);
 $moedaConc=static function($v){return 'R$ '.number_format((float)$v,2,',','.');};
 $escConc=static function($v){return htmlspecialchars((string)$v,ENT_QUOTES,'UTF-8');};
@@ -178,6 +205,42 @@ Líquido estimado apenas dessas formas: <strong><?php echo $moedaConc($totalLiqu
 <?php endif; endforeach; ?>
 </form>
 <p class="bc-conc-note">Para salvar, primeiro clique em Calcular estimativa e depois em Salvar taxas do estabelecimento. As taxas salvas serão usadas em futuras consultas.</p>
+<?php endif; ?>
+</div>
+<div class="bc-conc-card">
+<h5><i class="fa fa-hourglass-half"></i> Acompanhamento de liquidações pendentes</h5>
+<p class="bc-conc-note">Compara o líquido estimado das baixas com os créditos informados para a mesma data de referência. Não representa cobrança vencida: prazos de repasse, estornos e antecipações não são calculados.</p>
+<?php if (!$liquidacoesDisponiveisConc): ?>
+<div class="alert alert-warning">A consulta de liquidações está indisponível.</div>
+<?php else: ?>
+<div class="bc-conc-grid">
+<div class="bc-conc-card"><small>Saldo ainda não conciliado (estimado)</small><strong><?php echo $moedaConc($totalPendenteLiquidacaoConc); ?></strong></div>
+<div class="bc-conc-card"><small>Formas com diferença a conferir</small><strong><?php echo $qtdePendenciasLiquidacaoConc; ?></strong></div>
+</div>
+<form method="get" action="index.php" class="bc-conc-filter">
+<input type="hidden" name="pagina" value="conciliacao_financeira">
+<input type="hidden" name="inicio" value="<?php echo $escConc($inicioConc); ?>">
+<input type="hidden" name="fim" value="<?php echo $escConc($fimConc); ?>">
+<div><label for="conc-situacao">Situação</label>
+<select id="conc-situacao" name="situacao_liquidacao" class="form-control">
+<?php foreach(['todas'=>'Todas','Pendente'=>'Pendente','Conferido'=>'Conferido','Crédito acima'=>'Crédito acima','Sem taxa'=>'Sem taxa'] as $valorSituacaoConc=>$rotuloSituacaoConc): ?>
+<option value="<?php echo $escConc($valorSituacaoConc); ?>" <?php echo $filtroPendenciasConc===$valorSituacaoConc?'selected':''; ?>><?php echo $escConc($rotuloSituacaoConc); ?></option>
+<?php endforeach; ?>
+</select></div>
+<button type="submit" class="btn btn-primary">Filtrar</button>
+</form>
+<div class="bc-conc-table mt-3"><table><thead><tr><th>Forma</th><th>Líquido estimado</th><th>Crédito informado</th><th>Saldo a conferir</th><th>Situação</th></tr></thead><tbody>
+<?php $linhasPendenciaExibidasConc=0; foreach($pendenciasLiquidacaoConc as $pendenciaConc):
+if ($filtroPendenciasConc!=='todas' && $filtroPendenciasConc!==$pendenciaConc['situacao']) continue;
+$linhasPendenciaExibidasConc++; ?>
+<tr><td><?php echo $escConc($pendenciaConc['forma']); ?></td>
+<td><?php echo $pendenciaConc['esperado']===null?'—':$moedaConc($pendenciaConc['esperado']); ?></td>
+<td><?php echo $moedaConc($pendenciaConc['credito']); ?></td>
+<td><?php echo $pendenciaConc['diferenca']===null?'—':$moedaConc($pendenciaConc['diferenca']); ?></td>
+<td><?php echo $escConc($pendenciaConc['situacao']); ?></td></tr>
+<?php endforeach; ?>
+<?php if (!$linhasPendenciaExibidasConc): ?><tr><td colspan="5">Nenhum registro para o filtro selecionado.</td></tr><?php endif; ?>
+</tbody></table></div>
 <?php endif; ?>
 </div>
 <div class="bc-conc-card">
