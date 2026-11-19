@@ -45,7 +45,9 @@ async function carregar(){
   const dados=await res.json();
   if(sequencia!==carregamentoAtual)return;
   if(!res.ok)throw new Error(dados.erro||'Falha na consulta');
-  totalPaginas=dados.total_paginas;el('linhas').replaceChildren();
+  totalPaginas=Number(dados.total_paginas)||0;
+  pagina=Number(dados.pagina)||1;
+  el('linhas').replaceChildren();
   for(const e of dados.estornos){
    const tr=document.createElement('tr');
    celula(tr,e.criado_em);celula(tr,e.venda_id);celula(tr,e.status);
@@ -64,7 +66,13 @@ async function carregar(){
   el('status').textContent=dados.total+' estorno(s) encontrado(s)';
   el('pagina-info').textContent='Página '+pagina+' de '+Math.max(1,totalPaginas);
   el('anterior').disabled=pagina<=1;el('proximo').disabled=pagina>=totalPaginas;
- }catch(e){if(sequencia===carregamentoAtual){el('status').textContent='';el('error').textContent=e.message}}
+ }catch(e){if(sequencia===carregamentoAtual){
+  el('status').textContent='';
+  el('error').textContent=e.message;
+  el('pagina-info').textContent='Consulta indisponível';
+  el('linhas').replaceChildren();
+  el('anterior').disabled=true;el('proximo').disabled=true;
+ }}
 }
 el('filtros').addEventListener('submit',e=>{e.preventDefault();pagina=1;carregar()});
 el('anterior').addEventListener('click',()=>{if(pagina>1){pagina--;carregar()}});
