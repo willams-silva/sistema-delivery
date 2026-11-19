@@ -213,8 +213,30 @@ $escConc=static function($v){return htmlspecialchars((string)$v,ENT_QUOTES,'UTF-
 .bc-conc-table{overflow-x:auto}.bc-conc-table table{width:100%;border-collapse:collapse}
 .bc-conc-table th,.bc-conc-table td{padding:11px;border-bottom:1px solid #e2e8f0;text-align:left}
 .bc-conc-table th{background:#f8fafc}.bc-conc-note{font-size:13px;color:#64748b}
+.bc-conc-tabs{display:flex;gap:8px;overflow-x:auto;padding:6px 2px 14px;margin-bottom:10px;scrollbar-width:thin}
+.bc-conc-tabs button{flex:0 0 auto;border:1px solid #d4dce7;border-radius:10px;background:#fff;color:#334155;font-weight:600;padding:11px 16px;cursor:pointer}
+.bc-conc-tabs button[aria-selected="true"]{background:#1d4ed8;border-color:#1d4ed8;color:#fff}
+.bc-conc-tabs button:focus-visible{outline:3px solid #93c5fd;outline-offset:2px}
+.bc-conc.js-tabs-ready [data-conc-panel]{display:none}
+.bc-conc.js-tabs-ready [data-conc-panel].is-active{display:block}
+@media(max-width:600px){.bc-conc-card{padding:14px}.bc-conc-tabs button{padding:10px 12px}.bc-conc-filter>div{max-width:100%}}
+
 </style>
 <div class="bc-conc">
+<nav class="bc-conc-tabs" aria-label="Seções da conciliação financeira" id="bc-conc-tabs">
+<button type="button" data-conc-tab="geral">Visão Geral</button>
+<button type="button" data-conc-tab="liquidacoes">Liquidações</button>
+<button type="button" data-conc-tab="repasses">Repasses</button>
+<button type="button" data-conc-tab="relatorios">Relatórios</button>
+<button type="button" data-conc-tab="configuracoes">Configurações</button>
+</nav>
+<div class="bc-conc-tab-panels" id="bc-conc-panels">
+<section data-conc-panel="geral" aria-label="Visão Geral"></section>
+<section data-conc-panel="liquidacoes" aria-label="Liquidações"></section>
+<section data-conc-panel="repasses" aria-label="Repasses"></section>
+<section data-conc-panel="relatorios" aria-label="Relatórios"></section>
+<section data-conc-panel="configuracoes" aria-label="Configurações"></section>
+</div>
 <div class="bc-conc-card">
 <h3><i class="fa fa-check-square-o"></i> Conciliação Financeira</h3>
 <p class="bc-conc-note">Conferência de contas a receber baixadas por forma de pagamento. Os valores representam baixas registradas no sistema, não depósitos bancários confirmados.</p>
@@ -450,3 +472,52 @@ $liquido=$linha['liquido_estimado'];
 </tbody></table></div>
 <p class="bc-conc-note">A simulação de taxas acima não substitui a conciliação bancária. A integração com extratos, liquidações e taxas persistidas continua pendente.</p>
 </div></div>
+<script>
+(function(){
+ const root=document.querySelector('.bc-conc');
+ if(!root)return;
+ const nav=root.querySelector('#bc-conc-tabs');
+ const panels=root.querySelector('#bc-conc-panels');
+ if(!nav||!panels)return;
+ const panel=(name)=>panels.querySelector('[data-conc-panel="'+name+'"]');
+ const tabs=['geral','liquidacoes','repasses','relatorios','configuracoes'];
+ const classify=(heading)=>{
+  const t=(heading||'').toLocaleLowerCase('pt-BR');
+  if(t.includes('simulador de taxas'))return 'configuracoes';
+  if(t.includes('prazos e previsão'))return 'repasses';
+  if(t.includes('repasses potencialmente'))return 'repasses';
+  if(t.includes('acompanhamento de liquidações'))return 'liquidacoes';
+  if(t.includes('liquidações informadas'))return 'liquidacoes';
+  if(t.includes('exportar créditos')||t.includes('últimos 100 recebimentos'))return 'relatorios';
+  return 'geral';
+ };
+ // Mover apenas blocos diretos: formulários e listeners permanecem intactos.
+ Array.from(root.children).forEach(el=>{
+  if(el===nav||el===panels||el.tagName==='SCRIPT')return;
+  if(el.classList.contains('bc-conc-grid')){panel('geral').appendChild(el);return;}
+  if(el.classList.contains('bc-conc-card')){
+   const h=el.querySelector('h3,h5');
+   if(h&&h.tagName==='H3'){root.insertBefore(el,nav);return;}
+   panel(classify(h&&h.textContent)).appendChild(el);
+   return;
+  }
+  // Avisos globais ficam visíveis acima das abas.
+  if(el.classList.contains('alert'))root.insertBefore(el,nav);
+ });
+ function activate(name,update){
+  if(!tabs.includes(name))name='geral';
+  nav.querySelectorAll('[data-conc-tab]').forEach(b=>{
+   const on=b.getAttribute('data-conc-tab')===name;
+   b.setAttribute('aria-selected',on?'true':'false');
+   b.setAttribute('aria-controls','bc-conc-panel-'+b.getAttribute('data-conc-tab'));
+  });
+  tabs.forEach(t=>{const el=panel(t);el.id='bc-conc-panel-'+t;el.classList.toggle('is-active',t===name);});
+  if(update){const u=new URL(window.location.href);u.searchParams.set('aba',name);history.replaceState(null,'',u.toString());}
+ }
+ nav.querySelectorAll('button[data-conc-tab]').forEach(b=>b.addEventListener('click',()=>activate(b.getAttribute('data-conc-tab'),true)));
+ root.classList.add('js-tabs-ready');
+ const requested=new URLSearchParams(window.location.search).get('aba');
+ const initial=requested||((new URLSearchParams(window.location.search).has('liquidacao_salva'))?'liquidacoes':(new URLSearchParams(window.location.search).has('prazos_salvos')?'repasses':'geral'));
+ activate(initial,false);
+})();
+</script>
