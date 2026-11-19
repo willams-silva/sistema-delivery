@@ -124,41 +124,34 @@ if($total_reg > 0){
 
 
 
-//SCRIPT PARA SUBIR FOTO NO SERVIDOR
-$nome_img = date('d-m-Y H:i:s') .'-'.@$_FILES['foto']['name'];
-$nome_img = preg_replace('/[ :]+/' , '-' , $nome_img);
-
-$caminho = '../../images/contas/' .$nome_img;
-
-$imagem_temp = @$_FILES['foto']['tmp_name']; 
-
-if(@$_FILES['foto']['name'] != ""){
-	$ext = pathinfo($nome_img, PATHINFO_EXTENSION);   
-	if($ext == 'png' or $ext == 'jpg' or $ext == 'jpeg' or $ext == 'gif' or $ext == 'pdf' or $ext == 'rar' or $ext == 'zip' or $ext == 'doc' or $ext == 'docx' or $ext == 'webp' or $ext == 'PNG' or $ext == 'JPG' or $ext == 'JPEG' or $ext == 'GIF' or $ext == 'PDF' or $ext == 'RAR' or $ext == 'ZIP' or $ext == 'DOC' or $ext == 'DOCX' or $ext == 'WEBP' or $ext == 'xlsx' or $ext == 'xlsm' or $ext == 'xls' or $ext == 'xml'){ 
-	
-			//EXCLUO A FOTO ANTERIOR
-			if($foto != "sem-foto.png"){
-				@unlink('../../images/contas/'.$foto);
-			}
-
-			$foto = $nome_img;
-
-		//pegar o tamanho da imagem
-		list($largura, $altura) = getimagesize($imagem_temp);
-		if ($largura > 1400) {
-			echo 'Diminua a imagem para um tamanho de no máximo 1400px de largura!';
-			exit();
-		} else {
-			move_uploaded_file($imagem_temp, $caminho);
-		}
-
-
-	}else{
-		echo 'Extensão de Imagem não permitida!';
-		exit();
-	}
+// Anexos: nome gerado pelo servidor, tamanho limitado e extensoes permitidas.
+// A substituicao preserva o arquivo anterior, que pode ser compartilhado por recorrencias.
+$upload = $_FILES['foto'] ?? null;
+if (is_array($upload) && ($upload['error'] ?? UPLOAD_ERR_NO_FILE) !== UPLOAD_ERR_NO_FILE) {
+    if (($upload['error'] ?? -1) !== UPLOAD_ERR_OK || !is_uploaded_file($upload['tmp_name'] ?? '')) {
+        http_response_code(400); exit('Falha no envio do anexo.');
+    }
+    if (($upload['size'] ?? 0) <= 0 || $upload['size'] > 10 * 1024 * 1024) {
+        http_response_code(400); exit('Anexo deve ter no máximo 10 MB.');
+    }
+    $ext = strtolower(pathinfo((string)($upload['name'] ?? ''), PATHINFO_EXTENSION));
+    $extensoes = ['png','jpg','jpeg','gif','webp','pdf','doc','docx','xls','xlsx','xlsm','zip','rar','xml'];
+    if (!in_array($ext, $extensoes, true)) {
+        http_response_code(400); exit('Extensão de anexo não permitida.');
+    }
+    $nome_img = bin2hex(random_bytes(16)) . '.' . $ext;
+    $caminho = '../../images/contas/' . $nome_img;
+    if (in_array($ext, ['png','jpg','jpeg','gif','webp'], true)) {
+        $dimensoes = @getimagesize($upload['tmp_name']);
+        if (!$dimensoes || $dimensoes[0] > 1400) {
+            http_response_code(400); exit('Imagem inválida ou maior que 1400px de largura.');
+        }
+    }
+    if (!move_uploaded_file($upload['tmp_name'], $caminho)) {
+        http_response_code(500); exit('Não foi possível salvar o anexo.');
+    }
+    $foto = $nome_img;
 }
-
 
 //verificar caixa aberto
 $query1 = $pdo->prepare("SELECT * FROM caixas WHERE operador=:usuario AND data_fechamento IS NULL AND empresa=:empresa ORDER BY id DESC LIMIT 1");
