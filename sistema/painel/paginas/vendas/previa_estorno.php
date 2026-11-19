@@ -84,9 +84,21 @@ try {
     if ($valorPendentePositivo) $motivosBloqueio[]='Venda parcialmente paga: conciliação manual necessária';
     $pagamentosNaoDinheiro=0;
     foreach ($formasRecebidas as $forma) {
-        $nomeForma=strtolower(trim((string)$forma['nome']));
-        if (!in_array($nomeForma,['dinheiro','espécie','especie'],true)
-            && strpos($nomeForma,'dinheiro')===false) $pagamentosNaoDinheiro++;
+        // Somente nomes explicitamente reconhecidos como dinheiro são elegíveis.
+        // Evita falso positivo para nomes como "Não dinheiro" ou "Dinheiro + PIX".
+        $nomeForma=trim((string)$forma['nome']);
+        $nomeForma=strtr($nomeForma,[
+            'Á'=>'a','À'=>'a','Â'=>'a','Ã'=>'a','Ä'=>'a',
+            'É'=>'e','Ê'=>'e','È'=>'e','Í'=>'i','Ó'=>'o',
+            'Ô'=>'o','Õ'=>'o','Ú'=>'u','Ç'=>'c',
+            'á'=>'a','à'=>'a','â'=>'a','ã'=>'a','ä'=>'a',
+            'é'=>'e','ê'=>'e','è'=>'e','í'=>'i','ó'=>'o',
+            'ô'=>'o','õ'=>'o','ú'=>'u','ç'=>'c'
+        ]);
+        $nomeForma=strtolower(preg_replace('/\\s+/u',' ',$nomeForma));
+        if (!in_array($nomeForma,['dinheiro','especie','em dinheiro','pagamento em dinheiro'],true)) {
+            $pagamentosNaoDinheiro++;
+        }
     }
     if ($pagamentosNaoDinheiro>0) $motivosBloqueio[]='PIX, cartão ou outra forma exigem confirmação externa da devolução';
     if (!$formasRecebidas && $recebido>0) $motivosBloqueio[]='Nenhuma forma de pagamento identificada para os recebimentos';
