@@ -188,32 +188,33 @@ if ($total_reg > 0) {
 
 
 
-if($tipo_desconto == '%'){
-	if($desconto > 0 and $total_carrinho > 0){
-		$total_final = -($total_carrinho * $desconto / 100);
-	}else{
-		$total_final = 0;
-	}
-	
-}else{
-	$total_final = -$desconto;
+// Calcula o desconto efetivo no servidor, sem confiar no total enviado pelo navegador.
+if (!is_numeric($desconto) || !is_numeric($frete) || (float)$desconto < 0 || (float)$frete < 0) {
+    throw new RuntimeException('Desconto ou frete inválido.');
 }
-
-
-$total_final = $total_carrinho + $frete - $desconto;
+if ($tipo_desconto !== '%' && $tipo_desconto !== 'reais') {
+    throw new RuntimeException('Tipo de desconto inválido.');
+}
+$descontoAplicado = $tipo_desconto === '%'
+    ? round($total_carrinho * (float)$desconto / 100, 2)
+    : (float)$desconto;
+if ($descontoAplicado > $total_carrinho) throw new RuntimeException('Desconto maior que o valor dos produtos.');
+$desconto = $descontoAplicado;
+$total_final = round($total_carrinho + (float)$frete - $descontoAplicado, 2);
 
 if($total_final <= 0){
 	throw new RuntimeException('O valor da venda tem que ser maior que zero.');
 }
 
 
-if($troco < $total_final and $troco != ""){
-	throw new RuntimeException('O total a pagar não pode ser menor que o total da venda.');
+// Troco só é permitido quando o pagamento principal é em dinheiro.
+$formaDinheiro = in_array(mb_strtolower(trim((string)$saida), 'UTF-8'), ['dinheiro','espécie','especie'], true);
+if (!is_numeric($troco) || (float)$troco < 0) throw new RuntimeException('Valor recebido inválido.');
+if (!$formaDinheiro && (float)$troco > 0.009) throw new RuntimeException('Troco só pode ser informado em pagamentos em dinheiro.');
+if ($formaDinheiro && (float)$troco > 0.009 && (float)$troco + 0.009 < $total_final) {
+    throw new RuntimeException('Valor recebido insuficiente. Para dividir o pagamento, utilize o fluxo específico.');
 }
-
-if($troco == ""){
-	$troco = 0;
-}
+if (!$formaDinheiro) $troco = 0;
 
 
 
