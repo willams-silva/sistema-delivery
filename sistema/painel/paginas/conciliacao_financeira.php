@@ -601,6 +601,8 @@ $linhasPendenciaExibidasConc++; ?>
 <?php if(isset($_GET['liquidacao_duplicada'])): ?><div class="alert alert-warning" role="alert"><strong>Possível crédito duplicado.</strong> Já existe um lançamento com o mesmo identificador para esta forma de pagamento, ou com a mesma forma, datas e valor. Nenhum novo crédito foi registrado. Confira o histórico antes de tentar novamente.</div><?php endif; ?>
 <?php if(isset($_GET['extrato_importado'])): ?><div class="alert alert-info"><?php echo (int)$_GET['extrato_importado']; ?> movimentação(ões) nova(s) importada(s) para conferência. Nenhum crédito foi criado automaticamente.</div><?php endif; ?>
 <?php if(isset($_GET['vinculo_salvo'])): ?><div class="alert alert-success">Recebimento vinculado ao crédito para conferência manual. O vínculo não confirma igualdade de valores líquidos.</div><?php endif; ?>
+<?php if(($_GET['extrato_vinculado']??'')==='1'): ?><div class="alert alert-success" role="status">Movimentação bancária vinculada ao crédito. Confira o histórico e os valores; o vínculo não equivale à aprovação da conciliação.</div><?php endif; ?>
+<?php if(($_GET['extrato_desvinculado']??'')==='1'): ?><div class="alert alert-warning" role="status">Vínculo bancário desfeito. A justificativa foi registrada no histórico de auditoria; a movimentação e o crédito foram preservados.</div><?php endif; ?>
 <div class="bc-conc-card">
 <h5>Indicadores de vínculos bancários</h5>
 <p class="bc-conc-note">Período selecionado: <?php echo $escConc($inicioConc); ?> a <?php echo $escConc($fimConc); ?>. Os indicadores são de vínculos entre extrato e créditos, não de conciliação contábil aprovada. Movimentações negativas entram na contagem, mas não nos totais de créditos.</p>
