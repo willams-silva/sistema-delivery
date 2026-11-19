@@ -148,7 +148,7 @@ HTML;
 		//verificar pgto pix
 		if ($codigo_pix != "" and $pago != "Sim") {
 			require("verificar_pgto.php");
-			if (@$status_api == 'approved') {
+			if ($pagamento_pix_validado === true && $status_api === 'approved') {
 				$atualizaPix=$pdo->prepare("UPDATE vendas SET pago='Sim', tipo_pgto='Pix'
                     WHERE id=:id AND empresa=:empresa AND pago<>'Sim'");
                 $atualizaPix->execute([':id'=>(int)$id,':empresa'=>(int)$id_empresa]);
