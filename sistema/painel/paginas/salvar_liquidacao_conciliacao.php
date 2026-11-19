@@ -23,7 +23,7 @@ try {
  if (!$validar->fetchColumn()) {http_response_code(403);exit('Forma de pagamento inválida.');}
  // Verificação preventiva de duplicidade. Sem índice único, não substitui proteção transacional no banco.
  $duplicado=$pdo->prepare("SELECT id FROM conciliacao_liquidacoes
- WHERE empresa=:empresa AND forma_pgto=:forma
+ WHERE empresa=:empresa AND forma_pgto=:forma AND cancelado_em IS NULL
  AND ((:idf1 <> '' AND identificador=:idf2)
       OR (data_referencia=:ref AND data_credito=:credito AND valor_creditado=:valor))
  LIMIT 1");
