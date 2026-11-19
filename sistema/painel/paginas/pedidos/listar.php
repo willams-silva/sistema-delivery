@@ -65,8 +65,22 @@ if ($ult_ped == "" and $id_ult_pedido != "") {
 }
 
 $ids = '';
-$query = $pdo->query("SELECT * FROM $tabela where status LIKE '$status' and status != 'Finalizado' and status != 'Cancelado' and nome_cliente like '%$busca%' $sql_pedido_balcao order by hora asc LIMIT $limite, $itens_paginacao");
-$res = $query->fetchAll(PDO::FETCH_ASSOC);
+// Pesquisa parametrizada: impede que a busca do operador altere a consulta SQL.
+$pagina = max(0, (int)$pagina);
+$limite = $pagina * $itens_paginacao;
+$busca = trim((string)$busca);
+$statusFiltro = trim((string)($_POST['status'] ?? ''));
+$sqlFiltroBalcao = $pedidos_pdv_delivery != 'Sim' ? " AND tipo_pedido != 'Balcão'" : '';
+$queryPedidos = $pdo->prepare("SELECT * FROM vendas
+    WHERE empresa=:empresa AND status NOT IN ('Finalizado','Cancelado')
+      AND status LIKE :status AND nome_cliente LIKE :busca
+      $sqlFiltroBalcao ORDER BY hora ASC, id ASC LIMIT $limite, $itens_paginacao");
+$queryPedidos->execute([
+    ':empresa'=>(int)$id_empresa,
+    ':status'=>'%'.$statusFiltro.'%',
+    ':busca'=>'%'.$busca.'%'
+]);
+$res = $queryPedidos->fetchAll(PDO::FETCH_ASSOC);
 $total_reg = @count($res);
 if ($total_reg > 0) {
 
