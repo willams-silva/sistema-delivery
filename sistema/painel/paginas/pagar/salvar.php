@@ -95,40 +95,53 @@ if ($total_reg > 0) {
 
 
 
-//SCRIPT PARA SUBIR FOTO NO SERVIDOR
-$nome_img = date('d-m-Y H:i:s') . '-' . @$_FILES['foto']['name'];
-$nome_img = preg_replace('/[ :]+/', '-', $nome_img);
-
-$caminho = '../../images/contas/' . $nome_img;
-
-$imagem_temp = @$_FILES['foto']['tmp_name'];
-
-if (@$_FILES['foto']['name'] != "") {
-	$ext = pathinfo($nome_img, PATHINFO_EXTENSION);
-	if ($ext == 'png' or $ext == 'jpg' or $ext == 'jpeg' or $ext == 'gif' or $ext == 'pdf' or $ext == 'rar' or $ext == 'zip' or $ext == 'doc' or $ext == 'docx' or $ext == 'webp' or $ext == 'PNG' or $ext == 'JPG' or $ext == 'JPEG' or $ext == 'GIF' or $ext == 'PDF' or $ext == 'RAR' or $ext == 'ZIP' or $ext == 'DOC' or $ext == 'DOCX' or $ext == 'WEBP' or $ext == 'xlsx' or $ext == 'xlsm' or $ext == 'xls' or $ext == 'xml') {
-
-		//EXCLUO A FOTO ANTERIOR
-		if ($foto != "sem-foto.png") {
-			@unlink('../../images/contas/' . $foto);
-		}
-
-		$foto = $nome_img;
-
-		//pegar o tamanho da imagem
-		list($largura, $altura) = getimagesize($imagem_temp);
-		if ($largura > 1400) {
-			echo 'Diminua a imagem para um tamanho de no máximo 1400px de largura!';
-			exit();
-		} else {
-			move_uploaded_file($imagem_temp, $caminho);
-		}
-	} else {
-		echo 'Extensão de Imagem não permitida!';
-		exit();
-	}
+// Anexos financeiros: validar conteúdo real, tamanho e nome antes de armazenar.
+$upload = $_FILES['foto'] ?? null;
+if ($upload && ($upload['error'] ?? UPLOAD_ERR_NO_FILE) !== UPLOAD_ERR_NO_FILE) {
+    if (($upload['error'] ?? -1) !== UPLOAD_ERR_OK) {
+        http_response_code(400); exit('Falha no envio do comprovante.');
+    }
+    $temporario = (string)($upload['tmp_name'] ?? '');
+    $tamanho = (int)($upload['size'] ?? 0);
+    if ($tamanho <= 0 || $tamanho > 8 * 1024 * 1024 || !is_uploaded_file($temporario)) {
+        http_response_code(400); exit('Comprovante inválido ou maior que 8 MB.');
+    }
+    $extensao = strtolower(pathinfo((string)($upload['name'] ?? ''), PATHINFO_EXTENSION));
+    $permitidos = [
+        'pdf'=>['application/pdf'],
+        'png'=>['image/png'],
+        'jpg'=>['image/jpeg'], 'jpeg'=>['image/jpeg'],
+        'gif'=>['image/gif'],
+        'webp'=>['image/webp']
+    ];
+    $finfo = new finfo(FILEINFO_MIME_TYPE);
+    $mime = $finfo->file($temporario);
+    if (!isset($permitidos[$extensao]) || !in_array($mime, $permitidos[$extensao], true)) {
+        http_response_code(400); exit('Formato não permitido. Use PDF, PNG, JPG, GIF ou WEBP.');
+    }
+    if ($extensao !== 'pdf') {
+        $dimensoes = @getimagesize($temporario);
+        if (!$dimensoes || $dimensoes[0] > 1400) {
+            http_response_code(400); exit('Imagem inválida ou com largura superior a 1400px.');
+        }
+    } else {
+        $cabecalho = file_get_contents($temporario, false, null, 0, 5);
+        if ($cabecalho !== '%PDF-') {
+            http_response_code(400); exit('PDF inválido.');
+        }
+    }
+    try {
+        $nome_img = bin2hex(random_bytes(16)) . '.' . $extensao;
+    } catch (Throwable $e) {
+        http_response_code(500); exit('Não foi possível gerar o nome do comprovante.');
+    }
+    $diretorio = '../../images/contas/';
+    if (!is_dir($diretorio) || !is_writable($diretorio) || !move_uploaded_file($temporario, $diretorio . $nome_img)) {
+        http_response_code(500); exit('Não foi possível salvar o comprovante.');
+    }
+    // Não remover o arquivo antigo: recorrências e resíduos podem compartilhar o anexo.
+    $foto = $nome_img;
 }
-
-
 
 if ($fornecedor != 0 || $funcionario != 0) {
 	if ($fornecedor != 0) {
