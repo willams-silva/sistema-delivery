@@ -318,6 +318,19 @@ $dashboardAlertasSt=$pdo->prepare("SELECT
  (SELECT COUNT(*) FROM caixas WHERE empresa=:empresa3 AND data_fechamento IS NOT NULL AND ABS(COALESCE(quebra,0))>0.009 AND data_fechamento BETWEEN :inicio AND :fim) caixas_divergentes");
 $dashboardAlertasSt->execute([':empresa1'=>(int)$id_empresa,':empresa2'=>(int)$id_empresa,':empresa3'=>(int)$id_empresa,':inicio'=>$dashboardInicio,':fim'=>$dashboardFim]);
 $dashboardAlertas=$dashboardAlertasSt->fetch(PDO::FETCH_ASSOC);
+$dashboardSerieSt=$pdo->prepare("SELECT data,COUNT(*) quantidade,COALESCE(SUM(valor),0) total
+ FROM vendas WHERE empresa=:empresa AND data BETWEEN :inicio AND :fim
+ AND (status IS NULL OR status<>'Cancelado') GROUP BY data ORDER BY data");
+$dashboardSerieSt->execute([':empresa'=>(int)$id_empresa,':inicio'=>$dashboardInicio,':fim'=>$dashboardFim]);
+$dashboardSerie=$dashboardSerieSt->fetchAll(PDO::FETCH_ASSOC);
+$dashboardSerieMax=1.0;
+foreach ($dashboardSerie as $ponto) $dashboardSerieMax=max($dashboardSerieMax,(float)$ponto['total']);
+$dashboardFormasSt=$pdo->prepare("SELECT f.nome,COUNT(*) quantidade,COALESCE(SUM(COALESCE(r.subtotal,r.valor)),0) total
+ FROM receber r INNER JOIN formas_pgto f ON f.id=r.forma_pgto AND f.empresa=r.empresa
+ WHERE r.empresa=:empresa AND r.pago='Sim' AND r.data_pgto BETWEEN :inicio AND :fim
+ GROUP BY f.id,f.nome ORDER BY total DESC");
+$dashboardFormasSt->execute([':empresa'=>(int)$id_empresa,':inicio'=>$dashboardInicio,':fim'=>$dashboardFim]);
+$dashboardFormas=$dashboardFormasSt->fetchAll(PDO::FETCH_ASSOC);
 $dashboardTicketMedio=(int)$dashboardResumoHoje['quantidade']>0
     ? (float)$dashboardResumoHoje['total']/(int)$dashboardResumoHoje['quantidade'] : 0.0;
 
@@ -390,6 +403,31 @@ $dashboardTicketMedio=(int)$dashboardResumoHoje['quantidade']>0
     <div class="col-12 col-md-4">Fechamentos com diferença no período: <strong><?php echo (int)$dashboardAlertas['caixas_divergentes']; ?></strong></div>
   </div>
 </section>
+<div class="row g-3 mb-3" aria-label="Análise de vendas e pagamentos">
+  <div class="col-12 col-lg-7"><section class="card p-3 h-100">
+    <h5>Evolução do faturamento</h5>
+    <div class="d-flex align-items-end gap-2 overflow-auto" style="min-height:170px" role="img" aria-label="Barras de faturamento por dia">
+    <?php foreach ($dashboardSerie as $ponto): ?>
+      <div class="text-center" style="min-width:55px;flex:1">
+        <div class="small text-muted">R$ <?php echo number_format((float)$ponto['total'],2,',','.'); ?></div>
+        <div class="bg-primary rounded mx-auto" style="height:<?php echo max(3,round((float)$ponto['total']/$dashboardSerieMax*105)); ?>px;max-width:45px"></div>
+        <div class="small text-muted mt-1"><?php echo date('d/m',strtotime($ponto['data'])); ?></div>
+      </div>
+    <?php endforeach; ?>
+    <?php if (!$dashboardSerie): ?><p class="text-muted">Sem vendas no período.</p><?php endif; ?>
+    </div>
+  </section></div>
+  <div class="col-12 col-lg-5"><section class="card p-3 h-100">
+    <h5>Recebimentos por forma de pagamento</h5>
+    <?php foreach ($dashboardFormas as $forma): ?>
+      <div class="d-flex justify-content-between gap-2 border-bottom py-2">
+        <span><?php echo htmlspecialchars($forma['nome'],ENT_QUOTES,'UTF-8'); ?></span>
+        <strong>R$ <?php echo number_format((float)$forma['total'],2,',','.'); ?></strong>
+      </div>
+    <?php endforeach; ?>
+    <?php if (!$dashboardFormas): ?><p class="text-muted">Sem recebimentos no período.</p><?php endif; ?>
+  </section></div>
+</div>
 <div class="row g-3 mt-2 mb-3" aria-label="Resumo operacional">
   <div class="col-12 col-md-4">
     <div class="card h-100 p-3">
