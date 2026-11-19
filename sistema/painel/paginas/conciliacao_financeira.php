@@ -75,9 +75,9 @@ foreach ($gruposConc as &$grupoConc) {
 unset($grupoConc);
 $liquidacoesConc=[];$liquidacoesPorFormaConc=[];$liquidacoesDisponiveisConc=false;
 try {
- $stL=$pdo->prepare("SELECT l.id,l.forma_pgto,l.data_referencia,l.data_credito,l.valor_creditado,l.identificador,l.observacao,fp.nome AS forma FROM conciliacao_liquidacoes l INNER JOIN formas_pgto fp ON fp.id=l.forma_pgto AND fp.empresa=l.empresa WHERE l.empresa=:empresa AND l.data_referencia BETWEEN :inicio AND :fim ORDER BY l.data_referencia DESC,l.id DESC LIMIT 100");
+ $stL=$pdo->prepare("SELECT l.id,l.forma_pgto,l.data_referencia,l.data_credito,l.valor_creditado,l.identificador,l.observacao,l.cancelado_em,l.cancelado_por,l.motivo_cancelamento,fp.nome AS forma FROM conciliacao_liquidacoes l INNER JOIN formas_pgto fp ON fp.id=l.forma_pgto AND fp.empresa=l.empresa WHERE l.empresa=:empresa AND l.data_referencia BETWEEN :inicio AND :fim ORDER BY l.data_referencia DESC,l.id DESC LIMIT 100");
  $stL->execute($paramsConc);$liquidacoesConc=$stL->fetchAll(PDO::FETCH_ASSOC);
- $stS=$pdo->prepare("SELECT forma_pgto,SUM(valor_creditado) AS total FROM conciliacao_liquidacoes WHERE empresa=:empresa AND data_referencia BETWEEN :inicio AND :fim GROUP BY forma_pgto");
+ $stS=$pdo->prepare("SELECT forma_pgto,SUM(valor_creditado) AS total FROM conciliacao_liquidacoes WHERE empresa=:empresa AND cancelado_em IS NULL AND data_referencia BETWEEN :inicio AND :fim GROUP BY forma_pgto");
  $stS->execute($paramsConc);
  foreach($stS->fetchAll(PDO::FETCH_ASSOC) as $l) $liquidacoesPorFormaConc[(int)$l['forma_pgto']]=(float)$l['total'];
  $liquidacoesDisponiveisConc=true;
@@ -176,7 +176,7 @@ if ($prazosDisponiveisConc && $liquidacoesDisponiveisConc) {
   $stDias->execute($paramsConc);
   $stCreditosDia=$pdo->prepare("SELECT forma_pgto AS forma_id,data_referencia AS dia,
     SUM(valor_creditado) AS total FROM conciliacao_liquidacoes
-    WHERE empresa=:empresa AND data_referencia BETWEEN :inicio AND :fim
+    WHERE empresa=:empresa AND cancelado_em IS NULL AND data_referencia BETWEEN :inicio AND :fim
     GROUP BY forma_pgto,data_referencia");
   $stCreditosDia->execute($paramsConc);
   $creditoDiaConc=[];
@@ -450,6 +450,7 @@ $linhasPendenciaExibidasConc++; ?>
 <div class="alert alert-warning">Execute a migração SQL conciliacao_liquidacoes.sql para ativar este recurso.</div>
 <?php else: ?>
 <?php if(isset($_GET['liquidacao_salva'])): ?><div class="alert alert-success">Crédito registrado com sucesso.</div><?php endif; ?>
+<?php if(isset($_GET['liquidacao_cancelada'])): ?><div class="alert alert-success">Crédito cancelado e preservado no histórico.</div><?php endif; ?>
 <?php if(isset($_GET['liquidacao_duplicada'])): ?><div class="alert alert-warning" role="alert"><strong>Possível crédito duplicado.</strong> Já existe um lançamento com o mesmo identificador para esta forma de pagamento, ou com a mesma forma, datas e valor. Nenhum novo crédito foi registrado. Confira o histórico antes de tentar novamente.</div><?php endif; ?>
 <form method="post" action="paginas/salvar_liquidacao_conciliacao.php">
 <input type="hidden" name="csrf_conc" value="<?php echo $escConc($_SESSION['csrf_conc']); ?>">
@@ -485,10 +486,23 @@ $liquido=$linha['liquido_estimado'];
 </tbody></table></div>
 <p class="bc-conc-note">Diferenças podem resultar de prazos de repasse, antecipações, estornos ou taxas. A comparação é gerencial e não comprova conciliação bancária automática.</p>
 <h6 class="mt-4">Últimos 100 créditos informados no período</h6>
-<div class="bc-conc-table"><table><thead><tr><th>Referência</th><th>Crédito</th><th>Forma</th><th>Valor</th><th>Identificador</th></tr></thead><tbody>
+<div class="bc-conc-table"><table><thead><tr><th>Referência</th><th>Crédito</th><th>Forma</th><th>Valor</th><th>Identificador</th><th>Situação / Ação</th></tr></thead><tbody>
 <?php foreach($liquidacoesConc as $l): ?><tr>
-<td><?php echo $escConc($l['data_referencia']); ?></td><td><?php echo $escConc($l['data_credito']); ?></td><td><?php echo $escConc($l['forma']); ?></td><td><?php echo $moedaConc($l['valor_creditado']); ?></td><td><?php echo $escConc($l['identificador']??''); ?></td></tr><?php endforeach; ?>
-<?php if(!$liquidacoesConc): ?><tr><td colspan="5">Nenhum crédito informado.</td></tr><?php endif; ?>
+<td><?php echo $escConc($l['data_referencia']); ?></td><td><?php echo $escConc($l['data_credito']); ?></td><td><?php echo $escConc($l['forma']); ?></td><td><?php echo $moedaConc($l['valor_creditado']); ?></td><td><?php echo $escConc($l['identificador']??''); ?></td>
+<td><?php if(!empty($l['cancelado_em'])): ?>
+<span class="text-danger">Cancelado em <?php echo $escConc($l['cancelado_em']); ?></span>
+<div class="bc-conc-note">Motivo: <?php echo $escConc($l['motivo_cancelamento']??''); ?> | Usuário #<?php echo (int)$l['cancelado_por']; ?></div>
+<?php else: ?>
+<details><summary class="btn btn-sm btn-outline-danger">Cancelar</summary>
+<form method="post" action="paginas/cancelar_liquidacao_conciliacao.php" onsubmit="return confirm('Confirma o cancelamento deste crédito?');">
+<input type="hidden" name="csrf_conc" value="<?php echo $escConc($_SESSION['csrf_conc']); ?>">
+<input type="hidden" name="id" value="<?php echo (int)$l['id']; ?>">
+<label for="motivo-conc-<?php echo (int)$l['id']; ?>">Justificativa (mín. 10 caracteres)</label>
+<textarea id="motivo-conc-<?php echo (int)$l['id']; ?>" name="motivo" minlength="10" maxlength="500" required class="form-control" rows="2"></textarea>
+<button type="submit" class="btn btn-danger btn-sm mt-2">Confirmar cancelamento</button>
+</form></details>
+<?php endif; ?></td></tr><?php endforeach; ?>
+<?php if(!$liquidacoesConc): ?><tr><td colspan="6">Nenhum crédito informado.</td></tr><?php endif; ?>
 </tbody></table></div>
 <?php endif; ?>
 </div>
