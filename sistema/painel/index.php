@@ -916,6 +916,7 @@ if($linhas == 0){
 								<ul class="slide-menu">
 
 									<li><a class="slide-item" href="index.php?pagina=visao_financeira"><i class="fa fa-line-chart me-1"></i> Visão Financeira</a></li>
+									<?php if (in_array($_SESSION['nivel'] ?? '', ['Administrador', 'Gerente'], true)): ?><li><a class="slide-item" href="index.php?pagina=auditoria_financeira"><i class="fa fa-history me-1"></i> Auditoria Financeira</a></li><?php endif; ?>
 									<li class="<?php echo @$pagar ?> "><a class="slide-item" href="pagar">Contas a Pagar</a></li>
 
 									<li class="<?php echo @$receber ?> "><a class="slide-item" href="receber">Contas a Receber</a></li>
