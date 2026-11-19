@@ -98,6 +98,11 @@ $data_final_mes = $ano_atual . "-" . $mes_atual . "-" . $dia_final_mes;
 
 	</div>
 
+	<div class="d-flex justify-content-end my-3">
+        <a class="btn btn-outline-primary" href="paginas/vendas/visualizar_estornos.php" target="_blank" rel="noopener noreferrer" title="Consultar histórico de estornos financeiros">
+            <i class="fa fa-history" aria-hidden="true"></i> Histórico de estornos
+        </a>
+    </div>
 	<hr>
 	<div id="listar">
 
