@@ -8,7 +8,7 @@ if(!isset($_FILES['arquivo'])||$_FILES['arquivo']['error']!==UPLOAD_ERR_OK||$_FI
 $tmp=$_FILES['arquivo']['tmp_name'];$nome=basename((string)$_FILES['arquivo']['name']);$ext=strtolower(pathinfo($nome,PATHINFO_EXTENSION));
 if(!in_array($ext,['csv','ofx'],true)||!is_uploaded_file($tmp)){http_response_code(400);exit('Formato inválido.');}
 $raw=file_get_contents($tmp);if($raw===false){http_response_code(400);exit('Arquivo ilegível.');}
-$hash=hash('sha256',$raw);$linhas=[];
+$hash=hash('sha256',$raw);$linhas=[];$invalidas=0;
 $dataValida=static function($v){$v=trim((string)$v);foreach(['Y-m-d','d/m/Y','d-m-Y','Ymd'] as $fmt){$d=DateTimeImmutable::createFromFormat('!'.$fmt,$v);if($d&&$d->format($fmt)===$v)return $d->format('Y-m-d');}return null;};
 $valorValido=static function($v){$v=trim(str_replace(['R$',' '],'',(string)$v));if(str_contains($v,','))$v=str_replace(',','. ',str_replace('.','',$v));$v=str_replace(' ','',$v);return preg_match('/^-?\d{1,10}(?:\.\d{1,2})?$/',$v)?number_format((float)$v,2,'.',''):null;};
 if($ext==='csv'){
@@ -17,7 +17,7 @@ if($ext==='csv'){
  $header=array_map(static function($v){return strtolower(trim(str_replace("\xEF\xBB\xBF",'',(string)$v)));},$header);
  $col=array_flip($header);
  foreach(['data','valor','descricao'] as $key)if(!isset($col[$key])){fclose($fp);http_response_code(400);exit('CSV precisa das colunas: data;valor;descricao;identificador (opcional).');}
- while(($row=fgetcsv($fp,0,$sep))!==false){if(count($linhas)>=5000){fclose($fp);http_response_code(413);exit('Arquivo excede 5.000 movimentações. Divida o extrato.');}$data=$dataValida($row[$col['data']]??'');$valor=$valorValido($row[$col['valor']]??'');if(!$data||$valor===null)continue;$linhas[]=[$data,$valor,mb_substr(trim($row[$col['descricao']]??''),0,500),mb_substr(trim($row[$col['identificador']]??''),0,120)];}
+ while(($row=fgetcsv($fp,0,$sep))!==false){if(count($linhas)>=5000){fclose($fp);http_response_code(413);exit('Arquivo excede 5.000 movimentações. Divida o extrato.');}$data=$dataValida($row[$col['data']]??'');$valor=$valorValido($row[$col['valor']]??'');if(!$data||$valor===null){$invalidas++;continue;}$linhas[]=[$data,$valor,mb_substr(trim($row[$col['descricao']]??''),0,500),mb_substr(trim($row[$col['identificador']]??''),0,120)];}
  fclose($fp);
 }else{
  // OFX 1.x usa SGML sem fechamento de tags; extrai apenas blocos STMTTRN, sem executar entidades.
@@ -26,11 +26,12 @@ if($ext==='csv'){
   foreach($matches[1] as $block){
    $get=static function($tag)use($block){return preg_match('/<'.$tag.'>\s*([^<\r\n]+)/i',$block,$m)?trim($m[1]):'';};
    $data=$dataValida(substr($get('DTPOSTED'),0,8));$valor=$valorValido($get('TRNAMT'));
-   if(!$data||$valor===null)continue;
+   if(!$data||$valor===null){$invalidas++;continue;}
    $linhas[]=[$data,$valor,mb_substr($get('MEMO')?:$get('NAME'),0,500),mb_substr($get('FITID'),0,120)];
   }
  }
 }
+if($invalidas>0){http_response_code(422);exit('Importação cancelada: '.$invalidas.' movimentação(ões) com data ou valor inválido. Corrija o arquivo e tente novamente. Nenhum registro foi gravado.');}
 if(!$linhas){http_response_code(422);exit('Nenhuma movimentação válida. Confira o layout do arquivo.');}
 try{
  $pdo->beginTransaction();
