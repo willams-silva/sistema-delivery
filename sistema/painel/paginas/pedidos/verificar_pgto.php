@@ -26,7 +26,13 @@ if ($codigoPagamento !== '' && preg_match('/^[0-9]{1,30}$/D', $codigoPagamento)
         // Nunca confiar somente no status: conferir também a identidade.
         if (is_object($resultado)
             && (string)($resultado->id ?? '') === $codigoPagamento
-            && ($resultado->status ?? '') === 'approved') {
+            && ($resultado->status ?? '') === 'approved'
+            // Não quitar venda com valor diferente ou moeda não BRL.
+            && strtoupper((string)($resultado->currency_id ?? '')) === 'BRL'
+            && isset($valor) && is_numeric($valor)
+            && isset($resultado->transaction_amount)
+            && is_numeric($resultado->transaction_amount)
+            && (int)round((float)$resultado->transaction_amount * 100) === (int)round((float)$valor * 100)) {
             $status_api = 'approved';
             $pagamento_pix_validado = true;
         }
