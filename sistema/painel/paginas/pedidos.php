@@ -500,7 +500,19 @@ if (@$pausar_delivery == 'Sim') {
             listar(undefined,0);
         },350);
     });
-	var requisicaoPedidosAtual = null;
+	var resultadoPedidosPendente = null;
+    $(document).off('focusout.boraPedidos hidden.bs.modal.boraPedidos')
+      .on('focusout.boraPedidos','#listar',function(){
+          setTimeout(aplicarPedidosPendentes,0);
+      })
+      .on('hidden.bs.modal.boraPedidos','.modal',aplicarPedidosPendentes);
+    function aplicarPedidosPendentes(){
+        if (resultadoPedidosPendente === null ||
+            $('#listar').find(':focus').length || $('.modal.show').length) return;
+        $('#listar').html(resultadoPedidosPendente);
+        resultadoPedidosPendente = null;
+    }
+    var requisicaoPedidosAtual = null;
     var sequenciaPedidos = 0;
 	function listar(p1, p2) {
 
@@ -536,7 +548,12 @@ if (@$pausar_delivery == 'Sim') {
 			success: function(result) {
                 if (sequencia !== sequenciaPedidos) return;
                 // Não substituir botões ou formulários enquanto o operador os utiliza.
-                if ($('#listar').find(':focus').length || $('.modal.show').length) return;
+                if ($('#listar').find(':focus').length || $('.modal.show').length) {
+                    // Guarda o resultado mais recente para aplicá-lo após a interação.
+                    resultadoPedidosPendente = result;
+                    return;
+                }
+                resultadoPedidosPendente = null;
 				$("#listar").html(result);
 				$('#mensagem-excluir').text('');
 			},
