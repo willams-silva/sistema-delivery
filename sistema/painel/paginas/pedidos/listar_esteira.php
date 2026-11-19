@@ -1,12 +1,17 @@
 <?php
 @session_start();
-$id_empresa = $_SESSION['empresa'];
+$id_empresa = filter_var($_SESSION['empresa'] ?? null, FILTER_VALIDATE_INT, ['options'=>['min_range'=>1]]);
+if (!$id_empresa || !filter_var($_SESSION['id'] ?? null, FILTER_VALIDATE_INT, ['options'=>['min_range'=>1]])) {
+    http_response_code(403);
+    exit('Sessão expirada. Entre novamente no painel.');
+}
 require_once("../../../conexao.php");
 require_once("../../buscar_config.php");
 $tabela = 'vendas';
 $data_hoje = date('Y-m-d');
 
-$status = '%' . @$_POST['status'] . '%';
+$statusInformado = trim((string)($_POST['status'] ?? ''));
+$status = '%' . $statusInformado . '%';
 $ult_ped = @$_POST['ult_pedido'];
 
 $total_vendas = 0;
@@ -55,7 +60,9 @@ if ($ult_ped == "" and $id_ult_pedido != "") {
 }
 
 $ids = '';
-$query = $pdo->query("SELECT * FROM $tabela where status LIKE '$status' and status != 'Finalizado' and status != 'Cancelado' $sql_pedido_balcao order by hora asc");
+$query = $pdo->prepare("SELECT * FROM vendas WHERE status LIKE :status
+    AND status NOT IN ('Finalizado','Cancelado') $sql_pedido_balcao ORDER BY hora ASC");
+$query->execute([':status'=>$status]);
 $res = $query->fetchAll(PDO::FETCH_ASSOC);
 $total_reg = @count($res);
 if ($total_reg > 0) {
@@ -88,8 +95,10 @@ if ($total_reg > 0) {
 		//verificar pgto pix
 		if ($codigo_pix != "" and $pago != "Sim") {
 			require("verificar_pgto.php");
-			if (@$status_api == 'approved') {
-				$pdo->query("UPDATE vendas set pago = 'Sim', tipo_pgto = 'Pix' where id = '$id'");
+			if ($pagamento_pix_validado === true && $status_api === 'approved') {
+                $atualizaPix=$pdo->prepare("UPDATE vendas SET pago='Sim', tipo_pgto='Pix'
+                    WHERE id=:id AND empresa=:empresa AND pago<>'Sim'");
+                $atualizaPix->execute([':id'=>(int)$id,':empresa'=>(int)$id_empresa]);
 			}
 		}
 
