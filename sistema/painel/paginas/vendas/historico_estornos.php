@@ -5,6 +5,9 @@
  */
 @session_start();
 header('Content-Type: application/json; charset=utf-8');
+header('Cache-Control: no-store, no-cache, must-revalidate, private');
+header('Pragma: no-cache');
+header('X-Content-Type-Options: nosniff');
 if (($_SERVER['REQUEST_METHOD'] ?? '') !== 'GET') {
     http_response_code(405);
     exit(json_encode(['erro'=>'Método inválido.']));
@@ -36,6 +39,12 @@ try {
     $contagem=$pdo->prepare("SELECT COUNT(*) FROM estornos_vendas e WHERE e.empresa=:empresa $filtro");
     $contagem->execute($parametros);
     $total=(int)$contagem->fetchColumn();
+    // Corrige páginas fora do intervalo após alteração dos filtros.
+    $totalPaginas=(int)ceil($total/$limite);
+    if ($totalPaginas>0 && $pagina>$totalPaginas) {
+        $pagina=$totalPaginas;
+        $offset=($pagina-1)*$limite;
+    }
     $consulta=$pdo->prepare("SELECT e.id,e.venda_id,e.caixa_estorno_id,e.usuario_id,
         e.motivo,e.valor_venda,e.valor_recebido,e.valor_pendente,e.status,e.criado_em,
         COALESCE(SUM(er.valor_devolvido),0) AS valor_devolvido_registrado,
@@ -50,7 +59,7 @@ try {
     echo json_encode([
         'pagina'=>$pagina,'por_pagina'=>$limite,'total'=>$total,
         'filtros'=>['venda_id'=>$venda,'status'=>$status],
-        'total_paginas'=>(int)ceil($total/$limite),
+        'total_paginas'=>$totalPaginas,
         'estornos'=>$consulta->fetchAll(PDO::FETCH_ASSOC),
         'somente_leitura'=>true
     ],JSON_UNESCAPED_UNICODE|JSON_THROW_ON_ERROR);
