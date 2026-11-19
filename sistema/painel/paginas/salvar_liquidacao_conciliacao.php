@@ -25,9 +25,10 @@ try {
  $duplicado=$pdo->prepare("SELECT id FROM conciliacao_liquidacoes
  WHERE empresa=:empresa AND forma_pgto=:forma AND cancelado_em IS NULL
  AND ((:idf1 <> '' AND identificador=:idf2)
-      OR (data_referencia=:ref AND data_credito=:credito AND valor_creditado=:valor))
+      OR (data_referencia=:ref AND data_credito=:credito AND valor_creditado=:valor
+          AND (:idf3 = '' OR identificador IS NULL OR identificador = '' OR identificador=:idf4)))
  LIMIT 1");
- $duplicado->execute([':empresa'=>$empresa,':forma'=>$forma,':idf1'=>$idf,':idf2'=>$idf,
+ $duplicado->execute([':empresa'=>$empresa,':forma'=>$forma,':idf1'=>$idf,':idf2'=>$idf,':idf3'=>$idf,':idf4'=>$idf,
  ':ref'=>$dataRef,':credito'=>$dataCred,':valor'=>$valor]);
  $idDuplicado=$duplicado->fetchColumn();
  if ($idDuplicado) {
