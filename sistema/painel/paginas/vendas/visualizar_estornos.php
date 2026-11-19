@@ -28,7 +28,7 @@ th{background:#f1f4f7}.pager{display:flex;gap:12px;align-items:center;margin-top
 <form id="filtros"><label>Venda <input id="venda" type="number" min="1" placeholder="Número da venda"></label>
 <label>Status <select id="filtro-status"><option value="">Todos</option><option>Registrado</option><option>Concluido</option><option>Cancelado</option></select></label>
 <button type="submit">Pesquisar</button></form>
-<p id="status" role="status"></p><p id="error" role="alert"></p>
+<p id="status" role="status"></p><p id="resumo-devolvido" aria-live="polite"></p><p id="error" role="alert"></p>
 <div class="table-wrap"><table><thead><tr><th>Data</th><th>Venda</th><th>Status</th><th>Motivo</th><th>Valor da venda</th><th>Devolução registrada</th><th>Caixa</th></tr></thead><tbody id="linhas"></tbody></table></div>
 <div class="pager"><button id="anterior" type="button">Anterior</button><span id="pagina-info"></span><button id="proximo" type="button">Próxima</button></div>
 </section></main><script>
@@ -67,10 +67,12 @@ async function carregar(){
     el('linhas').appendChild(tr);
   }
   el('status').textContent=dados.total+' estorno(s) encontrado(s)';
+  el('resumo-devolvido').textContent='Total devolvido em estornos concluídos (filtros atuais): '+moeda(dados.total_devolvido_concluido);
   el('pagina-info').textContent='Página '+pagina+' de '+Math.max(1,totalPaginas);
   el('anterior').disabled=pagina<=1;el('proximo').disabled=pagina>=totalPaginas;
  }catch(e){if(sequencia===carregamentoAtual){
   el('status').textContent='';
+  el('resumo-devolvido').textContent='';
   el('error').textContent=e.message;
   el('pagina-info').textContent='Consulta indisponível';
   el('linhas').replaceChildren();
