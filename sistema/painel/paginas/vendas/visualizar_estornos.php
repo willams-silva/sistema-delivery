@@ -20,7 +20,7 @@ th{background:#f1f4f7}.pager{display:flex;gap:12px;align-items:center;margin-top
 #error{color:#b42318}#status{min-height:20px}
 </style></head><body><main><h1>Histórico de estornos</h1>
 <p>Consulta financeira somente leitura. Este painel não realiza devoluções.</p>
-<p><a href="../../vendas" style="color:#233b59">Voltar às vendas</a></p>
+<p><a href="../../index.php?pagina=vendas" style="color:#233b59">Voltar ao painel</a></p>
 <section class="card">
 <form id="filtros"><label>Venda <input id="venda" type="number" min="1" placeholder="Número da venda"></label>
 <label>Status <select id="filtro-status"><option value="">Todos</option><option>Registrado</option><option>Concluido</option><option>Cancelado</option></select></label>
@@ -36,6 +36,7 @@ function celula(tr,valor){const td=document.createElement('td');td.textContent=S
 async function carregar(){
  const sequencia=++carregamentoAtual;
  el('error').textContent='';el('status').textContent='Carregando...';
+ el('anterior').disabled=true;el('proximo').disabled=true;
  const q=new URLSearchParams({pagina:String(pagina)});
  if(el('venda').value)q.set('venda_id',el('venda').value);
  if(el('filtro-status').value)q.set('status',el('filtro-status').value);
@@ -51,6 +52,14 @@ async function carregar(){
    celula(tr,e.motivo);celula(tr,moeda(e.valor_venda));
    celula(tr,moeda(e.valor_devolvido_registrado));celula(tr,e.caixa_estorno_id);
    el('linhas').appendChild(tr);
+  }
+  if (!dados.estornos.length) {
+    const tr=document.createElement('tr');
+    const td=document.createElement('td');
+    td.colSpan=7;
+    td.textContent='Nenhum estorno encontrado para os filtros selecionados.';
+    tr.appendChild(td);
+    el('linhas').appendChild(tr);
   }
   el('status').textContent=dados.total+' estorno(s) encontrado(s)';
   el('pagina-info').textContent='Página '+pagina+' de '+Math.max(1,totalPaginas);
