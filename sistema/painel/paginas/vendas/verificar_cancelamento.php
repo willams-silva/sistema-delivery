@@ -16,7 +16,7 @@ if (!$empresa || !$usuario || !$id) {
 }
 require_once('../../../conexao.php');
 try {
-    $v=$pdo->prepare('SELECT id,status,pago,valor,caixa FROM vendas WHERE id=:id AND empresa=:empresa LIMIT 1');
+    $v=$pdo->prepare('SELECT id,status,pago,valor,caixa,cliente FROM vendas WHERE id=:id AND empresa=:empresa LIMIT 1');
     $v->execute([':id'=>$id,':empresa'=>$empresa]);
     $venda=$v->fetch(PDO::FETCH_ASSOC);
     if (!$venda) { http_response_code(404); echo json_encode(['erro'=>'Venda não encontrada.']); exit; }
@@ -71,8 +71,31 @@ try {
     );
     $diferencaConciliacao=round((float)$venda['valor']-$totalConciliado,2);
     $conciliacaoOk=abs($diferencaConciliacao)<0.01;
+    // A interface informa a elegibilidade da modalidade já implementada:
+    // somente venda não paga, sem fidelidade e com parcelas totalmente pendentes.
+    $st=$pdo->prepare("SELECT COUNT(*) FROM receber
+        WHERE empresa=:empresa AND venda_id=:venda AND
+        (pago IS NULL OR pago<>'Não' OR referencia<>'Venda'
+         OR residuo='Sim' OR (id_ref IS NOT NULL AND id_ref<>0))");
+    $st->execute([':empresa'=>$empresa,':venda'=>$id]);
+    $parcelasIncompativeis=(int)$st->fetchColumn();
+    $st=$pdo->prepare("SELECT COUNT(*) FROM receber filho
+        INNER JOIN receber origem ON origem.id=filho.id_ref AND origem.empresa=filho.empresa
+        WHERE origem.empresa=:empresa AND origem.venda_id=:venda");
+    $st->execute([':empresa'=>$empresa,':venda'=>$id]);
+    $dependenciasFinanceiras=(int)$st->fetchColumn();
+    $st=$pdo->prepare("SELECT COUNT(*) FROM carrinho WHERE empresa=:empresa AND pedido=:venda");
+    $st->execute([':empresa'=>$empresa,':venda'=>$id]);
+    $itensVenda=(int)$st->fetchColumn();
     $legado=(int)$financeiro['quantidade']===0;
     $cancelada=$venda['status']==='Cancelado';
+    $cancelamentoPendenteElegivel=!$cancelada && !$legado
+        && ($venda['pago'] ?? '')!=='Sim'
+        && (int)($venda['cliente'] ?? 0)===0
+        && (float)$financeiro['pago_direto']===0.0
+        && (float)$financeiro['pago_parcial']===0.0
+        && $parcelasIncompativeis===0 && $dependenciasFinanceiras===0
+        && $itensVenda>0 && $conciliacaoOk;
     echo json_encode([
         'venda_id'=>$id,
         'status'=>$venda['status'],
@@ -90,8 +113,9 @@ try {
         'diferenca_conciliacao'=>$diferencaConciliacao,
         'conciliacao_valores_ok'=>$conciliacaoOk,
         'venda_legada_sem_vinculo'=>$legado,
-        'cancelamento_liberado'=>false,
-        'motivo'=>$cancelada?'Venda já cancelada.':($legado?'Venda sem parcelas vinculadas: requer conciliação manual.':($parciaisSemOrigem || $pagosSemCaixaValido || !$conciliacaoOk ? 'Inconsistência financeira: conciliação manual necessária.' : 'Estorno transacional ainda não habilitado.'))
+        'cancelamento_liberado'=>$cancelamentoPendenteElegivel,
+        'modalidade_liberada'=>$cancelamentoPendenteElegivel ? 'Somente venda totalmente pendente sem fidelidade' : null,
+        'motivo'=>$cancelamentoPendenteElegivel ? 'Cancelamento de venda pendente disponível; operação exige confirmação.' : ($cancelada?'Venda já cancelada.':($legado?'Venda sem parcelas vinculadas: requer conciliação manual.':($parciaisSemOrigem || $pagosSemCaixaValido || !$conciliacaoOk ? 'Inconsistência financeira: conciliação manual necessária.' : 'Estorno transacional ainda não habilitado.')))
     ],JSON_THROW_ON_ERROR|JSON_UNESCAPED_UNICODE);
 } catch (Throwable $e) {
     error_log('Pré-validação cancelamento: '.$e->getMessage());
