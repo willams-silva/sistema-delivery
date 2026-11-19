@@ -139,7 +139,7 @@ try {
  foreach($stS->fetchAll(PDO::FETCH_ASSOC) as $l) $liquidacoesPorFormaConc[(int)$l['forma_pgto']]=(float)$l['total'];
  $liquidacoesDisponiveisConc=true;
 } catch(PDOException $e) {error_log('Liquidacoes indisponiveis: '.$e->getMessage());}
-$extratoLinhasConc=[];$vinculosConc=[];$resumoVinculosConc=[];$auditoriaImportacoesConc=[];$auditoriaDesvinculosConc=[];
+$auditoriaVinculosExtratoConc=[];$extratoLinhasConc=[];$vinculosConc=[];$resumoVinculosConc=[];$auditoriaImportacoesConc=[];$auditoriaDesvinculosConc=[];
 $buscaExtratoConc=trim((string)($_GET['extrato_busca']??''));
 if(mb_strlen($buscaExtratoConc)>120)$buscaExtratoConc=mb_substr($buscaExtratoConc,0,120);
 $situacaoExtratoConc=(string)($_GET['extrato_situacao']??'todos');
@@ -185,6 +185,8 @@ try {
   }
   unset($ex);
  }
+ $stAuditExt=$pdo->prepare("SELECT extrato_linha_id,liquidacao_id,usuario_id,valor_extrato,criado_em FROM conciliacao_extrato_vinculos_auditoria WHERE empresa=:empresa ORDER BY id DESC LIMIT 20");
+ $stAuditExt->execute([':empresa'=>$empresaConc]);$auditoriaVinculosExtratoConc=$stAuditExt->fetchAll(PDO::FETCH_ASSOC);
  $stImportAud=$pdo->prepare("SELECT i.id,i.nome_arquivo,i.formato,i.usuario_id,i.criado_em,COUNT(e.id) AS linhas_novas FROM conciliacao_extrato_importacoes i LEFT JOIN conciliacao_extrato_linhas e ON e.importacao_id=i.id AND e.empresa=i.empresa WHERE i.empresa=:empresa GROUP BY i.id,i.nome_arquivo,i.formato,i.usuario_id,i.criado_em ORDER BY i.id DESC LIMIT 30");
  $stImportAud->execute([':empresa'=>$empresaConc]);$auditoriaImportacoesConc=$stImportAud->fetchAll(PDO::FETCH_ASSOC);
  $stVin=$pdo->prepare("SELECT v.id,v.receber_id,v.liquidacao_id,v.valor_vinculado,v.criado_em FROM conciliacao_vinculos_recebimentos v INNER JOIN conciliacao_liquidacoes l ON l.id=v.liquidacao_id AND l.empresa=v.empresa WHERE v.empresa=:empresa AND l.data_referencia BETWEEN :inicio AND :fim ORDER BY v.id DESC LIMIT 50");
@@ -592,6 +594,15 @@ $linhasPendenciaExibidasConc++; ?>
 <?php elseif((int)($ex['candidatos']??0)===1): ?>Possível crédito #<?php echo (int)$ex['credito_sugerido']; ?> — conferir
 <?php elseif((int)($ex['candidatos']??0)>1): ?><?php echo (int)$ex['candidatos']; ?> créditos possíveis — conferir manualmente
 <?php else: ?>Sem correspondência por valor/data
+<?php endif; ?>
+<?php if($ex['liquidacao_id']===null && (float)$ex['valor']>0): ?>
+<details class="mt-2"><summary class="btn btn-sm btn-outline-primary">Vincular crédito</summary>
+<form method="post" action="paginas/vincular_extrato_conciliacao.php">
+<input type="hidden" name="csrf_conc" value="<?php echo $escConc($_SESSION['csrf_conc']); ?>">
+<input type="hidden" name="extrato_id" value="<?php echo (int)$ex['id']; ?>">
+<label>Crédito (ID)</label><input type="number" min="1" class="form-control" name="liquidacao_id" value="<?php echo (int)($ex['credito_sugerido']??0)?:''; ?>" required>
+<p class="bc-conc-note">Confirme o valor antes de vincular. Somente valores idênticos são aceitos.</p>
+<button class="btn btn-sm btn-primary" type="submit">Confirmar vínculo</button></form></details>
 <?php endif; ?></td></tr><?php endforeach; ?>
 <?php if(!$extratoLinhasConc): ?><tr><td colspan="6">Nenhuma movimentação encontrada para os filtros.</td></tr><?php endif; ?>
 </tbody></table></div>
@@ -602,6 +613,13 @@ $linhasPendenciaExibidasConc++; ?>
 <?php if($paginaExtratoConc<$paginasExtratoConc): $queryExtratoConc['extrato_pagina']=$paginaExtratoConc+1; ?><a class="btn btn-outline-primary btn-sm" href="index.php?<?php echo $escConc(http_build_query($queryExtratoConc)); ?>">Próxima</a><?php endif; ?>
 </div>
 </div>
+<div class="bc-conc-card">
+<h5>Auditoria dos vínculos do extrato</h5>
+<p class="bc-conc-note">Últimos 20 vínculos confirmados manualmente. Não movimentam o caixa.</p>
+<div class="bc-conc-table"><table><thead><tr><th>Movimentação</th><th>Crédito</th><th>Valor</th><th>Usuário</th><th>Data</th></tr></thead><tbody>
+<?php foreach($auditoriaVinculosExtratoConc as $a): ?><tr><td>#<?php echo (int)$a['extrato_linha_id']; ?></td><td>#<?php echo (int)$a['liquidacao_id']; ?></td><td><?php echo $moedaConc($a['valor_extrato']); ?></td><td>#<?php echo (int)$a['usuario_id']; ?></td><td><?php echo $escConc($a['criado_em']); ?></td></tr><?php endforeach; ?>
+<?php if(!$auditoriaVinculosExtratoConc): ?><tr><td colspan="5">Nenhum vínculo de extrato registrado.</td></tr><?php endif; ?>
+</tbody></table></div></div>
 <div class="bc-conc-card">
 <h5>Auditoria de importações bancárias</h5>
 <p class="bc-conc-note">Últimas 30 importações da empresa, com usuário, horário e quantidade de linhas novas efetivamente armazenadas. Arquivos duplicados não geram nova importação.</p>
