@@ -73,6 +73,15 @@ foreach ($gruposConc as &$grupoConc) {
  }
 }
 unset($grupoConc);
+$liquidacoesConc=[];$liquidacoesPorFormaConc=[];$liquidacoesDisponiveisConc=false;
+try {
+ $stL=$pdo->prepare("SELECT l.id,l.forma_pgto,l.data_referencia,l.data_credito,l.valor_creditado,l.identificador,l.observacao,fp.nome AS forma FROM conciliacao_liquidacoes l INNER JOIN formas_pgto fp ON fp.id=l.forma_pgto AND fp.empresa=l.empresa WHERE l.empresa=:empresa AND l.data_referencia BETWEEN :inicio AND :fim ORDER BY l.data_referencia DESC,l.id DESC LIMIT 100");
+ $stL->execute($paramsConc);$liquidacoesConc=$stL->fetchAll(PDO::FETCH_ASSOC);
+ $stS=$pdo->prepare("SELECT forma_pgto,SUM(valor_creditado) AS total FROM conciliacao_liquidacoes WHERE empresa=:empresa AND data_referencia BETWEEN :inicio AND :fim GROUP BY forma_pgto");
+ $stS->execute($paramsConc);
+ foreach($stS->fetchAll(PDO::FETCH_ASSOC) as $l) $liquidacoesPorFormaConc[(int)$l['forma_pgto']]=(float)$l['total'];
+ $liquidacoesDisponiveisConc=true;
+} catch(PDOException $e) {error_log('Liquidacoes indisponiveis: '.$e->getMessage());}
 $totalConc=$somarConc($gruposConc); $totalPendenteConc=$somarConc($pendentesConc);
 $moedaConc=static function($v){return 'R$ '.number_format((float)$v,2,',','.');};
 $escConc=static function($v){return htmlspecialchars((string)$v,ENT_QUOTES,'UTF-8');};
@@ -144,6 +153,54 @@ Líquido estimado apenas dessas formas: <strong><?php echo $moedaConc($totalLiqu
 <?php endif; endforeach; ?>
 </form>
 <p class="bc-conc-note">Para salvar, primeiro clique em Calcular estimativa e depois em Salvar taxas do estabelecimento. As taxas salvas serão usadas em futuras consultas.</p>
+<?php endif; ?>
+</div>
+<div class="bc-conc-card">
+<h5>Liquidações informadas pelo estabelecimento</h5>
+<p class="bc-conc-note">Registre créditos conferidos no extrato bancário. A data de referência associa o crédito ao período das vendas; a data do crédito é a data em que o valor entrou na conta. Estes registros não alteram caixa ou contas a receber.</p>
+<?php if (!$liquidacoesDisponiveisConc): ?>
+<div class="alert alert-warning">Execute a migração SQL conciliacao_liquidacoes.sql para ativar este recurso.</div>
+<?php else: ?>
+<?php if(isset($_GET['liquidacao_salva'])): ?><div class="alert alert-success">Crédito registrado com sucesso.</div><?php endif; ?>
+<form method="post" action="paginas/salvar_liquidacao_conciliacao.php">
+<input type="hidden" name="csrf_conc" value="<?php echo $escConc($_SESSION['csrf_conc']); ?>">
+<div class="bc-conc-filter">
+<div><label>Forma de pagamento</label><select name="forma_pgto" class="form-control" required>
+<option value="">Selecione</option>
+<?php
+$formasCadastroConc=$pdo->prepare('SELECT id,nome FROM formas_pgto WHERE empresa=:empresa ORDER BY nome');
+$formasCadastroConc->execute([':empresa'=>$empresaConc]);
+foreach($formasCadastroConc->fetchAll(PDO::FETCH_ASSOC) as $fpConc): ?>
+<option value="<?php echo (int)$fpConc['id']; ?>"><?php echo $escConc($fpConc['nome']); ?></option>
+<?php endforeach; ?>
+</select></div>
+<div><label>Data de referência</label><input required type="date" name="data_referencia" value="<?php echo $escConc($fimConc); ?>"></div>
+<div><label>Data do crédito</label><input required type="date" name="data_credito" value="<?php echo date('Y-m-d'); ?>"></div>
+<div><label>Valor creditado (R$)</label><input required name="valor_creditado" inputmode="decimal" placeholder="0,00"></div>
+<div><label>Identificador (opcional)</label><input maxlength="120" name="identificador" placeholder="NSU ou referência"></div>
+<div><label>Observação</label><input maxlength="500" name="observacao"></div>
+<button class="btn btn-primary" type="submit">Registrar crédito</button>
+</div></form>
+<h6 class="mt-4">Comparação por forma de pagamento no período</h6>
+<div class="bc-conc-table"><table><thead><tr><th>Forma</th><th>Líquido estimado</th><th>Crédito informado</th><th>Diferença</th></tr></thead><tbody>
+<?php foreach($gruposConc as $linha):
+$idForma=(int)$linha['forma_id'];
+$credito=(float)($liquidacoesPorFormaConc[$idForma]??0);
+$liquido=$linha['liquido_estimado'];
+?>
+<tr><td><?php echo $escConc($linha['forma']); ?></td>
+<td><?php echo $liquido===null?'Taxa não informada':$moedaConc($liquido); ?></td>
+<td><?php echo $moedaConc($credito); ?></td>
+<td><?php echo $liquido===null?'—':$moedaConc($credito-(float)$liquido); ?></td></tr>
+<?php endforeach; ?>
+</tbody></table></div>
+<p class="bc-conc-note">Diferenças podem resultar de prazos de repasse, antecipações, estornos ou taxas. A comparação é gerencial e não comprova conciliação bancária automática.</p>
+<h6 class="mt-4">Últimos 100 créditos informados no período</h6>
+<div class="bc-conc-table"><table><thead><tr><th>Referência</th><th>Crédito</th><th>Forma</th><th>Valor</th><th>Identificador</th></tr></thead><tbody>
+<?php foreach($liquidacoesConc as $l): ?><tr>
+<td><?php echo $escConc($l['data_referencia']); ?></td><td><?php echo $escConc($l['data_credito']); ?></td><td><?php echo $escConc($l['forma']); ?></td><td><?php echo $moedaConc($l['valor_creditado']); ?></td><td><?php echo $escConc($l['identificador']??''); ?></td></tr><?php endforeach; ?>
+<?php if(!$liquidacoesConc): ?><tr><td colspan="5">Nenhum crédito informado.</td></tr><?php endif; ?>
+</tbody></table></div>
 <?php endif; ?>
 </div>
 <div class="bc-conc-card"><h5>Pendências por forma de pagamento</h5>
