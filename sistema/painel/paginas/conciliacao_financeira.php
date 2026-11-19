@@ -139,7 +139,7 @@ try {
  foreach($stS->fetchAll(PDO::FETCH_ASSOC) as $l) $liquidacoesPorFormaConc[(int)$l['forma_pgto']]=(float)$l['total'];
  $liquidacoesDisponiveisConc=true;
 } catch(PDOException $e) {error_log('Liquidacoes indisponiveis: '.$e->getMessage());}
-$extratoLinhasConc=[];$vinculosConc=[];$resumoVinculosConc=[];
+$extratoLinhasConc=[];$vinculosConc=[];$resumoVinculosConc=[];$auditoriaImportacoesConc=[];
 $buscaExtratoConc=trim((string)($_GET['extrato_busca']??''));
 if(mb_strlen($buscaExtratoConc)>120)$buscaExtratoConc=mb_substr($buscaExtratoConc,0,120);
 $situacaoExtratoConc=(string)($_GET['extrato_situacao']??'todos');
@@ -163,6 +163,8 @@ try {
  $offsetExtratoConc=($paginaExtratoConc-1)*$porPaginaExtratoConc;
  $stExt=$pdo->prepare("SELECT e.id,e.data_movimento,e.valor,e.descricao,e.identificador,e.liquidacao_id,i.nome_arquivo FROM conciliacao_extrato_linhas e INNER JOIN conciliacao_extrato_importacoes i ON i.id=e.importacao_id AND i.empresa=e.empresa".$whereExtratoConc." ORDER BY e.data_movimento DESC,e.id DESC LIMIT ".$porPaginaExtratoConc." OFFSET ".$offsetExtratoConc);
  $stExt->execute($paramsExtratoConc);$extratoLinhasConc=$stExt->fetchAll(PDO::FETCH_ASSOC);
+ $stImportAud=$pdo->prepare("SELECT i.id,i.nome_arquivo,i.formato,i.usuario_id,i.criado_em,COUNT(e.id) AS linhas_novas FROM conciliacao_extrato_importacoes i LEFT JOIN conciliacao_extrato_linhas e ON e.importacao_id=i.id AND e.empresa=i.empresa WHERE i.empresa=:empresa GROUP BY i.id,i.nome_arquivo,i.formato,i.usuario_id,i.criado_em ORDER BY i.id DESC LIMIT 30");
+ $stImportAud->execute([':empresa'=>$empresaConc]);$auditoriaImportacoesConc=$stImportAud->fetchAll(PDO::FETCH_ASSOC);
  $stVin=$pdo->prepare("SELECT v.receber_id,v.liquidacao_id,v.valor_vinculado,v.criado_em FROM conciliacao_vinculos_recebimentos v INNER JOIN conciliacao_liquidacoes l ON l.id=v.liquidacao_id AND l.empresa=v.empresa WHERE v.empresa=:empresa AND l.data_referencia BETWEEN :inicio AND :fim ORDER BY v.id DESC LIMIT 50");
  $stVin->execute($paramsConc);$vinculosConc=$stVin->fetchAll(PDO::FETCH_ASSOC);
  $stResumoVin=$pdo->prepare("SELECT l.id,l.valor_creditado,COALESCE(SUM(v.valor_vinculado),0) AS bruto_vinculado,COUNT(v.id) AS quantidade FROM conciliacao_liquidacoes l LEFT JOIN conciliacao_vinculos_recebimentos v ON v.liquidacao_id=l.id AND v.empresa=l.empresa WHERE l.empresa=:empresa AND l.cancelado_em IS NULL AND l.data_referencia BETWEEN :inicio AND :fim GROUP BY l.id,l.valor_creditado HAVING COUNT(v.id)>0 ORDER BY l.id DESC LIMIT 50");
@@ -568,6 +570,18 @@ $linhasPendenciaExibidasConc++; ?>
 <?php if($paginaExtratoConc>1): $queryExtratoConc['extrato_pagina']=$paginaExtratoConc-1; ?><a class="btn btn-outline-primary btn-sm" href="index.php?<?php echo $escConc(http_build_query($queryExtratoConc)); ?>">Anterior</a><?php endif; ?>
 <?php if($paginaExtratoConc<$paginasExtratoConc): $queryExtratoConc['extrato_pagina']=$paginaExtratoConc+1; ?><a class="btn btn-outline-primary btn-sm" href="index.php?<?php echo $escConc(http_build_query($queryExtratoConc)); ?>">Próxima</a><?php endif; ?>
 </div>
+</div>
+<div class="bc-conc-card">
+<h5>Auditoria de importações bancárias</h5>
+<p class="bc-conc-note">Últimas 30 importações da empresa, com usuário, horário e quantidade de linhas novas efetivamente armazenadas. Arquivos duplicados não geram nova importação.</p>
+<div class="bc-conc-table"><table><thead><tr><th>ID</th><th>Arquivo</th><th>Formato</th><th>Usuário</th><th>Importado em</th><th>Linhas novas</th></tr></thead><tbody>
+<?php foreach($auditoriaImportacoesConc as $imp): ?><tr>
+<td>#<?php echo (int)$imp['id']; ?></td><td><?php echo $escConc($imp['nome_arquivo']); ?></td>
+<td><?php echo $escConc(strtoupper($imp['formato'])); ?></td><td>#<?php echo (int)$imp['usuario_id']; ?></td>
+<td><?php echo $escConc($imp['criado_em']); ?></td><td><?php echo (int)$imp['linhas_novas']; ?></td>
+</tr><?php endforeach; ?>
+<?php if(!$auditoriaImportacoesConc): ?><tr><td colspan="6">Nenhuma importação registrada.</td></tr><?php endif; ?>
+</tbody></table></div>
 </div>
 <div class="bc-conc-card">
 <h5>Vincular recebimento a crédito</h5>
