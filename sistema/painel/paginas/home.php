@@ -312,6 +312,12 @@ $dashboardRecebidoLiquido=(float)$dashboardRecebido['total']-(float)$dashboardEs
 $dashboardTicketPeriodo=(int)$dashboardFaturamento['quantidade']>0
  ? (float)$dashboardFaturamento['total']/(int)$dashboardFaturamento['quantidade'] : 0.0;
 
+$dashboardAlertasSt=$pdo->prepare("SELECT
+ (SELECT COUNT(*) FROM pagar WHERE empresa=:empresa1 AND pago<>'Sim' AND vencimento<CURDATE()) contas_pagar,
+ (SELECT COUNT(*) FROM receber WHERE empresa=:empresa2 AND pago<>'Sim' AND vencimento<CURDATE()) contas_receber,
+ (SELECT COUNT(*) FROM caixas WHERE empresa=:empresa3 AND data_fechamento IS NOT NULL AND ABS(COALESCE(quebra,0))>0.009 AND data_fechamento BETWEEN :inicio AND :fim) caixas_divergentes");
+$dashboardAlertasSt->execute([':empresa1'=>(int)$id_empresa,':empresa2'=>(int)$id_empresa,':empresa3'=>(int)$id_empresa,':inicio'=>$dashboardInicio,':fim'=>$dashboardFim]);
+$dashboardAlertas=$dashboardAlertasSt->fetch(PDO::FETCH_ASSOC);
 $dashboardTicketMedio=(int)$dashboardResumoHoje['quantidade']>0
     ? (float)$dashboardResumoHoje['total']/(int)$dashboardResumoHoje['quantidade'] : 0.0;
 
@@ -376,6 +382,14 @@ $dashboardTicketMedio=(int)$dashboardResumoHoje['quantidade']>0
     <div class="small text-muted">Indicador gerencial; não equivale ao saldo de caixa</div>
   </div></div>
 </div>
+<section class="card p-3 mb-3" aria-label="Alertas operacionais">
+  <h5 class="mb-2"><i class="fa fa-exclamation-circle me-2"></i>Alertas operacionais</h5>
+  <div class="row g-2">
+    <div class="col-12 col-md-4"><a href="pagar" class="d-block text-decoration-none">Contas a pagar vencidas: <strong><?php echo (int)$dashboardAlertas['contas_pagar']; ?></strong></a></div>
+    <div class="col-12 col-md-4"><a href="receber" class="d-block text-decoration-none">Contas a receber vencidas: <strong><?php echo (int)$dashboardAlertas['contas_receber']; ?></strong></a></div>
+    <div class="col-12 col-md-4">Fechamentos com diferença no período: <strong><?php echo (int)$dashboardAlertas['caixas_divergentes']; ?></strong></div>
+  </div>
+</section>
 <div class="row g-3 mt-2 mb-3" aria-label="Resumo operacional">
   <div class="col-12 col-md-4">
     <div class="card h-100 p-3">
