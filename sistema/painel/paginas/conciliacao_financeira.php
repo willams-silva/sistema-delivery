@@ -139,7 +139,7 @@ try {
  foreach($stS->fetchAll(PDO::FETCH_ASSOC) as $l) $liquidacoesPorFormaConc[(int)$l['forma_pgto']]=(float)$l['total'];
  $liquidacoesDisponiveisConc=true;
 } catch(PDOException $e) {error_log('Liquidacoes indisponiveis: '.$e->getMessage());}
-$auditoriaVinculosExtratoConc=[];$extratoLinhasConc=[];$vinculosConc=[];$resumoVinculosConc=[];$auditoriaImportacoesConc=[];$auditoriaDesvinculosConc=[];
+$auditoriaDesvinculosExtratoConc=[];$auditoriaVinculosExtratoConc=[];$extratoLinhasConc=[];$vinculosConc=[];$resumoVinculosConc=[];$auditoriaImportacoesConc=[];$auditoriaDesvinculosConc=[];
 $buscaExtratoConc=trim((string)($_GET['extrato_busca']??''));
 if(mb_strlen($buscaExtratoConc)>120)$buscaExtratoConc=mb_substr($buscaExtratoConc,0,120);
 $situacaoExtratoConc=(string)($_GET['extrato_situacao']??'todos');
@@ -185,6 +185,8 @@ try {
   }
   unset($ex);
  }
+ $stDesvExt=$pdo->prepare("SELECT extrato_linha_id,liquidacao_id,valor_extrato,usuario_id,motivo,criado_em FROM conciliacao_extrato_desvinculos_auditoria WHERE empresa=:empresa ORDER BY id DESC LIMIT 20");
+ $stDesvExt->execute([':empresa'=>$empresaConc]);$auditoriaDesvinculosExtratoConc=$stDesvExt->fetchAll(PDO::FETCH_ASSOC);
  $stAuditExt=$pdo->prepare("SELECT extrato_linha_id,liquidacao_id,usuario_id,valor_extrato,criado_em FROM conciliacao_extrato_vinculos_auditoria WHERE empresa=:empresa ORDER BY id DESC LIMIT 20");
  $stAuditExt->execute([':empresa'=>$empresaConc]);$auditoriaVinculosExtratoConc=$stAuditExt->fetchAll(PDO::FETCH_ASSOC);
  $stImportAud=$pdo->prepare("SELECT i.id,i.nome_arquivo,i.formato,i.usuario_id,i.criado_em,COUNT(e.id) AS linhas_novas FROM conciliacao_extrato_importacoes i LEFT JOIN conciliacao_extrato_linhas e ON e.importacao_id=i.id AND e.empresa=i.empresa WHERE i.empresa=:empresa GROUP BY i.id,i.nome_arquivo,i.formato,i.usuario_id,i.criado_em ORDER BY i.id DESC LIMIT 30");
@@ -590,6 +592,12 @@ $linhasPendenciaExibidasConc++; ?>
 <div class="bc-conc-table mt-3"><table><thead><tr><th>Data</th><th>Valor</th><th>Identificador</th><th>Descrição</th><th>Arquivo</th><th>Conferência sugerida</th></tr></thead><tbody>
 <?php foreach($extratoLinhasConc as $ex): ?><tr><td><?php echo $escConc($ex['data_movimento']); ?></td><td><?php echo $moedaConc($ex['valor']); ?></td><td><?php echo $escConc($ex['identificador']); ?></td><td><?php echo $escConc($ex['descricao']); ?></td><td><?php echo $escConc($ex['nome_arquivo']); ?></td><td>
 <?php if($ex['liquidacao_id']!==null): ?>Vinculado ao crédito #<?php echo (int)$ex['liquidacao_id']; ?>
+<details class="mt-2"><summary class="btn btn-sm btn-outline-danger">Desvincular</summary>
+<form method="post" action="paginas/desvincular_extrato_conciliacao.php">
+<input type="hidden" name="csrf_conc" value="<?php echo $escConc($_SESSION['csrf_conc']); ?>">
+<input type="hidden" name="extrato_id" value="<?php echo (int)$ex['id']; ?>">
+<label>Justificativa (10 a 500 caracteres)</label><textarea class="form-control" name="motivo" minlength="10" maxlength="500" required></textarea>
+<button type="submit" class="btn btn-sm btn-outline-danger mt-2">Confirmar desvínculo</button></form></details>
 <?php elseif((float)$ex['valor']<=0): ?>Débito — conferência manual
 <?php elseif((int)($ex['candidatos']??0)===1): ?>Possível crédito #<?php echo (int)$ex['credito_sugerido']; ?> — conferir
 <?php elseif((int)($ex['candidatos']??0)>1): ?><?php echo (int)$ex['candidatos']; ?> créditos possíveis — conferir manualmente
@@ -613,6 +621,13 @@ $linhasPendenciaExibidasConc++; ?>
 <?php if($paginaExtratoConc<$paginasExtratoConc): $queryExtratoConc['extrato_pagina']=$paginaExtratoConc+1; ?><a class="btn btn-outline-primary btn-sm" href="index.php?<?php echo $escConc(http_build_query($queryExtratoConc)); ?>">Próxima</a><?php endif; ?>
 </div>
 </div>
+<div class="bc-conc-card">
+<h5>Histórico de desvínculos bancários</h5>
+<p class="bc-conc-note">Últimas 20 correções, preservadas para auditoria.</p>
+<div class="bc-conc-table"><table><thead><tr><th>Movimentação</th><th>Crédito</th><th>Valor</th><th>Usuário</th><th>Data</th><th>Motivo</th></tr></thead><tbody>
+<?php foreach($auditoriaDesvinculosExtratoConc as $a): ?><tr><td>#<?php echo (int)$a['extrato_linha_id']; ?></td><td>#<?php echo (int)$a['liquidacao_id']; ?></td><td><?php echo $moedaConc($a['valor_extrato']); ?></td><td>#<?php echo (int)$a['usuario_id']; ?></td><td><?php echo $escConc($a['criado_em']); ?></td><td><?php echo $escConc($a['motivo']); ?></td></tr><?php endforeach; ?>
+<?php if(!$auditoriaDesvinculosExtratoConc): ?><tr><td colspan="6">Nenhum desvínculo bancário registrado.</td></tr><?php endif; ?>
+</tbody></table></div></div>
 <div class="bc-conc-card">
 <h5>Auditoria dos vínculos do extrato</h5>
 <p class="bc-conc-note">Últimos 20 vínculos confirmados manualmente. Não movimentam o caixa.</p>
