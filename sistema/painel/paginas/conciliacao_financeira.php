@@ -139,12 +139,34 @@ try {
  foreach($stS->fetchAll(PDO::FETCH_ASSOC) as $l) $liquidacoesPorFormaConc[(int)$l['forma_pgto']]=(float)$l['total'];
  $liquidacoesDisponiveisConc=true;
 } catch(PDOException $e) {error_log('Liquidacoes indisponiveis: '.$e->getMessage());}
-$extratoLinhasConc=[];$vinculosConc=[];
+$extratoLinhasConc=[];$vinculosConc=[];$resumoVinculosConc=[];
+$buscaExtratoConc=trim((string)($_GET['extrato_busca']??''));
+if(mb_strlen($buscaExtratoConc)>120)$buscaExtratoConc=mb_substr($buscaExtratoConc,0,120);
+$situacaoExtratoConc=(string)($_GET['extrato_situacao']??'todos');
+if(!in_array($situacaoExtratoConc,['todos','pendentes','vinculados'],true))$situacaoExtratoConc='todos';
+$paginaExtratoConc=filter_var($_GET['extrato_pagina']??1,FILTER_VALIDATE_INT,['options'=>['min_range'=>1]])?:1;
+$totalExtratoConc=0;$paginasExtratoConc=1;$porPaginaExtratoConc=25;
 try {
- $stExt=$pdo->prepare("SELECT e.id,e.data_movimento,e.valor,e.descricao,e.identificador,e.liquidacao_id,i.nome_arquivo FROM conciliacao_extrato_linhas e INNER JOIN conciliacao_extrato_importacoes i ON i.id=e.importacao_id AND i.empresa=e.empresa WHERE e.empresa=:empresa AND e.data_movimento BETWEEN :inicio AND :fim ORDER BY e.data_movimento DESC,e.id DESC LIMIT 50");
- $stExt->execute($paramsConc);$extratoLinhasConc=$stExt->fetchAll(PDO::FETCH_ASSOC);
+ $whereExtratoConc=" WHERE e.empresa=:empresa AND e.data_movimento BETWEEN :inicio AND :fim";
+ $paramsExtratoConc=$paramsConc;
+ if($buscaExtratoConc!==''){
+  $whereExtratoConc.=" AND (e.identificador LIKE :busca ESCAPE '!' OR e.descricao LIKE :busca2 ESCAPE '!')";
+  $buscaSqlExtratoConc='%'.str_replace(['!','%','_'],['!!','!%','!_'],$buscaExtratoConc).'%';
+  $paramsExtratoConc[':busca']=$buscaSqlExtratoConc;$paramsExtratoConc[':busca2']=$buscaSqlExtratoConc;
+ }
+ if($situacaoExtratoConc==='pendentes')$whereExtratoConc.=" AND e.liquidacao_id IS NULL";
+ if($situacaoExtratoConc==='vinculados')$whereExtratoConc.=" AND e.liquidacao_id IS NOT NULL";
+ $stCountExtratoConc=$pdo->prepare("SELECT COUNT(*) FROM conciliacao_extrato_linhas e".$whereExtratoConc);
+ $stCountExtratoConc->execute($paramsExtratoConc);$totalExtratoConc=(int)$stCountExtratoConc->fetchColumn();
+ $paginasExtratoConc=max(1,(int)ceil($totalExtratoConc/$porPaginaExtratoConc));
+ $paginaExtratoConc=min($paginaExtratoConc,$paginasExtratoConc);
+ $offsetExtratoConc=($paginaExtratoConc-1)*$porPaginaExtratoConc;
+ $stExt=$pdo->prepare("SELECT e.id,e.data_movimento,e.valor,e.descricao,e.identificador,e.liquidacao_id,i.nome_arquivo FROM conciliacao_extrato_linhas e INNER JOIN conciliacao_extrato_importacoes i ON i.id=e.importacao_id AND i.empresa=e.empresa".$whereExtratoConc." ORDER BY e.data_movimento DESC,e.id DESC LIMIT ".$porPaginaExtratoConc." OFFSET ".$offsetExtratoConc);
+ $stExt->execute($paramsExtratoConc);$extratoLinhasConc=$stExt->fetchAll(PDO::FETCH_ASSOC);
  $stVin=$pdo->prepare("SELECT v.receber_id,v.liquidacao_id,v.valor_vinculado,v.criado_em FROM conciliacao_vinculos_recebimentos v INNER JOIN conciliacao_liquidacoes l ON l.id=v.liquidacao_id AND l.empresa=v.empresa WHERE v.empresa=:empresa AND l.data_referencia BETWEEN :inicio AND :fim ORDER BY v.id DESC LIMIT 50");
  $stVin->execute($paramsConc);$vinculosConc=$stVin->fetchAll(PDO::FETCH_ASSOC);
+ $stResumoVin=$pdo->prepare("SELECT l.id,l.valor_creditado,COALESCE(SUM(v.valor_vinculado),0) AS bruto_vinculado,COUNT(v.id) AS quantidade FROM conciliacao_liquidacoes l LEFT JOIN conciliacao_vinculos_recebimentos v ON v.liquidacao_id=l.id AND v.empresa=l.empresa WHERE l.empresa=:empresa AND l.cancelado_em IS NULL AND l.data_referencia BETWEEN :inicio AND :fim GROUP BY l.id,l.valor_creditado HAVING COUNT(v.id)>0 ORDER BY l.id DESC LIMIT 50");
+ $stResumoVin->execute($paramsConc);$resumoVinculosConc=$stResumoVin->fetchAll(PDO::FETCH_ASSOC);
 } catch(PDOException $e){error_log('Extrato/vinculos indisponiveis: '.$e->getMessage());}
 // Alertas gerenciais: diferença por forma e falta de crédito informado.
 $alertasConc=[];$totalCreditoConc=0.0;$totalEsperadoComparavelConc=0.0;
@@ -526,10 +548,26 @@ $linhasPendenciaExibidasConc++; ?>
 <input type="file" name="arquivo" accept=".csv,.ofx" required>
 <button type="submit" class="btn btn-primary">Importar para conferência</button>
 </form>
+<form class="bc-conc-filter mt-3" method="get" action="index.php">
+<input type="hidden" name="pagina" value="conciliacao_financeira"><input type="hidden" name="aba" value="liquidacoes">
+<input type="hidden" name="inicio" value="<?php echo $escConc($inicioConc); ?>"><input type="hidden" name="fim" value="<?php echo $escConc($fimConc); ?>">
+<div><label for="extrato-busca">Identificador ou descrição</label><input id="extrato-busca" class="form-control" name="extrato_busca" maxlength="120" value="<?php echo $escConc($buscaExtratoConc); ?>"></div>
+<div><label for="extrato-situacao">Situação do extrato</label><select id="extrato-situacao" class="form-control" name="extrato_situacao">
+<option value="todos" <?php echo $situacaoExtratoConc==='todos'?'selected':''; ?>>Todas</option>
+<option value="pendentes" <?php echo $situacaoExtratoConc==='pendentes'?'selected':''; ?>>Sem vínculo</option>
+<option value="vinculados" <?php echo $situacaoExtratoConc==='vinculados'?'selected':''; ?>>Com vínculo</option>
+</select></div><button type="submit" class="btn btn-primary">Filtrar extrato</button>
+</form>
 <div class="bc-conc-table mt-3"><table><thead><tr><th>Data</th><th>Valor</th><th>Identificador</th><th>Descrição</th><th>Arquivo</th></tr></thead><tbody>
 <?php foreach($extratoLinhasConc as $ex): ?><tr><td><?php echo $escConc($ex['data_movimento']); ?></td><td><?php echo $moedaConc($ex['valor']); ?></td><td><?php echo $escConc($ex['identificador']); ?></td><td><?php echo $escConc($ex['descricao']); ?></td><td><?php echo $escConc($ex['nome_arquivo']); ?></td></tr><?php endforeach; ?>
-<?php if(!$extratoLinhasConc): ?><tr><td colspan="5">Nenhuma linha importada no período.</td></tr><?php endif; ?>
+<?php if(!$extratoLinhasConc): ?><tr><td colspan="5">Nenhuma movimentação encontrada para os filtros.</td></tr><?php endif; ?>
 </tbody></table></div>
+<?php $queryExtratoConc=['pagina'=>'conciliacao_financeira','aba'=>'liquidacoes','inicio'=>$inicioConc,'fim'=>$fimConc,'extrato_busca'=>$buscaExtratoConc,'extrato_situacao'=>$situacaoExtratoConc]; ?>
+<div class="bc-conc-filter mt-3" role="navigation" aria-label="Paginação do extrato">
+<span class="bc-conc-note">Página <?php echo $paginaExtratoConc; ?> de <?php echo $paginasExtratoConc; ?> — <?php echo $totalExtratoConc; ?> movimentação(ões).</span>
+<?php if($paginaExtratoConc>1): $queryExtratoConc['extrato_pagina']=$paginaExtratoConc-1; ?><a class="btn btn-outline-primary btn-sm" href="index.php?<?php echo $escConc(http_build_query($queryExtratoConc)); ?>">Anterior</a><?php endif; ?>
+<?php if($paginaExtratoConc<$paginasExtratoConc): $queryExtratoConc['extrato_pagina']=$paginaExtratoConc+1; ?><a class="btn btn-outline-primary btn-sm" href="index.php?<?php echo $escConc(http_build_query($queryExtratoConc)); ?>">Próxima</a><?php endif; ?>
+</div>
 </div>
 <div class="bc-conc-card">
 <h5>Vincular recebimento a crédito</h5>
@@ -543,6 +581,12 @@ $linhasPendenciaExibidasConc++; ?>
 <div class="bc-conc-table mt-3"><table><thead><tr><th>Recebimento</th><th>Crédito</th><th>Valor bruto</th><th>Vinculado em</th></tr></thead><tbody>
 <?php foreach($vinculosConc as $v): ?><tr><td>#<?php echo (int)$v['receber_id']; ?></td><td>#<?php echo (int)$v['liquidacao_id']; ?></td><td><?php echo $moedaConc($v['valor_vinculado']); ?></td><td><?php echo $escConc($v['criado_em']); ?></td></tr><?php endforeach; ?>
 <?php if(!$vinculosConc): ?><tr><td colspan="4">Nenhum vínculo registrado no período.</td></tr><?php endif; ?>
+</tbody></table></div>
+<h6 class="mt-4">Conferência de valores vinculados</h6>
+<p class="bc-conc-note">O total vinculado corresponde ao valor bruto dos recebimentos. A diferença abaixo é apenas indicativa: taxas e repasses agrupados podem explicar divergências. Nenhum crédito é marcado automaticamente como conciliado.</p>
+<div class="bc-conc-table"><table><thead><tr><th>Crédito</th><th>Valor creditado</th><th>Bruto vinculado</th><th>Diferença indicativa</th><th>Recebimentos</th></tr></thead><tbody>
+<?php foreach($resumoVinculosConc as $v): ?><tr><td>#<?php echo (int)$v['id']; ?></td><td><?php echo $moedaConc($v['valor_creditado']); ?></td><td><?php echo $moedaConc($v['bruto_vinculado']); ?></td><td><?php echo $moedaConc((float)$v['valor_creditado']-(float)$v['bruto_vinculado']); ?></td><td><?php echo (int)$v['quantidade']; ?></td></tr><?php endforeach; ?>
+<?php if(!$resumoVinculosConc): ?><tr><td colspan="5">Nenhum crédito com recebimentos vinculados no período.</td></tr><?php endif; ?>
 </tbody></table></div>
 </div>
 <form method="post" action="paginas/salvar_liquidacao_conciliacao.php">
