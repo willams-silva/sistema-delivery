@@ -98,32 +98,12 @@ if ($cliente !== '' && $cliente !== '0') {
         exit();
     }
 }
-$total_cartoes_cliente = 0;
-$query = $pdo->query("SELECT * FROM clientes where id = '$cliente'");
-$res = $query->fetchAll(PDO::FETCH_ASSOC);
-$nome_cliente = @$res[0]['nome'];
-$total_cartoes_cliente = @$res[0]['cartoes'];
-if(@count($res) > 0){
-    if($total_cartoes_cliente == ""){
-      $total_cartoes_cliente = 0;
-    }
-    if($total_cartoes_cliente < $total_cartoes_config){
-      $total_cartoes_cliente = $total_cartoes_cliente + 1;
-    } 
-
-    if($total_cartoes_config == 0){
-       $total_cartoes_cliente = 0;
-    }
-
-$pdo->query("UPDATE clientes SET  cartoes = '$total_cartoes_cliente' where id = '$cliente'");
-
-}
-
-
-$query = $pdo->query("SELECT * FROM formas_pgto where nome = '$saida' and empresa = '$id_empresa' ");
-$res = $query->fetchAll(PDO::FETCH_ASSOC);
-$id_saida = @$res[0]['id'];
-
+// A fidelidade é atualizada somente depois da confirmação transacional da venda.
+$nome_cliente = '';
+$cliente_fidelidade = (int)$cliente;
+$formaSt=$pdo->prepare('SELECT id FROM formas_pgto WHERE nome=:nome AND empresa=:empresa LIMIT 1');
+$formaSt->execute([':nome'=>$saida,':empresa'=>(int)$id_empresa]);
+$id_saida=(int)($formaSt->fetchColumn() ?: 0);
 
 // Valida o caixa e a forma de pagamento antes de alterar estoque ou criar vendas.
 if (($_SERVER['REQUEST_METHOD'] ?? '') !== 'POST') { http_response_code(405); exit('Método inválido.'); }
@@ -143,6 +123,19 @@ $pdo->beginTransaction();
 $lockCaixa=$pdo->prepare('SELECT id FROM caixas WHERE id=:id AND empresa=:empresa AND operador=:operador AND data_fechamento IS NULL FOR UPDATE');
 $lockCaixa->execute([':id'=>$id_caixa,':empresa'=>(int)$id_empresa,':operador'=>(int)$id_usuario]);
 if (!$lockCaixa->fetchColumn()) throw new RuntimeException('O caixa foi fechado. Abra um caixa para continuar.');
+if ($cliente_fidelidade > 0) {
+    $clienteSt=$pdo->prepare('SELECT nome,cartoes FROM clientes WHERE id=:id AND empresa=:empresa FOR UPDATE');
+    $clienteSt->execute([':id'=>$cliente_fidelidade,':empresa'=>(int)$id_empresa]);
+    $clienteRegistro=$clienteSt->fetch(PDO::FETCH_ASSOC);
+    if (!$clienteRegistro) throw new RuntimeException('Cliente não encontrado nesta empresa.');
+    $nome_cliente=$clienteRegistro['nome'];
+    $cartoesAtuais=(int)$clienteRegistro['cartoes'];
+    $limiteCartoes=(int)$total_cartoes_config;
+    $cartoesNovos=$limiteCartoes>0 ? min($limiteCartoes,$cartoesAtuais+1) : 0;
+    $fidelidadeSt=$pdo->prepare('UPDATE clientes SET cartoes=:cartoes WHERE id=:id AND empresa=:empresa');
+    $fidelidadeSt->execute([':cartoes'=>$cartoesNovos,':id'=>$cliente_fidelidade,':empresa'=>(int)$id_empresa]);
+}
+
 $total_carrinho = 0;
 $query = $pdo->prepare("SELECT * FROM carrinho WHERE sessao=:sessao AND pedido=0 AND mesa='' AND empresa=:empresa FOR UPDATE");
 $query->execute([':sessao'=>(int)$sessao,':empresa'=>(int)$id_empresa]);
@@ -175,6 +168,8 @@ if ($total_reg > 0) {
 
 
     if ($tem_estoque == 'Sim') {
+      if (!is_numeric($quantidade) || (float)$quantidade<=0) throw new RuntimeException('Quantidade inválida no carrinho.');
+      if ((float)$estoque < (float)$quantidade) throw new RuntimeException('Estoque insuficiente para o produto selecionado.');
       $total_produtos = $estoque - $quantidade;
       $estoqueSt=$pdo->prepare('UPDATE produtos SET estoque=:estoque WHERE id=:id AND empresa=:empresa');
       $estoqueSt->execute([':estoque'=>$total_produtos,':id'=>$produto,':empresa'=>(int)$id_empresa]);
