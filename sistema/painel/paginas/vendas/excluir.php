@@ -1,29 +1,25 @@
-<?php 
-require_once("../../../conexao.php");
-$tabela = 'vendas';
-
-$id = $_POST['id'];
-
-//remover os itens da venda do estoque
-$query = $pdo->query("SELECT * FROM carrinho where pedido = '$id'");
-$res = $query->fetchAll(PDO::FETCH_ASSOC);
-$total_reg = @count($res);
-for($i=0; $i < $total_reg; $i++){
-	$id_produto = $res[$i]['produto'];
-	$quantidade = $res[$i]['quantidade'];
-
-	$query2 = $pdo->query("SELECT * FROM produtos where id = '$id_produto'");
-	$res2 = $query2->fetchAll(PDO::FETCH_ASSOC);
-	$total_reg2 = @count($res2);
-	$estoque = @$res2[0]['estoque'];
-	$tem_estoque = @$res2[0]['tem_estoque'];
-
-	if($tem_estoque == 'Sim'){
-		$novo_estoque = $estoque + $quantidade;
-		$pdo->query("UPDATE produtos SET estoque = '$novo_estoque' where id = '$id_produto'");
-	}
+<?php
+@session_start();
+require_once('../../../conexao.php');
+$empresa=filter_var($_SESSION['empresa'] ?? null,FILTER_VALIDATE_INT,['options'=>['min_range'=>1]]);
+$usuario=filter_var($_SESSION['id'] ?? null,FILTER_VALIDATE_INT,['options'=>['min_range'=>1]]);
+$id=filter_var($_POST['id'] ?? null,FILTER_VALIDATE_INT,['options'=>['min_range'=>1]]);
+if (($_SERVER['REQUEST_METHOD'] ?? '')!=='POST') {http_response_code(405);exit('Método inválido.');}
+if (!$empresa || !$usuario || !$id) {http_response_code(403);exit('Sessão ou venda inválida.');}
+try {
+    $pdo->setAttribute(PDO::ATTR_ERRMODE,PDO::ERRMODE_EXCEPTION);
+    $pdo->beginTransaction();
+    $st=$pdo->prepare('SELECT id,status,pago,caixa FROM vendas WHERE id=:id AND empresa=:empresa FOR UPDATE');
+    $st->execute([':id'=>$id,':empresa'=>$empresa]);
+    $venda=$st->fetch(PDO::FETCH_ASSOC);
+    if (!$venda) throw new RuntimeException('Venda não encontrada nesta empresa.');
+    if ($venda['status']==='Cancelado') throw new RuntimeException('Esta venda já foi cancelada.');
+    // Sem vínculo inequívoco entre a venda e os lançamentos em receber,
+    // estornar automaticamente poderia afetar recebimentos de outra venda.
+    // Bloqueia a operação até existir conciliação e estorno auditável.
+    throw new RuntimeException('Cancelamento temporariamente bloqueado: é necessário estornar e conciliar os recebimentos desta venda antes de devolver o estoque.');
+} catch (Throwable $e) {
+    if ($pdo->inTransaction()) $pdo->rollBack();
+    http_response_code(409);
+    echo $e->getMessage();
 }
-
-$pdo->query("UPDATE $tabela SET status = 'Cancelado' where id = '$id'");
-echo 'Excluído com Sucesso';
-
