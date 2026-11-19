@@ -40,6 +40,17 @@ $id = $_POST['id'];
 // Não permitir editar lançamentos de outro estabelecimento.
 if ($id !== '' && (!ctype_digit((string)$id) || (int)$id <= 0)) { http_response_code(400); exit('Lançamento inválido.'); }
 if ($id !== '') {
+    // Registros liquidados e com dependências devem ser tratados por estorno,
+    // não por edição direta do valor ou do vencimento.
+    $verificaMovimentos = $pdo->prepare("SELECT pago, residuo FROM receber WHERE id=:id AND empresa=:empresa");
+    $verificaMovimentos->execute([':id'=>(int)$id,':empresa'=>(int)$id_empresa]);
+    $estadoConta = $verificaMovimentos->fetch(PDO::FETCH_ASSOC);
+    if (!$estadoConta) { http_response_code(403); exit('Conta não pertence à empresa.'); }
+    $dependencias = $pdo->prepare("SELECT COUNT(*) FROM receber WHERE id_ref=:id AND empresa=:empresa");
+    $dependencias->execute([':id'=>(int)$id,':empresa'=>(int)$id_empresa]);
+    if (($estadoConta['pago']??'')==='Sim' || ($estadoConta['residuo']??'')==='Sim' || (int)$dependencias->fetchColumn()>0) {
+        http_response_code(409); exit('Conta com movimentação financeira vinculada. Utilize o procedimento de estorno.');
+    }
     $verificaEmpresa = $pdo->prepare("SELECT id FROM ${tabela} WHERE id = :id AND empresa = :empresa LIMIT 1");
     $verificaEmpresa->execute([':id'=>(int)$id, ':empresa'=>(int)$id_empresa]);
     if (!$verificaEmpresa->fetchColumn()) { http_response_code(403); exit('Lançamento não pertence à empresa.'); }
@@ -80,7 +91,8 @@ if($descricao == "" and $cliente == "0"){
 	exit();
 }
 
-$query2 = $pdo->query("SELECT * FROM clientes where id = '$cliente'");
+$query2 = $pdo->prepare("SELECT * FROM clientes WHERE id=:cliente AND empresa=:empresa");
+$query2->execute([':cliente'=>(int)$cliente,':empresa'=>(int)$id_empresa]);
 $res2 = $query2->fetchAll(PDO::FETCH_ASSOC);
 if(@count($res2) > 0){
 	$nome_cliente = $res2[0]['nome'];
