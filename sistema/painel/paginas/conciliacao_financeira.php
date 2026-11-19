@@ -79,6 +79,10 @@ $filtroHistoricoConc=(string)($_GET['historico']??'todos');
 if(!in_array($filtroHistoricoConc,['todos','ativos','cancelados'],true))$filtroHistoricoConc='todos';
 
 $auditoriaCancelamentosConc=[];
+$totalCancelamentosAudConc=0;
+$porPaginaAudConc=25;
+$paginaAudConc=filter_var($_GET['cancel_pagina']??1,FILTER_VALIDATE_INT,['options'=>['min_range'=>1]])?:1;
+$paginasAudConc=1;
 $audInicioConc=(string)($_GET['cancel_inicio']??$inicioConc);
 $audFimConc=(string)($_GET['cancel_fim']??$fimConc);
 $audUsuarioConc=trim((string)($_GET['cancel_usuario']??''));
@@ -91,7 +95,15 @@ try {
  WHERE l.empresa=:empresa AND l.cancelado_em >= :inicio AND l.cancelado_em < DATE_ADD(:fim,INTERVAL 1 DAY)";
  $paramsAudCancel=[':empresa'=>$empresaConc,':inicio'=>$audInicioConc,':fim'=>$audFimConc];
  if($audUsuarioConc!==''){$sqlAudCancel.=" AND l.cancelado_por=:usuario";$paramsAudCancel[':usuario']=(int)$audUsuarioConc;}
- $sqlAudCancel.=" ORDER BY l.cancelado_em DESC,l.id DESC LIMIT 200";
+ $sqlCountAud="SELECT COUNT(*) FROM conciliacao_liquidacoes l WHERE l.empresa=:empresa AND l.cancelado_em >= :inicio AND l.cancelado_em < DATE_ADD(:fim,INTERVAL 1 DAY)";
+ if($audUsuarioConc!=='')$sqlCountAud.=" AND l.cancelado_por=:usuario";
+ $stCountAud=$pdo->prepare($sqlCountAud);
+ $stCountAud->execute($paramsAudCancel);
+ $totalCancelamentosAudConc=(int)$stCountAud->fetchColumn();
+ $paginasAudConc=max(1,(int)ceil($totalCancelamentosAudConc/$porPaginaAudConc));
+ $paginaAudConc=min($paginaAudConc,$paginasAudConc);
+ $offsetAudConc=($paginaAudConc-1)*$porPaginaAudConc;
+ $sqlAudCancel.=" ORDER BY l.cancelado_em DESC,l.id DESC LIMIT ".$porPaginaAudConc." OFFSET ".$offsetAudConc;
  $stAudCancel=$pdo->prepare($sqlAudCancel);
  $stAudCancel->execute($paramsAudCancel);
  $auditoriaCancelamentosConc=$stAudCancel->fetchAll(PDO::FETCH_ASSOC);
@@ -517,7 +529,7 @@ $liquido=$linha['liquido_estimado'];
 <p class="bc-conc-note">Diferenças podem resultar de prazos de repasse, antecipações, estornos ou taxas. A comparação é gerencial e não comprova conciliação bancária automática.</p>
 <div class="bc-conc-card" data-conc-audit="cancelamentos">
 <h5><i class="fa fa-history"></i> Histórico de cancelamentos</h5>
-<p class="bc-conc-note">Consulta por data efetiva do cancelamento e ID do usuário. Diferente do filtro principal, que utiliza a data de referência do crédito. Exibe até 200 registros.</p>
+<p class="bc-conc-note">Consulta por data efetiva do cancelamento e ID do usuário. Diferente do filtro principal, que utiliza a data de referência do crédito. Exibe 25 registros por página, com navegação pelo histórico completo do período.</p>
 <form method="get" action="index.php" class="bc-conc-filter">
 <input type="hidden" name="pagina" value="conciliacao_financeira">
 <input type="hidden" name="aba" value="liquidacoes">
@@ -539,6 +551,19 @@ $liquido=$linha['liquido_estimado'];
 </tr><?php endforeach; ?>
 <?php if(!$auditoriaCancelamentosConc): ?><tr><td colspan="6">Nenhum cancelamento encontrado para os filtros.</td></tr><?php endif; ?>
 </tbody></table></div>
+<?php
+$queryAudConc=['pagina'=>'conciliacao_financeira','aba'=>'liquidacoes','inicio'=>$inicioConc,'fim'=>$fimConc,'cancel_inicio'=>$audInicioConc,'cancel_fim'=>$audFimConc];
+if($audUsuarioConc!=='')$queryAudConc['cancel_usuario']=$audUsuarioConc;
+?>
+<div class="bc-conc-filter mt-3" role="navigation" aria-label="Paginação de cancelamentos">
+<span class="bc-conc-note">Página <?php echo $paginaAudConc; ?> de <?php echo $paginasAudConc; ?> — <?php echo $totalCancelamentosAudConc; ?> cancelamento(s) encontrado(s).</span>
+<?php if($paginaAudConc>1): $queryAudConc['cancel_pagina']=$paginaAudConc-1; ?>
+<a class="btn btn-outline-primary btn-sm" href="index.php?<?php echo $escConc(http_build_query($queryAudConc)); ?>">Anterior</a>
+<?php endif; ?>
+<?php if($paginaAudConc<$paginasAudConc): $queryAudConc['cancel_pagina']=$paginaAudConc+1; ?>
+<a class="btn btn-outline-primary btn-sm" href="index.php?<?php echo $escConc(http_build_query($queryAudConc)); ?>">Próxima</a>
+<?php endif; ?>
+</div>
 </div>
 <h6 class="mt-4">Auditoria de créditos e cancelamentos</h6>
 <div class="bc-conc-grid">
