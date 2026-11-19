@@ -25,6 +25,12 @@ try {
     if (!is_numeric($venda['valor']) || (float)$venda['valor']<=0) {
         throw new DomainException('Valor do pedido inválido');
     }
+    // PIX estático (Nubank ou outro banco) não possui confirmação automática.
+    // A confirmação manual exige declaração expressa de conferência no extrato.
+    $pixManual = preg_match('/\\bpix\\b/i', $forma) === 1;
+    if ($pixManual && ($_POST['pix_conferido'] ?? '') !== '1') {
+        throw new DomainException('Confira o crédito no extrato bancário e marque a confirmação do PIX');
+    }
     $st=$pdo->prepare('SELECT id FROM formas_pgto WHERE empresa=:empresa AND nome=:nome LIMIT 1');
     $st->execute([':empresa'=>$empresa,':nome'=>$forma]);
     $formaId=(int)$st->fetchColumn();
