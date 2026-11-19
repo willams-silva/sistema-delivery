@@ -78,6 +78,24 @@ $resumoAuditoriaConc=['ativos'=>0,'cancelados'=>0,'valor_ativo'=>0.0,'valor_canc
 $filtroHistoricoConc=(string)($_GET['historico']??'todos');
 if(!in_array($filtroHistoricoConc,['todos','ativos','cancelados'],true))$filtroHistoricoConc='todos';
 
+$auditoriaCancelamentosConc=[];
+$audInicioConc=(string)($_GET['cancel_inicio']??$inicioConc);
+$audFimConc=(string)($_GET['cancel_fim']??$fimConc);
+$audUsuarioConc=trim((string)($_GET['cancel_usuario']??''));
+if(!$validarConc($audInicioConc)||!$validarConc($audFimConc)||$audInicioConc>$audFimConc){$audInicioConc=$inicioConc;$audFimConc=$fimConc;}
+if($audUsuarioConc!==''&&(!ctype_digit($audUsuarioConc)||(int)$audUsuarioConc<1))$audUsuarioConc='';
+try {
+ $sqlAudCancel="SELECT l.id,l.forma_pgto,fp.nome AS forma,l.data_referencia,l.data_credito,l.valor_creditado,l.identificador,l.cancelado_em,l.cancelado_por,l.motivo_cancelamento
+ FROM conciliacao_liquidacoes l
+ INNER JOIN formas_pgto fp ON fp.id=l.forma_pgto AND fp.empresa=l.empresa
+ WHERE l.empresa=:empresa AND l.cancelado_em >= :inicio AND l.cancelado_em < DATE_ADD(:fim,INTERVAL 1 DAY)";
+ $paramsAudCancel=[':empresa'=>$empresaConc,':inicio'=>$audInicioConc,':fim'=>$audFimConc];
+ if($audUsuarioConc!==''){$sqlAudCancel.=" AND l.cancelado_por=:usuario";$paramsAudCancel[':usuario']=(int)$audUsuarioConc;}
+ $sqlAudCancel.=" ORDER BY l.cancelado_em DESC,l.id DESC LIMIT 200";
+ $stAudCancel=$pdo->prepare($sqlAudCancel);
+ $stAudCancel->execute($paramsAudCancel);
+ $auditoriaCancelamentosConc=$stAudCancel->fetchAll(PDO::FETCH_ASSOC);
+} catch(PDOException $e){error_log('Auditoria de cancelamentos indisponivel: '.$e->getMessage());}
 try {
  $stL=$pdo->prepare("SELECT l.id,l.forma_pgto,l.data_referencia,l.data_credito,l.valor_creditado,l.identificador,l.observacao,l.cancelado_em,l.cancelado_por,l.motivo_cancelamento,fp.nome AS forma FROM conciliacao_liquidacoes l INNER JOIN formas_pgto fp ON fp.id=l.forma_pgto AND fp.empresa=l.empresa WHERE l.empresa=:empresa AND l.data_referencia BETWEEN :inicio AND :fim ORDER BY l.data_referencia DESC,l.id DESC LIMIT 100");
  $stL->execute($paramsConc);$liquidacoesConc=$stL->fetchAll(PDO::FETCH_ASSOC);
@@ -497,6 +515,31 @@ $liquido=$linha['liquido_estimado'];
 <?php endforeach; ?>
 </tbody></table></div>
 <p class="bc-conc-note">Diferenças podem resultar de prazos de repasse, antecipações, estornos ou taxas. A comparação é gerencial e não comprova conciliação bancária automática.</p>
+<div class="bc-conc-card" data-conc-audit="cancelamentos">
+<h5><i class="fa fa-history"></i> Histórico de cancelamentos</h5>
+<p class="bc-conc-note">Consulta por data efetiva do cancelamento e ID do usuário. Diferente do filtro principal, que utiliza a data de referência do crédito. Exibe até 200 registros.</p>
+<form method="get" action="index.php" class="bc-conc-filter">
+<input type="hidden" name="pagina" value="conciliacao_financeira">
+<input type="hidden" name="aba" value="liquidacoes">
+<input type="hidden" name="inicio" value="<?php echo $escConc($inicioConc); ?>">
+<input type="hidden" name="fim" value="<?php echo $escConc($fimConc); ?>">
+<div><label for="aud-cancel-inicio">Cancelados de</label><input id="aud-cancel-inicio" type="date" name="cancel_inicio" value="<?php echo $escConc($audInicioConc); ?>" required></div>
+<div><label for="aud-cancel-fim">Até</label><input id="aud-cancel-fim" type="date" name="cancel_fim" value="<?php echo $escConc($audFimConc); ?>" required></div>
+<div><label for="aud-cancel-usuario">ID do usuário (opcional)</label><input id="aud-cancel-usuario" type="number" min="1" step="1" name="cancel_usuario" value="<?php echo $escConc($audUsuarioConc); ?>" placeholder="Todos"></div>
+<button class="btn btn-primary" type="submit">Consultar cancelamentos</button>
+</form>
+<div class="bc-conc-table mt-3"><table><thead><tr><th>Cancelado em</th><th>Crédito</th><th>Forma</th><th>Valor</th><th>Usuário</th><th>Justificativa</th></tr></thead><tbody>
+<?php foreach($auditoriaCancelamentosConc as $audCancelConc): ?><tr>
+<td><?php echo $escConc($audCancelConc['cancelado_em']); ?></td>
+<td>#<?php echo (int)$audCancelConc['id']; ?> — <?php echo $escConc($audCancelConc['data_referencia']); ?></td>
+<td><?php echo $escConc($audCancelConc['forma']); ?></td>
+<td><?php echo $moedaConc($audCancelConc['valor_creditado']); ?></td>
+<td>#<?php echo (int)$audCancelConc['cancelado_por']; ?></td>
+<td><?php echo $escConc($audCancelConc['motivo_cancelamento']); ?></td>
+</tr><?php endforeach; ?>
+<?php if(!$auditoriaCancelamentosConc): ?><tr><td colspan="6">Nenhum cancelamento encontrado para os filtros.</td></tr><?php endif; ?>
+</tbody></table></div>
+</div>
 <h6 class="mt-4">Auditoria de créditos e cancelamentos</h6>
 <div class="bc-conc-grid">
 <div class="bc-conc-card"><small>Créditos ativos</small><strong><?php echo (int)$resumoAuditoriaConc['ativos']; ?></strong><span class="bc-conc-note"><?php echo $moedaConc($resumoAuditoriaConc['valor_ativo']); ?></span></div>
