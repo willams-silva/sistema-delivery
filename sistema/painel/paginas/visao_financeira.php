@@ -37,6 +37,26 @@ $st = $pdo->prepare("SELECT dia, SUM(entrada) entrada, SUM(saida) saida FROM (
 ) t GROUP BY dia ORDER BY dia");
 $st->execute([':empresa1'=>$empresaFinanceira, ':inicio1'=>$inicioFinanceiro, ':fim1'=>$fimFinanceiro, ':empresa2'=>$empresaFinanceira, ':inicio2'=>$inicioFinanceiro, ':fim2'=>$fimFinanceiro]);
 $movimentos = $st->fetchAll(PDO::FETCH_ASSOC);
+
+// Previsões por dia: somente títulos ainda não baixados; não altera lançamentos.
+$previsaoSt = $pdo->prepare("SELECT dia, SUM(entrada) entrada, SUM(saida) saida FROM (
+ SELECT vencimento dia, valor entrada, 0 saida FROM receber WHERE empresa=:empresa1 AND pago <> 'Sim' AND vencimento BETWEEN :inicio1 AND :fim1
+ UNION ALL
+ SELECT vencimento dia, 0 entrada, valor saida FROM pagar WHERE empresa=:empresa2 AND pago <> 'Sim' AND vencimento BETWEEN :inicio2 AND :fim2
+) t GROUP BY dia ORDER BY dia");
+$previsaoSt->execute([':empresa1'=>$empresaFinanceira, ':inicio1'=>$inicioFinanceiro, ':fim1'=>$fimFinanceiro, ':empresa2'=>$empresaFinanceira, ':inicio2'=>$inicioFinanceiro, ':fim2'=>$fimFinanceiro]);
+$previsoes = $previsaoSt->fetchAll(PDO::FETCH_ASSOC);
+$diarioFinanceiro = [];
+foreach ($movimentos as $m) {
+    $diarioFinanceiro[$m['dia']] = ['entrada'=>(float)$m['entrada'], 'saida'=>(float)$m['saida'], 'prev_entrada'=>0, 'prev_saida'=>0];
+}
+foreach ($previsoes as $m) {
+    if (!isset($diarioFinanceiro[$m['dia']])) $diarioFinanceiro[$m['dia']] = ['entrada'=>0, 'saida'=>0, 'prev_entrada'=>0, 'prev_saida'=>0];
+    $diarioFinanceiro[$m['dia']]['prev_entrada'] = (float)$m['entrada'];
+    $diarioFinanceiro[$m['dia']]['prev_saida'] = (float)$m['saida'];
+}
+ksort($diarioFinanceiro);
+
 $saldoPeriodo = $entradas - $saidas;
 ?>
 <style>
@@ -94,5 +114,28 @@ $saldoPeriodo = $entradas - $saidas;
 <p class="bc-note">Valores previstos não são somados ao saldo realizado.</p>
 </div></div>
 </div>
+<div class="bc-card mt-3">
+<h5>Movimentações e previsão por dia</h5>
+<p class="bc-note">O saldo realizado acumula apenas contas baixadas. A projeção acrescenta contas pendentes por vencimento; não é saldo bancário.</p>
+<div class="table-responsive"><table><thead><tr><th>Data</th><th>Entradas realizadas</th><th>Saídas realizadas</th><th>Saldo realizado acumulado</th><th>A receber previsto</th><th>A pagar previsto</th><th>Saldo projetado</th></tr></thead><tbody>
+<?php
+$saldoDiario = $saldoAnterior;
+$saldoProjetado = $saldoAnterior;
+foreach ($diarioFinanceiro as $dia => $m):
+    $saldoDiario += $m['entrada'] - $m['saida'];
+    $saldoProjetado += $m['entrada'] - $m['saida'] + $m['prev_entrada'] - $m['prev_saida'];
+?>
+<tr>
+<td><?php echo htmlspecialchars(date('d/m/Y', strtotime($dia)), ENT_QUOTES, 'UTF-8'); ?></td>
+<td><?php echo $valorFinanceiro($m['entrada']); ?></td>
+<td><?php echo $valorFinanceiro($m['saida']); ?></td>
+<td><?php echo $valorFinanceiro($saldoDiario); ?></td>
+<td><?php echo $valorFinanceiro($m['prev_entrada']); ?></td>
+<td><?php echo $valorFinanceiro($m['prev_saida']); ?></td>
+<td><?php echo $valorFinanceiro($saldoProjetado); ?></td>
+</tr>
+<?php endforeach; ?>
+<?php if (!$diarioFinanceiro): ?><tr><td colspan="7" style="text-align:center">Sem lançamentos no período selecionado.</td></tr><?php endif; ?>
+</tbody></table></div></div>
 <p class="bc-note mt-3">Importante: saldo acumulado calculado apenas com contas baixadas em receber/pagar. Não representa necessariamente o saldo bancário ou o dinheiro físico no caixa. Conciliação por forma de pagamento e auditoria de alterações exigem integração adicional.</p>
 </div>
