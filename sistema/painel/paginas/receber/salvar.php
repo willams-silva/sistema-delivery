@@ -165,7 +165,7 @@ if(@count($res1) > 0){
 
 
 if($id == ""){
-$query = $pdo->prepare("INSERT INTO receber SET descricao=:descricao, cliente=:cliente, valor=:valor, vencimento=:vencimento, data_pgto=:data_pgto, data_lanc=CURDATE(), forma_pgto=:forma_pgto, frequencia=:frequencia, obs=:obs, arquivo=:arquivo, foto=:foto, subtotal=:valor, usuario_lanc=:usuario_lanc, usuario_pgto=:usuario_pgto, pago=:pago, referencia='Conta', caixa=:caixa, hora=CURTIME(), empresa=:empresa");
+$query = $pdo->prepare("INSERT INTO receber SET descricao=:descricao, cliente=:cliente, valor=:valor, vencimento=:vencimento, data_pgto=:data_pgto, data_lanc=CURDATE(), forma_pgto=:forma_pgto, frequencia=:frequencia, obs=:obs, arquivo=:arquivo, foto=:foto, subtotal=:subtotal, usuario_lanc=:usuario_lanc, usuario_pgto=:usuario_pgto, pago=:pago, referencia='Conta', caixa=:caixa, hora=CURTIME(), empresa=:empresa");
 
 
 
@@ -233,7 +233,7 @@ $query = $pdo->prepare("INSERT INTO receber SET descricao=:descricao, cliente=:c
 }
 	
 }else{
-$query = $pdo->prepare("UPDATE receber SET descricao=:descricao, cliente=:cliente, valor=:valor, vencimento=:vencimento, data_pgto=:data_pgto, forma_pgto=:forma_pgto, frequencia=:frequencia, obs=:obs, arquivo=:arquivo, foto=:foto, subtotal=:valor, usuario_pgto=:usuario_pgto, pago=:pago WHERE id=:id AND empresa=:empresa AND (pago IS NULL OR pago <> 'Sim')");
+$query = $pdo->prepare("UPDATE receber SET descricao=:descricao, cliente=:cliente, valor=:valor, vencimento=:vencimento, data_pgto=:data_pgto, forma_pgto=:forma_pgto, frequencia=:frequencia, obs=:obs, arquivo=:arquivo, foto=:foto, subtotal=:subtotal, usuario_pgto=:usuario_pgto, pago=:pago WHERE id=:id AND empresa=:empresa AND (pago IS NULL OR pago <> 'Sim')");
 
 
 
@@ -302,6 +302,7 @@ if ($id !== '') {
 $query->bindValue(":descricao", "$descricao");
 $query->bindValue(":cliente", "$cliente");
 $query->bindValue(":valor", "$valor");
+$query->bindValue(':subtotal',$valor);
 $query->bindValue(":obs", "$obs");
 $query->bindValue(':vencimento',$vencimento);
 $query->bindValue(':data_pgto',$data_pgto !== '' ? $data_pgto : null);
