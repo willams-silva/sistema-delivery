@@ -273,10 +273,27 @@ $dashboardCaixasResumo->execute([':empresa'=>(int)$id_empresa]);
 $dashboardCaixas=$dashboardCaixasResumo->fetch(PDO::FETCH_ASSOC);
 // Período independente dos indicadores históricos do painel.
 $dashboardPeriodo=$_GET['periodo_dash'] ?? 'hoje';
-$dashboardDias=['hoje'=>0,'7dias'=>6,'30dias'=>29];
+$dashboardDias=['hoje'=>0,'7dias'=>6,'30dias'=>29,'personalizado'=>null];
 if (!array_key_exists($dashboardPeriodo,$dashboardDias)) $dashboardPeriodo='hoje';
-$dashboardInicio=(new DateTimeImmutable('today'))->modify('-'.$dashboardDias[$dashboardPeriodo].' days')->format('Y-m-d');
-$dashboardFim=(new DateTimeImmutable('today'))->format('Y-m-d');
+$dashboardHoje=new DateTimeImmutable('today');
+$dashboardInicio=$dashboardHoje->modify('-'.($dashboardDias[$dashboardPeriodo] ?? 0).' days')->format('Y-m-d');
+$dashboardFim=$dashboardHoje->format('Y-m-d');
+$dashboardErroPeriodo='';
+if ($dashboardPeriodo==='personalizado') {
+    $inicioDigitado=(string)($_GET['inicio_dash'] ?? '');
+    $fimDigitado=(string)($_GET['fim_dash'] ?? '');
+    $inicioData=DateTimeImmutable::createFromFormat('!Y-m-d',$inicioDigitado);
+    $fimData=DateTimeImmutable::createFromFormat('!Y-m-d',$fimDigitado);
+    if ($inicioData && $fimData && $inicioData->format('Y-m-d')===$inicioDigitado
+        && $fimData->format('Y-m-d')===$fimDigitado && $inicioData<=$fimData
+        && $fimData<=$dashboardHoje && $inicioData>=$dashboardHoje->modify('-366 days')) {
+        $dashboardInicio=$inicioDigitado;
+        $dashboardFim=$fimDigitado;
+    } else {
+        $dashboardErroPeriodo='Informe datas válidas, até hoje, em um intervalo dos últimos 366 dias.';
+        $dashboardPeriodo='hoje';
+    }
+}
 $dashboardFaturamentoSt=$pdo->prepare("SELECT COUNT(*) quantidade,COALESCE(SUM(valor),0) total
  FROM vendas WHERE empresa=:empresa AND data BETWEEN :inicio AND :fim
  AND (status IS NULL OR status<>'Cancelado')");
@@ -315,9 +332,15 @@ $dashboardTicketMedio=(int)$dashboardResumoHoje['quantidade']>0
     <option value="hoje" <?php echo $dashboardPeriodo==='hoje'?'selected':''; ?>>Hoje</option>
     <option value="7dias" <?php echo $dashboardPeriodo==='7dias'?'selected':''; ?>>Últimos 7 dias</option>
     <option value="30dias" <?php echo $dashboardPeriodo==='30dias'?'selected':''; ?>>Últimos 30 dias</option>
+    <option value="personalizado" <?php echo $dashboardPeriodo==='personalizado'?'selected':''; ?>>Personalizado</option>
   </select>
+  <label class="small mb-0" for="inicio_dash">De</label>
+  <input type="date" id="inicio_dash" name="inicio_dash" class="form-control form-control-sm" style="width:auto" value="<?php echo htmlspecialchars($dashboardInicio,ENT_QUOTES,'UTF-8'); ?>">
+  <label class="small mb-0" for="fim_dash">Até</label>
+  <input type="date" id="fim_dash" name="fim_dash" class="form-control form-control-sm" style="width:auto" value="<?php echo htmlspecialchars($dashboardFim,ENT_QUOTES,'UTF-8'); ?>">
   <button class="btn btn-primary btn-sm" type="submit">Aplicar</button>
 </form>
+<?php if ($dashboardErroPeriodo!==''): ?><div class="alert alert-warning" role="alert"><?php echo htmlspecialchars($dashboardErroPeriodo,ENT_QUOTES,'UTF-8'); ?></div><?php endif; ?>
 <div class="row g-3 mb-3" aria-label="Resumo financeiro do período">
   <div class="col-12 col-md-4"><div class="card h-100 p-3">
     <div class="small text-muted">Faturamento (vendas realizadas)</div>
