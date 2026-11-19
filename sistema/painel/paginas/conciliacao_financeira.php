@@ -509,6 +509,13 @@ foreach($formasPrazosConc->fetchAll(PDO::FETCH_ASSOC) as $formaPrazoConc): ?>
 <a class="btn btn-outline-primary" href="paginas/exportar_liquidacoes_conciliacao.php?inicio=<?php echo urlencode($inicioConc); ?>&amp;fim=<?php echo urlencode($fimConc); ?>"><i class="fa fa-file-excel-o"></i> Exportar liquidações (CSV)</a>
 </div>
 <div class="bc-conc-card">
+<h5><i class="fa fa-file-excel-o"></i> Exportar extrato e situação dos vínculos</h5>
+<p class="bc-conc-note">CSV de todas as movimentações importadas no período, sem limite de paginação. Inclui crédito vinculado, divergências e arquivo de origem. Um vínculo não representa aprovação financeira.</p>
+<a class="btn btn-outline-primary" href="paginas/exportar_extrato_conciliacao.php?inicio=<?php echo urlencode($inicioConc); ?>&amp;fim=<?php echo urlencode($fimConc); ?>&amp;situacao=todos">Extrato completo (CSV)</a>
+<a class="btn btn-outline-secondary" href="paginas/exportar_extrato_conciliacao.php?inicio=<?php echo urlencode($inicioConc); ?>&amp;fim=<?php echo urlencode($fimConc); ?>&amp;situacao=pendentes">Somente sem vínculo (CSV)</a>
+<a class="btn btn-outline-secondary" href="paginas/exportar_extrato_conciliacao.php?inicio=<?php echo urlencode($inicioConc); ?>&amp;fim=<?php echo urlencode($fimConc); ?>&amp;situacao=vinculados">Somente vinculados (CSV)</a>
+</div>
+<div class="bc-conc-card">
 <h5><i class="fa fa-clock-o"></i> Repasses potencialmente atrasados</h5>
 <p class="bc-conc-note">Verificação por forma e dia de referência, usando prazos em dias corridos. Só considera datas previstas anteriores a hoje, taxas cadastradas e créditos informados. Não comprova atraso contratual nem identifica depósitos não cadastrados.</p>
 <?php if (!$prazosDisponiveisConc || !$liquidacoesDisponiveisConc): ?>
