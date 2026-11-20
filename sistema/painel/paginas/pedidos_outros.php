@@ -70,6 +70,7 @@ $segundos = $tempo_atualizar * 1000;
 				<span class="badge bg-light rounded-pill ms-1" id="ent_pedidos">0</span>
 			</button>
 
+			<button type="button" class="btn btn-outline-secondary btn-sm mt-1 mb-1" id="bc-fila-toggle" aria-expanded="false"><i class="fa fa-print"></i> Fila de impressão</button>
 			<button type="button" id="bc-kanban-toggle" class="btn btn-outline-primary btn-sm mt-1 mb-1" aria-pressed="false"><i class="fa fa-columns"></i> Visualização Kanban</button>
 			<input type="hidden" id="buscar-contas">
 			<input type="hidden" id="id_pedido">
@@ -79,7 +80,19 @@ $segundos = $tempo_atualizar * 1000;
 
 
 	<hr>
-	<div id="bc-kanban" style="display:none" class="row g-2 mb-3"></div>
+	<section id="bc-fila-painel" style="display:none" class="card p-3 mb-3" aria-label="Fila de impressao">
+  <div class="d-flex justify-content-between align-items-center mb-2">
+    <strong>Fila de impressão — Outros Locais</strong>
+    <button type="button" class="btn btn-outline-primary btn-sm" id="bc-fila-atualizar">Atualizar</button>
+  </div>
+  <p class="text-muted small mb-2">Somente acompanhamento. O envio automático para impressoras permanece desativado.</p>
+  <div id="bc-fila-mensagem" role="status" class="small mb-2"></div>
+  <div class="table-responsive"><table class="table table-sm table-striped">
+    <thead><tr><th>Fila</th><th>Item</th><th>Estado</th><th>Tentativas</th><th>Criado em</th><th>Detalhes</th></tr></thead>
+    <tbody id="bc-fila-linhas"><tr><td colspan="6">Clique em Atualizar para consultar.</td></tr></tbody>
+  </table></div>
+</section>
+<div id="bc-kanban" style="display:none" class="row g-2 mb-3"></div>
 	<div id="listar">
 
 	</div>
@@ -416,5 +429,46 @@ $segundos = $tempo_atualizar * 1000;
     botao.classList.toggle('btn-outline-primary',!ativo);
     window.bcAtualizarKanban();
   });
+})();
+</script>
+
+<script>
+(function(){
+  var setor="Outro";
+  var painel=document.getElementById('bc-fila-painel');
+  var botao=document.getElementById('bc-fila-toggle');
+  var atualizar=document.getElementById('bc-fila-atualizar');
+  var linhas=document.getElementById('bc-fila-linhas');
+  var mensagem=document.getElementById('bc-fila-mensagem');
+  var carregando=false;
+  function celula(tr,valor){
+    var td=document.createElement('td');td.textContent=valor==null?'—':String(valor);tr.appendChild(td);
+  }
+  function carregar(){
+    if(carregando || !painel || painel.style.display==='none')return;
+    carregando=true;atualizar.disabled=true;mensagem.textContent='Consultando fila...';
+    fetch('paginas/pedidos/fila_impressao_local.php?setor='+encodeURIComponent(setor),{credentials:'same-origin',cache:'no-store'})
+      .then(function(r){return r.json().then(function(d){if(!r.ok)throw new Error(d.erro||'Erro na consulta');return d;});})
+      .then(function(d){
+        linhas.replaceChildren();
+        if(!d.fila || !d.fila.length){
+          var tr=document.createElement('tr'),td=document.createElement('td');td.colSpan=6;td.textContent='Nenhum item registrado na fila.';tr.appendChild(td);linhas.appendChild(tr);
+        } else d.fila.forEach(function(item){
+          var tr=document.createElement('tr');
+          [item.id,item.carrinho_id,item.estado,item.tentativas,item.criado_em,item.erro||'—'].forEach(function(v){celula(tr,v);});
+          linhas.appendChild(tr);
+        });
+        mensagem.textContent=d.fila.length+' registro(s). Impressão automática desativada.';
+      })
+      .catch(function(e){mensagem.textContent='Não foi possível carregar: '+e.message;})
+      .finally(function(){carregando=false;atualizar.disabled=false;});
+  }
+  if(botao)botao.addEventListener('click',function(){
+    var aberto=painel.style.display==='none';
+    painel.style.display=aberto?'block':'none';
+    botao.setAttribute('aria-expanded',String(aberto));
+    if(aberto)carregar();
+  });
+  if(atualizar)atualizar.addEventListener('click',carregar);
 })();
 </script>
