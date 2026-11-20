@@ -9,7 +9,7 @@ if($modo_teste == 'Sim'){
 }
 
 
-$id = $_POST['id'];
+$id = (int) ($_POST['id'] ?? 0);
 
 $query = $pdo->query("SELECT * FROM $tabela where id = '$id'");
 $res = $query->fetchAll(PDO::FETCH_ASSOC);
