@@ -43,7 +43,8 @@ $senha = '123';
 $senha_crip = password_hash($senha, PASSWORD_DEFAULT);
 
 //validacao email
-$query = $pdo->query("SELECT * from $tabela where email = '$email' and empresa = '$id_empresa' ");
+$query = $pdo->prepare("SELECT id FROM usuarios WHERE email = :email AND empresa = :empresa");
+$query->execute([':email' => $email, ':empresa' => $id_empresa]);
 $res = $query->fetchAll(PDO::FETCH_ASSOC);
 $id_reg = @$res[0]['id'];
 if(@count($res) > 0 and $id != $id_reg){
