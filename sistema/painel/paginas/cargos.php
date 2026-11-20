@@ -8,20 +8,20 @@ if (@$cargos == 'ocultar') {
 $pag = 'cargos';
 ?>
 
-<div class="breadcrumb-header justify-content-between">
-	<div class="left-content mt-2">
-		<a class="btn ripple btn-primary text-white" onclick="inserir()" type="button"><i class="fe fe-plus me-1"></i>
-			Adicionar <?php echo ucfirst($pag); ?></a>
-
-
-
-		<a class="btn btn-danger" href="#" onclick="deletarSel()" title="Excluir" id="btn-deletar" style="display:none"><i class="fe fe-trash-2"></i> Deletar</a>
-
-	</div>
-
+<div class="breadcrumb-header justify-content-between align-items-center">
+    <div class="left-content mt-2">
+        <h4 class="mb-1"><i class="fa-solid fa-id-badge me-2" aria-hidden="true"></i>Gestão de Cargos</h4>
+        <p class="text-muted mb-0">Organize as funções da equipe e consulte quantos funcionários utilizam cada cargo.</p>
+    </div>
+    <div class="mt-2 d-flex gap-2 flex-wrap">
+        <button class="btn btn-primary" type="button" onclick="inserir()"><i class="fa-solid fa-plus me-1"></i>Novo Cargo</button>
+        <button class="btn btn-outline-danger" type="button" onclick="deletarSel()" id="btn-deletar" style="display:none"><i class="fa-solid fa-trash-can me-1"></i>Excluir selecionados</button>
+    </div>
 </div>
-
-
+<div class="row row-sm">
+    <div class="col-sm-6 mb-3"><div class="card custom-card h-100"><div class="card-body"><small class="text-muted">Cargos cadastrados</small><h3 id="bc-total-cargos" class="mb-0">—</h3></div></div></div>
+    <div class="col-sm-6 mb-3"><div class="card custom-card h-100"><div class="card-body"><small class="text-muted">Cargos em uso</small><h3 id="bc-cargos-em-uso" class="mb-0">—</h3></div></div></div>
+</div>
 <div class="row row-sm">
 	<div class="col-lg-12">
 		<div class="card custom-card">
@@ -49,12 +49,12 @@ $pag = 'cargos';
 
 					<div class="row needs-validation was-validated">
 						<div class="col-md-8 mb-2">
-							<label>Cargo</label>
-							<input type="text" class="form-control" id="nome" name="nome" placeholder="Ex. Faxineiro" required>
+							<label for="nome">Nome do cargo <span class="text-danger">*</span></label>
+							<input type="text" class="form-control" id="nome" name="nome" placeholder="Ex.: Atendente, Gerente, Cozinheiro" maxlength="100" autocomplete="off" required>
 						</div>
 
-						<div class="col-md-4" style="margin-top: 25px">
-							<button id="btn_salvar" type="submit" class="btn btn-primary">Salvar<i
+						<div class="col-md-4 d-flex align-items-end mb-2">
+							<button id="btn_salvar" type="submit" class="btn btn-primary w-100">Salvar<i
 									class="fa fa-check ms-2"></i></button>
 						</div>
 
@@ -66,7 +66,7 @@ $pag = 'cargos';
 
 					<br>
 					<small>
-						<div id="mensagem" align="center"></div>
+						<div id="mensagem" role="status" aria-live="polite"></div>
 					</small>
 				</div>
 
