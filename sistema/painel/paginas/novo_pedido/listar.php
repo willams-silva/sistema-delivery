@@ -1,6 +1,7 @@
 <?php
 @session_start();
-$id_empresa = $_SESSION['empresa'];
+$id_empresa = filter_var($_SESSION['empresa'] ?? null, FILTER_VALIDATE_INT, ['options'=>['min_range'=>1]]);
+if (!$id_empresa) { http_response_code(403); exit('Sessão expirada'); }
 require_once("../../../conexao.php");
 require_once("../../buscar_config.php");
 
@@ -26,7 +27,7 @@ if ($total_reg > 0) {
 
 
 		//abertura da mesa
-		$query2 = $pdo->query("SELECT * FROM abertura_mesa where mesa = '$id' and status = 'Aberta'");
+		$query2 = $pdo->query("SELECT * FROM abertura_mesa where mesa = '$id' and empresa = '$id_empresa' and status = 'Aberta'");
 		$res2 = $query2->fetchAll(PDO::FETCH_ASSOC);
 		$total_reg2 = @count($res2);
 		if ($total_reg2 > 0) {
@@ -46,7 +47,7 @@ if ($total_reg > 0) {
 			}
 
 
-			$query2 = $pdo->query("SELECT * FROM usuarios where id = '$garcon' ");
+			$query2 = $pdo->query("SELECT * FROM usuarios where id = '$garcon' and empresa = '$id_empresa' ");
 			$res2 = $query2->fetchAll(PDO::FETCH_ASSOC);
 			$nome_garcon = @$res2[0]['nome'];
 
@@ -105,7 +106,7 @@ if ($total_reg > 0) {
 
 		//totalizar o valor dos itens
 		$total_mesa = 0;
-		$query2 = $pdo->query("SELECT * FROM carrinho where mesa = '$id_abertura_mesa' ");
+		$query2 = $pdo->query("SELECT * FROM carrinho where mesa = '$id_abertura_mesa' and empresa = '$id_empresa' ");
 		$res2 = $query2->fetchAll(PDO::FETCH_ASSOC);
 		$total_reg2 = @count($res2);
 		if ($total_reg2 > 0 and $status_abertura == 'Aberta') {
@@ -148,7 +149,7 @@ if ($total_reg > 0) {
 		$total_valor = 0;
 		$total_valorF = 0;
 		
-		$query2 = $pdo->query("SELECT * FROM valor_adiantamento where abertura = '$id_abertura_mesa' order by id desc");
+		$query2 = $pdo->query("SELECT * FROM valor_adiantamento where abertura = '$id_abertura_mesa' and empresa = '$id_empresa' order by id desc");
 		$res2 = $query2->fetchAll(PDO::FETCH_ASSOC);
 		$total_reg2 = @count($res2);
 		if ($total_reg2 > 0) {
@@ -167,6 +168,21 @@ if ($total_reg > 0) {
 		$subtotalF = @number_format($subtotal, 2, ',', '.');
 		$subtotalC = @number_format($subtotal, 2);
 
+		$mesaOcupada = $ativo === 'Sim' && $status_abertura === 'Aberta';
+        $classeMesa = $ativo !== 'Sim' ? 'mesa-card-inativa' : ($mesaOcupada ? 'mesa-card-ocupada' : 'mesa-card-livre');
+        $situacaoMesa = $ativo !== 'Sim' ? 'Inativa' : ($mesaOcupada ? 'Ocupada' : 'Livre');
+        $duracaoMesa = '';
+        if ($mesaOcupada && !empty($horario_abertura)) {
+            $inicioMesa = strtotime($horario_abertura);
+            if ($inicioMesa !== false) {
+                // Horários sem data são tratados como início no dia anterior se necessário.
+                if ($inicioMesa > time()) $inicioMesa -= 86400;
+                $minutosMesa = max(0, (int)floor((time() - $inicioMesa) / 60));
+                $duracaoMesa = '<span class="mesa-tempo">⏱ ' . intdiv($minutosMesa, 60) . 'h ' . ($minutosMesa % 60) . 'min</span>';
+            }
+        }
+        $nomeEscapado = htmlspecialchars((string)$nome, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
+        $situacaoMesaEscapada = htmlspecialchars($situacaoMesa, ENT_QUOTES, 'UTF-8');
 		if($nome_cliente != ""){
 			$area_nome_cliente = '<span style="color:#133591; font-size: 12px; font-family: Arial, Helvetica, sans-serif;
 font-weight:600;
@@ -183,8 +199,9 @@ letter-spacing:0.5px; ">GARÇON: '.mb_strtoupper($nome_garcon).'</span>';
 		
 
 		echo <<<HTML
-			<div class="col-xs-12 col-md-3  widget cardTarefas " style="margin-right: 5px; margin-bottom: 5px; display: inline-block; width:100%">
+			<div class="col-xs-12 col-md-3 widget cardTarefas mesa-card {$classeMesa}" style="margin-right: 5px; margin-bottom: 5px; display: inline-block; width:100%">
         		<div class="r3_counter_box">
+                <div class="mesa-card-topo"><strong>Mesa {$nomeEscapado}</strong><span class="mesa-status">{$situacaoMesaEscapada}</span></div>
 
 				<span  class="{$mostrar_fechar}" style="position:absolute; top:5px; right:8px">
 				<a href="#" onclick="fecharMesa('{$id}', '{$nome}', '{$obs}', '{$id_abertura_mesa}', '{$total_couvert}', '{$total_comissaoC}', '{$subtotalC}', '{$garcon}', '{$total_mesa}', '{$total_valor}')" title="Fechar Mesa">
@@ -219,7 +236,8 @@ letter-spacing:0.5px; ">GARÇON: '.mb_strtoupper($nome_garcon).'</span>';
         		</div>     		
        					
 
-        		<hr style="margin-bottom: 3px">
+        		<div class="mesa-duracao">{$duracaoMesa}</div>
+                <hr style="margin-bottom: 3px">
                     <div class="stats" align="center">
                       <span>                     
 
@@ -240,6 +258,17 @@ HTML;
 
 
 ?>
+<style>
+.mesa-card{border:1px solid #e2e8f0;border-radius:14px;overflow:hidden;box-shadow:0 3px 12px #00000010;transition:box-shadow .2s,transform .2s}
+.mesa-card:hover{box-shadow:0 6px 18px #00000020;transform:translateY(-2px)}
+.mesa-card-topo{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:12px;padding-right:50px;font-size:14px}
+.mesa-status{border-radius:20px;padding:4px 10px;font-size:11px;font-weight:700;background:#e2e8f0;color:#334155}
+.mesa-card-livre{border-top:4px solid #16a34a}.mesa-card-livre .mesa-status{background:#dcfce7;color:#166534}
+.mesa-card-ocupada{border-top:4px solid #ea580c}.mesa-card-ocupada .mesa-status{background:#ffedd5;color:#9a3412}
+.mesa-card-inativa{border-top:4px solid #94a3b8;opacity:.75}
+.mesa-duracao{font-size:12px;font-weight:600;color:#475569;margin-top:8px}
+@media(max-width:600px){.mesa-card{margin-right:0!important}.mesa-card-topo{padding-right:45px}}
+</style>
 
 <script type="text/javascript">
 	function editar(id, cliente, garcon, obs, pessoas) {
