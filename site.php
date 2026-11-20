@@ -423,7 +423,7 @@ a[href="/meus-pedidos"].btn-warning { background:#a85b24 !important; border-colo
   }
 /* O banner da vitrine deve aparecer também no desktop. */
 @media (min-width: 768px) {
-  body.cardapio-unificado #slider.ocultar-banner-web { display: block !important; }
+  #slider.ocultar-banner-web { display: block !important; visibility: visible !important; }
 }
 
 /* Cabeçalho mobile compacto: mantém a logo legível e elimina espaço vazio antes do banner. */
@@ -539,7 +539,7 @@ if ($id_mesa == "" && $sessão_balcao == "") {
       ?>
 
 
-          <div class="flexslider">
+          <div class="flexslider" aria-label="Banners promocionais">
             <ul class="slides">
 
               <?php
@@ -569,12 +569,6 @@ if ($id_mesa == "" && $sessão_balcao == "") {
                   $ativo = '';
                 }
               ?>
-
-                <div class="carousel-item <?php echo $ativo ?>">
-                  <a href="<?php echo $url ?>">
-                    <img class="d-block w-100" src="/sistema/painel/images/banner_rotativo/<?php echo $foto ?>" alt="First slide" width="100%">
-                  </a>
-                </div>
 
                 <li>
                   <a href="<?php echo $url ?>">
