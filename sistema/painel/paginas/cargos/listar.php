@@ -57,6 +57,7 @@ HTML;
 <td><strong>{$nome_html}</strong></td><td><span class="badge bg-light text-dark">{$total_funcionarios} funcionário(s)</span></td>
 
 <td>
+	<button type="button" class="btn btn-outline-secondary btn-sm" onclick="bcAbrirCargoPermissoes('{$id}',{$nome_js})" title="Configurar modelo de acessos"><i class="fa-solid fa-shield-halved"></i> Acessos</button>
 	<big><a class="btn btn-info-light btn-sm" href="#" onclick="editar('{$id}',{$nome_js})" title="Editar Dados"><i class="fa fa-edit "></i></a></big>
 
 <big><a href="#" class="btn btn-danger-light btn-sm" onclick="excluir('{$id}')" title="Excluir"><i class="fa fa-trash-can text-danger"></i></a></big>
