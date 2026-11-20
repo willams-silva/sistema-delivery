@@ -531,7 +531,8 @@ if ($id_mesa == "" && $sessão_balcao == "") {
 
       <?php
       if ($banner_rotativo == 'Sim') {
-        $query = $pdo->query("SELECT * FROM banner_rotativo where empresa = '$id_empresa'");
+        $query = $pdo->prepare("SELECT id, foto, categoria FROM banner_rotativo WHERE empresa = :empresa AND ativo = 'Sim' AND (inicio_em IS NULL OR inicio_em <= NOW()) AND (fim_em IS NULL OR fim_em >= NOW()) ORDER BY ordem ASC, id DESC");
+        $query->execute([':empresa'=>(int)$id_empresa]);
         $res = $query->fetchAll(PDO::FETCH_ASSOC);
         $total_reg = @count($res);
         if ($total_reg > 0) {
@@ -545,15 +546,17 @@ if ($id_mesa == "" && $sessão_balcao == "") {
               for ($i = 0; $i < $total_reg; $i++) {
                 foreach ($res[$i] as $key => $value) {
                 }
-                $foto = $res[$i]['foto'];
+                $foto = basename((string)$res[$i]['foto']);
+                if(!preg_match('/^[a-zA-Z0-9_.-]+$/D',$foto)) $foto='sem-foto.jpg';
                 $categoria = $res[$i]['categoria'];
 
 
-                $query2 = $pdo->query("SELECT * FROM categorias where id = '$categoria'");
+                $query2 = $pdo->prepare('SELECT url FROM categorias WHERE id = :id AND empresa = :empresa LIMIT 1');
+                $query2->execute([':id'=>(int)$categoria, ':empresa'=>(int)$id_empresa]);
                 $res2 = $query2->fetchAll(PDO::FETCH_ASSOC);
                 $total_reg2 = @count($res2);
                 if ($total_reg2 > 0) {
-                  $url = 'categoria-' . $res2[0]['url'];
+                  $url = 'categoria-' . rawurlencode((string)$res2[0]['url']);
                 } else {
                   $url = '#';
                 }
