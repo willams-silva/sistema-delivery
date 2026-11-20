@@ -18,3 +18,11 @@ if (!$bcUsuario || $bcUsuario<=0) bcPermissaoErro(400,'Usuário inválido');
 $q=$pdo->prepare('SELECT id FROM usuarios WHERE id=:id AND empresa=:empresa LIMIT 1');
 $q->execute([':id'=>$bcUsuario,':empresa'=>$bcEmpresa]);
 if (!$q->fetchColumn()) bcPermissaoErro(404,'Usuário não pertence a esta empresa');
+
+$bcAlvoNivelQuery=$pdo->prepare('SELECT nivel FROM usuarios WHERE id=:id AND empresa=:empresa LIMIT 1');
+$bcAlvoNivelQuery->execute([':id'=>$bcUsuario,':empresa'=>$bcEmpresa]);
+$bcAlvoNivel=(string)$bcAlvoNivelQuery->fetchColumn();
+// Alterar os acessos do próprio administrador pode provocar perda de acesso acidental.
+if ($bcUsuario===$bcOperador && basename((string)($_SERVER['SCRIPT_NAME']??''))==='limpar_permissoes.php') {
+ bcPermissaoErro(409,'Não é permitido remover todas as permissões do próprio administrador');
+}
