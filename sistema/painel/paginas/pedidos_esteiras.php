@@ -443,6 +443,36 @@ $(document).on('show.bs.modal', '#modalBaixar', function(){
 
 
 <script type="text/javascript">
+    function imprimirPedidoEsteira(id, tipo){
+        const destino=tipo==='Balcão'?'rel/comprovante_balcao.php':'rel/comprovante.php';
+        const janela=window.open(destino+'?id='+encodeURIComponent(id),'_blank');
+        if(!janela){
+            Swal.fire({icon:'warning',title:'Janela bloqueada',text:'Permita pop-ups para abrir o cupom. O pedido continua pendente de impressão.'});
+            return;
+        }
+        Swal.fire({
+            title:'O cupom foi impresso?',
+            text:'Confirme somente depois de verificar a impressão física. Caso contrário, poderá tentar novamente.',
+            icon:'question',
+            showCancelButton:true,
+            confirmButtonText:'Sim, foi impresso',
+            cancelButtonText:'Ainda não',
+            reverseButtons:true
+        }).then(function(resultado){
+            if(!resultado.isConfirmed)return;
+            $.ajax({
+                url:'paginas/pedidos/confirmar_impressao.php',
+                method:'POST',
+                dataType:'json',
+                data:{id:id,confirmado:'1'}
+            }).done(function(resposta){
+                if(resposta.ok){listar();}
+                else Swal.fire({icon:'error',text:resposta.mensagem||'Não foi possível confirmar'});
+            }).fail(function(xhr){
+                Swal.fire({icon:'error',text:xhr.responseJSON?.mensagem||'Falha ao registrar a impressão. Tente novamente.'});
+            });
+        });
+    }
     let idsEsteiraAnteriores=null;
     let somEsteiraAtivo=false;
     const audioEsteira=new Audio('../../img/audio.mp3');
