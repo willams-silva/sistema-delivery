@@ -219,6 +219,47 @@ if (@$pausar_delivery == 'Sim') {
     </div>
 </div>
 
+<div class="d-flex align-items-center justify-content-between flex-wrap gap-2 mb-3" id="bc-pedidos-modos">
+ <span class="small text-muted">Visualização dos pedidos</span>
+ <div class="btn-group" role="group" aria-label="Modo de visualização dos pedidos">
+  <button type="button" class="btn btn-outline-primary btn-sm active" id="bc-pedidos-cartoes" aria-pressed="true" onclick="bcMudarVisaoPedidos('cartoes')"><i class="fa fa-th-large me-1"></i> Cartões</button>
+  <button type="button" class="btn btn-outline-primary btn-sm" id="bc-pedidos-tabela" aria-pressed="false" onclick="bcMudarVisaoPedidos('tabela')"><i class="fa fa-list me-1"></i> Tabela</button>
+ </div>
+</div>
+<style>
+#listar.bc-pedidos-cartoes .ux-orders-scroll-region{overflow:visible!important}
+#listar.bc-pedidos-cartoes .ux-orders-table{display:block!important;width:100%!important;border:0!important;background:transparent!important}
+#listar.bc-pedidos-cartoes .ux-orders-table thead{display:none!important}
+#listar.bc-pedidos-cartoes .ux-orders-table tbody{display:grid!important;grid-template-columns:repeat(auto-fit,minmax(min(100%,310px),1fr));gap:14px;width:100%}
+#listar.bc-pedidos-cartoes .ux-orders-table tbody tr{display:flex!important;flex-direction:column;gap:7px;min-width:0;border:1px solid #e2e8f0;border-top:4px solid #f59e0b;border-radius:14px;background:#fff;padding:14px;box-shadow:0 3px 12px #0000000d;white-space:normal!important}
+#listar.bc-pedidos-cartoes .ux-orders-table tbody tr td{display:flex!important;align-items:flex-start;justify-content:space-between;gap:10px;width:100%!important;max-width:100%;border:0!important;padding:5px 0!important;white-space:normal!important;overflow-wrap:anywhere}
+#listar.bc-pedidos-cartoes .ux-orders-table tbody tr td::before{font-weight:600;color:#64748b;font-size:12px;flex:0 0 85px}
+#listar.bc-pedidos-cartoes .ux-orders-table tbody tr td:nth-child(1)::before{content:"Cliente"}
+#listar.bc-pedidos-cartoes .ux-orders-table tbody tr td:nth-child(2)::before{content:"Valor"}
+#listar.bc-pedidos-cartoes .ux-orders-table tbody tr td:nth-child(3)::before{content:"Total pago"}
+#listar.bc-pedidos-cartoes .ux-orders-table tbody tr td:nth-child(4)::before{content:"Troco"}
+#listar.bc-pedidos-cartoes .ux-orders-table tbody tr td:nth-child(5)::before{content:"Pagamento"}
+#listar.bc-pedidos-cartoes .ux-orders-table tbody tr td:nth-child(6)::before{content:"Status"}
+#listar.bc-pedidos-cartoes .ux-orders-table tbody tr td:nth-child(7)::before{content:"Hora"}
+#listar.bc-pedidos-cartoes .ux-orders-table tbody tr td:nth-child(8){border-top:1px solid #e2e8f0!important;padding-top:10px!important;flex-wrap:wrap;justify-content:flex-start}
+#listar.bc-pedidos-cartoes .ux-orders-table tbody tr td:nth-child(8)::before{content:"Ações";flex-basis:100%}
+@media(max-width:600px){#listar.bc-pedidos-cartoes .ux-orders-table tbody{grid-template-columns:minmax(0,1fr)}}
+</style>
+<script>
+(function(){
+ window.bcVisaoPedidos='cartoes';
+ window.bcMudarVisaoPedidos=function(modo){
+  window.bcVisaoPedidos=modo==='tabela'?'tabela':'cartoes';
+  var painel=document.getElementById('listar');
+  if(painel)painel.classList.toggle('bc-pedidos-cartoes',window.bcVisaoPedidos==='cartoes');
+  ['cartoes','tabela'].forEach(function(item){
+   var botao=document.getElementById('bc-pedidos-'+item);
+   if(botao){var ativo=item===window.bcVisaoPedidos;botao.classList.toggle('active',ativo);botao.setAttribute('aria-pressed',String(ativo));}
+  });
+ };
+ window.bcMudarVisaoPedidos('cartoes');
+})();
+</script>
 	<hr>
 	<div id="listar">
 
