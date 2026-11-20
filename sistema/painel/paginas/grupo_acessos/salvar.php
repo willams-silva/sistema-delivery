@@ -1,31 +1,28 @@
-<?php 
-$tabela = 'grupo_acessos';
+<?php
+@session_start();
 require_once("../../../conexao.php");
+$empresa = (int) ($_SESSION['empresa'] ?? 0);
+$usuario = (int) ($_SESSION['id'] ?? 0);
+if ($empresa <= 0 || $usuario <= 0) { http_response_code(403); exit('Sessão inválida'); }
+$q = $pdo->prepare("SELECT nivel FROM usuarios WHERE id = :id AND empresa = :empresa LIMIT 1");
+$q->execute([':id'=>$usuario, ':empresa'=>$empresa]);
+if ($q->fetchColumn() !== 'Administrador') { http_response_code(403); exit('Somente administradores podem alterar permissões'); }
+$q = $pdo->prepare("SELECT alterar_acessos FROM config WHERE empresa = :empresa LIMIT 1");
+$q->execute([':empresa'=>$empresa]);
+if ($q->fetchColumn() !== 'Sim') { http_response_code(403); exit('Alteração de acessos desabilitada para esta empresa'); }
+if (($_SERVER['REQUEST_METHOD'] ?? '') !== 'POST') { http_response_code(405); exit('Método não permitido'); }
 
-
-
-$nome = $_POST['nome'];
-$id = $_POST['id'];
-
-//validacao nome
-$query = $pdo->query("SELECT * from $tabela where nome = '$nome'");
-$res = $query->fetchAll(PDO::FETCH_ASSOC);
-$id_reg = @$res[0]['id'];
-if(@count($res) > 0 and $id != $id_reg){
-	echo 'Nome já Cadastrado!';
-	exit();
+$id = (int) ($_POST['id'] ?? 0);
+$nome = trim((string) ($_POST['nome'] ?? ''));
+if ($nome === '' || mb_strlen($nome, 'UTF-8') > 100 || $id < 0) { http_response_code(400); exit('Nome do grupo inválido'); }
+$q = $pdo->prepare("SELECT id FROM grupo_acessos WHERE nome = :nome AND id <> :id LIMIT 1");
+$q->execute([':nome'=>$nome, ':id'=>$id]);
+if ($q->fetchColumn()) { exit('Nome já Cadastrado!'); }
+if ($id > 0) {
+    $q = $pdo->prepare("UPDATE grupo_acessos SET nome = :nome WHERE id = :id");
+    $q->execute([':nome'=>$nome, ':id'=>$id]);
+} else {
+    $q = $pdo->prepare("INSERT INTO grupo_acessos (nome) VALUES (:nome)");
+    $q->execute([':nome'=>$nome]);
 }
-
-
-if($id == ""){
-$query = $pdo->prepare("INSERT INTO $tabela SET nome = :nome ");
-	
-}else{
-$query = $pdo->prepare("UPDATE $tabela SET nome = :nome where id = '$id'");
-}
-$query->bindValue(":nome", "$nome");
-
-$query->execute();
-
 echo 'Salvo com Sucesso';
- ?>
