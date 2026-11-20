@@ -541,7 +541,7 @@ if ($id_mesa == "" && $sessão_balcao == "") {
 
 
 
-  <div id="slider" style="margin-top: 50px;" class="ocultar-banner-web">
+  <div id="slider" style="margin-top: 50px;" class="bc-banner-publico">
 
     <?php if(@$pausar_delivery == 'Sim'){ ?>
   <div class="alert alert-warning">
