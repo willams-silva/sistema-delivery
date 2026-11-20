@@ -70,6 +70,7 @@ $segundos = $tempo_atualizar * 1000;
 				<span class="badge bg-light rounded-pill ms-1" id="ent_pedidos">0</span>
 			</button>
 
+			<button type="button" id="bc-kanban-toggle" class="btn btn-outline-primary btn-sm mt-1 mb-1" aria-pressed="false"><i class="fa fa-columns"></i> Visualização Kanban</button>
 			<input type="hidden" id="buscar-contas">
 			<input type="hidden" id="id_pedido">
 
@@ -78,6 +79,7 @@ $segundos = $tempo_atualizar * 1000;
 
 
 	<hr>
+	<div id="bc-kanban" style="display:none" class="row g-2 mb-3"></div>
 	<div id="listar">
 
 	</div>
@@ -257,6 +259,7 @@ $segundos = $tempo_atualizar * 1000;
 
 			success: function(result) {
 				$("#listar").html(result);
+				if (window.bcAtualizarKanban) window.bcAtualizarKanban();
 				$('#mensagem-excluir').text('');
 			},
 			complete: function() { atualizacaoPedidosEmAndamento = false; }
@@ -374,4 +377,44 @@ $segundos = $tempo_atualizar * 1000;
 		});
 
 	});
+</script>
+<style>
+#bc-kanban .bc-kanban-col { background:#f3f4f6; border-radius:12px; padding:12px; min-height:160px; }
+#bc-kanban .bc-kanban-col h5 { font-size:14px; font-weight:700; color:#242b3a; }
+#bc-kanban .bc-kanban-items { display:flex; flex-direction:column; gap:10px; }
+#bc-kanban .bc-kanban-items > .widget { width:100% !important; max-width:100%; margin:0 !important; }
+#bc-kanban .bc-kanban-items > .widget > div { height:auto !important; min-height:150px; max-height:400px; overflow:auto !important; }
+</style>
+<script>
+(function(){
+  var ativo=false;
+  var estados=['Aguardando','Preparando','Pronto'];
+  window.bcAtualizarKanban=function(){
+    var origem=document.getElementById('listar'), destino=document.getElementById('bc-kanban');
+    if(!origem || !destino) return;
+    if(!ativo){destino.style.display='none';origem.style.display='';return;}
+    destino.style.display='flex';origem.style.display='none';
+    destino.innerHTML='';
+    estados.forEach(function(status){
+      var coluna=document.createElement('div');coluna.className='col-12 col-lg-4';
+      var painel=document.createElement('div');painel.className='bc-kanban-col';
+      var titulo=document.createElement('h5');titulo.textContent=status;
+      var itens=document.createElement('div');itens.className='bc-kanban-items';
+      var cards=origem.querySelectorAll('.widget');
+      cards.forEach(function(card){
+        var botao=card.querySelector('[id^="area_status_"] a');
+        if(botao && botao.textContent.trim().indexOf(status)===0) itens.appendChild(card.cloneNode(true));
+      });
+      if(!itens.children.length){var vazio=document.createElement('small');vazio.className='text-muted';vazio.textContent='Nenhum pedido';itens.appendChild(vazio);}
+      painel.appendChild(titulo);painel.appendChild(itens);coluna.appendChild(painel);destino.appendChild(coluna);
+    });
+  };
+  var botao=document.getElementById('bc-kanban-toggle');
+  if(botao)botao.addEventListener('click',function(){
+    ativo=!ativo;botao.setAttribute('aria-pressed',String(ativo));
+    botao.classList.toggle('btn-primary',ativo);
+    botao.classList.toggle('btn-outline-primary',!ativo);
+    window.bcAtualizarKanban();
+  });
+})();
 </script>
