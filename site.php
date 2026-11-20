@@ -421,35 +421,14 @@ a[href="/meus-pedidos"].btn-warning { background:#a85b24 !important; border-colo
     background: #f9e5df;
     color: #a9432b;
   }
-/* Banner público: visível em todas as resoluções, inclusive desktop.
-   Evita depender de regras antigas de ocultação do tema. */
-#slider.bc-banner-publico {
-  display: block !important;
-  visibility: visible !important;
-  opacity: 1 !important;
-  width: 100%;
-  height: auto;
-}
-#slider.bc-banner-publico .flexslider {
-  display: block !important;
-  visibility: visible !important;
-  width: 100%;
-}
-#slider.bc-banner-publico .slides img {
-  display: block;
-  width: 100%;
-  height: auto;
-  object-fit: cover;
-}
-/* FlexSlider esconde os slides por padrão. Sem inicialização JS,
-   mantenha pelo menos o primeiro banner visível. */
-#slider.bc-banner-publico .flexslider:not(:has(.flex-viewport)) .slides > li:first-child {
-  display: block !important;
-}
-@media (min-width: 768px) {
-  #slider.bc-banner-publico { margin-top: 80px !important; }
-  #slider.bc-banner-publico .flexslider { max-width: 1400px; margin: 0 auto; }
-}
+/* Carrossel isolado do FlexSlider e do Bootstrap, para desktop e mobile. */
+#slider.bc-banner-publico { display:block !important; visibility:visible !important; width:100%; }
+#slider .bc-banner-carousel { position:relative; display:block !important; width:min(100%,1400px); margin:0 auto; overflow:hidden; border-radius:12px; }
+#slider .bc-banner-slide { display:none !important; width:100%; }
+#slider .bc-banner-slide.bc-banner-active { display:block !important; }
+#slider .bc-banner-slide img { display:block !important; width:100%; height:auto; object-fit:contain; }
+@media(min-width:768px) { #slider.bc-banner-publico { margin-top:80px !important; } }
+@media(max-width:767px) { #slider .bc-banner-carousel { border-radius:0; } }
 
 /* Cabeçalho mobile compacto: mantém a logo legível e elimina espaço vazio antes do banner. */
 @media (max-width: 767px) {
@@ -564,50 +543,54 @@ if ($id_mesa == "" && $sessão_balcao == "") {
       ?>
 
 
-          <div class="flexslider" aria-label="Banners promocionais">
-            <ul class="slides">
-
-              <?php
-              for ($i = 0; $i < $total_reg; $i++) {
-                foreach ($res[$i] as $key => $value) {
-                }
-                $foto = basename((string)$res[$i]['foto']);
-                if(!preg_match('/^[a-zA-Z0-9_.-]+$/D',$foto)) $foto='sem-foto.jpg';
-                $categoria = $res[$i]['categoria'];
-
-
+          <div id="bc-banner-carousel" class="bc-banner-carousel" aria-label="Banners promocionais">
+            <?php
+            foreach ($res as $indice => $banner) {
+              $foto = basename((string)$banner['foto']);
+              if (!preg_match('/^[a-zA-Z0-9_.-]+$/D', $foto)) continue;
+              $categoria = (int)$banner['categoria'];
+              $url = '#';
+              if ($categoria > 0) {
                 $query2 = $pdo->prepare('SELECT url FROM categorias WHERE id = :id AND empresa = :empresa LIMIT 1');
-                $query2->execute([':id'=>(int)$categoria, ':empresa'=>(int)$id_empresa]);
-                $res2 = $query2->fetchAll(PDO::FETCH_ASSOC);
-                $total_reg2 = @count($res2);
-                if ($total_reg2 > 0) {
-                  $url = 'categoria-' . rawurlencode((string)$res2[0]['url']);
-                } else {
-                  $url = '#';
+                $query2->execute([':id' => $categoria, ':empresa' => (int)$id_empresa]);
+                $categoriaUrl = $query2->fetchColumn();
+                if ($categoriaUrl !== false && $categoriaUrl !== '') {
+                  $url = 'categoria-' . rawurlencode((string)$categoriaUrl);
                 }
-
-
-
-                if ($i == 0) {
-                  $ativo = 'active';
-                } else {
-                  $ativo = '';
-                }
-              ?>
-
-                <li>
-                  <a href="<?php echo $url ?>">
-                    <img src="/sistema/painel/images/banner_rotativo/<?php echo $foto ?>" alt="" />
-                  </a>
-                </li>
-
-
-
-
-              <?php } ?>
-            </ul>
+              }
+            ?>
+              <a class="bc-banner-slide<?php echo $indice === 0 ? ' bc-banner-active' : ''; ?>"
+                 href="<?php echo htmlspecialchars($url, ENT_QUOTES, 'UTF-8'); ?>"
+                 <?php echo $indice === 0 ? '' : 'aria-hidden="true" tabindex="-1"'; ?>>
+                <img src="/sistema/painel/images/banner_rotativo/<?php echo rawurlencode($foto); ?>"
+                     alt="Banner promocional" <?php echo $indice === 0 ? 'fetchpriority="high"' : 'loading="lazy"'; ?>>
+              </a>
+            <?php } ?>
           </div>
-
+          <script>
+          (function () {
+            function iniciarBanner() {
+              var root = document.getElementById('bc-banner-carousel');
+              if (!root || root.dataset.iniciado === '1') return;
+              root.dataset.iniciado = '1';
+              var slides = Array.prototype.slice.call(root.querySelectorAll('.bc-banner-slide'));
+              if (slides.length < 2) return;
+              var atual = 0;
+              window.setInterval(function () {
+                if (document.hidden) return;
+                slides[atual].classList.remove('bc-banner-active');
+                slides[atual].setAttribute('aria-hidden', 'true');
+                slides[atual].setAttribute('tabindex', '-1');
+                atual = (atual + 1) % slides.length;
+                slides[atual].classList.add('bc-banner-active');
+                slides[atual].removeAttribute('aria-hidden');
+                slides[atual].removeAttribute('tabindex');
+              }, 5000);
+            }
+            if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', iniciarBanner);
+            else iniciarBanner();
+          })();
+          </script>
 
       <?php }
       } ?>
