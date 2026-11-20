@@ -281,6 +281,7 @@ if ($total_reg > 0) {
         <div style="margin-top: 5px">
           <span><small><i><span style="color:#000">{$nome_garcon} </span></i></small></span>  
           <a style="position:absolute; right:20px" class="btn btn-dark-light btn-sm" href="#" onclick="gerarComprovante('{$id}')" title="Abrir comanda de Bar para impressao manual"><i class="fa fa-file-pdf-o"></i></a>        
+          <button type="button" class="btn btn-outline-secondary btn-sm" style="font-size:10px;padding:3px 6px" onclick="bcHistoricoLocal('{$id}', 'Bar')" title="Consultar historico de movimentacoes"><i class="fa fa-history"></i> Histórico</button>
         </div>
 
         <div style="border-bottom: 1px solid #000">
@@ -598,4 +599,18 @@ $total_dos_itens_pedidos = @count($res);
     a.href = 'rel/comprovante_item_mesa.php?id=' + id;
     a.click();
   }
+</script>
+<script>
+window.bcHistoricoLocal = window.bcHistoricoLocal || function(id,setor){
+  var endereco='paginas/pedidos/historico_local.php?id='+encodeURIComponent(id)+'&setor='+encodeURIComponent(setor);
+  fetch(endereco,{credentials:'same-origin',cache:'no-store'})
+    .then(function(res){return res.json().then(function(d){if(!res.ok)throw new Error(d.erro||'Falha ao consultar historico');return d;});})
+    .then(function(d){
+      var registros=d.historico||[];
+      var texto=registros.length?registros.map(function(r){
+        return r.criado_em+' | Operador #'+r.usuario_id+' | '+r.status_anterior+' → '+r.status_novo;
+      }).join('\\n'):'Nenhuma movimentacao registrada para este item.';
+      alert('Histórico do pedido #'+id+' ('+setor+')\\n\\n'+texto);
+    }).catch(function(e){alert('Histórico indisponível: '+e.message);});
+};
 </script>
