@@ -36,6 +36,10 @@ $nome = $_POST['nome'];
 $email = $_POST['email'];
 $telefone = $_POST['telefone'];
 $nivel = $_POST['nivel'];
+if ($nivel === 'Administrador' && $nivel_operador !== 'Administrador') {
+    http_response_code(403);
+    exit('Somente administradores podem atribuir o nível Administrador');
+}
 $cargo = $pdo->prepare("SELECT 1 FROM cargos WHERE nome = :nome AND empresa = :empresa LIMIT 1");
 $cargo->execute([':nome' => $nivel, ':empresa' => $id_empresa]);
 if (!$cargo->fetchColumn()) {
