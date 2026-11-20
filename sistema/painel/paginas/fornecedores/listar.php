@@ -76,26 +76,61 @@ HTML;
 		}
 
 
+
+        // Dados em HTML e argumentos JS devem ser codificados separadamente.
+        $html_id = htmlspecialchars((string) $id, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
+        $js_id = htmlspecialchars(json_encode((string) $id, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_INVALID_UTF8_SUBSTITUTE), ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
+        $html_nome = htmlspecialchars((string) $nome, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
+        $js_nome = htmlspecialchars(json_encode((string) $nome, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_INVALID_UTF8_SUBSTITUTE), ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
+        $html_telefone = htmlspecialchars((string) $telefone, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
+        $js_telefone = htmlspecialchars(json_encode((string) $telefone, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_INVALID_UTF8_SUBSTITUTE), ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
+        $html_email = htmlspecialchars((string) $email, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
+        $js_email = htmlspecialchars(json_encode((string) $email, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_INVALID_UTF8_SUBSTITUTE), ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
+        $html_endereco = htmlspecialchars((string) $endereco, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
+        $js_endereco = htmlspecialchars(json_encode((string) $endereco, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_INVALID_UTF8_SUBSTITUTE), ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
+        $html_pix = htmlspecialchars((string) $pix, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
+        $js_pix = htmlspecialchars(json_encode((string) $pix, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_INVALID_UTF8_SUBSTITUTE), ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
+        $html_numero = htmlspecialchars((string) $numero, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
+        $js_numero = htmlspecialchars(json_encode((string) $numero, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_INVALID_UTF8_SUBSTITUTE), ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
+        $html_bairro = htmlspecialchars((string) $bairro, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
+        $js_bairro = htmlspecialchars(json_encode((string) $bairro, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_INVALID_UTF8_SUBSTITUTE), ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
+        $html_cidade = htmlspecialchars((string) $cidade, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
+        $js_cidade = htmlspecialchars(json_encode((string) $cidade, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_INVALID_UTF8_SUBSTITUTE), ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
+        $html_estado = htmlspecialchars((string) $estado, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
+        $js_estado = htmlspecialchars(json_encode((string) $estado, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_INVALID_UTF8_SUBSTITUTE), ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
+        $html_cep = htmlspecialchars((string) $cep, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
+        $js_cep = htmlspecialchars(json_encode((string) $cep, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_INVALID_UTF8_SUBSTITUTE), ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
+        $html_cnpj = htmlspecialchars((string) $cnpj, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
+        $js_cnpj = htmlspecialchars(json_encode((string) $cnpj, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_INVALID_UTF8_SUBSTITUTE), ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
+        $html_complemento = htmlspecialchars((string) $complemento, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
+        $js_complemento = htmlspecialchars(json_encode((string) $complemento, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_INVALID_UTF8_SUBSTITUTE), ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
+        $html_tipo_chave = htmlspecialchars((string) $tipo_chave, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
+        $js_tipo_chave = htmlspecialchars(json_encode((string) $tipo_chave, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_INVALID_UTF8_SUBSTITUTE), ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
+        $html_dataF = htmlspecialchars((string) $dataF, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
+        $js_dataF = htmlspecialchars(json_encode((string) $dataF, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_INVALID_UTF8_SUBSTITUTE), ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
+        $html_chave_pix_mod = htmlspecialchars((string) $chave_pix_mod, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
+        $js_chave_pix_mod = htmlspecialchars(json_encode((string) $chave_pix_mod, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_INVALID_UTF8_SUBSTITUTE), ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
+
 		echo <<<HTML
 <tr>
 <td align="center">
 <div class="custom-checkbox custom-control">
-<input type="checkbox" class="custom-control-input" id="seletor-{$id}" onchange="selecionar('{$id}')">
-<label for="seletor-{$id}" class="custom-control-label mt-1 text-dark"></label>
+<input type="checkbox" class="custom-control-input" id="seletor-{$html_id}" onchange="selecionar({$js_id})">
+<label for="seletor-{$html_id}" class="custom-control-label mt-1 text-dark"></label>
 </div>
 </td>
-<td>{$nome}</td>
-<td>{$telefone}</td>
-<td>{$chave_pix_mod}</td>
-<td>{$cnpj}</td>
+<td>{$html_nome}</td>
+<td>{$html_telefone}</td>
+<td>{$html_chave_pix_mod}</td>
+<td>{$html_cnpj}</td>
 <td>
-	<a class="btn btn-info-light btn-sm" href="#" onclick="editar('{$id}','{$nome}','{$email}','{$telefone}','{$endereco}','{$pix}','{$numero}','{$bairro}','{$cidade}','{$estado}','{$cep}','{$cnpj}','{$complemento}', '{$tipo_chave}')" title="Editar Dados"><i class="fa fa-edit"></i></a>
+	<a class="btn btn-info-light btn-sm" href="#" onclick="editar({$js_id},{$js_nome},{$js_email},{$js_telefone},{$js_endereco},{$js_pix},{$js_numero},{$js_bairro},{$js_cidade},{$js_estado},{$js_cep},{$js_cnpj},{$js_complemento}, {$js_tipo_chave})" title="Editar Dados"><i class="fa fa-edit"></i></a>
 
-<big><a href="#" class="btn btn-danger-light btn-sm" onclick="excluir('{$id}')" title="Excluir"><i class="fa fa-trash-can"></i></a></big>
+<big><a href="#" class="btn btn-danger-light btn-sm" onclick="excluir({$js_id})" title="Excluir"><i class="fa fa-trash-can"></i></a></big>
 
-<a class="btn btn-warning-light btn-sm" href="#" onclick="mostrar('{$nome}','{$email}','{$telefone}','{$endereco}','{$pix}','{$dataF}','{$numero}','{$bairro}','{$cidade}','{$estado}','{$cep}','{$cnpj}','{$complemento}', '{$tipo_chave}')" title="Mostrar Dados"><i class="fa fa-info-circle"></i></a>
+<a class="btn btn-warning-light btn-sm" href="#" onclick="mostrar({$js_nome},{$js_email},{$js_telefone},{$js_endereco},{$js_pix},{$js_dataF},{$js_numero},{$js_bairro},{$js_cidade},{$js_estado},{$js_cep},{$js_cnpj},{$js_complemento}, {$js_tipo_chave})" title="Mostrar Dados"><i class="fa fa-info-circle"></i></a>
 
-<a class="btn btn-dark-light btn-sm" href="#" onclick="arquivo('{$id}', '{$nome}')" title="Inserir / Ver Arquivos"><i class="fa fa-file-o " ></i></a>
+<a class="btn btn-dark-light btn-sm" href="#" onclick="arquivo({$js_id}, {$js_nome})" title="Inserir / Ver Arquivos"><i class="fa fa-file-o " ></i></a>
 
 
 
