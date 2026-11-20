@@ -146,7 +146,10 @@ if (@$_FILES['foto']['name'] != "") {
         http_response_code(400);
         exit('O arquivo enviado não é uma imagem válida');
     }
-	if ($ext == 'png' or $ext == 'jpg' or $ext == 'jpeg' or $ext == 'gif' or $ext == 'PNG' or $ext == 'JPG' or $ext == 'JPEG' or $ext == 'GIF') {
+	if (in_array($ext, ['png', 'jpg', 'jpeg', 'gif'], true) &&
+        (($info_imagem[2] === IMAGETYPE_PNG && $ext === 'png') ||
+         ($info_imagem[2] === IMAGETYPE_GIF && $ext === 'gif') ||
+         ($info_imagem[2] === IMAGETYPE_JPEG && in_array($ext, ['jpg', 'jpeg'], true)))) {
 
 		//EXCLUO A FOTO ANTERIOR
 		if ($foto != "sem-foto.jpg") {
