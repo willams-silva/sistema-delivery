@@ -39,11 +39,23 @@ $(function(){if($.fn.DataTable){$('#tabela').DataTable({pageLength:10,order:[[1,
 function bcEditarAcesso(id,btn){
  var d=$(btn).attr('data-acesso');try{d=JSON.parse(d);}catch(e){return;}
  $('#mensagem').text('');$('#titulo_inserir').text('Editar acesso');
- $('#id').val(id);$('#nome').val(d[0]);$('#chave').val(d[1]);$('#grupo').val(d[2]);$('#pagina').val(d[3]);$('#modalForm').modal('show');
+ $('#id').val(id);$('#nome').val(d[0]);$('#chave').val(d[1]).prop('readonly',true).addClass('bg-light');$('#grupo').val(d[2]);$('#pagina').val(d[3]);$('#modalForm').modal('show');
 }
 function bcExcluirAcesso(id,usuarios,cargos){
  if(usuarios||cargos){Swal.fire('Acesso em uso','Remova os vínculos antes de excluir.','warning');return;}
- Swal.fire({title:'Excluir acesso?',text:'Essa definição é global e pode ser utilizada por outras empresas.',icon:'warning',showCancelButton:true,confirmButtonText:'Excluir',cancelButtonText:'Cancelar',confirmButtonColor:'#dc3545'}).then(function(r){if(r.isConfirmed)excluir(id);});
+ Swal.fire({title:'Excluir acesso?',text:'Essa definição é global e pode ser utilizada por outras empresas.',icon:'warning',showCancelButton:true,confirmButtonText:'Excluir',cancelButtonText:'Cancelar',confirmButtonColor:'#dc3545'}).then(function(r){if(r.isConfirmed)bcExcluirAcessoDireto(id);});
 }
-function limparCampos(){$('#id,#nome,#chave,#ids').val('');$('#grupo').val('0');$('#pagina').val('Sim');$('#btn-deletar').hide();}
+function bcExcluirAcessoDireto(id){
+ $.ajax({url:'paginas/acessos/excluir.php',method:'POST',data:{id:id},dataType:'text'})
+ .done(function(res){if(res.trim()==='Excluído com Sucesso'){listar();$('#ids').val('');$('#btn-deletar').hide();Swal.fire('Excluído','Acesso excluído com sucesso.','success');}else{Swal.fire('Não foi possível excluir',res,'warning');}})
+ .fail(function(xhr){Swal.fire('Exclusão bloqueada',(xhr.responseText||'Falha ao excluir.').slice(0,250),'warning');});
+}
+function bcSelecionarAcesso(id){
+ var ids=($('#ids').val()||'').split('-').filter(function(v){return /^[1-9][0-9]*$/.test(v);});
+ ids=ids.filter(function(v){return v!==String(id);});
+ if($('#seletor-'+id).is(':checked'))ids.push(String(id));
+ $('#ids').val(ids.length?ids.join('-')+'-':'');
+ $('#btn-deletar').toggle(ids.length>0);
+}
+function limparCampos(){$('#id,#nome,#chave,#ids').val('');$('#chave').prop('readonly',false).removeClass('bg-light');$('#grupo').val('0');$('#pagina').val('Sim');$('#btn-deletar').hide();}
 </script>
