@@ -421,9 +421,34 @@ a[href="/meus-pedidos"].btn-warning { background:#a85b24 !important; border-colo
     background: #f9e5df;
     color: #a9432b;
   }
-/* O banner da vitrine deve aparecer também no desktop. */
+/* Banner público: visível em todas as resoluções, inclusive desktop.
+   Evita depender de regras antigas de ocultação do tema. */
+#slider.ocultar-banner-web {
+  display: block !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+  width: 100%;
+  height: auto;
+}
+#slider.ocultar-banner-web .flexslider {
+  display: block !important;
+  visibility: visible !important;
+  width: 100%;
+}
+#slider.ocultar-banner-web .slides img {
+  display: block;
+  width: 100%;
+  height: auto;
+  object-fit: cover;
+}
+/* FlexSlider esconde os slides por padrão. Sem inicialização JS,
+   mantenha pelo menos o primeiro banner visível. */
+#slider.ocultar-banner-web .flexslider:not(:has(.flex-viewport)) .slides > li:first-child {
+  display: block !important;
+}
 @media (min-width: 768px) {
-  #slider.ocultar-banner-web { display: block !important; visibility: visible !important; }
+  #slider.ocultar-banner-web { margin-top: 80px !important; }
+  #slider.ocultar-banner-web .flexslider { max-width: 1400px; margin: 0 auto; }
 }
 
 /* Cabeçalho mobile compacto: mantém a logo legível e elimina espaço vazio antes do banner. */
