@@ -11,32 +11,33 @@ function bcHorarioEspecial(PDO $pdo, int $empresa, string $data): ?array
     return $horario ?: null;
 }
 
-/** A regra excepcional só substitui a regra semanal na data cadastrada. */
+/** Retorna verdadeiro para a janela iniciada na própria data. */
 function bcHorarioEspecialAberto(array $horario, string $agora): bool
 {
-    return $agora >= $horario['inicio'] && $agora <= $horario['fim'];
+    $inicio = substr($horario['inicio'], 0, 5);
+    $fim = substr($horario['fim'], 0, 5);
+    $hora = substr($agora, 0, 5);
+    return $fim < $inicio ? $hora >= $inicio : ($hora >= $inicio && $hora <= $fim);
 }
 
 /**
- * Funcionamento online: pausa/manual > fechamento integral do dia atual
- * > horário especial de hoje > janela noturna herdada de ontem
- * > fechamento semanal de hoje > horário normal de hoje.
- * O fechamento integral do dia atual impede pedidos mesmo durante a madrugada.
+ * Prioridade: pausa/manual > fechamento integral do dia corrente
+ * > continuidade de expediente especial de ontem > horário especial de hoje
+ * > continuidade normal de ontem > fechamento semanal > expediente normal.
+ * Um horário especial hoje só começa na sua hora de abertura, não apaga
+ * uma continuidade válida de ontem. Fechamento integral hoje bloqueia ambos.
  */
 function bcEstadoDelivery(PDO $pdo, int $empresa, string $data, string $hora, string $pausa, string $statusManual, string $abertura, string $fechamento): array
 {
     if ($pausa === 'Sim') return ['aberto'=>false, 'motivo'=>'pausado'];
     if ($statusManual === 'Fechado') return ['aberto'=>false, 'motivo'=>'manual'];
 
-    $q = $pdo->prepare('SELECT 1 FROM fechamentos_excepcionais WHERE empresa = :empresa AND data_fechamento = :data LIMIT 1');
-    $q->execute([':empresa'=>$empresa, ':data'=>$data]);
-    if ($q->fetchColumn()) return ['aberto'=>false, 'motivo'=>'fechamento_integral'];
-
-    $especial = bcHorarioEspecial($pdo, $empresa, $data);
-    if ($especial !== null) {
-        $aberto = bcHorarioEspecialAberto($especial, $hora);
-        return ['aberto'=>$aberto, 'motivo'=>$aberto?'horario_especial':'fora_horario_especial'];
-    }
+    $fechadoIntegral = static function(string $dia) use ($pdo, $empresa): bool {
+        $q = $pdo->prepare('SELECT 1 FROM fechamentos_excepcionais WHERE empresa = :empresa AND data_fechamento = :data LIMIT 1');
+        $q->execute([':empresa'=>$empresa, ':data'=>$dia]);
+        return (bool)$q->fetchColumn();
+    };
+    if ($fechadoIntegral($data)) return ['aberto'=>false, 'motivo'=>'fechamento_integral'];
 
     $dias = ['Domingo','Segunda-Feira','Terça-Feira','Quarta-Feira','Quinta-Feira','Sexta-Feira','Sábado'];
     $diaFechado = static function(string $diaData) use ($pdo, $empresa, $dias): bool {
@@ -45,24 +46,34 @@ function bcEstadoDelivery(PDO $pdo, int $empresa, string $data, string $hora, st
         $q->execute([':empresa'=>$empresa, ':dia'=>$dia]);
         return (bool)$q->fetchColumn();
     };
-    $inicio = substr($abertura,0,5);
-    $fim = substr($fechamento,0,5);
-    $agora = substr($hora,0,5);
 
-    // A janela após meia-noite pertence ao expediente do dia anterior.
-    if ($fim < $inicio && $agora <= $fim) {
-        $ontem = date('Y-m-d', strtotime($data . ' -1 day'));
-        $q = $pdo->prepare('SELECT 1 FROM fechamentos_excepcionais WHERE empresa = :empresa AND data_fechamento = :data LIMIT 1');
-        $q->execute([':empresa'=>$empresa, ':data'=>$ontem]);
-        $ontemFechado = (bool)$q->fetchColumn();
-        // Se ontem teve um horário especial diurno, não herdar o expediente padrão.
-        $ontemEspecial = bcHorarioEspecial($pdo, $empresa, $ontem);
-        if (!$ontemFechado && $ontemEspecial === null && !$diaFechado($ontem)) {
-            return ['aberto'=>true, 'motivo'=>'continuidade_madrugada'];
+    $agora = substr($hora, 0, 5);
+    $ontem = date('Y-m-d', strtotime($data . ' -1 day'));
+    $ontemEspecial = bcHorarioEspecial($pdo, $empresa, $ontem);
+    if (!$fechadoIntegral($ontem)) {
+        if ($ontemEspecial !== null) {
+            $inicioOntem = substr($ontemEspecial['inicio'], 0, 5);
+            $fimOntem = substr($ontemEspecial['fim'], 0, 5);
+            if ($fimOntem < $inicioOntem && $agora <= $fimOntem) {
+                return ['aberto'=>true, 'motivo'=>'continuidade_especial'];
+            }
+        } else {
+            $inicioNormal = substr($abertura, 0, 5);
+            $fimNormal = substr($fechamento, 0, 5);
+            if ($fimNormal < $inicioNormal && $agora <= $fimNormal && !$diaFechado($ontem)) {
+                return ['aberto'=>true, 'motivo'=>'continuidade_madrugada'];
+            }
         }
     }
 
+    $especial = bcHorarioEspecial($pdo, $empresa, $data);
+    if ($especial !== null) {
+        $aberto = bcHorarioEspecialAberto($especial, $hora);
+        return ['aberto'=>$aberto, 'motivo'=>$aberto?'horario_especial':'fora_horario_especial'];
+    }
     if ($diaFechado($data)) return ['aberto'=>false, 'motivo'=>'fechamento_semanal'];
+    $inicio = substr($abertura, 0, 5);
+    $fim = substr($fechamento, 0, 5);
     $aberto = $fim < $inicio ? $agora >= $inicio : ($agora >= $inicio && $agora <= $fim);
     return ['aberto'=>$aberto, 'motivo'=>$aberto?'horario_normal':'fora_horario_normal'];
 }
