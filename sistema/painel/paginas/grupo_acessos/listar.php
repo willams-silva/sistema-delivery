@@ -27,7 +27,7 @@ function bcEsc($v) {return htmlspecialchars((string)$v,ENT_QUOTES|ENT_SUBSTITUTE
 <tbody>
 <?php foreach($grupos as $g): $id=(int)$g['id']; $nome=(string)$g['nome']; ?>
 <tr>
-<td><input type="checkbox" class="bc-grupo-check" value="<?=$id?>" id="seletor-<?=$id?>" onchange="selecionar('<?=$id?>')" aria-label="Selecionar <?=bcEsc($nome)?>"></td>
+<td><input type="checkbox" class="bc-grupo-check" value="<?=$id?>" id="seletor-<?=$id?>" onchange="bcGrupoAtualizarSelecao()" aria-label="Selecionar <?=bcEsc($nome)?>"></td>
 <td class="bc-grupo-nome"><?=bcEsc($nome)?></td>
 <td><span class="badge bg-secondary"><?= (int)$g['total_acessos'] ?></span></td>
 <td>
@@ -50,7 +50,7 @@ function bcEsc($v) {return htmlspecialchars((string)$v,ENT_QUOTES|ENT_SUBSTITUTE
   });
  });
  $('#bc-grupo-todos').on('change',function(){
-  tabela.find('.bc-grupo-check:visible').prop('checked',this.checked).trigger('change');
+  tabela.find('tbody tr:visible .bc-grupo-check').prop('checked',this.checked);bcGrupoAtualizarSelecao();
  });
  tabela.on('click','.bc-grupo-editar',function(){
   $('#mensagem').text('');$('#titulo_inserir').text('Editar grupo');
@@ -63,6 +63,13 @@ function bcEsc($v) {return htmlspecialchars((string)$v,ENT_QUOTES|ENT_SUBSTITUTE
   Swal.fire({icon:'warning',title:'Excluir grupo?',text:'Deseja excluir '+nome+'?',showCancelButton:true,confirmButtonText:'Excluir',cancelButtonText:'Cancelar',confirmButtonColor:'#dc3545'}).then(function(r){if(r.isConfirmed){$.post('paginas/grupo_acessos/excluir.php',{id:id},function(msg){if(String(msg).trim()==='Excluído com Sucesso'){listar();Swal.fire({icon:'success',title:'Grupo excluído',timer:1200,showConfirmButton:false});}else{Swal.fire({icon:'warning',text:String(msg)});}},'text').fail(function(xhr){Swal.fire({icon:'error',title:'Não foi possível excluir',text:(xhr.responseText||'Verifique suas permissões.').replace(/<[^>]*>/g,'').slice(0,250)});});}});
  });
 })();
+function bcGrupoAtualizarSelecao(){
+ var ids=$('#bc-grupos-tabela .bc-grupo-check:checked').map(function(){return this.value;}).get();
+ $('#ids').val(ids.length?ids.join('-')+'-':'');
+ $('#btn-deletar').toggle(ids.length>0);
+ var todas=$('#bc-grupos-tabela tbody tr:visible .bc-grupo-check');
+ $('#bc-grupo-todos').prop('checked',todas.length>0 && todas.filter(':checked').length===todas.length);
+}
 function limparCampos(){
  $('#id').val('');$('#nome').val('');$('#ids').val('');
  $('#btn-deletar').hide();$('#bc-grupo-todos').prop('checked',false);
