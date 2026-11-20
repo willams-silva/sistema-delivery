@@ -35,7 +35,7 @@ if ($total_reg > 0) {
   echo '<span class="badge bg-'.$corCard.' mb-3">'.$rotuloCard.'</span><div class="d-flex gap-2 justify-content-center flex-wrap">';
   echo '<button type="button" class="btn btn-sm btn-outline-primary" onclick="editar('.$idCard.', '.htmlspecialchars(json_encode((string)$mesaCard['nome']),ENT_QUOTES,'UTF-8').')" title="Editar mesa"><i class="fa fa-edit"></i></button>';
   echo '<button type="button" class="btn btn-sm btn-outline-dark" onclick="gerarQrCode('.$idCard.', '.htmlspecialchars(json_encode((string)$mesaCard['nome']),ENT_QUOTES,'UTF-8').')" title="QR Code"><i class="fa fa-qrcode"></i></button>';
-  if($abertaCard) echo '<a class="btn btn-sm btn-outline-success" href="lista_pedidos_mesas" title="Consultar pedidos das mesas"><i class="fa fa-list-alt"></i> Pedidos</a>';
+  if($abertaCard) echo '<a class="btn btn-sm btn-outline-success" href="lista_pedidos_mesas?mesa='.$idCard.'" title="Consultar histórico da mesa"><i class="fa fa-list-alt"></i> Pedidos</a>';
   echo '</div></div></div>';
  }
  echo '</div><div id="bc-mesas-tabela">';
