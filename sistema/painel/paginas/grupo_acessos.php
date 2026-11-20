@@ -15,14 +15,7 @@ if(@$grupo_acessos == 'ocultar'){
 
 
 
-<div class="dropdown" style="display: inline-block;">                      
-                        <a href="#" aria-expanded="false" aria-haspopup="true" data-bs-toggle="dropdown" class="btn btn-danger dropdown" id="btn-deletar" style="display:none"><i class="fe fe-trash-2"></i> Deletar</a>
-                        <div  class="dropdown-menu tx-13">
-                        <div style="width: 240px; padding:15px 5px 0 10px;" class="dropdown-item-text">
-                        <p>Excluir Selecionados? <a href="#" onclick="deletarSel()"><span class="text-danger">Sim</span></a></p>
-                        </div>
-                        </div>
-                        </div>
+<button type="button" class="btn btn-outline-danger" id="btn-deletar" style="display:none" onclick="bcExcluirGruposSelecionados()"><i class="fa-solid fa-trash-can me-1"></i>Excluir selecionados</button>
 
 </div>
 
@@ -101,3 +94,18 @@ $(document).ajaxError(function (_event, xhr, settings) {
 
 
 
+
+<script>
+function bcExcluirGruposSelecionados(){
+ var selecionados=$('#bc-grupos-tabela .bc-grupo-check:checked').map(function(){return this.value;}).get();
+ if(!selecionados.length)return;
+ Swal.fire({icon:'warning',title:'Excluir '+selecionados.length+' grupo(s)?',text:'A operação será cancelada se qualquer grupo tiver acessos vinculados.',showCancelButton:true,confirmButtonText:'Excluir grupos',cancelButtonText:'Cancelar',confirmButtonColor:'#dc3545'}).then(function(res){
+  if(!res.isConfirmed)return;
+  var botao=$('#btn-deletar');botao.prop('disabled',true);
+  $.ajax({url:'paginas/grupo_acessos/excluir_lote.php',method:'POST',data:{ids:selecionados},dataType:'json'})
+   .done(function(r){Swal.fire({icon:'success',title:r.excluidos+' grupo(s) excluído(s)',timer:1600,showConfirmButton:false});$('#ids').val('');botao.hide();listar();})
+   .fail(function(xhr){Swal.fire({icon:'error',title:'Exclusão não realizada',text:xhr.responseJSON&&xhr.responseJSON.erro||'Não foi possível concluir a operação.'});})
+   .always(function(){botao.prop('disabled',false);});
+ });
+}
+</script>
