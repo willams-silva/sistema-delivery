@@ -302,6 +302,16 @@ if($linhas == 0){
 .slide-menu li:has(> .pedidos-locais-link)::before { content: none !important; display: none !important; }
 </style>
 
+<style id="bc-config-menu-icons">
+/* Configurações: remove marcadores do tema, mantendo os ícones. */
+.slide-menu .bc-config-link { display:flex !important; align-items:center; gap:10px; }
+.slide-menu .bc-config-link::before,
+.slide-menu .bc-config-link::after,
+.slide-menu li:has(> .bc-config-link)::before,
+.slide-menu li:has(> .bc-config-link)::after { content:none !important; display:none !important; }
+.slide-menu .bc-config-link > i { flex:0 0 17px; width:17px; text-align:center; font-size:14px; margin-right:0 !important; }
+</style>
+
 <style id="bc-pessoas-menu-icons">
 /* Pessoas: remove os pontos do tema e alinha os icones dos submenus */
 .slide-menu .bc-pessoas-link { display: flex !important; align-items: center; gap: 10px; }
@@ -892,11 +902,11 @@ if($linhas == 0){
 							<li class="slide <?php echo @$menu_cadastros ?>">
 								<a class="side-menu__item" data-bs-toggle="slide" href="javascript:void(0);"><i class="fa-solid fa-gear text-white mt-1"></i><span class="side-menu__label" style="margin-left: 15px">Configurações</span><i class="angle fe fe-chevron-right"></i></a>
 								<ul class="slide-menu">
-									<li class="<?php echo @$bairros ?>"><a class="slide-item" href="bairros"><i class="fa-solid fa-map-location-dot me-2"></i>Bairros / Locais</a></li>
-									<li class="<?php echo @$dias ?>"><a class="slide-item" href="dias"><i class="fa-solid fa-calendar-xmark me-2"></i>Dias Fechados</a></li>
+									<li class="<?php echo @$bairros ?>"><a class="slide-item bc-config-link" href="bairros"><i class="fa-solid fa-map-location-dot me-2"></i>Bairros / Locais</a></li>
+									<li class="<?php echo @$dias ?>"><a class="slide-item bc-config-link" href="dias"><i class="fa-solid fa-calendar-xmark me-2"></i>Dias Fechados</a></li>
 									<?php if ($mostrar_acessos == 'Sim') { ?>
-									<li class="<?php echo @$grupo_acessos ?>"><a class="slide-item" href="grupo_acessos"><i class="fa-solid fa-users-gear me-2"></i>Grupos de Acessos</a></li>
-									<li class="<?php echo @$acessos ?>"><a class="slide-item" href="acessos"><i class="fa-solid fa-shield-halved me-2"></i>Acessos</a></li>
+									<li class="<?php echo @$grupo_acessos ?>"><a class="slide-item bc-config-link" href="grupo_acessos"><i class="fa-solid fa-users-gear me-2"></i>Grupos de Acessos</a></li>
+									<li class="<?php echo @$acessos ?>"><a class="slide-item bc-config-link" href="acessos"><i class="fa-solid fa-shield-halved me-2"></i>Acessos</a></li>
 									<?php } ?>
 								</ul>
 							</li>
