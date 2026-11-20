@@ -15,6 +15,10 @@ try{
  $mesa=$q->fetch(PDO::FETCH_ASSOC);
  if(!$mesa){$pdo->rollBack();http_response_code(404);exit('Mesa não encontrada');}
  if($status==='Aberta'&&$mesa['ativo']!=='Sim'){$pdo->rollBack();http_response_code(409);exit('Ative a mesa antes de abri-la');}
+ if($status==='Aberta'&&$mesa['status']!=='Aberta'){
+  // Abrir apenas o status cria mesa ocupada sem atendimento ou comanda vinculada.
+  $pdo->rollBack();http_response_code(409);exit('Abra a mesa pelo fluxo de atendimento para vincular a comanda corretamente');
+ }
  if($status==='Fechada'&&$mesa['status']==='Aberta'){
   // Fechamento operacional exige fluxo de caixa/comanda; não encerrar atendimento por atalho.
   $pdo->rollBack();http_response_code(409);exit('Finalize o atendimento e o pagamento pelo fluxo de pedidos antes de fechar a mesa');
