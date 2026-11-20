@@ -1,115 +1,70 @@
 <?php
 @session_start();
-$id_empresa = $_SESSION['empresa'];
-require_once("../../../conexao.php");
-require_once("../../buscar_config.php");
-$tabela = 'grupo_acessos';
-
-
-$query = $pdo->query("SELECT * from $tabela order by id desc");
-$res = $query->fetchAll(PDO::FETCH_ASSOC);
-$linhas = @count($res);
-if($linhas > 0){
-echo <<<HTML
-<small>
-	<table class="table table-hover table-bordered text-nowrap border-bottom dt-responsive" id="tabela">
-	<thead> 
-	<tr> 
-	<th align="center" width="5%" class="text-center">Selecionar</th>
-	<th>Nome</th>	
-	<th>Acessos</th>
-	<th>Ações</th>
-	</tr> 
-	</thead> 
-	<tbody>	
-HTML;
-
-
-for($i=0; $i<$linhas; $i++){
-	$id = $res[$i]['id'];
-	$nome = $res[$i]['nome'];
-
-$query2 = $pdo->query("SELECT * from acessos where grupo = '$id' ");
-$res2 = $query2->fetchAll(PDO::FETCH_ASSOC);
-$total_acessos = @count($res2);
-		
-echo <<<HTML
-<tr>
-<td align="center">
-<div class="custom-checkbox custom-control">
-<input type="checkbox" class="custom-control-input" id="seletor-{$id}" onchange="selecionar('{$id}')">
-<label for="seletor-{$id}" class="custom-control-label mt-1 text-dark"></label>
+require_once '../../../conexao.php';
+$empresa=(int)($_SESSION['empresa']??0);
+$usuario=(int)($_SESSION['id']??0);
+if (!$empresa || !$usuario) {http_response_code(403);exit('Sessão inválida');}
+$q=$pdo->prepare('SELECT nivel FROM usuarios WHERE id=:usuario AND empresa=:empresa LIMIT 1');
+$q->execute([':usuario'=>$usuario,':empresa'=>$empresa]);
+$nivel=$q->fetchColumn();
+if ($nivel===false) {http_response_code(403);exit('Acesso negado');}
+if ($nivel!=='Administrador') {
+ $q=$pdo->prepare('SELECT 1 FROM usuarios_permissoes up JOIN acessos a ON a.id=up.permissao WHERE up.usuario=:usuario AND a.chave=:chave LIMIT 1');
+ $q->execute([':usuario'=>$usuario,':chave'=>'grupo_acessos']);
+ if (!$q->fetchColumn()) {http_response_code(403);exit('Sem permissão');}
+}
+$q=$pdo->query('SELECT g.id,g.nome,COUNT(a.id) AS total_acessos FROM grupo_acessos g LEFT JOIN acessos a ON a.grupo=g.id GROUP BY g.id,g.nome ORDER BY g.id DESC');
+$grupos=$q->fetchAll(PDO::FETCH_ASSOC);
+function bcEsc($v) {return htmlspecialchars((string)$v,ENT_QUOTES|ENT_SUBSTITUTE,'UTF-8');}
+?>
+<div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-3">
+ <div><strong><?=count($grupos)?> grupos cadastrados</strong><div class="small text-muted">Os grupos organizam os acessos disponíveis no sistema.</div></div>
+ <input type="search" id="bc-grupo-busca" class="form-control" style="max-width:280px" placeholder="Pesquisar grupos..." aria-label="Pesquisar grupos">
 </div>
-</td>
-<td>{$nome}</td>
-<td class="esc">{$total_acessos}</td>
-
+<div class="table-responsive">
+<table class="table table-hover align-middle" id="bc-grupos-tabela">
+<thead><tr><th><input type="checkbox" id="bc-grupo-todos" aria-label="Selecionar todos"></th><th>Grupo</th><th>Acessos</th><th>Ações</th></tr></thead>
+<tbody>
+<?php foreach($grupos as $g): $id=(int)$g['id']; $nome=(string)$g['nome']; ?>
+<tr>
+<td><input type="checkbox" class="bc-grupo-check" value="<?=$id?>" id="seletor-<?=$id?>" onchange="selecionar('<?=$id?>')" aria-label="Selecionar <?=bcEsc($nome)?>"></td>
+<td class="bc-grupo-nome"><?=bcEsc($nome)?></td>
+<td><span class="badge bg-secondary"><?= (int)$g['total_acessos'] ?></span></td>
 <td>
-	<big><a class="btn btn-info btn-sm" href="#" onclick="editar('{$id}','{$nome}')" title="Editar Dados"><i class="fa fa-edit "></i></a></big>
-
-	<div class="dropdown" style="display: inline-block;">                      
-                        <a class="btn btn-danger btn-sm" href="#" aria-expanded="false" aria-haspopup="true" data-bs-toggle="dropdown" class="dropdown"><i class="fa fa-trash "></i> </a>
-                        <div  class="dropdown-menu tx-13">
-                        <div class="dropdown-item-text botao_excluir">
-                        <p>Confirmar Exclusão? <a href="#" onclick="excluir('{$id}')"><span class="text-danger">Sim</span></a></p>
-                        </div>
-                        </div>
-                        </div>
-
+<button type="button" class="btn btn-sm btn-outline-primary bc-grupo-editar" data-id="<?=$id?>" data-nome="<?=bcEsc($nome)?>" aria-label="Editar grupo <?=bcEsc($nome)?>"><i class="fa-solid fa-pen-to-square"></i></button>
+<button type="button" class="btn btn-sm btn-outline-danger bc-grupo-excluir" data-id="<?=$id?>" data-nome="<?=bcEsc($nome)?>" data-total="<?=(int)$g['total_acessos']?>" aria-label="Excluir grupo <?=bcEsc($nome)?>"><i class="fa-solid fa-trash-can"></i></button>
 </td>
 </tr>
-HTML;
-
+<?php endforeach; ?>
+</tbody></table>
+<?php if(!$grupos): ?><p class="text-muted">Nenhum grupo cadastrado.</p><?php endif; ?>
+</div>
+<div id="mensagem-excluir" role="status"></div>
+<script>
+(function(){
+ var tabela=$('#bc-grupos-tabela');
+ $('#bc-grupo-busca').on('input',function(){
+  var termo=this.value.toLocaleLowerCase();
+  tabela.find('tbody tr').each(function(){
+   $(this).toggle($(this).find('.bc-grupo-nome').text().toLocaleLowerCase().includes(termo));
+  });
+ });
+ $('#bc-grupo-todos').on('change',function(){
+  tabela.find('.bc-grupo-check:visible').prop('checked',this.checked).trigger('change');
+ });
+ tabela.on('click','.bc-grupo-editar',function(){
+  $('#mensagem').text('');$('#titulo_inserir').text('Editar grupo');
+  $('#id').val($(this).attr('data-id'));$('#nome').val($(this).attr('data-nome'));
+  $('#modalForm').modal('show');
+ });
+ tabela.on('click','.bc-grupo-excluir',function(){
+  var id=$(this).attr('data-id'),nome=$(this).attr('data-nome'),total=Number($(this).attr('data-total'));
+  if(total>0){Swal.fire({icon:'warning',title:'Grupo com acessos vinculados',text:'Remova os '+total+' acessos vinculados antes de excluir '+nome+'.'});return;}
+  Swal.fire({icon:'warning',title:'Excluir grupo?',text:'Deseja excluir '+nome+'?',showCancelButton:true,confirmButtonText:'Excluir',cancelButtonText:'Cancelar',confirmButtonColor:'#dc3545'}).then(function(r){if(r.isConfirmed)excluir(id);});
+ });
+})();
+function limparCampos(){
+ $('#id').val('');$('#nome').val('');$('#ids').val('');
+ $('#btn-deletar').hide();$('#bc-grupo-todos').prop('checked',false);
 }
-
-
-echo <<<HTML
-</tbody>
-<small><div align="center" id="mensagem-excluir"></div></small>
-</table>
-</small>
-HTML;
-
-}else{
-	echo 'Nenhum Registro Encontrado!';
-}
-
-?>
-
-
-
-<script type="text/javascript">
-	$(document).ready( function () {		
-    $('#tabela').DataTable({
-    	"language" : {
-            //"url" : '//cdn.datatables.net/plug-ins/1.13.2/i18n/pt-BR.json'
-        },
-        "ordering": false,
-		"stateSave": true
-    });
-} );
-</script>
-
-<script type="text/javascript">
-	function editar(id, nome){
-		$('#mensagem').text('');
-    	$('#titulo_inserir').text('Editar Registro');
-
-    	$('#id').val(id);
-    	$('#nome').val(nome);
-    
-    	$('#modalForm').modal('show');
-	}
-
-
-
-	function limparCampos(){
-		$('#id').val('');
-    	$('#nome').val('');
-    
-
-    	$('#ids').val('');
-    	$('#btn-deletar').hide();	
-	}
-
 </script>
