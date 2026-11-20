@@ -13,6 +13,7 @@ $buscar_cliente = @$_POST['p1'];
 $query = $pdo->query("SELECT * FROM $tabela where empresa = '$id_empresa' order by id asc");
 $res = $query->fetchAll(PDO::FETCH_ASSOC);
 $total_reg = @count($res);
+$indicadoresMesa = ['livres'=>0,'ocupadas'=>0,'inativas'=>0,'total'=>0];
 if ($total_reg > 0) {
 
 
@@ -183,6 +184,10 @@ if ($total_reg > 0) {
         }
         $nomeEscapado = htmlspecialchars((string)$nome, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
         $situacaoMesaEscapada = htmlspecialchars($situacaoMesa, ENT_QUOTES, 'UTF-8');
+        $indicadoresMesa['total']++;
+        if ($ativo !== 'Sim') $indicadoresMesa['inativas']++;
+        elseif ($mesaOcupada) $indicadoresMesa['ocupadas']++;
+        else $indicadoresMesa['livres']++;
 		if($nome_cliente != ""){
 			$area_nome_cliente = '<span style="color:#133591; font-size: 12px; font-family: Arial, Helvetica, sans-serif;
 font-weight:600;
@@ -199,7 +204,7 @@ letter-spacing:0.5px; ">GARÇON: '.mb_strtoupper($nome_garcon).'</span>';
 		
 
 		echo <<<HTML
-			<div class="col-xs-12 col-md-3 widget cardTarefas mesa-card {$classeMesa}" style="margin-right: 5px; margin-bottom: 5px; display: inline-block; width:100%">
+			<div class="col-xs-12 col-md-3 widget cardTarefas mesa-card {$classeMesa}" data-situacao="{$situacaoMesaEscapada}" style="margin-right: 5px; margin-bottom: 5px; display: inline-block; width:100%">
         		<div class="r3_counter_box">
                 <div class="mesa-card-topo"><strong>Mesa {$nomeEscapado}</strong><span class="mesa-status">{$situacaoMesaEscapada}</span></div>
 
@@ -258,7 +263,25 @@ HTML;
 
 
 ?>
+<div class="mesa-resumo" id="mesa-resumo">
+    <div><small>Total de mesas</small><strong><?= (int)$indicadoresMesa['total'] ?></strong></div>
+    <div><small>Livres</small><strong><?= (int)$indicadoresMesa['livres'] ?></strong></div>
+    <div><small>Ocupadas</small><strong><?= (int)$indicadoresMesa['ocupadas'] ?></strong></div>
+    <div><small>Inativas</small><strong><?= (int)$indicadoresMesa['inativas'] ?></strong></div>
+</div>
+<div class="mesa-filtros" role="group" aria-label="Filtrar mesas">
+    <button type="button" class="btn btn-sm btn-outline-secondary mesa-filtro ativo" data-filtro="Todas">Todas</button>
+    <button type="button" class="btn btn-sm btn-outline-success mesa-filtro" data-filtro="Livre">Livres</button>
+    <button type="button" class="btn btn-sm btn-outline-warning mesa-filtro" data-filtro="Ocupada">Ocupadas</button>
+    <button type="button" class="btn btn-sm btn-outline-secondary mesa-filtro" data-filtro="Inativa">Inativas</button>
+</div>
 <style>
+.mesa-resumo{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;clear:both;margin:14px 0}
+.mesa-resumo>div{border:1px solid #e2e8f0;border-radius:12px;background:#fff;padding:12px}
+.mesa-resumo small{display:block;color:#64748b}.mesa-resumo strong{font-size:22px}
+.mesa-filtros{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px}
+.mesa-filtro.ativo{font-weight:700;box-shadow:0 0 0 2px #94a3b8}
+@media(max-width:640px){.mesa-resumo{grid-template-columns:repeat(2,minmax(0,1fr))}}
 .mesa-card{border:1px solid #e2e8f0;border-radius:14px;overflow:hidden;box-shadow:0 3px 12px #00000010;transition:box-shadow .2s,transform .2s}
 .mesa-card:hover{box-shadow:0 6px 18px #00000020;transform:translateY(-2px)}
 .mesa-card-topo{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:12px;padding-right:50px;font-size:14px}
@@ -271,6 +294,24 @@ HTML;
 </style>
 
 <script type="text/javascript">
+    (function(){
+        const raiz=document.getElementById('listar');
+        if(!raiz)return;
+        const botoes=Array.from(raiz.querySelectorAll('.mesa-filtro'));
+        const filtroAnterior=raiz.dataset.filtroMesa||'Todas';
+        function filtrar(situacao){
+            raiz.dataset.filtroMesa=situacao;
+            raiz.querySelectorAll('.mesa-card').forEach(function(card){
+                card.style.display=(situacao==='Todas'||card.dataset.situacao===situacao)?'inline-block':'none';
+            });
+            botoes.forEach(function(botao){
+                botao.classList.toggle('ativo',botao.dataset.filtro===situacao);
+                botao.setAttribute('aria-pressed',String(botao.dataset.filtro===situacao));
+            });
+        }
+        botoes.forEach(function(botao){botao.addEventListener('click',function(){filtrar(botao.dataset.filtro)});});
+        filtrar(filtroAnterior);
+    })();
 	function editar(id, cliente, garcon, obs, pessoas) {
 		$('#id').val(id);
 		$('#nome').val(cliente);
