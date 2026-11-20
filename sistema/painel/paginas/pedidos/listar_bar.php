@@ -20,7 +20,7 @@ if($delivery_monitor != 'Sim'){
 //TOTAIS DOS PEDIDOS
 // base da consulta: só itens da cozinha
 $base = "FROM $tabela c 
-         INNER JOIN produtos p ON p.id = c.produto
+         INNER JOIN produtos p ON p.id = c.produto AND p.empresa = c.empresa
          WHERE p.preparado = 'Bar' $sql_mesa";
 
 // Aguardando
