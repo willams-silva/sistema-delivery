@@ -41,7 +41,8 @@ if (!$cargo->fetchColumn()) {
     exit('Cargo inválido para esta empresa');
 }
 $endereco = $_POST['endereco'];
-$senha = '123';
+// Senha temporaria individual, somente para novos cadastros.
+$senha = substr(strtr(base64_encode(random_bytes(12)), '+/', '-_'), 0, 16);
 $senha_crip = password_hash($senha, PASSWORD_DEFAULT);
 $pix = $_POST['pix'];
 $id = (int) ($_POST['id'] ?? 0);
