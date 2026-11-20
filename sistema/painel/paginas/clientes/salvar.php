@@ -40,6 +40,14 @@ $cidade = $_POST['cidade'];
 $estado = $_POST['estado'];
 $cep = $_POST['cep'];
 $id = (int) ($_POST['id'] ?? 0);
+if ($id > 0) {
+    $verificar = $pdo->prepare("SELECT 1 FROM clientes WHERE id = :id AND empresa = :empresa LIMIT 1");
+    $verificar->execute([':id' => $id, ':empresa' => $id_empresa]);
+    if (!$verificar->fetchColumn()) {
+        http_response_code(404);
+        exit('Cliente não encontrado');
+    }
+}
 $complemento = $_POST['complemento'];
 
 
