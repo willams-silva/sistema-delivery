@@ -9,6 +9,7 @@ $pag = 'acessos';
  ?>
 
 <div class="breadcrumb-header justify-content-between">
+    <div class="left-content mt-2"><h4><i class="fa-solid fa-shield-halved me-2"></i>Acessos e Permissões</h4><p class="text-muted mb-2">Gerencie com cuidado: essas definições podem afetar o acesso de outros usuários.</p></div>
     <div class="left-content mt-2">
 <a class="btn ripple btn-primary text-white" onclick="inserir()" type="button"><i class="fe fe-plus me-1"></i> Adicionar <?php echo ucfirst($pag); ?></a>
 
@@ -58,12 +59,12 @@ $pag = 'acessos';
 					<div class="row">
 						<div class="col-md-6 mb-2 col-6">						
 								<label>Nome</label>
-								<input type="text" class="form-control" id="nome" name="nome" placeholder="Nome do Acesso" required>	
+								<input type="text" class="form-control" id="nome" name="nome" placeholder="Nome do Acesso" maxlength="100" required>	
 						</div>
 
 						<div class="col-md-6 col-6">						
 								<label>Chave</label>
-								<input type="text" class="form-control" id="chave" name="chave" placeholder="Chave" required>	
+								<input type="text" class="form-control" id="chave" name="chave" placeholder="Ex.: pedidos" maxlength="100" pattern="[A-Za-z0-9_-]+" title="Use letras, números, hífen ou sublinhado" required>	
 						</div>
 					</div>
 
@@ -119,6 +120,20 @@ $pag = 'acessos';
 
 <script type="text/javascript">var pag = "<?=$pag?>"</script>
 <script src="js/ajax.js"></script>
+<script>
+$(document).ajaxError(function (_event, xhr, settings) {
+    if (!settings.url || settings.url.indexOf('paginas/acessos/') === -1) return;
+    var msg = (xhr.responseText || '').replace(/<[^>]*>/g, '').trim();
+    if (!msg || msg.length > 250) msg = 'Operação não concluída. Verifique suas permissões.';
+    if (settings.url.indexOf('/salvar.php') !== -1) {
+        $('#mensagem').addClass('text-danger').text(msg);
+        $('#btn_salvar').show();
+        $('#btn_carregando').hide();
+    } else if (settings.url.indexOf('/excluir.php') !== -1) {
+        Swal.fire({title:'Operação bloqueada',text:msg,icon:'warning'});
+    } else { $('#listar').text(msg); }
+});
+</script>
 
 
 
