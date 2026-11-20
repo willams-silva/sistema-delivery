@@ -71,6 +71,17 @@ $data_final_mes = $ano_atual . "-" . $mes_atual . "-" . $dia_final_mes;
 
 
 		<input type="hidden" id="buscar-contas">
+        <div class="col-md-3"><label for="bc-filtro-mesa" class="form-label">Mesa</label>
+        <select class="form-select" id="bc-filtro-mesa" onchange="listar()">
+        <option value="">Todas as mesas</option>
+        <?php
+        $qMesas=$pdo->prepare('SELECT id,nome FROM mesas WHERE empresa=:empresa ORDER BY CAST(nome AS UNSIGNED),id');
+        $qMesas->execute([':empresa'=>(int)$id_empresa]);
+        foreach($qMesas->fetchAll(PDO::FETCH_ASSOC) as $m){
+         echo '<option value="'.(int)$m['id'].'">Mesa '.htmlspecialchars((string)$m['nome'],ENT_QUOTES,'UTF-8').'</option>';
+        }
+        ?>
+        </select></div>
 
 	</div>
 
@@ -125,6 +136,7 @@ $data_final_mes = $ano_atual . "-" . $mes_atual . "-" . $dia_final_mes;
 		var dataInicial = $('#data-inicial-caixa').val();
 		var dataFinal = $('#data-final-caixa').val();
 		var status = $('#buscar-contas').val();
+        var mesa = $('#bc-filtro-mesa').val();
 
 		$.ajax({
 			url: 'paginas/' + pag + "/listar.php",
@@ -132,7 +144,7 @@ $data_final_mes = $ano_atual . "-" . $mes_atual . "-" . $dia_final_mes;
 			data: {
 				dataInicial,
 				dataFinal,
-				status
+				status, mesa
 			},
 			dataType: "html",
 
@@ -151,4 +163,20 @@ $data_final_mes = $ano_atual . "-" . $mes_atual . "-" . $dia_final_mes;
 		$('#buscar-contas').val(status);
 		listar();
 	}
+</script>
+<script>
+(function(){
+ var params=new URLSearchParams(window.location.search);
+ var mesa=params.get('mesa');
+ if(mesa && /^\d+$/.test(mesa)){
+  var sel=document.getElementById('bc-filtro-mesa');
+  if(sel && Array.from(sel.options).some(function(o){return o.value===mesa;})){
+   sel.value=mesa;
+   // Exibir histórico completo da mesa, não apenas o dia corrente.
+   document.getElementById('data-inicial-caixa').value='2000-01-01';
+   document.getElementById('data-final-caixa').value=new Date().toISOString().slice(0,10);
+   setTimeout(function(){if(typeof listar==='function')listar();},0);
+  }
+ }
+})();
 </script>
