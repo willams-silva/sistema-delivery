@@ -18,14 +18,7 @@ $pag = 'acessos';
 
 
 
-<div class="dropdown" style="display: inline-block;">                      
-                        <a href="#" aria-expanded="false" aria-haspopup="true" data-bs-toggle="dropdown" class="btn btn-danger dropdown" id="btn-deletar" style="display:none"><i class="fe fe-trash-2"></i> Deletar</a>
-                        <div  class="dropdown-menu tx-13">
-                        <div style="width: 240px; padding:15px 5px 0 10px;" class="dropdown-item-text">
-                        <p>Excluir Selecionados? <a href="#" onclick="deletarSel()"><span class="text-danger">Sim</span></a></p>
-                        </div>
-                        </div>
-                        </div>
+<button type="button" class="btn btn-outline-danger" id="btn-deletar" style="display:none" onclick="bcExcluirAcessosSelecionados()"><i class="fe fe-trash-2 me-1"></i>Excluir selecionados</button>
 
 </div>
 
@@ -80,7 +73,7 @@ $pag = 'acessos';
 									if($linhas > 0){
 									for($i=0; $i<$linhas; $i++){
 								 ?>
-								  <option value="<?php echo $res[$i]['id'] ?>"><?php echo $res[$i]['nome'] ?></option>
+								  <option value="<?php echo $res[$i]['id'] ?>"><?php echo htmlspecialchars((string)$res[$i]['nome'], ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?></option>
 
 								<?php } } ?>
 									
@@ -121,6 +114,9 @@ $pag = 'acessos';
 <script type="text/javascript">var pag = "<?=$pag?>"</script>
 <script src="js/ajax.js"></script>
 <script>
+function bcExcluirAcessosSelecionados(){
+ Swal.fire({icon:'info',title:'Exclusão em lote indisponível',text:'Para proteger permissões compartilhadas entre empresas, exclua cada acesso individualmente. O sistema verificará os vínculos com usuários e cargos.'});
+}
 $(document).ajaxError(function (_event, xhr, settings) {
     if (!settings.url || settings.url.indexOf('paginas/acessos/') === -1) return;
     var msg = (xhr.responseText || '').replace(/<[^>]*>/g, '').trim();
