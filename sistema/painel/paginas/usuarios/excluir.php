@@ -16,7 +16,8 @@ if ($id <= 0 || $id_empresa <= 0 || $id === (int) ($_SESSION['id'] ?? 0)) {
     exit('Dados inválidos');
 }
 
-$query = $pdo->query("SELECT * FROM $tabela where id = '$id' and empresa = '$id_empresa'");
+$query = $pdo->prepare("SELECT * FROM usuarios WHERE id = :id AND empresa = :empresa");
+$query->execute([':id' => $id, ':empresa' => $id_empresa]);
 $res = $query->fetchAll(PDO::FETCH_ASSOC);
 $foto = @$res[0]['foto'];
 
