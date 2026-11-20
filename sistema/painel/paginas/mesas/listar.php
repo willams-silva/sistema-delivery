@@ -35,6 +35,7 @@ if ($total_reg > 0) {
   echo '<span class="badge bg-'.$corCard.' mb-3">'.$rotuloCard.'</span><div class="d-flex gap-2 justify-content-center flex-wrap">';
   echo '<button type="button" class="btn btn-sm btn-outline-primary" onclick="editar('.$idCard.', '.htmlspecialchars(json_encode((string)$mesaCard['nome']),ENT_QUOTES,'UTF-8').')" title="Editar mesa"><i class="fa fa-edit"></i></button>';
   echo '<button type="button" class="btn btn-sm btn-outline-dark" onclick="gerarQrCode('.$idCard.', '.htmlspecialchars(json_encode((string)$mesaCard['nome']),ENT_QUOTES,'UTF-8').')" title="QR Code"><i class="fa fa-qrcode"></i></button>';
+  if($abertaCard) echo '<a class="btn btn-sm btn-outline-success" href="lista_pedidos_mesas" title="Consultar pedidos das mesas"><i class="fa fa-list-alt"></i> Pedidos</a>';
   echo '</div></div></div>';
  }
  echo '</div><div id="bc-mesas-tabela">';
@@ -62,6 +63,7 @@ HTML;
 		$nome = htmlspecialchars((string)$res[$i]['nome'], ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
 		$ativo = $res[$i]['ativo'];
 		$status = $res[$i]['status'];
+        $tipoCard=$ativo!=='Sim'?'inativa':($status==='Aberta'?'ocupada':'livre');
 
 		if ($ativo == 'Sim') {
 			$icone = 'fa-check-square';
@@ -95,7 +97,7 @@ HTML;
 </div>
 </td>
 <td style="color:{$classe_linha}">{$nome}</td>
-<td style="color:{$classe_linha}"><span class="badge bg-light text-dark border">{$ativo}</span></td>
+<td style="color:{$classe_linha}"><span class="badge bg-light text-dark border">{$ativo}</span><span class="d-none bc-mesa-tipo">{$tipoCard}</span></td>
 <td style="color:{$classe_linha}">
 <select id="status_{$id}" style="background:transparent; border:none; border-bottom:1px solid #000; outline:none" onchange="editarStatus('{$id}')">
 	<option value="Aberta" {$selected_aberta}>Aberta</option>
@@ -133,6 +135,7 @@ HTML;
 
 <script type="text/javascript">
 	$(document).ready(function() {
+		if (!$('#tabela').length) return;
 		$('#tabela').DataTable({
 			"ordering": false,
 			"stateSave": true,
