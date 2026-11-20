@@ -3063,6 +3063,12 @@ document.addEventListener("DOMContentLoaded", function() {
 (function(){
   var setores = {Cozinha:'cozinha',Bar:'bar',Outro:'outro'};
   var emAndamento = false;
+  var limitesPadrao = {cozinha:20,bar:5,outro:15};
+  var limites = Object.assign({},limitesPadrao);
+  try {
+    var salvo = JSON.parse(localStorage.getItem('bc-tempos-setores') || '{}');
+    Object.keys(limites).forEach(function(k){var v=Number(salvo[k]);if(Number.isInteger(v)&&v>=1&&v<=180)limites[k]=v;});
+  } catch(e) {}
   var ultimoVisto = {};
   var somAtivado = false;
   var audioContexto = null;
@@ -3086,7 +3092,7 @@ document.addEventListener("DOMContentLoaded", function() {
   function atualizarContadores(){
     if (document.hidden || emAndamento) return;
     emAndamento = true;
-    fetch('paginas/pedidos_locais_contadores.php', {credentials:'same-origin',cache:'no-store'})
+    fetch('paginas/pedidos_locais_contadores.php?'+new URLSearchParams({tempo_cozinha:limites.cozinha,tempo_bar:limites.bar,tempo_outro:limites.outro}).toString(), {credentials:'same-origin',cache:'no-store'})
       .then(function(res){ if (!res.ok) throw new Error('Consulta indisponível'); return res.json(); })
       .then(function(data){
         if (!data.setores) return;
@@ -3098,7 +3104,7 @@ document.addEventListener("DOMContentLoaded", function() {
           el.hidden = n === 0;
           var dados = data.setores[setor] || {};
           var atrasados = Number(dados.atrasados || 0);
-          el.title = n+' itens ativos em '+setor+(atrasados ? ' • '+atrasados+' atrasados (>20 min)' : '');
+          el.title = n+' itens ativos em '+setor+(atrasados ? ' • '+atrasados+' atrasados (>'+limites[setores[setor]]+' min)' : '');
           el.style.backgroundColor = atrasados ? '#dc3545' : '#8b5cf6';
           var novoId = Number(dados.ultimo_aguardando || 0);
           if (Object.prototype.hasOwnProperty.call(ultimoVisto,setor) && novoId > ultimoVisto[setor]) tocarAviso();
@@ -3122,6 +3128,25 @@ document.addEventListener("DOMContentLoaded", function() {
     });
     var menu = document.querySelector('.pedidos-locais-link');
     if(menu && menu.parentElement && menu.parentElement.parentElement) menu.parentElement.parentElement.appendChild(controle);
+    var configurar=document.createElement('button');
+    configurar.type='button';configurar.className='btn btn-sm btn-outline-secondary';
+    configurar.style.cssText='margin:4px 12px;font-size:11px;display:block;';
+    configurar.textContent='⚙ Tempos por setor';
+    configurar.addEventListener('click',function(){
+      var novos={};
+      for(var k of Object.keys(limites)){
+        var nome={cozinha:'Cozinha',bar:'Bar',outro:'Outros Locais'}[k];
+        var resposta=prompt('Tempo limite de '+nome+' (1 a 180 minutos):',String(limites[k]));
+        if(resposta===null)return;
+        var valor=Number(resposta);
+        if(!Number.isInteger(valor)||valor<1||valor>180){alert('Informe um numero inteiro entre 1 e 180.');return;}
+        novos[k]=valor;
+      }
+      limites=novos;
+      try{localStorage.setItem('bc-tempos-setores',JSON.stringify(limites));}catch(e){}
+      atualizarContadores();
+    });
+    if(menu && menu.parentElement && menu.parentElement.parentElement) menu.parentElement.parentElement.appendChild(configurar);
     atualizarContadores();
     setInterval(atualizarContadores,15000);
     document.addEventListener('visibilitychange',function(){ if(!document.hidden) atualizarContadores(); });
