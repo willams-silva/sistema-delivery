@@ -28,7 +28,7 @@ $pag = 'dias';
  </div></div></div></div>
 <div class="row row-sm"><div class="col-lg-12"><div class="card custom-card"><div class="card-body">
 <h5><i class="fa-solid fa-clock me-2"></i>Horários especiais por data</h5>
-<p class="text-muted">Configure uma abertura e fechamento diferentes em uma data específica. O cadastro não altera o horário normal. <strong>O uso automático destes horários no cardápio ainda será integrado.</strong></p>
+<p class="text-muted">Configure uma abertura e fechamento diferentes em uma data específica. O cadastro não altera o horário normal. O cardápio e a finalização online consideram os horários especiais; valide o comportamento antes de usar em produção.</p>
 <form id="bc-horario-form" class="row g-2 align-items-end">
 <div class="col-md-3"><label for="bc-horario-data" class="form-label">Data</label><input type="date" id="bc-horario-data" class="form-control" required></div>
 <div class="col-md-2"><label for="bc-horario-inicio" class="form-label">Abertura</label><input type="time" id="bc-horario-inicio" class="form-control" required></div>
@@ -177,7 +177,7 @@ function carregar(){
 $('#bc-horario-form').on('submit',function(e){
  e.preventDefault();
  $.post(endpoint,{acao:'salvar',data_especial:$('#bc-horario-data').val(),hora_inicio:$('#bc-horario-inicio').val(),hora_fim:$('#bc-horario-fim').val(),descricao:$('#bc-horario-descricao').val()},function(){
- aviso('Horário salvo. A aplicação automática ao cardápio ainda está pendente.');
+ aviso('Horário salvo. Confira o status no cardápio e a finalização de pedidos na data cadastrada.');
  carregar();
  },'json').fail(falha);
 });
