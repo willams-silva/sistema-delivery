@@ -90,6 +90,18 @@ if($id_mesa > 0){
 
 
 
+// Fechamentos por data específica: somente delivery, preservando mesas e balcão.
+$bc_fechamento_excepcional_hoje = false;
+if ($id_mesa == "" && $sessão_balcao == "" && (int)$id_empresa > 0) {
+  try {
+    $bc_fechamento_stmt = $pdo->prepare("SELECT 1 FROM fechamentos_excepcionais WHERE empresa = :empresa AND data_fechamento = :data LIMIT 1");
+    $bc_fechamento_stmt->execute([':empresa' => (int)$id_empresa, ':data' => date('Y-m-d')]);
+    $bc_fechamento_excepcional_hoje = (bool)$bc_fechamento_stmt->fetchColumn();
+  } catch (PDOException $e) {
+    error_log('Falha ao consultar fechamentos excepcionais: ' . $e->getMessage());
+  }
+}
+
 $img = 'aberto.png';
 
 
@@ -106,6 +118,9 @@ if($id_edicao == ""){
 
       if ($id_mesa == "" and $sessão_balcao == "") {
         $data = date('Y-m-d');
+        if ($bc_fechamento_excepcional_hoje) {
+          $img = 'fechado.png';
+        }
         //verificar se está aberto hoje
         $diasemana = array("Domingo", "Segunda-Feira", "Terça-Feira", "Quarta-Feira", "Quinta-Feira", "Sexta-Feira", "Sábado");
         $diasemana_numero = date('w', strtotime($data));
@@ -471,7 +486,7 @@ if ($id_mesa == "" and $sessão_balcao == "") {
     $query_status_dia = $pdo->query("SELECT * FROM dias where dia = '$dia_procurado' and empresa = '$id_empresa'");
     $res_status_dia = $query_status_dia->fetchAll(PDO::FETCH_ASSOC);
 
-    if (@count($res_status_dia) > 0) {
+    if (@count($res_status_dia) > 0 || $bc_fechamento_excepcional_hoje) {
 
       $status_delivery_txt = 'FECHADO';
       $status_delivery_cor = '#dc3545';
