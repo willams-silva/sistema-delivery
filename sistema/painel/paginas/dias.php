@@ -28,7 +28,7 @@ $pag = 'dias';
  </div></div></div></div>
 <div class="row row-sm"><div class="col-lg-12"><div class="card custom-card"><div class="card-body">
 <h5><i class="fa-solid fa-clock me-2"></i>Horários especiais por data</h5>
-<p class="text-muted">Configure uma abertura e fechamento diferentes em uma data específica. O cadastro não altera o horário normal. O cardápio e a finalização online consideram os horários especiais; valide o comportamento antes de usar em produção.</p>
+<p class="text-muted">Configure uma abertura e fechamento diferentes em uma data específica. O cadastro não altera o horário normal. O cardápio e a finalização online consideram os horários especiais; valide o comportamento antes de usar em produção. Horários especiais encerram no mesmo dia; expedientes normais que atravessam a meia-noite seguem a agenda do dia anterior, respeitando fechamentos integrais.</p>
 <form id="bc-horario-form" class="row g-2 align-items-end">
 <div class="col-md-3"><label for="bc-horario-data" class="form-label">Data</label><input type="date" id="bc-horario-data" class="form-control" required></div>
 <div class="col-md-2"><label for="bc-horario-inicio" class="form-label">Abertura</label><input type="time" id="bc-horario-inicio" class="form-control" required></div>
