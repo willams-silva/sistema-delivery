@@ -8,6 +8,18 @@ $q->execute([':id'=>$operador,':empresa'=>$empresa]);
 if($q->fetchColumn()!=='Administrador'){http_response_code(403);exit('Somente administradores podem consultar acessos');}
 $q=$pdo->query('SELECT a.id,a.nome,a.chave,a.grupo,a.pagina,COALESCE(g.nome,"Sem grupo") grupo_nome,(SELECT COUNT(DISTINCT up.usuario) FROM usuarios_permissoes up WHERE up.permissao=a.id) total_usuarios,(SELECT COUNT(*) FROM cargos_permissoes cp WHERE cp.permissao_id=a.id) total_cargos FROM acessos a LEFT JOIN grupo_acessos g ON g.id=a.grupo ORDER BY a.id DESC');
 $itens=$q->fetchAll(PDO::FETCH_ASSOC);
+$total=count($itens);$emUso=0;$comCargos=0;$disponiveis=0;
+foreach($itens as $item){
+ $temUsuario=(int)$item['total_usuarios']>0;
+ $temCargo=(int)$item['total_cargos']>0;
+ if($temUsuario||$temCargo)$emUso++;else $disponiveis++;
+ if($temCargo)$comCargos++;
+}
+echo '<div class="row g-3 mb-3">';
+foreach([['Total de acessos',$total,'fa-shield-halved','primary'],['Em uso',$emUso,'fa-user-lock','warning'],['Disponíveis',$disponiveis,'fa-circle-check','success'],['Em modelos de cargos',$comCargos,'fa-users-gear','info']] as $kpi){
+ echo '<div class="col-6 col-xl-3"><div class="card border shadow-none h-100 mb-0"><div class="card-body py-3"><div class="d-flex justify-content-between align-items-center"><div><div class="small text-muted">'.$kpi[0].'</div><div class="fs-4 fw-bold">'.(int)$kpi[1].'</div></div><i class="fa-solid '.$kpi[2].' text-'.$kpi[3].' fs-4"></i></div></div></div></div>';
+}
+echo '</div>';
 echo '<div class="d-flex flex-wrap justify-content-between align-items-center mb-3"><div><h5 class="mb-1">Catálogo de acessos</h5><small class="text-muted">Definições globais compartilhadas entre empresas. Exclua somente acessos sem vínculos.</small></div><span class="badge bg-primary">'.count($itens).' acessos</span></div>';
 if(!$itens){echo '<div class="text-center text-muted py-4">Nenhum acesso cadastrado.</div>';exit;}
 echo '<div class="table-responsive"><table class="table table-hover table-striped align-middle" id="tabela"><thead><tr><th>Selecionar</th><th>Nome</th><th>Chave</th><th>Grupo</th><th>Página</th><th>Usuários</th><th>Cargos</th><th>Ações</th></tr></thead><tbody>';
