@@ -19,7 +19,11 @@ if ($id <= 0 || $id_empresa <= 0 || $id === (int) ($_SESSION['id'] ?? 0)) {
 $query = $pdo->prepare("SELECT * FROM usuarios WHERE id = :id AND empresa = :empresa");
 $query->execute([':id' => $id, ':empresa' => $id_empresa]);
 $res = $query->fetchAll(PDO::FETCH_ASSOC);
-$foto = @$res[0]['foto'];
+if (!$res) {
+    http_response_code(404);
+    exit('Usuário não encontrado');
+}
+$foto = $res[0]['foto'] ?? '';
 
 if($foto != "sem-foto.jpg"){
 	@unlink('../../images/perfil/'.$foto);
