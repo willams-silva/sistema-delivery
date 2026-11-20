@@ -1,9 +1,10 @@
 <?php
 @session_start();
 $id_empresa = (int) ($_SESSION['empresa'] ?? 0);
+$id_operador = (int) ($_SESSION['id'] ?? 0);
 require_once("../../../conexao.php");
 require_once("../../buscar_config.php");
-if($id_empresa <= 0){
+if($id_empresa <= 0 || $id_operador <= 0){
 	echo 'Sem Sessão da Empresa, refaça o Login!';
 	exit();
 }
