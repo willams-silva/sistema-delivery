@@ -105,7 +105,12 @@ if(@count($res) > 0 and $id != $id_reg){
 if($data_nasc == ""){
 	$nasc = '';	
 }else{
-	$nasc = " ,data_nasc = '$data_nasc'";
+	$data_obj = DateTimeImmutable::createFromFormat('!Y-m-d', $data_nasc);
+    if (!$data_obj || $data_obj->format('Y-m-d') !== $data_nasc) {
+        http_response_code(400);
+        exit('Data de nascimento inválida');
+    }
+    $nasc = ' ,data_nasc = :data_nasc';
 	
 }
 
@@ -144,6 +149,9 @@ require('../../apis/disparar_email.php');
 	
 }else{
 $query = $pdo->prepare("UPDATE $tabela SET nome = :nome, email = :email, nivel = '$nivel', telefone = :telefone, endereco = :endereco, numero = :numero, bairro = :bairro, cidade = :cidade, estado = :estado, cep = :cep $nasc, cpf = :cpf, pix = :pix, acessar_painel = 'Sim', tipo_chave = '$tipo_chave', complemento = :complemento where id = '$id' and empresa = '$id_empresa'");
+}
+if ($nasc !== '') {
+    $query->bindValue(':data_nasc', $data_nasc);
 }
 $query->bindValue(":nome", "$nome");
 $query->bindValue(":email", "$email");
