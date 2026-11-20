@@ -1,4 +1,5 @@
-<?php 
+<?php
+@session_start();
 $tabela = 'usuarios';
 require_once("../../../conexao.php");
 
