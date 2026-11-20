@@ -99,11 +99,15 @@ if (@count($res) > 0 and $id != $id_reg) {
 	exit();
 }
 
-if ($data_nasc == "") {
-	$nasc = '';
+if ($data_nasc === '') {
+    $nasc = '';
 } else {
-	$nasc = " ,data_nasc = '$data_nasc'";
-
+    $data_obj = DateTimeImmutable::createFromFormat('!Y-m-d', $data_nasc);
+    if (!$data_obj || $data_obj->format('Y-m-d') !== $data_nasc) {
+        http_response_code(400);
+        exit('Data de nascimento inválida');
+    }
+    $nasc = ' ,data_nasc = :data_nasc';
 }
 
 
@@ -220,6 +224,9 @@ if ($id === 0) {
 
 } else {
 	$query = $pdo->prepare("UPDATE $tabela SET nome = :nome, email = :email, nivel = '$nivel', telefone = :telefone, endereco = :endereco, pix = :pix $nasc, numero = :numero, bairro = :bairro, cidade = :cidade, estado = :estado, cep = :cep, acessar_painel = '$acessar_painel', complemento = :complemento, tipo_chave = '$tipo_chave', foto = '$foto' where id = '$id' and empresa = '$id_empresa'");
+}
+if ($nasc !== '') {
+    $query->bindValue(':data_nasc', $data_nasc);
 }
 $query->bindValue(":nome", "$nome");
 $query->bindValue(":email", "$email");
