@@ -19,6 +19,26 @@ if($sessao_pedido_balcao == 'BALCÃO'){
   $tipo_pedido = 'Balcão';
 }
 
+// Proteção no servidor: datas excepcionais bloqueiam somente pedidos públicos.
+// Pedidos de balcão e de mesas mantêm o fluxo operacional atual.
+$bc_pedido_mesa = !empty($_SESSION['id_mesa']) || !empty($_POST['mesa']);
+if ($tipo_pedido !== 'Balcão' && !$bc_pedido_mesa) {
+  try {
+    $bc_stmt_fechamento = $pdo->prepare("SELECT 1 FROM fechamentos_excepcionais WHERE empresa = :empresa AND data_fechamento = :data LIMIT 1");
+    $bc_stmt_fechamento->execute([':empresa' => (int)$id_empresa, ':data' => date('Y-m-d')]);
+    if ($bc_stmt_fechamento->fetchColumn()) {
+      http_response_code(409);
+      echo 'Estabelecimento fechado nesta data. Não é possível finalizar pedidos online.';
+      exit();
+    }
+  } catch (PDOException $e) {
+    error_log('Consulta de fechamento excepcional no checkout: ' . $e->getMessage());
+    http_response_code(503);
+    echo 'Não foi possível confirmar o funcionamento da loja. Tente novamente em instantes.';
+    exit();
+  }
+}
+
 $total_compra = 0;
 
 $data_atual = date('Y-m-d');
