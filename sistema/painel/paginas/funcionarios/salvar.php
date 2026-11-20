@@ -155,41 +155,41 @@ if (@$_FILES['foto']['name'] != "") {
          ($info_imagem[2] === IMAGETYPE_GIF && $ext === 'gif') ||
          ($info_imagem[2] === IMAGETYPE_JPEG && in_array($ext, ['jpg', 'jpeg'], true)))) {
 
-		//EXCLUO A FOTO ANTERIOR
-		if ($foto != "sem-foto.jpg") {
-			@unlink('../../images/perfil/' . $foto);
-		}
-
-		$foto = $nome_img;
-
-		//pegar o tamanho da imagem
-		list($largura, $altura) = getimagesize($imagem_temp);
-
-		if ($largura > 1400) {
-
-
-			if ($ext == 'png') {
-				$image = imagecreatefrompng($imagem_temp);
-			} else if ($ext == 'jpeg' or $ext == 'jpg') {
-				$image = imagecreatefromjpeg($imagem_temp);
-			} else {
-				die("Formato de imagem não suportado.");
-			}
-
-
-
-			// Reduza a qualidade para 20% ajuste conforme necessário
-			imagejpeg($image, $caminho, 20);
-			imagedestroy($image);
-
-
-
-
-		} else {
-			move_uploaded_file($imagem_temp, $caminho);
-		}
-
-
+        // Preserve a foto anterior ate a gravacao do cadastro ser concluida.
+        $foto_anterior = $foto;
+        $largura = (int) $info_imagem[0];
+        $altura = (int) $info_imagem[1];
+        if ($largura < 1 || $altura < 1) {
+            http_response_code(400);
+            exit('Dimensões de imagem inválidas');
+        }
+        if ($largura > 1400 && $info_imagem[2] !== IMAGETYPE_GIF) {
+            $origem = $info_imagem[2] === IMAGETYPE_PNG
+                ? @imagecreatefrompng($imagem_temp)
+                : @imagecreatefromjpeg($imagem_temp);
+            if (!$origem) exit('Não foi possível processar a imagem');
+            $nova_altura = max(1, (int) round($altura * 1400 / $largura));
+            $destino = imagecreatetruecolor(1400, $nova_altura);
+            if ($info_imagem[2] === IMAGETYPE_PNG) {
+                imagealphablending($destino, false);
+                imagesavealpha($destino, true);
+                $transparente = imagecolorallocatealpha($destino, 0, 0, 0, 127);
+                imagefilledrectangle($destino, 0, 0, 1400, $nova_altura, $transparente);
+            }
+            imagecopyresampled($destino, $origem, 0, 0, 0, 0, 1400, $nova_altura, $largura, $altura);
+            $gravou = $info_imagem[2] === IMAGETYPE_PNG
+                ? imagepng($destino, $caminho, 6)
+                : imagejpeg($destino, $caminho, 85);
+            imagedestroy($origem);
+            imagedestroy($destino);
+        } else {
+            $gravou = move_uploaded_file($imagem_temp, $caminho);
+        }
+        if (!$gravou) {
+            http_response_code(500);
+            exit('Não foi possível salvar a foto');
+        }
+        $foto = $nome_img;
 
 	} else {
 		echo 'Extensão de Imagem não permitida!';
