@@ -860,16 +860,16 @@ if($linhas == 0){
 
 							<li class="slide <?php echo @$menu_pessoas ?>">
 								<a class="side-menu__item" data-bs-toggle="slide" href="javascript:void(0);">
-									<i class="fa-solid fa-cart-plus text-white mt-1"></i>
+									<i class="fa-solid fa-users text-white mt-1"></i>
 									<span class="side-menu__label" style="margin-left: 15px">Pessoas</span><i
 										class="angle fe fe-chevron-right"></i></a>
 								<ul class="slide-menu">
 
-									<li class="<?php echo @$clientes ?>"><a class="slide-item" href="clientes"> Clientes</a></li>
-									<li class="<?php echo @$usuarios ?>"><a class="slide-item" href="usuarios"> Usuários</a></li>
-									<li class="<?php echo @$funcionarios ?>"><a class="slide-item" href="funcionarios"> Funcionários</a>
+									<li class="<?php echo @$clientes ?>"><a class="slide-item bc-pessoas-link" href="clientes"><i class="fa-solid fa-address-card" aria-hidden="true"></i><span>Clientes</span></a></li>
+									<li class="<?php echo @$usuarios ?>"><a class="slide-item bc-pessoas-link" href="usuarios"><i class="fa-solid fa-user-shield" aria-hidden="true"></i><span>Usuários</span></a></li>
+									<li class="<?php echo @$funcionarios ?>"><a class="slide-item bc-pessoas-link" href="funcionarios"><i class="fa-solid fa-user-gear" aria-hidden="true"></i><span>Funcionários</span></a>
 									</li>
-									<li class="<?php echo @$fornecedores ?>"><a class="slide-item" href="fornecedores"> Fornecedores</a>
+									<li class="<?php echo @$fornecedores ?>"><a class="slide-item bc-pessoas-link" href="fornecedores"><i class="fa-solid fa-truck-field" aria-hidden="true"></i><span>Fornecedores</span></a>
 									</li>
 
 								</ul>
