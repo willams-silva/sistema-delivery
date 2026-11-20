@@ -64,7 +64,8 @@ if ($ult_ped == "" and $id_ult_pedido != "") {
 }
 
 $ids = '';
-$query = $pdo->query("SELECT * FROM $tabela where status LIKE '$status' and status != 'Finalizado' and status != 'Cancelado' and empresa = '$id_empresa' $sql_mesa order by hora asc");
+$query = $pdo->prepare("SELECT c.* FROM carrinho c INNER JOIN produtos p ON p.id=c.produto AND p.empresa=c.empresa WHERE p.preparado=:setor AND c.status LIKE :status AND c.status NOT IN ('Finalizado','Cancelado') AND c.empresa=:empresa $sql_mesa ORDER BY c.hora ASC");
+$query->execute([':setor'=>'Cozinha',':status'=>$status,':empresa'=>(int)$id_empresa]);
 $res = $query->fetchAll(PDO::FETCH_ASSOC);
 $total_reg = @count($res);
 if ($total_reg > 0) {
@@ -578,7 +579,8 @@ $total_dos_itens_pedidos = @count($res);
         method: 'POST',
         data: {
           id,
-          acao
+          acao,
+          setor: 'Cozinha'
         },
         dataType: "text",
 
