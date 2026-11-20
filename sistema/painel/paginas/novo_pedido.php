@@ -642,8 +642,14 @@ if ($linhas > 0) {
 		
 		formaPgto()
 
-		setInterval(listar(buscar_cliente), 20000);
-		setInterval(listarCarrinho, 20000);
+		setInterval(function() {
+            if (document.hidden) return;
+            listar($('#buscar_cliente').val());
+        }, 20000);
+		setInterval(function() {
+            if (document.hidden || !$('#modalItens').hasClass('show')) return;
+            listarCarrinho();
+        }, 20000);
 
 		$('.sel5').select2({
 			dropdownParent: $('#modalAbertura')
@@ -662,6 +668,7 @@ if ($linhas > 0) {
 
 	function listarCarrinho() {
 		var id = $('#id_abertura_mesa').val();
+        if (!id || !$('#modalItens').hasClass('show')) return;
 		$.ajax({
 
 			url: 'paginas/' + pag + "/listar_carrinho.php",
