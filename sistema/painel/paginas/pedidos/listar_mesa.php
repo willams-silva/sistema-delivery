@@ -299,6 +299,7 @@ if ($total_reg > 0) {
         <div style="margin-top: 5px">
           <span><small><i><span style="color:#000">{$nome_garcon} </span></i></small></span>  
           <a style="position:absolute; right:20px" class="btn btn-dark-light btn-sm" href="#" onclick="gerarComprovante('{$id}')" title="Abrir comanda de Cozinha para impressao manual"><i class="fa fa-file-pdf-o"></i></a>        
+          <button type="button" class="btn btn-outline-primary btn-sm" style="font-size:10px;padding:3px 6px" onclick="bcEnfileirarLocal('{$id}', 'Cozinha', this)" title="Adicionar item a fila sem imprimir"><i class="fa fa-print"></i> Enfileirar</button>
           <button type="button" class="btn btn-outline-secondary btn-sm" style="font-size:10px;padding:3px 6px" onclick="bcHistoricoLocal('{$id}', 'Cozinha')" title="Consultar historico de movimentacoes"><i class="fa fa-history"></i> Histórico</button>
         </div>
 
@@ -630,5 +631,18 @@ window.bcHistoricoLocal = window.bcHistoricoLocal || function(id,setor){
       }).join('\\n'):'Nenhuma movimentacao registrada para este item.';
       alert('Histórico do pedido #'+id+' ('+setor+')\\n\\n'+texto);
     }).catch(function(e){alert('Histórico indisponível: '+e.message);});
+};
+</script>
+
+<script>
+window.bcEnfileirarLocal=window.bcEnfileirarLocal||function(id,setor,botao){
+ if(!window.confirm('Adicionar item #'+id+' à fila de impressão? Nenhuma impressão será iniciada.'))return;
+ if(botao)botao.disabled=true;
+ var dados=new URLSearchParams({carrinho_id:id,setor:setor});
+ fetch('paginas/pedidos/fila_impressao_local.php',{method:'POST',credentials:'same-origin',headers:{'Content-Type':'application/x-www-form-urlencoded'},body:dados.toString()})
+  .then(function(r){return r.json().then(function(d){if(!r.ok)throw new Error(d.erro||'Erro ao enfileirar');return d;});})
+  .then(function(d){alert('Item #'+id+' na fila. Estado: '+d.estado+'. Nenhuma impressão foi iniciada.');})
+  .catch(function(e){alert('Não foi possível enfileirar: '+e.message);})
+  .finally(function(){if(botao)botao.disabled=false;});
 };
 </script>
