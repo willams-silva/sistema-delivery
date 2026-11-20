@@ -302,6 +302,15 @@ if($linhas == 0){
 .slide-menu li:has(> .pedidos-locais-link)::before { content: none !important; display: none !important; }
 </style>
 
+<style id="bc-pessoas-menu-icons">
+/* Pessoas: remove os pontos do tema e alinha os icones dos submenus */
+.slide-menu .bc-pessoas-link { display: flex !important; align-items: center; gap: 10px; }
+.slide-menu .bc-pessoas-link::before,
+.slide-menu .bc-pessoas-link::after { content: none !important; display: none !important; }
+.slide-menu .bc-pessoas-link > i { flex: 0 0 17px; width: 17px; text-align: center; font-size: 14px; }
+.slide-menu li:has(> .bc-pessoas-link)::before { content: none !important; display: none !important; }
+</style>
+
 <style id="bc-local-count-style">
 .bc-local-count { margin-left:auto; order:3; background:#8b5cf6; color:white; font-size:11px; font-weight:700; line-height:19px; min-width:20px; text-align:center; padding:0 5px; border-radius:12px; }
 .bc-local-count[hidden] { display:none !important; }
