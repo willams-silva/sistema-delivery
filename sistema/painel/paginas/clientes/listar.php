@@ -112,33 +112,74 @@ HTML;
 			$mostrar_cartao = 'ocultar';
 		}
 
+
+        // Codifica dados para HTML e argumentos JavaScript separadamente.
+        $html_id = htmlspecialchars((string) $id, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
+        $js_id = htmlspecialchars(json_encode((string) $id, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_INVALID_UTF8_SUBSTITUTE), ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
+        $html_nome = htmlspecialchars((string) $nome, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
+        $js_nome = htmlspecialchars(json_encode((string) $nome, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_INVALID_UTF8_SUBSTITUTE), ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
+        $html_nomeF = htmlspecialchars((string) $nomeF, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
+        $js_nomeF = htmlspecialchars(json_encode((string) $nomeF, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_INVALID_UTF8_SUBSTITUTE), ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
+        $html_telefone = htmlspecialchars((string) $telefone, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
+        $js_telefone = htmlspecialchars(json_encode((string) $telefone, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_INVALID_UTF8_SUBSTITUTE), ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
+        $html_email = htmlspecialchars((string) $email, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
+        $js_email = htmlspecialchars(json_encode((string) $email, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_INVALID_UTF8_SUBSTITUTE), ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
+        $html_endereco = htmlspecialchars((string) $endereco, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
+        $js_endereco = htmlspecialchars(json_encode((string) $endereco, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_INVALID_UTF8_SUBSTITUTE), ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
+        $html_enderecoF = htmlspecialchars((string) $enderecoF, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
+        $js_enderecoF = htmlspecialchars(json_encode((string) $enderecoF, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_INVALID_UTF8_SUBSTITUTE), ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
+        $html_cpf = htmlspecialchars((string) $cpf, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
+        $js_cpf = htmlspecialchars(json_encode((string) $cpf, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_INVALID_UTF8_SUBSTITUTE), ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
+        $html_numero = htmlspecialchars((string) $numero, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
+        $js_numero = htmlspecialchars(json_encode((string) $numero, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_INVALID_UTF8_SUBSTITUTE), ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
+        $html_bairro = htmlspecialchars((string) $bairro, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
+        $js_bairro = htmlspecialchars(json_encode((string) $bairro, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_INVALID_UTF8_SUBSTITUTE), ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
+        $html_cidade = htmlspecialchars((string) $cidade, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
+        $js_cidade = htmlspecialchars(json_encode((string) $cidade, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_INVALID_UTF8_SUBSTITUTE), ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
+        $html_estado = htmlspecialchars((string) $estado, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
+        $js_estado = htmlspecialchars(json_encode((string) $estado, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_INVALID_UTF8_SUBSTITUTE), ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
+        $html_cep = htmlspecialchars((string) $cep, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
+        $js_cep = htmlspecialchars(json_encode((string) $cep, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_INVALID_UTF8_SUBSTITUTE), ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
+        $html_complemento = htmlspecialchars((string) $complemento, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
+        $js_complemento = htmlspecialchars(json_encode((string) $complemento, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_INVALID_UTF8_SUBSTITUTE), ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
+        $html_data_cadF = htmlspecialchars((string) $data_cadF, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
+        $js_data_cadF = htmlspecialchars(json_encode((string) $data_cadF, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_INVALID_UTF8_SUBSTITUTE), ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
+        $html_data_nasc = htmlspecialchars((string) $data_nasc, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
+        $js_data_nasc = htmlspecialchars(json_encode((string) $data_nasc, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_INVALID_UTF8_SUBSTITUTE), ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
+        $html_data_nascF = htmlspecialchars((string) $data_nascF, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
+        $js_data_nascF = htmlspecialchars(json_encode((string) $data_nascF, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_INVALID_UTF8_SUBSTITUTE), ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
+        $html_cartoes = htmlspecialchars((string) $cartoes, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
+        $js_cartoes = htmlspecialchars(json_encode((string) $cartoes, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_INVALID_UTF8_SUBSTITUTE), ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
+        $html_tel_whatsF = htmlspecialchars((string) $tel_whatsF, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
+        $js_tel_whatsF = htmlspecialchars(json_encode((string) $tel_whatsF, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_INVALID_UTF8_SUBSTITUTE), ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
+
 		echo <<<HTML
 <tr class="{$debito2}">
 <td align="center">
 <div class="custom-checkbox custom-control">
-<input type="checkbox" class="custom-control-input" id="seletor-{$id}" onchange="selecionar('{$id}')">
-<label for="seletor-{$id}" class="custom-control-label mt-1 text-dark"></label>
+<input type="checkbox" class="custom-control-input" id="seletor-{$html_id}" onchange="selecionar({$js_id})">
+<label for="seletor-{$html_id}" class="custom-control-label mt-1 text-dark"></label>
 </div>
 </td>
-<td class="{$debito}"> {$nome}</td>
-<td>{$telefone}</td>
-<td>{$email}</td>
+<td class="{$debito}"> {$html_nome}</td>
+<td>{$html_telefone}</td>
+<td>{$html_email}</td>
 <td>
-<a class="btn btn-info-light btn-sm" href="#" onclick="editar('{$id}','{$nomeF}','{$email}','{$telefone}','{$enderecoF}','{$cpf}','{$data_nasc}','{$numero}','{$bairro}','{$cidade}','{$estado}','{$cep}','{$complemento}')" title="Editar Dados"><i class="fa fa-edit"></i></a>
+<a class="btn btn-info-light btn-sm" href="#" onclick="editar({$js_id},{$js_nomeF},{$js_email},{$js_telefone},{$js_enderecoF},{$js_cpf},{$js_data_nasc},{$js_numero},{$js_bairro},{$js_cidade},{$js_estado},{$js_cep},{$js_complemento})" title="Editar Dados"><i class="fa fa-edit"></i></a>
 
-<big><a class="btn btn-danger-light btn-sm" href="#" onclick="excluir('{$id}')" title="Excluir"><i class="fa fa-trash-can text-danger"></i></a></big>
+<big><a class="btn btn-danger-light btn-sm" href="#" onclick="excluir({$js_id})" title="Excluir"><i class="fa fa-trash-can text-danger"></i></a></big>
 
-<a class="btn btn-primary-light btn-sm" href="#" onclick="mostrar('{$nome}','{$email}','{$telefone}','{$endereco}', '{$data_cadF}','{$cpf}','{$data_nascF}','{$numero}','{$bairro}','{$cidade}','{$estado}','{$cep}','{$complemento}','{$cartoes}')" title="Mostrar Dados"><i class="fa fa-info-circle"></i></a>
+<a class="btn btn-primary-light btn-sm" href="#" onclick="mostrar({$js_nome},{$js_email},{$js_telefone},{$js_endereco}, {$js_data_cadF},{$js_cpf},{$js_data_nascF},{$js_numero},{$js_bairro},{$js_cidade},{$js_estado},{$js_cep},{$js_complemento},{$js_cartoes})" title="Mostrar Dados"><i class="fa fa-info-circle"></i></a>
 
-<a class="btn btn-dark-light btn-sm" href="#" onclick="arquivo('{$id}', '{$nome}')" title="Inserir / Ver Arquivos"><i class="fa fa-file-o "></i></a>
+<a class="btn btn-dark-light btn-sm" href="#" onclick="arquivo({$js_id}, {$js_nome})" title="Inserir / Ver Arquivos"><i class="fa fa-file-o "></i></a>
 
-<a class="btn btn-success-light btn-sm" href="#" onclick="mostrarContas('{$nome}','{$id}')" title="Mostrar Contas"><i class="fa fa-money"></i></a>
+<a class="btn btn-success-light btn-sm" href="#" onclick="mostrarContas({$js_nome},{$js_id})" title="Mostrar Contas"><i class="fa fa-money"></i></a>
 
-<a class="btn btn-success-light btn-sm {$ocultar_whats}" href="http://api.whatsapp.com/send?1=pt_BR&phone={$tel_whatsF}" title="Whatsapp" target="_blank"><i class="fa-brands fa-whatsapp"></i></a>
+<a class="btn btn-success-light btn-sm {$ocultar_whats}" href="http://api.whatsapp.com/send?1=pt_BR&phone={$html_tel_whatsF}" title="Whatsapp" target="_blank"><i class="fa-brands fa-whatsapp"></i></a>
 
-<a class="btn btn-info btn-sm {$mostrar_cartao}" href="#" title="Mensagem Cartões" onclick="mensagemMarketing('{$id}', '{$nome}', '{$cartoes}', '{$telefone}')"><i class="fa fa-id-card"></i></a>
+<a class="btn btn-info btn-sm {$mostrar_cartao}" href="#" title="Mensagem Cartões" onclick="mensagemMarketing({$js_id}, {$js_nome}, {$js_cartoes}, {$js_telefone})"><i class="fa fa-id-card"></i></a>
 
-<big><a class="btn btn-danger-light btn-sm {$ocultar_mark}" href="#" onclick="excluirMarketing('{$id}')" title="Remover do Marketing Whatsapp"><i class="fa fa-ban text-danger"></i></a></big>
+<big><a class="btn btn-danger-light btn-sm {$ocultar_mark}" href="#" onclick="excluirMarketing({$js_id})" title="Remover do Marketing Whatsapp"><i class="fa fa-ban text-danger"></i></a></big>
 
 </td>
 </tr>
