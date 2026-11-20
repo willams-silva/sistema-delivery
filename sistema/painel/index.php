@@ -301,6 +301,11 @@ if($linhas == 0){
 .slide-menu .pedidos-locais-link i { flex: 0 0 17px; width: 17px; text-align: center; font-size: 14px; }
 .slide-menu li:has(> .pedidos-locais-link)::before { content: none !important; display: none !important; }
 </style>
+
+<style id="bc-local-count-style">
+.bc-local-count { margin-left:auto; order:3; background:#8b5cf6; color:white; font-size:11px; font-weight:700; line-height:19px; min-width:20px; text-align:center; padding:0 5px; border-radius:12px; }
+.bc-local-count[hidden] { display:none !important; }
+</style>
 </head>
 
 <body class="ltr main-body app sidebar-mini">
@@ -803,11 +808,11 @@ if($linhas == 0){
 										class="angle fe fe-chevron-right"></i></a>
 								<ul class="slide-menu">
 
-									<li class="<?php echo @$pedidos_mesa ?>"><a class="slide-item pedidos-locais-link" href="pedidos_mesa"><i class="fa-solid fa-utensils" aria-hidden="true"></i><span>Pedidos Cozinha</span></a></li>
+									<li class="<?php echo @$pedidos_mesa ?>"><a class="slide-item pedidos-locais-link" href="pedidos_mesa"><span class="bc-local-count" id="bc-local-cozinha" aria-label="Pedidos ativos" hidden></span><i class="fa-solid fa-utensils" aria-hidden="true"></i><span>Pedidos Cozinha</span></a></li>
 
-									<li class="<?php echo @$pedidos_bar ?>"><a class="slide-item pedidos-locais-link" href="pedidos_bar"><i class="fa-solid fa-martini-glass" aria-hidden="true"></i><span>Pedidos Bar</span></a></li>
+									<li class="<?php echo @$pedidos_bar ?>"><a class="slide-item pedidos-locais-link" href="pedidos_bar"><span class="bc-local-count" id="bc-local-bar" aria-label="Pedidos ativos" hidden></span><i class="fa-solid fa-martini-glass" aria-hidden="true"></i><span>Pedidos Bar</span></a></li>
 
-									<li class="<?php echo @$pedidos_outros ?>"><a class="slide-item pedidos-locais-link" href="pedidos_outros"><i class="fa-solid fa-location-dot" aria-hidden="true"></i><span>Outros Locais</span></a></li>
+									<li class="<?php echo @$pedidos_outros ?>"><a class="slide-item pedidos-locais-link" href="pedidos_outros"><span class="bc-local-count" id="bc-local-outro" aria-label="Pedidos ativos" hidden></span><i class="fa-solid fa-location-dot" aria-hidden="true"></i><span>Outros Locais</span></a></li>
 									
 
 								</ul>
@@ -3052,4 +3057,35 @@ function habilitarUrl() {
 document.addEventListener("DOMContentLoaded", function() {
     habilitarUrl();
 });
+</script>
+
+<script id="bc-local-count-script">
+(function(){
+  var setores = {Cozinha:'cozinha',Bar:'bar',Outro:'outro'};
+  var emAndamento = false;
+  function atualizarContadores(){
+    if (document.hidden || emAndamento) return;
+    emAndamento = true;
+    fetch('paginas/pedidos_locais_contadores.php', {credentials:'same-origin',cache:'no-store'})
+      .then(function(res){ if (!res.ok) throw new Error('Consulta indisponível'); return res.json(); })
+      .then(function(data){
+        if (!data.setores) return;
+        Object.keys(setores).forEach(function(setor){
+          var el = document.getElementById('bc-local-'+setores[setor]);
+          if (!el) return;
+          var n = Number((data.setores[setor] || {}).total || 0);
+          el.textContent = String(n);
+          el.hidden = n === 0;
+          el.title = n+' itens ativos em '+setor;
+        });
+      })
+      .catch(function(){ /* preserva menu quando a consulta falha */ })
+      .finally(function(){ emAndamento = false; });
+  }
+  document.addEventListener('DOMContentLoaded',function(){
+    atualizarContadores();
+    setInterval(atualizarContadores,15000);
+    document.addEventListener('visibilitychange',function(){ if(!document.hidden) atualizarContadores(); });
+  });
+})();
 </script>
