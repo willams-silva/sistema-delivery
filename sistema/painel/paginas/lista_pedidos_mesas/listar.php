@@ -1,6 +1,7 @@
 <?php
 @session_start();
-$id_empresa = $_SESSION['empresa'];
+$id_empresa = (int)($_SESSION['empresa']??0);
+if($id_empresa<=0||empty($_SESSION['id'])){http_response_code(403);exit('Sessão inválida');}
 require_once("../../../conexao.php");
 require_once("../../buscar_config.php");
 $tabela = 'abertura_mesa';
@@ -14,7 +15,18 @@ $nome_forma_pgto = '';
 
 $total_vendas = 0;
 
-$query = $pdo->query("SELECT * FROM $tabela where data >= '$dataInicial' and data <= '$dataFinal' and status = 'Fechada' and empresa = '$id_empresa' order by data asc, horario_abertura desc");
+$mesa=filter_var($_POST['mesa']??'',FILTER_VALIDATE_INT);
+$dataInicial=(string)($_POST['dataInicial']??'');
+$dataFinal=(string)($_POST['dataFinal']??'');
+if(!preg_match('/^\\d{4}-\\d{2}-\\d{2}$/',$dataInicial)||!preg_match('/^\\d{4}-\\d{2}-\\d{2}$/',$dataFinal)||$dataInicial>$dataFinal){
+ http_response_code(400);exit('Período inválido');
+}
+$sql="SELECT * FROM abertura_mesa WHERE data>=:inicio AND data<=:fim AND status='Fechada' AND empresa=:empresa";
+$params=[':inicio'=>$dataInicial,':fim'=>$dataFinal,':empresa'=>$id_empresa];
+if($mesa && $mesa>0){$sql.=' AND mesa=:mesa';$params[':mesa']=$mesa;}
+$sql.=' ORDER BY data ASC, horario_abertura DESC';
+$query=$pdo->prepare($sql);
+$query->execute($params);
 $res = $query->fetchAll(PDO::FETCH_ASSOC);
 $total_reg = @count($res);
 if($total_reg > 0){
@@ -60,10 +72,11 @@ for($i=0; $i < $total_reg; $i++){
 		$valor_adiantado = $res[$i]['valor_adiantado'];
 
 
-		$query2 = $pdo->query("SELECT * FROM formas_pgto WHERE id = '$forma_pgto'");
+		$query2=$pdo->prepare('SELECT nome FROM formas_pgto WHERE id=:id AND empresa=:empresa LIMIT 1');
+        $query2->execute([':id'=>(int)$forma_pgto,':empresa'=>$id_empresa]);
 		$res2 = $query2->fetchAll(PDO::FETCH_ASSOC);
 		if (@count($res2) > 0) {
-			$nome_forma_pgto = $res2[0]['nome'];
+			$nome_forma_pgto = htmlspecialchars((string)$res2[0]['nome'],ENT_QUOTES,'UTF-8');
 		}
 
 		$totalF = @number_format($total, 2, ',', '.');
@@ -74,13 +87,15 @@ for($i=0; $i < $total_reg; $i++){
 	
 		$dataF = implode('/', array_reverse(@explode('-', $data)));
 
-		$query2 = $pdo->query("SELECT * FROM mesas where id = '$mesa' ");
+		$query2=$pdo->prepare('SELECT nome FROM mesas WHERE id=:id AND empresa=:empresa LIMIT 1');
+        $query2->execute([':id'=>(int)$mesa,':empresa'=>$id_empresa]);
 		$res2 = $query2->fetchAll(PDO::FETCH_ASSOC);
-		$nome_mesa = $res2[0]['nome'];
+		$nome_mesa = htmlspecialchars((string)($res2[0]['nome']??'Mesa removida'),ENT_QUOTES,'UTF-8');
 
-		$query2 = $pdo->query("SELECT * FROM usuarios where id = '$garcon' ");
+		$query2=$pdo->prepare('SELECT nome FROM usuarios WHERE id=:id AND empresa=:empresa LIMIT 1');
+        $query2->execute([':id'=>(int)$garcon,':empresa'=>$id_empresa]);
 		$res2 = $query2->fetchAll(PDO::FETCH_ASSOC);
-		$nome_garcon = $res2[0]['nome'];
+		$nome_garcon = htmlspecialchars((string)($res2[0]['nome']??'Não informado'),ENT_QUOTES,'UTF-8');
 
 		$horario_aberturaF = date('H:i', @strtotime($horario_abertura));
 		$horario_fechamentoF = date('H:i', @strtotime($horario_fechamento));
@@ -90,8 +105,8 @@ for($i=0; $i < $total_reg; $i++){
 echo <<<HTML
 <tr>
 <td>{$nome_mesa}</td>
-<td>{$horario_fechamentoF}</td>
 <td>{$nome_garcon}</td>
+<td>{$horario_fechamentoF}</td>
 <td>R$ {$totalF}</td>
 <td>R$ {$comissaoF}</td>
 <td>R$ {$couvertF}</td>
