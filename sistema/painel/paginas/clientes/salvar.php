@@ -100,7 +100,12 @@ if($telefone != "") {
 if($data_nasc == "") {
     $nasc = '';
 } else {
-    $nasc = " ,data_nasc = '$data_nasc'";
+    $data_obj = DateTimeImmutable::createFromFormat('!Y-m-d', $data_nasc);
+    if (!$data_obj || $data_obj->format('Y-m-d') !== $data_nasc) {
+        http_response_code(400);
+        exit('Data de nascimento inválida');
+    }
+    $nasc = ' ,data_nasc = :data_nasc';
 
 }
 
@@ -114,6 +119,9 @@ if($id === 0) {
 }
 
 
+if ($nasc !== '') {
+    $query->bindValue(':data_nasc', $data_nasc);
+}
 $query->bindValue(":nome", "$nome");
 $query->bindValue(":email", "$email");
 $query->bindValue(":telefone", "$telefone");
