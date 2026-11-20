@@ -60,7 +60,7 @@ function bcEsc($v) {return htmlspecialchars((string)$v,ENT_QUOTES|ENT_SUBSTITUTE
  tabela.on('click','.bc-grupo-excluir',function(){
   var id=$(this).attr('data-id'),nome=$(this).attr('data-nome'),total=Number($(this).attr('data-total'));
   if(total>0){Swal.fire({icon:'warning',title:'Grupo com acessos vinculados',text:'Remova os '+total+' acessos vinculados antes de excluir '+nome+'.'});return;}
-  Swal.fire({icon:'warning',title:'Excluir grupo?',text:'Deseja excluir '+nome+'?',showCancelButton:true,confirmButtonText:'Excluir',cancelButtonText:'Cancelar',confirmButtonColor:'#dc3545'}).then(function(r){if(r.isConfirmed)excluir(id);});
+  Swal.fire({icon:'warning',title:'Excluir grupo?',text:'Deseja excluir '+nome+'?',showCancelButton:true,confirmButtonText:'Excluir',cancelButtonText:'Cancelar',confirmButtonColor:'#dc3545'}).then(function(r){if(r.isConfirmed){$.post('paginas/grupo_acessos/excluir.php',{id:id},function(msg){if(String(msg).trim()==='Excluído com Sucesso'){listar();Swal.fire({icon:'success',title:'Grupo excluído',timer:1200,showConfirmButton:false});}else{Swal.fire({icon:'warning',text:String(msg)});}},'text').fail(function(xhr){Swal.fire({icon:'error',title:'Não foi possível excluir',text:(xhr.responseText||'Verifique suas permissões.').replace(/<[^>]*>/g,'').slice(0,250)});});}});
  });
 })();
 function limparCampos(){
