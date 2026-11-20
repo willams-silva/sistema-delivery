@@ -32,6 +32,11 @@ try{
  if(!$at||(int)$at['mesa']!==$origem){
   $pdo->rollBack();http_response_code(409);exit('Atendimento de origem não corresponde à mesa informada');
  }
+ $qOrigem=$pdo->prepare("SELECT id FROM abertura_mesa WHERE mesa=:mesa AND empresa=:empresa AND status='Aberta' FOR UPDATE");
+ $qOrigem->execute([':mesa'=>$origem,':empresa'=>$empresa]);
+ if(count($qOrigem->fetchAll(PDO::FETCH_COLUMN))!==1){
+  $pdo->rollBack();http_response_code(409);exit('A origem possui múltiplos atendimentos abertos; regularize antes de transferir');
+ }
  $q=$pdo->prepare("SELECT id FROM abertura_mesa WHERE mesa=:mesa AND empresa=:empresa AND status='Aberta' LIMIT 1 FOR UPDATE");
  $q->execute([':mesa'=>$destino,':empresa'=>$empresa]);
  if($q->fetchColumn()){
