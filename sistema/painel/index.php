@@ -179,10 +179,10 @@ $query1 = $pdo->query("SELECT * from caixas where operador = '$id_usuario' and d
 $res1 = $query1->fetchAll(PDO::FETCH_ASSOC);
 if (@count($res1) > 0) {
 	$caixa_esta_aberto = 'Sim';
-	$texto_caixa = '<small><span style="color:green"> (Aberto)</span></small>';
+	$texto_caixa = '<span class="bc-caixa-status bc-caixa-aberto" title="Caixa aberto"><i class="fa-solid fa-circle-check"></i> ABERTO</span>';
 } else {
 	$caixa_esta_aberto = 'Não';
-	$texto_caixa = '<small><span style="color:red"> (Fechado)</span></small>';
+	$texto_caixa = '<span class="bc-caixa-status bc-caixa-fechado" title="Caixa fechado"><i class="fa-solid fa-circle-xmark"></i> FECHADO</span>';
 }
 
 
@@ -305,6 +305,18 @@ if($linhas == 0){
 <style id="bc-local-count-style">
 .bc-local-count { margin-left:auto; order:3; background:#8b5cf6; color:white; font-size:11px; font-weight:700; line-height:19px; min-width:20px; text-align:center; padding:0 5px; border-radius:12px; }
 .bc-local-count[hidden] { display:none !important; }
+</style>
+
+<style id="bc-caixa-status-style">
+.app-sidebar .bc-caixa-status {
+  display:inline-flex;align-items:center;gap:4px;
+  padding:3px 7px;border-radius:12px;
+  color:#fff!important;font-size:10px;font-weight:600;line-height:1;
+  vertical-align:middle;white-space:nowrap;margin-left:5px;
+}
+.app-sidebar .bc-caixa-aberto {background:#10b981!important;}
+.app-sidebar .bc-caixa-fechado {background:#ef4444!important;}
+.app-sidebar .bc-caixa-status i {font-size:9px;}
 </style>
 </head>
 
