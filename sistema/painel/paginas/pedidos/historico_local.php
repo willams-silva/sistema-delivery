@@ -11,6 +11,10 @@ if (!$empresa || !$usuario || !$id || !in_array($setor, ['Cozinha','Bar','Outro'
     ($_SESSION['aut_token_SaL1P'] ?? '') !== '25tNX1L1MSaL1P') {
     http_response_code(403); exit(json_encode(['erro'=>'Acesso negado']));
 }
+require_once(__DIR__.'/permissao_setor.php');
+if (!bcPermiteSetor($pdo, (int)$empresa, (int)$usuario, $setor)) {
+    http_response_code(403); exit(json_encode(['erro'=>'Sem permissao para consultar este setor']));
+}
 try {
     $consulta = $pdo->prepare("SELECT 1 FROM carrinho c INNER JOIN produtos p ON p.id=c.produto AND p.empresa=c.empresa
         WHERE c.id=:id AND c.empresa=:empresa AND p.preparado=:setor LIMIT 1");
