@@ -133,6 +133,12 @@ $caminho = '../../images/perfil/' . $nome_img;
 $imagem_temp = @$_FILES['foto']['tmp_name'];
 
 if (@$_FILES['foto']['name'] != "") {
+    if (($_FILES['foto']['error'] ?? UPLOAD_ERR_NO_FILE) !== UPLOAD_ERR_OK ||
+        !is_uploaded_file($imagem_temp) ||
+        ($_FILES['foto']['size'] ?? 0) > 5 * 1024 * 1024) {
+        http_response_code(400);
+        exit('Imagem inválida ou maior que 5 MB');
+    }
 
 	$ext = pathinfo($nome_img, PATHINFO_EXTENSION);
 	if ($ext == 'png' or $ext == 'jpg' or $ext == 'jpeg' or $ext == 'gif' or $ext == 'PNG' or $ext == 'JPG' or $ext == 'JPEG' or $ext == 'GIF') {
