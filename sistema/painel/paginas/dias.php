@@ -39,6 +39,16 @@ $pag = 'dias';
 <div id="bc-horario-msg" class="small mt-2" role="status" aria-live="polite"></div>
 <div class="table-responsive mt-3"><table class="table table-hover"><thead><tr><th>Data</th><th>Horário</th><th>Motivo</th><th>Ação</th></tr></thead><tbody id="bc-horario-lista"><tr><td colspan="4" class="text-muted">Carregando...</td></tr></tbody></table></div>
 </div></div></div></div>
+<div class="row row-sm"><div class="col-lg-12"><div class="card custom-card"><div class="card-body">
+<h5><i class="fa-solid fa-calendar-check me-2"></i>Simulador de funcionamento</h5>
+<p class="text-muted">Consulte o status do delivery para uma data e horário, com base nas regras atualmente salvas. A simulação não modifica configurações. Pausas e fechamentos manuais futuros não podem ser previstos.</p>
+<form id="bc-previsao-form" class="row g-2 align-items-end">
+<div class="col-md-4"><label for="bc-previsao-data" class="form-label">Data</label><input type="date" id="bc-previsao-data" class="form-control" required></div>
+<div class="col-md-4"><label for="bc-previsao-hora" class="form-label">Horário</label><input type="time" id="bc-previsao-hora" class="form-control" required></div>
+<div class="col-md-4"><button class="btn btn-primary w-100" type="submit" id="bc-previsao-btn"><i class="fa-solid fa-magnifying-glass me-1"></i>Consultar funcionamento</button></div>
+</form>
+<div id="bc-previsao-resultado" class="mt-3" role="status" aria-live="polite"></div>
+</div></div></div></div>
 <input type="hidden" id="ids">
 
 
@@ -182,5 +192,31 @@ $('#bc-horario-form').on('submit',function(e){
  },'json').fail(falha);
 });
 carregar();
+})();
+</script>
+
+<script>
+(function(){
+ var form=$('#bc-previsao-form'), result=$('#bc-previsao-resultado'), btn=$('#bc-previsao-btn');
+ var agora=new Date();
+ var dataLocal=agora.getFullYear()+'-'+String(agora.getMonth()+1).padStart(2,'0')+'-'+String(agora.getDate()).padStart(2,'0');
+ $('#bc-previsao-data').val(dataLocal);
+ $('#bc-previsao-hora').val(String(agora.getHours()).padStart(2,'0')+':'+String(agora.getMinutes()).padStart(2,'0'));
+ form.on('submit',function(e){
+  e.preventDefault();
+  result.empty().append($('<span class="text-muted">').text('Consultando regras...'));
+  btn.prop('disabled',true);
+  $.post('paginas/dias/previsao_funcionamento.php',{
+   data:$('#bc-previsao-data').val(),hora:$('#bc-previsao-hora').val()
+  },function(r){
+   result.empty();
+   var cor=r.status==='ABERTO'?'text-success':r.status==='PAUSADO'?'text-warning':'text-danger';
+   result.append($('<div class="fw-bold">').addClass(cor).text('Resultado: '+r.status));
+   result.append($('<div>').text(r.motivo));
+   result.append($('<small class="text-muted">').text(r.observacao));
+  },'json').fail(function(xhr){
+   result.empty().append($('<div class="text-danger">').text(xhr.responseJSON && xhr.responseJSON.erro || 'Não foi possível consultar o funcionamento.'));
+  }).always(function(){btn.prop('disabled',false);});
+ });
 })();
 </script>
