@@ -91,6 +91,15 @@ if($id_mesa > 0){
 
 
 // Fechamentos por data específica: somente delivery, preservando mesas e balcão.
+require_once __DIR__ . '/sistema/horarios_especiais.php';
+$bc_horario_especial_hoje = null;
+if ($id_mesa == "" && $sessão_balcao == "" && (int)$id_empresa > 0) {
+  try {
+    $bc_horario_especial_hoje = bcHorarioEspecial($pdo, (int)$id_empresa, date('Y-m-d'));
+  } catch (PDOException $e) {
+    error_log('Horário especial do cardápio: ' . $e->getMessage());
+  }
+}
 $bc_fechamento_excepcional_hoje = false;
 if ($id_mesa == "" && $sessão_balcao == "" && (int)$id_empresa > 0) {
   try {
@@ -120,6 +129,10 @@ if($id_edicao == ""){
         $data = date('Y-m-d');
         if ($bc_fechamento_excepcional_hoje) {
           $img = 'fechado.png';
+        }
+        // Horário especial prevalece sobre a agenda semanal, exceto fechamento integral.
+        if ($bc_horario_especial_hoje !== null && !$bc_fechamento_excepcional_hoje) {
+          $img = bcHorarioEspecialAberto($bc_horario_especial_hoje, date('H:i:s')) ? 'aberto.png' : 'fechado.png';
         }
         //verificar se está aberto hoje
         $diasemana = array("Domingo", "Segunda-Feira", "Terça-Feira", "Quarta-Feira", "Quinta-Feira", "Sexta-Feira", "Sábado");
@@ -156,12 +169,15 @@ if($id_edicao == ""){
             $img = 'fechado.png';
           }
         }
+        if ($bc_horario_especial_hoje !== null && !$bc_fechamento_excepcional_hoje) {
+          $img = bcHorarioEspecialAberto($bc_horario_especial_hoje, date('H:i:s')) ? 'aberto.png' : 'fechado.png';
+        }
+        if ($bc_fechamento_excepcional_hoje) $img = 'fechado.png';
       }
 
     }
 
 }
-
 
 
 
@@ -486,7 +502,7 @@ if ($id_mesa == "" and $sessão_balcao == "") {
     $query_status_dia = $pdo->query("SELECT * FROM dias where dia = '$dia_procurado' and empresa = '$id_empresa'");
     $res_status_dia = $query_status_dia->fetchAll(PDO::FETCH_ASSOC);
 
-    if (@count($res_status_dia) > 0 || $bc_fechamento_excepcional_hoje) {
+    if ($bc_fechamento_excepcional_hoje || ($bc_horario_especial_hoje === null && @count($res_status_dia) > 0)) {
 
       $status_delivery_txt = 'FECHADO';
       $status_delivery_cor = '#dc3545';
@@ -494,6 +510,10 @@ if ($id_mesa == "" and $sessão_balcao == "") {
 
     } else {
 
+      if ($bc_horario_especial_hoje !== null) {
+        $horario_abertura = $bc_horario_especial_hoje['inicio'];
+        $horario_fechamento = $bc_horario_especial_hoje['fim'];
+      }
       $start = strtotime(date('Y-m-d') . ' ' . $horario_abertura);
       $end = strtotime(date('Y-m-d') . ' ' . $horario_fechamento);
       $now = time();
