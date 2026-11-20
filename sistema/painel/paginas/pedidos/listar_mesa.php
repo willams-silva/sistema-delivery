@@ -276,7 +276,8 @@ if ($total_reg > 0) {
     if ($status == 'Aguardando' and $impressao_cozinha == 'Sim' and $impressao != "Sim") {
       $ids .= $id . '-';
       //coloco a impressao = sim
-      $pdo->query("UPDATE $tabela SET impressao = 'Sim' where id = '$id'");
+      $marcar = $pdo->prepare("UPDATE carrinho SET impressao = 'Sim' WHERE id = :id AND empresa = :empresa AND impressao != 'Sim'");
+      $marcar->execute([':id'=>(int)$id, ':empresa'=>(int)$id_empresa]);
     }
 
 
@@ -290,7 +291,7 @@ if ($total_reg > 0) {
 
         <div style="margin-top: 5px">
           <span><small><i><span style="color:#000">{$nome_garcon} </span></i></small></span>  
-          <a style="position:absolute; right:20px" class="btn btn-dark-light btn-sm" href="#" onclick="gerarComprovante('{$id}')" title="Gerar Comprovante"><i class="fa fa-file-pdf-o"></i></a>        
+          <a style="position:absolute; right:20px" class="btn btn-dark-light btn-sm" href="#" onclick="gerarComprovante('{$id}')" title="Abrir comanda de Cozinha para impressao manual"><i class="fa fa-file-pdf-o"></i></a>        
         </div>
 
         <div style="border-bottom: 1px solid #000">
