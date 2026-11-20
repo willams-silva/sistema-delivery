@@ -110,7 +110,7 @@ if($data_nasc == "") {
 }
 
 if($id === 0) {
-    $query = $pdo->prepare("INSERT INTO $tabela SET nome = :nome, email = :email, telefone = :telefone, data_cad = curDate(), endereco = :endereco, cpf = :cpf $nasc, usuario = '$id_usuario', numero = :numero, bairro = :bairro, cidade = :cidade, estado = :estado, cep = :cep, complemento = :complemento, empresa = '$id_empresa' ");
+    $query = $pdo->prepare("INSERT INTO $tabela SET nome = :nome, email = :email, telefone = :telefone, data_cad = curDate(), endereco = :endereco, cpf = :cpf $nasc, usuario = :usuario, numero = :numero, bairro = :bairro, cidade = :cidade, estado = :estado, cep = :cep, complemento = :complemento, empresa = :empresa ");
 
 } else {
 
@@ -121,6 +121,12 @@ if($id === 0) {
 
 if ($nasc !== '') {
     $query->bindValue(':data_nasc', $data_nasc);
+}
+$query->bindValue(':empresa', $id_empresa, PDO::PARAM_INT);
+if ($id === 0) {
+    $query->bindValue(':usuario', $id_usuario, PDO::PARAM_INT);
+} else {
+    $query->bindValue(':id', $id, PDO::PARAM_INT);
 }
 $query->bindValue(":nome", "$nome");
 $query->bindValue(":email", "$email");
