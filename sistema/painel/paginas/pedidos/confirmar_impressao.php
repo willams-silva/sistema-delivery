@@ -22,11 +22,11 @@ try {
         $existe = $pdo->prepare("SELECT impressao FROM vendas WHERE id=:id AND empresa=:empresa");
         $existe->execute([':id'=>$id,':empresa'=>$empresa]);
         $estado = $existe->fetchColumn();
-        if ($estado === false) responderImpressao(404, 'Pedido não encontrado nesta empresa');
-        if ($estado !== 'Sim') responderImpressao(409, 'Não foi possível confirmar a impressão');
+        if ($estado === false) { $pdo->rollBack(); responderImpressao(404, 'Pedido não encontrado nesta empresa'); }
+        if ($estado !== 'Sim') { $pdo->rollBack(); responderImpressao(409, 'Não foi possível confirmar a impressão'); }
     }
     // O cron pode ter enfileirado o mesmo pedido: só limpa após confirmação humana.
-    $estado = $pdo->prepare("UPDATE automacao_pedidos_estado SET imprimir_pendente=0 WHERE empresa=:empresa AND venda_id=:id");
+    $estado = $pdo->prepare("UPDATE automacao_pedidos_estado SET imprimir_pendente=0, impresso_em=COALESCE(impresso_em,NOW()) WHERE empresa=:empresa AND venda_id=:id");
     $estado->execute([':empresa'=>$empresa,':id'=>$id]);
     $pdo->commit();
     responderImpressao(200, 'Impressão confirmada');
