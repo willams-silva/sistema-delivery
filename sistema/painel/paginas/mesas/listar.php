@@ -9,7 +9,17 @@ $tabela = 'mesas';
 $query = $pdo->prepare("SELECT * FROM mesas WHERE empresa = :empresa ORDER BY CAST(nome AS UNSIGNED), id");
 $query->execute([':empresa'=>$id_empresa]);
 $res = $query->fetchAll(PDO::FETCH_ASSOC);
-$total_reg = @count($res);
+$total_reg = count($res);
+// Dados operacionais somente leitura: não altera pedidos nem movimenta comandas.
+$atendimentos=[];
+try {
+ $qAt=$pdo->prepare("SELECT mesa, COUNT(*) AS qtd, MIN(data) AS primeira_data, MIN(horario_abertura) AS primeiro_horario, SUM(COALESCE(subtotal,0)) AS subtotal FROM abertura_mesa WHERE empresa=:empresa AND status='Aberta' GROUP BY mesa");
+ $qAt->execute([':empresa'=>$id_empresa]);
+ foreach($qAt->fetchAll(PDO::FETCH_ASSOC) as $at) $atendimentos[(int)$at['mesa']]=$at;
+} catch(Throwable $e) {
+ error_log('mesas/atendimentos: '.$e->getMessage());
+}
+
 
 $totalAbertas=0; $totalAtivas=0;
 foreach($res as $mesaResumo){ if($mesaResumo['status']==='Aberta')$totalAbertas++; if($mesaResumo['ativo']==='Sim')$totalAtivas++; }
@@ -32,7 +42,22 @@ if ($total_reg > 0) {
   $corCard=!$ativoCard?'secondary':($abertaCard?'danger':'success');
   echo '<div class="col-6 col-md-4 col-xl-3 bc-mesa-item" data-tipo="'.$tipoCard.'"><div class="bc-mesa-card h-100 border rounded-3 p-3 text-center">';
   echo '<i class="fa fa-chair fa-2x text-'.$corCard.' mb-2" aria-hidden="true"></i><div class="fw-bold mb-1">Mesa '.$nomeCard.'</div>';
-  echo '<span class="badge bg-'.$corCard.' mb-3">'.$rotuloCard.'</span><div class="d-flex gap-2 justify-content-center flex-wrap">';
+  echo '<span class="badge bg-'.$corCard.' mb-2">'.$rotuloCard.'</span>';
+  if($abertaCard){
+   $at=$atendimentos[$idCard]??null;
+   if($at){
+    $qtd=(int)$at['qtd'];
+    $valor=number_format((float)$at['subtotal'],2,',','.');
+    $dataAt=(string)$at['primeira_data'];
+    $horaAt=substr((string)$at['primeiro_horario'],0,5);
+    $dataLegivel=DateTimeImmutable::createFromFormat('Y-m-d',$dataAt);
+    $inicio=$dataLegivel?$dataLegivel->format('d/m').' '.$horaAt:$horaAt;
+    echo '<div class="small text-muted mb-2">'.$qtd.' atendimento(s) aberto(s)<div>Desde '.htmlspecialchars($inicio,ENT_QUOTES,'UTF-8').'</div><div>Subtotal registrado: R$ '.$valor.'</div></div>';
+   } else {
+    echo '<div class="small text-muted mb-2">Sem atendimento aberto localizado</div>';
+   }
+  }
+  echo '<div class="d-flex gap-2 justify-content-center flex-wrap">';
   echo '<button type="button" class="btn btn-sm btn-outline-primary" onclick="editar('.$idCard.', '.htmlspecialchars(json_encode((string)$mesaCard['nome']),ENT_QUOTES,'UTF-8').')" title="Editar mesa"><i class="fa fa-edit"></i></button>';
   echo '<button type="button" class="btn btn-sm btn-outline-dark" onclick="gerarQrCode('.$idCard.', '.htmlspecialchars(json_encode((string)$mesaCard['nome']),ENT_QUOTES,'UTF-8').')" title="QR Code"><i class="fa fa-qrcode"></i></button>';
   if($abertaCard) echo '<a class="btn btn-sm btn-outline-success" href="lista_pedidos_mesas?mesa='.$idCard.'" title="Consultar histórico da mesa"><i class="fa fa-list-alt"></i> Pedidos</a>';
