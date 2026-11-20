@@ -280,7 +280,7 @@ if ($total_reg > 0) {
 
         <div style="margin-top: 5px">
           <span><small><i><span style="color:#000">{$nome_garcon} </span></i></small></span>  
-          <a style="position:absolute; right:20px" class="btn btn-dark-light btn-sm" href="#" onclick="gerarComprovante('{$id}')" title="Gerar Comprovante"><i class="fa fa-file-pdf-o"></i></a>        
+          <a style="position:absolute; right:20px" class="btn btn-dark-light btn-sm" href="#" onclick="gerarComprovante('{$id}')" title="Abrir comanda de Outros Locais para impressao manual"><i class="fa fa-file-pdf-o"></i></a>        
         </div>
 
         <div style="border-bottom: 1px solid #000">
