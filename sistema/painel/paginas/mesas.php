@@ -34,6 +34,23 @@ if (@count($res2) > 0) {
 	</div>
 </div>
 
+<style>
+.bc-mesa-card{background:#fff;transition:transform .15s ease,box-shadow .15s ease}
+.bc-mesa-card:hover{transform:translateY(-2px);box-shadow:0 8px 22px rgba(0,0,0,.08)}
+.bc-mesas-controls{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin:12px 0}
+.bc-mesas-controls .btn.active{background:#ff8700;color:#fff;border-color:#ff8700}
+</style>
+<div class="bc-mesas-controls" aria-label="Visualização e filtros das mesas">
+ <div class="btn-group" role="group" aria-label="Modo de visualização">
+  <button type="button" class="btn btn-outline-secondary active" id="bc-mesas-btn-cards" onclick="bcDefinirVisaoMesas('cards')"><i class="fa fa-th-large me-1"></i> Cartões</button>
+  <button type="button" class="btn btn-outline-secondary" id="bc-mesas-btn-table" onclick="bcDefinirVisaoMesas('table')"><i class="fa fa-list me-1"></i> Tabela</button>
+ </div>
+ <label for="bc-mesas-filtro" class="small mb-0">Filtrar:</label>
+ <select id="bc-mesas-filtro" class="form-select form-select-sm" style="max-width:180px" onchange="bcAplicarVisaoMesas()">
+  <option value="todas">Todas</option><option value="livre">Livres</option><option value="ocupada">Ocupadas</option><option value="inativa">Desativadas</option>
+ </select>
+ <label class="small mb-0 ms-auto"><input type="checkbox" id="bc-mesas-auto" checked> Atualizar a cada 15 segundos</label>
+</div>
 <div class="bs-example widget-shadow" style="padding:15px" id="listar">
 
 </div>
@@ -113,3 +130,36 @@ if (@count($res2) > 0) {
 	var pag = "<?= $pag ?>"
 </script>
 <script src="js/ajax.js"></script>
+<script>
+(function(){
+ window.bcMesasVisao='cards';
+ window.bcDefinirVisaoMesas=function(visao){
+  window.bcMesasVisao=visao==='table'?'table':'cards';
+  window.bcAplicarVisaoMesas();
+ };
+ window.bcAplicarVisaoMesas=function(){
+  var cards=document.getElementById('bc-mesas-cards');
+  var table=document.getElementById('bc-mesas-tabela');
+  var filtro=document.getElementById('bc-mesas-filtro');
+  var isCards=window.bcMesasVisao!=='table';
+  if(cards)cards.style.display=isCards?'':'none';
+  if(table)table.style.display=isCards?'none':'';
+  var btnCards=document.getElementById('bc-mesas-btn-cards'),btnTable=document.getElementById('bc-mesas-btn-table');
+  if(btnCards)btnCards.classList.toggle('active',isCards);
+  if(btnTable)btnTable.classList.toggle('active',!isCards);
+  if(cards&&filtro){
+   Array.prototype.forEach.call(cards.querySelectorAll('.bc-mesa-item'),function(item){
+    item.style.display=(filtro.value==='todas'||item.dataset.tipo===filtro.value)?'':'none';
+   });
+  }
+ };
+ if(window.bcMesasRefreshTimer)clearInterval(window.bcMesasRefreshTimer);
+ window.bcMesasRefreshTimer=setInterval(function(){
+  var auto=document.getElementById('bc-mesas-auto');
+  if(!auto){clearInterval(window.bcMesasRefreshTimer);return;}
+  if(!auto.checked||document.hidden||window.bcMesasVisao==='table')return;
+  if(document.querySelector('.modal.show')||document.querySelector('#ids')?.value)return;
+  if(typeof listar==='function')listar();
+ },15000);
+})();
+</script>
