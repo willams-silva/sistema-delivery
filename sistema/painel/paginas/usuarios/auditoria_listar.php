@@ -13,7 +13,7 @@ try {
  $filtroAcao=trim((string)($_POST['acao']??''));
  $dataInicio=trim((string)($_POST['inicio']??''));
  $dataFim=trim((string)($_POST['fim']??''));
- $acoes=['conceder','remover','conceder_todos','remover_todos'];
+ $acoes=['conceder','remover','conceder_todos','remover_todos','aplicar_cargo'];
  if ($filtroAcao!=='' && !in_array($filtroAcao,$acoes,true)) {http_response_code(400);exit(json_encode(['erro'=>'Ação inválida']));}
  foreach([$dataInicio,$dataFim] as $data) if($data!=='' && (!preg_match('/^\\d{4}-\\d{2}-\\d{2}$/',$data) || !DateTime::createFromFormat('!Y-m-d',$data) || DateTime::createFromFormat('!Y-m-d',$data)->format('Y-m-d')!==$data)) {http_response_code(400);exit(json_encode(['erro'=>'Data inválida']));}
  $sql='SELECT a.id,a.criado_em,a.acao,a.permissao,a.detalhes,COALESCE(u.nome,CONCAT("Usuário #",a.usuario_alvo)) AS alvo,COALESCE(o.nome,CONCAT("Operador #",a.operador)) AS operador_nome,ac.nome AS acesso_nome FROM auditoria_permissoes a LEFT JOIN usuarios u ON u.id=a.usuario_alvo AND u.empresa=a.empresa LEFT JOIN usuarios o ON o.id=a.operador AND o.empresa=a.empresa LEFT JOIN acessos ac ON ac.id=a.permissao WHERE a.empresa=:empresa';
