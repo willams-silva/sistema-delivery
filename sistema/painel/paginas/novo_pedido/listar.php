@@ -204,7 +204,7 @@ letter-spacing:0.5px; ">GARÇON: '.mb_strtoupper($nome_garcon).'</span>';
 		
 
 		echo <<<HTML
-			<div class="col-xs-12 col-md-3 widget cardTarefas mesa-card {$classeMesa}" data-situacao="{$situacaoMesaEscapada}" style="margin-right: 5px; margin-bottom: 5px; display: inline-block; width:100%">
+			<div class="col-xs-12 col-md-3 widget cardTarefas mesa-card {$classeMesa}" data-mesa-id="{$id}" data-situacao="{$situacaoMesaEscapada}" style="margin-right: 5px; margin-bottom: 5px; display: inline-block; width:100%">
         		<div class="r3_counter_box">
                 <div class="mesa-card-topo"><strong>Mesa {$nomeEscapado}</strong><span class="mesa-status">{$situacaoMesaEscapada}</span></div>
 
@@ -293,6 +293,19 @@ HTML;
         }
         botoes.forEach(function(botao){botao.addEventListener('click',function(){filtrar(botao.dataset.filtro)});});
         filtrar(filtroAnterior);
+        var idAlvo=new URLSearchParams(window.location.search).get('mesa');
+        if(idAlvo && /^\\d+$/.test(idAlvo)){
+          var alvo=Array.from(raiz.querySelectorAll('.mesa-card')).find(function(card){return card.dataset.mesaId===idAlvo;});
+          if(alvo){
+            filtrar('Todas');
+            alvo.style.outline='3px solid #2563eb';
+            alvo.style.outlineOffset='3px';
+            if(!window.bcMesaFocada || window.bcMesaFocada!==idAlvo){
+              window.bcMesaFocada=idAlvo;
+              alvo.scrollIntoView({behavior:'smooth',block:'center'});
+            }
+          }
+        }
     })();
 	function editar(id, cliente, garcon, obs, pessoas) {
 		$('#id').val(id);
