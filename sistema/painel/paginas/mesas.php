@@ -22,10 +22,12 @@ if (@count($res2) > 0) {
 
 ?>
 
-<div class="breadcrumb-header justify-content-between">
+<div class="breadcrumb-header justify-content-between"><div class="left-content mt-2"><h4 class="mb-1"><i class="fa fa-table me-2"></i>Gestão de Mesas</h4><p class="text-muted small mb-0">Acompanhe disponibilidade, status e QR Codes do salão.</p></div>
 	<div class="left-content mt-2">
 		<a class="btn ripple btn-primary text-white" onclick="inserir()" type="button"><i class="fe fe-plus me-1"></i>
-			Adicionar <?php echo ucfirst($pag); ?></a>
+			Adicionar mesa</a>
+
+		<button type="button" class="btn btn-outline-secondary" onclick="listar()" title="Atualizar mesas"><i class="fa fa-refresh me-1"></i> Atualizar</button>
 
 		<a class="btn btn-danger" href="#" onclick="deletarSel()" title="Excluir" id="btn-deletar" style="display:none"><i class="fe fe-trash-2"></i> Deletar</a>
 
@@ -58,7 +60,7 @@ if (@count($res2) > 0) {
 						<div class="col-md-9">
 							<div class="form-group">
 
-								<input type="number" class="form-control" id="nome" name="nome" placeholder="Digite o Número" required>
+								<label for="nome" class="form-label fw-semibold">Número da mesa</label><input type="number" class="form-control" id="nome" name="nome" placeholder="Ex.: 12" min="1" max="99999" required>
 							</div>
 						</div>
 						<div class="col-md-3">
