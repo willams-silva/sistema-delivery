@@ -35,6 +35,19 @@ $senha = '123';
 $senha_crip = password_hash($senha, PASSWORD_DEFAULT);
 $pix = $_POST['pix'];
 $id = (int) ($_POST['id'] ?? 0);
+if ($id > 0) {
+    $verificar = $pdo->prepare("SELECT nivel FROM usuarios WHERE id = :id AND empresa = :empresa LIMIT 1");
+    $verificar->execute([':id' => $id, ':empresa' => $id_empresa]);
+    $nivel_atual = $verificar->fetchColumn();
+    if ($nivel_atual === false) {
+        http_response_code(404);
+        exit('Funcionário não encontrado');
+    }
+    if ($nivel_atual === 'Administrador' && $nivel_operador !== 'Administrador') {
+        http_response_code(403);
+        exit('Somente administradores podem editar administradores');
+    }
+}
 $numero = @$_POST['numero'];
 $bairro = @$_POST['bairro'];
 $cidade = @$_POST['cidade'];
