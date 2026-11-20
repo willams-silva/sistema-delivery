@@ -9,7 +9,8 @@ require_once("../../buscar_config.php");
 $query = $pdo->prepare("SELECT * FROM bairros WHERE empresa = :empresa ORDER BY id DESC");
 $query->execute([':empresa'=>$id_empresa]);
 $res = $query->fetchAll(PDO::FETCH_ASSOC);
-$total_reg = @count($res);
+$total_reg = count($res);
+echo '<script>$("#bc-total-bairros").text(' . $total_reg . ');</script>';
 if ($total_reg > 0) {
 
 	echo <<<HTML
@@ -68,7 +69,7 @@ HTML;
 	</small>
 HTML;
 } else {
-	echo 'Não possui registros cadastrados!';
+	echo '<div class="text-center py-5"><i class="fa-solid fa-map-location-dot fa-2x text-muted mb-3"></i><h5>Nenhuma localidade cadastrada</h5><p class="text-muted">Adicione uma localidade para configurar a taxa de entrega.</p></div>';
 }
 
 
@@ -78,7 +79,9 @@ HTML;
 <script type="text/javascript">
 	$(document).ready(function() {
 		$('#tabela').DataTable({
-			"ordering": false,
+			"ordering": true,
+            "pageLength": 10,
+            "language": {"search": "Buscar:", "lengthMenu": "Mostrar _MENU_", "info": "Exibindo _START_ a _END_ de _TOTAL_", "infoEmpty": "Nenhum registro", "zeroRecords": "Nenhum resultado", "paginate": {"previous": "Anterior", "next": "Próximo"}},
 			"stateSave": true
 		});
 		$('#tabela_filter label input').focus();
