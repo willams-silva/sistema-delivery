@@ -262,14 +262,9 @@ HTML;
 		}
 
 
-		//validando impressao automatica
-		if ($status == 'Iniciado' and $impressao_automatica == 'Site' and $impressao != "Sim") {
-			$ids .= $id . '-';
-			//coloco a impressao = sim
-			$marcaImpressao=$pdo->prepare("UPDATE vendas SET impressao='Sim'
-                WHERE id=:id AND empresa=:empresa AND (impressao IS NULL OR impressao<>'Sim')");
-            $marcaImpressao->execute([':id'=>(int)$id,':empresa'=>(int)$id_empresa]);
-		}
+        // Abrir a listagem não significa que o cupom foi impresso.
+        $impressaoPendente = $impressao !== 'Sim';
+        $etiquetaImpressao = $impressaoPendente ? 'Pendente' : 'Confirmada';
 
 
 		if($pago == 'Não'){
@@ -352,7 +347,7 @@ HTML;
 
 
 
-			<a class="btn btn-dark-light btn-sm" href="#" onclick="gerarComprovante('{$id}', '{$tipo_pedido}')" title="Gerar Comprovante"><i class="fa fa-file-pdf-o"></i></a>		
+			<a class="btn btn-dark-light btn-sm" href="#" onclick="imprimirPedidoEsteira('{$id}', '{$tipo_pedido}');return false" title="Imprimir cupom ({$etiquetaImpressao})"><i class="fa fa-file-pdf-o"></i></a>		
 			
 		
 	
@@ -425,19 +420,7 @@ $total_dos_itens_pedidos=(int)$totalHojeSt->fetchColumn();
 		var pagina = "<?= $pagina ?>";
 		$('#pagina').val(pagina);
 
-		var ids = "<?= $ids ?>";
-		var id_imp = ids.split("-");
-		//alert(ids)
-
-		for (i = 0; i < id_imp.length - 1; i++) {
-			var id_pedido = id_imp[i];
-
-			let a = document.createElement('a');
-			a.target = '_blank';
-			a.href = 'rel/comprovante.php?id=' + id_pedido;
-			a.click();
-		}
-
+		// Impressão requer confirmação explícita; não abrir pop-ups ao atualizar a lista.
 
 		$('#todos_pedidos').text("<?= $total_pedidos ?>");
 		$('#ini_pedidos').text("<?= $total_ini ?>");
