@@ -293,6 +293,14 @@ if($linhas == 0){
 .bc-finance-menu .slide-item { display:flex; align-items:center; gap:8px; padding-left:14px !important; }
 .bc-finance-menu .slide-item > i.fa { width:18px; flex:0 0 18px; text-align:center; margin-right:0 !important; }
 </style>
+
+<style id="pedidos-locais-menu-icons">
+/* Submenus de Pedidos Locais: icones distintos sem marcadores de lista */
+.slide-menu .pedidos-locais-link { display: flex !important; align-items: center; gap: 10px; }
+.slide-menu .pedidos-locais-link::before, .slide-menu .pedidos-locais-link::after { content: none !important; display: none !important; }
+.slide-menu .pedidos-locais-link i { flex: 0 0 17px; width: 17px; text-align: center; font-size: 14px; }
+.slide-menu li:has(> .pedidos-locais-link)::before { content: none !important; display: none !important; }
+</style>
 </head>
 
 <body class="ltr main-body app sidebar-mini">
@@ -795,11 +803,11 @@ if($linhas == 0){
 										class="angle fe fe-chevron-right"></i></a>
 								<ul class="slide-menu">
 
-									<li class="<?php echo @$pedidos_mesa ?>"><a class="slide-item" href="pedidos_mesa"> Pedidos Cozinha</a></li>
+									<li class="<?php echo @$pedidos_mesa ?>"><a class="slide-item pedidos-locais-link" href="pedidos_mesa"><i class="fa-solid fa-utensils" aria-hidden="true"></i><span>Pedidos Cozinha</span></a></li>
 
-									<li class="<?php echo @$pedidos_bar ?>"><a class="slide-item" href="pedidos_bar"> Pedidos Bar</a></li>
+									<li class="<?php echo @$pedidos_bar ?>"><a class="slide-item pedidos-locais-link" href="pedidos_bar"><i class="fa-solid fa-martini-glass" aria-hidden="true"></i><span>Pedidos Bar</span></a></li>
 
-									<li class="<?php echo @$pedidos_outros ?>"><a class="slide-item" href="pedidos_outros"> Outros Locais</a></li>
+									<li class="<?php echo @$pedidos_outros ?>"><a class="slide-item pedidos-locais-link" href="pedidos_outros"><i class="fa-solid fa-location-dot" aria-hidden="true"></i><span>Outros Locais</span></a></li>
 									
 
 								</ul>
