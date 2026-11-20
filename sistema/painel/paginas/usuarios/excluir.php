@@ -35,6 +35,10 @@ if (!$res) {
     http_response_code(404);
     exit('Usuário não encontrado');
 }
+if ($res[0]['nivel'] === 'Administrador' && $nivel_operador !== 'Administrador') {
+    http_response_code(403);
+    exit('Somente administrador pode excluir outro administrador');
+}
 $foto = $res[0]['foto'] ?? '';
 
 if ($foto !== '' && $foto !== 'sem-foto.jpg' && basename($foto) === $foto) {
