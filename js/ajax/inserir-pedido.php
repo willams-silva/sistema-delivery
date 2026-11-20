@@ -21,7 +21,7 @@ if($sessao_pedido_balcao == 'BALCÃO'){
 
 // Proteção no servidor: datas excepcionais bloqueiam somente pedidos públicos.
 // Pedidos de balcão e de mesas mantêm o fluxo operacional atual.
-$bc_pedido_mesa = !empty($_SESSION['id_mesa']) || !empty($_POST['mesa']);
+$bc_pedido_mesa = !empty($_SESSION['id_mesa']);
 if ($tipo_pedido !== 'Balcão' && !$bc_pedido_mesa) {
   try {
     $bc_stmt_fechamento = $pdo->prepare("SELECT 1 FROM fechamentos_excepcionais WHERE empresa = :empresa AND data_fechamento = :data LIMIT 1");
