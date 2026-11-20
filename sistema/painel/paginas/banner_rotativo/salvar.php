@@ -8,6 +8,19 @@ $idRaw=$_POST['id']??'';
 $id=($idRaw===''?0:filter_var($idRaw,FILTER_VALIDATE_INT));
 $categoria=filter_var($_POST['categoria']??null,FILTER_VALIDATE_INT);
 if($id===false||$id<0||$categoria===false||$categoria<0){http_response_code(400);exit('Dados inválidos');}
+$ativo=(string)($_POST['ativo']??'Sim');
+$ordem=filter_var($_POST['ordem']??0,FILTER_VALIDATE_INT);
+$inicio=trim((string)($_POST['inicio_em']??''));
+$fim=trim((string)($_POST['fim_em']??''));
+if(!in_array($ativo,['Sim','Não'],true)||$ordem===false||$ordem<0||$ordem>99999){http_response_code(400);exit('Status ou ordem inválidos');}
+foreach([$inicio,$fim] as $valor){
+ if($valor==='')continue;
+ $dt=DateTimeImmutable::createFromFormat('!Y-m-d\\TH:i',$valor);
+ if(!$dt||$dt->format('Y-m-d\\TH:i')!==$valor){http_response_code(400);exit('Data de agendamento inválida');}
+}
+if($inicio!==''&&$fim!==''&&$inicio>$fim){http_response_code(400);exit('A data final deve ser posterior à inicial');}
+$inicioDb=$inicio===''?null:str_replace('T',' ',$inicio).':00';
+$fimDb=$fim===''?null:str_replace('T',' ',$fim).':00';
 try{
  if($categoria>0){
   $q=$pdo->prepare('SELECT 1 FROM categorias WHERE id=:id AND empresa=:empresa');
@@ -41,10 +54,10 @@ try{
  try{
   $pdo->beginTransaction();
   if($id>0){
-   $q=$pdo->prepare('UPDATE banner_rotativo SET categoria=:categoria,foto=:foto WHERE id=:id AND empresa=:empresa');
+   $q=$pdo->prepare('UPDATE banner_rotativo SET categoria=:categoria,foto=:foto,ativo=:ativo,ordem=:ordem,inicio_em=:inicio,fim_em=:fim WHERE id=:id AND empresa=:empresa');
    $q->execute([':categoria'=>$categoria,':foto'=>$foto,':id'=>$id,':empresa'=>$empresa]);
   }else{
-   $q=$pdo->prepare('INSERT INTO banner_rotativo (categoria,foto,empresa) VALUES (:categoria,:foto,:empresa)');
+   $q=$pdo->prepare('INSERT INTO banner_rotativo (categoria,foto,empresa,ativo,ordem,inicio_em,fim_em) VALUES (:categoria,:foto,:empresa,:ativo,:ordem,:inicio,:fim)');
    $q->execute([':categoria'=>$categoria,':foto'=>$foto,':empresa'=>$empresa]);
   }
   $pdo->commit();
