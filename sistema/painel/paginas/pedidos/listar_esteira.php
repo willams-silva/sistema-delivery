@@ -47,17 +47,7 @@ $query = $pdo->query("SELECT * FROM $tabela where status != 'Finalizado' and sta
 $res = $query->fetchAll(PDO::FETCH_ASSOC);
 $id_ult_pedido = @$res[0]['id'];
 
-if ($ult_ped < $id_ult_pedido and $ult_ped != "") {
-	echo '<audio autoplay="true">
-<source src="../../img/audio.mp3" type="audio/mpeg" />
-</audio>';
-}
-
-if ($ult_ped == "" and $id_ult_pedido != "") {
-	echo '<audio autoplay="true">
-<source src="../../img/audio.mp3" type="audio/mpeg" />
-</audio>';
-}
+// Notificações de novos pedidos são controladas no navegador, sem autoplay repetitivo.
 
 $ids = '';
 $query = $pdo->prepare("SELECT * FROM vendas WHERE status LIKE :status
@@ -235,7 +225,7 @@ if ($total_reg > 0) {
 		}
 
 		echo <<<HTML
-<div class="col-md-3 widget esteira-cartao" data-status="{$status}" data-criado="{$data} {$hora}" data-tipo="{$entrega}" style="display: inline-block;">
+<div class="col-md-3 widget esteira-cartao" data-id="{$id}" data-status="{$status}" data-criado="{$data} {$hora}" data-tipo="{$entrega}" style="display: inline-block;">
 			<div class="" style="padding:4px; min-height: 100px; background: {$classe_pago2};">
 				<div style="border-bottom: 1px solid #000">
 					<span style="color:{$classe_alerta}"> <i class="fa fa-square"></i></span> Pedido <b>{$pedido}</b>
