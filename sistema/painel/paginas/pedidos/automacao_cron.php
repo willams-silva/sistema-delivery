@@ -26,8 +26,11 @@ foreach ($cfgs as $cfg) {
                 $u = $pdo->prepare("UPDATE vendas SET status = 'Aceito' WHERE id = ? AND empresa = ? AND status = 'Iniciado'");
                 $u->execute(array($id,$empresa));
                 if ($u->rowCount() === 1) {
-                    $fila = $cfg['imprimir_ao_aceitar'] ? 1 : 0;
-                    $s = $pdo->prepare("INSERT INTO automacao_pedidos_estado (empresa,venda_id,aceito_em,imprimir_pendente) VALUES (?,?,NOW(),?) ON DUPLICATE KEY UPDATE aceito_em=VALUES(aceito_em),imprimir_pendente=VALUES(imprimir_pendente)");
+                    // Não reabrir a fila se o pedido já foi confirmado como impresso.
+                    $impresso = $pdo->prepare("SELECT impressao FROM vendas WHERE id=? AND empresa=?");
+                    $impresso->execute(array($id,$empresa));
+                    $fila = ($cfg['imprimir_ao_aceitar'] && $impresso->fetchColumn() !== 'Sim') ? 1 : 0;
+                    $s = $pdo->prepare("INSERT INTO automacao_pedidos_estado (empresa,venda_id,aceito_em,imprimir_pendente) VALUES (?,?,NOW(),?) ON DUPLICATE KEY UPDATE aceito_em=COALESCE(automacao_pedidos_estado.aceito_em,VALUES(aceito_em)),imprimir_pendente=IF(automacao_pedidos_estado.impresso_em IS NOT NULL,0,VALUES(imprimir_pendente))");
                     $s->execute(array($empresa,$id,$fila));
                 }
                 $pdo->commit();
