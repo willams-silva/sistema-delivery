@@ -17,7 +17,7 @@ $pag = 'dias';
 <div class="row row-sm"><div class="col-lg-12"><div class="card custom-card"><div class="card-body" id="listar"></div></div></div></div>
 <div class="row row-sm"><div class="col-lg-12"><div class="card custom-card"><div class="card-body">
  <h5><i class="fa-solid fa-calendar-day me-2"></i>Feriados e fechamentos excepcionais</h5>
- <p class="text-muted">Cadastre datas específicas sem alterar os dias semanais. As datas cadastradas são consideradas no status visual do cardápio público. O bloqueio de pedidos ainda precisa ser validado.</p>
+ <p class="text-muted">Cadastre datas específicas sem alterar os dias semanais. As datas cadastradas são consideradas no status visual do cardápio público. O sistema também verifica a data ao receber pedidos online; valide o funcionamento antes de usar em produção.</p>
  <form id="bc-excecoes-form" class="row g-2 align-items-end">
   <div class="col-md-4"><label for="bc-excecao-data" class="form-label">Data</label><input type="date" id="bc-excecao-data" class="form-control" required></div>
   <div class="col-md-5"><label for="bc-excecao-motivo" class="form-label">Motivo (opcional)</label><input type="text" id="bc-excecao-motivo" maxlength="150" class="form-control" placeholder="Ex.: Feriado municipal"></div>
@@ -133,7 +133,7 @@ $(document).ajaxError(function (_event, xhr, settings) {
  $('#bc-excecoes-form').on('submit',function(e){
   e.preventDefault();
   $.post(endpoint,{acao:'salvar',data_fechamento:$('#bc-excecao-data').val(),motivo:$('#bc-excecao-motivo').val()},function(){
-   mensagem('Data cadastrada. Confira o status no cardápio público na data selecionada.');
+   mensagem('Data cadastrada. Confira o status no cardápio e o bloqueio de novos pedidos na data selecionada.');
    $('#bc-excecao-motivo').val('');carregar();
   },'json').fail(falha);
  });
