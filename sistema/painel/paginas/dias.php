@@ -13,6 +13,7 @@ $pag = 'dias';
  <button class="btn btn-outline-danger" type="button" onclick="deletarSel()" id="btn-deletar" style="display:none"><i class="fa-solid fa-trash-can me-1"></i>Excluir selecionados</button>
  </div>
 </div>
+<div class="row row-sm"><div class="col-md-4 mb-3"><div class="card custom-card"><div class="card-body"><small class="text-muted">Dias fechados na semana</small><h3 class="mb-0" id="bc-total-dias">—</h3></div></div></div></div>
 <div class="row row-sm"><div class="col-lg-12"><div class="card custom-card"><div class="card-body" id="listar"></div></div></div></div>
 <input type="hidden" id="ids">
 
