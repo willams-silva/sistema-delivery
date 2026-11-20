@@ -115,10 +115,21 @@ $pag = 'acessos';
 <script src="js/ajax.js"></script>
 <script>
 function bcExcluirAcessosSelecionados(){
- Swal.fire({icon:'info',title:'Exclusão em lote indisponível',text:'Para proteger permissões compartilhadas entre empresas, exclua cada acesso individualmente. O sistema verificará os vínculos com usuários e cargos.'});
+ var ids=($('#ids').val()||'').split('-').filter(function(v){return /^[1-9][0-9]*$/.test(v);});
+ ids=Array.from(new Set(ids));
+ if(!ids.length){Swal.fire('Nenhum acesso selecionado','','info');return;}
+ if(ids.length>100){Swal.fire('Limite excedido','Selecione no máximo 100 acessos por vez.','warning');return;}
+ Swal.fire({title:'Excluir '+ids.length+' acesso(s)?',text:'Todos serão verificados antes da exclusão. Se houver algum vínculo com usuários ou cargos, nenhum será excluído.',icon:'warning',showCancelButton:true,confirmButtonText:'Excluir selecionados',cancelButtonText:'Cancelar',confirmButtonColor:'#dc3545'}).then(function(result){
+  if(!result.isConfirmed)return;
+  $('#btn-deletar').prop('disabled',true);
+  $.ajax({url:'paginas/acessos/excluir_lote.php',method:'POST',dataType:'json',data:{ids:ids}})
+  .done(function(data){$('#ids').val('');$('#btn-deletar').hide();listar();Swal.fire('Exclusão concluída',data.excluidos+' acesso(s) excluído(s).','success');})
+  .fail(function(xhr){Swal.fire('Exclusão bloqueada',xhr.responseJSON&&xhr.responseJSON.erro||'Não foi possível excluir os acessos.','warning');})
+  .always(function(){$('#btn-deletar').prop('disabled',false);});
+ });
 }
 $(document).ajaxError(function (_event, xhr, settings) {
-    if (!settings.url || settings.url.indexOf('paginas/acessos/') === -1) return;
+    if (!settings.url || settings.url.indexOf('paginas/acessos/') === -1 || settings.url.indexOf('/excluir_lote.php') !== -1) return;
     var msg = (xhr.responseText || '').replace(/<[^>]*>/g, '').trim();
     if (!msg || msg.length > 250) msg = 'Operação não concluída. Verifique suas permissões.';
     if (settings.url.indexOf('/salvar.php') !== -1) {
