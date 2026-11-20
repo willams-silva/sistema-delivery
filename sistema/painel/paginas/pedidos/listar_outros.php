@@ -557,44 +557,34 @@ $total_dos_itens_pedidos = @count($res);
 
 <script type="text/javascript">
   function ativarPedido(id, acao) {
-
+    // Evita dois cliques ou requisicoes simultaneas para o mesmo item.
+    window.bcPedidosEmAtualizacao = window.bcPedidosEmAtualizacao || {};
+    var chave = 'Outro-' + id;
+    if (window.bcPedidosEmAtualizacao[chave]) return;
+    window.bcPedidosEmAtualizacao[chave] = true;
     $('#status_link_' + id).show();
     $('#area_status_' + id).hide();
-
-    setTimeout(function() {
-
-
-      $.ajax({
-        url: 'paginas/' + pag + "/mudar-status_mesa.php",
-        method: 'POST',
-        data: {
-          id,
-          acao,
-          setor: 'Outro'
-        },
-        dataType: "text",
-
-        success: function(mensagem) {
-          var split = mensagem.split("***");
-
-          if (split[0] == "Alterado com Sucesso") {
-            listar();
-
-          } else {
-            $('#mensagem-excluir').addClass('text-danger')
-            $('#mensagem-excluir').text(mensagem)
-          }
-
-          $('#status_link_' + id).hide();
-          $('#area_status_' + id).show();
-
-        },
-
-
-
-      });
-
-    }, 1000);
+    $.ajax({
+      url: 'paginas/' + pag + '/mudar-status_mesa.php',
+      method: 'POST',
+      data: {id:id, acao:acao, setor:'Outro'},
+      dataType: 'text',
+      timeout: 15000
+    }).done(function(mensagem) {
+      if (mensagem.split('***')[0].trim() === 'Alterado com Sucesso') {
+        listar();
+      } else {
+        alert('Nao foi possivel atualizar o pedido: ' + mensagem);
+      }
+    }).fail(function(xhr, estado) {
+      var erro = (xhr.responseText || '').trim();
+      alert('Falha ao atualizar o pedido: ' + (erro || (estado === 'timeout' ? 'tempo de resposta excedido' : 'verifique sua conexao')));
+      if (xhr.status === 409 && typeof listar === 'function') listar();
+    }).always(function() {
+      delete window.bcPedidosEmAtualizacao[chave];
+      $('#status_link_' + id).hide();
+      $('#area_status_' + id).show();
+    });
   }
 </script>
 
