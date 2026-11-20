@@ -32,6 +32,14 @@ $telefone = $_POST['telefone'];
 $endereco = $_POST['endereco'];
 $pix = $_POST['pix'];
 $id = (int) ($_POST['id'] ?? 0);
+if ($id > 0) {
+    $verificar = $pdo->prepare("SELECT 1 FROM fornecedores WHERE id = :id AND empresa = :empresa LIMIT 1");
+    $verificar->execute([':id' => $id, ':empresa' => $id_empresa]);
+    if (!$verificar->fetchColumn()) {
+        http_response_code(404);
+        exit('Fornecedor não encontrado');
+    }
+}
 $numero =@ $_POST['numero'];
 $bairro = @$_POST['bairro'];
 $cidade = @$_POST['cidade'];
