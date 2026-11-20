@@ -10,6 +10,11 @@ if($modo_teste == 'Sim'){
 
 
 $id = (int) ($_POST['id'] ?? 0);
+$id_empresa = (int) ($_SESSION['empresa'] ?? 0);
+if ($id <= 0 || $id_empresa <= 0) {
+    http_response_code(400);
+    exit('Dados inválidos');
+}
 
 $query = $pdo->query("SELECT * FROM $tabela where id = '$id'");
 $res = $query->fetchAll(PDO::FETCH_ASSOC);
