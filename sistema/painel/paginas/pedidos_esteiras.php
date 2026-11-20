@@ -164,6 +164,11 @@ if (@$pausar_delivery == 'Sim') {
 
 
     <style>
+    .esteira-indicadores{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:10px;margin:12px 0}
+    .esteira-indicadores>div{padding:12px;border:1px solid #dce2e9;border-radius:10px;background:#fff}
+    .esteira-indicadores small{display:block;color:#64748b;font-size:12px}
+    .esteira-indicadores strong{display:block;font-size:22px;font-weight:700}
+    @media(max-width:850px){.esteira-indicadores{grid-template-columns:repeat(2,minmax(0,1fr))}}
     .esteira-barra{display:flex;justify-content:space-between;gap:12px;align-items:center;flex-wrap:wrap;margin:12px 0}
     .esteira-quadro{display:grid;grid-template-columns:repeat(4,minmax(240px,1fr));gap:12px;align-items:start;overflow-x:auto}
     .esteira-coluna{background:#f4f6fa;border:1px solid #dce2e9;border-radius:12px;padding:12px;min-height:200px}
@@ -180,6 +185,13 @@ if (@$pausar_delivery == 'Sim') {
     @media(max-width:1000px){.esteira-quadro{grid-template-columns:repeat(2,minmax(240px,1fr))}}
     @media(max-width:600px){.esteira-quadro{grid-template-columns:minmax(0,1fr)}}
     </style>
+    <div class="esteira-indicadores" aria-label="Indicadores da produção">
+        <div><small>Pedidos visíveis</small><strong id="esteira-kpi-total">0</strong></div>
+        <div><small>Aguardando início</small><strong id="esteira-kpi-aguardando">0</strong></div>
+        <div><small>Em preparo</small><strong id="esteira-kpi-preparo">0</strong></div>
+        <div><small>Atrasados (30 min)</small><strong id="esteira-kpi-atrasados">0</strong></div>
+        <div><small>Maior espera</small><strong id="esteira-kpi-espera">0 min</strong></div>
+    </div>
     <div class="esteira-barra">
         <strong>Esteira de produção</strong>
         <div class="d-flex gap-2 align-items-center">
@@ -495,6 +507,7 @@ $(document).on('show.bs.modal', '#modalBaixar', function(){
     }
     function atualizarTemposEsteira(){
         const filtro=document.getElementById('esteira-origem')?.value||'';
+        const metricas={total:0,aguardando:0,preparo:0,atrasados:0,espera:0};
         document.querySelectorAll('#listar .esteira-cartao').forEach(function(card){
             const data=String(card.dataset.criado||'').replace(' ','T');
             const instante=new Date(data);
@@ -503,6 +516,18 @@ $(document).on('show.bs.modal', '#modalBaixar', function(){
             if(tempo)tempo.textContent=minutos===null?'Horário indisponível':'Aguardando há '+minutos+' min';
             card.classList.toggle('esteira-atrasado',minutos!==null && minutos>=30 && card.dataset.status!=='Entrega');
             card.style.display=(!filtro || card.dataset.tipo===filtro)?'':'none';
+            if(card.style.display!=='none'){
+                metricas.total++;
+                if(card.dataset.status==='Iniciado'||card.dataset.status==='Aceito')metricas.aguardando++;
+                if(card.dataset.status==='Preparando')metricas.preparo++;
+                if(card.classList.contains('esteira-atrasado'))metricas.atrasados++;
+                if(minutos!==null)metricas.espera=Math.max(metricas.espera,minutos);
+            }
+        });
+        const valoresKpi={total:metricas.total,aguardando:metricas.aguardando,preparo:metricas.preparo,atrasados:metricas.atrasados,espera:metricas.espera+' min'};
+        Object.keys(valoresKpi).forEach(function(chave){
+            const el=document.getElementById('esteira-kpi-'+chave);
+            if(el)el.textContent=String(valoresKpi[chave]);
         });
         document.querySelectorAll('#listar .esteira-coluna').forEach(function(col){
             const qtd=Array.from(col.querySelectorAll('.esteira-cartao')).filter(function(c){return c.style.display!=='none'}).length;
