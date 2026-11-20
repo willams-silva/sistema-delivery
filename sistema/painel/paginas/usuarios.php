@@ -404,7 +404,24 @@ if (@$usuarios == 'ocultar') {
 			</div>
 
 			<div class="modal-body">
-				<div id="listar_permissoes">
+				<div class="border rounded p-3 mb-3">
+ <label class="form-label fw-bold" for="bc-modelo-cargo">Aplicar modelo de permissões do cargo</label>
+ <div class="d-flex flex-wrap gap-2 align-items-center">
+ <select class="form-select" style="max-width:280px" id="bc-modelo-cargo">
+ <option value="">Selecione o cargo</option>
+ <?php
+ $bcCargosQuery=$pdo->prepare('SELECT id,nome FROM cargos WHERE empresa=:empresa ORDER BY nome');
+ $bcCargosQuery->execute([':empresa'=>(int)$id_empresa]);
+ foreach($bcCargosQuery->fetchAll(PDO::FETCH_ASSOC) as $bcCargo):
+ ?>
+ <option value="<?= (int)$bcCargo['id'] ?>"><?=htmlspecialchars($bcCargo['nome'],ENT_QUOTES|ENT_SUBSTITUTE,'UTF-8')?></option>
+ <?php endforeach; ?>
+ </select>
+ <button type="button" class="btn btn-outline-primary" onclick="bcPreverModeloCargo()">Ver alterações</button>
+ </div>
+ <div id="bc-modelo-resultado" class="small mt-2" role="status">O modelo substitui os acessos individuais apenas após sua confirmação.</div>
+ </div>
+ <div id="listar_permissoes">
 
 				</div>
 
@@ -430,6 +447,23 @@ if (@$usuarios == 'ocultar') {
 
 
 <script type="text/javascript">
+function bcPreverModeloCargo(){
+ var usuario=$('#id_permissoes').val(),cargo=$('#bc-modelo-cargo').val(),saida=$('#bc-modelo-resultado');
+ if(!usuario||!cargo){saida.text('Selecione um cargo para continuar.');return;}
+ saida.removeClass('text-danger').text('Conferindo permissões...');
+ $.ajax({url:'paginas/usuarios/aplicar_modelo_cargo.php',method:'POST',dataType:'json',data:{acao:'prever',id_usuario:usuario,cargo:cargo}})
+ .done(function(d){
+  saida.text('Modelo: '+d.total_modelo+' acessos. Serão adicionados '+d.adicionar+', removidos '+d.remover+' e mantidos '+d.mantidas+'.');
+  Swal.fire({icon:'warning',title:'Aplicar modelo do cargo?',text:'Esta ação substituirá as permissões individuais: '+d.adicionar+' adicionadas, '+d.remover+' removidas e '+d.mantidas+' mantidas. Deseja continuar?',showCancelButton:true,confirmButtonText:'Aplicar modelo',cancelButtonText:'Cancelar',confirmButtonColor:'#d97706'})
+  .then(function(r){
+   if(!r.isConfirmed)return;
+   $.ajax({url:'paginas/usuarios/aplicar_modelo_cargo.php',method:'POST',dataType:'json',data:{acao:'aplicar',id_usuario:usuario,cargo:cargo,confirmar:'APLICAR'}})
+   .done(function(x){saida.removeClass('text-danger').text(x.mensagem);listarPermissoes(usuario);})
+   .fail(function(xhr){saida.addClass('text-danger').text(xhr.responseJSON&&xhr.responseJSON.erro||'Não foi possível aplicar o modelo.');});
+  });
+ })
+ .fail(function(xhr){saida.addClass('text-danger').text(xhr.responseJSON&&xhr.responseJSON.erro||'Não foi possível conferir o modelo.');});
+}
 	function bcErroPermissao(xhr) {
 		var msg=(xhr.responseText||'Não foi possível alterar as permissões.').replace(/<[^>]*>/g,'').trim();
 		$('#mensagem_permissao').addClass('text-danger').text(msg.slice(0,250));
