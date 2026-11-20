@@ -1,6 +1,7 @@
 <?php
 @session_start();
 require_once('../../../conexao.php');
+// O historico e opcional ate a migracao SQL ser aplicada.
 $empresa = filter_var($_SESSION['empresa'] ?? null, FILTER_VALIDATE_INT, ['options'=>['min_range'=>1]]);
 $usuario = filter_var($_SESSION['id'] ?? null, FILTER_VALIDATE_INT, ['options'=>['min_range'=>1]]);
 $id = filter_var($_POST['id'] ?? null, FILTER_VALIDATE_INT, ['options'=>['min_range'=>1]]);
@@ -29,4 +30,16 @@ if (!in_array($acao, $transicoes[$atual] ?? [], true)) {
 $atualiza = $pdo->prepare("UPDATE carrinho SET status=:acao WHERE id=:id AND empresa=:empresa AND status=:atual");
 $atualiza->execute([':acao'=>$acao,':id'=>$id,':empresa'=>$empresa,':atual'=>$atual]);
 if ($atualiza->rowCount() !== 1) { http_response_code(409); exit('Status alterado por outro operador'); }
+// Historico em tabela propria: falha de auditoria nao desfaz a mudanca de status.
+try {
+    $auditoria = $pdo->prepare("INSERT INTO pedidos_locais_historico
+        (empresa, carrinho_id, usuario_id, setor, status_anterior, status_novo, criado_em)
+        VALUES (:empresa, :item, :usuario, :setor, :anterior, :novo, NOW())");
+    $auditoria->execute([
+        ':empresa'=>$empresa, ':item'=>$id, ':usuario'=>$usuario,
+        ':setor'=>$setor, ':anterior'=>$atual, ':novo'=>$acao
+    ]);
+} catch (PDOException $erro) {
+    error_log('Pedidos Locais: nao foi possivel registrar auditoria: '.$erro->getCode());
+}
 echo 'Alterado com Sucesso***';
