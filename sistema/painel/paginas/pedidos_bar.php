@@ -60,14 +60,12 @@ $segundos = $tempo_atualizar * 1000;
 			</button>
 
 
-			<button style="font-size:11px;" type="button" class="btn btn-info mt-1 mb-1"
-				<button style="font-size:11px;" type="button" href="#" class="btn btn-info" title="Pedidos em Preparo" onclick="buscarContas('Preparando')">
+			<button style="font-size:11px;" type="button" class="btn btn-info mt-1 mb-1" title="Pedidos em Preparo" onclick="buscarContas('Preparando')">
 				<span>PREPARANDO</span>
 				<span class="badge bg-light rounded-pill ms-1" id="prep_pedidos">0</span>
 			</button>
 
-			<button style="font-size:11px;" type="button" class="btn btn-success mt-1 mb-1"
-				<button style="font-size:11px;" type="button" href="#" class="btn btn-info" title="Pedidos Prontos" onclick="buscarContas('Pronto')">
+			<button style="font-size:11px;" type="button" class="btn btn-success mt-1 mb-1" title="Pedidos Prontos" onclick="buscarContas('Pronto')">
 				<span>PRONTO</span>
 				<span class="badge bg-light rounded-pill ms-1" id="ent_pedidos">0</span>
 			</button>
@@ -126,7 +124,6 @@ $segundos = $tempo_atualizar * 1000;
 				<h4 class="modal-title" id="exampleModalLabel"><span id="nome_baixar"></span></h4>
 				<button id="btn-fechar-baixar" aria-label="Close" class="btn-close" data-bs-dismiss="modal" type="button"><span
 						class="text-white" aria-hidden="true">&times;</span></button>
-				</button>
 			</div>
 
 			<div class="modal-body">
@@ -229,10 +226,10 @@ $segundos = $tempo_atualizar * 1000;
 <script src="js/ajax.js"></script>
 
 <script type="text/javascript">
-	var seg = '<?= $segundos ?>';
+	var seg = Math.max(5000, Number('<?= $segundos ?>') || 10000);
 	$(document).ready(function() {
 		setInterval(() => {
-			listar();
+			if (!document.hidden && !$('#modalDados').hasClass('show') && !$('#modalBaixar').hasClass('show') && !$('#modalEntregador').hasClass('show')) listar();
 		}, seg);
 	});
 </script>
@@ -241,7 +238,10 @@ $segundos = $tempo_atualizar * 1000;
 
 
 <script type="text/javascript">
+	var atualizacaoPedidosEmAndamento = false;
 	function listar() {
+		if (atualizacaoPedidosEmAndamento) return;
+		atualizacaoPedidosEmAndamento = true;
 
 		var status = $('#buscar-contas').val();
 		var ult_pedido = $('#id_pedido').val();
@@ -258,7 +258,8 @@ $segundos = $tempo_atualizar * 1000;
 			success: function(result) {
 				$("#listar").html(result);
 				$('#mensagem-excluir').text('');
-			}
+			},
+			complete: function() { atualizacaoPedidosEmAndamento = false; }
 		});
 	}
 </script>
