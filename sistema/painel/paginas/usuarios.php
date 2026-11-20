@@ -375,7 +375,7 @@ if (@$usuarios == 'ocultar') {
  <div class="modal-body">
  <div class="row g-2 mb-3">
  <div class="col-md-3"><label for="bc-audit-usuario" class="form-label">ID do usuário</label><input id="bc-audit-usuario" type="number" min="1" class="form-control" placeholder="Todos"></div>
- <div class="col-md-3"><label for="bc-audit-acao" class="form-label">Operação</label><select id="bc-audit-acao" class="form-select"><option value="">Todas</option><option value="conceder">Conceder acesso</option><option value="remover">Remover acesso</option><option value="conceder_todos">Conceder todos</option><option value="remover_todos">Remover todos</option></select></div>
+ <div class="col-md-3"><label for="bc-audit-acao" class="form-label">Operação</label><select id="bc-audit-acao" class="form-select"><option value="">Todas</option><option value="conceder">Conceder acesso</option><option value="remover">Remover acesso</option><option value="conceder_todos">Conceder todos</option><option value="remover_todos">Remover todos</option><option value="aplicar_cargo">Aplicar modelo de cargo</option></select></div>
  <div class="col-md-2"><label for="bc-audit-inicio" class="form-label">De</label><input id="bc-audit-inicio" type="date" class="form-control"></div>
  <div class="col-md-2"><label for="bc-audit-fim" class="form-label">Até</label><input id="bc-audit-fim" type="date" class="form-control"></div>
  <div class="col-md-2 d-flex align-items-end"><button type="button" class="btn btn-primary w-100" onclick="bcCarregarAuditoria()">Filtrar</button></div>
@@ -641,7 +641,7 @@ function bcCarregarAuditoria(){
  }}).done(function(d){
   var itens=d.registros||[];
   status.text(itens.length?itens.length+' registro(s) encontrado(s).':'Nenhum registro encontrado.');
-  var nomes={conceder:'Concedeu acesso',remover:'Removeu acesso',conceder_todos:'Concedeu todos',remover_todos:'Removeu todos'};
+  var nomes={conceder:'Concedeu acesso',remover:'Removeu acesso',conceder_todos:'Concedeu todos',remover_todos:'Removeu todos',aplicar_cargo:'Aplicou modelo do cargo'};
   itens.forEach(function(x){
    var tr=$('<tr>');
    [x.criado_em,x.operador_nome,x.alvo,nomes[x.acao]||x.acao,x.acesso_nome||'—',x.detalhes||'—'].forEach(function(v){$('<td>').text(v==null?'—':String(v)).appendTo(tr);});
