@@ -21,7 +21,24 @@ foreach([['Total de mesas',$total_reg,'primary'],['Disponíveis',$totalLivres,'s
 }
 echo '</div>';
 if ($total_reg > 0) {
-
+ echo '<div class="bc-mesas-cards row g-3 mb-3" id="bc-mesas-cards">';
+ foreach($res as $mesaCard){
+  $idCard=(int)$mesaCard['id'];
+  $nomeCard=htmlspecialchars((string)$mesaCard['nome'],ENT_QUOTES|ENT_SUBSTITUTE,'UTF-8');
+  $ativoCard=$mesaCard['ativo']==='Sim';
+  $abertaCard=$mesaCard['status']==='Aberta';
+  $tipoCard=!$ativoCard?'inativa':($abertaCard?'ocupada':'livre');
+  $rotuloCard=!$ativoCard?'Desativada':($abertaCard?'Ocupada':'Livre');
+  $corCard=!$ativoCard?'secondary':($abertaCard?'danger':'success');
+  echo '<div class="col-6 col-md-4 col-xl-3 bc-mesa-item" data-tipo="'.$tipoCard.'"><div class="bc-mesa-card h-100 border rounded-3 p-3 text-center">';
+  echo '<i class="fa fa-chair fa-2x text-'.$corCard.' mb-2" aria-hidden="true"></i><div class="fw-bold mb-1">Mesa '.$nomeCard.'</div>';
+  echo '<span class="badge bg-'.$corCard.' mb-3">'.$rotuloCard.'</span><div class="d-flex gap-2 justify-content-center flex-wrap">';
+  echo '<button type="button" class="btn btn-sm btn-outline-primary" onclick="editar('.$idCard.', '.htmlspecialchars(json_encode((string)$mesaCard['nome']),ENT_QUOTES,'UTF-8').')" title="Editar mesa"><i class="fa fa-edit"></i></button>';
+  echo '<button type="button" class="btn btn-sm btn-outline-dark" onclick="gerarQrCode('.$idCard.', '.htmlspecialchars(json_encode((string)$mesaCard['nome']),ENT_QUOTES,'UTF-8').')" title="QR Code"><i class="fa fa-qrcode"></i></button>';
+  echo '</div></div></div>';
+ }
+ echo '</div><div id="bc-mesas-tabela">';
+ 
 	echo <<<HTML
 	<small>
 	<table class="table table-hover table-bordered text-nowrap border-bottom dt-responsive" id="tabela">
@@ -105,6 +122,7 @@ HTML;
 <small><div align="center" id="mensagem-excluir"></div></small>
 </table>
 </small>
+</div>
 HTML;
 } else {
 	echo '<small>Não possui nenhum registro Cadastrado!</small>';
@@ -121,7 +139,7 @@ HTML;
             "pageLength": 10,
             "language": {"search":"Buscar mesa:","lengthMenu":"Exibir _MENU_ mesas","info":"Exibindo _START_ a _END_ de _TOTAL_ mesas","zeroRecords":"Nenhuma mesa encontrada","paginate":{"previous":"Anterior","next":"Próximo"}}
 		});
-		// Mantém o foco do operador; não força a busca a cada atualização.
+		if (typeof window.bcAplicarVisaoMesas === 'function') window.bcAplicarVisaoMesas();
 	});
 </script>
 
