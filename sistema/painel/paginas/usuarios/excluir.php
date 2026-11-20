@@ -21,6 +21,13 @@ if ($id <= 0 || $id_empresa <= 0 || $id_operador <= 0 || $id === $id_operador) {
     exit('Dados inválidos');
 }
 
+$operador_query = $pdo->prepare("SELECT nivel FROM usuarios WHERE id = :id AND empresa = :empresa LIMIT 1");
+$operador_query->execute([':id' => $id_operador, ':empresa' => $id_empresa]);
+$nivel_operador = $operador_query->fetchColumn();
+if ($nivel_operador === false) {
+    http_response_code(403);
+    exit('Operador sem acesso a esta empresa');
+}
 $query = $pdo->prepare("SELECT * FROM usuarios WHERE id = :id AND empresa = :empresa");
 $query->execute([':id' => $id, ':empresa' => $id_empresa]);
 $res = $query->fetchAll(PDO::FETCH_ASSOC);
