@@ -1,9 +1,10 @@
 <?php
 @session_start();
-$id_empresa = $_SESSION['empresa'];
+$id_empresa = (int) ($_SESSION['empresa'] ?? 0);
+$id_operador = (int) ($_SESSION['id'] ?? 0);
 require_once("../../../conexao.php");
 require_once("../../buscar_config.php");
-if($id_empresa == ""){
+if($id_empresa <= 0 || $id_operador <= 0){
 	echo 'Sem Sessão da Empresa, refaça o Login!';
 	exit();
 }
@@ -15,7 +16,7 @@ $email = $_POST['email'];
 $telefone = $_POST['telefone'];
 $endereco = $_POST['endereco'];
 $pix = $_POST['pix'];
-$id = $_POST['id'];
+$id = (int) ($_POST['id'] ?? 0);
 $numero =@ $_POST['numero'];
 $bairro = @$_POST['bairro'];
 $cidade = @$_POST['cidade'];
@@ -63,7 +64,7 @@ if($id == ""){
 $query = $pdo->prepare("INSERT INTO $tabela SET nome = :nome, email = :email, telefone = :telefone, data = curDate(), endereco = :endereco, pix = :pix, numero = :numero, bairro = :bairro, cidade = :cidade, estado = :estado, cep = :cep, cnpj = :cnpj, complemento = :complemento, tipo_chave = '$tipo_chave', empresa = '$id_empresa' ");
 	
 }else{
-$query = $pdo->prepare("UPDATE $tabela SET nome = :nome, email = :email, telefone = :telefone, endereco = :endereco, pix = :pix, numero = :numero, bairro = :bairro, cidade = :cidade, estado = :estado, cep = :cep, cnpj = :cnpj, complemento = :complemento, tipo_chave = '$tipo_chave' where id = '$id'");
+$query = $pdo->prepare("UPDATE $tabela SET nome = :nome, email = :email, telefone = :telefone, endereco = :endereco, pix = :pix, numero = :numero, bairro = :bairro, cidade = :cidade, estado = :estado, cep = :cep, cnpj = :cnpj, complemento = :complemento, tipo_chave = '$tipo_chave' where id = '$id' and empresa = '$id_empresa'");
 }
 $query->bindValue(":nome", "$nome");
 $query->bindValue(":email", "$email");
