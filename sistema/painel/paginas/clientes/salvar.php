@@ -74,7 +74,8 @@ require_once("../../validar_cpf.php");
 
 //validacao email
 if($email != "") {
-    $query = $pdo->query("SELECT * from $tabela where email = '$email' and empresa = '$id_empresa' ");
+    $query = $pdo->prepare("SELECT id FROM clientes WHERE email = :email AND empresa = :empresa");
+    $query->execute([':email' => $email, ':empresa' => $id_empresa]);
     $res = $query->fetchAll(PDO::FETCH_ASSOC);
     $id_reg = @$res[0]['id'];
     if(@count($res) > 0 and $id != $id_reg) {
@@ -86,7 +87,8 @@ if($email != "") {
 
 //validacao telefone
 if($telefone != "") {
-    $query = $pdo->query("SELECT * from $tabela where telefone = '$telefone' and empresa = '$id_empresa'");
+    $query = $pdo->prepare("SELECT id FROM clientes WHERE telefone = :telefone AND empresa = :empresa");
+    $query->execute([':telefone' => $telefone, ':empresa' => $id_empresa]);
     $res = $query->fetchAll(PDO::FETCH_ASSOC);
     $id_reg = @$res[0]['id'];
     if(@count($res) > 0 and $id != $id_reg) {
