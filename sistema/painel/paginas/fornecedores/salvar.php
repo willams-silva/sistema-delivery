@@ -9,6 +9,21 @@ if($id_empresa <= 0 || $id_operador <= 0){
 	exit();
 }
 $tabela = 'fornecedores';
+$operador = $pdo->prepare("SELECT nivel FROM usuarios WHERE id = :id AND empresa = :empresa LIMIT 1");
+$operador->execute([':id' => $id_operador, ':empresa' => $id_empresa]);
+$nivel_operador = $operador->fetchColumn();
+if ($nivel_operador === false) {
+    http_response_code(403);
+    exit('Operador não autorizado');
+}
+if ($nivel_operador !== 'Administrador') {
+    $permissao = $pdo->prepare("SELECT 1 FROM usuarios_permissoes up INNER JOIN acessos a ON a.id = up.permissao WHERE up.usuario = :usuario AND a.empresa = :empresa AND a.chave = 'fornecedores' LIMIT 1");
+    $permissao->execute([':usuario' => $id_operador, ':empresa' => $id_empresa]);
+    if (!$permissao->fetchColumn()) {
+        http_response_code(403);
+        exit('Sem permissão para gerenciar fornecedores');
+    }
+}
 
 
 $nome = $_POST['nome'];
