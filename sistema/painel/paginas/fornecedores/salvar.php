@@ -85,11 +85,16 @@ if(@count($res) > 0 and $id != $id_reg){
 	exit();
 }
 
-if($id == ""){
-$query = $pdo->prepare("INSERT INTO $tabela SET nome = :nome, email = :email, telefone = :telefone, data = curDate(), endereco = :endereco, pix = :pix, numero = :numero, bairro = :bairro, cidade = :cidade, estado = :estado, cep = :cep, cnpj = :cnpj, complemento = :complemento, tipo_chave = '$tipo_chave', empresa = '$id_empresa' ");
+if($id === 0){
+$query = $pdo->prepare("INSERT INTO $tabela SET nome = :nome, email = :email, telefone = :telefone, data = curDate(), endereco = :endereco, pix = :pix, numero = :numero, bairro = :bairro, cidade = :cidade, estado = :estado, cep = :cep, cnpj = :cnpj, complemento = :complemento, tipo_chave = :tipo_chave, empresa = :empresa ");
 	
 }else{
-$query = $pdo->prepare("UPDATE $tabela SET nome = :nome, email = :email, telefone = :telefone, endereco = :endereco, pix = :pix, numero = :numero, bairro = :bairro, cidade = :cidade, estado = :estado, cep = :cep, cnpj = :cnpj, complemento = :complemento, tipo_chave = '$tipo_chave' where id = '$id' and empresa = '$id_empresa'");
+$query = $pdo->prepare("UPDATE $tabela SET nome = :nome, email = :email, telefone = :telefone, endereco = :endereco, pix = :pix, numero = :numero, bairro = :bairro, cidade = :cidade, estado = :estado, cep = :cep, cnpj = :cnpj, complemento = :complemento, tipo_chave = :tipo_chave where id = :id and empresa = :empresa");
+}
+$query->bindValue(':tipo_chave', $tipo_chave);
+$query->bindValue(':empresa', $id_empresa, PDO::PARAM_INT);
+if ($id > 0) {
+    $query->bindValue(':id', $id, PDO::PARAM_INT);
 }
 $query->bindValue(":nome", "$nome");
 $query->bindValue(":email", "$email");
