@@ -242,12 +242,10 @@ if ($total_reg > 0) {
 		}
 
 
-		//validando impressao automatica
-		if ($status == 'Iniciado' and $impressao_automatica == 'Site' and $impressao != "Sim") {
-			$ids .= $id . '-';
-			//coloco a impressao = sim
-			$pdo->query("UPDATE $tabela SET impressao = 'Sim' where id = '$id'");
-		}
+        // A listagem nunca confirma impressão: a confirmação é explícita após imprimir.
+        $impressaoPendente = $impressao !== 'Sim';
+        $etiquetaImpressao = $impressaoPendente ? 'Impressão pendente' : 'Impressão confirmada';
+        $classeImpressao = $impressaoPendente ? 'bg-warning text-dark' : 'bg-success';
 
 		$nome_clienteF = mb_strimwidth($nome_cliente, 0, 16, "...");
 
@@ -309,7 +307,8 @@ if ($total_reg > 0) {
 							<span class="text-primary"><small>({$tipo_pgto})</small></span>	
 						</small>		
 					</div>
-					{$resumoItens}
+					<div class="mb-2"><span class="badge {$classeImpressao}">{$etiquetaImpressao}</span></div>
+				{$resumoItens}
 				<div align="center" style="">
 					<span>	
 
@@ -322,7 +321,7 @@ if ($total_reg > 0) {
 	<a id="btn_baixar_{$id}" class="btn btn-success-light btn-sm {$classe_excluir}" href="#" onclick="baixar('{$id}', '{$nome_cliente}', '{$tipo_pgto}')" title="Confirmar Pgto"><i class="fa fa-check-square"></i></a>
 
 
-		<a class="btn btn-dark-light btn-sm" href="#" onclick="gerarComprovante('{$id}', '{$tipo_pedido}')" title="Gerar Comprovante"><i class="fa fa-file-pdf-o"></i></a>
+		<a class="btn btn-dark-light btn-sm" href="#" onclick="imprimirPedidoEsteira('{$id}', '{$tipo_pedido}');return false" title="Abrir cupom para impressão"><i class="fa fa-print"></i></a>
 
 	<a href="#" class="btn btn-success-light btn-sm  {$ocultar_modal_whats}" onclick="modalWhats('{$cliente}','Cliente')" title="Enviar Mensagem para o Cliente"><i class="fa-brands fa-whatsapp"></i></a>
 
@@ -360,20 +359,7 @@ $total_dos_itens_pedidos = @count($res);
 <script type="text/javascript">
 	$(document).ready(function() {
 
-		var ids = "<?= $ids ?>";
-		var id_imp = ids.split("-");
-		//alert(ids)
-
-		for (i = 0; i < id_imp.length - 1; i++) {
-			var id_pedido = id_imp[i];
-
-			let a = document.createElement('a');
-			a.target = '_blank';
-			a.href = 'rel/comprovante.php?id=' + id_pedido;
-			a.click();
-		}
-
-
+		// A listagem não abre janelas nem marca cupons como impressos automaticamente.
 
 		$('#todos_pedidos').text("<?= $total_pedidos ?>");
 		$('#ini_pedidos').text("<?= $total_ini ?>");
