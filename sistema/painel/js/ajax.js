@@ -27,7 +27,7 @@ function inserir(){
 
 
 
-$("#form").submit(function () {
+$("#form").submit(function (event) {
 
     event.preventDefault();
     var formData = new FormData(this);
@@ -63,6 +63,15 @@ $("#form").submit(function () {
 
         },
 
+        error: function(xhr) {
+            var resposta = (xhr.responseText || '').replace(/<[^>]*>/g, '').trim();
+            $('#mensagem').addClass('text-danger').text(resposta || 'Não foi possível salvar. Verifique os dados e tente novamente.');
+        },
+        complete: function() {
+            $('#btn_salvar').show();
+            $('#btn_carregando').hide();
+        },
+        timeout: 30000,
         cache: false,
         contentType: false,
         processData: false,
