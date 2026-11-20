@@ -28,7 +28,7 @@ $pag = 'dias';
  </div></div></div></div>
 <div class="row row-sm"><div class="col-lg-12"><div class="card custom-card"><div class="card-body">
 <h5><i class="fa-solid fa-clock me-2"></i>Horários especiais por data</h5>
-<p class="text-muted">Configure uma abertura e fechamento diferentes em uma data específica. O cadastro não altera o horário normal. O cardápio e a finalização online consideram os horários especiais; valide o comportamento antes de usar em produção. Horários especiais encerram no mesmo dia; expedientes normais que atravessam a meia-noite seguem a agenda do dia anterior, respeitando fechamentos integrais.</p>
+<p class="text-muted">Configure uma abertura e fechamento diferentes em uma data específica. O cadastro não altera o horário normal. O cardápio e a finalização online consideram os horários especiais; valide o comportamento antes de usar em produção. Horários especiais podem atravessar a meia-noite (ex.: 20h às 3h do dia seguinte). O fechamento integral na data seguinte interrompe o atendimento à meia-noite.</p>
 <form id="bc-horario-form" class="row g-2 align-items-end">
 <div class="col-md-3"><label for="bc-horario-data" class="form-label">Data</label><input type="date" id="bc-horario-data" class="form-control" required></div>
 <div class="col-md-2"><label for="bc-horario-inicio" class="form-label">Abertura</label><input type="time" id="bc-horario-inicio" class="form-control" required></div>
@@ -166,7 +166,7 @@ function carregar(){
  if(!r.registros || !r.registros.length){lista.append($('<tr>').append($('<td colspan="4" class="text-muted">').text('Nenhum horário especial cadastrado.')));return;}
  r.registros.forEach(function(x){
  var tr=$('<tr>');tr.append($('<td>').text(x.data_especial.split('-').reverse().join('/')));
- tr.append($('<td>').text(x.hora_inicio+' às '+x.hora_fim));
+ tr.append($('<td>').text(x.hora_inicio+' às '+x.hora_fim+(x.hora_fim < x.hora_inicio ? ' (dia seguinte)' : '')));
  tr.append($('<td>').text(x.descricao||'—'));
  var b=$('<button type="button" class="btn btn-sm btn-outline-danger">').text('Excluir');
  b.on('click',function(){if(!confirm('Excluir este horário especial?'))return;$.post(endpoint,{acao:'excluir',id:x.id},function(){aviso('Horário excluído.');carregar();},'json').fail(falha);});
