@@ -8,7 +8,7 @@ $pag = 'banner_rotativo';
 ?>
 
 
-<div class="justify-content-between breadcrumb-header">
+<div class="justify-content-between breadcrumb-header"><div class="left-content mt-2"><h4><i class="fa-solid fa-images me-2"></i>Banner Rotativo</h4><p class="text-muted mb-2">Gerencie as imagens de destaque do cardápio online.</p></div>
 	<div class="left-content mt-2">
 		<a class="btn ripple btn-primary text-white" onclick="inserir()" type="button"><i class="fe fe-plus me-1"></i> Adicionar Banner</a>
 
@@ -29,7 +29,7 @@ $pag = 'banner_rotativo';
 
 <!-- Modal Inserir-->
 <div class="modal fade" id="modalForm" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-	<div class="modal-dialog" role="document">
+	<div class="modal-dialog modal-lg" role="document">
 		<div class="modal-content">
 			<div class="modal-header  bg-primary text-white">
 				<h4 class="modal-title"><span id="titulo_inserir"></span></h4>
@@ -43,7 +43,7 @@ $pag = 'banner_rotativo';
 					<div class="row">
 						<div class="col-md-12">
 							<div class="form-group">
-								<label for="exampleInputEmail1">Categoria</label>
+								<label for="categoria" class="form-label fw-semibold">Categoria vinculada</label>
 								<select class="form-select sel3" id="categoria" name="categoria" style="width:100%;">
 									<option value="0">Nenhuma Categoria</option>
 									<?php
@@ -54,7 +54,7 @@ $pag = 'banner_rotativo';
 										for ($i = 0; $i < $total_reg; $i++) {
 											foreach ($res[$i] as $key => $value) {
 											}
-											echo '<option value="' . $res[$i]['id'] . '">' . $res[$i]['nome'] . '</option>';
+											echo '<option value="' . (int)$res[$i]['id'] . '">' . htmlspecialchars((string)$res[$i]['nome'], ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') . '</option>';
 										}
 									}
 									?>
@@ -69,13 +69,13 @@ $pag = 'banner_rotativo';
 					<div class="row">
 						<div class="col-md-8">
 							<div class="form-group">
-								<label>Foto <small><small>(1400x600 Tamanho Recomendado)</small></small></label>
-								<input class="form-control" type="file" name="foto" onChange="carregarImg();" id="foto">
+								<label for="foto" class="form-label fw-semibold">Imagem do banner</label><div class="form-text mb-2">Tamanho recomendado: 1400 × 600 px. JPG, PNG ou GIF, até 5 MB.</div>
+								<input class="form-control" type="file" name="foto" accept="image/jpeg,image/png,image/gif" onChange="carregarImg();" id="foto">
 							</div>
 						</div>
 						<div class="col-md-4">
 							<div id="divImg">
-								<img src="images/<?php echo $pag ?>/sem-foto.jpg" width="80px" id="target">
+								<img src="images/<?php echo $pag ?>/sem-foto.jpg" class="img-fluid rounded border" style="width:100%;max-height:180px;object-fit:contain" alt="Prévia do banner" id="target">
 							</div>
 						</div>
 
@@ -92,7 +92,7 @@ $pag = 'banner_rotativo';
 				</div>
 
 				<div class="modal-footer">
-					<button type="submit" class="btn btn-primary">Salvar<i class="fa fa-check ms-2"></i></button>
+					<button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancelar</button><button type="submit" id="btn_salvar" class="btn btn-primary"><i class="fa fa-check me-2"></i>Salvar banner</button>
 					<button class="btn btn-primary" type="button" id="btn_carregando" style="display: none">
 						<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Carregando...
 					</button>
@@ -122,7 +122,13 @@ $pag = 'banner_rotativo';
 		var target = document.getElementById('target');
 		var file = document.querySelector("#foto").files[0];
 
-		var reader = new FileReader();
+		if(file && (file.size > 5*1024*1024 || !['image/jpeg','image/png','image/gif'].includes(file.type))){
+ document.querySelector('#foto').value='';
+ $('#mensagem').addClass('text-danger').text('Escolha uma imagem JPG, PNG ou GIF de até 5 MB.');
+ return;
+}
+$('#mensagem').removeClass('text-danger').text('');
+var reader = new FileReader();
 
 		reader.onloadend = function() {
 			target.src = reader.result;
