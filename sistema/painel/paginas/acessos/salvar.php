@@ -25,7 +25,7 @@ if ($grupo > 0) {
 }
 $q = $pdo->prepare("SELECT id FROM acessos WHERE (nome = :nome OR chave = :chave) AND id <> :id LIMIT 1");
 $q->execute([':nome'=>$nome, ':chave'=>$chave, ':id'=>$id]);
-if ($q->fetchColumn()) { exit('Nome ou chave já cadastrado!'); }
+if ($q->fetchColumn()) { http_response_code(409); exit('Nome ou chave já cadastrado!'); }
 if ($id > 0) {
     $q = $pdo->prepare("SELECT chave FROM acessos WHERE id = :id LIMIT 1");
     $q->execute([':id'=>$id]);
