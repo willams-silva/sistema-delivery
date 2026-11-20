@@ -53,7 +53,8 @@ if(@count($res) > 0 and $id != $id_reg){
 }
 
 //validacao telefone
-$query = $pdo->query("SELECT * from $tabela where telefone = '$telefone' and empresa = '$id_empresa'");
+$query = $pdo->prepare("SELECT id FROM usuarios WHERE telefone = :telefone AND empresa = :empresa");
+$query->execute([':telefone' => $telefone, ':empresa' => $id_empresa]);
 $res = $query->fetchAll(PDO::FETCH_ASSOC);
 $id_reg = @$res[0]['id'];
 if(@count($res) > 0 and $id != $id_reg){
