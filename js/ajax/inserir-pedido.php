@@ -19,27 +19,22 @@ if($sessao_pedido_balcao == 'BALCÃO'){
   $tipo_pedido = 'Balcão';
 }
 
-// Proteção no servidor: datas excepcionais bloqueiam somente pedidos públicos.
-// Pedidos de balcão e de mesas mantêm o fluxo operacional atual.
+// Verificação no servidor, antes de qualquer alteração no pedido ou cliente.
+// Mesas e balcão conservam o fluxo independente do delivery público.
 $bc_pedido_mesa = !empty($_SESSION['id_mesa']);
 if ($tipo_pedido !== 'Balcão' && !$bc_pedido_mesa) {
+  require_once '../../sistema/horarios_especiais.php';
   try {
-    $bc_stmt_fechamento = $pdo->prepare("SELECT 1 FROM fechamentos_excepcionais WHERE empresa = :empresa AND data_fechamento = :data LIMIT 1");
-    $bc_stmt_fechamento->execute([':empresa' => (int)$id_empresa, ':data' => date('Y-m-d')]);
-    if ($bc_stmt_fechamento->fetchColumn()) {
+    $bc_estado = bcEstadoDelivery($pdo, (int)$id_empresa, date('Y-m-d'), date('H:i:s'), (string)@$pausar_delivery, (string)@$status_estabelecimento, (string)$horario_abertura, (string)$horario_fechamento);
+    if (!$bc_estado['aberto']) {
       http_response_code(409);
-      echo 'Estabelecimento fechado nesta data. Não é possível finalizar pedidos online.';
-      exit();
-    }
-    require_once '../../sistema/horarios_especiais.php';
-    $bc_horario_pedido = bcHorarioEspecial($pdo, (int)$id_empresa, date('Y-m-d'));
-    if ($bc_horario_pedido !== null && !bcHorarioEspecialAberto($bc_horario_pedido, date('H:i:s'))) {
-      http_response_code(409);
-      echo 'Fora do horário especial de funcionamento. Não é possível finalizar o pedido online.';
+      echo $bc_estado['motivo'] === 'pausado'
+        ? 'Delivery pausado. Não é possível finalizar pedidos agora.'
+        : 'Estabelecimento fechado ou fora do horário de funcionamento. Tente novamente no horário de atendimento.';
       exit();
     }
   } catch (PDOException $e) {
-    error_log('Consulta de fechamento excepcional no checkout: ' . $e->getMessage());
+    error_log('Falha ao validar funcionamento no checkout: '.$e->getMessage());
     http_response_code(503);
     echo 'Não foi possível confirmar o funcionamento da loja. Tente novamente em instantes.';
     exit();
