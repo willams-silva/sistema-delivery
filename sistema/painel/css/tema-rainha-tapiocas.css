@@ -15,3 +15,27 @@ a:not(.btn):not(.side-menu__item) { color:var(--rainha-cacau); }
 .table thead th { background:#fff1df!important; color:var(--rainha-cacau)!important; }
 .modal-content { border-radius:16px!important; border:1px solid var(--rainha-borda)!important; }
 @media(max-width:767px){ .card { border-radius:12px!important; } .app-sidebar .side-menu__item { min-height:42px; } }
+
+/* Sidebar inteira na mesma cor: o tema base colore o container rolavel separadamente. */
+.app-sidebar,
+.app-sidebar .main-sidebar-header,
+.app-sidebar .main-sidebar-header.active,
+.app-sidebar .main-sidemenu,
+.app-sidebar .side-menu,
+.app-sidebar .sidebar-scroll,
+.app-sidebar .ps,
+.app-sidebar .ps-content,
+.app-sidebar .app-sidebar__user,
+.app-sidebar .app-sidebar__user-info,
+.app-sidebar .slide,
+.app-sidebar .slide-menu,
+.app-sidebar .slide-menu li {
+  background-color:var(--rainha-cacau)!important;
+  background-image:none!important;
+}
+.app-sidebar .side-menu__item,
+.app-sidebar .slide-item { color:#fff4e7!important; }
+.app-sidebar .side-menu__item:hover,
+.app-sidebar .slide-item:hover,
+.app-sidebar .side-menu__item.active,
+.app-sidebar .slide-item.active { background-color:var(--rainha-cacau-escuro)!important; }
