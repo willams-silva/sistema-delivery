@@ -65,7 +65,35 @@ if($tipo_desconto == "%"){
 
 $total_compra = 0;
 
-$query = $pdo->prepare("UPDATE $tabela SET garcon = :garcon, total = :total, horario_fechamento = curTime(), status = 'Fechada', obs = :obs, comissao_garcon = :comissao, couvert = :couvert, subtotal = :subtotal, forma_pgto = :forma_pgto, valor_adiantado = '$total_valor_fechamento', desconto = :desconto, total_recebido = :total_recebido, troco = :troco WHERE id = '$id_ab'");
+// Trava o fechamento antes de qualquer lançamento financeiro ou baixa de estoque.
+$id_empresa = filter_var($id_empresa, FILTER_VALIDATE_INT, ['options'=>['min_range'=>1]]);
+$id_usuario = filter_var($id_usuario, FILTER_VALIDATE_INT, ['options'=>['min_range'=>1]]);
+$id_ab = filter_var($id_ab, FILTER_VALIDATE_INT, ['options'=>['min_range'=>1]]);
+$id_mesa = filter_var($id_mesa, FILTER_VALIDATE_INT, ['options'=>['min_range'=>1]]);
+if (($_SERVER['REQUEST_METHOD'] ?? '') !== 'POST' || !$id_empresa || !$id_usuario || !$id_ab || !$id_mesa) {
+    http_response_code(400);
+    exit('Dados de fechamento inválidos');
+}
+try {
+    $pdo->beginTransaction();
+    $trava = $pdo->prepare("SELECT id, status, mesa FROM abertura_mesa WHERE id=:id AND empresa=:empresa FOR UPDATE");
+    $trava->execute([':id'=>$id_ab, ':empresa'=>$id_empresa]);
+    $abertura = $trava->fetch(PDO::FETCH_ASSOC);
+    if (!$abertura || (int)$abertura['mesa'] !== (int)$id_mesa) {
+        throw new RuntimeException('Mesa não pertence a esta empresa ou abertura');
+    }
+    if ($abertura['status'] === 'Fechada') {
+        $pdo->rollBack();
+        http_response_code(409);
+        exit('Esta mesa já foi fechada');
+    }
+    if ($abertura['status'] !== 'Aberta') {
+        throw new RuntimeException('Abertura da mesa não está ativa');
+    }
+
+$query = $pdo->prepare("UPDATE $tabela SET garcon = :garcon, total = :total, horario_fechamento = curTime(), status = 'Fechada', obs = :obs, comissao_garcon = :comissao, couvert = :couvert, subtotal = :subtotal, forma_pgto = :forma_pgto, valor_adiantado = '$total_valor_fechamento', desconto = :desconto, total_recebido = :total_recebido, troco = :troco WHERE id = :id_ab AND empresa = :empresa AND status = 'Aberta'");
+$query->bindValue(':id_ab', $id_ab, PDO::PARAM_INT);
+$query->bindValue(':empresa', $id_empresa, PDO::PARAM_INT);
 
 
 $query->bindValue(":garcon", "$garcon");
@@ -80,12 +108,13 @@ $query->bindValue(":total_recebido", "$total_recebido");
 $query->bindValue(":troco", "$troco");
 $query->execute();
 
-$pdo->query("UPDATE mesas set status = 'Fechada' where id = '$id_mesa'");
+$fechaMesa=$pdo->prepare("UPDATE mesas SET status='Fechada' WHERE id=:id AND empresa=:empresa");
+$fechaMesa->execute([':id'=>$id_mesa, ':empresa'=>$id_empresa]);
 
 
 
 //verificar caixa aberto
-$query1 = $pdo->query("SELECT * from caixas where operador = '$id_usuario' and data_fechamento is null order by id desc limit 1");
+$query1 = $pdo->query("SELECT * from caixas where operador = '$id_usuario' and empresa = '$id_empresa' and data_fechamento is null order by id desc limit 1");
 $res1 = $query1->fetchAll(PDO::FETCH_ASSOC);
 if (@count($res1) > 0) {
   $id_caixa = @$res1[0]['id'];
@@ -93,11 +122,11 @@ if (@count($res1) > 0) {
   $id_caixa = 0;
 }
 
-$query1 = $pdo->query("SELECT * from formas_pgto where id = '$forma_pgto'");
+$query1 = $pdo->query("SELECT * from formas_pgto where id = '$forma_pgto' and empresa = '$id_empresa'");
 $res1 = $query1->fetchAll(PDO::FETCH_ASSOC);
 $nome_forma_pgto = $res1[0]['nome'];
 
-$query1 = $pdo->query("SELECT * from abertura_mesa where id = '$id_ab'");
+$query1 = $pdo->query("SELECT * from abertura_mesa where id = '$id_ab' and empresa = '$id_empresa'");
 $res1 = $query1->fetchAll(PDO::FETCH_ASSOC);
 $nome_cliente_ab = $res1[0]['cliente'];
 
@@ -109,7 +138,7 @@ $query->execute();
 
 
 //atualizar produtos
-$query = $pdo->query("SELECT * FROM carrinho where mesa = '$id_ab'");
+$query = $pdo->query("SELECT * FROM carrinho where mesa = '$id_ab' and empresa = '$id_empresa'");
 $res = $query->fetchAll(PDO::FETCH_ASSOC);
 $total_reg = @count($res);
 if ($total_reg > 0) {
@@ -122,7 +151,7 @@ if ($total_reg > 0) {
     $produto = $res[$i]['produto'];
     $quantidade = $res[$i]['quantidade'];   
 
-    $query2 = $pdo->query("SELECT * FROM produtos where id = '$produto'");
+    $query2 = $pdo->query("SELECT * FROM produtos where id = '$produto' and empresa = '$id_empresa'");
     $res2 = $query2->fetchAll(PDO::FETCH_ASSOC);
     $id_categoria = $res2[0]['categoria'];
     $valor_produto = $res2[0]['valor_venda'];
@@ -135,7 +164,8 @@ if ($total_reg > 0) {
 
     if ($tem_estoque == 'Sim') {
       $total_produtos = $estoque - $quantidade;
-      $pdo->query("UPDATE produtos SET estoque = '$total_produtos' where id = '$produto'");
+      $estoqueUpdate=$pdo->prepare("UPDATE produtos SET estoque=estoque-:quantidade WHERE id=:id AND empresa=:empresa");
+      $estoqueUpdate->execute([':quantidade'=>$quantidade, ':id'=>$produto, ':empresa'=>$id_empresa]);
     }
 
   }
@@ -159,6 +189,13 @@ $pdo->query("INSERT INTO vendas SET cliente = '0', valor = '$subtotal', total_pa
 
 
 
+$pdo->commit();
 echo 'Salvo com Sucesso';
+} catch (Throwable $e) {
+    if ($pdo->inTransaction()) $pdo->rollBack();
+    error_log('Falha fechamento mesa: '.$e->getMessage());
+    http_response_code(409);
+    echo 'Não foi possível fechar a mesa. Verifique o status e tente novamente.';
+}
 
 ?>
