@@ -13,4 +13,3 @@ if($nome===false){http_response_code(404);exit('Mesa não encontrada');}
 $url=($url_sistema??'').'mesa/'.$id;
 $qr='https://api.qrserver.com/v1/create-qr-code/?size=350x350&data='.rawurlencode($url);
 echo '<div class="p-3"><h5>Mesa '.htmlspecialchars((string)$nome,ENT_QUOTES,'UTF-8').'</h5><img class="img-fluid" style="max-width:350px" src="'.htmlspecialchars($qr,ENT_QUOTES,'UTF-8').'" alt="QR Code da mesa"><p class="small text-muted mt-2">Aponte a câmera para abrir o cardápio da mesa.</p><a class="btn btn-outline-primary" target="_blank" rel="noopener noreferrer" href="'.htmlspecialchars($qr,ENT_QUOTES,'UTF-8').'">Abrir QR Code para imprimir</a></div>';
-}
