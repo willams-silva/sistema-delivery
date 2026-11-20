@@ -3063,6 +3063,26 @@ document.addEventListener("DOMContentLoaded", function() {
 (function(){
   var setores = {Cozinha:'cozinha',Bar:'bar',Outro:'outro'};
   var emAndamento = false;
+  var ultimoVisto = {};
+  var somAtivado = false;
+  var audioContexto = null;
+  function tocarAviso(){
+    if (!somAtivado) return;
+    try {
+      var Ctx = window.AudioContext || window.webkitAudioContext;
+      if (!Ctx) return;
+      audioContexto = audioContexto || new Ctx();
+      if (audioContexto.state === 'suspended') audioContexto.resume();
+      var oscilador = audioContexto.createOscillator();
+      var volume = audioContexto.createGain();
+      oscilador.type = 'sine'; oscilador.frequency.value = 880;
+      volume.gain.setValueAtTime(0.0001,audioContexto.currentTime);
+      volume.gain.exponentialRampToValueAtTime(0.08,audioContexto.currentTime+0.02);
+      volume.gain.exponentialRampToValueAtTime(0.0001,audioContexto.currentTime+0.25);
+      oscilador.connect(volume); volume.connect(audioContexto.destination);
+      oscilador.start(); oscilador.stop(audioContexto.currentTime+0.26);
+    } catch(e) {}
+  }
   function atualizarContadores(){
     if (document.hidden || emAndamento) return;
     emAndamento = true;
@@ -3076,13 +3096,32 @@ document.addEventListener("DOMContentLoaded", function() {
           var n = Number((data.setores[setor] || {}).total || 0);
           el.textContent = String(n);
           el.hidden = n === 0;
-          el.title = n+' itens ativos em '+setor;
+          var dados = data.setores[setor] || {};
+          var atrasados = Number(dados.atrasados || 0);
+          el.title = n+' itens ativos em '+setor+(atrasados ? ' • '+atrasados+' atrasados (>20 min)' : '');
+          el.style.backgroundColor = atrasados ? '#dc3545' : '#8b5cf6';
+          var novoId = Number(dados.ultimo_aguardando || 0);
+          if (Object.prototype.hasOwnProperty.call(ultimoVisto,setor) && novoId > ultimoVisto[setor]) tocarAviso();
+          ultimoVisto[setor] = Math.max(ultimoVisto[setor] || 0,novoId);
         });
       })
       .catch(function(){ /* preserva menu quando a consulta falha */ })
       .finally(function(){ emAndamento = false; });
   }
   document.addEventListener('DOMContentLoaded',function(){
+    var controle = document.createElement('button');
+    controle.type='button';
+    controle.className='btn btn-sm btn-outline-secondary';
+    controle.style.cssText='margin:8px 12px;font-size:11px;';
+    controle.textContent='🔕 Ativar som dos pedidos';
+    controle.title='Clique para habilitar ou desabilitar alertas sonoros neste navegador';
+    controle.addEventListener('click',function(){
+      somAtivado=!somAtivado;
+      controle.textContent=somAtivado?'🔔 Silenciar pedidos':'🔕 Ativar som dos pedidos';
+      if(somAtivado) tocarAviso();
+    });
+    var menu = document.querySelector('.pedidos-locais-link');
+    if(menu && menu.parentElement && menu.parentElement.parentElement) menu.parentElement.parentElement.appendChild(controle);
     atualizarContadores();
     setInterval(atualizarContadores,15000);
     document.addEventListener('visibilitychange',function(){ if(!document.hidden) atualizarContadores(); });
