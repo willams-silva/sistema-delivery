@@ -83,7 +83,14 @@ $pag = 'banner_rotativo';
 
 
 
-					<input type="hidden" name="id" id="id">
+					<div class="row g-3 mt-2">
+ <div class="col-md-4"><label class="form-label fw-semibold" for="ativo">Status</label><select class="form-select" id="ativo" name="ativo"><option value="Sim">Ativo</option><option value="Não">Desativado</option></select></div>
+ <div class="col-md-4"><label class="form-label fw-semibold" for="ordem">Ordem de exibição</label><input class="form-control" id="ordem" name="ordem" type="number" min="0" max="99999" value="0"><div class="form-text">Menor número aparece primeiro.</div></div>
+ <div class="col-md-6"><label class="form-label fw-semibold" for="inicio_em">Início da exibição (opcional)</label><input class="form-control" id="inicio_em" name="inicio_em" type="datetime-local"></div>
+ <div class="col-md-6"><label class="form-label fw-semibold" for="fim_em">Fim da exibição (opcional)</label><input class="form-control" id="fim_em" name="fim_em" type="datetime-local"></div>
+ <div class="col-12"><small class="text-muted">O agendamento e o status só controlarão o cardápio após a integração da consulta pública de banners.</small></div>
+</div>
+<input type="hidden" name="id" id="id">
 
 					<br>
 					<small>
