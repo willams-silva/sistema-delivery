@@ -130,10 +130,6 @@ if($id_edicao == ""){
         if ($bc_fechamento_excepcional_hoje) {
           $img = 'fechado.png';
         }
-        // Horário especial prevalece sobre a agenda semanal, exceto fechamento integral.
-        if ($bc_horario_especial_hoje !== null && !$bc_fechamento_excepcional_hoje) {
-          $img = bcHorarioEspecialAberto($bc_horario_especial_hoje, date('H:i:s')) ? 'aberto.png' : 'fechado.png';
-        }
         //verificar se está aberto hoje
         $diasemana = array("Domingo", "Segunda-Feira", "Terça-Feira", "Quarta-Feira", "Quinta-Feira", "Sexta-Feira", "Sábado");
         $diasemana_numero = date('w', strtotime($data));
@@ -169,7 +165,7 @@ if($id_edicao == ""){
             $img = 'fechado.png';
           }
         }
-        if ($bc_horario_especial_hoje !== null && !$bc_fechamento_excepcional_hoje) {
+        if ($bc_horario_especial_hoje !== null && !$bc_fechamento_excepcional_hoje && $status_estabelecimento != 'Fechado') {
           $img = bcHorarioEspecialAberto($bc_horario_especial_hoje, date('H:i:s')) ? 'aberto.png' : 'fechado.png';
         }
         if ($bc_fechamento_excepcional_hoje) $img = 'fechado.png';
