@@ -492,6 +492,34 @@ $(document).on('show.bs.modal', '#modalBaixar', function(){
 	var pag = "<?= $pag ?>"
 </script>
 <script src="js/ajax.js"></script>
+<script>
+function imprimirPedidoEsteira(id,tipo){
+    const caminho=tipo==='Balcão'?'rel/comprovante_balcao.php':'rel/comprovante.php';
+    const janela=window.open(caminho+'?id='+encodeURIComponent(id),'_blank');
+    if(!janela){
+        Swal.fire({icon:'warning',title:'Janela bloqueada',text:'Permita pop-ups para imprimir. O pedido continua pendente.'});
+        return;
+    }
+    Swal.fire({
+        title:'O cupom foi impresso?',
+        text:'Confirme apenas depois de verificar o cupom na impressora.',
+        icon:'question',showCancelButton:true,
+        confirmButtonText:'Sim, foi impresso',cancelButtonText:'Ainda não'
+    }).then(function(res){
+        if(!res.isConfirmed)return;
+        $.ajax({
+            url:'paginas/pedidos/confirmar_impressao.php',
+            method:'POST',dataType:'json',data:{id:id,confirmado:'1'}
+        }).done(function(retorno){
+            if(retorno.ok)listar();
+            else Swal.fire({icon:'error',text:retorno.mensagem||'Falha ao confirmar impressão'});
+        }).fail(function(xhr){
+            Swal.fire({icon:'error',text:xhr.responseJSON?.mensagem||'Não foi possível confirmar impressão'});
+        });
+    });
+}
+</script>
+
 
 <script type="text/javascript">
 	// O intervalo configurado é em milissegundos; evita polling excessivo.
