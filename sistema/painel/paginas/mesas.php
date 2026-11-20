@@ -152,13 +152,19 @@ if (@count($res2) > 0) {
     item.style.display=(filtro.value==='todas'||item.dataset.tipo===filtro.value)?'':'none';
    });
   }
+  if(table&&filtro&&window.jQuery&&jQuery.fn.DataTable&&jQuery.fn.DataTable.isDataTable('#tabela')){
+   var dt=jQuery('#tabela').DataTable();
+   var termo=filtro.value==='todas'?'':filtro.value;
+   dt.column(2).search(termo,false,false).draw();
+  }
  };
  if(window.bcMesasRefreshTimer)clearInterval(window.bcMesasRefreshTimer);
  window.bcMesasRefreshTimer=setInterval(function(){
   var auto=document.getElementById('bc-mesas-auto');
   if(!auto){clearInterval(window.bcMesasRefreshTimer);return;}
-  if(!auto.checked||document.hidden||window.bcMesasVisao==='table')return;
+  if(!auto.checked||document.hidden)return;
   if(document.querySelector('.modal.show')||document.querySelector('#ids')?.value)return;
+  if(document.activeElement && /^(INPUT|SELECT|TEXTAREA)$/.test(document.activeElement.tagName))return;
   if(typeof listar==='function')listar();
  },15000);
 })();
