@@ -1,18 +1,25 @@
 <?php
 @session_start();
-$id_empresa = $_SESSION['empresa'];
+$id_empresa = (int) ($_SESSION['empresa'] ?? 0);
+$id_operador = (int) ($_SESSION['id'] ?? 0);
+if ($id_empresa <= 0 || $id_operador <= 0) {
+    http_response_code(403);
+    exit('Sessão inválida');
+}
 require_once("../../../conexao.php");
 require_once("../../buscar_config.php");
 $mostrar_registros = @$_SESSION['registros'];
-$id_usuario = @$_SESSION['id'];
+$id_usuario = $id_operador;
 
 $tabela = 'clientes';
 
 
 if ($mostrar_registros == 'Não') {
-	$query = $pdo->query("SELECT * from $tabela where usuario = '$id_usuario' and empresa = '$id_empresa' order by id desc");
+	$query = $pdo->prepare("SELECT * FROM clientes WHERE usuario = :usuario AND empresa = :empresa ORDER BY id DESC");
+    $query->execute([':usuario' => $id_usuario, ':empresa' => $id_empresa]);
 } else {
-	$query = $pdo->query("SELECT * from $tabela where empresa = '$id_empresa' order by id desc");
+	$query = $pdo->prepare("SELECT * FROM clientes WHERE empresa = :empresa ORDER BY id DESC");
+    $query->execute([':empresa' => $id_empresa]);
 }
 
 $res = $query->fetchAll(PDO::FETCH_ASSOC);
@@ -57,7 +64,8 @@ HTML;
 		$tel_whatsF = '55' . preg_replace('/[ ()-]+/', '', $telefone);
 
 		//verificar débitos cliente
-		$query2 = $pdo->query("SELECT * from receber where cliente = '$id' and vencimento < curDate() and pago != 'Sim'");
+		$query2 = $pdo->prepare("SELECT 1 FROM receber WHERE cliente = :cliente AND empresa = :empresa AND vencimento < CURDATE() AND pago != 'Sim' LIMIT 1");
+        $query2->execute([':cliente' => $id, ':empresa' => $id_empresa]);
 		$res2 = $query2->fetchAll(PDO::FETCH_ASSOC);
 		$linhas2 = @count($res2);
 		if ($linhas2 > 0) {
