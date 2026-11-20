@@ -15,7 +15,8 @@ if($modo_teste == 'Sim'){
 
 $id = (int) ($_POST['id'] ?? 0);
 $id_empresa = (int) ($_SESSION['empresa'] ?? 0);
-if ($id <= 0 || $id_empresa <= 0 || $id === (int) ($_SESSION['id'] ?? 0)) {
+$id_operador = (int) ($_SESSION['id'] ?? 0);
+if ($id <= 0 || $id_empresa <= 0 || $id_operador <= 0 || $id === $id_operador) {
     http_response_code(400);
     exit('Dados inválidos');
 }
