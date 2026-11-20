@@ -783,7 +783,7 @@ if($linhas == 0){
 
 							<li class="slide <?php echo @$pedidos_esteiras ?>">
 								<a class="side-menu__item" href="pedidos_esteiras">
-									<i class="fa fa-motorcycle text-white"></i>
+									<i class="fa fa-tasks text-white"></i>
 									<span class="side-menu__label" style="margin-left: 15px">Pedidos Esteira</span></a>
 							</li>
 
