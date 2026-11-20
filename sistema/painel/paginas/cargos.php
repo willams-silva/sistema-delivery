@@ -83,3 +83,20 @@ $pag = 'cargos';
 	var pag = "<?= $pag ?>"
 </script>
 <script src="js/ajax.js"></script>
+<script>
+// Tratamento de erros dos endpoints de Cargos, sem alterar o AJAX compartilhado.
+$(document).ajaxError(function (_event, xhr, settings) {
+    if (!settings.url || settings.url.indexOf('paginas/cargos/') === -1) return;
+    var mensagem = (xhr.responseText || '').replace(/<[^>]*>/g, '').trim();
+    if (!mensagem || mensagem.length > 250) mensagem = 'Não foi possível concluir a operação. Tente novamente.';
+    if (settings.url.indexOf('/salvar.php') !== -1) {
+        $('#mensagem').addClass('text-danger').text(mensagem);
+        $('#btn_salvar').show();
+        $('#btn_carregando').hide();
+    } else if (settings.url.indexOf('/excluir.php') !== -1) {
+        Swal.fire({title: 'Não foi possível excluir', text: mensagem, icon: 'warning'});
+    } else {
+        $('#listar').text(mensagem);
+    }
+});
+</script>
