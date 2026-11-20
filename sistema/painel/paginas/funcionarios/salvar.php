@@ -111,7 +111,8 @@ if ($data_nasc == "") {
 
 
 //validar troca da foto
-$query = $pdo->query("SELECT * FROM $tabela where id = '$id' and empresa = '$id_empresa'");
+$query = $pdo->prepare("SELECT foto FROM usuarios WHERE id = :id AND empresa = :empresa");
+$query->execute([':id' => $id, ':empresa' => $id_empresa]);
 $res = $query->fetchAll(PDO::FETCH_ASSOC);
 $total_reg = @count($res);
 if ($total_reg > 0) {
