@@ -20,7 +20,9 @@ if ($nivel !== 'Administrador') {
 $query = $pdo->prepare("SELECT c.id, c.nome, COUNT(u.id) AS total_funcionarios FROM cargos c LEFT JOIN usuarios u ON u.empresa = c.empresa AND u.nivel = c.nome WHERE c.empresa = :empresa GROUP BY c.id, c.nome ORDER BY c.id DESC");
 $query->execute([':empresa'=>$id_empresa]);
 $res = $query->fetchAll(PDO::FETCH_ASSOC);
-$linhas = @count($res);
+$linhas = count($res);
+$cargos_em_uso = count(array_filter($res, static function ($cargo) { return (int) $cargo['total_funcionarios'] > 0; }));
+echo '<script>$("#bc-total-cargos").text(' . $linhas . ');$("#bc-cargos-em-uso").text(' . $cargos_em_uso . ');</script>';
 if ($linhas > 0) {
 	echo <<<HTML
 <small>
@@ -52,7 +54,7 @@ HTML;
 <label for="seletor-{$id}" class="custom-control-label mt-1 text-dark"></label>
 </div>
 </td>
-<td>{$nome_html}</td><td>{$total_funcionarios}</td>
+<td><strong>{$nome_html}</strong></td><td><span class="badge bg-light text-dark">{$total_funcionarios} funcionário(s)</span></td>
 
 <td>
 	<big><a class="btn btn-info-light btn-sm" href="#" onclick="editar('{$id}',{$nome_js})" title="Editar Dados"><i class="fa fa-edit "></i></a></big>
@@ -71,7 +73,7 @@ HTML;
 </small>
 HTML;
 } else {
-	echo '<small>Nenhum Registro Encontrado!</small>';
+	echo '<div class="text-center py-5"><i class="fa-solid fa-id-badge fa-2x text-muted mb-3"></i><h5>Nenhum cargo cadastrado</h5><p class="text-muted">Clique em Novo Cargo para cadastrar a primeira função da equipe.</p></div>';
 }
 
 ?>
@@ -81,10 +83,9 @@ HTML;
 <script type="text/javascript">
 	$(document).ready(function() {
 		$('#tabela').DataTable({
-			"language": {
-				//"url" : '//cdn.datatables.net/plug-ins/1.13.2/i18n/pt-BR.json'
-			},
-			"ordering": false,
+			"ordering": true,
+            "pageLength": 10,
+            "language": {"search": "Buscar cargo:", "lengthMenu": "Mostrar _MENU_ cargos", "info": "Exibindo _START_ a _END_ de _TOTAL_ cargos", "infoEmpty": "Nenhum cargo", "zeroRecords": "Nenhum cargo encontrado", "paginate": {"previous": "Anterior", "next": "Próximo"}},
 			"stateSave": true
 		});
 	});
