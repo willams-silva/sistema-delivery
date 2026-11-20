@@ -15,6 +15,7 @@ if (!$empresa || !$usuario || !$id) responderImpressao(403, 'Sessão ou pedido i
 if (($_POST['confirmado'] ?? '') !== '1') responderImpressao(422, 'Confirme que o cupom foi realmente impresso');
 require_once('../../../conexao.php');
 try {
+    $pdo->beginTransaction();
     $consulta = $pdo->prepare("UPDATE vendas SET impressao='Sim' WHERE id=:id AND empresa=:empresa AND (impressao IS NULL OR impressao<>'Sim')");
     $consulta->execute([':id'=>$id, ':empresa'=>$empresa]);
     if ($consulta->rowCount() !== 1) {
@@ -27,8 +28,10 @@ try {
     // O cron pode ter enfileirado o mesmo pedido: só limpa após confirmação humana.
     $estado = $pdo->prepare("UPDATE automacao_pedidos_estado SET imprimir_pendente=0 WHERE empresa=:empresa AND venda_id=:id");
     $estado->execute([':empresa'=>$empresa,':id'=>$id]);
+    $pdo->commit();
     responderImpressao(200, 'Impressão confirmada');
 } catch (Throwable $e) {
+    if ($pdo->inTransaction()) $pdo->rollBack();
     error_log('Confirmacao impressao pedido: '.$e->getMessage());
     responderImpressao(500, 'Não foi possível registrar a confirmação');
 }
