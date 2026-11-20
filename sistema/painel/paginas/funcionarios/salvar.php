@@ -140,7 +140,12 @@ if (@$_FILES['foto']['name'] != "") {
         exit('Imagem inválida ou maior que 5 MB');
     }
 
-	$ext = pathinfo($nome_img, PATHINFO_EXTENSION);
+	$ext = strtolower(pathinfo($nome_img, PATHINFO_EXTENSION));
+    $info_imagem = @getimagesize($imagem_temp);
+    if ($info_imagem === false || !in_array($info_imagem[2], [IMAGETYPE_JPEG, IMAGETYPE_PNG, IMAGETYPE_GIF], true)) {
+        http_response_code(400);
+        exit('O arquivo enviado não é uma imagem válida');
+    }
 	if ($ext == 'png' or $ext == 'jpg' or $ext == 'jpeg' or $ext == 'gif' or $ext == 'PNG' or $ext == 'JPG' or $ext == 'JPEG' or $ext == 'GIF') {
 
 		//EXCLUO A FOTO ANTERIOR
