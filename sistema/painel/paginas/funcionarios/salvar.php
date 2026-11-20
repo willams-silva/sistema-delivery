@@ -239,12 +239,18 @@ $query->bindValue(":cidade", "$cidade");
 $query->bindValue(":estado", "$estado");
 $query->bindValue(":cep", "$cep");
 $query->bindValue(":complemento", "$complemento");
-$query->execute();
-
-
-
-
-
+try {
+    $query->execute();
+} catch (Throwable $erro) {
+    if (!empty($nome_img) && $foto === $nome_img && is_file($caminho)) {
+        @unlink($caminho);
+    }
+    throw $erro;
+}
+if (!empty($foto_anterior) && $foto_anterior !== 'sem-foto.jpg' &&
+    $foto_anterior !== $foto && basename($foto_anterior) === $foto_anterior) {
+    @unlink('../../images/perfil/' . $foto_anterior);
+}
 
 //enviar email
 if ($email != '') {
