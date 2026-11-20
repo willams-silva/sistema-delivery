@@ -171,6 +171,9 @@ if (@$pausar_delivery == 'Sim') {
     .esteira-coluna .esteira-cartao{display:block!important;width:100%!important;max-width:none!important;margin:0 0 12px;float:none!important;position:relative;border:1px solid #dfe4ea;border-radius:9px;background:#fff;box-shadow:0 2px 7px #00000012}
     .esteira-coluna .esteira-cartao>div{border-radius:9px;padding:10px!important}
     .esteira-tempo{font-size:12px;font-weight:600;display:block;margin:5px 0}
+    .esteira-lista-itens{margin:10px 0;padding:9px 9px 9px 25px;background:#f8fafc;border-radius:8px;font-size:13px;line-height:1.5;max-height:230px;overflow:auto}
+    .esteira-lista-itens li{margin-bottom:6px;overflow-wrap:anywhere}
+    .esteira-obs-pedido{font-size:12px;background:#fff3cd;border-radius:6px;padding:8px;overflow-wrap:anywhere}
     .esteira-atrasado{border:2px solid #d32f2f!important}
     .esteira-atrasado .esteira-tempo{color:#b42318}
     .esteira-coluna-vazia{font-size:13px;color:#697586}
