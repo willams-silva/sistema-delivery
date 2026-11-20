@@ -28,6 +28,9 @@ try {
   $motivo = trim((string) ($_POST['motivo'] ?? ''));
   $dt = DateTimeImmutable::createFromFormat('!Y-m-d', $data);
   if (!$dt || $dt->format('Y-m-d') !== $data || mb_strlen($motivo, 'UTF-8') > 150) responder(400, ['erro'=>'Informe uma data e motivo válidos']);
+  $conflito = $pdo->prepare('SELECT 1 FROM horarios_especiais WHERE empresa = :empresa AND data_especial = :data LIMIT 1');
+  $conflito->execute([':empresa'=>$empresa, ':data'=>$data]);
+  if ($conflito->fetchColumn()) responder(409, ['erro'=>'Esta data possui horário especial. Exclua o horário antes de cadastrar um fechamento integral.']);
   $q = $pdo->prepare('INSERT INTO fechamentos_excepcionais (empresa, data_fechamento, motivo) VALUES (:empresa, :data, :motivo) ON DUPLICATE KEY UPDATE motivo = VALUES(motivo)');
   $q->execute([':empresa'=>$empresa, ':data'=>$data, ':motivo'=>$motivo]);
   responder(200, ['sucesso'=>true]);
