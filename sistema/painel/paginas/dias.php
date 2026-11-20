@@ -15,6 +15,17 @@ $pag = 'dias';
 </div>
 <div class="row row-sm"><div class="col-md-4 mb-3"><div class="card custom-card"><div class="card-body"><small class="text-muted">Dias fechados na semana</small><h3 class="mb-0" id="bc-total-dias">—</h3></div></div></div></div>
 <div class="row row-sm"><div class="col-lg-12"><div class="card custom-card"><div class="card-body" id="listar"></div></div></div></div>
+<div class="row row-sm"><div class="col-lg-12"><div class="card custom-card"><div class="card-body">
+ <h5><i class="fa-solid fa-calendar-day me-2"></i>Feriados e fechamentos excepcionais</h5>
+ <p class="text-muted">Cadastre datas específicas sem alterar os dias semanais. Até a integração com o status da loja, estes registros são apenas informativos.</p>
+ <form id="bc-excecoes-form" class="row g-2 align-items-end">
+  <div class="col-md-4"><label for="bc-excecao-data" class="form-label">Data</label><input type="date" id="bc-excecao-data" class="form-control" required></div>
+  <div class="col-md-5"><label for="bc-excecao-motivo" class="form-label">Motivo (opcional)</label><input type="text" id="bc-excecao-motivo" maxlength="150" class="form-control" placeholder="Ex.: Feriado municipal"></div>
+  <div class="col-md-3"><button type="submit" class="btn btn-primary w-100"><i class="fa-solid fa-plus me-1"></i>Salvar data</button></div>
+ </form>
+ <div id="bc-excecoes-msg" class="small mt-2" role="status" aria-live="polite"></div>
+ <div class="table-responsive mt-3"><table class="table table-hover"><thead><tr><th>Data</th><th>Motivo</th><th>Ação</th></tr></thead><tbody id="bc-excecoes-lista"><tr><td colspan="3" class="text-muted">Carregando datas...</td></tr></tbody></table></div>
+ </div></div></div></div>
 <input type="hidden" id="ids">
 
 
@@ -96,4 +107,36 @@ $(document).ajaxError(function (_event, xhr, settings) {
    Swal.fire({title:'Operação não concluída',text:msg,icon:'warning'});
  } else { $('#listar').text(msg); }
 });
+</script>
+<script>
+(function(){
+ var endpoint = 'paginas/dias/fechamentos_api.php';
+ var $msg = $('#bc-excecoes-msg'), $lista = $('#bc-excecoes-lista');
+ function mensagem(t, erro){ $msg.toggleClass('text-danger',!!erro).toggleClass('text-success',!erro).text(t); }
+ function carregar(){
+  $.post(endpoint,{acao:'listar'},function(r){
+   $lista.empty();
+   if(!r.registros || !r.registros.length){$lista.append($('<tr>').append($('<td colspan="3" class="text-muted">').text('Nenhuma data cadastrada.')));return;}
+   r.registros.forEach(function(x){
+    var tr=$('<tr>');tr.append($('<td>').text(x.data_fechamento.split('-').reverse().join('/')));
+    tr.append($('<td>').text(x.motivo||'—'));
+    var b=$('<button type="button" class="btn btn-sm btn-outline-danger">').text('Excluir');
+    b.on('click',function(){
+     if(!confirm('Excluir esta data?'))return;
+     $.post(endpoint,{acao:'excluir',id:x.id},function(){mensagem('Data excluída.');carregar();},'json').fail(falha);
+    });
+    tr.append($('<td>').append(b));$lista.append(tr);
+   });
+  },'json').fail(function(xhr){$lista.empty().append($('<tr>').append($('<td colspan="3" class="text-muted">').text(xhr.responseJSON?.erro||'Cadastro indisponível. Execute o SQL de instalação.')));});
+ }
+ function falha(xhr){mensagem(xhr.responseJSON?.erro||'Não foi possível concluir a operação.',true);}
+ $('#bc-excecoes-form').on('submit',function(e){
+  e.preventDefault();
+  $.post(endpoint,{acao:'salvar',data_fechamento:$('#bc-excecao-data').val(),motivo:$('#bc-excecao-motivo').val()},function(){
+   mensagem('Data cadastrada. A integração com o status da loja ainda está pendente.');
+   $('#bc-excecao-motivo').val('');carregar();
+  },'json').fail(falha);
+ });
+ carregar();
+})();
 </script>
