@@ -1,12 +1,14 @@
 <?php
 @session_start();
-$id_empresa = $_SESSION['empresa'];
+$id_empresa = (int)($_SESSION['empresa'] ?? 0);
+if ($id_empresa <= 0) { http_response_code(403); exit('Sessão inválida'); }
 $tabela = 'banner_rotativo';
 require_once("../../../conexao.php");
 require_once("../../buscar_config.php");
 
 
-$query = $pdo->query("SELECT * FROM $tabela where empresa = '$id_empresa' order by id desc");
+$query = $pdo->prepare("SELECT * FROM banner_rotativo WHERE empresa = :empresa ORDER BY id DESC");
+$query->execute([':empresa'=>$id_empresa]);
 $res = $query->fetchAll(PDO::FETCH_ASSOC);
 $total_reg = @count($res);
 if ($total_reg > 0) {
@@ -30,13 +32,15 @@ HTML;
 		}
 		$id = $res[$i]['id'];
 		$categoria = $res[$i]['categoria'];
-		$foto = $res[$i]['foto'];
+		$foto = basename((string)$res[$i]['foto']);
+        if(!preg_match('/^[a-zA-Z0-9_.-]+$/D',$foto)) $foto='sem-foto.jpg';
 
-		$query2 = $pdo->query("SELECT * FROM categorias where id = '$categoria'");
+		$query2 = $pdo->prepare("SELECT nome FROM categorias WHERE id = :id AND empresa = :empresa");
+        $query2->execute([':id'=>$categoria, ':empresa'=>$id_empresa]);
 		$res2 = $query2->fetchAll(PDO::FETCH_ASSOC);
 		$total_reg2 = @count($res2);
 		if ($total_reg2 > 0) {
-			$nome_cat = $res2[0]['nome'];
+			$nome_cat = htmlspecialchars((string)$res2[0]['nome'], ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
 		} else {
 			$nome_cat = 'Sem Categoria!';
 		}
@@ -51,7 +55,7 @@ HTML;
 </div>
 </td>
 <td>{$nome_cat}</td>
-<td class="esc"><img src="images/{$tabela}/{$foto}" width="30px"></td>
+<td class="esc"><img src="images/{$tabela}/{$foto}" alt="Miniatura do banner" style="width:140px;max-height:75px;object-fit:cover;border-radius:8px"></td>
 <td>
 	<a class="btn btn-info-light btn-sm" href="#" onclick="editar('{$id}','{$categoria}', '{$foto}')" title="Editar Dados"><i class="fa fa-edit"></i></a>
 
@@ -104,6 +108,8 @@ HTML;
 
 	function limparCampos() {
 		$('#id').val('');
+        $('#categoria').val('0').change();
+        $('#mensagem').removeClass('text-danger').text('');
 		$('#foto').val('');
 		$('#target').attr('src', 'images/banner_rotativo/sem-foto.jpg');
 	}
