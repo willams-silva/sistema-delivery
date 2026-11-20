@@ -39,6 +39,10 @@ try {
   if((int)$q->fetchColumn()!==count($ids))bcCargoResp(400,['erro'=>'Há acessos inexistentes na seleção']);
  }
  $pdo->beginTransaction();
+ // Bloqueia o cargo para impedir edição do modelo durante sua aplicação a um usuário.
+ $lock=$pdo->prepare('SELECT id FROM cargos WHERE id=:cargo AND empresa=:empresa FOR UPDATE');
+ $lock->execute([':cargo'=>$cargo,':empresa'=>$empresa]);
+ if(!$lock->fetchColumn()){$pdo->rollBack();bcCargoResp(404,['erro'=>'Cargo não encontrado']);}
  $q=$pdo->prepare('DELETE FROM cargos_permissoes WHERE empresa=:empresa AND cargo_id=:cargo');
  $q->execute([':empresa'=>$empresa,':cargo'=>$cargo]);
  $q=$pdo->prepare('INSERT INTO cargos_permissoes (empresa,cargo_id,permissao_id) VALUES (:empresa,:cargo,:permissao)');
