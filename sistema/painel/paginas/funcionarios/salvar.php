@@ -125,7 +125,7 @@ if ($total_reg > 0) {
 
 
 //SCRIPT PARA SUBIR FOTO NO SERVIDOR
-$nome_img = date('d-m-Y H:i:s') . '-' . @$_FILES['foto']['name'];
+$nome_img = date('d-m-Y H:i:s') . '-' . basename((string) (@$_FILES['foto']['name'] ?? ''));
 $nome_img = preg_replace('/[ :]+/', '-', $nome_img);
 
 $caminho = '../../images/perfil/' . $nome_img;
