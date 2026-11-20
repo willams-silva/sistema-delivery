@@ -169,6 +169,14 @@ if($id_edicao == ""){
           $img = bcHorarioEspecialAberto($bc_horario_especial_hoje, date('H:i:s')) ? 'aberto.png' : 'fechado.png';
         }
         if ($bc_fechamento_excepcional_hoje) $img = 'fechado.png';
+        // Mesma regra usada no selo ABERTO/FECHADO e na finalização.
+        try {
+          $bc_estado_img = bcEstadoDelivery($pdo, (int)$id_empresa, date('Y-m-d'), date('H:i:s'), (string)@$pausar_delivery, (string)@$status_estabelecimento, (string)$horario_abertura, (string)$horario_fechamento);
+          $img = $bc_estado_img['aberto'] ? 'aberto.png' : ($bc_estado_img['motivo'] === 'pausado' ? 'pausado.png' : 'fechado.png');
+        } catch (PDOException $e) {
+          error_log('Estado visual do delivery: '.$e->getMessage());
+          $img = 'fechado.png';
+        }
       }
 
     }
@@ -473,65 +481,19 @@ a[href="/meus-pedidos"].btn-warning { background:#a85b24 !important; border-colo
 $status_delivery_txt = 'ABERTO';
 $status_delivery_cor = '#198754';
 $status_delivery_icone = 'bi-check-circle';
-
-if ($id_mesa == "" and $sessão_balcao == "") {
-
-  if (@$pausar_delivery == 'Sim') {
-
-    $status_delivery_txt = 'PAUSADO';
-    $status_delivery_cor = '#f59e0b';
-    $status_delivery_icone = 'bi-pause-circle';
-
-  } else if (@$status_estabelecimento == "Fechado") {
-
+if ($id_mesa == "" && $sessão_balcao == "") {
+  try {
+    $bc_estado_delivery = bcEstadoDelivery($pdo, (int)$id_empresa, date('Y-m-d'), date('H:i:s'), (string)@$pausar_delivery, (string)@$status_estabelecimento, (string)$horario_abertura, (string)$horario_fechamento);
+    if (!$bc_estado_delivery['aberto']) {
+      $status_delivery_txt = $bc_estado_delivery['motivo'] === 'pausado' ? 'PAUSADO' : 'FECHADO';
+      $status_delivery_cor = $bc_estado_delivery['motivo'] === 'pausado' ? '#f59e0b' : '#dc3545';
+      $status_delivery_icone = $bc_estado_delivery['motivo'] === 'pausado' ? 'bi-pause-circle' : 'bi-x-circle';
+    }
+  } catch (PDOException $e) {
+    error_log('Estado do delivery no cardápio: '.$e->getMessage());
     $status_delivery_txt = 'FECHADO';
     $status_delivery_cor = '#dc3545';
     $status_delivery_icone = 'bi-x-circle';
-
-  } else {
-
-    $data = date('Y-m-d');
-    $diasemana = array("Domingo", "Segunda-Feira", "Terça-Feira", "Quarta-Feira", "Quinta-Feira", "Sexta-Feira", "Sábado");
-    $diasemana_numero = date('w', strtotime($data));
-    $dia_procurado = $diasemana[$diasemana_numero];
-
-    $query_status_dia = $pdo->query("SELECT * FROM dias where dia = '$dia_procurado' and empresa = '$id_empresa'");
-    $res_status_dia = $query_status_dia->fetchAll(PDO::FETCH_ASSOC);
-
-    if ($bc_fechamento_excepcional_hoje || ($bc_horario_especial_hoje === null && @count($res_status_dia) > 0)) {
-
-      $status_delivery_txt = 'FECHADO';
-      $status_delivery_cor = '#dc3545';
-      $status_delivery_icone = 'bi-x-circle';
-
-    } else {
-
-      if ($bc_horario_especial_hoje !== null) {
-        $horario_abertura = $bc_horario_especial_hoje['inicio'];
-        $horario_fechamento = $bc_horario_especial_hoje['fim'];
-      }
-      $start = strtotime(date('Y-m-d') . ' ' . $horario_abertura);
-      $end = strtotime(date('Y-m-d') . ' ' . $horario_fechamento);
-      $now = time();
-
-      $aberto_agora = false;
-
-      if ($end < $start) {
-        if ($now > $start || $now < $end) {
-          $aberto_agora = true;
-        }
-      } else {
-        if ($start <= $now && $now <= $end) {
-          $aberto_agora = true;
-        }
-      }
-
-      if (!$aberto_agora) {
-        $status_delivery_txt = 'FECHADO';
-        $status_delivery_cor = '#dc3545';
-        $status_delivery_icone = 'bi-x-circle';
-      }
-    }
   }
 }
 ?>
