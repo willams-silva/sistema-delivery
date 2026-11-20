@@ -208,37 +208,18 @@ letter-spacing:0.5px; ">GARÇON: '.mb_strtoupper($nome_garcon).'</span>';
         		<div class="r3_counter_box">
                 <div class="mesa-card-topo"><strong>Mesa {$nomeEscapado}</strong><span class="mesa-status">{$situacaoMesaEscapada}</span></div>
 
-				<span  class="{$mostrar_fechar}" style="position:absolute; top:5px; right:8px">
-				<a href="#" onclick="fecharMesa('{$id}', '{$nome}', '{$obs}', '{$id_abertura_mesa}', '{$total_couvert}', '{$total_comissaoC}', '{$subtotalC}', '{$garcon}', '{$total_mesa}', '{$total_valor}')" title="Fechar Mesa">
-					<span aria-hidden="true" >
-						<small >Fechar </small></span>x</span>			
-						
-				</a>
-				</span>
-
-				
-
-		<div class="">  
-        	
-        		<div style="display:inline-block;">
-							
-        			<h5><span class="" onclick="abrirMesa('{$id}', '{$status}', '{$nome}','{$obsF}', '{$id_abertura_mesa}','{$ativo}')" style="padding:23px; font-size: 28px; color:#FFF; background-image: url('../../img/{$imagem_mesa}'); width:80px; height:80px; background-size: 100%; cursor: pointer;">{$nome}</span>   
-
-        			
-        			<a  class="{$ocultar_botoes}" href="#" onclick="editar('{$id_abertura_mesa}', '{$cliente}', '{$garcon}', '{$obs}', '{$pessoas}')" title="Editar Mesa" class=""> <img class="icon-rounded-vermelho" src="../../img/editar.png" width="20px" height="20px"></a>
-
-        			<a class="{$ocultar_botoes}" href="rel/comprovante_mesa.php?id={$id_abertura_mesa}" title="Detalhamento da Mesa" target="_blank"><img class="icon-rounded-vermelho" src="../../img/pdf.png" width="20px" height="20px"></a>
-
-        			<a class="$ocultar_indisponivel" href="#" onclick="abrirMesa('{$id}', '{$status}', '{$nome}', '{$obsF}', '{$id_abertura_mesa}','{$ativo}')" title="Adicionar Itens" class=""> <img class="icon-rounded-vermelho" src="../../img/plus.png" width="20px" height="20px"></a>
-
-							<a class="{$ocultar_botoes}" href="#" onclick="adiantamento('{$id}', '{$nome}', '{$id_abertura_mesa}')" title="Adiantamento" class=""> <img class="icon-rounded-vermelho" src="../../img/valor.png" width="20px" height="20px"></a>
-							
-
-							<a class="{$ocultar_botoes}" href="#" onclick="trocarMesa('{$id}', '{$nome}', '{$id_abertura_mesa}')" title="Trocar Mesa" class=""> <img class="icon-rounded-vermelho" src="../../img/troca.png" width="20px" height="20px"></a>
-        			</h5>       			
-
-        		</div>
-        		</div>     		
+                <div class="mesa-identidade">
+                    <span class="mesa-numero" aria-label="Mesa {$nomeEscapado}">{$nomeEscapado}</span>
+                    <span class="mesa-resumo-consumo">{$totalF}</span>
+                </div>
+                <div class="mesa-acoes">
+                    <button type="button" class="mesa-acao mesa-acao-principal" onclick="abrirMesa('{$id}', '{$status}', '{$nome}', '{$obsF}', '{$id_abertura_mesa}', '{$ativo}')" title="Abrir mesa ou adicionar itens"><i class="fa fa-plus-circle"></i> Comanda / Itens</button>
+                    <a class="mesa-acao {$ocultar_botoes}" href="rel/comprovante_mesa.php?id={$id_abertura_mesa}" target="_blank" rel="noopener" title="Consultar consumo da mesa"><i class="fa fa-file-text-o"></i> Consumo</a>
+                    <button type="button" class="mesa-acao {$ocultar_botoes}" onclick="editar('{$id_abertura_mesa}', '{$cliente}', '{$garcon}', '{$obs}', '{$pessoas}')" title="Editar dados da mesa"><i class="fa fa-pencil"></i> Editar</button>
+                    <button type="button" class="mesa-acao {$ocultar_botoes}" onclick="adiantamento('{$id}', '{$nome}', '{$id_abertura_mesa}')" title="Registrar adiantamento"><i class="fa fa-money"></i> Adiantamento</button>
+                    <button type="button" class="mesa-acao {$ocultar_botoes}" onclick="trocarMesa('{$id}', '{$nome}', '{$id_abertura_mesa}')" title="Transferir mesa"><i class="fa fa-exchange"></i> Transferir</button>
+                    <button type="button" class="mesa-acao mesa-acao-fechar {$mostrar_fechar}" onclick="fecharMesa('{$id}', '{$nome}', '{$obs}', '{$id_abertura_mesa}', '{$total_couvert}', '{$total_comissaoC}', '{$subtotalC}', '{$garcon}', '{$total_mesa}', '{$total_valor}')" title="Conferir e fechar conta"><i class="fa fa-check-circle"></i> Fechar conta</button>
+                </div>     		
        					
 
         		<div class="mesa-duracao">{$duracaoMesa}</div>
@@ -282,6 +263,7 @@ HTML;
 .mesa-filtros{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px}
 .mesa-filtro.ativo{font-weight:700;box-shadow:0 0 0 2px #94a3b8}
 @media(max-width:640px){.mesa-resumo{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.mesa-identidade{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:12px 0}.mesa-numero{font-size:26px;font-weight:800;color:#334155}.mesa-resumo-consumo{font-weight:700;color:#166534}.mesa-acoes{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}.mesa-acao{display:flex;align-items:center;justify-content:center;gap:6px;min-height:36px;border:1px solid #cbd5e1;border-radius:8px;background:#f8fafc;color:#334155;text-decoration:none;font-size:12px;font-weight:600;padding:7px 8px;cursor:pointer;text-align:center}.mesa-acao:hover{background:#e2e8f0;color:#0f172a}.mesa-acao-principal{grid-column:1/-1;background:#eff6ff;color:#1d4ed8;border-color:#bfdbfe}.mesa-acao-fechar{grid-column:1/-1;background:#fff7ed;color:#9a3412;border-color:#fed7aa}.mesa-acao.ocultar{display:none!important}
 .mesa-card{border:1px solid #e2e8f0;border-radius:14px;overflow:hidden;box-shadow:0 3px 12px #00000010;transition:box-shadow .2s,transform .2s}
 .mesa-card:hover{box-shadow:0 6px 18px #00000020;transform:translateY(-2px)}
 .mesa-card-topo{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:12px;padding-right:50px;font-size:14px}
