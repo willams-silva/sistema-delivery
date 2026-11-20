@@ -1,15 +1,16 @@
 <?php
 @session_start();
-$id_empresa = $_SESSION['empresa'];
+$id_empresa = (int) ($_SESSION['empresa'] ?? 0);
+$id_usuario = (int) ($_SESSION['id'] ?? 0);
 require_once("../../../conexao.php");
 require_once("../../buscar_config.php");
-if($id_empresa == ""){
+if($id_empresa <= 0 || $id_usuario <= 0){
     echo 'Sem Sessão da Empresa, refaça o Login!';
     exit();
 }
 $tabela = 'clientes';
 
-$id_usuario = @$_SESSION['id'];
+// Operador autenticado validado acima.
 
 
 $nome = $_POST['nome'];
@@ -23,7 +24,7 @@ $bairro = $_POST['bairro'];
 $cidade = $_POST['cidade'];
 $estado = $_POST['estado'];
 $cep = $_POST['cep'];
-$id = $_POST['id'];
+$id = (int) ($_POST['id'] ?? 0);
 $complemento = $_POST['complemento'];
 
 
@@ -78,13 +79,13 @@ if($data_nasc == "") {
 
 }
 
-if($id == "") {
+if($id === 0) {
     $query = $pdo->prepare("INSERT INTO $tabela SET nome = :nome, email = :email, telefone = :telefone, data_cad = curDate(), endereco = :endereco, cpf = :cpf $nasc, usuario = '$id_usuario', numero = :numero, bairro = :bairro, cidade = :cidade, estado = :estado, cep = :cep, complemento = :complemento, empresa = '$id_empresa' ");
 
 } else {
 
 
-    $query = $pdo->prepare("UPDATE $tabela SET nome = :nome, email = :email, telefone = :telefone, endereco = :endereco, cpf = :cpf $nasc , numero = :numero, bairro = :bairro, cidade = :cidade, estado = :estado, cep = :cep, complemento = :complemento where id = '$id'");
+    $query = $pdo->prepare("UPDATE $tabela SET nome = :nome, email = :email, telefone = :telefone, endereco = :endereco, cpf = :cpf $nasc , numero = :numero, bairro = :bairro, cidade = :cidade, estado = :estado, cep = :cep, complemento = :complemento where id = '$id' and empresa = '$id_empresa'");
 }
 
 
