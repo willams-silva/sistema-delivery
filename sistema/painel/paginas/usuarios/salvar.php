@@ -20,9 +20,11 @@ $nome = $_POST['nome'];
 $email = $_POST['email'];
 $telefone = $_POST['telefone'];
 $nivel = $_POST['nivel'];
-if (!in_array($nivel, ['Administrador', 'Gerente', 'Funcionário', 'Funcionario'], true)) {
+$cargo = $pdo->prepare("SELECT 1 FROM cargos WHERE nome = :nome AND empresa = :empresa LIMIT 1");
+$cargo->execute([':nome' => $nivel, ':empresa' => $id_empresa]);
+if (!$cargo->fetchColumn()) {
     http_response_code(400);
-    exit('Nível de usuário inválido');
+    exit('Cargo inválido para esta empresa');
 }
 $endereco = $_POST['endereco'];
 $id = (int) ($_POST['id'] ?? 0);
