@@ -49,11 +49,16 @@ if (!$cargo->fetchColumn()) {
 $endereco = $_POST['endereco'];
 $id = (int) ($_POST['id'] ?? 0);
 if ($id > 0) {
-    $verificar = $pdo->prepare("SELECT 1 FROM usuarios WHERE id = :id AND empresa = :empresa");
+    $verificar = $pdo->prepare("SELECT nivel FROM usuarios WHERE id = :id AND empresa = :empresa");
     $verificar->execute([':id' => $id, ':empresa' => $id_empresa]);
-    if (!$verificar->fetchColumn()) {
+    $nivel_atual = $verificar->fetchColumn();
+    if ($nivel_atual === false) {
         http_response_code(404);
         exit('Usuário não encontrado');
+    }
+    if ($nivel_atual === 'Administrador' && $nivel_operador !== 'Administrador') {
+        http_response_code(403);
+        exit('Somente administradores podem editar administradores');
     }
 }
 $numero =@ $_POST['numero'];
