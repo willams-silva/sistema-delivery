@@ -1,23 +1,15 @@
-<?php 
-require_once("../../../conexao.php");
-
-$id_usuario = $_POST['id_usuario'];
-
-$pdo->query("DELETE FROM usuarios_permissoes where usuario = '$id_usuario'");
-
-$query = $pdo->query("SELECT * FROM acessos order by id asc");
-$res = $query->fetchAll(PDO::FETCH_ASSOC);
-$total_reg = @count($res);
-if($total_reg > 0){
-	for($i=0; $i < $total_reg; $i++){
-		foreach ($res[$i] as $key => $value){}
-			$nome = $res[$i]['nome'];
-		$chave = $res[$i]['chave'];
-		$id = $res[$i]['id'];
-
-		$query = $pdo->query("INSERT INTO usuarios_permissoes SET permissao = '$id', usuario = '$id_usuario'");
-
-	}
+<?php
+require_once __DIR__.'/permissoes_guard.php';
+try {
+ $pdo->beginTransaction();
+ $q=$pdo->prepare('DELETE FROM usuarios_permissoes WHERE usuario=:usuario');
+ $q->execute([':usuario'=>$bcUsuario]);
+ $q=$pdo->prepare('INSERT INTO usuarios_permissoes (usuario,permissao) SELECT :usuario,id FROM acessos');
+ $q->execute([':usuario'=>$bcUsuario]);
+ $pdo->commit();
+ echo 'Salvo com Sucesso';
+} catch (PDOException $e) {
+ if ($pdo->inTransaction()) $pdo->rollBack();
+ error_log('Permissões em lote: '.$e->getMessage());
+ bcPermissaoErro(503,'Não foi possível atualizar as permissões');
 }
-
-?>
