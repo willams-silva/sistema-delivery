@@ -16,6 +16,8 @@ if (@$usuarios == 'ocultar') {
 
 
 
+		<button type="button" class="btn btn-outline-secondary" onclick="bcAbrirAuditoria()"><i class="fa-solid fa-clock-rotate-left me-1"></i>Histórico de permissões</button>
+
 		<a class="btn btn-danger" href="#" onclick="deletarSel()" title="Excluir" id="btn-deletar" style="display:none"><i class="fe fe-trash-2"></i> Deletar</a>
 
 	</div>
@@ -366,6 +368,24 @@ if (@$usuarios == 'ocultar') {
 
 
 
+<!-- Histórico de alterações de permissões -->
+<div class="modal fade" id="modalAuditoriaPermissoes" tabindex="-1" aria-labelledby="tituloAuditoriaPermissoes" aria-hidden="true">
+ <div class="modal-dialog modal-xl modal-dialog-scrollable"><div class="modal-content">
+ <div class="modal-header"><h5 class="modal-title" id="tituloAuditoriaPermissoes"><i class="fa-solid fa-clock-rotate-left me-2"></i>Histórico de permissões</h5><button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button></div>
+ <div class="modal-body">
+ <div class="row g-2 mb-3">
+ <div class="col-md-3"><label for="bc-audit-usuario" class="form-label">ID do usuário</label><input id="bc-audit-usuario" type="number" min="1" class="form-control" placeholder="Todos"></div>
+ <div class="col-md-3"><label for="bc-audit-acao" class="form-label">Operação</label><select id="bc-audit-acao" class="form-select"><option value="">Todas</option><option value="conceder">Conceder acesso</option><option value="remover">Remover acesso</option><option value="conceder_todos">Conceder todos</option><option value="remover_todos">Remover todos</option></select></div>
+ <div class="col-md-2"><label for="bc-audit-inicio" class="form-label">De</label><input id="bc-audit-inicio" type="date" class="form-control"></div>
+ <div class="col-md-2"><label for="bc-audit-fim" class="form-label">Até</label><input id="bc-audit-fim" type="date" class="form-control"></div>
+ <div class="col-md-2 d-flex align-items-end"><button type="button" class="btn btn-primary w-100" onclick="bcCarregarAuditoria()">Filtrar</button></div>
+ </div>
+ <p class="small text-muted">Últimos 100 registros correspondentes aos filtros. Visível apenas para administradores.</p>
+ <div id="bc-audit-status" role="status" class="small mb-2"></div>
+ <div class="table-responsive"><table class="table table-sm table-striped align-middle"><thead><tr><th>Data/hora</th><th>Administrador</th><th>Usuário</th><th>Operação</th><th>Acesso</th><th>Detalhes</th></tr></thead><tbody id="bc-audit-linhas"></tbody></table></div>
+ </div></div></div>
+</div>
+
 <!-- Modal Permissoes -->
 <div class="modal fade" id="modalPermissoes" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
 	<div class="modal-dialog modal-lg">
@@ -570,4 +590,29 @@ if (@$usuarios == 'ocultar') {
 			limpa_formulário_cep();
 		}
 	};
+</script>
+<script>
+function bcAbrirAuditoria(){
+ $('#bc-audit-status').text('');
+ $('#modalAuditoriaPermissoes').modal('show');
+ bcCarregarAuditoria();
+}
+function bcCarregarAuditoria(){
+ var status=$('#bc-audit-status'),corpo=$('#bc-audit-linhas');
+ status.removeClass('text-danger').text('Carregando histórico...');
+ corpo.empty();
+ $.ajax({url:'paginas/usuarios/auditoria_listar.php',method:'POST',dataType:'json',data:{
+  usuario:$('#bc-audit-usuario').val(),acao:$('#bc-audit-acao').val(),
+  inicio:$('#bc-audit-inicio').val(),fim:$('#bc-audit-fim').val()
+ }}).done(function(d){
+  var itens=d.registros||[];
+  status.text(itens.length?itens.length+' registro(s) encontrado(s).':'Nenhum registro encontrado.');
+  var nomes={conceder:'Concedeu acesso',remover:'Removeu acesso',conceder_todos:'Concedeu todos',remover_todos:'Removeu todos'};
+  itens.forEach(function(x){
+   var tr=$('<tr>');
+   [x.criado_em,x.operador_nome,x.alvo,nomes[x.acao]||x.acao,x.acesso_nome||'—',x.detalhes||'—'].forEach(function(v){$('<td>').text(v==null?'—':String(v)).appendTo(tr);});
+   corpo.append(tr);
+  });
+ }).fail(function(xhr){status.addClass('text-danger').text(xhr.responseJSON&&xhr.responseJSON.erro||'Não foi possível consultar o histórico.');});
+}
 </script>
