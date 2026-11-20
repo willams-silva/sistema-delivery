@@ -201,7 +201,7 @@ if (@$_FILES['foto']['name'] != "") {
 
 
 if ($id === 0) {
-	$query = $pdo->prepare("INSERT INTO $tabela SET nome = :nome, email = :email, senha = '', senha_crip = '$senha_crip', nivel = '$nivel', ativo = 'Sim', telefone = :telefone, data = curDate(), endereco = :endereco, pix = :pix $nasc, numero = :numero, bairro = :bairro, cidade = :cidade, estado = :estado, cep = :cep, acessar_painel = '$acessar_painel', complemento = :complemento, tipo_chave = '$tipo_chave', foto = '$foto', empresa = '$id_empresa' ");
+	$query = $pdo->prepare("INSERT INTO $tabela SET nome = :nome, email = :email, senha = '', senha_crip = :senha_crip, nivel = :nivel, ativo = 'Sim', telefone = :telefone, data = curDate(), endereco = :endereco, pix = :pix $nasc, numero = :numero, bairro = :bairro, cidade = :cidade, estado = :estado, cep = :cep, acessar_painel = :acessar_painel, complemento = :complemento, tipo_chave = :tipo_chave, foto = :foto, empresa = '$id_empresa' ");
 
 
 	//api whats
@@ -223,10 +223,17 @@ if ($id === 0) {
 
 
 } else {
-	$query = $pdo->prepare("UPDATE $tabela SET nome = :nome, email = :email, nivel = '$nivel', telefone = :telefone, endereco = :endereco, pix = :pix $nasc, numero = :numero, bairro = :bairro, cidade = :cidade, estado = :estado, cep = :cep, acessar_painel = '$acessar_painel', complemento = :complemento, tipo_chave = '$tipo_chave', foto = '$foto' where id = '$id' and empresa = '$id_empresa'");
+	$query = $pdo->prepare("UPDATE $tabela SET nome = :nome, email = :email, nivel = :nivel, telefone = :telefone, endereco = :endereco, pix = :pix $nasc, numero = :numero, bairro = :bairro, cidade = :cidade, estado = :estado, cep = :cep, acessar_painel = :acessar_painel, complemento = :complemento, tipo_chave = :tipo_chave, foto = :foto where id = '$id' and empresa = '$id_empresa'");
 }
 if ($nasc !== '') {
     $query->bindValue(':data_nasc', $data_nasc);
+}
+$query->bindValue(':nivel', $nivel);
+$query->bindValue(':tipo_chave', $tipo_chave);
+$query->bindValue(':acessar_painel', $acessar_painel);
+$query->bindValue(':foto', $foto);
+if ($id === 0) {
+    $query->bindValue(':senha_crip', $senha_crip);
 }
 $query->bindValue(":nome", "$nome");
 $query->bindValue(":email", "$email");
