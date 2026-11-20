@@ -1,11 +1,20 @@
 <?php
+@session_start();
+$id_empresa = filter_var($_SESSION['empresa'] ?? null, FILTER_VALIDATE_INT, ['options'=>['min_range'=>1]]);
+$id_usuario = filter_var($_SESSION['id'] ?? null, FILTER_VALIDATE_INT, ['options'=>['min_range'=>1]]);
+if (!$id_empresa || !$id_usuario) { http_response_code(403); exit('Sessão expirada'); }
 require_once("../../../conexao.php");
 $tabela = 'carrinho';
 
-$id = @$_POST['id'];
+$id = filter_var($_POST['id'] ?? null, FILTER_VALIDATE_INT, ['options'=>['min_range'=>1]]);
+if (!$id) { http_response_code(400); exit('Mesa inválida'); }
+$abertura = $pdo->prepare("SELECT id FROM abertura_mesa WHERE id=:id AND empresa=:empresa AND status='Aberta' LIMIT 1");
+$abertura->execute([':id'=>$id, ':empresa'=>$id_empresa]);
+if (!$abertura->fetchColumn()) { http_response_code(404); exit('Comanda não encontrada'); }
 
 $total_carrinho = 0;
-$query = $pdo->query("SELECT * FROM $tabela where mesa = '$id' order by id desc");
+$query = $pdo->prepare("SELECT * FROM carrinho WHERE mesa=:mesa AND empresa=:empresa ORDER BY id DESC");
+$query->execute([':mesa'=>$id, ':empresa'=>$id_empresa]);
 $res = $query->fetchAll(PDO::FETCH_ASSOC);
 $total_reg = @count($res);
 if ($total_reg > 0) {
@@ -72,7 +81,7 @@ HTML;
 		$valor_unitF = number_format($valor_unit, 2, ',', '.');
 		$total_carrinhoF = number_format($total_carrinho, 2, ',', '.');
 
-		$query2 = $pdo->query("SELECT * FROM variacoes where id = '$variacao'");
+		$query2 = $pdo->query("SELECT * FROM variacoes where id = '$variacao' and empresa = '$id_empresa'");
 		$res2 = $query2->fetchAll(PDO::FETCH_ASSOC);
 		if (@count(@$res2) > 0) {
 			$sigla_variacao = '(' . $res2[0]['sigla'] . ')';
@@ -81,16 +90,18 @@ HTML;
 		}
 
 
-		$query2 = $pdo->query("SELECT * FROM produtos where id = '$produto'");
+		$query2 = $pdo->query("SELECT * FROM produtos where id = '$produto' and empresa = '$id_empresa'");
 		$res2 = $query2->fetchAll(PDO::FETCH_ASSOC);
 		if (@count(@$res2) > 0) {
 			$nome_produto = $res2[0]['nome'];
 			$foto_produto = $res2[0]['foto'];
 			$unidade = $res2[0]['unidade'];
+            $setorPreparacao = $res2[0]['preparado'] ?? '';
 		} else {
 			$nome_produto = $nome_produto_tab;
 			$foto_produto = "";
 			$unidade = "";
+            $setorPreparacao = '';
 		}
 
 		$query3 = $pdo->query("SELECT * FROM unidade_medida where id = '$unidade'");
@@ -128,6 +139,9 @@ HTML;
 			}
 
 
+        $setorPreparacao = in_array($setorPreparacao, ['Cozinha','Bar','Outro'], true) ? $setorPreparacao : 'Não definido';
+        $setorF = htmlspecialchars($setorPreparacao, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
+        $statusF = htmlspecialchars((string)$status, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
 		if ($obs == '') {
 			$classe_obs = 'text-warning';
 		} else {
@@ -143,7 +157,7 @@ HTML;
 		echo <<<HTML
 <tr>
 <td><img class="" src="../../sistema/painel/images/produtos/{$foto_produto}" width="25px"></td>
-<td><i class="fa fa-square {$classe_alerta}" style="opacity: {$opacidade}"></i> <span class="">{$quantidadeF} {$sigla_unidade} </span> / {$nome_produto}</td>
+<td><i class="fa fa-square {$classe_alerta}" style="opacity: {$opacidade}"></i> <span class="">{$quantidadeF} {$sigla_unidade} </span> / {$nome_produto}<div style="font-size:11px;color:#64748b;margin-top:3px">Setor: {$setorF} · Status: {$statusF}</div></td>
 <td>{$total_do_itemF}</td>
 <td>
 
