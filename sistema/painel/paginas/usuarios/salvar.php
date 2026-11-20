@@ -20,6 +20,10 @@ $nome = $_POST['nome'];
 $email = $_POST['email'];
 $telefone = $_POST['telefone'];
 $nivel = $_POST['nivel'];
+if (!in_array($nivel, ['Administrador', 'Gerente', 'Funcionário', 'Funcionario'], true)) {
+    http_response_code(400);
+    exit('Nível de usuário inválido');
+}
 $endereco = $_POST['endereco'];
 $id = (int) ($_POST['id'] ?? 0);
 if ($id > 0) {
