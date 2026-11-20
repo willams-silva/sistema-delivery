@@ -373,9 +373,9 @@ if (@$usuarios == 'ocultar') {
 			<div class="modal-header bg-primary text-white">
 				<h4 class="modal-title" id="exampleModalLabel"><span id="nome_permissoes"></span>
 
-					<span style="position:absolute; right:45px">
-						<input class="form-check-input" type="checkbox" id="input-todos" onchange="marcarTodos()">
-						<label class="">Marcar Todos</label>
+					<span class="d-inline-flex align-items-center gap-2 ms-3">
+						<input class="form-check-input mt-0" type="checkbox" id="input-todos" onchange="marcarTodos()" aria-label="Conceder ou remover todas as permissões">
+						<label for="input-todos" class="small mb-0">Todos os acessos</label>
 					</span>
 
 				</h4>
@@ -449,16 +449,23 @@ if (@$usuarios == 'ocultar') {
 
 
 	function marcarTodos() {
-		let checkbox = document.getElementById('input-todos');
-		var usuario = $('#id_permissoes').val();
-
-		if (checkbox.checked) {
-			adicionarPermissoes(usuario);
-		} else {
-			limparPermissoes(usuario);
-		}
+		var checkbox=$('#input-todos'),usuario=$('#id_permissoes').val(),conceder=checkbox.is(':checked');
+		checkbox.prop('disabled',true);
+		Swal.fire({
+			icon:'warning',
+			title:conceder?'Conceder todos os acessos?':'Remover todos os acessos?',
+			text:conceder?'O usuário terá acesso a todas as funções cadastradas, inclusive administrativas.':'O usuário perderá todas as permissões configuradas.',
+			showCancelButton:true,confirmButtonText:conceder?'Conceder todos':'Remover todos',cancelButtonText:'Cancelar',
+			confirmButtonColor:conceder?'#d97706':'#dc3545'
+		}).then(function(r){
+			if(!r.isConfirmed){listarPermissoes(usuario);checkbox.prop('disabled',false);return;}
+			var endpoint=conceder?'add_permissoes.php':'limpar_permissoes.php';
+			$.ajax({url:'paginas/usuarios/'+endpoint,method:'POST',data:{id_usuario:usuario},dataType:'text'})
+			 .done(function(){listarPermissoes(usuario);})
+			 .fail(function(xhr){bcErroPermissao(xhr);listarPermissoes(usuario);})
+			 .always(function(){checkbox.prop('disabled',false);});
+		});
 	}
-
 
 	function adicionarPermissoes(id_usuario) {
 
