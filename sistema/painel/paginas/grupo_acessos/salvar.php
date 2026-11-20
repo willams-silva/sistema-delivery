@@ -17,8 +17,11 @@ $nome = trim((string) ($_POST['nome'] ?? ''));
 if ($nome === '' || mb_strlen($nome, 'UTF-8') > 100 || $id < 0) { http_response_code(400); exit('Nome do grupo inválido'); }
 $q = $pdo->prepare("SELECT id FROM grupo_acessos WHERE nome = :nome AND id <> :id LIMIT 1");
 $q->execute([':nome'=>$nome, ':id'=>$id]);
-if ($q->fetchColumn()) { exit('Nome já Cadastrado!'); }
+if ($q->fetchColumn()) { http_response_code(409); exit('Nome já cadastrado!'); }
 if ($id > 0) {
+    $verificar = $pdo->prepare('SELECT 1 FROM grupo_acessos WHERE id = :id LIMIT 1');
+    $verificar->execute([':id'=>$id]);
+    if (!$verificar->fetchColumn()) { http_response_code(404); exit('Grupo não encontrado'); }
     $q = $pdo->prepare("UPDATE grupo_acessos SET nome = :nome WHERE id = :id");
     $q->execute([':nome'=>$nome, ':id'=>$id]);
 } else {
