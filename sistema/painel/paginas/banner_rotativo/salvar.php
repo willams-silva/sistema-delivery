@@ -55,10 +55,10 @@ try{
   $pdo->beginTransaction();
   if($id>0){
    $q=$pdo->prepare('UPDATE banner_rotativo SET categoria=:categoria,foto=:foto,ativo=:ativo,ordem=:ordem,inicio_em=:inicio,fim_em=:fim WHERE id=:id AND empresa=:empresa');
-   $q->execute([':categoria'=>$categoria,':foto'=>$foto,':id'=>$id,':empresa'=>$empresa]);
+   $q->execute([':categoria'=>$categoria,':foto'=>$foto,':ativo'=>$ativo,':ordem'=>$ordem,':inicio'=>$inicioDb,':fim'=>$fimDb,':id'=>$id,':empresa'=>$empresa]);
   }else{
    $q=$pdo->prepare('INSERT INTO banner_rotativo (categoria,foto,empresa,ativo,ordem,inicio_em,fim_em) VALUES (:categoria,:foto,:empresa,:ativo,:ordem,:inicio,:fim)');
-   $q->execute([':categoria'=>$categoria,':foto'=>$foto,':empresa'=>$empresa]);
+   $q->execute([':categoria'=>$categoria,':foto'=>$foto,':empresa'=>$empresa,':ativo'=>$ativo,':ordem'=>$ordem,':inicio'=>$inicioDb,':fim'=>$fimDb]);
   }
   $pdo->commit();
  }catch(Throwable $e){
