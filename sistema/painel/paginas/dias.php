@@ -26,6 +26,19 @@ $pag = 'dias';
  <div id="bc-excecoes-msg" class="small mt-2" role="status" aria-live="polite"></div>
  <div class="table-responsive mt-3"><table class="table table-hover"><thead><tr><th>Data</th><th>Motivo</th><th>Ação</th></tr></thead><tbody id="bc-excecoes-lista"><tr><td colspan="3" class="text-muted">Carregando datas...</td></tr></tbody></table></div>
  </div></div></div></div>
+<div class="row row-sm"><div class="col-lg-12"><div class="card custom-card"><div class="card-body">
+<h5><i class="fa-solid fa-clock me-2"></i>Horários especiais por data</h5>
+<p class="text-muted">Configure uma abertura e fechamento diferentes em uma data específica. O cadastro não altera o horário normal. <strong>O uso automático destes horários no cardápio ainda será integrado.</strong></p>
+<form id="bc-horario-form" class="row g-2 align-items-end">
+<div class="col-md-3"><label for="bc-horario-data" class="form-label">Data</label><input type="date" id="bc-horario-data" class="form-control" required></div>
+<div class="col-md-2"><label for="bc-horario-inicio" class="form-label">Abertura</label><input type="time" id="bc-horario-inicio" class="form-control" required></div>
+<div class="col-md-2"><label for="bc-horario-fim" class="form-label">Fechamento</label><input type="time" id="bc-horario-fim" class="form-control" required></div>
+<div class="col-md-3"><label for="bc-horario-descricao" class="form-label">Motivo (opcional)</label><input type="text" id="bc-horario-descricao" maxlength="150" class="form-control" placeholder="Ex.: Véspera de feriado"></div>
+<div class="col-md-2"><button type="submit" class="btn btn-primary w-100">Salvar horário</button></div>
+</form>
+<div id="bc-horario-msg" class="small mt-2" role="status" aria-live="polite"></div>
+<div class="table-responsive mt-3"><table class="table table-hover"><thead><tr><th>Data</th><th>Horário</th><th>Motivo</th><th>Ação</th></tr></thead><tbody id="bc-horario-lista"><tr><td colspan="4" class="text-muted">Carregando...</td></tr></tbody></table></div>
+</div></div></div></div>
 <input type="hidden" id="ids">
 
 
@@ -138,5 +151,36 @@ $(document).ajaxError(function (_event, xhr, settings) {
   },'json').fail(falha);
  });
  carregar();
+})();
+</script>
+
+<script>
+(function(){
+var endpoint='paginas/dias/horarios_especiais_api.php';
+var lista=$('#bc-horario-lista'), msg=$('#bc-horario-msg');
+function aviso(t,erro){msg.toggleClass('text-danger',!!erro).toggleClass('text-success',!erro).text(t);}
+function falha(xhr){aviso(xhr.responseJSON && xhr.responseJSON.erro || 'Operação não concluída.',true);}
+function carregar(){
+ $.post(endpoint,{acao:'listar'},function(r){
+ lista.empty();
+ if(!r.registros || !r.registros.length){lista.append($('<tr>').append($('<td colspan="4" class="text-muted">').text('Nenhum horário especial cadastrado.')));return;}
+ r.registros.forEach(function(x){
+ var tr=$('<tr>');tr.append($('<td>').text(x.data_especial.split('-').reverse().join('/')));
+ tr.append($('<td>').text(x.hora_inicio+' às '+x.hora_fim));
+ tr.append($('<td>').text(x.descricao||'—'));
+ var b=$('<button type="button" class="btn btn-sm btn-outline-danger">').text('Excluir');
+ b.on('click',function(){if(!confirm('Excluir este horário especial?'))return;$.post(endpoint,{acao:'excluir',id:x.id},function(){aviso('Horário excluído.');carregar();},'json').fail(falha);});
+ tr.append($('<td>').append(b));lista.append(tr);
+ });
+ },'json').fail(function(xhr){lista.empty().append($('<tr>').append($('<td colspan="4" class="text-muted">').text(xhr.responseJSON && xhr.responseJSON.erro || 'Cadastro indisponível. Execute o SQL de horários especiais.')));});
+}
+$('#bc-horario-form').on('submit',function(e){
+ e.preventDefault();
+ $.post(endpoint,{acao:'salvar',data_especial:$('#bc-horario-data').val(),hora_inicio:$('#bc-horario-inicio').val(),hora_fim:$('#bc-horario-fim').val(),descricao:$('#bc-horario-descricao').val()},function(){
+ aviso('Horário salvo. A aplicação automática ao cardápio ainda está pendente.');
+ carregar();
+ },'json').fail(falha);
+});
+carregar();
 })();
 </script>
