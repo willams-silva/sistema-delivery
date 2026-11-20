@@ -9,6 +9,21 @@ if($id_empresa <= 0 || $id_operador <= 0){
 	exit();
 }
 $tabela = 'usuarios';
+$operador = $pdo->prepare("SELECT nivel FROM usuarios WHERE id = :id AND empresa = :empresa LIMIT 1");
+$operador->execute([':id' => $id_operador, ':empresa' => $id_empresa]);
+$nivel_operador = $operador->fetchColumn();
+if ($nivel_operador === false) {
+    http_response_code(403);
+    exit('Operador sem acesso a esta empresa');
+}
+if ($nivel_operador !== 'Administrador') {
+    $acesso = $pdo->prepare("SELECT 1 FROM usuarios_permissoes up INNER JOIN acessos a ON a.id = up.permissao WHERE up.usuario = :usuario AND a.empresa = :empresa AND a.chave = 'funcionarios' LIMIT 1");
+    $acesso->execute([':usuario' => $id_operador, ':empresa' => $id_empresa]);
+    if (!$acesso->fetchColumn()) {
+        http_response_code(403);
+        exit('Sem permissão para gerenciar funcionários');
+    }
+}
 
 
 $nome = $_POST['nome'];
