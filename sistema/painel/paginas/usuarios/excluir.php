@@ -28,6 +28,14 @@ if ($nivel_operador === false) {
     http_response_code(403);
     exit('Operador sem acesso a esta empresa');
 }
+if ($nivel_operador !== 'Administrador') {
+    $acesso = $pdo->prepare("SELECT 1 FROM usuarios_permissoes up INNER JOIN acessos a ON a.id = up.permissao WHERE up.usuario = :usuario AND a.empresa = :empresa AND a.chave = 'usuarios' LIMIT 1");
+    $acesso->execute([':usuario' => $id_operador, ':empresa' => $id_empresa]);
+    if (!$acesso->fetchColumn()) {
+        http_response_code(403);
+        exit('Sem permissão para gerenciar usuários');
+    }
+}
 $query = $pdo->prepare("SELECT * FROM usuarios WHERE id = :id AND empresa = :empresa");
 $query->execute([':id' => $id, ':empresa' => $id_empresa]);
 $res = $query->fetchAll(PDO::FETCH_ASSOC);
