@@ -70,7 +70,9 @@ $id_empresa = filter_var($id_empresa, FILTER_VALIDATE_INT, ['options'=>['min_ran
 $id_usuario = filter_var($id_usuario, FILTER_VALIDATE_INT, ['options'=>['min_range'=>1]]);
 $id_ab = filter_var($id_ab, FILTER_VALIDATE_INT, ['options'=>['min_range'=>1]]);
 $id_mesa = filter_var($id_mesa, FILTER_VALIDATE_INT, ['options'=>['min_range'=>1]]);
-if (($_SERVER['REQUEST_METHOD'] ?? '') !== 'POST' || !$id_empresa || !$id_usuario || !$id_ab || !$id_mesa) {
+$forma_pgto = filter_var($forma_pgto, FILTER_VALIDATE_INT, ['options'=>['min_range'=>1]]);
+$garcon = filter_var($garcon, FILTER_VALIDATE_INT, ['options'=>['min_range'=>0]]);
+if (($_SERVER['REQUEST_METHOD'] ?? '') !== 'POST' || !$id_empresa || !$id_usuario || !$id_ab || !$id_mesa || !$forma_pgto || $garcon === false) {
     http_response_code(400);
     exit('Dados de fechamento inválidos');
 }
@@ -124,10 +126,12 @@ if (@count($res1) > 0) {
 
 $query1 = $pdo->query("SELECT * from formas_pgto where id = '$forma_pgto' and empresa = '$id_empresa'");
 $res1 = $query1->fetchAll(PDO::FETCH_ASSOC);
+if (!$res1) throw new RuntimeException('Forma de pagamento inválida');
 $nome_forma_pgto = $res1[0]['nome'];
 
 $query1 = $pdo->query("SELECT * from abertura_mesa where id = '$id_ab' and empresa = '$id_empresa'");
 $res1 = $query1->fetchAll(PDO::FETCH_ASSOC);
+if (!$res1) throw new RuntimeException('Abertura não encontrada');
 $nome_cliente_ab = $res1[0]['cliente'];
 
 //lançar a comissão do garçon
@@ -153,6 +157,7 @@ if ($total_reg > 0) {
 
     $query2 = $pdo->query("SELECT * FROM produtos where id = '$produto' and empresa = '$id_empresa'");
     $res2 = $query2->fetchAll(PDO::FETCH_ASSOC);
+    if (!$res2) throw new RuntimeException('Produto da mesa não encontrado nesta empresa');
     $id_categoria = $res2[0]['categoria'];
     $valor_produto = $res2[0]['valor_venda'];
     $estoque = $res2[0]['estoque'];
