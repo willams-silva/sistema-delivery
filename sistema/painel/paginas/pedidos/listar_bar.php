@@ -3,6 +3,13 @@
 $id_empresa = $_SESSION['empresa'];
 require_once("../../../conexao.php");
 require_once("../../buscar_config.php");
+require_once(__DIR__.'/permissao_setor.php');
+$bcUsuario = filter_var($_SESSION['id'] ?? null, FILTER_VALIDATE_INT, ['options'=>['min_range'=>1]]);
+if (($_SESSION['aut_token_SaL1P'] ?? '') !== '25tNX1L1MSaL1P' ||
+    !$bcUsuario || !bcPermiteSetor($pdo, (int)$id_empresa, (int)$bcUsuario, 'Bar')) {
+    http_response_code(403);
+    exit('Sem permissao para visualizar este setor');
+}
 $tabela = 'carrinho';
 $data_hoje = date('Y-m-d');
 
