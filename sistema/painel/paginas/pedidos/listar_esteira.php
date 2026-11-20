@@ -55,6 +55,55 @@ $query = $pdo->prepare("SELECT * FROM vendas WHERE status LIKE :status
 $query->execute([':status'=>$status]);
 $res = $query->fetchAll(PDO::FETCH_ASSOC);
 $total_reg = @count($res);
+// Resumo de produção em lote: não altera carrinho, valores nem a automação.
+$itensPorVenda = [];
+if ($total_reg > 0) {
+    $idsVenda = array_values(array_unique(array_map('intval', array_column($res, 'id'))));
+    $marcadores = implode(',', array_fill(0, count($idsVenda), '?'));
+    $consultaItens = $pdo->prepare("SELECT c.id, c.pedido, c.quantidade, c.nome_produto, c.produto, c.obs, c.sabores,
+                                          p.nome AS nome_catalogo
+                                   FROM carrinho c
+                                   LEFT JOIN produtos p ON p.id = c.produto AND p.empresa = ?
+                                   WHERE c.pedido IN ($marcadores) ORDER BY c.id ASC");
+    $consultaItens->execute(array_merge([(int)$id_empresa], $idsVenda));
+    $linhasItens = $consultaItens->fetchAll(PDO::FETCH_ASSOC);
+    $idsCarrinho = array_values(array_unique(array_map('intval', array_column($linhasItens, 'id'))));
+    $extrasPorItem = [];
+    if ($idsCarrinho) {
+        $marcadoresExtras = implode(',', array_fill(0, count($idsCarrinho), '?'));
+        $consultaExtras = $pdo->prepare("SELECT t.carrinho, t.tabela, t.quantidade,
+                                               COALESCE(ac.nome, aa.nome, g.nome, ing.nome, ig.texto) AS nome_extra
+                                        FROM temp t
+                                        LEFT JOIN adicionais ac ON ac.id=t.id_item AND t.tabela='adicionais'
+                                        LEFT JOIN adicionais_cat aa ON aa.id=t.id_item AND t.tabela='adicionais'
+                                        LEFT JOIN guarnicoes g ON g.id=t.id_item AND t.tabela='guarnicoes'
+                                        LEFT JOIN ingredientes ing ON ing.id=t.id_item AND t.tabela='ingredientes'
+                                        LEFT JOIN itens_grade ig ON ig.id=t.id_item AND t.grade IS NOT NULL
+                                        WHERE t.carrinho IN ($marcadoresExtras)
+                                        ORDER BY t.id ASC");
+        $consultaExtras->execute($idsCarrinho);
+        foreach ($consultaExtras->fetchAll(PDO::FETCH_ASSOC) as $extra) {
+            $nomeExtra = trim((string)($extra['nome_extra'] ?? ''));
+            if ($nomeExtra === '') continue;
+            $tipoExtra = (string)$extra['tabela'];
+            $rotulo = $tipoExtra === 'ingredientes' ? 'Sem ' : '+ ';
+            $extrasPorItem[(int)$extra['carrinho']][] = $rotulo . $nomeExtra;
+        }
+    }
+    foreach ($linhasItens as $itemLinha) {
+        $nome = trim((string)($itemLinha['nome_produto'] ?: $itemLinha['nome_catalogo'] ?: 'Produto'));
+        $quantidade = (float)$itemLinha['quantidade'];
+        $quantidadeTexto = $quantidade == (int)$quantidade ? (string)(int)$quantidade : number_format($quantidade, 2, ',', '.');
+        $textoItem = $quantidadeTexto . ' × ' . $nome;
+        $detalhes = $extrasPorItem[(int)$itemLinha['id']] ?? [];
+        if ((int)$itemLinha['sabores'] > 1) $detalhes[] = (int)$itemLinha['sabores'] . ' sabores';
+        if (trim((string)$itemLinha['obs']) !== '') $detalhes[] = 'Obs.: ' . trim((string)$itemLinha['obs']);
+        $itensPorVenda[(int)$itemLinha['pedido']][] = [
+            'nome' => htmlspecialchars($textoItem, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8'),
+            'detalhes' => htmlspecialchars(implode(' · ', $detalhes), ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8')
+        ];
+    }
+}
 if ($total_reg > 0) {
 
 
@@ -224,6 +273,16 @@ if ($total_reg > 0) {
 			$ocultar_icone_whats = '';
 		}
 
+		$resumoItens = '';
+        foreach (($itensPorVenda[(int)$id] ?? []) as $itemResumo) {
+            $resumoItens .= '<li><strong>' . $itemResumo['nome'] . '</strong>';
+            if ($itemResumo['detalhes'] !== '') $resumoItens .= '<small class="d-block text-muted">' . $itemResumo['detalhes'] . '</small>';
+            $resumoItens .= '</li>';
+        }
+        if ($resumoItens === '') $resumoItens = '<li>Itens indisponíveis — consulte os detalhes</li>';
+        $resumoItens = '<ul class="esteira-lista-itens">' . $resumoItens . '</ul>';
+        $obsPedido = trim((string)$obs);
+        if ($obsPedido !== '') $resumoItens .= '<p class="esteira-obs-pedido"><strong>Observação:</strong> ' . htmlspecialchars($obsPedido, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') . '</p>';
 		echo <<<HTML
 <div class="col-md-3 widget esteira-cartao" data-id="{$id}" data-status="{$status}" data-criado="{$data} {$hora}" data-tipo="{$entrega}" style="display: inline-block;">
 			<div class="" style="padding:4px; min-height: 100px; background: {$classe_pago2};">
@@ -250,7 +309,8 @@ if ($total_reg > 0) {
 							<span class="text-primary"><small>({$tipo_pgto})</small></span>	
 						</small>		
 					</div>
-					<div align="center" style="">
+					{$resumoItens}
+				<div align="center" style="">
 					<span>	
 
 		<a class="btn btn-{$classe_info}-light btn-sm" href="#" onclick="mostrar('{$id}', '{$nome_cliente}', '{$pedido}')" title="Ver Dados"><i class="fa fa-info-circle"></i></a>
