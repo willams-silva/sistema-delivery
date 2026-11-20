@@ -6,24 +6,14 @@ if (@$bairros == 'ocultar') {
 }
 $pag = 'bairros';
 ?>
-<div class="justify-content-between breadcrumb-header">
-	<div class="left-content mt-2">
-		<a class="btn ripple btn-primary text-white" onclick="inserir()" type="button"><i class="fe fe-plus me-1"></i> Adicionar <?php echo ucfirst($pag); ?></a>
-
-
-		<a class="btn btn-danger" href="#" onclick="deletarSel()" title="Excluir" id="btn-deletar" style="display:none"><i class="fe fe-trash-2"></i> Deletar</a>
-
-	</div>
+<div class="breadcrumb-header justify-content-between align-items-center">
+ <div class="left-content mt-2"><h4 class="mb-1"><i class="fa-solid fa-map-location-dot me-2"></i>Bairros e Taxas de Entrega</h4><p class="text-muted mb-0">Cadastre as regiões atendidas e defina a taxa de entrega de cada local.</p></div>
+ <div class="mt-2 d-flex gap-2 flex-wrap">
+ <button class="btn btn-primary" type="button" onclick="inserir()"><i class="fa-solid fa-plus me-1"></i>Nova localidade</button>
+ <button class="btn btn-outline-danger" type="button" onclick="deletarSel()" id="btn-deletar" style="display:none"><i class="fa-solid fa-trash-can me-1"></i>Excluir selecionados</button>
+ </div>
 </div>
-
-
-
-
-<div class="bs-example widget-shadow" style="padding:15px" id="listar">
-
-</div>
-
-
+<div class="row row-sm"><div class="col-lg-12"><div class="card custom-card"><div class="card-body" id="listar"></div></div></div></div>
 <input type="hidden" id="ids">
 
 
@@ -38,18 +28,18 @@ $pag = 'bairros';
 			<form id="form">
 				<div class="modal-body">
 
-					<div class="row needs-validation was-validated">
+					<div class="row">
 						<div class="col-md-6">
 							<div class="form-group">
-								<label for="exampleInputEmail1">Nome</label>
-								<input type="text" class="form-control" id="nome" name="nome" placeholder="Nome" required>
+								<label for="nome">Bairro ou localidade</label>
+								<input type="text" class="form-control" id="nome" name="nome" placeholder="Ex.: Centro" maxlength="150" required>
 							</div>
 						</div>
 
 						<div class="col-md-6">
 							<div class="form-group">
-								<label for="exampleInputEmail1">Valor</label>
-								<input type="text" class="form-control" id="valor" name="valor" placeholder="Taxa de Entrega" required>
+								<label for="valor">Taxa de entrega (R$)</label>
+								<input type="text" class="form-control" id="valor" name="valor" placeholder="Ex.: 5,00" inputmode="decimal" required>
 							</div>
 						</div>
 
@@ -61,7 +51,7 @@ $pag = 'bairros';
 
 					<br>
 					<small>
-						<div id="mensagem" align="center"></div>
+						<div id="mensagem" role="status" aria-live="polite"></div>
 					</small>
 				</div>
 
@@ -86,3 +76,16 @@ $pag = 'bairros';
 	var pag = "<?= $pag ?>"
 </script>
 <script src="js/ajax.js"></script>
+<script>
+$(document).ajaxError(function (_event, xhr, settings) {
+ if (!settings.url || settings.url.indexOf('paginas/bairros/') === -1) return;
+ var msg = (xhr.responseText || '').replace(/<[^>]*>/g, '').trim();
+ if (!msg || msg.length > 250) msg = 'Não foi possível concluir a operação.';
+ if (settings.url.indexOf('/salvar.php') !== -1) {
+   $('#mensagem').addClass('text-danger').text(msg);
+   $('#btn_salvar').show(); $('#btn_carregando').hide();
+ } else if (settings.url.indexOf('/excluir.php') !== -1) {
+   Swal.fire({title:'Operação não concluída',text:msg,icon:'warning'});
+ } else { $('#listar').text(msg); }
+});
+</script>
