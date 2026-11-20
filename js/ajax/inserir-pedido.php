@@ -31,6 +31,13 @@ if ($tipo_pedido !== 'Balcão' && !$bc_pedido_mesa) {
       echo 'Estabelecimento fechado nesta data. Não é possível finalizar pedidos online.';
       exit();
     }
+    require_once '../../sistema/horarios_especiais.php';
+    $bc_horario_pedido = bcHorarioEspecial($pdo, (int)$id_empresa, date('Y-m-d'));
+    if ($bc_horario_pedido !== null && !bcHorarioEspecialAberto($bc_horario_pedido, date('H:i:s'))) {
+      http_response_code(409);
+      echo 'Fora do horário especial de funcionamento. Não é possível finalizar o pedido online.';
+      exit();
+    }
   } catch (PDOException $e) {
     error_log('Consulta de fechamento excepcional no checkout: ' . $e->getMessage());
     http_response_code(503);
