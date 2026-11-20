@@ -18,6 +18,14 @@ if ($nivel_operador === false) {
 }
 
 
+if ($nivel_operador !== 'Administrador') {
+    $acesso = $pdo->prepare("SELECT 1 FROM usuarios_permissoes up INNER JOIN acessos a ON a.id = up.permissao WHERE up.usuario = :usuario AND a.empresa = :empresa AND a.chave = 'usuarios' LIMIT 1");
+    $acesso->execute([':usuario' => $id_operador, ':empresa' => $id_empresa]);
+    if (!$acesso->fetchColumn()) {
+        http_response_code(403);
+        exit('Sem permissão para gerenciar usuários');
+    }
+}
 if($modo_teste == 'Sim'){
 	echo 'Esse recurso está desativado no modo teste!';
 	exit();
