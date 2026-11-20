@@ -18,6 +18,7 @@ $pag = 'cargos';
         <button class="btn btn-outline-danger" type="button" onclick="deletarSel()" id="btn-deletar" style="display:none"><i class="fa-solid fa-trash-can me-1"></i>Excluir selecionados</button>
     </div>
 </div>
+<div class="mb-3 small text-muted">Configure um modelo de acessos por cargo. Os modelos não alteram automaticamente os funcionários atuais.</div>
 <div class="row row-sm">
     <div class="col-sm-6 mb-3"><div class="card custom-card h-100"><div class="card-body"><small class="text-muted">Cargos cadastrados</small><h3 id="bc-total-cargos" class="mb-0">—</h3></div></div></div>
     <div class="col-sm-6 mb-3"><div class="card custom-card h-100"><div class="card-body"><small class="text-muted">Cargos em uso</small><h3 id="bc-cargos-em-uso" class="mb-0">—</h3></div></div></div>
@@ -99,4 +100,50 @@ $(document).ajaxError(function (_event, xhr, settings) {
         $('#listar').text(mensagem);
     }
 });
+</script>
+<div class="modal fade" id="bcModalCargoPermissoes" tabindex="-1" aria-labelledby="bcCargoPermTitulo" aria-hidden="true">
+ <div class="modal-dialog modal-lg modal-dialog-scrollable"><div class="modal-content">
+ <div class="modal-header"><h5 class="modal-title" id="bcCargoPermTitulo">Modelo de acessos do cargo</h5><button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button></div>
+ <div class="modal-body">
+ <p class="text-muted small">O modelo é uma configuração de referência. Salvar não altera os acessos dos funcionários.</p>
+ <div id="bcCargoPermStatus" role="status"></div>
+ <div id="bcCargoPermLista"></div>
+ </div>
+ <div class="modal-footer"><button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancelar</button><button type="button" id="bcCargoPermSalvar" class="btn btn-primary" onclick="bcSalvarCargoPermissoes()">Salvar modelo</button></div>
+ </div></div>
+</div>
+<script>
+var bcCargoPermId=0;
+function bcAbrirCargoPermissoes(id,nome){
+ bcCargoPermId=id;
+ $('#bcCargoPermTitulo').text('Modelo de acessos: '+nome);
+ $('#bcCargoPermStatus').removeClass('text-danger').text('Carregando...');
+ $('#bcCargoPermLista').empty();
+ $('#bcModalCargoPermissoes').modal('show');
+ $.post('paginas/cargos/permissoes_api.php',{acao:'listar',cargo:id},function(d){
+  $('#bcCargoPermStatus').text('');
+  var grupos={},selecionadas=new Set((d.selecionadas||[]).map(String));
+  (d.acessos||[]).forEach(function(a){var g=a.grupo||'Sem grupo';(grupos[g]||(grupos[g]=[])).push(a);});
+  Object.keys(grupos).forEach(function(g){
+   var section=$('<section class="mb-3">'),heading=$('<h6 class="fw-bold border-bottom pb-2">').text(g);
+   section.append(heading);
+   var grid=$('<div class="row g-2">');
+   grupos[g].forEach(function(a){
+    var id='bc-cargo-acesso-'+a.id,wrap=$('<div class="col-sm-6">'),check=$('<div class="form-check">');
+    $('<input type="checkbox" class="form-check-input bc-cargo-permissao">').attr({id:id,value:a.id}).prop('checked',selecionadas.has(String(a.id))).appendTo(check);
+    $('<label class="form-check-label">').attr('for',id).text(a.nome).appendTo(check);
+    grid.append(wrap.append(check));
+   });
+   $('#bcCargoPermLista').append(section.append(grid));
+  });
+ },'json').fail(function(xhr){$('#bcCargoPermStatus').addClass('text-danger').text(xhr.responseJSON&&xhr.responseJSON.erro||'Não foi possível carregar os acessos.');});
+}
+function bcSalvarCargoPermissoes(){
+ var ids=$('.bc-cargo-permissao:checked').map(function(){return this.value;}).get(),btn=$('#bcCargoPermSalvar');
+ btn.prop('disabled',true);
+ $.ajax({url:'paginas/cargos/permissoes_api.php',method:'POST',dataType:'json',data:{acao:'salvar',cargo:bcCargoPermId,permissoes:ids}})
+ .done(function(d){$('#bcCargoPermStatus').removeClass('text-danger').text(d.mensagem);})
+ .fail(function(xhr){$('#bcCargoPermStatus').addClass('text-danger').text(xhr.responseJSON&&xhr.responseJSON.erro||'Falha ao salvar o modelo.');})
+ .always(function(){btn.prop('disabled',false);});
+}
 </script>
