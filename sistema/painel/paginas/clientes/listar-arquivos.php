@@ -1,12 +1,41 @@
 <?php
 require_once("../../../conexao.php");
 $pagina = 'arquivos';
-$id = $_POST['id'];
+@session_start();
+$empresa = (int) ($_SESSION['empresa'] ?? 0);
+$usuario = (int) ($_SESSION['id'] ?? 0);
+$id = (int) ($_POST['id'] ?? 0);
+if ($empresa <= 0 || $usuario <= 0 || $id <= 0) {
+    http_response_code(403);
+    exit('Sessão ou registro inválido');
+}
+$operador = $pdo->prepare("SELECT nivel FROM usuarios WHERE id = :id AND empresa = :empresa LIMIT 1");
+$operador->execute([':id' => $usuario, ':empresa' => $empresa]);
+$nivel = $operador->fetchColumn();
+if ($nivel === false) {
+    http_response_code(403);
+    exit('Operador não autorizado');
+}
+if ($nivel !== 'Administrador') {
+    $permissao = $pdo->prepare("SELECT 1 FROM usuarios_permissoes up INNER JOIN acessos a ON a.id = up.permissao WHERE up.usuario = :usuario AND a.empresa = :empresa AND a.chave = 'clientes' LIMIT 1");
+    $permissao->execute([':usuario' => $usuario, ':empresa' => $empresa]);
+    if (!$permissao->fetchColumn()) {
+        http_response_code(403);
+        exit('Sem permissão');
+    }
+}
+$cadastro = $pdo->prepare("SELECT 1 FROM clientes WHERE id = :id AND empresa = :empresa LIMIT 1");
+$cadastro->execute([':id' => $id, ':empresa' => $empresa]);
+if (!$cadastro->fetchColumn()) {
+    http_response_code(404);
+    exit('Cadastro não encontrado');
+}
 
 echo <<<HTML
 <small>
 HTML;
-$query = $pdo->query("SELECT * FROM $pagina where id_reg = '$id' and registro = 'Cliente' order by id desc");
+$query = $pdo->prepare("SELECT * FROM arquivos WHERE id_reg = :id AND registro = :registro ORDER BY id DESC");
+$query->execute([':id' => $id, ':registro' => 'Cliente']);
 $res = $query->fetchAll(PDO::FETCH_ASSOC);
 $total_reg = @count($res);
 if ($total_reg > 0) {
