@@ -185,6 +185,8 @@ if (@$pausar_delivery == 'Sim') {
                 <option value="">Todas</option><option value="Delivery">Delivery</option>
                 <option value="Retirar">Retirada</option><option value="Balcão">Balcão</option>
             </select>
+            <button type="button" class="btn btn-outline-secondary btn-sm" id="esteira-som" aria-pressed="false">Ativar som</button>
+            <span id="esteira-novos" class="badge bg-primary" style="display:none" aria-live="polite"></span>
             <button type="button" class="btn btn-outline-primary btn-sm" id="esteira-tela-cheia">Tela cheia</button>
         </div>
     </div>
@@ -426,12 +428,42 @@ $(document).on('show.bs.modal', '#modalBaixar', function(){
 
 
 <script type="text/javascript">
+    let idsEsteiraAnteriores=null;
+    let somEsteiraAtivo=false;
+    const audioEsteira=new Audio('../../img/audio.mp3');
+    audioEsteira.preload='none';
+    $(document).on('click','#esteira-som',function(){
+        somEsteiraAtivo=!somEsteiraAtivo;
+        this.textContent=somEsteiraAtivo?'Desativar som':'Ativar som';
+        this.setAttribute('aria-pressed',String(somEsteiraAtivo));
+        if(somEsteiraAtivo){
+            // Desbloqueia a reprodução apenas após gesto explícito do operador.
+            audioEsteira.muted=true;
+            audioEsteira.play().then(function(){audioEsteira.pause();audioEsteira.currentTime=0;audioEsteira.muted=false;}).catch(function(){audioEsteira.muted=false;});
+        }
+    });
+    function detectarNovosPedidos(cards){
+        const atuais=new Set(cards.map(function(c){return c.dataset.id}).filter(Boolean));
+        if(idsEsteiraAnteriores!==null){
+            const novos=cards.filter(function(c){return c.dataset.status==='Iniciado'&&!idsEsteiraAnteriores.has(c.dataset.id)});
+            const indicador=document.getElementById('esteira-novos');
+            if(novos.length){
+                if(indicador){indicador.textContent=novos.length+' novo(s) pedido(s)';indicador.style.display='';}
+                if(somEsteiraAtivo&&!document.hidden){
+                    audioEsteira.currentTime=0;
+                    audioEsteira.play().catch(function(){});
+                }
+            }
+        }
+        idsEsteiraAnteriores=atuais;
+    }
     const colunasEsteira=[['Iniciado','Iniciados'],['Aceito','Aceitos'],['Preparando','Preparando'],['Entrega','Em rota / Prontos']];
     function montarEsteira(){
         const area=document.getElementById('listar');
         if(!area)return;
         const cards=Array.from(area.querySelectorAll('.esteira-cartao'));
-        if(!cards.length)return;
+        detectarNovosPedidos(cards);
+        if(!cards.length){area.innerHTML='<p class="text-muted">Nenhum pedido encontrado para os filtros atuais.</p>';return;}
         const quadro=document.createElement('div');
         quadro.className='esteira-quadro';
         colunasEsteira.forEach(function(col){
