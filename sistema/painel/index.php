@@ -846,6 +846,7 @@ if($linhas == 0){
 									<i class="fa-brands fa-palfed text-white"></i>
 									<span class="side-menu__label" style="margin-left: 15px">Pedido Mesas</span></a>
 							</li>
+							<li class="slide <?php echo @$mesas ?>"><a class="side-menu__item" href="mesas"><i class="fa-solid fa-table-cells text-white mt-1"></i><span class="side-menu__label" style="margin-left: 15px">Mesas</span></a></li>
 
 
 
@@ -880,56 +881,29 @@ if($linhas == 0){
 									</li>
 									<li class="<?php echo @$fornecedores ?>"><a class="slide-item bc-pessoas-link" href="fornecedores"><i class="fa-solid fa-truck-field" aria-hidden="true"></i><span>Fornecedores</span></a>
 									</li>
+									<li class="<?php echo @$cargos ?>"><a class="slide-item bc-pessoas-link" href="cargos"><i class="fa-solid fa-id-badge" aria-hidden="true"></i><span>Cargos</span></a></li>
 
 								</ul>
 							</li>
 
 
 
+							<!-- Configurações: rotas originais preservadas -->
 							<li class="slide <?php echo @$menu_cadastros ?>">
-								<a class="side-menu__item" data-bs-toggle="slide" href="javascript:void(0);">
-									<i class="fa fa-save text-white mt-1"></i>
-									<span class="side-menu__label" style="margin-left: 15px">Cadastros</span><i
-										class="angle fe fe-chevron-right"></i></a>
+								<a class="side-menu__item" data-bs-toggle="slide" href="javascript:void(0);"><i class="fa-solid fa-gear text-white mt-1"></i><span class="side-menu__label" style="margin-left: 15px">Configurações</span><i class="angle fe fe-chevron-right"></i></a>
 								<ul class="slide-menu">
-
-									<li class="<?php echo @$bairros ?>"><a class="slide-item" href="bairros"> Bairros / Locais</a></li>
-
-									<li class="<?php echo @$dias ?>"><a class="slide-item" href="dias"> Dias Fechados</a></li>
-
-									<li class="<?php echo @$banner_rotativo ?> "><a class="slide-item" href="banner_rotativo"> Banner
-											Rotativo</a></li>
-
-									<li class="<?php echo @$mesas ?> "><a class="slide-item" href="mesas"> Mesas</a></li>
-
-									<li class="<?php echo @$cupons ?> "><a class="slide-item" href="cupons"> Cupom Desconto</a></li>
-
-									<li class="<?php echo @$formas_pgto ?>"><a class="slide-item" href="formas_pgto"> Formas Pgto</a></li>
-
-									<li class="<?php echo @$frequencias ?> "><a class="slide-item" href="frequencias"> Frequências</a>
-									</li>
-
-									<li class="<?php echo @$cargos ?> "><a class="slide-item" href="cargos"> Cargos</a></li>
-
-									<li class="<?php echo @$unidade_medida ?> "><a class="slide-item" href="unidade_medida"> Unidade de Medidas</a></li>
-
-
-									<li class="<?php echo @$adicionais ?> "><a class="slide-item" href="adicionais"> Adicionais</a></li>
-
-
-									<li class="<?php echo @$grupos_disparos ?> "><a class="slide-item" href="grupos_disparos"> Grupos de Disparos</a></li>
-
-
+									<li class="<?php echo @$bairros ?>"><a class="slide-item" href="bairros"><i class="fa-solid fa-map-location-dot me-2"></i>Bairros / Locais</a></li>
+									<li class="<?php echo @$dias ?>"><a class="slide-item" href="dias"><i class="fa-solid fa-calendar-xmark me-2"></i>Dias Fechados</a></li>
 									<?php if ($mostrar_acessos == 'Sim') { ?>
-										<li class="<?php echo @$grupo_acessos ?>"><a class="slide-item" href="grupo_acessos"> Grupos de
-												Acessos</a></li>
-
-										<li class="<?php echo @$acessos ?>"><a class="slide-item" href="acessos">
-												Acessos</a></li>
+									<li class="<?php echo @$grupo_acessos ?>"><a class="slide-item" href="grupo_acessos"><i class="fa-solid fa-users-gear me-2"></i>Grupos de Acessos</a></li>
+									<li class="<?php echo @$acessos ?>"><a class="slide-item" href="acessos"><i class="fa-solid fa-shield-halved me-2"></i>Acessos</a></li>
 									<?php } ?>
-
-
-
+								</ul>
+							</li>
+							<li class="slide <?php echo @$banner_rotativo ?>">
+								<a class="side-menu__item" data-bs-toggle="slide" href="javascript:void(0);"><i class="fa-solid fa-book-open text-white mt-1"></i><span class="side-menu__label" style="margin-left: 15px">Cardápio Online</span><i class="angle fe fe-chevron-right"></i></a>
+								<ul class="slide-menu">
+									<li class="<?php echo @$banner_rotativo ?>"><a class="slide-item" href="banner_rotativo"><i class="fa-solid fa-images me-2"></i>Banner Rotativo</a></li>
 								</ul>
 							</li>
 
@@ -941,6 +915,8 @@ if($linhas == 0){
 								<ul class="slide-menu">
 									<li class="<?php echo @$categorias ?>"><a class="slide-item" href="categorias"> Categorias</a></li>
 									<li class="<?php echo @$produtos ?>"><a class="slide-item" href="produtos"> Produtos</a></li>
+									<li class="<?php echo @$adicionais ?>"><a class="slide-item" href="adicionais"><i class="fa-solid fa-circle-plus me-2"></i>Adicionais</a></li>
+									<li class="<?php echo @$unidade_medida ?>"><a class="slide-item" href="unidade_medida"><i class="fa-solid fa-ruler me-2"></i>Unidades de Medida</a></li>
 
 									<li class="<?php echo @$estoque ?>"><a class="slide-item" href="estoque"> Estoque</a></li>
 									<li class="<?php echo @$entradas ?>"><a class="slide-item" href="entradas"> Entradas</a></li>
@@ -966,6 +942,8 @@ if($linhas == 0){
 									<li class="<?php echo @$pagar ?> "><a class="slide-item" href="pagar"><i class="fa fa-file-text-o me-1" aria-hidden="true"></i> Contas a Pagar</a></li>
 
 									<li class="<?php echo @$receber ?> "><a class="slide-item" href="receber"><i class="fa fa-money me-1" aria-hidden="true"></i> Contas a Receber</a></li>
+									<li class="<?php echo @$formas_pgto ?>"><a class="slide-item" href="formas_pgto"><i class="fa-solid fa-credit-card me-2"></i>Formas de Pagamento</a></li>
+									<li class="<?php echo @$frequencias ?>"><a class="slide-item" href="frequencias"><i class="fa-solid fa-repeat me-2"></i>Frequências</a></li>
 
 									<li class="<?php echo @$vendas ?> "><a class="slide-item" href="vendas"><i class="fa fa-shopping-cart me-1" aria-hidden="true"></i> Vendas / Pedidos</a></li>
 
@@ -1069,11 +1047,14 @@ if($linhas == 0){
 								
 
 
-										<li class="slide <?php echo @$marketing ?> <?php echo $recursos_marketing_whats ?>" >
-									<a class="side-menu__item" href="marketing">
-										<i class="fa fa-phone text-white"></i>
-										<span class="side-menu__label" style="margin-left: 15px">Marketing</span></a>
-								</li>
+										<li class="slide <?php echo @$marketing ?> <?php echo @$cupons ?> <?php echo @$grupos_disparos ?>">
+											<a class="side-menu__item" data-bs-toggle="slide" href="javascript:void(0);"><i class="fa-solid fa-bullhorn text-white mt-1"></i><span class="side-menu__label" style="margin-left: 15px">Marketing</span><i class="angle fe fe-chevron-right"></i></a>
+											<ul class="slide-menu">
+												<li class="<?php echo @$marketing ?> <?php echo $recursos_marketing_whats ?>"><a class="slide-item" href="marketing"><i class="fa-solid fa-comment-dots me-2"></i>Disparos</a></li>
+												<li class="<?php echo @$cupons ?>"><a class="slide-item" href="cupons"><i class="fa-solid fa-ticket me-2"></i>Cupons de Desconto</a></li>
+												<li class="<?php echo @$grupos_disparos ?>"><a class="slide-item" href="grupos_disparos"><i class="fa-solid fa-layer-group me-2"></i>Grupos de Disparo</a></li>
+											</ul>
+										</li>
 
 								<?php if($api_whatsapp == 'menuia'){ ?>
 								<li class="slide <?php echo @$dispositivos ?>" >
