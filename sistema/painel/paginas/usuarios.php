@@ -420,6 +420,7 @@ if (@$usuarios == 'ocultar') {
  <button type="button" class="btn btn-outline-primary" onclick="bcPreverModeloCargo()">Ver alterações</button>
  </div>
  <div id="bc-modelo-resultado" class="small mt-2" role="status">O modelo substitui os acessos individuais apenas após sua confirmação.</div>
+ <p class="small text-muted mb-0 mt-1">Atenção: a aplicação substitui os acessos existentes; permissões extras não incluídas no modelo serão removidas.</p>
  </div>
  <div id="listar_permissoes">
 
@@ -480,7 +481,7 @@ function bcPreverModeloCargo(){
 
 			success: function(result) {
 				$("#listar_permissoes").html(result);
-				$('#mensagem_permissao').text('');
+				// Mantém avisos de falha visíveis mesmo após atualizar a lista.
 			}
 		});
 	}
