@@ -78,7 +78,8 @@ if($cpf != ""){
 }
 
 
-$senha = '123';
+// Senha temporaria individual para novas contas.
+$senha = substr(strtr(base64_encode(random_bytes(12)), '+/', '-_'), 0, 16);
 $senha_crip = password_hash($senha, PASSWORD_DEFAULT);
 
 //validacao email
