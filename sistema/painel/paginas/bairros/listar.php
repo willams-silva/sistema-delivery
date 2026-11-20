@@ -1,11 +1,13 @@
 <?php
 @session_start();
-$id_empresa = $_SESSION['empresa'];
+$id_empresa = (int) ($_SESSION['empresa'] ?? 0);
+if ($id_empresa <= 0 || (int) ($_SESSION['id'] ?? 0) <= 0) { http_response_code(403); exit('Sessão inválida'); }
 $tabela = 'bairros';
 require_once("../../../conexao.php");
 require_once("../../buscar_config.php");
 
-$query = $pdo->query("SELECT * FROM $tabela where empresa = '$id_empresa' order by id desc");
+$query = $pdo->prepare("SELECT * FROM bairros WHERE empresa = :empresa ORDER BY id DESC");
+$query->execute([':empresa'=>$id_empresa]);
 $res = $query->fetchAll(PDO::FETCH_ASSOC);
 $total_reg = @count($res);
 if ($total_reg > 0) {
@@ -29,6 +31,8 @@ HTML;
 		}
 		$id = $res[$i]['id'];
 		$nome = $res[$i]['nome'];
+        $nome_html = htmlspecialchars((string) $nome, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
+        $nome_js = htmlspecialchars(json_encode((string) $nome, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_INVALID_UTF8_SUBSTITUTE), ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
 		$valor = $res[$i]['valor'];
 		$valorF = number_format($valor, 2, ',', '.');
 
@@ -40,10 +44,10 @@ HTML;
 <label for="seletor-{$id}" class="custom-control-label mt-1 text-dark"></label>
 </div>
 </td>
-<td>{$nome}</td>
-<td>{$valorF}</td>
+<td>{$nome_html}</td>
+<td>R$ {$valorF}</td>
 <td>
-	<a class="btn btn-info-light btn-sm" href="#" onclick="editar('{$id}','{$nome}','{$valor}')" title="Editar Dados"><i class="fa fa-edit"></i></a>
+	<a class="btn btn-info-light btn-sm" href="#" onclick="editar('{$id}',{$nome_js},'{$valor}')" title="Editar Dados"><i class="fa fa-edit"></i></a>
 
 	
 
