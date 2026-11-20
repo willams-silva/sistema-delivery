@@ -64,7 +64,7 @@ if ($ult_ped == "" and $id_ult_pedido != "") {
 }
 
 $ids = '';
-$query = $pdo->prepare("SELECT c.* FROM carrinho c INNER JOIN produtos p ON p.id=c.produto AND p.empresa=c.empresa WHERE p.preparado=:setor AND c.status LIKE :status AND c.status NOT IN ('Finalizado','Cancelado') AND c.empresa=:empresa $sql_mesa ORDER BY c.hora ASC");
+$query = $pdo->prepare("SELECT c.* FROM carrinho c INNER JOIN produtos p ON p.id=c.produto AND p.empresa=c.empresa WHERE p.preparado=:setor AND c.status LIKE :status AND c.status NOT IN ('Finalizado','Cancelado') AND c.empresa=:empresa " . str_replace(['mesa > 0','cliente > 0'],['c.mesa > 0','c.cliente > 0'],$sql_mesa) . " ORDER BY c.hora ASC");
 $query->execute([':setor'=>'Outro',':status'=>$status,':empresa'=>(int)$id_empresa]);
 $res = $query->fetchAll(PDO::FETCH_ASSOC);
 $total_reg = @count($res);
