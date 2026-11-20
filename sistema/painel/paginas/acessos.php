@@ -39,7 +39,7 @@ $pag = 'acessos';
 <input type="hidden" id="ids">
 
 <div class="modal fade" id="modalForm" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-	<div class="modal-dialog">
+	<div class="modal-dialog modal-lg">
 		<div class="modal-content">
 			<div class="modal-header bg-primary text-white">
 				<h4 class="modal-title" id="exampleModalLabel"><span id="titulo_inserir"></span></h4>
@@ -50,20 +50,20 @@ $pag = 'acessos';
 				
 
 					<div class="row">
-						<div class="col-md-6 mb-2 col-6">						
-								<label>Nome</label>
-								<input type="text" class="form-control" id="nome" name="nome" placeholder="Nome do Acesso" maxlength="100" required>	
+						<div class="col-md-6 mb-3">						
+								<label for="nome" class="form-label fw-semibold">Nome do acesso <span class="text-danger">*</span></label>
+								<input type="text" class="form-control" id="nome" name="nome" placeholder="Ex.: Pedidos locais" maxlength="100" required><div class="form-text">Nome exibido na administração das permissões.</div>	
 						</div>
 
-						<div class="col-md-6 col-6">						
-								<label>Chave</label>
-								<input type="text" class="form-control" id="chave" name="chave" placeholder="Ex.: pedidos" maxlength="100" pattern="[A-Za-z0-9_-]+" title="Use letras, números, hífen ou sublinhado" required>	
+						<div class="col-md-6 mb-3">						
+								<label for="chave" class="form-label fw-semibold">Chave técnica <span class="text-danger">*</span></label>
+								<input type="text" class="form-control" id="chave" name="chave" placeholder="Ex.: pedidos" maxlength="100" pattern="[A-Za-z0-9_-]+" title="Use letras, números, hífen ou sublinhado" required><div class="form-text">Identificador usado internamente. Não pode ser alterado depois do cadastro.</div>	
 						</div>
 					</div>
 
 					<div class="row">
-						<div class="col-md-5 mb-2 col-6">						
-								<label>Grupo</label>
+						<div class="col-md-6 mb-3">						
+								<label for="grupo" class="form-label fw-semibold">Grupo de acesso</label>
 								<select class="form-select" name="grupo" id="grupo">
 								<option value="0">Sem Grupo</option>
 								<?php 
@@ -80,16 +80,16 @@ $pag = 'acessos';
 								</select>	
 						</div>
 
-						<div class="col-md-4 mb-2 col-6">	
-							<label>Página</label>
+						<div class="col-md-6 mb-3">	
+							<label for="pagina" class="form-label fw-semibold">Exibir como página no menu?</label>
 								<select class="form-select" name="pagina" id="pagina">
 								<option value="Sim">Sim</option>
 								<option value="Não">Não</option>
 								</select>	
 						</div>
 
-						<div class="col-md-3" style="margin-top: 22px">							
-								<button id="btn_salvar" type="submit" class="btn btn-primary">Salvar<i class="fa fa-check ms-2"></i></button>					
+						<div class="col-12 d-flex justify-content-end gap-2 mt-2">							
+								<button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancelar</button><button id="btn_salvar" type="submit" class="btn btn-primary"><i class="fa fa-check me-1"></i>Salvar acesso</button>					
 						</div>
 
 						
@@ -99,7 +99,7 @@ $pag = 'acessos';
 					<input type="hidden" class="form-control" id="id" name="id">					
 
 				<br>
-				<small><div id="mensagem" align="center"></div></small>
+				<div id="mensagem" class="small text-center" role="status"></div>
 			</div>
 			
 			</form>
