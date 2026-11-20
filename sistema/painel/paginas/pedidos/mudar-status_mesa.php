@@ -13,6 +13,11 @@ if (($_SERVER['REQUEST_METHOD'] ?? '') !== 'POST' || !$empresa || !$usuario || !
     http_response_code(400);
     exit('Requisição inválida');
 }
+if (($_SESSION['aut_token_SaL1P'] ?? '') !== '25tNX1L1MSaL1P') { http_response_code(403); exit('Sessao invalida'); }
+require_once(__DIR__.'/permissao_setor.php');
+if (!bcPermiteSetor($pdo, (int)$empresa, (int)$usuario, $setor)) {
+    http_response_code(403); exit('Sem permissao para alterar pedidos deste setor');
+}
 $transicoes = [
     'Aguardando'=>['Preparando'],
     'Preparando'=>['Pronto'],
