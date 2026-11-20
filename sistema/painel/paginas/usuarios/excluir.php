@@ -25,7 +25,7 @@ if (!$res) {
 }
 $foto = $res[0]['foto'] ?? '';
 
-if($foto != "sem-foto.jpg"){
+if ($foto !== '' && $foto !== 'sem-foto.jpg' && basename($foto) === $foto) {
 	@unlink('../../images/perfil/'.$foto);
 }
 
