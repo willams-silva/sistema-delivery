@@ -410,6 +410,11 @@ if (@$usuarios == 'ocultar') {
 
 
 <script type="text/javascript">
+	function bcErroPermissao(xhr) {
+		var msg=(xhr.responseText||'Não foi possível alterar as permissões.').replace(/<[^>]*>/g,'').trim();
+		$('#mensagem_permissao').addClass('text-danger').text(msg.slice(0,250));
+		$('#input-todos').prop('disabled',false);
+	}
 	function listarPermissoes(id) {
 		$.ajax({
 			url: 'paginas/' + pag + "/listar_permissoes.php",
@@ -438,7 +443,7 @@ if (@$usuarios == 'ocultar') {
 
 			success: function(result) {
 				listarPermissoes(usuario);
-			}
+			},error: function(xhr){bcErroPermissao(xhr);listarPermissoes(usuario);}
 		});
 	}
 
@@ -467,7 +472,7 @@ if (@$usuarios == 'ocultar') {
 
 			success: function(result) {
 				listarPermissoes(id_usuario);
-			}
+			},error: function(xhr){bcErroPermissao(xhr);listarPermissoes(id_usuario);}
 		});
 	}
 
@@ -484,7 +489,7 @@ if (@$usuarios == 'ocultar') {
 
 			success: function(result) {
 				listarPermissoes(id_usuario);
-			}
+			},error: function(xhr){bcErroPermissao(xhr);listarPermissoes(id_usuario);}
 		});
 	}
 </script>
