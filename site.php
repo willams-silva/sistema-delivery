@@ -423,19 +423,19 @@ a[href="/meus-pedidos"].btn-warning { background:#a85b24 !important; border-colo
   }
 /* Banner público: visível em todas as resoluções, inclusive desktop.
    Evita depender de regras antigas de ocultação do tema. */
-#slider.ocultar-banner-web {
+#slider.bc-banner-publico {
   display: block !important;
   visibility: visible !important;
   opacity: 1 !important;
   width: 100%;
   height: auto;
 }
-#slider.ocultar-banner-web .flexslider {
+#slider.bc-banner-publico .flexslider {
   display: block !important;
   visibility: visible !important;
   width: 100%;
 }
-#slider.ocultar-banner-web .slides img {
+#slider.bc-banner-publico .slides img {
   display: block;
   width: 100%;
   height: auto;
@@ -443,12 +443,12 @@ a[href="/meus-pedidos"].btn-warning { background:#a85b24 !important; border-colo
 }
 /* FlexSlider esconde os slides por padrão. Sem inicialização JS,
    mantenha pelo menos o primeiro banner visível. */
-#slider.ocultar-banner-web .flexslider:not(:has(.flex-viewport)) .slides > li:first-child {
+#slider.bc-banner-publico .flexslider:not(:has(.flex-viewport)) .slides > li:first-child {
   display: block !important;
 }
 @media (min-width: 768px) {
-  #slider.ocultar-banner-web { margin-top: 80px !important; }
-  #slider.ocultar-banner-web .flexslider { max-width: 1400px; margin: 0 auto; }
+  #slider.bc-banner-publico { margin-top: 80px !important; }
+  #slider.bc-banner-publico .flexslider { max-width: 1400px; margin: 0 auto; }
 }
 
 /* Cabeçalho mobile compacto: mantém a logo legível e elimina espaço vazio antes do banner. */
