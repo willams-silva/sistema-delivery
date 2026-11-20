@@ -49,6 +49,15 @@ $pag = 'dias';
 </form>
 <div id="bc-previsao-resultado" class="mt-3" role="status" aria-live="polite"></div>
 </div></div></div></div>
+<div class="row row-sm"><div class="col-lg-12"><div class="card custom-card"><div class="card-body">
+<div class="d-flex flex-wrap align-items-center justify-content-between gap-2">
+ <div><h5><i class="fa-solid fa-calendar-week me-2"></i>Agenda visual de funcionamento</h5><p class="text-muted mb-0">Veja os próximos sete dias ou escolha outra data inicial. A agenda mostra as regras cadastradas, não altera o funcionamento.</p></div>
+ <div class="d-flex flex-wrap gap-2 align-items-end"><div><label for="bc-agenda-inicio" class="form-label">A partir de</label><input type="date" id="bc-agenda-inicio" class="form-control"></div><button type="button" id="bc-agenda-atualizar" class="btn btn-outline-primary">Atualizar agenda</button></div>
+</div>
+<div id="bc-agenda-alerta" class="mt-2 small" role="status" aria-live="polite"></div>
+<div class="table-responsive mt-3"><table class="table table-hover align-middle"><thead><tr><th>Data</th><th>Regra</th><th>Funcionamento</th><th>Detalhe</th></tr></thead><tbody id="bc-agenda-lista"><tr><td colspan="4" class="text-muted">Carregando agenda...</td></tr></tbody></table></div>
+<div id="bc-agenda-rodape" class="small text-muted"></div>
+</div></div></div></div>
 <input type="hidden" id="ids">
 
 
@@ -218,5 +227,34 @@ carregar();
    result.empty().append($('<div class="text-danger">').text(xhr.responseJSON && xhr.responseJSON.erro || 'Não foi possível consultar o funcionamento.'));
   }).always(function(){btn.prop('disabled',false);});
  });
+})();
+</script>
+
+<script>
+(function(){
+ var inicio=$('#bc-agenda-inicio'),lista=$('#bc-agenda-lista'),alerta=$('#bc-agenda-alerta'),rodape=$('#bc-agenda-rodape'),botao=$('#bc-agenda-atualizar');
+ var agora=new Date(), hoje=agora.getFullYear()+'-'+String(agora.getMonth()+1).padStart(2,'0')+'-'+String(agora.getDate()).padStart(2,'0');
+ inicio.val(hoje);
+ var tipos={normal:'Normal',semanal:'Fechamento semanal',especial:'Horário especial',integral:'Fechamento integral'};
+ function carregar(){
+  if(!inicio.val()){alerta.addClass('text-danger').text('Selecione uma data inicial.');return;}
+  botao.prop('disabled',true);lista.empty().append($('<tr>').append($('<td colspan="4" class="text-muted">').text('Consultando agenda...')));
+  $.post('paginas/dias/agenda_visual.php',{inicio:inicio.val()},function(r){
+   lista.empty();alerta.removeClass('text-danger text-warning').empty();
+   if(r.pausado || r.fechado_manual) alerta.addClass('text-warning').text((r.pausado?'Delivery pausado. ':'')+(r.fechado_manual?'Estabelecimento fechado manualmente. ':'')+'Esses controles prevalecem sobre os horários da tabela.');
+   (r.dias||[]).forEach(function(x){
+    var tr=$('<tr>'),badge=$('<span class="badge">').addClass(x.tipo==='especial'?'bg-primary':x.tipo==='normal'?'bg-success':'bg-danger').text(tipos[x.tipo]||x.tipo);
+    tr.append($('<td>').text(x.dia+' — '+x.data.split('-').reverse().join('/')));
+    tr.append($('<td>').append(badge));
+    tr.append($('<td>').text(x.horario));
+    tr.append($('<td>').text(x.descricao));
+    lista.append(tr);
+   });
+   rodape.text(r.observacao||'');
+  },'json').fail(function(xhr){
+   lista.empty().append($('<tr>').append($('<td colspan="4" class="text-danger">').text(xhr.responseJSON&&xhr.responseJSON.erro||'Não foi possível carregar a agenda.')));
+  }).always(function(){botao.prop('disabled',false);});
+ }
+ botao.on('click',carregar);carregar();
 })();
 </script>
