@@ -1,6 +1,11 @@
 <?php
 @session_start();
-$id_empresa = $_SESSION['empresa'];
+$id_empresa = (int) ($_SESSION['empresa'] ?? 0);
+$id_operador = (int) ($_SESSION['id'] ?? 0);
+if ($id_empresa <= 0 || $id_operador <= 0) {
+    http_response_code(403);
+    exit('Sessão inválida');
+}
 require_once("../../../conexao.php");
 require_once("../../buscar_config.php");
 
@@ -8,7 +13,8 @@ $tabela = 'fornecedores';
 
 require_once("../../verificar.php");
 
-$query = $pdo->query("SELECT * from $tabela where empresa = '$id_empresa' order by id desc");
+$query = $pdo->prepare("SELECT * FROM fornecedores WHERE empresa = :empresa ORDER BY id DESC");
+$query->execute([':empresa' => $id_empresa]);
 $res = $query->fetchAll(PDO::FETCH_ASSOC);
 $linhas = @count($res);
 if ($linhas > 0) {
