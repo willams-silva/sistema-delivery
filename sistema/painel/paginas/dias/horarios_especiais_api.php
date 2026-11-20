@@ -29,8 +29,8 @@ try {
   $fim = (string)($_POST['hora_fim'] ?? '');
   $descricao = trim((string)($_POST['descricao'] ?? ''));
   $dt = DateTimeImmutable::createFromFormat('!Y-m-d', $data);
-  if (!$dt || $dt->format('Y-m-d') !== $data || !preg_match('/^(?:[01][0-9]|2[0-3]):[0-5][0-9]$/', $inicio) || !preg_match('/^(?:[01][0-9]|2[0-3]):[0-5][0-9]$/', $fim) || $fim <= $inicio || mb_strlen($descricao, 'UTF-8') > 150) {
-   horario_responder(400, ['erro'=>'Informe uma data e horário válidos. O encerramento deve ser no mesmo dia, depois da abertura.']);
+  if (!$dt || $dt->format('Y-m-d') !== $data || !preg_match('/^(?:[01][0-9]|2[0-3]):[0-5][0-9]$/', $inicio) || !preg_match('/^(?:[01][0-9]|2[0-3]):[0-5][0-9]$/', $fim) || $fim === $inicio || mb_strlen($descricao, 'UTF-8') > 150) {
+   horario_responder(400, ['erro'=>'Informe uma data e horário válidos. A abertura e o fechamento devem ser diferentes; horários noturnos são permitidos.']);
   }
   $q = $pdo->prepare('SELECT 1 FROM fechamentos_excepcionais WHERE empresa = :empresa AND data_fechamento = :data LIMIT 1');
   $q->execute([':empresa'=>$empresa, ':data'=>$data]);
