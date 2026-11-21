@@ -1148,9 +1148,8 @@ function FormaPg(){
    if(e) e.preventDefault();
    $('#pdvExtrasErro').hide().text('');
    var botao=$(botaoClicado||'#pdvExtrasSalvar');
-   botao.text('Validando...');
-   e.preventDefault();
-   if(!produtoAtual){erroExtras('Produto não selecionado.');return;}
+   if(botao.prop('disabled')) return false;
+   if(!produtoAtual){erroExtras('Produto não selecionado.');return false;}
    $('#pdvExtrasErro').hide().text('');
    var extras={},valido=true;
    $('#pdvExtrasItens .pdv-extra-qtd').each(function(){
