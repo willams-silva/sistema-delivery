@@ -1,1 +1,8 @@
 sistema/sas/backup/*.sql
+
+# Imagens enviadas pelo painel em produção: não versionar novos uploads.
+# Arquivos já rastreados exigem ajuste separado no processo de deploy.
+/sistema/painel/images/banner_rotativo/
+/sistema/painel/images/categorias/
+/sistema/painel/images/produtos/
+/sistema/img/logos/
