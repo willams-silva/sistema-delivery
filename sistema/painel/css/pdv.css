@@ -442,3 +442,38 @@
 .pdv_body #listar .product-card { height: auto !important; min-height: 0; }
 .pdv_body #listar .pdv-barcode-box { flex: none; min-height: 0; }
 .pdv_body #listar .pdv-barcode { flex: none; width: 100px !important; height: 30px !important; max-height: 30px; overflow: hidden; }
+
+/* Tema marrom do Bora Comanda: restrito ao PDV para nao afetar outros menus. */
+.pdv_body { background:#f7f1eb !important; color:#432b22 !important; }
+.pdv_body .pdv-container { background:#f7f1eb !important; }
+.pdv_body .products-section > .bg-white,
+.pdv_body .cart-section > .bg-white,
+.pdv_body #listar,
+.pdv_body .product-card,
+.pdv_body .category-pill { background-color:#fffaf6 !important; }
+.pdv_body .product-card { border:1px solid #e8d7ca; }
+.pdv_body .product-card .card-title,
+.pdv_body #listar .product-card .card-title,
+.pdv_body #listar .product-card:hover .card-title { color:#432b22 !important; }
+.pdv_body .product-card .card-price,
+.pdv_body #listar .pdv-barcode-number,
+.pdv_body .text-primary { color:#79452f !important; }
+.pdv_body .product-card .add-to-cart,
+.pdv_body .category-pill.active,
+.pdv_body .btn-search { background:#79452f !important; color:#fff !important; }
+.pdv_body .product-card .add-to-cart:hover,
+.pdv_body .btn-search:hover { background:#593020 !important; }
+.pdv_body .product-card .card-stock,
+.pdv_body .search-icon { color:#876d5c !important; }
+.pdv_body .form-input:focus,
+.pdv_body .form-select:focus { border-color:#a66b49 !important; box-shadow:0 0 0 3px rgba(166,107,73,.16) !important; }
+.pdv_body .category-pill { border:1px solid #eadbd0; }
+.pdv_body .category-pill .text-dark,
+.pdv_body .cart-section label,
+.pdv_body .cart-section .text-dark { color:#432b22 !important; }
+.pdv_body .cart-section input,
+.pdv_body .cart-section select { background-color:#fff !important; color:#432b22 !important; border-color:#d9c4b4 !important; }
+.pdv_body .btn-finalize { background:#79452f !important; }
+.pdv_body .btn-finalize:hover { background:#593020 !important; }
+.pdv_body .btn-cancel { background:#a94b42 !important; }
+.pdv_body .btn-cancel:hover { background:#873b35 !important; }
