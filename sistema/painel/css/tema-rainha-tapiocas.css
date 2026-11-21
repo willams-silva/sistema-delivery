@@ -149,3 +149,17 @@ body .app-sidebar .main-sidebar-header + .main-sidemenu::before {
  background-color:#512c24!important;
  background-image:none!important;
 }
+
+/* Diagnostico Firefox: ASIDE.app-sidebar.ps.ps--active-y.open em dark-theme
+   mantinha rgb(42,46,63) na faixa superior. Aplicar a cor cacau ao elemento raiz. */
+html body.dark-theme aside.app-sidebar,
+html body.dark-theme aside.app-sidebar.ps,
+html body.dark-theme aside.app-sidebar.ps.ps--active-y,
+html body.dark-theme aside.app-sidebar.ps.ps--active-y.open,
+html body.dark-theme.sidebar-mini aside.app-sidebar,
+html body.dark-theme.sidenav-toggled aside.app-sidebar,
+html body aside.app-sidebar.ps.ps--active-y.open {
+  background:#512c24!important;
+  background-color:#512c24!important;
+  background-image:none!important;
+}
