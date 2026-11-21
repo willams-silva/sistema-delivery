@@ -784,7 +784,10 @@ $("#form_venda").submit(function (event) {
 					dataType: "html",
 
 					success:function(result){
-						$("#listar_vendas").html(result);            
+						$("#listar_vendas").html(result);
+                        // O subtotal e atualizado no HTML da comanda; recalcular
+                        // dinheiro, troco e saldo somente depois de receber o novo total.
+                        atualizarPagamentoPdv();
 					}
 				});
 
