@@ -6,6 +6,27 @@ $_SESSION['url_site'] = $url_site;
 $configurar_config_site = true;
 require_once("cabecalho.php");
 
+// URLs consistentes para mídias enviadas pelo painel. O versionamento só muda
+// quando o arquivo realmente muda; assim F5 não depende de cache antigo.
+if (!function_exists('bc_url_imagem_publica')) {
+  function bc_url_imagem_publica($diretorio, $arquivo) {
+    $diretorios = array(
+      'logo' => 'sistema/img',
+      'banner' => 'sistema/painel/images/banner_rotativo',
+      'categoria' => 'sistema/painel/images/categorias'
+    );
+    if (!isset($diretorios[$diretorio])) return '';
+    $nome = basename(str_replace('\\\\', '/', (string)$arquivo));
+    if ($nome === '' || $nome === '.' || $nome === '..') return '';
+    $relativo = $diretorios[$diretorio] . '/' . $nome;
+    $caminho = __DIR__ . '/' . $relativo;
+    $url = '/' . $diretorios[$diretorio] . '/' . rawurlencode($nome);
+    if (is_file($caminho)) $url .= '?v=' . filemtime($caminho);
+    return htmlspecialchars($url, ENT_QUOTES, 'UTF-8');
+  }
+}
+
+
  // Verifica se cada seção possui produtos disponíveis para delivery.
 $query_disp = $pdo->query("SELECT COUNT(*) FROM categorias c WHERE c.ativo = 'Sim' AND c.delivery = 'Sim' AND c.empresa = '$id_empresa' AND EXISTS (SELECT 1 FROM produtos p WHERE p.categoria = c.id AND p.ativo = 'Sim' AND p.delivery = 'Sim' AND p.empresa = '$id_empresa' AND (p.tem_estoque = 'Não' OR p.estoque > 0))");
 $qtd_categorias_disponiveis = (int) $query_disp->fetchColumn();
@@ -467,7 +488,7 @@ a[href="/meus-pedidos"].btn-warning { background:#a85b24 !important; border-colo
 
 
       <a class="navbar-brand" href="site/<?php echo $url_site ?>">
-        <img src="sistema/img/<?php echo $logo_sistema ?>" alt="" width="80" class="d-inline-block align-text-top logo-loja-topo">
+        <img src="<?php echo bc_url_imagem_publica('logo', $logo_sistema); ?>" alt="" width="80" class="d-inline-block align-text-top logo-loja-topo">
         <small>
           <?php
           if ($id_mesa == "") {
@@ -562,7 +583,7 @@ if ($id_mesa == "" && $sessão_balcao == "") {
               <a class="bc-banner-slide<?php echo $indice === 0 ? ' bc-banner-active' : ''; ?>"
                  href="<?php echo htmlspecialchars($url, ENT_QUOTES, 'UTF-8'); ?>"
                  <?php echo $indice === 0 ? '' : 'aria-hidden="true" tabindex="-1"'; ?>>
-                <img src="/sistema/painel/images/banner_rotativo/<?php echo rawurlencode($foto); ?>"
+                <img src="<?php echo bc_url_imagem_publica('banner', $foto); ?>"
                      alt="Banner promocional" <?php echo $indice === 0 ? 'fetchpriority="high"' : 'loading="lazy"'; ?>>
               </a>
             <?php } ?>
@@ -769,7 +790,7 @@ if ($id_mesa == "" && $sessão_balcao == "") {
                   <div class="category__item mb-30" style="height: 200px; background: #f5f5f5; box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px">
                     <div class="quadrado">
                       <div class="fix">
-                        <img src="/sistema/painel/images/categorias/<?php echo $foto ?>" alt="category-thumb" class="img-fluid w-100 h-100 object-fit-contain">
+                        <img src="<?php echo bc_url_imagem_publica('categoria', $foto); ?>" alt="category-thumb" class="img-fluid w-100 h-100 object-fit-contain">
 
                       </div>
 
@@ -987,7 +1008,7 @@ if ($id_mesa == "" && $sessão_balcao == "") {
                   <a href="<?php echo $link_cat ?>">
                     <div class="tpbrandproduct__item d-flex mb-10" style="box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;">
                       <div class="imgem-cat-div p-relative">
-                        <img class="imagem-cat" src="/sistema/painel/images/categorias/<?php echo $foto ?>" alt="">
+                        <img class="imagem-cat" src="<?php echo bc_url_imagem_publica('categoria', $foto); ?>" alt="">
                       </div>
 
                       <div class="tpbrandproduct__contact">
