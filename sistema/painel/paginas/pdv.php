@@ -256,7 +256,7 @@ $data_atual = date('Y-m-d');
 
           <div class="mb-3">
             <label class="d-flex align-items-center gap-2" style="cursor:pointer;color:#512c24">
-              <input type="checkbox" id="pdv_dividir_pagamento" onchange="atualizarPagamentoPdv()">
+              <input type="checkbox" id="pdv_dividir_pagamento" name="pdv_dividir_pagamento" value="1" onchange="atualizarPagamentoPdv()">
               <strong>Dividir pagamento em duas formas</strong>
             </label>
             <small class="text-muted">Marque para informar a primeira parte e escolher como pagar o restante.</small>
