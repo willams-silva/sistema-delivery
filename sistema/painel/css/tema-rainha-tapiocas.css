@@ -132,3 +132,20 @@ body .app-sidebar .ps-content {
  background-image:none!important;
 }
 body .main-header .app-sidebar__toggle { background:transparent!important; }
+
+/* Faixa acima do primeiro item da barra lateral (area de rolagem e pseudo-elementos). */
+body .app-sidebar,
+body .app-sidebar .main-sidemenu,
+body .app-sidebar .main-sidemenu::before,
+body .app-sidebar .main-sidemenu::after,
+body .app-sidebar .side-menu,
+body .app-sidebar .side-menu::before,
+body .app-sidebar .sidebar-scroll,
+body .app-sidebar .sidebar-scroll::before,
+body .app-sidebar .ps,
+body .app-sidebar .ps-content,
+body .app-sidebar .main-sidebar-header + .main-sidemenu,
+body .app-sidebar .main-sidebar-header + .main-sidemenu::before {
+ background-color:#512c24!important;
+ background-image:none!important;
+}
