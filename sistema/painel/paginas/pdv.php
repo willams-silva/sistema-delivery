@@ -1144,6 +1144,10 @@ function FormaPg(){
  var produtoAtual=null, modal=null, carrinhoEdicao=null;
  window.editarAdicionaisPdv=function(id){
    carrinhoEdicao=null;
+   if(typeof $!=='function' || typeof $.ajax!=='function'){
+     alert('Não foi possível inicializar a edição de adicionais. Recarregue o PDV.');
+     return false;
+   }
    $.ajax({url:'paginas/'+pag+'/editar_personalizacao.php',type:'POST',dataType:'json',data:{carrinho:id,modo:'consultar'},
      success:function(r){
        if(r.erro){alert(r.erro);return;}
@@ -1162,13 +1166,17 @@ function FormaPg(){
        $('#pdvExtrasSem').hide();
        $('#pdvExtrasSalvar').text('Salvar alterações');
        bootstrap.Modal.getOrCreateInstance(document.getElementById('modalPdvExtras')).show();
-     },error:function(xhr){alert((xhr.responseJSON&&xhr.responseJSON.erro)||'Não foi possível carregar os adicionais deste item.');}
+     },error:function(xhr){
+       var mensagem=(xhr.responseJSON&&xhr.responseJSON.erro)||'Não foi possível carregar os adicionais deste item.';
+       alert(mensagem+' (HTTP '+xhr.status+')');
+       console.error('[PDV editar adicionais]',xhr.status,xhr.responseText);
+     }
    });
+   return false;
  };
  $('#modalPdvExtras').on('hidden.bs.modal',function(){
    carrinhoEdicao=null;$('#pdvExtrasSem').show();$('#pdvExtrasSalvar').text('Adicionar à comanda');
  });
- var produtoAtual=null, modal=null;
  function aviso(m){ if(typeof alertWarning==='function') alertWarning(m); else alert(m); }
  function abrirNormal(){
    if(!produtoAtual) return;
