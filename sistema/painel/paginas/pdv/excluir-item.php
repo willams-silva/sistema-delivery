@@ -1,47 +1,47 @@
-<?php 
-$tabela = 'carrinho';
+<?php
+@session_start();
 require_once("../../../conexao.php");
 
-$id = $_POST['id'];
+$empresa = (int)($_SESSION['empresa'] ?? 0);
+$usuario = (int)($_SESSION['id'] ?? 0);
+$mesa = isset($_SESSION['id_ab_mesa']) && (int)$_SESSION['id_ab_mesa'] > 0
+    ? (string)(int)$_SESSION['id_ab_mesa'] : '';
+$id = filter_input(INPUT_POST, 'id', FILTER_VALIDATE_INT);
 
-$query = $pdo->query("SELECT * from $tabela where id = '$id'");
-$res = $query->fetchAll(PDO::FETCH_ASSOC);
-$id_produto = $res[0]['produto'];
-$quantidade = $res[0]['quantidade'];
-
-
-
-
-$query = $pdo->query("SELECT * from produtos where id = '$id_produto'");
-$res = $query->fetchAll(PDO::FETCH_ASSOC);
-$estoque = $res[0]['estoque'];
-$tem_estoque = $res[0]['tem_estoque'];
-$vendas = $res[0]['vendas'];
-$unidade = $res[0]['unidade'];
-
-$query3 = $pdo->query("SELECT * FROM unidade_medida where id = '$unidade'");
-	$res3 = $query3->fetchAll(PDO::FETCH_ASSOC);
-	if(@count($res3) > 0){
-		$nome_unidade = $res3[0]['nome'];
-	}else{
-		$nome_unidade = 'Sem Unidade';
-	}
-
-
-
-$pdo->query("DELETE FROM $tabela WHERE id = '$id' ");
-echo 'Excluído com Sucesso';
-
-if($tem_estoque == 'Sim'){
-	$novo_estoque = $estoque + $quantidade;
-
-	if($nome_unidade == 'Quilogramas' or $nome_unidade == 'Quilo' or $nome_unidade == 'Quilograma' or $nome_unidade == 'KG' or $nome_unidade == 'Metros' or $nome_unidade == 'Metro' or $nome_unidade == 'M' or $nome_unidade == 'm' or $nome_unidade == 'Litro' or $nome_unidade == 'Litros' or $nome_unidade == 'L'){
-		$vendas = $vendas - 1;
-	}else{
-		$vendas = $vendas - $quantidade;
-	}
-	
-	//adicionar os produtos na tabela produtos
-	//$pdo->query("UPDATE produtos SET estoque = '$novo_estoque', vendas = '$vendas' WHERE id = '$id_produto'"); 
+if ($empresa <= 0 || $usuario <= 0) {
+    http_response_code(403);
+    exit('Sessão expirada');
 }
-?>
+if (!$id || $id <= 0) {
+    http_response_code(400);
+    exit('Item inválido');
+}
+
+try {
+    $pdo->beginTransaction();
+    // Excluir somente itens da comanda atual do operador.
+    $stmt = $pdo->prepare("SELECT id FROM carrinho WHERE id = ? AND sessao = ? AND empresa = ? AND pedido = 0 AND mesa = ? FOR UPDATE");
+    $stmt->execute([$id, (string)$usuario, $empresa, $mesa]);
+    if (!$stmt->fetchColumn()) {
+        $pdo->rollBack();
+        http_response_code(404);
+        exit('Item não encontrado nesta comanda');
+    }
+
+    // Evitar adicionais órfãos depois de remover o produto.
+    $stmt = $pdo->prepare("DELETE FROM temp WHERE carrinho = ? AND empresa = ? AND tabela = 'adicionais'");
+    $stmt->execute([$id, $empresa]);
+
+    $stmt = $pdo->prepare("DELETE FROM carrinho WHERE id = ? AND sessao = ? AND empresa = ? AND pedido = 0 AND mesa = ?");
+    $stmt->execute([$id, (string)$usuario, $empresa, $mesa]);
+    if ($stmt->rowCount() !== 1) {
+        throw new RuntimeException('Falha ao remover item da comanda');
+    }
+    $pdo->commit();
+    echo 'Excluído com Sucesso';
+} catch (Throwable $e) {
+    if ($pdo->inTransaction()) $pdo->rollBack();
+    error_log('[PDV excluir-item] ' . $e->getMessage());
+    http_response_code(500);
+    echo 'Não foi possível remover o item.';
+}
