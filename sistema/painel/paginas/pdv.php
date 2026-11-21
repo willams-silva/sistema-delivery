@@ -1157,7 +1157,7 @@ function FormaPg(){
      if(this.value===''||!Number.isInteger(n)||n<0||n>max){valido=false;return;}
      if(n>0)extras[String($(this).attr('data-id'))]=n;
    });
-   if(!valido){erroExtras('Confira as quantidades dos adicionais.');return;}
+   if(!valido){erroExtras('Confira as quantidades dos adicionais.');return false;}
    botao.prop('disabled',true).text('Adicionando...');
    $('#pdvExtrasErro').hide();
    $.ajax({url:'paginas/'+pag+'/salvar_personalizacao.php',type:'POST',dataType:'text',timeout:15000,
@@ -1169,7 +1169,8 @@ function FormaPg(){
        }else erroExtras(r||'O servidor não confirmou a gravação do produto.');
      },
      error:function(xhr,status){
-       erroExtras('Falha ao salvar (HTTP '+xhr.status+'): '+(xhr.responseText||status||'Sem resposta do servidor'));
+       var resposta=String(xhr.responseText||'').replace(/<[^>]*>/g,' ').trim();
+       erroExtras('Falha ao salvar (HTTP '+xhr.status+'): '+(resposta||status||'Sem resposta do servidor'));
      },
      complete:function(){botao.prop('disabled',false).text('Adicionar à comanda');}
    });
