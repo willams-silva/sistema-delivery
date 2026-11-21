@@ -961,8 +961,16 @@ function atualizarPagamentoPdv(){
         $('#troco').val('0');
         $('#troco_resultado').val('R$ 0,00');
     }
+    // A tela de troco so faz sentido para dinheiro.
+    $('#troco_resultado').prop('readonly', true);
+    $('#troco_resultado').closest('div').toggle(dinheiro);
     FormaPg();
 }
+// Captura mudancas por teclado, mouse ou componentes que atualizam o select.
+// A delegacao permanece ativa mesmo quando a interface e redesenhada.
+$(document).off('change.pdvPagamento', '#saida').on('change.pdvPagamento', '#saida', function(){
+    atualizarPagamentoPdv();
+});
 function FormaPg(){
 	var valor_pago = $('#valor_pago').val();
 	var subtotal_venda = $('#subtotal_venda').val();
