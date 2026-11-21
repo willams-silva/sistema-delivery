@@ -498,6 +498,24 @@ $data_atual = date('Y-m-d');
 
 
 
+<style>
+/* Contraste exclusivo da janela de adicionais do PDV, inclusive no tema escuro. */
+#modalPdvExtras .modal-content { background:#fff8ee !important; color:#432b22 !important; border:1px solid #ead9c7 !important; }
+#modalPdvExtras .modal-header { background:#512c24 !important; color:#fff8ee !important; border-bottom:1px solid #b87542 !important; }
+#modalPdvExtras .modal-header .modal-title,
+#modalPdvExtras .modal-header #pdvExtrasNome { color:#fff8ee !important; }
+#modalPdvExtras .modal-body { background:#fff8ee !important; color:#432b22 !important; }
+#modalPdvExtras .modal-body .text-muted { color:#765d50 !important; }
+#modalPdvExtras #pdvExtrasItens > div { color:#432b22 !important; border-color:#ead9c7 !important; }
+#modalPdvExtras #pdvExtrasItens > div > div { color:#432b22 !important; font-weight:600; line-height:1.45; }
+#modalPdvExtras .pdv-extra-qtd { background:#fff !important; color:#432b22 !important; border:1px solid #bba18f !important; }
+#modalPdvExtras .pdv-extra-qtd:focus { border-color:#b87542 !important; box-shadow:0 0 0 .18rem rgba(184,117,66,.18) !important; }
+#modalPdvExtras .modal-footer { background:#fff8ee !important; border-top:1px solid #ead9c7 !important; }
+#modalPdvExtras #pdvExtrasSalvar { background:#512c24 !important; border-color:#512c24 !important; color:#fff !important; }
+#modalPdvExtras #pdvExtrasSalvar:hover { background:#351b17 !important; }
+#modalPdvExtras #pdvExtrasSem { color:#512c24 !important; border-color:#b87542 !important; }
+#modalPdvExtras #pdvExtrasSem:hover { background:#ead9c7 !important; }
+</style>
 <!-- Personalização de tapiocas no PDV -->
 <div class="modal fade" id="modalPdvExtras" tabindex="-1" aria-hidden="true">
  <div class="modal-dialog modal-dialog-scrollable"><div class="modal-content">
