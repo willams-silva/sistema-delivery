@@ -254,6 +254,14 @@ $data_atual = date('Y-m-d');
         
 
 
+          <div class="mb-3">
+            <label class="d-flex align-items-center gap-2" style="cursor:pointer;color:#512c24">
+              <input type="checkbox" id="pdv_dividir_pagamento" onchange="atualizarPagamentoPdv()">
+              <strong>Dividir pagamento em duas formas</strong>
+            </label>
+            <small class="text-muted">Marque para informar a primeira parte e escolher como pagar o restante.</small>
+          </div>
+
           <div id="div_pgto2">
 									<span><b>Total Restante: <span class="text-danger">R$ <span id="total_restante"></span></span></b></span>
 								
@@ -674,7 +682,19 @@ $data_atual = date('Y-m-d');
 $("#form_venda").submit(function (event) {
 	event.preventDefault();
 
-	if (envioEmAndamento) return; // impede múltiplos envios
+    var totalPdv = Number($('#subtotal_venda').val())||0;
+    var pagoPdv = Number(String($('#valor_pago').val()).replace(',','.'))||0;
+    var divididoPdv = $('#pdv_dividir_pagamento').is(':checked');
+    var dinheiroPdv = ['dinheiro','espécie','especie'].includes(String($('#saida').val()||'').trim().toLowerCase());
+    if(totalPdv<=0){alert('Adicione produtos antes de finalizar.');return;}
+    if(!$('#saida').val()){alert('Selecione a forma de pagamento.');return;}
+    if(divididoPdv){
+      if(pagoPdv<=0 || pagoPdv>=totalPdv){alert('Informe uma primeira parte maior que zero e menor que o total.');return;}
+      if(!$('#forma_pgto2').val()){alert('Selecione a segunda forma de pagamento.');return;}
+    }else if(dinheiroPdv && pagoPdv+0.001<totalPdv){
+      alert('Valor recebido insuficiente. Para pagar com duas formas, marque Dividir pagamento.');return;
+    }
+    if (envioEmAndamento) return; // impede múltiplos envios
 
 	envioEmAndamento = true;
 
@@ -946,16 +966,17 @@ function atualizarPagamentoPdv(){
     var total = parseFloat($('#subtotal_venda').val()) || 0;
     var campo = $('#valor_pago');
     var pago = parseFloat(String(campo.val()).replace(',', '.')) || 0;
-    if (dinheiro) {
-        campo.prop('readonly', false).attr('placeholder', 'Valor recebido em dinheiro');
+    var dividido = $('#pdv_dividir_pagamento').is(':checked');
+    if (dinheiro || dividido) {
+        campo.prop('readonly', false).attr('placeholder', dividido ? 'Valor da primeira parte' : 'Valor recebido em dinheiro');
         // Não sobrescrever o dinheiro digitado quando o carrinho for atualizado.
         if (!campo.data('pdv-dinheiro')) {
             campo.val('');
             pago = 0;
             campo.data('pdv-dinheiro', true);
         }
-        $('#troco').val(pago > 0 ? pago.toFixed(2) : '0');
-        $('#troco_resultado').val('R$ ' + Math.max(0, pago - total).toFixed(2).replace('.', ','));
+        $('#troco').val(dinheiro && !dividido && pago > 0 ? pago.toFixed(2) : '0');
+        $('#troco_resultado').val('R$ ' + (dinheiro && !dividido ? Math.max(0, pago - total) : 0).toFixed(2).replace('.', ','));
     } else {
         campo.data('pdv-dinheiro', false).prop('readonly', true).val(total.toFixed(2));
         $('#troco').val('0');
@@ -963,7 +984,7 @@ function atualizarPagamentoPdv(){
     }
     // A tela de troco so faz sentido para dinheiro.
     $('#troco_resultado').prop('readonly', true);
-    $('#troco_resultado').closest('div').toggle(dinheiro);
+    $('#troco_resultado').closest('div').toggle(dinheiro && !dividido);
     FormaPg();
 }
 // Captura mudancas por teclado, mouse ou componentes que atualizam o select.
@@ -975,11 +996,8 @@ function FormaPg(){
 	var valor_pago = $('#valor_pago').val();
 	var subtotal_venda = $('#subtotal_venda').val();
 
-	if(parseFloat(valor_pago) < parseFloat(subtotal_venda)){
-		$('#div_pgto2').show();
-	}else{
-		$('#div_pgto2').hide();
-	}
+    var dividido = $('#pdv_dividir_pagamento').is(':checked');
+    $('#div_pgto2').toggle(dividido);
 
 	if(valor_pago == ""){
 		valor_pago = 0;
@@ -989,7 +1007,7 @@ function FormaPg(){
 		subtotal_venda = 0;
 	}
 
-	var total_restante = Math.max(0, parseFloat(subtotal_venda) - parseFloat(valor_pago));
+	var total_restante = dividido ? Math.max(0, (parseFloat(subtotal_venda)||0) - (parseFloat(valor_pago)||0)) : 0;
 	$('#total_restante').text(total_restante.toFixed(2));
 	$('#valor_restante').val(total_restante);
 }
