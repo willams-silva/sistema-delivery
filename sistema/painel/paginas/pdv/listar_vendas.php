@@ -202,7 +202,7 @@ if($linhas > 0){
     $stmtExtras->execute([(int)$id, (int)$id_empresa]);
     $extrasDaComanda = $stmtExtras->fetchAll(PDO::FETCH_ASSOC);
     if ($extrasDaComanda) {
-        echo '<div class="small text-muted mt-1" style="line-height:1.5">';
+        echo '<div class="small mt-1 pdv-extras-comanda" style="line-height:1.5;color:#512c24 !important;font-weight:600">';
         foreach ($extrasDaComanda as $extra) {
             $qtdExtra = (int)$extra['quantidade'];
             $nomeExtra = htmlspecialchars((string)$extra['nome'], ENT_QUOTES, 'UTF-8');
