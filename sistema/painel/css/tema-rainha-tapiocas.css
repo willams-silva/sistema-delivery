@@ -61,3 +61,29 @@ body .app-sidebar .sidebar-scroll,
 body .app-sidebar .main-sidemenu,
 body .app-sidebar .side-menu,
 body .app-sidebar .ps-content { background:var(--rainha-cacau)!important; }
+
+/* Icones e saudacao no header: evitar azul herdado do tema base. */
+body .main-header .app-sidebar__toggle a,
+body .main-header .app-sidebar__toggle i,
+body .main-header .app-sidebar__toggle .header-icon,
+body .main-header .header-icon,
+body .main-header .header-icon-svgs,
+body .main-header .header-icon-svgs *,
+body .main-header .main-header-center,
+body .main-header .main-header-center *,
+body .main-header .main-header-right .nav-link > i,
+body .main-header .main-header-right .nav-link > svg,
+body .main-header .main-header-right .nav-link > svg *,
+body .main-header .main-header-right .header-icon,
+body .main-header .main-header-right .header-icon-svgs,
+body .main-header .main-header-right .header-icon-svgs *,
+body .main-header .main-header-left .header-icon,
+body .main-header .main-header-left .header-icon-svgs,
+body .main-header .main-header-left .header-icon-svgs * {
+ color:#fff4e7!important;
+ stroke:currentColor!important;
+}
+body .main-header .main-header-center *,
+body .main-header .main-header-center { color:#fff4e7!important; }
+body .main-header .main-header-right .badge,
+body .main-header .main-header-right .badge * { stroke:none!important; }
