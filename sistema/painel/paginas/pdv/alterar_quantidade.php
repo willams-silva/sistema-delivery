@@ -17,7 +17,7 @@ try {
  if($atual<=0)throw new RuntimeException('Quantidade atual inválida');
 
  $entrada=trim((string)($_POST['quantidade']??''));
- if(!preg_match('/^\\d+(?:[.,]\\d{1,3})?$/D',$entrada)){
+ if(!preg_match('/^[0-9]+(?:[.,][0-9]{1,3})?$/D',$entrada)){
   $pdo->rollBack();http_response_code(400);exit('Informe uma quantidade válida maior que zero');
  }
  $nova=(float)str_replace(',','.',$entrada);
