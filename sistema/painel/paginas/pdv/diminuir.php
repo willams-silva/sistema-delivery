@@ -1,39 +1,38 @@
-<?php 
-$tabela = 'carrinho';
+<?php
+@session_start();
 require_once("../../../conexao.php");
+$empresa=(int)($_SESSION['empresa']??0);
+$usuario=(int)($_SESSION['id']??0);
+$mesa=isset($_SESSION['id_ab_mesa']) && (int)$_SESSION['id_ab_mesa']>0 ? (string)(int)$_SESSION['id_ab_mesa'] : '';
+$id=filter_input(INPUT_POST,'id',FILTER_VALIDATE_INT);
+if($empresa<=0||$usuario<=0){http_response_code(403);exit('Sessão expirada');}
+if(!$id||$id<=0){http_response_code(400);exit('Item inválido');}
+try {
+ $pdo->beginTransaction();
+ $stmt=$pdo->prepare("SELECT c.id,c.produto,c.quantidade,c.total_item,p.estoque,p.tem_estoque FROM carrinho c INNER JOIN produtos p ON p.id=c.produto AND p.empresa=c.empresa WHERE c.id=? AND c.sessao=? AND c.empresa=? AND c.pedido=0 AND c.mesa=? FOR UPDATE");
+ $stmt->execute([$id,(string)$usuario,$empresa,$mesa]);
+ $item=$stmt->fetch(PDO::FETCH_ASSOC);
+ if(!$item){$pdo->rollBack();http_response_code(404);exit('Item não encontrado nesta comanda');}
+ $atual=(float)$item['quantidade'];
+ if($atual<=0)throw new RuntimeException('Quantidade atual inválida');
 
-$id = $_POST['id'];
-$quantidade = $_POST['quantidade'];
+ $nova=$atual-1;
+ if($nova<=0){
+  $stmt=$pdo->prepare("DELETE FROM temp WHERE carrinho=? AND empresa=? AND tabela='adicionais'");
+  $stmt->execute([$id,$empresa]);
+  $stmt=$pdo->prepare("DELETE FROM carrinho WHERE id=? AND empresa=?");
+  $stmt->execute([$id,$empresa]);
+ }else{
+  $unitario=(float)$item['total_item']/$atual;
+  $stmt=$pdo->prepare("UPDATE carrinho SET quantidade=?,total_item=? WHERE id=? AND empresa=?");
+  $stmt->execute([$nova,round($unitario*$nova,2),$id,$empresa]);
+ }
 
-$query = $pdo->query("SELECT * from $tabela where id = '$id'");
-$res = $query->fetchAll(PDO::FETCH_ASSOC);
-$id_produto = $res[0]['produto'];
-$total_item = $res[0]['total_item'];
-$qt = $res[0]['quantidade'];
-$valor = $total_item / $qt;
-
-$query = $pdo->query("SELECT * from produtos where id = '$id_produto'");
-$res = $query->fetchAll(PDO::FETCH_ASSOC);
-$estoque = $res[0]['estoque'];
-$tem_estoque = $res[0]['tem_estoque'];
-$vendas = $res[0]['vendas'];
-
-$nova_quant = $quantidade - 1;
-$novo_total = $valor * $nova_quant;
-
-if($quantidade == 1){
-	$pdo->query("DELETE FROM $tabela WHERE id = '$id' ");
-}else{
-	$pdo->query("UPDATE $tabela SET quantidade = '$nova_quant', total_item = '$novo_total' WHERE id = '$id' ");
+ $pdo->commit();
+ echo 'Excluído com Sucesso';
+} catch(Throwable $e) {
+ if($pdo->inTransaction())$pdo->rollBack();
+ error_log('[PDV quantidade] '.$e->getMessage());
+ http_response_code(500);
+ echo 'Não foi possível alterar a quantidade.';
 }
-
-echo 'Excluído com Sucesso';
-
-if($tem_estoque == 'Sim'){
-	$novo_estoque = $estoque + 1;
-	$vendas = $vendas - 1;
-	//adicionar os produtos na tabela produtos
-	//$pdo->query("UPDATE produtos SET estoque = '$novo_estoque', vendas = '$vendas' WHERE id = '$id_produto'");
-}
-
-?>
