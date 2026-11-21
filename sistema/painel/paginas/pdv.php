@@ -1141,6 +1141,33 @@ function FormaPg(){
 
 <script>
 (function(){
+ var produtoAtual=null, modal=null, carrinhoEdicao=null;
+ window.editarAdicionaisPdv=function(id){
+   carrinhoEdicao=null;
+   $.ajax({url:'paginas/'+pag+'/editar_personalizacao.php',type:'POST',dataType:'json',data:{carrinho:id,modo:'consultar'},
+     success:function(r){
+       if(r.erro){alert(r.erro);return;}
+       carrinhoEdicao=id;
+       $('#pdvExtrasErro').hide().text('');
+       $('#pdvExtrasNome').text(r.nome);
+       var area=$('#pdvExtrasItens').empty();
+       (r.itens||[]).forEach(function(item){
+         var linha=$('<div class="d-flex align-items-center justify-content-between border-bottom py-2 gap-2"></div>');
+         var texto=$('<div></div>').text(item.nome+' ('+item.tipo+') — R$ '+Number(item.valor).toFixed(2).replace('.',','));
+         var campo=$('<input type="number" class="form-control pdv-extra-qtd" style="width:85px" min="0" max="20" step="1">').attr('data-id',item.id);
+         if(item.tipo==='opcional')campo.attr('max','1');
+         campo.val((r.selecionados||{})[item.id]||0);
+         linha.append(texto,campo);area.append(linha);
+       });
+       $('#pdvExtrasSem').hide();
+       $('#pdvExtrasSalvar').text('Salvar alterações');
+       bootstrap.Modal.getOrCreateInstance(document.getElementById('modalPdvExtras')).show();
+     },error:function(xhr){alert((xhr.responseJSON&&xhr.responseJSON.erro)||'Não foi possível carregar os adicionais deste item.');}
+   });
+ };
+ $('#modalPdvExtras').on('hidden.bs.modal',function(){
+   carrinhoEdicao=null;$('#pdvExtrasSem').show();$('#pdvExtrasSalvar').text('Adicionar à comanda');
+ });
  var produtoAtual=null, modal=null;
  function aviso(m){ if(typeof alertWarning==='function') alertWarning(m); else alert(m); }
  function abrirNormal(){
@@ -1151,6 +1178,8 @@ function FormaPg(){
    try { addVenda(p.id,p.estoque,p.nome,p.unidade,p.grade); } finally {window.pdvExtrasIgnorar=false;}
  }
  window.abrirPdvExtras=function(id,nome,estoque,unidade,grade){
+   carrinhoEdicao=null;
+   $('#pdvExtrasSem').show();$('#pdvExtrasSalvar').text('Adicionar à comanda');
    produtoAtual={id:id,nome:nome,estoque:estoque,unidade:unidade,grade:grade};
    $.ajax({url:'paginas/'+pag+'/listar_personalizacoes.php',type:'POST',dataType:'json',data:{produto:id},success:function(r){
      if(!r || !r.personalizavel || !r.itens || !r.itens.length){abrirNormal();return;}
@@ -1178,7 +1207,7 @@ function FormaPg(){
    $('#pdvExtrasErro').hide().text('');
    var botao=$(botaoClicado||'#pdvExtrasSalvar');
    if(botao.prop('disabled')) return false;
-   if(!produtoAtual){erroExtras('Produto não selecionado.');return false;}
+   if(!carrinhoEdicao && !produtoAtual){erroExtras('Produto não selecionado.');return false;}
    $('#pdvExtrasErro').hide().text('');
    var extras={},valido=true;
    $('#pdvExtrasItens .pdv-extra-qtd').each(function(){
@@ -1189,10 +1218,12 @@ function FormaPg(){
    if(!valido){erroExtras('Confira as quantidades dos adicionais.');return false;}
    botao.prop('disabled',true).text('Adicionando...');
    $('#pdvExtrasErro').hide();
-   $.ajax({url:'paginas/'+pag+'/salvar_personalizacao.php',type:'POST',dataType:'text',timeout:15000,
-     data:{produto:produtoAtual.id,extras:JSON.stringify(extras)},
+   var editando=!!carrinhoEdicao;
+   $.ajax({url:'paginas/'+pag+'/'+(editando?'editar_personalizacao.php':'salvar_personalizacao.php'),type:'POST',dataType:'text',timeout:15000,
+     data:editando?{carrinho:carrinhoEdicao,modo:'salvar',extras:JSON.stringify(extras)}:{produto:produtoAtual.id,extras:JSON.stringify(extras)},
      success:function(r){
-       if(String(r).trim()==='Inserido com Sucesso'){
+       var sucesso=editando?(function(){try{return JSON.parse(r).ok===true;}catch(e){return false;}})():String(r).trim()==='Inserido com Sucesso';
+       if(sucesso){
          bootstrap.Modal.getOrCreateInstance(document.getElementById('modalPdvExtras')).hide();
          listarVendas();limparCampos();
        }else erroExtras(r||'O servidor não confirmou a gravação do produto.');
@@ -1201,7 +1232,7 @@ function FormaPg(){
        var resposta=String(xhr.responseText||'').replace(/<[^>]*>/g,' ').trim();
        erroExtras('Falha ao salvar (HTTP '+xhr.status+'): '+(resposta||status||'Sem resposta do servidor'));
      },
-     complete:function(){botao.prop('disabled',false).text('Adicionar à comanda');}
+     complete:function(){botao.prop('disabled',false).text(carrinhoEdicao?'Salvar alterações':'Adicionar à comanda');}
    });
    return false;
  };
