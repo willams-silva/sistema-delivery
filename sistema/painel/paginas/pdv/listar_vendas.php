@@ -215,6 +215,10 @@ if($linhas > 0){
         echo '</div>';
     }
 
+    if (mb_stripos($nomeCategoriaPdv, 'tapioca') !== false) {
+        echo '<button type="button" class="btn btn-sm btn-outline-secondary mt-1 mb-1" style="font-size:11px;color:#512c24!important;border-color:#b87542!important" onclick="editarAdicionaisPdv('.(int)$id.')"><i class="fa fa-pencil"></i> Editar adicionais</button>';
+    }
+
     echo '<div class="text-dark" style="font-size:12px; margin-top:0;">'; // mantém 12px e sem margin-left
       echo '<a class="'.$ocultar_quantidades.'" href="#" onclick="diminuir('.$id.', '.$quantidadeF.')"><big><i class="fa fa-minus-circle text-danger"></i></big></a>
       <input type="text" value="'.$quantidadeF.'" style="background:transparent; border:none; outline:none; width:28px; text-align:center" id="input_quant_'.$id.'" onblur="alterarQuantidade('.$id.', '.$quantidadeF.')"> '.$sigla_unidade.'
