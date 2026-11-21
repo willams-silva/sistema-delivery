@@ -39,3 +39,25 @@ a:not(.btn):not(.side-menu__item) { color:var(--rainha-cacau); }
 .app-sidebar .slide-item:hover,
 .app-sidebar .side-menu__item.active,
 .app-sidebar .slide-item.active { background-color:var(--rainha-cacau-escuro)!important; }
+
+/* Completar o tema no topo, barra lateral e rodape, inclusive no modo escuro. */
+body .main-header.side-header,
+body .main-header.side-header.sticky,
+body .main-header .main-container,
+body .app-header,
+body .header { background-color:var(--rainha-cacau)!important; background-image:none!important; border-color:var(--rainha-cacau-escuro)!important; }
+body .main-header .header-icon,
+body .main-header .header-icon-svgs,
+body .main-header .open-toggle,
+body .main-header .close-toggle,
+body .main-header .header-icon-svgs path { color:#fff4e7!important; stroke:#fff4e7!important; }
+body .main-header .nav-link,
+body .main-header .nav-link-bg { color:#fff4e7!important; }
+body .main-footer,
+body .main-footer .container-fluid { background-color:var(--rainha-cacau)!important; background-image:none!important; color:#fff4e7!important; border-color:var(--rainha-cacau-escuro)!important; }
+body .main-footer strong { color:#fff!important; }
+body .app-sidebar .main-sidebar-header,
+body .app-sidebar .sidebar-scroll,
+body .app-sidebar .main-sidemenu,
+body .app-sidebar .side-menu,
+body .app-sidebar .ps-content { background:var(--rainha-cacau)!important; }
