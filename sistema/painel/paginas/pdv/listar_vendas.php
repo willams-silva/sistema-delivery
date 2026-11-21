@@ -216,7 +216,7 @@ if($linhas > 0){
     }
 
     if (mb_stripos($nomeCategoriaPdv, 'tapioca') !== false) {
-        echo '<button type="button" class="btn btn-sm btn-outline-secondary mt-1 mb-1" style="font-size:11px;color:#512c24!important;border-color:#b87542!important" onclick="editarAdicionaisPdv('.(int)$id.')"><i class="fa fa-pencil"></i> Editar adicionais</button>';
+        echo '<button type="button" class="btn btn-sm btn-outline-secondary mt-1 mb-1" style="font-size:11px;color:#512c24!important;border-color:#b87542!important" onclick="return window.editarAdicionaisPdv ? window.editarAdicionaisPdv('.(int)$id.') : (alert(\'A edição de adicionais não foi carregada. Atualize o PDV com Ctrl+Shift+R.\'), false)"><i class="fa fa-pencil"></i> Editar adicionais</button>';
     }
 
     echo '<div class="text-dark" style="font-size:12px; margin-top:0;">'; // mantém 12px e sem margin-left
