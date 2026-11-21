@@ -74,7 +74,11 @@ $forma_pgto2 = $_POST['forma_pgto2'];
 // Valores informados no navegador são revalidados contra o total calculado no servidor.
 $valorPagoInformado = str_replace(',', '.', trim((string)$valor_pago));
 $restanteInformado = str_replace(',', '.', trim((string)$valor_restante));
-$parcialSolicitado = is_numeric($restanteInformado) && (float)$restanteInformado > 0.009;
+$divisaoExplicita = (string)($_POST['pdv_dividir_pagamento'] ?? '') === '1';
+$parcialSolicitado = $divisaoExplicita;
+if ($divisaoExplicita && (!is_numeric($restanteInformado) || (float)$restanteInformado <= 0)) {
+    http_response_code(409); exit('Informe o valor restante do pagamento dividido.');
+}
 if ($parcialSolicitado && (!is_numeric($valorPagoInformado) || (float)$valorPagoInformado <= 0)) {
     http_response_code(409); exit('Informe um valor válido para o primeiro pagamento.');
 }
@@ -230,6 +234,12 @@ if ($formaDinheiro && (float)$troco > 0.009 && (float)$troco + 0.009 < $primeira
     throw new RuntimeException('Valor recebido insuficiente. Para dividir o pagamento, utilize o fluxo específico.');
 }
 if (!$formaDinheiro) $troco = 0;
+if ($formaDinheiro && !$parcialSolicitado && (float)$troco + 0.009 < $total_final) {
+    throw new RuntimeException('Valor recebido insuficiente. Informe o valor total ou utilize pagamento dividido.');
+}
+if ($parcialSolicitado && $formaDinheiro && (float)$troco > 0.009) {
+    throw new RuntimeException('Pagamento dividido: informe apenas o valor da primeira parte, sem troco.');
+}
 
 
 
