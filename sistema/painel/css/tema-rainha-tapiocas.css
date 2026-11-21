@@ -106,3 +106,29 @@ body .main-header .header-icon-svgs path,
 body .main-header .header-icon-svgs circle,
 body .main-header .header-icon-svgs rect { fill:#fff4e7!important; stroke:#fff4e7!important; }
 body .main-header .header-icons .header-badge { color:#fff!important; }
+
+/* Ajustes finais: toggle de menu e faixa lateral superior azul do tema base. */
+body .main-header #btn_ocultar_menu,
+body .main-header #btn_ocultar_menu i,
+body .main-header .app-sidebar__toggle .open-toggle,
+body .main-header .app-sidebar__toggle .open-toggle .fe-align-left,
+body .main-header .app-sidebar__toggle .close-toggle,
+body .main-header .app-sidebar__toggle .close-toggle i {
+ color:#fff4e7!important;
+ -webkit-text-fill-color:#fff4e7!important;
+}
+body .app-sidebar,
+body .app-sidebar .main-sidebar-header,
+body .app-sidebar .main-sidebar-header.active,
+body .main-sidebar-header,
+body .main-sidebar-header.active,
+body .app-sidebar .sidebar-scroll,
+body .app-sidebar .side-menu,
+body .app-sidebar .main-sidemenu,
+body .app-sidebar .ps,
+body .app-sidebar .ps-content {
+ background:#512c24!important;
+ background-color:#512c24!important;
+ background-image:none!important;
+}
+body .main-header .app-sidebar__toggle { background:transparent!important; }
