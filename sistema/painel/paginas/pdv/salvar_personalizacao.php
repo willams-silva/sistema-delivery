@@ -36,7 +36,9 @@ foreach($extras as $key=>$value){
  $selecionados[]=['id'=>(int)$key,'qtd'=>$qtd,'valor'=>$valor];
 }
 $pedido=(int)($_SESSION['id_edicao']??0);
-$mesa=(int)($_SESSION['id_ab_mesa']??0);
+// Manter o mesmo identificador de mesa usado pelo fluxo normal do PDV.
+// Sem mesa, o carrinho utiliza string vazia (nao zero).
+$mesa=isset($_SESSION['id_ab_mesa']) && (int)$_SESSION['id_ab_mesa']>0 ? (string)(int)$_SESSION['id_ab_mesa'] : '';
 $status=$p['preparado']!=='Não'?'Aguardando':'';
 try{
  $pdo->beginTransaction();
