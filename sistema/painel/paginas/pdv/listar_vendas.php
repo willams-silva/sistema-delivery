@@ -127,6 +127,16 @@ if($linhas > 0){
 		$ocultar_quantidades = 'ocultar';
 	}
 
+	// O catalogo do PDV vende tapiocas por unidade; manter o mesmo criterio na comanda.
+	// Nao modifica a unidade cadastrada nem afeta produtos de outras categorias.
+	$stmtCategoriaPdv = $pdo->prepare("SELECT c.nome FROM produtos p INNER JOIN categorias c ON c.id = p.categoria AND c.empresa = p.empresa WHERE p.id = ? AND p.empresa = ? LIMIT 1");
+	$stmtCategoriaPdv->execute([(int)$produto, (int)$id_empresa]);
+	$nomeCategoriaPdv = (string)$stmtCategoriaPdv->fetchColumn();
+	if (mb_stripos($nomeCategoriaPdv, 'tapioca') !== false) {
+		$sigla_unidade = ' (Un.)';
+		$ocultar_quantidades = '';
+	}
+
 	//tratamento separa string
 	$qt = explode(".", $quantidade);
 	if($qt[1] > 0){
@@ -163,8 +173,16 @@ if($linhas > 0){
 
 
 	echo '<div class="row g-0">'; // g-0 remove o “gutter” padrão sem precisar de margens negativas
-  echo '<div class="col-3 col-md-3 pe-1">'; // antes: margin-right:3px
-    echo '<img src="images/produtos/'.$foto_produto.'" width="45px">'; // mantém 45px
+  echo '<div class="col-3 col-md-3 pe-1">';
+    // Evitar imagem quebrada quando o arquivo nao foi publicado na hospedagem.
+    $fotoArquivo = basename((string)$foto_produto);
+    $fotoCaminho = __DIR__ . '/../../images/produtos/' . $fotoArquivo;
+    if ($fotoArquivo !== '' && is_file($fotoCaminho)) {
+        echo '<img src="images/produtos/'.rawurlencode($fotoArquivo).'" width="45" height="45" style="object-fit:contain" alt="Foto do produto" onerror="this.style.display=\'none\';this.nextElementSibling.style.display=\'inline-flex\'">';
+        echo '<span title="Imagem indisponível" style="display:none;width:45px;height:45px;align-items:center;justify-content:center;background:#f3f4f6;color:#777;border-radius:5px"><i class="fa fa-image"></i></span>';
+    } else {
+        echo '<span title="Produto sem imagem cadastrada ou arquivo ausente" style="display:inline-flex;width:45px;height:45px;align-items:center;justify-content:center;background:#f3f4f6;color:#777;border-radius:5px"><i class="fa fa-image"></i></span>';
+    }
   echo '</div>';
 
   // Torna este bloco "relative" para o X absoluto ancorar corretamente
