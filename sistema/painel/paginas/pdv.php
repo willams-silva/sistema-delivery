@@ -70,7 +70,7 @@ $data_atual = date('Y-m-d');
 </script>
 
 
-<link rel="stylesheet" type="text/css" href="css/pdv.css">
+<link rel="stylesheet" type="text/css" href="css/pdv.css?v=20261121-marrom2">
 <style>
 .pdv-product-code{font-size:12px;color:#475569;margin:5px 0;overflow-wrap:anywhere;font-weight:600}
 </style>
