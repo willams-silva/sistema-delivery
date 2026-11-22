@@ -45,7 +45,13 @@ $troco = $_POST['troco'];
 $troco = @str_replace(',', '.', $troco);
 $desconto = $_POST['desconto'];
 $desconto = @str_replace(',', '.', $desconto);
-$cliente = $_POST['cliente'];
+$cliente = trim((string)($_POST['cliente'] ?? '0'));
+if ($cliente === '' || $cliente === '0') {
+    $cliente = '0'; // Consumidor Final, sem cadastro obrigatório.
+} elseif (!ctype_digit($cliente) || (int)$cliente < 1) {
+    http_response_code(409);
+    exit('Identificação de cliente inválida. Selecione Consumidor Final ou busque pelo CPF.');
+}
 $saida = $_POST['saida'];
 $data = $_POST['data2'];
 $frete = $_POST['frete'];
