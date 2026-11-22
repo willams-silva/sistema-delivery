@@ -12,18 +12,18 @@ header('X-Content-Type-Options: nosniff');
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Histórico de estornos - Bora Comanda</title>
 <style>
-body{font-family:system-ui,Arial,sans-serif;background:#f7f8fa;color:#20242a;margin:0;padding:24px}
-main{max-width:1100px;margin:auto}.card{background:white;border:1px solid #e2e6eb;border-radius:12px;padding:20px}
+body{font-family:system-ui,Arial,sans-serif;background:#fff8f0;color:#512c24;margin:0;padding:24px}
+main{max-width:1100px;margin:auto}.card{background:white;border:1px solid #dfc4ae;border-radius:12px;padding:20px}
 form{display:flex;flex-wrap:wrap;gap:12px;align-items:end;margin-bottom:18px}
-label{display:grid;gap:5px;font-size:14px}input,select,button{font:inherit;padding:10px;border:1px solid #cbd2da;border-radius:7px}
-button{cursor:pointer;background:#233b59;color:white}button:disabled{opacity:.5;cursor:not-allowed}
+label{display:grid;gap:5px;font-size:14px}input,select,button{font:inherit;padding:10px;border:1px solid #dfc4ae;border-radius:7px}
+button{cursor:pointer;background:#512c24;color:white}button:disabled{opacity:.5;cursor:not-allowed}
 .table-wrap{overflow-x:auto}table{width:100%;border-collapse:collapse;font-size:14px}
-th,td{padding:11px;text-align:left;border-bottom:1px solid #e5e9ed;white-space:nowrap}
-th{background:#f1f4f7}.pager{display:flex;gap:12px;align-items:center;margin-top:16px}
+th,td{padding:11px;text-align:left;border-bottom:1px solid #ead8c9;white-space:nowrap}
+th{background:#f1dfce;color:#512c24}.pager{display:flex;gap:12px;align-items:center;margin-top:16px}
 #error{color:#b42318}#status{min-height:20px}
 </style></head><body><main><h1>Histórico de estornos</h1>
 <p>Consulta financeira somente leitura. Este painel não realiza devoluções.</p>
-<p><a href="../../index.php?pagina=vendas" style="color:#233b59">Voltar às vendas</a></p>
+<p><a href="../../index.php?pagina=vendas" style="color:#512c24">Voltar às vendas</a></p>
 <section class="card">
 <form id="filtros"><label>Venda <input id="venda" type="number" min="1" placeholder="Número da venda"></label>
 <label>Status <select id="filtro-status"><option value="">Todos</option><option>Registrado</option><option>Concluido</option><option>Cancelado</option></select></label>
