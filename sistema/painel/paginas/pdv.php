@@ -795,6 +795,34 @@ $data_atual = date('Y-m-d');
 
 			let envioEmAndamento = false;
 
+function confirmarVendaConcluidaPdv(idVenda, impressaoAutomatica) {
+    var id = String(idVenda || '').trim();
+    var comprovante = /^\d+$/.test(id) ? 'rel/comprovante_balcao.php?id=' + encodeURIComponent(id) : '';
+    if (typeof Swal === 'undefined' || typeof Swal.fire !== 'function') {
+        if (!impressaoAutomatica) alertSucesso('Venda efetuada com sucesso!');
+        return;
+    }
+    Swal.fire({
+        icon: 'success',
+        title: 'Venda finalizada!',
+        text: 'A venda foi registrada com sucesso. Você pode imprimir o comprovante ou iniciar outra venda.',
+        showCancelButton: !!comprovante,
+        confirmButtonText: 'Nova venda',
+        cancelButtonText: 'Imprimir comprovante',
+        confirmButtonColor: '#512c24',
+        cancelButtonColor: '#80503d',
+        reverseButtons: true,
+        allowOutsideClick: false,
+        customClass: {popup: 'pdv-aviso-fechamento-popup'}
+    }).then(function(resultado) {
+        if (resultado.dismiss === Swal.DismissReason.cancel && comprovante) {
+            window.open(comprovante, '_blank');
+            confirmarVendaConcluidaPdv(id, true);
+        } else if (resultado.isConfirmed) {
+            $('#txt_buscar').trigger('focus');
+        }
+    });
+}
 function avisoFechamentoPdv(mensagem, seletor) {
     if (typeof Swal !== 'undefined' && typeof Swal.fire === 'function') {
         Swal.fire({
@@ -898,13 +926,12 @@ $("#form_venda").submit(function (event) {
 
 					var imp_auto = "<?=$impressao_automatica?>";
 
-					if (imp_auto != 'Não') {						
-						window.open('rel/comprovante_balcao.php?id=' + msg[1]);
-						$('#div_pgto2').hide();
-					} else {
-						alertSucesso('Venda Efetuada!');
-						$('#div_pgto2').hide();
-					}
+                    var imprimirAutomaticamente = imp_auto != 'Não';
+                    if (imprimirAutomaticamente && /^\d+$/.test(String(msg[1] || '').trim())) {
+                        window.open('rel/comprovante_balcao.php?id=' + encodeURIComponent(String(msg[1]).trim()), '_blank');
+                    }
+                    $('#div_pgto2').hide();
+                    confirmarVendaConcluidaPdv(msg[1], imprimirAutomaticamente);
 				} else {
 					alertWarning(msg[0]);
 					$("#btn_venda").show();
