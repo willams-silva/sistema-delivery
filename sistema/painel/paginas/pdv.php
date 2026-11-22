@@ -789,10 +789,17 @@ $("#form_venda").submit(function (event) {
 				envioEmAndamento = false;
 			},
 
-            error: function(xhr) {
+            error: function(xhr, status) {
+                var falhaConexao = xhr.status === 0 || status === 'timeout';
                 var mensagem = String(xhr.responseText || '').replace(/<[^>]*>/g, ' ').trim();
-                if (!mensagem) mensagem = 'Não foi possível confirmar a venda. Verifique o caixa antes de tentar novamente.';
-                console.error('[PDV finalizar venda]', xhr.status, xhr.responseText);
+                if (falhaConexao) {
+                    // O servidor pode ter gravado a venda antes da conexao cair.
+                    // Preservar carrinho e token: repetir com o mesmo token e seguro.
+                    mensagem = 'Conexão interrompida. A venda pode ter sido registrada. Confira o Caixa ou Vendas antes de tentar novamente. Não atualize a página: o carrinho e a identificação desta tentativa foram preservados.';
+                } else if (!mensagem) {
+                    mensagem = 'Não foi possível confirmar a venda. Confira o Caixa ou Vendas antes de tentar novamente.';
+                }
+                console.error('[PDV finalizar venda]', xhr.status, status, xhr.responseText);
                 if (typeof alertWarning === 'function') alertWarning(mensagem);
                 else alert(mensagem);
             },
