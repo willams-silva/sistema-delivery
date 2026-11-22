@@ -774,6 +774,19 @@ $("#form_venda").submit(function (event) {
 				envioEmAndamento = false;
 			},
 
+            error: function(xhr) {
+                var mensagem = String(xhr.responseText || '').replace(/<[^>]*>/g, ' ').trim();
+                if (!mensagem) mensagem = 'Não foi possível confirmar a venda. Verifique o caixa antes de tentar novamente.';
+                console.error('[PDV finalizar venda]', xhr.status, xhr.responseText);
+                if (typeof alertWarning === 'function') alertWarning(mensagem);
+                else alert(mensagem);
+            },
+            complete: function() {
+                $('#img_loading').hide();
+                $('#btn_venda').show();
+                $('#btn_limpar').show();
+                envioEmAndamento = false;
+            },
 			cache: false,
 			contentType: false,
 			processData: false,
