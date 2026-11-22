@@ -2,6 +2,10 @@
 $_SESSION['sessao_usuario'] = $id_usuario;
 $_SESSION['id_edicao'] = 0;
 $pag = 'pdv';
+if (empty($_SESSION['pdv_token_atual']) || !preg_match('/^[a-f0-9]{32}$/', (string)$_SESSION['pdv_token_atual'])) {
+    $_SESSION['pdv_token_atual'] = bin2hex(random_bytes(16));
+}
+
 
 $id_mesa = @$_POST['id_mesa'];
 
@@ -323,6 +327,7 @@ $data_atual = date('Y-m-d');
 
 
 							<input type="hidden" name="cliente" id="cliente_input">
+                            <input type="hidden" name="pdv_token" id="pdv_token" value="<?php echo htmlspecialchars($_SESSION['pdv_token_atual'], ENT_QUOTES, 'UTF-8') ?>">
 
 							<input type="hidden" name="tipo_desconto" id="tipo_desconto" value="reais">
 
@@ -729,7 +734,8 @@ $("#form_venda").submit(function (event) {
 			return;
 		}
 
-		var formData = new FormData($("#form_venda")[0]);
+		// Mesmo token durante tentativas da mesma venda; o servidor evita duplicacao.
+        var formData = new FormData($("#form_venda")[0]);
 
 		$.ajax({
 			url: 'paginas/' + pag + "/salvar.php",
@@ -742,6 +748,12 @@ $("#form_venda").submit(function (event) {
 				$('#mensagem').removeClass();
 
 				if (msg[0].trim() == "Salvo com Sucesso") {
+                    // Gera token novo apenas depois da confirmacao da venda.
+                    if (window.crypto && window.crypto.getRandomValues) {
+                        var bytesPdv = new Uint8Array(16);
+                        window.crypto.getRandomValues(bytesPdv);
+                        $('#pdv_token').val(Array.from(bytesPdv, b => b.toString(16).padStart(2,'0')).join(''));
+                    }
 					$("#img_loading").hide();
 
 					$('#desconto').val('');
