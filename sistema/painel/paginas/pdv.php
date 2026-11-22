@@ -82,6 +82,8 @@ $data_atual = date('Y-m-d');
 .pdv-quantidade-grupo{display:inline-flex;align-items:center;border:1px solid #b99378;border-radius:9px;overflow:hidden;background:#fffaf3}
 .pdv-quantidade-grupo.ocultar{display:none!important}
 .pdv-quantidade-btn{display:inline-flex;align-items:center;justify-content:center;width:38px;height:40px;min-width:38px;background:#512c24;color:#fff;border:0;cursor:pointer;font-size:14px;transition:background .15s}
+.pdv-quantidade-btn:disabled{opacity:.55!important;cursor:wait!important;background:#826359!important}
+.pdv-quantidade-input:disabled{opacity:.7!important;cursor:wait!important}
 .pdv-quantidade-btn:hover,.pdv-quantidade-btn:focus-visible{background:#351b17;color:#fff}
 .pdv-quantidade-btn:focus-visible,.pdv-quantidade-input:focus-visible{outline:2px solid #b87542;outline-offset:-2px}
 .pdv-quantidade-input{width:48px!important;height:40px!important;min-height:40px!important;padding:3px!important;text-align:center!important;border:0!important;border-radius:0!important;background:#fffdf9!important;color:#512c24!important;font-size:16px!important;font-weight:800!important}
