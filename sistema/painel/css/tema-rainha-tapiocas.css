@@ -163,3 +163,43 @@ html body aside.app-sidebar.ps.ps--active-y.open {
   background-color:#512c24!important;
   background-image:none!important;
 }
+
+/* Caixa: retirar fundos azulados herdados do tema escuro, sem alterar outras empresas. */
+html body .ux-cash-list,
+html body .ux-cash-list.card-body,
+html body .ux-cash-list .table-responsive,
+html body .ux-cash-list .table,
+html body .ux-cash-list .table tbody,
+html body .ux-cash-list .table tbody tr,
+html body .ux-cash-list .table tbody td {
+  background-color:#fffaf3!important;
+  color:#512c24!important;
+}
+html body .ux-cash-list .table thead th {
+  background-color:#f3e3d3!important;
+  color:#512c24!important;
+}
+html body .ux-cash-list,
+html body .ux-cash-list .table td {
+  border-color:#ead9c7!important;
+}
+html body .ux-cash-page .form-control,
+html body .ux-cash-page .form-select,
+html body .ux-cash-page .select2-container--default .select2-selection--single,
+html body .ux-cash-modal .form-control,
+html body .ux-cash-modal .form-select {
+  background-color:#fffaf3!important;
+  color:#512c24!important;
+  border-color:#d7bda6!important;
+}
+html body .ux-cash-page .select2-container--default .select2-selection--single .select2-selection__rendered {
+  color:#512c24!important;
+}
+html body .ux-cash-modal .modal-header.bg-primary {
+  background-color:#512c24!important;
+  color:#fff4e7!important;
+}
+html body .ux-cash-list .text-primary,
+html body .ux-cash-page .text-primary {
+  color:#512c24!important;
+}
