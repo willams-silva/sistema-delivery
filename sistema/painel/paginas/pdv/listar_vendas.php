@@ -268,6 +268,7 @@ echo '</div>';
 // Campos de conferencia atualizados no navegador quando o operador informa dinheiro.
 echo '<div class="pdv-resumo-recebido" id="pdv-resumo-recebido" style="display:none"><span>Valor recebido</span><strong id="pdv-resumo-recebido-valor">R$ 0,00</strong></div>';
 echo '<div class="pdv-resumo-troco" id="pdv-resumo-troco" style="display:none"><span>Troco a devolver</span><strong id="pdv-resumo-troco-valor">R$ 0,00</strong></div>';
+echo '<div class="pdv-resumo-faltante" id="pdv-resumo-faltante" style="display:none" role="status"><span><i class="fa fa-exclamation-circle" aria-hidden="true"></i> Falta receber</span><strong id="pdv-resumo-faltante-valor">R$ 0,00</strong></div>';
 echo '</div>';
 
 
