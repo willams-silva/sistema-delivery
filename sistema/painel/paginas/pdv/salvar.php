@@ -215,7 +215,19 @@ if ($total_reg > 0) {
 
     if ($tem_estoque == 'Sim') {
       if (!is_numeric($quantidade) || (float)$quantidade<=0) throw new RuntimeException('Quantidade inválida no carrinho.');
-      if ((float)$estoque < (float)$quantidade) throw new RuntimeException('Estoque insuficiente para o produto selecionado.');
+      if ((float)$estoque + 0.00001 < (float)$quantidade) {
+          // A consulta bloqueada ja reflete descontos de itens anteriores
+          // do mesmo produto nesta venda. Informar o saldo real sem limpar a comanda.
+          $nomeProdutoEstoque = trim((string)($res2[0]['nome'] ?? 'Produto'));
+          $disponivelEstoque = number_format(max(0, (float)$estoque), 3, ',', '.');
+          $solicitadoEstoque = number_format((float)$quantidade, 3, ',', '.');
+          throw new RuntimeException(
+              'Estoque insuficiente para ' . $nomeProdutoEstoque .
+              '. Disponível: ' . $disponivelEstoque .
+              '; solicitado neste item: ' . $solicitadoEstoque .
+              '. Ajuste a quantidade na comanda e tente novamente. Os outros itens foram preservados.'
+          );
+      }
       $total_produtos = $estoque - $quantidade;
       $estoqueSt=$pdo->prepare('UPDATE produtos SET estoque=:estoque WHERE id=:id AND empresa=:empresa');
       $estoqueSt->execute([':estoque'=>$total_produtos,':id'=>$produto,':empresa'=>(int)$id_empresa]);
