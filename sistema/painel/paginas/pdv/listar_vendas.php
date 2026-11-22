@@ -347,6 +347,21 @@ function excluirAlert(id) {
 }
 
 
+    function mostrarErroQuantidadePdv(mensagem) {
+        var texto = String(mensagem || 'Não foi possível atualizar a quantidade.').replace(/<[^>]*>/g, ' ').trim();
+        if (typeof Swal !== 'undefined') {
+            Swal.fire({
+                icon: 'warning',
+                title: 'Confira o estoque',
+                text: texto,
+                confirmButtonText: 'Entendi',
+                confirmButtonColor: '#512c24'
+            });
+        } else {
+            alert(texto);
+        }
+    }
+
 	function diminuir(id, quantidade){
 		 $.ajax({
         url: 'paginas/' + pag + "/diminuir.php",
@@ -379,10 +394,14 @@ function excluirAlert(id) {
             if (mensagem.trim() == "Excluído com Sucesso") {           	
                 listarVendas();
             } else {
-            	alert(mensagem)
+                mostrarErroQuantidadePdv(mensagem);
                 $('#mensagem-excluir').addClass('text-danger')
                 $('#mensagem-excluir').text(mensagem)
             }
+        },
+        error: function(xhr) {
+            mostrarErroQuantidadePdv(xhr.responseText);
+            listarVendas();
         }
     });
 	}
@@ -401,11 +420,16 @@ function excluirAlert(id) {
             if (mensagem.trim() == "Excluído com Sucesso") {           	
                 listarVendas();
             } else {
-            	alert(mensagem);
-            	$('#input_quant_'+id).val(quant_enviada);	
+                mostrarErroQuantidadePdv(mensagem);
+                $('#input_quant_'+id).val(quant_enviada);	
                 $('#mensagem-excluir').addClass('text-danger')
                 $('#mensagem-excluir').text(mensagem)
             }
+        },
+        error: function(xhr) {
+            mostrarErroQuantidadePdv(xhr.responseText);
+            $('#input_quant_'+id).val(quant_enviada);
+            listarVendas();
         }
     });
 	}
