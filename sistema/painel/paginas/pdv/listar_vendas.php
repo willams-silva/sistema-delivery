@@ -381,77 +381,49 @@ function excluirAlert(id) {
         }
     }
 
-	function diminuir(id, quantidade){
-		 $.ajax({
-        url: 'paginas/' + pag + "/diminuir.php",
-        method: 'POST',
-        data: {id, quantidade},
-        dataType: "html",
 
-        success:function(mensagem){
-            
-            if (mensagem.trim() == "Excluído com Sucesso") {           	
-                listarVendas();
-            } else {
-                $('#mensagem-excluir').addClass('text-danger')
-                $('#mensagem-excluir').text(mensagem)
-            }
-        }
-    });
-	}
-
-
-	function aumentar(id, quantidade){
-		 $.ajax({
-        url: 'paginas/' + pag + "/aumentar.php",
-        method: 'POST',
-        data: {id, quantidade},
-        dataType: "html",
-
-        success:function(mensagem){
-        	
-            if (mensagem.trim() == "Excluído com Sucesso") {           	
+    // Uma requisicao por item por vez. Evita duplo clique e corrida com onblur.
+    window.pdvQuantidadeEmAndamento = window.pdvQuantidadeEmAndamento || {};
+    function requisitarQuantidadePdv(id, operacao, quantidade, anterior) {
+        if (window.pdvQuantidadeEmAndamento[id]) return;
+        window.pdvQuantidadeEmAndamento[id] = true;
+        var grupo = $('#input_quant_' + id).closest('.pdv-quantidade-grupo');
+        grupo.find('button, input').prop('disabled', true);
+        $.ajax({
+            url: 'paginas/' + pag + '/' + operacao + '.php',
+            method: 'POST',
+            data: operacao === 'alterar_quantidade' ? {id:id, quantidade:quantidade} : {id:id, quantidade:quantidade},
+            dataType: 'html'
+        }).done(function(mensagem) {
+            if (String(mensagem).trim() === 'Excluído com Sucesso') {
                 listarVendas();
             } else {
                 mostrarErroQuantidadePdv(mensagem);
-                $('#mensagem-excluir').addClass('text-danger')
-                $('#mensagem-excluir').text(mensagem)
-            }
-        },
-        error: function(xhr) {
-            mostrarErroQuantidadePdv(xhr.responseText);
-            listarVendas();
-        }
-    });
-	}
-
-
-		function alterarQuantidade(id, quant_enviada){
-			var quantidade =  $('#input_quant_'+id).val();			
-		 $.ajax({
-        url: 'paginas/' + pag + "/alterar_quantidade.php",
-        method: 'POST',
-        data: {id, quantidade},
-        dataType: "html",
-
-        success:function(mensagem){
-        	
-            if (mensagem.trim() == "Excluído com Sucesso") {           	
+                if (anterior !== undefined) $('#input_quant_' + id).val(anterior);
                 listarVendas();
-            } else {
-                mostrarErroQuantidadePdv(mensagem);
-                $('#input_quant_'+id).val(quant_enviada);	
-                $('#mensagem-excluir').addClass('text-danger')
-                $('#mensagem-excluir').text(mensagem)
             }
-        },
-        error: function(xhr) {
+        }).fail(function(xhr) {
             mostrarErroQuantidadePdv(xhr.responseText);
-            $('#input_quant_'+id).val(quant_enviada);
+            if (anterior !== undefined) $('#input_quant_' + id).val(anterior);
             listarVendas();
-        }
-    });
-	}
+        }).always(function() {
+            delete window.pdvQuantidadeEmAndamento[id];
+            grupo.find('button, input').prop('disabled', false);
+        });
+    }
+    function diminuir(id, quantidade) {
+        requisitarQuantidadePdv(id, 'diminuir', quantidade);
+    }
+    function aumentar(id, quantidade) {
+        requisitarQuantidadePdv(id, 'aumentar', quantidade);
+    }
+    function alterarQuantidade(id, quant_enviada) {
+        if (window.pdvQuantidadeEmAndamento && window.pdvQuantidadeEmAndamento[id]) return;
+        var campo = $('#input_quant_' + id);
+        var quantidade = String(campo.val() || '').trim();
+        if (quantidade === String(quant_enviada)) return;
+        requisitarQuantidadePdv(id, 'alterar_quantidade', quantidade, quant_enviada);
+    }
 
 
 function verGrade(id){
