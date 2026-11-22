@@ -251,19 +251,22 @@ echo '</div>';
 echo '</div>';
 
 $total_finalF = @number_format($total_final, 2, ',', '.');
-echo '<div align="right" style="margin-top:10px; font-size:14px; border-top:1px solid #8f8f8f;" >';
-echo '<br>';
-echo '<span style="margin-right:10px;">'.$nome_mesa.'</span>';
-echo '<span style="margin-right:40px;">Itens: <b>('.$linhas.')</b></span>';
-echo '<span>Total: </span>';
-echo '<span style="font-weight:bold"> R$ ';
-echo $total_finalF;
-echo '</span>';
-if($troco > 0){
-echo '<br><span>Troco: </span>';
-echo '<span style="font-weight:bold"> R$ ';
-echo $total_trocoF;
-echo '</span>';
+$quantidadeTotalItens = 0;
+foreach ($res as $itemResumo) {
+    $quantidadeTotalItens += (float)($itemResumo['quantidade'] ?? 0);
+}
+$quantidadeTotalFormatada = rtrim(rtrim(number_format($quantidadeTotalItens, 3, ',', '.'), '0'), ',');
+$nomeMesaSeguro = htmlspecialchars((string)$nome_mesa, ENT_QUOTES, 'UTF-8');
+echo '<div class="pdv-resumo-comanda" role="status" aria-label="Resumo da comanda">';
+if ($nomeMesaSeguro !== '') {
+    echo '<div class="pdv-resumo-mesa">'.$nomeMesaSeguro.'</div>';
+}
+echo '<div class="pdv-resumo-linha">';
+echo '<div class="pdv-resumo-itens"><span>Produtos na comanda</span><strong>'.(int)$linhas.' <small>tipos</small> · '.$quantidadeTotalFormatada.' <small>unidades</small></strong></div>';
+echo '<div class="pdv-resumo-total"><span>Total a pagar</span><strong>R$ '.$total_finalF.'</strong></div>';
+echo '</div>';
+if ($troco > 0) {
+    echo '<div class="pdv-resumo-troco"><span>Troco calculado</span><strong>R$ '.$total_trocoF.'</strong></div>';
 }
 echo '</div>';
 
