@@ -78,6 +78,17 @@ $data_atual = date('Y-m-d');
 <style>
 .pdv-product-code{font-size:12px;color:#475569;margin:5px 0;overflow-wrap:anywhere;font-weight:600}
 
+.pdv-remover-item{display:inline-flex;align-items:center;justify-content:center;width:34px;height:34px;border:1px solid #b99378;border-radius:9px;background:#fffaf3;color:#7d1107;cursor:pointer;font-size:16px}
+.pdv-remover-item:hover,.pdv-remover-item:focus-visible{background:#f7e3da;color:#512c24;outline:2px solid #b87542;outline-offset:1px}
+.pdv-remover-item:disabled{opacity:.5;cursor:wait}
+.pdv-exclusao-popup{border-radius:18px!important;padding:22px!important}
+.pdv-exclusao-popup .swal2-title{color:#512c24!important;font-weight:800!important}
+.pdv-exclusao-popup .swal2-actions{gap:10px!important}
+.pdv-exclusao-popup .swal2-confirm,.pdv-exclusao-popup .swal2-cancel{border-radius:9px!important;padding:12px 18px!important;font-weight:700!important;min-height:44px}
+.pdv-exclusao-conteudo{color:#512c24;text-align:center}
+.pdv-exclusao-produto{background:#fffaf3;border:1px solid #e1c6ae;border-radius:12px;padding:13px;font-size:17px;font-weight:800;overflow-wrap:anywhere}
+.pdv-exclusao-conteudo p{margin:12px 0 0;color:#5e4c45}
+@media(max-width:500px){.pdv-exclusao-popup .swal2-actions{flex-direction:column-reverse;width:100%}.pdv-exclusao-popup .swal2-confirm,.pdv-exclusao-popup .swal2-cancel{width:100%;margin:0!important}}
 .pdv-comanda-controles{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-top:7px;font-size:13px;color:#512c24!important}
 .pdv-quantidade-grupo{display:inline-flex;align-items:center;border:1px solid #b99378;border-radius:9px;overflow:hidden;background:#fffaf3}
 .pdv-quantidade-grupo.ocultar{display:none!important}
