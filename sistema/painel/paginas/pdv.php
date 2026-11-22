@@ -1130,6 +1130,11 @@ function atualizarPagamentoPdv(){
         $('#troco').val('0');
         $('#troco_resultado').val('R$ 0,00');
     }
+    // Atualizar tambem o resumo da comanda, sem depender de nova consulta AJAX.
+    var trocoCalculado = dinheiro && !dividido ? Math.max(0, pago - total) : 0;
+    var mostrarTroco = dinheiro && !dividido && pago > 0;
+    $('#pdv-resumo-troco-valor').text('R$ ' + trocoCalculado.toFixed(2).replace('.', ','));
+    $('#pdv-resumo-troco').toggle(mostrarTroco);
     // A tela de troco so faz sentido para dinheiro.
     $('#troco_resultado').prop('readonly', true);
     $('#troco_resultado').closest('div').toggle(dinheiro && !dividido);
