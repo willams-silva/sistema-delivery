@@ -247,13 +247,14 @@ HTML;
 
 <script type="text/javascript">
 	$(document).ready(function() {
-		$('#tabela').DataTable({
-			"ordering": false,
+        var tabelaCaixa=$('#tabela').DataTable({
+            "ordering": false,
             "responsive": false,
             "scrollX": false,
             "autoWidth": false,
-			"stateSave": true,
-		});
+            "stateSave": true,
+            "columnDefs": [{"targets":8,"visible":false,"searchable":false}]
+        });
         // Detalhes por linha, sem sobrepor o indicador de caixa aberto.
         $('#tabela tbody').off('click.caixaExpand').on('click.caixaExpand', '.caixa-expand-btn', function(){
             var btn=$(this), tr=btn.closest('tr'), row=$('#tabela').DataTable().row(tr);
@@ -272,6 +273,15 @@ HTML;
                 campo.append($('<span></span>').text(texto || '—'));
                 detalhe.append(campo);
             });
+            // A coluna Acoes fica oculta; seus controles aparecem somente
+            // dentro do cartao expandido, mantendo os handlers existentes.
+            var dados=row.data();
+            if(dados && dados[8]){
+                var acoes=$('<div class="caixa-detail-actions"></div>');
+                acoes.append($('<strong class="caixa-detail-actions-title"></strong>').text('Ações'));
+                acoes.append($('<div class="caixa-detail-actions-buttons"></div>').html(dados[8]));
+                detalhe.append(acoes);
+            }
             row.child(detalhe).show();
             tr.addClass('caixa-expanded');
             btn.text('−').attr('aria-expanded','true').attr('aria-label','Recolher detalhes do caixa');
