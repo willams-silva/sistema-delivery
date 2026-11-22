@@ -423,17 +423,25 @@ function excluirAlert(id) {
             event.target.blur(); // onblur valida e grava uma unica vez
             return false;
         }
-        if (event.key === 'Escape') {
+        if (event.key === 'Escape' || event.key === 'Esc' || event.keyCode === 27) {
             event.preventDefault();
-            event.target.value = anterior;
+            event.stopPropagation();
+            // Marcar cancelamento ANTES do blur: o blur nao pode enviar AJAX.
+            event.target.dataset.pdvCancelarEdicao = '1';
+            event.target.value = String(anterior);
             event.target.blur();
             return false;
         }
         return true;
     }
     function alterarQuantidade(id, quant_enviada) {
-        if (window.pdvQuantidadeEmAndamento && window.pdvQuantidadeEmAndamento[id]) return;
         var campo = $('#input_quant_' + id);
+        if (campo[0] && campo[0].dataset.pdvCancelarEdicao === '1') {
+            delete campo[0].dataset.pdvCancelarEdicao;
+            campo.val(String(quant_enviada));
+            return;
+        }
+        if (window.pdvQuantidadeEmAndamento && window.pdvQuantidadeEmAndamento[id]) return;
         var quantidade = String(campo.val() || '').trim();
         if (quantidade === String(quant_enviada)) return;
         if (!/^[0-9]+(?:[.,][0-9]{1,3})?$/.test(quantidade) || Number(quantidade.replace(',', '.')) <= 0) {
