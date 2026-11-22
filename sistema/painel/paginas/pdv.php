@@ -88,6 +88,14 @@ $data_atual = date('Y-m-d');
 .pdv-limpar-conteudo p{margin-bottom:12px}
 .pdv-limpar-conteudo strong{display:block;background:#fffaf3;border:1px solid #e1c6ae;border-radius:10px;padding:10px}
 @media(max-width:500px){.pdv-limpar-popup .swal2-actions{flex-direction:column-reverse;width:100%}.pdv-limpar-popup .swal2-confirm,.pdv-limpar-popup .swal2-cancel{width:100%;margin:0!important}}
+.pdv-comanda-lista{width:100%;max-height:280px;overflow-y:auto;overflow-x:hidden;scrollbar-width:thin;scrollbar-gutter:stable;padding:4px 12px 8px 0;box-sizing:border-box}
+.pdv-comanda-item{padding:10px 0 14px;border-bottom:1px solid #e6d8cd;margin:0!important;min-width:0}
+.pdv-comanda-item:last-child{border-bottom:0}
+.pdv-comanda-detalhes{min-width:0;padding-right:44px!important;overflow-wrap:anywhere}
+.pdv-remover-area{position:absolute;top:0;right:2px;z-index:1}
+.pdv-comanda-controles{min-width:0;max-width:100%}
+.pdv-total-item{margin-left:0!important;white-space:normal!important;overflow-wrap:anywhere}
+@media(max-width:600px){.pdv-comanda-lista{max-height:300px;padding-right:10px}.pdv-comanda-detalhes{padding-right:40px!important}.pdv-comanda-controles{gap:7px}}
 .pdv-remover-item{display:inline-flex;align-items:center;justify-content:center;width:34px;height:34px;border:1px solid #b99378;border-radius:9px;background:#fffaf3;color:#7d1107;cursor:pointer;font-size:16px}
 .pdv-remover-item:hover,.pdv-remover-item:focus-visible{background:#f7e3da;color:#512c24;outline:2px solid #b87542;outline-offset:1px}
 .pdv-remover-item:disabled{opacity:.5;cursor:wait}
