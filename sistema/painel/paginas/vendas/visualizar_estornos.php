@@ -23,6 +23,7 @@ th{background:#f1dfce;color:#512c24}.pager{display:flex;gap:12px;align-items:cen
 #error{color:#b42318}#status{min-height:20px}
 </style></head><body><main><h1>Histórico de estornos</h1>
 <p>Consulta financeira somente leitura. Este painel não realiza devoluções.</p>
+<p><strong>Conciliação segura:</strong> antes de concluir qualquer estorno, confira os recebimentos de cada forma de pagamento, o caixa original e os itens de estoque. Um estorno registrado não significa dinheiro devolvido. O processamento automático permanece desativado até a validação transacional.</p>
 <p><a href="../../index.php?pagina=vendas" style="color:#512c24">Voltar às vendas</a></p>
 <section class="card">
 <form id="filtros"><label>Venda <input id="venda" type="number" min="1" placeholder="Número da venda"></label>
