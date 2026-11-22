@@ -13,6 +13,23 @@ $tabela = 'receber';
 
 $sessao = $id_usuario;
 
+// Idempotencia por sessao: uma mesma tentativa de venda nunca gera
+// uma segunda venda, mesmo com duplo clique ou repeticao da requisicao.
+$pdvToken = trim((string)($_POST['pdv_token'] ?? ''));
+if (!preg_match('/^[a-f0-9]{32}$/', $pdvToken)) {
+    http_response_code(409);
+    exit('Sessão de venda desatualizada. Atualize o PDV antes de finalizar.');
+}
+if (!isset($_SESSION['pdv_vendas_confirmadas']) || !is_array($_SESSION['pdv_vendas_confirmadas'])) {
+    $_SESSION['pdv_vendas_confirmadas'] = [];
+}
+$chavePdv = (int)$id_empresa . ':' . (int)$id_usuario . ':' . $pdvToken;
+if (isset($_SESSION['pdv_vendas_confirmadas'][$chavePdv])) {
+    echo 'Salvo com Sucesso-' . (int)$_SESSION['pdv_vendas_confirmadas'][$chavePdv];
+    exit();
+}
+
+
 $data_atual = date('Y-m-d');
 $mes_atual = Date('m');
 $ano_atual = Date('Y');
@@ -331,6 +348,12 @@ $tempSt->execute(array_merge([(int)$id_pedido, (int)$id_empresa], $idsCarrinhoVe
 
 
 $pdo->commit();
+// A sessao PHP mantem o lock durante toda a requisicao. Registrar a
+// confirmacao antes de responder para que um retry retorne o mesmo pedido.
+$_SESSION['pdv_vendas_confirmadas'][$chavePdv] = (int)$id_pedido;
+if (count($_SESSION['pdv_vendas_confirmadas']) > 30) {
+    $_SESSION['pdv_vendas_confirmadas'] = array_slice($_SESSION['pdv_vendas_confirmadas'], -30, null, true);
+}
 echo 'Salvo com Sucesso-'.$id_pedido;
 } catch (Throwable $e) {
     if ($pdo->inTransaction()) $pdo->rollBack();
