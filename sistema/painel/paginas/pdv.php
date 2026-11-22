@@ -241,6 +241,12 @@ $data_atual = date('Y-m-d');
         <div class="bg-white rounded-xl shadow-sm p-4">
                    <!-- Lista de Itens no Carrinho -->
          <div id="listar_vendas" style="margin-top: -10px"></div>
+         <?php if(!($id_ab_mesa > 0)){ ?>
+         <div id="pdv-status-fechamento" class="pdv-status-fechamento" role="status" aria-live="polite">
+           <i id="pdv-status-icone" class="fas fa-info-circle" aria-hidden="true"></i>
+           <span id="pdv-status-texto">Selecione os produtos e a forma de pagamento.</span>
+         </div>
+         <?php } ?>
           
           
           <form id="form_venda">     
@@ -404,12 +410,6 @@ $data_atual = date('Y-m-d');
 
 			<?php } ?>
           
-          <?php if(!($id_ab_mesa > 0)){ ?>
-          <div id="pdv-status-fechamento" class="pdv-status-fechamento" role="status" aria-live="polite">
-            <i id="pdv-status-icone" class="fas fa-info-circle" aria-hidden="true"></i>
-            <span id="pdv-status-texto">Selecione os produtos e a forma de pagamento.</span>
-          </div>
-          <?php } ?>
           <div class="flex gap-3 mt-6">
 
           	<?php if($id_ab_mesa == ""){ ?>
