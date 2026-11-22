@@ -231,7 +231,7 @@ if ($entrega == 'Consumir Local') {
 	$dados = $res->fetchAll(PDO::FETCH_ASSOC);
 	$linhas = count($dados);
 
-	$sub_tot;
+	$sub_tot = 0;
 	for ($i = 0; $i < count($dados); $i++) {
 		foreach ($dados[$i] as $key => $value) {
 		}
@@ -250,7 +250,7 @@ if ($entrega == 'Consumir Local') {
 
 		//tratamento separa string
 	$qt = explode(".", $quantidade);
-	if($qt[1] > 0){
+	if(isset($qt[1]) && (float)$qt[1] > 0){
 		$quantidadeF = $quantidade;		
 	}else{
 		$quantidadeF = $qt[0];
@@ -396,8 +396,12 @@ if ($entrega == 'Consumir Local') {
 							$query3 = $pdo->query("SELECT * FROM $tabela_ad where id = '$id_item'");
 							$res3 = $query3->fetchAll(PDO::FETCH_ASSOC);
 							$total_reg3 = @count($res3);
-							$nome_adc = $res3[0]['nome'];
-							echo '(' . $quantidade_temp . ') ' . $nome_adc;
+							$nome_adc = isset($res3[0]['nome']) ? trim((string)$res3[0]['nome']) : '';
+                            if ($nome_adc === '') {
+                                // Registro antigo/removido: nao imprimir avisos PHP no cupom.
+                                continue;
+                            }
+							echo '(' . $quantidade_temp . ') ' . htmlspecialchars($nome_adc, ENT_QUOTES, 'UTF-8');
 							if ($i2 < ($total_reg2 - 1)) {
 								echo ', ';
 							}
@@ -455,7 +459,8 @@ if ($entrega == 'Consumir Local') {
 							$query3 = $pdo->query("SELECT * FROM itens_grade where id = '$id_item' order by posicao asc");
 							$res3 = $query3->fetchAll(PDO::FETCH_ASSOC);
 							$total_reg3 = @count($res3);
-							$nome_item = $res3[0]['texto'];
+							$nome_item = isset($res3[0]['texto']) ? (string)$res3[0]['texto'] : '';
+                            if ($nome_item === '') continue;
 							if ($i2 < ($total_reg2 - 1)) {
 								$nome_item .= ', ';
 							}
