@@ -225,7 +225,19 @@ $texto_filtro = 'OPERADOR: ' . $nome_operador;
         .report-note { padding:8px; border:1px solid #e2cdbb; background:#fffaf4; margin:8px 0; font-size:10px; }
         .report-signature { margin-top:35px; text-align:center; font-size:10px; }
         .report-signature-line { border-top:1px solid #876458; width:260px; margin:0 auto 6px; }
-    </style>
+            /* Cabecalho: manter logo e titulo inteiramente dentro da borda. */
+        #header { height:82px!important; }
+        #header .report-header-box {
+            height:70px!important; padding:7px 12px!important;
+            border:1px solid #d7bda6!important; border-radius:5px;
+            background:#fffaf4; box-sizing:border-box;
+        }
+        #header .report-header-table { width:100%; height:54px; table-layout:fixed; border:0; }
+        #header .report-header-logo { width:32%; vertical-align:middle; text-align:left; padding:0; border:0!important; }
+        #header .report-header-logo img { display:block; max-width:115px; max-height:48px; width:auto; height:auto; }
+        #header .report-header-info { width:68%; text-align:right; vertical-align:middle; padding:0 2px 0 8px; border:0!important; font-size:9px; line-height:1.55; }
+        #header .report-header-title { font-size:13px; font-weight:bold; color:#512c24; margin-bottom:3px; }
+</style>
 
 
 
@@ -244,27 +256,30 @@ $texto_filtro = 'OPERADOR: ' . $nome_operador;
 
 
 	<div id="header">
-
-		<div style="border-style: solid; font-size: 10px; height: 50px;">
-			<table style="width: 100%; border: 0px solid #ccc;">
-				<tr>
-					<td style="border: 1px; solid #000; width: 40%; text-align: left;">
-						<img style="margin-top: 7px; margin-left: 7px;" id="imag" src="<?php echo $url_sistema ?>sistema/img/logo.jpg" width="110px">
-					</td>
-
-					<td style="width: 5%; text-align: center; font-size: 13px;">
-
-					</td>
-
-					<td style="width: 40%; text-align: right; font-size: 9px;padding-right: 10px;">
-						<b><big>DETALHAMENTO CAIXA</big></b><br> <b>OPERADOR: </b><?php echo mb_strtoupper($nome_operador) ?> <br> <?php echo mb_strtoupper($data_hoje) ?>
-					</td>
-				</tr>
-			</table>
-		</div>
-
-		<br>
-
+        <div class="report-header-box">
+            <table class="report-header-table" cellspacing="0" cellpadding="0">
+                <tr>
+                    <td class="report-header-logo">
+                        <?php
+                        // Dompdf: arquivo local em base64 evita imagem quebrada por URL externa.
+                        $logoArquivo = realpath(__DIR__ . '/../../img/logo.jpg');
+                        if ($logoArquivo && is_file($logoArquivo) && is_readable($logoArquivo)) {
+                            $logoBase64 = base64_encode(file_get_contents($logoArquivo));
+                            echo '<img src="data:image/jpeg;base64,' . $logoBase64 . '" alt="Logo" />';
+                        } else {
+                            echo '<strong>' . htmlspecialchars((string)$nome_sistema, ENT_QUOTES, 'UTF-8') . '</strong>';
+                        }
+                        ?>
+                    </td>
+                    <td class="report-header-info">
+                        <div class="report-header-title">DETALHAMENTO CAIXA</div>
+                        <div><strong>OPERADOR:</strong> <?php echo htmlspecialchars(mb_strtoupper((string)$nome_operador), ENT_QUOTES, 'UTF-8'); ?></div>
+                        <div><?php echo htmlspecialchars(mb_strtoupper((string)$data_hoje), ENT_QUOTES, 'UTF-8'); ?></div>
+                    </td>
+                </tr>
+            </table>
+        </div>
+    </div>
 
 
 
