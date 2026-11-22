@@ -78,6 +78,17 @@ $data_atual = date('Y-m-d');
 <style>
 .pdv-product-code{font-size:12px;color:#475569;margin:5px 0;overflow-wrap:anywhere;font-weight:600}
 
+.pdv-comanda-controles{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-top:7px;font-size:13px;color:#512c24!important}
+.pdv-quantidade-grupo{display:inline-flex;align-items:center;border:1px solid #b99378;border-radius:9px;overflow:hidden;background:#fffaf3}
+.pdv-quantidade-grupo.ocultar{display:none!important}
+.pdv-quantidade-btn{display:inline-flex;align-items:center;justify-content:center;width:38px;height:40px;min-width:38px;background:#512c24;color:#fff;border:0;cursor:pointer;font-size:14px;transition:background .15s}
+.pdv-quantidade-btn:hover,.pdv-quantidade-btn:focus-visible{background:#351b17;color:#fff}
+.pdv-quantidade-btn:focus-visible,.pdv-quantidade-input:focus-visible{outline:2px solid #b87542;outline-offset:-2px}
+.pdv-quantidade-input{width:48px!important;height:40px!important;min-height:40px!important;padding:3px!important;text-align:center!important;border:0!important;border-radius:0!important;background:#fffdf9!important;color:#512c24!important;font-size:16px!important;font-weight:800!important}
+.pdv-quantidade-unidade{font-size:12px;font-weight:600;white-space:nowrap}
+.pdv-total-item{margin-left:auto;white-space:nowrap;font-size:13px;color:#512c24}
+.pdv-total-item strong{font-size:14px}
+@media(max-width:767px){.pdv-quantidade-btn{width:44px;min-width:44px;height:44px}.pdv-quantidade-input{height:44px!important;min-height:44px!important}}
 .pdv-estoque-popup{border-radius:18px!important;padding:22px 22px 26px!important;max-width:480px!important}
 .pdv-estoque-popup .swal2-title{color:#512c24!important;font-size:25px!important;line-height:1.2!important}
 .pdv-estoque-popup .swal2-html-container{margin:16px 0 0!important;overflow:visible!important}
