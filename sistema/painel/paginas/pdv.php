@@ -795,6 +795,27 @@ $data_atual = date('Y-m-d');
 
 			let envioEmAndamento = false;
 
+function prepararNovaVendaPdv() {
+    // Executado em TODA venda concluida, impressa ou nao.
+    $('#desconto, #frete').val('');
+    $('#troco').val('0');
+    $('#tipo_desconto').val('reais');
+    $('#cliente').val('0').trigger('change');
+    $('#cliente_input').val('0');
+    $('#data2').val('<?=$data_atual?>');
+    $('#saida, #entrega, #forma_pgto2').val('');
+    $('#pdv_dividir_pagamento').prop('checked', false);
+    $('#valor_pago').data('pdv-dinheiro', false).prop('readonly', true).val('0.00');
+    $('#troco_resultado').val('R$ 0,00');
+    $('#valor_restante').val('0');
+    $('#total_restante').text('0.00');
+    $('#div_pgto2').hide();
+    atualizarPagamentoPdv();
+}
+function focarNovaVendaPdv() {
+    var busca = $('#txt_buscar');
+    if (busca.length) busca.trigger('focus');
+}
 function confirmarVendaConcluidaPdv(idVenda, impressaoAutomatica) {
     var id = String(idVenda || '').trim();
     var comprovante = /^\d+$/.test(id) ? 'rel/comprovante_balcao.php?id=' + encodeURIComponent(id) : '';
@@ -818,9 +839,9 @@ function confirmarVendaConcluidaPdv(idVenda, impressaoAutomatica) {
         if (resultado.dismiss === Swal.DismissReason.cancel && comprovante) {
             // O modal ja foi fechado pelo SweetAlert. Nao reabri-lo apos imprimir.
             window.open(comprovante, '_blank');
-            $('#txt_buscar').trigger('focus');
+            focarNovaVendaPdv();
         } else if (resultado.isConfirmed) {
-            $('#txt_buscar').trigger('focus');
+            focarNovaVendaPdv();
         }
     });
 }
@@ -913,25 +934,7 @@ $("#form_venda").submit(function (event) {
                     }
 					$("#img_loading").hide();
 
-					$('#desconto').val('');
-					$('#troco').val('');
-					$('#frete').val('');
-					$('#cliente').val('0').change();
-					$('#cliente_input').val('0');
-					$('#data').val('<?=$data_atual?>');
-					$('#saida').val('');
-					$('#entrega').val('');
-                    // Limpar dados financeiros da venda anterior, inclusive pagamento dividido.
-                    // Evita que o valor recebido ou a segunda forma sejam reutilizados na proxima venda.
-                    $('#pdv_dividir_pagamento').prop('checked', false);
-                    $('#forma_pgto2').val('');
-                    $('#valor_pago').data('pdv-dinheiro', false).prop('readonly', true).val('0.00');
-                    $('#troco_resultado').val('R$ 0,00');
-                    $('#valor_restante').val('0');
-                    $('#total_restante').text('0.00');
-                    $('#div_pgto2').hide();
-                    atualizarPagamentoPdv();
-
+					prepararNovaVendaPdv();
 					listar(); 
 					listarVendas();
 
