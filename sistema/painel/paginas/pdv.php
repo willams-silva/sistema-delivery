@@ -816,8 +816,9 @@ function confirmarVendaConcluidaPdv(idVenda, impressaoAutomatica) {
         customClass: {popup: 'pdv-aviso-fechamento-popup'}
     }).then(function(resultado) {
         if (resultado.dismiss === Swal.DismissReason.cancel && comprovante) {
+            // O modal ja foi fechado pelo SweetAlert. Nao reabri-lo apos imprimir.
             window.open(comprovante, '_blank');
-            confirmarVendaConcluidaPdv(id, true);
+            $('#txt_buscar').trigger('focus');
         } else if (resultado.isConfirmed) {
             $('#txt_buscar').trigger('focus');
         }
