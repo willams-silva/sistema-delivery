@@ -78,6 +78,8 @@ $data_atual = date('Y-m-d');
 <style>
 .pdv-product-code{font-size:12px;color:#475569;margin:5px 0;overflow-wrap:anywhere;font-weight:600}
 
+.pdv-aviso-atualizacao{padding:12px;margin:8px 0;background:#fff5e8;border:1px solid #b99378;border-radius:10px;color:#512c24;font-weight:700}
+.pdv-aviso-atualizacao button{margin-left:8px;border:0;border-radius:7px;background:#512c24;color:#fff;padding:8px 12px;cursor:pointer}
 .pdv-limpar-popup{border-radius:18px!important;padding:22px!important}
 .pdv-limpar-popup .swal2-title{color:#512c24!important;font-weight:800!important}
 .pdv-limpar-popup .swal2-actions{gap:10px!important}
@@ -878,27 +880,39 @@ $("#form_venda").submit(function (event) {
 
 			
 
-			function listarVendas(){
-				var desconto = $("#desconto").val();
-				var frete = $("#frete").val();	
-				var troco = $("#troco").val();
-				var tipo_desconto = $("#tipo_desconto").val();	
-				$.ajax({
-					url: 'paginas/' + pag + "/listar_vendas.php",
-					method: 'POST',
-					data: {desconto, troco, tipo_desconto, frete},
-					dataType: "html",
-
-					success:function(result){
-						$("#listar_vendas").html(result);
-                        // O subtotal e atualizado no HTML da comanda; recalcular
-                        // dinheiro, troco e saldo somente depois de receber o novo total.
-                        atualizarPagamentoPdv();
-					}
-				});
-
-				FormaPg()
-			}
+            // Somente a consulta mais recente pode atualizar a comanda.
+            // Evita que respostas antigas sobrescrevam quantidades e totais novos.
+            var pdvListaRequisicao = null;
+            var pdvListaVersao = 0;
+            function listarVendas(){
+                var desconto = $("#desconto").val();
+                var frete = $("#frete").val();
+                var troco = $("#troco").val();
+                var tipo_desconto = $("#tipo_desconto").val();
+                var versao = ++pdvListaVersao;
+                if (pdvListaRequisicao && pdvListaRequisicao.readyState !== 4) {
+                    pdvListaRequisicao.abort();
+                }
+                pdvListaRequisicao = $.ajax({
+                    url: 'paginas/' + pag + "/listar_vendas.php",
+                    method: 'POST',
+                    data: {desconto, troco, tipo_desconto, frete},
+                    dataType: 'html'
+                }).done(function(result) {
+                    if (versao !== pdvListaVersao) return;
+                    $('#pdv-aviso-atualizacao').remove();
+                    $("#listar_vendas").html(result);
+                    if (typeof atualizarPagamentoPdv === 'function') atualizarPagamentoPdv();
+                }).fail(function(xhr, status) {
+                    if (status === 'abort' || versao !== pdvListaVersao) return;
+                    // Nunca substituir a comanda por dados vazios numa falha de rede.
+                    if ($('#pdv-aviso-atualizacao').length) $('#pdv-aviso-atualizacao').show();
+                    else {
+                        $('#listar_vendas').before('<div id="pdv-aviso-atualizacao" class="pdv-aviso-atualizacao" role="alert">Não foi possível atualizar a comanda. <button type="button" onclick="listarVendas()">Tentar novamente</button></div>');
+                    }
+                });
+                FormaPg();
+            }
 
             var pdvLimpandoVenda = false;
             function limparVenda() {
