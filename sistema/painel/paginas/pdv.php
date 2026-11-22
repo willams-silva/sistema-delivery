@@ -306,11 +306,11 @@ $data_atual = date('Y-m-d');
               <div id="pdv-valores-rapidos" class="pdv-valores-rapidos" style="display:none" role="group" aria-label="Valores rápidos de dinheiro recebido">
                 <span class="pdv-valores-rotulo">Recebido em dinheiro</span>
                 <div class="pdv-valores-botoes">
-                  <button type="button" data-valor-pdv="exato" aria-pressed="false" onclick="definirValorRapidoPdv('exato')">Valor exato</button>
-                  <button type="button" data-valor-pdv="20" aria-pressed="false" onclick="definirValorRapidoPdv(20)">R$ 20</button>
-                  <button type="button" data-valor-pdv="50" aria-pressed="false" onclick="definirValorRapidoPdv(50)">R$ 50</button>
-                  <button type="button" data-valor-pdv="100" aria-pressed="false" onclick="definirValorRapidoPdv(100)">R$ 100</button>
-                  <button type="button" class="pdv-valor-limpar" onclick="limparValorRecebidoPdv()" aria-label="Limpar valor recebido"><i class="fa fa-eraser" aria-hidden="true"></i> Limpar</button>
+                  <button type="button" data-valor-pdv="exato" aria-pressed="false" onclick="definirValorRapidoPdv('exato')">Alt+1 · Valor exato</button>
+                  <button type="button" data-valor-pdv="20" aria-pressed="false" onclick="definirValorRapidoPdv(20)">R$ 20 · Alt+2</button>
+                  <button type="button" data-valor-pdv="50" aria-pressed="false" onclick="definirValorRapidoPdv(50)">R$ 50 · Alt+3</button>
+                  <button type="button" data-valor-pdv="100" aria-pressed="false" onclick="definirValorRapidoPdv(100)">R$ 100 · Alt+4</button>
+                  <button type="button" class="pdv-valor-limpar" onclick="limparValorRecebidoPdv()" aria-label="Limpar valor recebido"><i class="fa fa-eraser" aria-hidden="true"></i> Limpar · Alt+L</button>
                 </div>
               </div>
             </div>
@@ -1129,6 +1129,21 @@ function tipoDesc(p){
 
 
 
+// Atalhos de caixa: Alt+1 (exato), Alt+2 (20), Alt+3 (50), Alt+4 (100), Alt+L (limpar).
+// Alt evita conflito com o leitor de codigo de barras e com a digitacao normal.
+$(document).off('keydown.pdvValoresRapidos').on('keydown.pdvValoresRapidos', function(event) {
+    if (!event.altKey || event.ctrlKey || event.metaKey || event.repeat) return;
+    if ($('.modal.show:visible, .swal2-container:visible').length) return;
+    var atalhos = {'1':'exato', '2':20, '3':50, '4':100};
+    var tecla = String(event.key || '').toLowerCase();
+    if (!Object.prototype.hasOwnProperty.call(atalhos, tecla) && tecla !== 'l') return;
+    var forma = String($('#saida').val() || '').trim().toLowerCase();
+    if (!['dinheiro', 'espécie', 'especie'].includes(forma) || $('#pdv_dividir_pagamento').is(':checked')) return;
+    if (!$('#pdv-valores-rapidos').is(':visible')) return;
+    event.preventDefault();
+    if (tecla === 'l') limparValorRecebidoPdv();
+    else definirValorRapidoPdv(atalhos[tecla]);
+});
 function definirValorRapidoPdv(valor) {
     var forma = String($('#saida').val() || '').trim().toLowerCase();
     var dinheiro = ['dinheiro', 'espécie', 'especie'].includes(forma);
