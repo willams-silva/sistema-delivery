@@ -101,6 +101,8 @@ $data_atual = date('Y-m-d');
 .pdv-valores-rotulo{display:block;color:#512c24;font-size:12px;font-weight:700;margin-bottom:6px}
 .pdv-valores-botoes{display:flex;flex-wrap:wrap;gap:6px}
 .pdv-valores-botoes button{background:#fffaf3;color:#512c24;border:1px solid #b99378;border-radius:8px;padding:8px 10px;min-height:38px;font-size:12px;font-weight:800;cursor:pointer}
+.pdv-valores-botoes button.pdv-valor-selecionado{background:#512c24!important;color:#fff!important;border-color:#512c24!important;box-shadow:0 0 0 2px #d9b99e}
+.pdv-valores-botoes button.pdv-valor-limpar{background:#f4e9e0;border-style:dashed}
 .pdv-valores-botoes button:hover,.pdv-valores-botoes button:focus-visible{background:#512c24;color:#fff;outline:2px solid #b87542;outline-offset:1px}
 .pdv-resumo-recebido{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-top:10px;padding-top:10px;border-top:1px solid #e1c6ae;font-size:13px;font-weight:700;color:#512c24}
 .pdv-resumo-recebido strong{font-size:17px;white-space:nowrap}
@@ -304,10 +306,11 @@ $data_atual = date('Y-m-d');
               <div id="pdv-valores-rapidos" class="pdv-valores-rapidos" style="display:none" role="group" aria-label="Valores rápidos de dinheiro recebido">
                 <span class="pdv-valores-rotulo">Recebido em dinheiro</span>
                 <div class="pdv-valores-botoes">
-                  <button type="button" onclick="definirValorRapidoPdv('exato')">Valor exato</button>
-                  <button type="button" onclick="definirValorRapidoPdv(20)">R$ 20</button>
-                  <button type="button" onclick="definirValorRapidoPdv(50)">R$ 50</button>
-                  <button type="button" onclick="definirValorRapidoPdv(100)">R$ 100</button>
+                  <button type="button" data-valor-pdv="exato" aria-pressed="false" onclick="definirValorRapidoPdv('exato')">Valor exato</button>
+                  <button type="button" data-valor-pdv="20" aria-pressed="false" onclick="definirValorRapidoPdv(20)">R$ 20</button>
+                  <button type="button" data-valor-pdv="50" aria-pressed="false" onclick="definirValorRapidoPdv(50)">R$ 50</button>
+                  <button type="button" data-valor-pdv="100" aria-pressed="false" onclick="definirValorRapidoPdv(100)">R$ 100</button>
+                  <button type="button" class="pdv-valor-limpar" onclick="limparValorRecebidoPdv()" aria-label="Limpar valor recebido"><i class="fa fa-eraser" aria-hidden="true"></i> Limpar</button>
                 </div>
               </div>
             </div>
@@ -1136,6 +1139,25 @@ function definirValorRapidoPdv(valor) {
     if (!Number.isFinite(recebido) || recebido <= 0) return;
     $('#valor_pago').data('pdv-dinheiro', true).val(recebido.toFixed(2)).trigger('input');
 }
+function limparValorRecebidoPdv() {
+    var forma = String($('#saida').val() || '').trim().toLowerCase();
+    if (!['dinheiro', 'espécie', 'especie'].includes(forma) || $('#pdv_dividir_pagamento').is(':checked')) return;
+    $('#valor_pago').data('pdv-dinheiro', true).val('').trigger('input').trigger('focus');
+}
+function destacarAtalhoPdv() {
+    var forma = String($('#saida').val() || '').trim().toLowerCase();
+    var ativo = ['dinheiro', 'espécie', 'especie'].includes(forma) && !$('#pdv_dividir_pagamento').is(':checked');
+    var valor = Number(String($('#valor_pago').val() || '').replace(',', '.'));
+    var texto = String($('#valor_pago').val() || '').trim();
+    var total = Number($('#subtotal_venda').val()) || 0;
+    $('#pdv-valores-rapidos button').each(function() {
+        var botao = $(this);
+        var tipo = botao.attr('data-valor-pdv');
+        var esperado = tipo === 'exato' ? total : Number(tipo);
+        var selecionado = ativo && texto !== '' && tipo && Number.isFinite(valor) && Math.abs(valor - esperado) < 0.005;
+        botao.toggleClass('pdv-valor-selecionado', !!selecionado).attr('aria-pressed', selecionado ? 'true' : 'false');
+    });
+}
 function atualizarPagamentoPdv(){
     var forma = ($('#saida').val() || '').trim().toLowerCase();
     var dinheiro = forma === 'dinheiro' || forma === 'espécie' || forma === 'especie';
@@ -1174,6 +1196,7 @@ function atualizarPagamentoPdv(){
     var mostrarFaltante = dinheiro && !dividido && pago > 0 && valorFaltante > 0.001;
     $('#pdv-resumo-faltante-valor').text(formatarMoedaPdv(valorFaltante));
     $('#pdv-resumo-faltante').toggle(mostrarFaltante);
+    destacarAtalhoPdv();
     // A tela de troco so faz sentido para dinheiro.
     $('#troco_resultado').prop('readonly', true);
     $('#troco_resultado').closest('div').toggle(dinheiro && !dividido);
