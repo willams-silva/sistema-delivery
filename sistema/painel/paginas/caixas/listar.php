@@ -61,7 +61,7 @@ $total_reg = @count($res);
 if ($total_reg > 0) {
 
 	echo <<<HTML
-	<table class="table table-hover table-bordered text-nowrap border-bottom dt-responsive" id="tabela">
+	<table class="table table-hover table-bordered text-nowrap border-bottom" id="tabela">
 		<thead> 
 			<tr> 				
 
@@ -251,6 +251,9 @@ HTML;
 	$(document).ready(function() {
 		$('#tabela').DataTable({
 			"ordering": false,
+            "responsive": false,
+            "scrollX": true,
+            "autoWidth": false,
 			"stateSave": true,
 		});
 		$('#tabela_filter label input').focus();
