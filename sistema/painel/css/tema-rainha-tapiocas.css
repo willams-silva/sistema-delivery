@@ -838,3 +838,186 @@ html body #modalDados .bg-primary {
 html body #modalDados .modal-content {background:#fffaf3!important;color:#512c24!important;}
 html body #modalDados .table td {border-color:#e2cbb8!important;}
 html body #modalDados .btn-close {filter:none!important;}
+
+
+/* Alto contraste para operacao em food truck: todos os menus da Rainha.
+   Mantem semantica de alertas, estados e acoes perigosas. */
+:root {
+ --rainha-fundo-operacional:#fffaf3;
+ --rainha-superficie:#fffdf9;
+ --rainha-texto-operacional:#42251e;
+ --rainha-borda-operacional:#b99378;
+ --rainha-foco-operacional:#965a31;
+}
+html body,
+html body.dark-theme,
+html body .main-content,
+html body .main-content .container-fluid,
+html body .main-content .container,
+html body .page,
+html body .page-content {
+ color:var(--rainha-texto-operacional)!important;
+}
+html body .main-content,
+html body .page,
+html body .page-content {background-color:var(--rainha-fundo-operacional)!important;}
+html body .main-content .card,
+html body .main-content .widget-shadow,
+html body .main-content .modal-body,
+html body .modal-content,
+html body .dropdown-menu:not(.select2-dropdown) {
+ background-color:var(--rainha-superficie)!important;
+ color:var(--rainha-texto-operacional)!important;
+}
+html body .main-content label,
+html body .modal label,
+html body .main-content .form-label,
+html body .main-content .card-title,
+html body .main-content h1,
+html body .main-content h2,
+html body .main-content h3,
+html body .main-content h4,
+html body .main-content h5,
+html body .modal-title {
+ color:var(--rainha-texto-operacional)!important;
+}
+html body .main-content input:not([type=checkbox]):not([type=radio]):not([type=range]):not([type=submit]):not([type=button]),
+html body .main-content select,
+html body .main-content textarea,
+html body .modal input:not([type=checkbox]):not([type=radio]):not([type=range]):not([type=submit]):not([type=button]),
+html body .modal select,
+html body .modal textarea,
+html body .main-content .form-control,
+html body .main-content .form-select,
+html body .modal .form-control,
+html body .modal .form-select {
+ background-color:var(--rainha-superficie)!important;
+ color:var(--rainha-texto-operacional)!important;
+ border:1px solid var(--rainha-borda-operacional)!important;
+ min-height:40px;
+ border-radius:8px!important;
+ opacity:1!important;
+}
+html body .main-content input::placeholder,
+html body .main-content textarea::placeholder,
+html body .modal input::placeholder,
+html body .modal textarea::placeholder {color:#75594b!important;opacity:1!important;}
+html body .main-content input:focus,
+html body .main-content select:focus,
+html body .main-content textarea:focus,
+html body .modal input:focus,
+html body .modal select:focus,
+html body .modal textarea:focus {
+ outline:2px solid var(--rainha-foco-operacional)!important;
+ outline-offset:1px;
+ box-shadow:0 0 0 3px rgba(150,90,49,.15)!important;
+}
+html body .main-content .table,
+html body .modal .table,
+html body .main-content .table tbody,
+html body .modal .table tbody,
+html body .main-content .table tbody tr,
+html body .modal .table tbody tr,
+html body .main-content .table tbody td,
+html body .modal .table tbody td {
+ background-color:var(--rainha-superficie)!important;
+ color:var(--rainha-texto-operacional)!important;
+ border-color:#dcc4b2!important;
+}
+html body .main-content .table thead th,
+html body .modal .table thead th {
+ background-color:#ead3bd!important;
+ color:#42251e!important;
+ border-color:#cba98e!important;
+ font-weight:700!important;
+}
+html body .main-content .table tbody tr:hover td,
+html body .modal .table tbody tr:hover td {background-color:#f4e5d6!important;}
+html body .main-content .dataTables_info,
+html body .main-content .dataTables_length,
+html body .main-content .dataTables_filter,
+html body .main-content .dataTables_empty,
+html body .main-content .pagination,
+html body .main-content .page-link {color:var(--rainha-texto-operacional)!important;}
+html body .main-content .page-link,
+html body .main-content .dataTables_paginate .paginate_button {
+ background:#f1e0d0!important;
+ color:#512c24!important;
+ border:1px solid #c9a98f!important;
+ box-shadow:none!important;
+}
+html body .main-content .page-item.active .page-link,
+html body .main-content .dataTables_paginate .paginate_button.current {
+ background:#512c24!important;
+ color:#fff!important;
+ border-color:#512c24!important;
+}
+html body .main-content .page-item.disabled .page-link,
+html body .main-content .dataTables_paginate .paginate_button.disabled {
+ background:#f1e8df!important;
+ color:#806759!important;
+ opacity:1!important;
+}
+html body .main-content .btn-primary,
+html body .modal .btn-primary {
+ background:#512c24!important;
+ border-color:#512c24!important;
+ color:#fff!important;
+ font-weight:600!important;
+}
+html body .main-content .btn-primary:hover,
+html body .modal .btn-primary:hover {background:#351b17!important;border-color:#351b17!important;}
+html body .main-content .btn-primary i,
+html body .modal .btn-primary i {color:inherit!important;}
+html body .main-content .btn:focus-visible,
+html body .modal .btn:focus-visible,
+html body .main-content a:focus-visible {
+ outline:3px solid #a96431!important;
+ outline-offset:2px!important;
+}
+html body .main-content .btn:not(.btn-sm):not(.btn-xs),
+html body .modal .btn:not(.btn-sm):not(.btn-xs) {min-height:40px;}
+html body .main-content .btn-danger,
+html body .modal .btn-danger {color:#fff!important;}
+html body .main-content .text-muted,
+html body .modal .text-muted,
+html body .main-content small.text-muted {color:#72574a!important;}
+html body .main-content .dropdown-menu .dropdown-item,
+html body .modal .dropdown-menu .dropdown-item {color:#42251e!important;}
+html body .main-content .dropdown-menu .dropdown-item:hover,
+html body .modal .dropdown-menu .dropdown-item:hover {
+ background:#f0dfce!important;
+ color:#42251e!important;
+}
+html body .select2-container--default .select2-selection--single,
+html body .select2-container--default .select2-selection--multiple {
+ background:#fffdf9!important;
+ border:1px solid #b99378!important;
+ min-height:40px!important;
+ color:#42251e!important;
+}
+html body .select2-container--default .select2-selection__rendered {color:#42251e!important;line-height:38px!important;}
+html body .select2-container--default .select2-selection__placeholder {color:#72574a!important;}
+html body .select2-container--default .select2-results__option--highlighted[aria-selected] {
+ background:#512c24!important;
+ color:#fff!important;
+}
+html body .select2-container--default .select2-dropdown {
+ background:#fffdf9!important;
+ border-color:#b99378!important;
+}
+html body .select2-container--default .select2-results__option {color:#42251e;}
+html body .select2-container--default .select2-results__option[aria-selected=true] {
+ background:#ead3bd!important;
+ color:#42251e!important;
+}
+html body .select2-container--default .select2-results__option--highlighted[aria-selected] {
+ background:#512c24!important;color:#fff!important;
+}
+@media (max-width:767px) {
+ html body .main-content .btn:not(.btn-sm):not(.btn-xs),
+ html body .modal .btn:not(.btn-sm):not(.btn-xs) {min-height:44px;}
+ html body .main-content input:not([type=checkbox]):not([type=radio]),
+ html body .main-content select,
+ html body .main-content textarea {font-size:16px;}
+}
