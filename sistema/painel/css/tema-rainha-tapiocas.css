@@ -422,3 +422,54 @@ html body .ux-cash-list .dataTables_wrapper .dataTables_paginate .pagination .di
  opacity:1!important;
  color:#876e62!important;
 }
+
+/* Caixa: Bootstrap DataTables usa LI.page-item > A.page-link.
+   Apenas o link e o botao visual; o LI nao pode ter fundo/borda/padding. */
+html body .ux-cash-list .dataTables_wrapper .dataTables_paginate ul.pagination > li.page-item,
+html body .ux-cash-list .dataTables_wrapper .dataTables_paginate ul.pagination > li.paginate_button {
+ display:list-item!important;
+ background:transparent!important;
+ background-image:none!important;
+ border:0!important;
+ border-radius:0!important;
+ box-shadow:none!important;
+ padding:0!important;
+ margin:0!important;
+ min-width:0!important;
+ min-height:0!important;
+ width:auto!important;
+ height:auto!important;
+}
+html body .ux-cash-list .dataTables_wrapper .dataTables_paginate ul.pagination > li.page-item > a.page-link,
+html body .ux-cash-list .dataTables_wrapper .dataTables_paginate ul.pagination > li.paginate_button > a {
+ display:flex!important;
+ align-items:center!important;
+ justify-content:center!important;
+ min-width:44px!important;
+ height:40px!important;
+ padding:8px 14px!important;
+ margin:0!important;
+ border:1px solid #512c24!important;
+ border-radius:8px!important;
+ background:#512c24!important;
+ background-image:none!important;
+ color:#fff!important;
+ box-shadow:none!important;
+ font-size:13px!important;
+ line-height:20px!important;
+ text-decoration:none!important;
+}
+html body .ux-cash-list .dataTables_wrapper .dataTables_paginate ul.pagination > li.disabled > a,
+html body .ux-cash-list .dataTables_wrapper .dataTables_paginate ul.pagination > li.disabled > a.page-link {
+ background:#f0e4da!important;
+ border-color:#e0cdbb!important;
+ color:#876e62!important;
+ opacity:1!important;
+ cursor:default!important;
+}
+html body .ux-cash-list .dataTables_wrapper .dataTables_paginate ul.pagination > li.active > a,
+html body .ux-cash-list .dataTables_wrapper .dataTables_paginate ul.pagination > li.active > a.page-link {
+ background:#512c24!important;
+ border-color:#512c24!important;
+ color:#fff!important;
+}
