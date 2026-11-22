@@ -97,6 +97,10 @@ $data_atual = date('Y-m-d');
 .pdv-resumo-itens small{font-size:11px;font-weight:600}
 .pdv-resumo-total{margin-left:auto;text-align:right}
 .pdv-resumo-total strong{font-size:23px;line-height:1.15;color:#512c24;font-weight:900;white-space:nowrap}
+.pdv-status-fechamento{display:flex;align-items:center;gap:9px;padding:11px 13px;border-radius:10px;font-size:13px;font-weight:750;margin-top:14px;line-height:1.4}
+.pdv-status-fechamento i{font-size:17px;flex-shrink:0}
+.pdv-status-atencao{background:#fff3e6;border:1px solid #c99b6b;color:#663c21}
+.pdv-status-pronto{background:#eaf6e9;border:1px solid #6b9b68;color:#205d2c}
 .pdv-valores-rapidos{margin-top:9px}
 .pdv-valores-rotulo{display:block;color:#512c24;font-size:12px;font-weight:700;margin-bottom:6px}
 .pdv-valores-botoes{display:flex;flex-wrap:wrap;gap:6px}
@@ -400,6 +404,12 @@ $data_atual = date('Y-m-d');
 
 			<?php } ?>
           
+          <?php if(!($id_ab_mesa > 0)){ ?>
+          <div id="pdv-status-fechamento" class="pdv-status-fechamento" role="status" aria-live="polite">
+            <i id="pdv-status-icone" class="fas fa-info-circle" aria-hidden="true"></i>
+            <span id="pdv-status-texto">Selecione os produtos e a forma de pagamento.</span>
+          </div>
+          <?php } ?>
           <div class="flex gap-3 mt-6">
 
           	<?php if($id_ab_mesa == ""){ ?>
@@ -1173,6 +1183,26 @@ function destacarAtalhoPdv() {
         botao.toggleClass('pdv-valor-selecionado', !!selecionado).attr('aria-pressed', selecionado ? 'true' : 'false');
     });
 }
+function atualizarStatusFechamentoPdv() {
+    var painel = $('#pdv-status-fechamento');
+    if (!painel.length) return;
+    var total = Number($('#subtotal_venda').val()) || 0;
+    var forma = String($('#saida').val() || '').trim();
+    var dinheiro = ['dinheiro', 'espécie', 'especie'].includes(forma.toLowerCase());
+    var dividido = $('#pdv_dividir_pagamento').is(':checked');
+    var pago = Number(String($('#valor_pago').val() || '').replace(',', '.')) || 0;
+    var texto = '';
+    var classe = 'pdv-status-atencao';
+    if (total <= 0) texto = 'Adicione produtos à comanda para finalizar.';
+    else if (!forma) texto = 'Selecione a forma de pagamento para finalizar.';
+    else if (dividido && (pago <= 0 || pago >= total || !$('#forma_pgto2').val())) texto = 'Confira o valor da primeira parte e a segunda forma de pagamento.';
+    else if (dinheiro && !dividido && pago + 0.001 < total) texto = 'Pagamento em dinheiro: falta receber o valor total.';
+    else { texto = 'Pagamento pronto para finalizar a venda.'; classe = 'pdv-status-pronto'; }
+    painel.removeClass('pdv-status-atencao pdv-status-pronto').addClass(classe);
+    $('#pdv-status-texto').text(texto);
+    $('#pdv-status-icone').attr('class', classe === 'pdv-status-pronto' ? 'fas fa-check-circle' : 'fas fa-info-circle');
+}
+$(document).off('change.pdvStatus', '#forma_pgto2, #pdv_dividir_pagamento').on('change.pdvStatus', '#forma_pgto2, #pdv_dividir_pagamento', atualizarStatusFechamentoPdv);
 function atualizarPagamentoPdv(){
     var forma = ($('#saida').val() || '').trim().toLowerCase();
     var dinheiro = forma === 'dinheiro' || forma === 'espécie' || forma === 'especie';
@@ -1212,6 +1242,7 @@ function atualizarPagamentoPdv(){
     $('#pdv-resumo-faltante-valor').text(formatarMoedaPdv(valorFaltante));
     $('#pdv-resumo-faltante').toggle(mostrarFaltante);
     destacarAtalhoPdv();
+    atualizarStatusFechamentoPdv();
     // A tela de troco so faz sentido para dinheiro.
     $('#troco_resultado').prop('readonly', true);
     $('#troco_resultado').closest('div').toggle(dinheiro && !dividido);
