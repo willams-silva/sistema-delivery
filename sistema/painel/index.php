@@ -270,7 +270,7 @@ if($linhas == 0){
 	<link href="css/painel-ux.css?v=20261117-17" rel="stylesheet" />
 	<?php // Tema visual exclusivo, baseado no slug da empresa autenticada. ?>
 	<?php if (strtolower(trim((string)($config['url_site'] ?? ''))) === 'rainhadastapiocas'): ?>
-	<link href="css/tema-rainha-tapiocas.css?v=20261121-8" rel="stylesheet" />
+	<link href="css/tema-rainha-tapiocas.css?v=20261122-1" rel="stylesheet" />
 	<?php endif; ?>
 	<script src="js/jquery-1.11.1.min.js"></script>
 	<script src="js/modernizr.custom.js"></script>
