@@ -568,10 +568,10 @@ if ($entrega == 'Consumir Local') {
 
 	<div class="th" style="margin-bottom: 7px"></div>
 
-	<div class="row valores">
-		<div class="col-6">Forma de Pagamento</div>
-		<div class="col-6" align="right"><?php echo htmlspecialchars((string)$tipo_pgto, ENT_QUOTES, 'UTF-8') ?></div>
-	</div>
+    <div class="row valores">
+        <div class="col-6"><?php echo count($pagamentosComprovante) > 1 ? 'Pagamentos' : 'Forma de Pagamento' ?></div>
+        <div class="col-6" align="right"><?php echo count($pagamentosComprovante) > 1 ? 'Dividido' : htmlspecialchars((string)$tipo_pgto, ENT_QUOTES, 'UTF-8') ?></div>
+    </div>
 	<?php if (count($pagamentosComprovante) > 0) { ?>
         <?php foreach ($pagamentosComprovante as $parcela) { ?>
         <div class="row valores">
