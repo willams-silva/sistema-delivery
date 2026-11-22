@@ -88,6 +88,10 @@ $data_atual = date('Y-m-d');
 .pdv-limpar-conteudo p{margin-bottom:12px}
 .pdv-limpar-conteudo strong{display:block;background:#fffaf3;border:1px solid #e1c6ae;border-radius:10px;padding:10px}
 @media(max-width:500px){.pdv-limpar-popup .swal2-actions{flex-direction:column-reverse;width:100%}.pdv-limpar-popup .swal2-confirm,.pdv-limpar-popup .swal2-cancel{width:100%;margin:0!important}}
+.pdv-comanda-vazia{min-height:158px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:7px;text-align:center;padding:20px 16px;color:#512c24;background:#fffaf3;border:1px dashed #b99378;border-radius:12px;margin:4px 0}
+.pdv-comanda-vazia-icone{display:inline-flex;align-items:center;justify-content:center;width:46px;height:46px;border-radius:50%;background:#f0e0d2;color:#512c24;font-size:20px}
+.pdv-comanda-vazia strong{font-size:16px;font-weight:800}
+.pdv-comanda-vazia>span:last-child{font-size:13px;max-width:300px;line-height:1.45;color:#66534b}
 .pdv-comanda-lista{width:100%;max-height:280px;overflow-y:auto;overflow-x:hidden;scrollbar-width:thin;scrollbar-gutter:stable;padding:4px 12px 8px 0;box-sizing:border-box}
 .pdv-comanda-item{padding:10px 0 14px;border-bottom:1px solid #e6d8cd;margin:0!important;min-width:0}
 .pdv-comanda-item:last-child{border-bottom:0}
