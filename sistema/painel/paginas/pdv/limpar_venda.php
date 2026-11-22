@@ -17,14 +17,14 @@ if ($mesa !== '') {
 }
 try {
     $pdo->beginTransaction();
-    $stmt = $pdo->prepare("SELECT id FROM carrinho WHERE sessao = ? AND empresa = ? AND pedido = 0 AND mesa = ? FOR UPDATE");
-    $stmt->execute([(string)$usuario, $empresa, '']);
+    $stmt = $pdo->prepare("SELECT id FROM carrinho WHERE sessao = ? AND empresa = ? AND pedido = 0 AND (mesa = '' OR mesa = '0' OR mesa IS NULL) FOR UPDATE");
+    $stmt->execute([(string)$usuario, $empresa]);
     $ids = array_map('intval', $stmt->fetchAll(PDO::FETCH_COLUMN));
     if ($ids) {
         $placeholders = implode(',', array_fill(0, count($ids), '?'));
         $stmt = $pdo->prepare("DELETE FROM temp WHERE empresa = ? AND carrinho IN ($placeholders) AND tabela = 'adicionais'");
         $stmt->execute(array_merge([$empresa], $ids));
-        $stmt = $pdo->prepare("DELETE FROM carrinho WHERE sessao = ? AND empresa = ? AND pedido = 0 AND mesa = ?");
+        $stmt = $pdo->prepare("DELETE FROM carrinho WHERE sessao = ? AND empresa = ? AND pedido = 0 AND (mesa = '' OR mesa = '0' OR mesa IS NULL)");
         $stmt->execute([(string)$usuario, $empresa, '']);
     }
     $pdo->commit();
