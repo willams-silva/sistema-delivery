@@ -219,11 +219,14 @@ if($linhas > 0){
         echo '<button type="button" class="btn btn-sm btn-outline-secondary mt-1 mb-1" style="font-size:11px;color:#512c24!important;border-color:#b87542!important" onclick="return window.editarAdicionaisPdv ? window.editarAdicionaisPdv('.(int)$id.') : (alert(\'A edição de adicionais não foi carregada. Atualize o PDV com Ctrl+Shift+R.\'), false)"><i class="fa fa-pencil"></i> Editar adicionais</button>';
     }
 
-    echo '<div class="text-dark" style="font-size:12px; margin-top:0;">'; // mantém 12px e sem margin-left
-      echo '<a class="'.$ocultar_quantidades.'" href="#" onclick="diminuir('.$id.', '.$quantidadeF.')"><big><i class="fa fa-minus-circle text-danger"></i></big></a>
-      <input type="text" value="'.$quantidadeF.'" style="background:transparent; border:none; outline:none; width:28px; text-align:center" id="input_quant_'.$id.'" onblur="alterarQuantidade('.$id.', '.$quantidadeF.')"> '.$sigla_unidade.'
-      <a class="'.$ocultar_quantidades.'" href="#" onclick="aumentar('.$id.', '.$quantidadeF.')"><big><i class="fa fa-plus-circle text-success"></i></big></a>
-      Total Item: R$ '.$totalF.'
+    echo '<div class="pdv-comanda-controles text-dark">';
+      echo '<div class="pdv-quantidade-grupo '.$ocultar_quantidades.'" role="group" aria-label="Quantidade do produto">
+        <button type="button" class="pdv-quantidade-btn" title="Diminuir quantidade" aria-label="Diminuir quantidade" onclick="diminuir('.$id.', '.$quantidadeF.')"><i class="fa fa-minus" aria-hidden="true"></i></button>
+        <input type="text" inputmode="decimal" class="pdv-quantidade-input" value="'.$quantidadeF.'" id="input_quant_'.$id.'" aria-label="Quantidade do produto" onblur="alterarQuantidade('.$id.', '.$quantidadeF.')">
+        <button type="button" class="pdv-quantidade-btn" title="Aumentar quantidade" aria-label="Aumentar quantidade" onclick="aumentar('.$id.', '.$quantidadeF.')"><i class="fa fa-plus" aria-hidden="true"></i></button>
+      </div>
+      <span class="pdv-quantidade-unidade">'.$sigla_unidade.'</span>
+      <span class="pdv-total-item">Total Item: <strong>R$ '.$totalF.'</strong></span>
       ';
 
       // Ícone remover no canto — mesmo visual, mas sem depender de margem negativa
