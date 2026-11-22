@@ -59,6 +59,13 @@ $query = $pdo->query("SELECT * from $tabela where sessao = '$id_usuario' and ped
 $res = $query->fetchAll(PDO::FETCH_ASSOC);
 $linhas = @count($res);
 echo '<div class="pdv-comanda-lista">';
+if ($linhas === 0) {
+    echo '<div class="pdv-comanda-vazia" role="status">
+        <span class="pdv-comanda-vazia-icone"><i class="fa fa-shopping-basket" aria-hidden="true"></i></span>
+        <strong>Comanda vazia</strong>
+        <span>Selecione um produto ou utilize o leitor de código de barras para começar.</span>
+    </div>';
+}
 if($linhas > 0){
 	for($i=0; $i<$linhas; $i++){
 	$id = $res[$i]['id'];
