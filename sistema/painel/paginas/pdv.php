@@ -99,6 +99,8 @@ $data_atual = date('Y-m-d');
 .pdv-resumo-total strong{font-size:23px;line-height:1.15;color:#512c24;font-weight:900;white-space:nowrap}
 .pdv-resumo-recebido{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-top:10px;padding-top:10px;border-top:1px solid #e1c6ae;font-size:13px;font-weight:700;color:#512c24}
 .pdv-resumo-recebido strong{font-size:17px;white-space:nowrap}
+.pdv-resumo-faltante{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-top:10px;padding:10px 12px;background:#fff1e5;border:1px solid #b65d32;border-radius:9px;color:#7d2d13;font-size:13px;font-weight:800}
+.pdv-resumo-faltante strong{font-size:17px;white-space:nowrap}
 .pdv-resumo-troco{display:flex;justify-content:space-between;gap:10px;margin-top:10px;padding-top:9px;border-top:1px solid #e1c6ae;font-size:13px;font-weight:700}
 .pdv-resumo-troco strong{font-size:16px}
 @media(max-width:480px){.pdv-resumo-comanda{padding:11px}.pdv-resumo-total strong{font-size:21px}.pdv-resumo-linha{gap:8px}}
@@ -1141,7 +1143,12 @@ function atualizarPagamentoPdv(){
     $('#pdv-resumo-recebido-valor').text(formatarMoedaPdv(pago));
     $('#pdv-resumo-recebido').toggle(mostrarTroco);
     $('#pdv-resumo-troco-valor').text(formatarMoedaPdv(trocoCalculado));
-    $('#pdv-resumo-troco').toggle(mostrarTroco);
+    $('#pdv-resumo-troco').toggle(mostrarTroco && pago + 0.001 >= total);
+    // Aviso visual, sem alterar a validacao de pagamento ja existente.
+    var valorFaltante = Math.max(0, total - pago);
+    var mostrarFaltante = dinheiro && !dividido && pago > 0 && valorFaltante > 0.001;
+    $('#pdv-resumo-faltante-valor').text(formatarMoedaPdv(valorFaltante));
+    $('#pdv-resumo-faltante').toggle(mostrarFaltante);
     // A tela de troco so faz sentido para dinheiro.
     $('#troco_resultado').prop('readonly', true);
     $('#troco_resultado').closest('div').toggle(dinheiro && !dividido);
