@@ -222,7 +222,7 @@ if($linhas > 0){
     echo '<div class="pdv-comanda-controles text-dark">';
       echo '<div class="pdv-quantidade-grupo '.$ocultar_quantidades.'" role="group" aria-label="Quantidade do produto">
         <button type="button" class="pdv-quantidade-btn" title="Diminuir quantidade" aria-label="Diminuir quantidade" onclick="diminuir('.$id.', '.$quantidadeF.')"><i class="fa fa-minus" aria-hidden="true"></i></button>
-        <input type="text" inputmode="decimal" class="pdv-quantidade-input" value="'.$quantidadeF.'" id="input_quant_'.$id.'" aria-label="Quantidade do produto" onblur="alterarQuantidade('.$id.', '.$quantidadeF.')">
+        <input type="text" inputmode="decimal" class="pdv-quantidade-input" value="'.$quantidadeF.'" id="input_quant_'.$id.'" aria-label="Quantidade do produto. Enter confirma e Escape cancela" onkeydown="return teclaQuantidadePdv(event, '.$id.', '.$quantidadeF.')" onblur="alterarQuantidade('.$id.', '.$quantidadeF.')">
         <button type="button" class="pdv-quantidade-btn" title="Aumentar quantidade" aria-label="Aumentar quantidade" onclick="aumentar('.$id.', '.$quantidadeF.')"><i class="fa fa-plus" aria-hidden="true"></i></button>
       </div>
       <span class="pdv-quantidade-unidade">'.$sigla_unidade.'</span>
@@ -417,11 +417,30 @@ function excluirAlert(id) {
     function aumentar(id, quantidade) {
         requisitarQuantidadePdv(id, 'aumentar', quantidade);
     }
+    function teclaQuantidadePdv(event, id, anterior) {
+        if (event.key === 'Enter') {
+            event.preventDefault();
+            event.target.blur(); // onblur valida e grava uma unica vez
+            return false;
+        }
+        if (event.key === 'Escape') {
+            event.preventDefault();
+            event.target.value = anterior;
+            event.target.blur();
+            return false;
+        }
+        return true;
+    }
     function alterarQuantidade(id, quant_enviada) {
         if (window.pdvQuantidadeEmAndamento && window.pdvQuantidadeEmAndamento[id]) return;
         var campo = $('#input_quant_' + id);
         var quantidade = String(campo.val() || '').trim();
         if (quantidade === String(quant_enviada)) return;
+        if (!/^[0-9]+(?:[.,][0-9]{1,3})?$/.test(quantidade) || Number(quantidade.replace(',', '.')) <= 0) {
+            mostrarErroQuantidadePdv('Informe uma quantidade maior que zero, com até três casas decimais. Para remover o item, utilize a opção de excluir.');
+            campo.val(quant_enviada);
+            return;
+        }
         requisitarQuantidadePdv(id, 'alterar_quantidade', quantidade, quant_enviada);
     }
 
