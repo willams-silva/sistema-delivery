@@ -81,6 +81,12 @@ $data_atual = date('Y-m-d');
 .pdv-comanda-controles{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-top:7px;font-size:13px;color:#512c24!important}
 .pdv-quantidade-grupo{display:inline-flex;align-items:center;border:1px solid #b99378;border-radius:9px;overflow:hidden;background:#fffaf3}
 .pdv-quantidade-grupo.ocultar{display:none!important}
+.pdv-quantidade-grupo.pdv-quantidade-carregando{position:relative;cursor:wait}
+.pdv-quantidade-grupo.pdv-quantidade-carregando::after{content:"";position:absolute;left:50%;top:50%;width:17px;height:17px;margin:-9px 0 0 -9px;border:3px solid #d8bca8;border-top-color:#512c24;border-radius:50%;animation:pdv-quantidade-giro .65s linear infinite;pointer-events:none}
+.pdv-quantidade-grupo.pdv-quantidade-carregando .pdv-quantidade-input{color:transparent!important}
+@keyframes pdv-quantidade-giro{to{transform:rotate(360deg)}}
+@media(prefers-reduced-motion:reduce){.pdv-quantidade-grupo.pdv-quantidade-carregando::after{animation:none;border-top-color:#512c24}}
+
 .pdv-quantidade-btn{display:inline-flex;align-items:center;justify-content:center;width:38px;height:40px;min-width:38px;background:#512c24;color:#fff;border:0;cursor:pointer;font-size:14px;transition:background .15s}
 .pdv-quantidade-btn:disabled{opacity:.55!important;cursor:wait!important;background:#826359!important}
 .pdv-quantidade-input:disabled{opacity:.7!important;cursor:wait!important}
