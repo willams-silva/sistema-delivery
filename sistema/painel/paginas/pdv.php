@@ -710,8 +710,11 @@ $("#form_venda").submit(function (event) {
 		$("#img_loading").show();
 
 		var data = $("#data2").val();
-		var cliente = $("#cliente_input").val();
-		if ($('#cliente').val() === 'cpf' && !cliente) {
+        // A selecao visivel e a fonte de verdade: Consumidor Final sempre usa ID 0.
+        var modoCliente = $('#cliente').val();
+        if (modoCliente === '0') $('#cliente_input').val('0');
+        var cliente = String($("#cliente_input").val() || '').trim();
+		if (modoCliente === 'cpf' && (!/^\\d+$/.test(cliente) || Number(cliente) <= 0)) {
 			alert('Busque e identifique o cliente pelo CPF antes de finalizar, ou escolha Consumidor Final.');
 			$('#img_loading').hide(); $('#btn_venda').show(); $('#btn_limpar').show(); envioEmAndamento = false;
 			return;
@@ -828,7 +831,7 @@ $("#form_venda").submit(function (event) {
 			}
 
 			function limparVenda(){
-				$("#cliente").val('').change();
+				$("#cliente").val('0').change();
 				$("#quantidade").val('1');
 				$("#desconto").val('');
 				$("#troco").val('0');
@@ -836,7 +839,7 @@ $("#form_venda").submit(function (event) {
                 $("#valor_pago").removeData('pdv-dinheiro');
 				$("#frete").val('');
 				$("#data").val('<?=$data_atual?>');
-				$("#cliente_input").val('');
+				$("#cliente_input").val('0');
 				$('#div_pgto2').hide();
 				listarVendas()
 
