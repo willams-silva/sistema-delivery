@@ -97,6 +97,9 @@ $data_atual = date('Y-m-d');
 .pdv-resumo-itens small{font-size:11px;font-weight:600}
 .pdv-resumo-total{margin-left:auto;text-align:right}
 .pdv-resumo-total strong{font-size:23px;line-height:1.15;color:#512c24;font-weight:900;white-space:nowrap}
+.pdv-aviso-fechamento-popup{border-radius:16px!important;border:1px solid #d4b49b!important}
+.pdv-aviso-fechamento-popup .swal2-title{color:#512c24!important}
+.pdv-aviso-fechamento-popup .swal2-html-container{color:#4d3a32!important;line-height:1.55}
 .pdv-status-fechamento{display:flex;align-items:center;gap:9px;padding:11px 13px;border-radius:10px;font-size:13px;font-weight:750;margin-top:14px;line-height:1.4}
 .pdv-status-fechamento i{font-size:17px;flex-shrink:0}
 .pdv-status-atencao{background:#fff3e6;border:1px solid #c99b6b;color:#663c21}
@@ -792,6 +795,23 @@ $data_atual = date('Y-m-d');
 
 			let envioEmAndamento = false;
 
+function avisoFechamentoPdv(mensagem, seletor) {
+    if (typeof Swal !== 'undefined' && typeof Swal.fire === 'function') {
+        Swal.fire({
+            icon: 'warning',
+            title: 'Confira o fechamento',
+            text: mensagem,
+            confirmButtonText: 'Entendi',
+            confirmButtonColor: '#512c24',
+            customClass: {popup: 'pdv-aviso-fechamento-popup'}
+        }).then(function() {
+            if (seletor && $(seletor).length) $(seletor).trigger('focus');
+        });
+    } else {
+        alert(mensagem);
+        if (seletor && $(seletor).length) $(seletor).trigger('focus');
+    }
+}
 $("#form_venda").submit(function (event) {
 	event.preventDefault();
 
@@ -799,13 +819,13 @@ $("#form_venda").submit(function (event) {
     var pagoPdv = Number(String($('#valor_pago').val()).replace(',','.'))||0;
     var divididoPdv = $('#pdv_dividir_pagamento').is(':checked');
     var dinheiroPdv = ['dinheiro','espécie','especie'].includes(String($('#saida').val()||'').trim().toLowerCase());
-    if(totalPdv<=0){alert('Adicione produtos antes de finalizar.');return;}
-    if(!$('#saida').val()){alert('Selecione a forma de pagamento.');return;}
+    if(totalPdv<=0){avisoFechamentoPdv('Adicione produtos antes de finalizar.', '#txt_buscar');return;}
+    if(!$('#saida').val()){avisoFechamentoPdv('Selecione a forma de pagamento.', '#saida');return;}
     if(divididoPdv){
-      if(pagoPdv<=0 || pagoPdv>=totalPdv){alert('Informe uma primeira parte maior que zero e menor que o total.');return;}
-      if(!$('#forma_pgto2').val()){alert('Selecione a segunda forma de pagamento.');return;}
+      if(pagoPdv<=0 || pagoPdv>=totalPdv){avisoFechamentoPdv('Informe uma primeira parte maior que zero e menor que o total.', '#valor_pago');return;}
+      if(!$('#forma_pgto2').val()){avisoFechamentoPdv('Selecione a segunda forma de pagamento.', '#forma_pgto2');return;}
     }else if(dinheiroPdv && pagoPdv+0.001<totalPdv){
-      alert('Valor recebido insuficiente. Para pagar com duas formas, marque Dividir pagamento.');return;
+      avisoFechamentoPdv('Valor recebido insuficiente. Para pagar com duas formas, marque Dividir pagamento.', '#valor_pago');return;
     }
     if (envioEmAndamento) return; // impede múltiplos envios
 
@@ -828,14 +848,14 @@ $("#form_venda").submit(function (event) {
         if (modoCliente === '0') $('#cliente_input').val('0');
         var cliente = String($("#cliente_input").val() || '').trim();
 		if (modoCliente === 'cpf' && (!/^\\d+$/.test(cliente) || Number(cliente) <= 0)) {
-			alert('Busque e identifique o cliente pelo CPF antes de finalizar, ou escolha Consumidor Final.');
+			avisoFechamentoPdv('Busque e identifique o cliente pelo CPF antes de finalizar, ou escolha Consumidor Final.', '#cliente');
 			$('#img_loading').hide(); $('#btn_venda').show(); $('#btn_limpar').show(); envioEmAndamento = false;
 			return;
 		}
 		var data_atual = "<?=$data_atual?>";
 
 		if (data > data_atual && cliente == "") {
-			alert('Você precisa selecionar um cliente para essa venda!');
+			avisoFechamentoPdv('Você precisa selecionar um cliente para essa venda!', '#cliente');
 			$("#img_loading").hide();
 			$("#btn_venda").show();
 			envioEmAndamento = false;
