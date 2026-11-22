@@ -306,3 +306,61 @@ html body .ux-cash-list .dataTables_wrapper .pagination .page-item.active .page-
 html body .ux-cash-list .dataTables_wrapper .dataTables_info {
  color:#705347!important;
 }
+
+/* Caixa: impedir colisao entre colunas, nomes e acoes em telas menores. */
+html body .ux-cash-list .dataTables_wrapper {
+ width:100%;
+ min-width:0;
+}
+html body .ux-cash-list .dataTables_wrapper .dataTables_scrollBody,
+html body .ux-cash-list .dataTables_wrapper .table-responsive {
+ overflow-x:auto!important;
+}
+html body .ux-cash-list table#tabela {
+ width:100%!important;
+ min-width:1190px;
+ table-layout:auto!important;
+ border-collapse:separate!important;
+ border-spacing:0!important;
+}
+html body .ux-cash-list table#tabela th,
+html body .ux-cash-list table#tabela td {
+ padding:12px 13px!important;
+ vertical-align:middle!important;
+ line-height:1.45!important;
+ border-top:0!important;
+ border-bottom:1px solid #ead9c7!important;
+ border-right:1px solid #ead9c7!important;
+ white-space:nowrap!important;
+ overflow:visible!important;
+ text-overflow:clip!important;
+ color:#512c24!important;
+}
+html body .ux-cash-list table#tabela th:last-child,
+html body .ux-cash-list table#tabela td:last-child {
+ border-right:0!important;
+}
+html body .ux-cash-list table#tabela th:nth-child(1),
+html body .ux-cash-list table#tabela td:nth-child(1),
+html body .ux-cash-list table#tabela th:nth-child(7),
+html body .ux-cash-list table#tabela td:nth-child(7),
+html body .ux-cash-list table#tabela th:nth-child(8),
+html body .ux-cash-list table#tabela td:nth-child(8) {
+ min-width:175px;
+}
+html body .ux-cash-list table#tabela th:last-child,
+html body .ux-cash-list table#tabela td:last-child {
+ min-width:220px;
+}
+html body .ux-cash-list table#tabela td:last-child .btn {
+ margin:2px!important;
+}
+html body .ux-cash-list .dataTables_wrapper .dataTables_info {
+ color:#705347!important;
+ opacity:1!important;
+}
+@media(max-width:1300px){
+ html body .ux-cash-list .dataTables_wrapper {
+  overflow-x:auto!important;
+ }
+}
