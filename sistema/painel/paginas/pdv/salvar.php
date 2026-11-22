@@ -52,9 +52,12 @@ $frete = $_POST['frete'];
 $mesa = @$_POST['mesa'];
 $entrega = @$_POST['entrega'];
 
-if($entrega != "" and ($cliente == "" || $cliente == "0")){
-	echo 'Para qualquer opcao do delivery precisa selecionar um cliente!';
-	exit();
+// Consumidor Final e permitido em vendas de balcao, consumo no local e retirada.
+// Somente entrega em domicilio exige cliente identificado.
+if ($entrega === 'Delivery' && ($cliente === '' || $cliente === '0')) {
+    http_response_code(409);
+    echo 'Para entrega por delivery, selecione um cliente cadastrado.';
+    exit();
 }
 
 $tipo_pedido = '';
