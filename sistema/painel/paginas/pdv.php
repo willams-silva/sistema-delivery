@@ -252,7 +252,7 @@ $data_atual = date('Y-m-d');
          <?php } ?>
           
           
-          <form id="form_venda">     
+          <form id="form_venda" novalidate>     
 
           <?php if($id_ab_mesa == ""){ ?>    
           <!-- Cliente e Pagamento -->
