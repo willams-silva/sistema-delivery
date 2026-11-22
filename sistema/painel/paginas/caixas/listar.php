@@ -65,7 +65,8 @@ if ($total_reg > 0) {
 		<thead> 
 			<tr> 				
 
-				<th>Operador</th>				
+				<th class="caixa-expand-heading">Detalhes</th>
+                <th>Operador</th>				
 				<th>Data Abertura</th>					
 				<th>Valor Abertura</th> 
 				<th>Valor Fechamento</th> 
@@ -193,6 +194,7 @@ HTML;
 
 		echo <<<HTML
 			<tr> 
+                <td class="caixa-expand-cell"><button type="button" class="caixa-expand-btn" aria-label="Expandir detalhes do caixa" aria-expanded="false">+</button></td>
 				<td>
 
 				<i class="fa fa-square {$classe_aberto} mr-1"></i> {$nome_operador} </td> 
@@ -252,10 +254,31 @@ HTML;
 		$('#tabela').DataTable({
 			"ordering": false,
             "responsive": false,
-            "scrollX": true,
+            "scrollX": false,
             "autoWidth": false,
 			"stateSave": true,
 		});
+        // Detalhes por linha, sem sobrepor o indicador de caixa aberto.
+        $('#tabela tbody').off('click.caixaExpand').on('click.caixaExpand', '.caixa-expand-btn', function(){
+            var btn=$(this), tr=btn.closest('tr'), row=$('#tabela').DataTable().row(tr);
+            if(row.child.isShown()){
+                row.child.hide();
+                tr.removeClass('caixa-expanded');
+                btn.text('+').attr('aria-expanded','false').attr('aria-label','Expandir detalhes do caixa');
+                return;
+            }
+            var nomes=['Operador','Data Abertura','Valor Abertura','Valor Fechamento','Sangrias','Quebra','Aberto Por','Fechado Por'];
+            var detalhe=$('<div class="caixa-detail-card"></div>');
+            tr.children('td').slice(1,9).each(function(i){
+                var campo=$('<div class="caixa-detail-field"></div>');
+                campo.append($('<strong></strong>').text(nomes[i]));
+                campo.append($('<span></span>').text($(this).text().trim() || '—'));
+                detalhe.append(campo);
+            });
+            row.child(detalhe).show();
+            tr.addClass('caixa-expanded');
+            btn.text('−').attr('aria-expanded','true').attr('aria-label','Recolher detalhes do caixa');
+        });
 		$('#tabela_filter label input').focus();
 	});
 
