@@ -27,8 +27,8 @@ try {
  if($item['tem_estoque']==='Sim' && $nova>(float)$item['estoque']){
   $pdo->rollBack();
   $nome=trim((string)$item['nome_produto']);
-  $disponivel=number_format(max(0,(float)$item['estoque']),3,',','.');
-  $solicitado=number_format($nova,3,',','.');
+  $disponivel=rtrim(rtrim(number_format(max(0,(float)$item['estoque']),3,',','.'), '0'), ',');
+  $solicitado=rtrim(rtrim(number_format($nova,3,',','.'), '0'), ',');
   http_response_code(409);
   exit('Estoque insuficiente para '.$nome.'. Disponível: '.$disponivel.'; solicitado: '.$solicitado.'. Ajuste a quantidade. Os demais itens da comanda foram preservados.');
  }
