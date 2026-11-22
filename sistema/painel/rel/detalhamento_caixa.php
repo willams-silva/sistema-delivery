@@ -260,7 +260,7 @@ $texto_filtro = 'OPERADOR: ' . $nome_operador;
 	<?php
 
 	if ($marca_dagua == 'Sim') { ?>
-		<img class="marca" src="<?php echo $url_sistema ?>sistema/img/logo.jpg">
+		<?php /* Marca d'agua global removida: nunca exibir logo de outra empresa. */ ?>
 	<?php } ?>
 
 
@@ -273,11 +273,29 @@ $texto_filtro = 'OPERADOR: ' . $nome_operador;
                 <tr>
                     <td class="report-header-logo">
                         <?php
-                        // Dompdf: arquivo local em base64 evita imagem quebrada por URL externa.
-                        $logoArquivo = realpath(__DIR__ . '/../../img/logo.jpg');
-                        if ($logoArquivo && is_file($logoArquivo) && is_readable($logoArquivo)) {
-                            $logoBase64 = base64_encode(file_get_contents($logoArquivo));
-                            echo '<img src="data:image/jpeg;base64,' . $logoBase64 . '" alt="Logo" />';
+                        // Logo do cliente atual, carregada da configuracao da empresa.
+                        // Nao utilizar a logo global do Bora Comanda.
+                        $logoArquivo = null;
+                        foreach ([$logo_rel ?? '', $logo_sistema ?? ''] as $logoNome) {
+                            $logoNome = basename(trim((string)$logoNome));
+                            if ($logoNome === '' || $logoNome === 'sem-foto.png') continue;
+                            $candidato = realpath(__DIR__ . '/../../img/' . $logoNome);
+                            if ($candidato && is_file($candidato) && is_readable($candidato)) {
+                                $logoArquivo = $candidato;
+                                break;
+                            }
+                        }
+                        if ($logoArquivo) {
+                            $tipoImagem = function_exists('mime_content_type') ? mime_content_type($logoArquivo) : '';
+                            if (!in_array($tipoImagem, ['image/jpeg', 'image/png', 'image/gif', 'image/webp'], true)) {
+                                $extensao = strtolower(pathinfo($logoArquivo, PATHINFO_EXTENSION));
+                                $tipoImagem = ['jpg'=>'image/jpeg','jpeg'=>'image/jpeg','png'=>'image/png','gif'=>'image/gif','webp'=>'image/webp'][$extensao] ?? '';
+                            }
+                            if ($tipoImagem) {
+                                echo '<img src="data:' . $tipoImagem . ';base64,' . base64_encode(file_get_contents($logoArquivo)) . '" alt="Logo da empresa" />';
+                            } else {
+                                echo '<strong>' . htmlspecialchars((string)$nome_sistema, ENT_QUOTES, 'UTF-8') . '</strong>';
+                            }
                         } else {
                             echo '<strong>' . htmlspecialchars((string)$nome_sistema, ENT_QUOTES, 'UTF-8') . '</strong>';
                         }
