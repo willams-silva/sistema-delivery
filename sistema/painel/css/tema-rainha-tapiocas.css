@@ -203,3 +203,46 @@ html body .ux-cash-list .text-primary,
 html body .ux-cash-page .text-primary {
   color:#512c24!important;
 }
+
+/* Modal de abertura, fechamento e sangria do Caixa: remover azul escuro e recuperar contraste. */
+html body .ux-cash-modal .modal-content,
+html body .ux-cash-modal .modal-body,
+html body .ux-cash-modal .modal-footer {
+ background-color:#fffaf3!important;
+ color:#512c24!important;
+}
+html body .ux-cash-modal .modal-header,
+html body .ux-cash-modal .modal-header.bg-primary {
+ background-color:#512c24!important;
+ color:#fff4e7!important;
+ border-bottom-color:#b87542!important;
+}
+html body .ux-cash-modal .modal-body label,
+html body .ux-cash-modal .modal-body .form-label,
+html body .ux-cash-modal .modal-body .form-group > label,
+html body .ux-cash-modal .modal-body .text-dark {
+ color:#512c24!important;
+ opacity:1!important;
+}
+html body .ux-cash-modal .modal-body .form-control,
+html body .ux-cash-modal .modal-body .form-select,
+html body .ux-cash-modal .modal-body textarea,
+html body .ux-cash-modal .modal-body .select2-container--default .select2-selection--single {
+ background:#fff!important;
+ color:#512c24!important;
+ border:1px solid #d7bda6!important;
+}
+html body .ux-cash-modal .modal-body input::placeholder,
+html body .ux-cash-modal .modal-body textarea::placeholder {
+ color:#96796d!important;
+ opacity:1!important;
+}
+html body .ux-cash-modal .modal-body .select2-selection__rendered {
+ color:#512c24!important;
+}
+html body .ux-cash-modal .modal-body .btn-primary,
+html body .ux-cash-modal .modal-body .btn-success {
+ background:#512c24!important;
+ border-color:#512c24!important;
+ color:#fff!important;
+}
