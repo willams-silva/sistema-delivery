@@ -78,6 +78,14 @@ $data_atual = date('Y-m-d');
 <style>
 .pdv-product-code{font-size:12px;color:#475569;margin:5px 0;overflow-wrap:anywhere;font-weight:600}
 
+.pdv-limpar-popup{border-radius:18px!important;padding:22px!important}
+.pdv-limpar-popup .swal2-title{color:#512c24!important;font-weight:800!important}
+.pdv-limpar-popup .swal2-actions{gap:10px!important}
+.pdv-limpar-popup .swal2-confirm,.pdv-limpar-popup .swal2-cancel{border-radius:9px!important;padding:12px 18px!important;min-height:44px;font-weight:700!important}
+.pdv-limpar-conteudo{color:#512c24}
+.pdv-limpar-conteudo p{margin-bottom:12px}
+.pdv-limpar-conteudo strong{display:block;background:#fffaf3;border:1px solid #e1c6ae;border-radius:10px;padding:10px}
+@media(max-width:500px){.pdv-limpar-popup .swal2-actions{flex-direction:column-reverse;width:100%}.pdv-limpar-popup .swal2-confirm,.pdv-limpar-popup .swal2-cancel{width:100%;margin:0!important}}
 .pdv-remover-item{display:inline-flex;align-items:center;justify-content:center;width:34px;height:34px;border:1px solid #b99378;border-radius:9px;background:#fffaf3;color:#7d1107;cursor:pointer;font-size:16px}
 .pdv-remover-item:hover,.pdv-remover-item:focus-visible{background:#f7e3da;color:#512c24;outline:2px solid #b87542;outline-offset:1px}
 .pdv-remover-item:disabled{opacity:.5;cursor:wait}
@@ -892,33 +900,57 @@ $("#form_venda").submit(function (event) {
 				FormaPg()
 			}
 
-			function limparVenda(){
-				$("#cliente").val('0').change();
-				$("#quantidade").val('1');
-				$("#desconto").val('');
-				$("#troco").val('0');
-                $("#troco_resultado").val('R$ 0,00');
-                $("#valor_pago").removeData('pdv-dinheiro');
-				$("#frete").val('');
-				$("#data").val('<?=$data_atual?>');
-				$("#cliente_input").val('0');
-				$('#div_pgto2').hide();
-				listarVendas()
+            var pdvLimpandoVenda = false;
+            function limparVenda() {
+                if (pdvLimpandoVenda || typeof envioEmAndamento !== 'undefined' && envioEmAndamento) return;
+                Swal.fire({
+                    title: 'Limpar toda a comanda?',
+                    html: '<div class="pdv-limpar-conteudo"><p>Todos os produtos e adicionais desta venda serão removidos.</p><strong>Esta ação não pode ser desfeita.</strong></div>',
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonText: '<i class="fa fa-trash" aria-hidden="true"></i> Sim, limpar comanda',
+                    cancelButtonText: 'Manter comanda',
+                    confirmButtonColor: '#512c24',
+                    cancelButtonColor: '#6b7280',
+                    focusCancel: true,
+                    reverseButtons: true,
+                    customClass: {popup: 'pdv-limpar-popup'}
+                }).then(function(resposta) {
+                    if (!resposta.isConfirmed || pdvLimpandoVenda) return;
+                    pdvLimpandoVenda = true;
+                    $('#btn_limpar').prop('disabled', true);
+                    $.ajax({
+                        url: 'paginas/' + pag + '/limpar_venda.php',
+                        method: 'POST',
+                        dataType: 'html'
+                    }).done(function(mensagem) {
+                        if (String(mensagem).trim() !== 'Limpo com Sucesso') {
+                            Swal.fire({title: 'Não foi possível limpar', text: String(mensagem), icon: 'error', confirmButtonColor: '#512c24'});
+                            return;
+                        }
+                        $("#cliente").val('0').change();
+                        $("#quantidade").val('1');
+                        $("#desconto").val('');
+                        $("#troco").val('0');
+                        $("#troco_resultado").val('R$ 0,00');
+                        $("#valor_pago").removeData('pdv-dinheiro');
+                        $("#frete").val('');
+                        $("#data").val('<?=$data_atual?>');
+                        $("#cliente_input").val('0');
+                        $('#div_pgto2').hide();
+                        if (typeof limparCampos === 'function') limparCampos();
+                        listarVendas();
+                        Swal.fire({title: 'Comanda limpa', icon: 'success', timer: 1100, showConfirmButton: false, customClass: {popup: 'pdv-limpar-popup'}});
+                    }).fail(function() {
+                        Swal.fire({title: 'Falha ao limpar', text: 'Confira a comanda antes de tentar novamente. Nenhum campo foi redefinido automaticamente.', icon: 'error', confirmButtonColor: '#512c24'});
+                        listarVendas();
+                    }).always(function() {
+                        pdvLimpandoVenda = false;
+                        $('#btn_limpar').prop('disabled', false);
+                    });
+                });
+            }
 
-				$("#btn_limpar").hide();		
-				$.ajax({
-					url: 'paginas/' + pag + "/limpar_venda.php",
-					method: 'POST',
-					data: {},
-					dataType: "html",
-
-					success:function(result){        	
-						listarVendas(); 
-						limparCampos();     
-					}
-				});
-				
-			}
 		</script>
 
 		<script type="text/javascript">
