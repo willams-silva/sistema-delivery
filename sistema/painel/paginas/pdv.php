@@ -805,7 +805,7 @@ function prepararNovaVendaPdv() {
     $('#data2').val('<?=$data_atual?>');
     $('#saida, #entrega, #forma_pgto2').val('');
     $('#pdv_dividir_pagamento').prop('checked', false);
-    $('#valor_pago').data('pdv-dinheiro', false).prop('readonly', true).val('0.00');
+    $('#valor_pago').data('pdv-dinheiro', false).prop('readonly', true).val('');
     $('#troco_resultado').val('R$ 0,00');
     $('#valor_restante').val('0');
     $('#total_restante').text('0.00');
@@ -1287,7 +1287,9 @@ function atualizarPagamentoPdv(){
         $('#troco').val(dinheiro && !dividido && pago > 0 ? pago.toFixed(2) : '0');
         $('#troco_resultado').val('R$ ' + (dinheiro && !dividido ? Math.max(0, pago - total) : 0).toFixed(2).replace('.', ','));
     } else {
-        campo.data('pdv-dinheiro', false).prop('readonly', true).val(total.toFixed(2));
+        // Sem forma de pagamento selecionada, nao exibir o total antigo como valor pago.
+        // Para cartao/Pix selecionado, preencher com o total da comanda atual.
+        campo.data('pdv-dinheiro', false).prop('readonly', true).val(forma && total > 0 ? total.toFixed(2) : '');
         $('#troco').val('0');
         $('#troco_resultado').val('R$ 0,00');
     }
