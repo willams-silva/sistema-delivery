@@ -219,8 +219,8 @@ if ($total_reg > 0) {
           // A consulta bloqueada ja reflete descontos de itens anteriores
           // do mesmo produto nesta venda. Informar o saldo real sem limpar a comanda.
           $nomeProdutoEstoque = trim((string)($res2[0]['nome'] ?? 'Produto'));
-          $disponivelEstoque = number_format(max(0, (float)$estoque), 3, ',', '.');
-          $solicitadoEstoque = number_format((float)$quantidade, 3, ',', '.');
+          $disponivelEstoque = rtrim(rtrim(number_format(max(0, (float)$estoque), 3, ',', '.'), '0'), ',');
+          $solicitadoEstoque = rtrim(rtrim(number_format((float)$quantidade, 3, ',', '.'), '0'), ',');
           throw new RuntimeException(
               'Estoque insuficiente para ' . $nomeProdutoEstoque .
               '. Disponível: ' . $disponivelEstoque .
