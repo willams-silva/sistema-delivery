@@ -231,7 +231,7 @@ if($linhas > 0){
 
       // Ícone remover no canto — mesmo visual, mas sem depender de margem negativa
       echo '<div class="dropdown head-dpdn2" style="position:absolute; top:0; right:10px;">
-        <a title="Remover Item" href="#" onclick="excluirAlert('.$id.')"><big><i class="fa fa-times" style="color:#7d1107"></i></big></a>
+        <button type="button" class="pdv-remover-item" title="Remover item" aria-label="Remover item" data-nome="'.htmlspecialchars($nome_produto, ENT_QUOTES, 'UTF-8').'" onclick="excluirAlert('.$id.', this)"><i class="fa fa-trash" aria-hidden="true"></i></button>
       </div>';
 
     echo '</div>';
@@ -280,72 +280,48 @@ echo '</div>';
 
 
 // ALERT EXCLUIR #######################################
-function excluirAlert(id) {
-    const swalWithBootstrapButtons = Swal.mixin({
-        customClass: {
-            confirmButton: "btn btn-success", // Adiciona margem à direita do botão "Sim, Excluir!"
-            cancelButton: "btn btn-danger me-1",
-            container: 'swal-whatsapp-container'
-        },
-        buttonsStyling: false
-    });
-
-    swalWithBootstrapButtons.fire({
-        title: "Deseja Excluir?",
-        text: "Você não conseguirá recuperá-lo novamente!",
-        icon: "warning",
+function excluirAlert(id, botao) {
+    if (window.pdvExclusaoEmAndamento && window.pdvExclusaoEmAndamento[id]) return;
+    var nome = botao ? String($(botao).attr('data-nome') || 'este produto') : 'este produto';
+    var nomeSeguro = $('<div>').text(nome).html();
+    Swal.fire({
+        title: 'Remover da comanda?',
+        html: '<div class="pdv-exclusao-conteudo"><div class="pdv-exclusao-produto">' + nomeSeguro + '</div><p>O item e seus adicionais serão retirados da comanda.</p></div>',
+        icon: 'warning',
         showCancelButton: true,
-        confirmButtonText: "Sim, Excluir!",
-        cancelButtonText: "Não, Cancelar!",
-        reverseButtons: true
-    }).then((result) => {
-        if (result.isConfirmed) {
-            // Realiza a requisição AJAX para excluir o item
-            $.ajax({
-                url: 'paginas/' + pag + "/excluir-item.php",
-                method: 'POST',
-                data: { id },
-                dataType: "html",
-                success: function (mensagem) {
-                    if (mensagem.trim() == "Excluído com Sucesso") {
-                        // Exibe mensagem de sucesso após a exclusão
-                        swalWithBootstrapButtons.fire({
-                            title: mensagem,
-                            text: 'Fecharei em 1 segundo.',
-                            icon: "success",
-                            timer: 1000,
-                            timerProgressBar: true,
-                            confirmButtonText: 'OK',
-                            customClass: {
-                             container: 'swal-whatsapp-container'
-                             }
-                        });                        
-                        limparCampos();
-                        listarVendas();
-                        buscar();
-                    } else {
-                        // Exibe mensagem de erro se a requisição falhar
-                        swalWithBootstrapButtons.fire({
-                            title: "Opss!",
-                            text: mensagem,
-                            icon: "error",
-                            confirmButtonText: 'OK',
-                            customClass: {
-                             container: 'swal-whatsapp-container'
-                             }
-                        });
-                    }
-                }
-            });
-        } else if (result.dismiss === Swal.DismissReason.cancel) {
-            swalWithBootstrapButtons.fire({
-                title: "Cancelado",
-                text: "Fecharei em 1 segundo.",
-                icon: "error",
-                timer: 1000,
-                timerProgressBar: true,
-            });
-        }
+        confirmButtonText: '<i class="fa fa-trash" aria-hidden="true"></i> Remover item',
+        cancelButtonText: 'Manter item',
+        confirmButtonColor: '#512c24',
+        cancelButtonColor: '#6b7280',
+        reverseButtons: true,
+        focusCancel: true,
+        customClass: {popup: 'pdv-exclusao-popup'}
+    }).then(function(resultado) {
+        if (!resultado.isConfirmed) return;
+        window.pdvExclusaoEmAndamento = window.pdvExclusaoEmAndamento || {};
+        if (window.pdvExclusaoEmAndamento[id]) return;
+        window.pdvExclusaoEmAndamento[id] = true;
+        if (botao) $(botao).prop('disabled', true);
+        $.ajax({
+            url: 'paginas/' + pag + '/excluir-item.php',
+            method: 'POST',
+            data: {id: id},
+            dataType: 'html'
+        }).done(function(mensagem) {
+            if (String(mensagem).trim() === 'Excluído com Sucesso') {
+                listarVendas();
+                if (typeof buscar === 'function') buscar();
+                Swal.fire({title: 'Item removido', icon: 'success', timer: 1100, showConfirmButton: false, customClass: {popup: 'pdv-exclusao-popup'}});
+            } else {
+                Swal.fire({title: 'Não foi possível remover', text: String(mensagem), icon: 'error', confirmButtonColor: '#512c24'});
+            }
+        }).fail(function() {
+            Swal.fire({title: 'Falha na conexão', text: 'O item pode não ter sido removido. Confira a comanda antes de tentar novamente.', icon: 'error', confirmButtonColor: '#512c24'});
+            listarVendas();
+        }).always(function() {
+            delete window.pdvExclusaoEmAndamento[id];
+            if (botao) $(botao).prop('disabled', false);
+        });
     });
 }
 
