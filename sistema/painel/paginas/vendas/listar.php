@@ -31,6 +31,7 @@ echo <<<HTML
 	<th>Total Pago</th>
 	<th>Troco</th>
 	<th>Forma PGTO</th>
+	<th>Pago?</th>
 	<th>Data</th>
 	<th>Hora</th>
 	<th>Ações</th>
