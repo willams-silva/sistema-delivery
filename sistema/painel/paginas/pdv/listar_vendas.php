@@ -58,7 +58,7 @@ $total_final = $total_final + $frete;
 $query = $pdo->query("SELECT * from $tabela where sessao = '$id_usuario' and pedido = '0' and mesa = '$id_ab_mesa' and empresa = '$id_empresa' order by id asc");
 $res = $query->fetchAll(PDO::FETCH_ASSOC);
 $linhas = @count($res);
-echo '<div style="overflow:auto; max-height:200px; width:100%; scrollbar-width: thin;">';
+echo '<div class="pdv-comanda-lista">';
 if($linhas > 0){
 	for($i=0; $i<$linhas; $i++){
 	$id = $res[$i]['id'];
@@ -172,7 +172,7 @@ if($linhas > 0){
 
 
 
-	echo '<div class="row g-0">'; // g-0 remove o “gutter” padrão sem precisar de margens negativas
+	echo '<div class="row g-0 pdv-comanda-item">'; // cada produto tem espaco proprio e nao fica sob a barra de rolagem
   echo '<div class="col-3 col-md-3 pe-1">';
     // Evitar imagem quebrada quando o arquivo nao foi publicado na hospedagem.
     $fotoArquivo = basename((string)$foto_produto);
@@ -186,7 +186,7 @@ if($linhas > 0){
   echo '</div>';
 
   // Torna este bloco "relative" para o X absoluto ancorar corretamente
-  echo '<div class="col-9 col-md-9 position-relative">'; // antes tinha margin-left:-15px
+  echo '<div class="col-9 col-md-9 position-relative pdv-comanda-detalhes">';
     echo '<span class="text-dark" style="font-size:13px;">'; // mantém 13px (sem margin-left negativo)
       echo '<span class="'.$ocultar_quantidades.'">'.$quantidadeF.'</span> '.$nome_produtoF.' '.$sigla_grade;
     echo '</span>
@@ -230,7 +230,7 @@ if($linhas > 0){
       ';
 
       // Ícone remover no canto — mesmo visual, mas sem depender de margem negativa
-      echo '<div class="dropdown head-dpdn2" style="position:absolute; top:0; right:10px;">
+      echo '<div class="pdv-remover-area">
         <button type="button" class="pdv-remover-item" title="Remover item" aria-label="Remover item" data-nome="'.htmlspecialchars($nome_produto, ENT_QUOTES, 'UTF-8').'" onclick="excluirAlert('.$id.', this)"><i class="fa fa-trash" aria-hidden="true"></i></button>
       </div>';
 
