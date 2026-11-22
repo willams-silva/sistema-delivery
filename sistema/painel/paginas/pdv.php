@@ -921,6 +921,16 @@ $("#form_venda").submit(function (event) {
 					$('#data').val('<?=$data_atual?>');
 					$('#saida').val('');
 					$('#entrega').val('');
+                    // Limpar dados financeiros da venda anterior, inclusive pagamento dividido.
+                    // Evita que o valor recebido ou a segunda forma sejam reutilizados na proxima venda.
+                    $('#pdv_dividir_pagamento').prop('checked', false);
+                    $('#forma_pgto2').val('');
+                    $('#valor_pago').data('pdv-dinheiro', false).prop('readonly', true).val('0.00');
+                    $('#troco_resultado').val('R$ 0,00');
+                    $('#valor_restante').val('0');
+                    $('#total_restante').text('0.00');
+                    $('#div_pgto2').hide();
+                    atualizarPagamentoPdv();
 
 					listar(); 
 					listarVendas();
