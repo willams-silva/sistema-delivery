@@ -183,9 +183,21 @@ if ($total_reg > 0) {
     $id = $res[$i]['id'];
     $total_item = $res[$i]['total_item'];
     $produto = $res[$i]['produto'];
-    $quantidade = $res[$i]['quantidade'];    
+    $quantidade = $res[$i]['quantidade'];
 
-    $total_carrinho += $total_item;
+    // Validar todos os itens, inclusive produtos sem controle de estoque.
+    // Evita totais negativos, quantidades zeradas e valores nao finitos.
+    if (!is_numeric($quantidade) || !is_finite((float)$quantidade) || (float)$quantidade <= 0) {
+        throw new RuntimeException('Quantidade inválida no carrinho. Revise os itens antes de finalizar.');
+    }
+    if (!is_numeric($total_item) || !is_finite((float)$total_item) || (float)$total_item < 0) {
+        throw new RuntimeException('Valor de item inválido no carrinho. Revise os produtos e adicionais.');
+    }
+    if (!ctype_digit((string)$produto) || (int)$produto <= 0) {
+        throw new RuntimeException('Produto inválido no carrinho.');
+    }
+
+    $total_carrinho += (float)$total_item;
 
 
     $query2 = $pdo->prepare('SELECT * FROM produtos WHERE id=:id AND empresa=:empresa FOR UPDATE');
@@ -218,11 +230,14 @@ if ($total_reg > 0) {
 
 
 // Calcula o desconto efetivo no servidor, sem confiar no total enviado pelo navegador.
-if (!is_numeric($desconto) || !is_numeric($frete) || (float)$desconto < 0 || (float)$frete < 0) {
+if (!is_numeric($desconto) || !is_numeric($frete) || !is_finite((float)$desconto) || !is_finite((float)$frete) || (float)$desconto < 0 || (float)$frete < 0) {
     throw new RuntimeException('Desconto ou frete inválido.');
 }
 if ($tipo_desconto !== '%' && $tipo_desconto !== 'reais') {
     throw new RuntimeException('Tipo de desconto inválido.');
+}
+if ($tipo_desconto === '%' && (float)$desconto > 100) {
+    throw new RuntimeException('Desconto percentual não pode ultrapassar 100%.');
 }
 $descontoAplicado = $tipo_desconto === '%'
     ? round($total_carrinho * (float)$desconto / 100, 2)
