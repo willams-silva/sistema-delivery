@@ -20,8 +20,8 @@ if (!$id || $id <= 0) {
 try {
     $pdo->beginTransaction();
     // Excluir somente itens da comanda atual do operador.
-    $stmt = $pdo->prepare("SELECT id FROM carrinho WHERE id = ? AND sessao = ? AND empresa = ? AND pedido = 0 AND mesa = ? FOR UPDATE");
-    $stmt->execute([$id, (string)$usuario, $empresa, $mesa]);
+    $stmt = $pdo->prepare("SELECT id FROM carrinho WHERE id = ? AND sessao = ? AND empresa = ? AND pedido = 0 AND (mesa = ? OR (? = '' AND (mesa = '0' OR mesa IS NULL))) FOR UPDATE");
+    $stmt->execute([$id, (string)$usuario, $empresa, $mesa, $mesa]);
     if (!$stmt->fetchColumn()) {
         $pdo->rollBack();
         http_response_code(404);
@@ -32,8 +32,8 @@ try {
     $stmt = $pdo->prepare("DELETE FROM temp WHERE carrinho = ? AND empresa = ? AND tabela = 'adicionais'");
     $stmt->execute([$id, $empresa]);
 
-    $stmt = $pdo->prepare("DELETE FROM carrinho WHERE id = ? AND sessao = ? AND empresa = ? AND pedido = 0 AND mesa = ?");
-    $stmt->execute([$id, (string)$usuario, $empresa, $mesa]);
+    $stmt = $pdo->prepare("DELETE FROM carrinho WHERE id = ? AND sessao = ? AND empresa = ? AND pedido = 0 AND (mesa = ? OR (? = '' AND (mesa = '0' OR mesa IS NULL)))");
+    $stmt->execute([$id, (string)$usuario, $empresa, $mesa, $mesa]);
     if ($stmt->rowCount() !== 1) {
         throw new RuntimeException('Falha ao remover item da comanda');
     }
