@@ -92,6 +92,12 @@ if($linhas > 0){
 	if($tem_estoque == 'Não'){
 		$possui_estoque = 'ocultar';
 	}
+	// Aviso visual para a operadora, sem bloquear a venda nem alterar estoque.
+	// Limite apenas para produtos controlados e vendidos em unidades.
+	$aviso_estoque = '';
+	if ($tem_estoque === 'Sim' && is_numeric($estoque) && (float)$estoque > 0 && (float)$estoque <= 5) {
+		$aviso_estoque = '<span class="pdv-low-stock-badge" title="Confira a disponibilidade antes de vender">Estoque baixo</span>';
+	}
 
 
 	//tratamento separa string
@@ -163,7 +169,7 @@ echo <<<HTML
 			      <h3 class="card-title">{$nomeF}</h3>
 			      {$codigo_barras_bloco}
 			      <p class="card-price">R$ {$valor_vendaF}</p>
-			      <p class="card-stock " style="min-height:20px; display:flex; align-items:center;"><span class="$possui_estoque">Estoque: ({$estoqueF}) {$sigla_unidade}</span></p>
+			      <p class="card-stock " style="min-height:20px; display:flex; align-items:center; gap:6px; flex-wrap:wrap;"><span class="$possui_estoque">Estoque: ({$estoqueF}) {$sigla_unidade}</span>{$aviso_estoque}</p>
 			      <button class="add-to-cart">
 			        <i class="fas fa-plus text-xs"></i>
 			      </button>
