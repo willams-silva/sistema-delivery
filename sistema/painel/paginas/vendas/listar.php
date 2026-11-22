@@ -107,7 +107,7 @@ for($i=0; $i < $total_reg; $i++){
 			$classe_ocultar = 'ocultar';
 		}else{
 			$classe_alerta = 'text-primary';
-			$total_vendas += $valor;
+			if ($pago === 'Sim') $total_vendas += $valor;
 			$classe_linha = '';
 			$classe_ativo = '';
 			$classe_ocultar = '';
@@ -137,7 +137,7 @@ echo <<<HTML
 		<a class="btn btn-primary-light btn-sm" href="#" onclick="mostrar('{$nome_cliente}', '{$valorF}', '{$total_pagoF}', '{$trocoF}',  '{$dataF}', '{$hora}', '{$status}', '{$pago}', '{$obs}', '{$taxa_entregaF}', '{$tipo_pgto}', '{$nome_usuario_pgto}')" title="Ver Dados"><i class="fa fa-info-circle"></i></a>
 
 
-<big><a href="#" class="btn btn-danger-light btn-sm {$classe_ocultar}" onclick="excluir('{$id}')" title="Solicitar cancelamento (sujeito à validação financeira)"><i class="fa fa-ban text-danger"></i></a></big>
+<big><a href="#" class="btn btn-danger-light btn-sm {$classe_ocultar}" onclick="solicitarCancelamentoVenda('{$id}', '{$pago}'); return false;" title="Analisar cancelamento / estorno"><i class="fa fa-ban text-danger"></i></a></big>
 
 		<a class="btn btn-dark-light btn-sm" href="#" onclick="gerarComprovante('{$id}')" title="Gerar Comprovante"><i class="fa fa-file-pdf-o"></i></a>
 	
@@ -155,7 +155,7 @@ echo <<<HTML
 </table>
 
 <br>	
-<div align="right">Total de vendas recebidas (sem descontar estornos): <span class="text-verde">R$ {$total_vendasF}</span> </div>
+<div align="right">Total de vendas recebidas (antes de estornos): <span class="text-verde">R$ {$total_vendasF}</span> </div>
 
 </small>
 HTML;
