@@ -661,3 +661,11 @@ html body .ux-cash-list table#tabela > tbody > tr.child > td {
  display:table-cell!important;
  visibility:visible!important;
 }
+
+/* Caixa: icone da lixeira branco durante hover/foco do botao Excluir. */
+html body .ux-cash-list .caixa-detail-actions-buttons a.btn-danger-light:hover i,
+html body .ux-cash-list .caixa-detail-actions-buttons a.btn-danger-light:focus i,
+html body .ux-cash-list .caixa-detail-actions-buttons a.btn-danger-light:hover i.text-danger,
+html body .ux-cash-list .caixa-detail-actions-buttons a.btn-danger-light:focus i.text-danger {
+ color:#fff!important;
+}
