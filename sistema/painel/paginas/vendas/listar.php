@@ -13,8 +13,11 @@ $status = '%'.@$_POST['status'].'%';
 
 $total_vendas = 0;
 
-$query = $pdo->query("SELECT * FROM $tabela where data >= '$dataInicial' and data <= '$dataFinal' and status LIKE '$status' and pago = 'Sim' and empresa = '$id_empresa' order by data asc, hora desc");
-$res = $query->fetchAll(PDO::FETCH_ASSOC);
+// Inclui vendas pendentes para permitir cancelamento seguro e conferência.
+// Os filtros são parametrizados para evitar SQL injection.
+$stListar = $pdo->prepare("SELECT * FROM vendas WHERE data >= :inicio AND data <= :fim AND status LIKE :status AND empresa = :empresa ORDER BY data ASC, hora DESC");
+$stListar->execute([':inicio'=>$dataInicial, ':fim'=>$dataFinal, ':status'=>$status, ':empresa'=>(int)$id_empresa]);
+$res = $stListar->fetchAll(PDO::FETCH_ASSOC);
 $total_reg = @count($res);
 if($total_reg > 0){
 
@@ -92,7 +95,7 @@ for($i=0; $i < $total_reg; $i++){
 
 		if($status == 'Finalizado'){
 			$classe_alerta = 'text-verde';	
-			$total_vendas += $valor;	
+			if ($pago === 'Sim') $total_vendas += $valor;
 			$classe_linha = '';
 			$classe_ativo = '';
 			$classe_ocultar = '';
@@ -126,6 +129,7 @@ echo <<<HTML
 <td style="color:{$classe_ativo}">R$ {$total_pagoF}</td>
 <td style="color:{$classe_ativo}">R$ {$trocoF}</td>
 <td style="color:{$classe_ativo}">{$tipo_pgto}</td>
+<td style="color:{$classe_ativo}">{$pago}</td>
 <td style="color:{$classe_ativo}">{$dataF}</td>
 <td style="color:{$classe_ativo}">{$hora}</td>
 <td>	
@@ -133,7 +137,7 @@ echo <<<HTML
 		<a class="btn btn-primary-light btn-sm" href="#" onclick="mostrar('{$nome_cliente}', '{$valorF}', '{$total_pagoF}', '{$trocoF}',  '{$dataF}', '{$hora}', '{$status}', '{$pago}', '{$obs}', '{$taxa_entregaF}', '{$tipo_pgto}', '{$nome_usuario_pgto}')" title="Ver Dados"><i class="fa fa-info-circle"></i></a>
 
 
-<big><a href="#" class="btn btn-danger-light btn-sm {$classe_ocultar}" onclick="excluir('{$id}')" title="Excluir"><i class="fa fa-trash-can text-danger"></i></a></big>
+<big><a href="#" class="btn btn-danger-light btn-sm {$classe_ocultar}" onclick="excluir('{$id}')" title="Solicitar cancelamento (sujeito à validação financeira)"><i class="fa fa-ban text-danger"></i></a></big>
 
 		<a class="btn btn-dark-light btn-sm" href="#" onclick="gerarComprovante('{$id}')" title="Gerar Comprovante"><i class="fa fa-file-pdf-o"></i></a>
 	
@@ -151,7 +155,7 @@ echo <<<HTML
 </table>
 
 <br>	
-<div align="right">Total Vendas: <span class="text-verde">R$ {$total_vendasF}</span> </div>
+<div align="right">Total de vendas recebidas (sem descontar estornos): <span class="text-verde">R$ {$total_vendasF}</span> </div>
 
 </small>
 HTML;
