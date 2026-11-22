@@ -97,6 +97,8 @@ $data_atual = date('Y-m-d');
 .pdv-resumo-itens small{font-size:11px;font-weight:600}
 .pdv-resumo-total{margin-left:auto;text-align:right}
 .pdv-resumo-total strong{font-size:23px;line-height:1.15;color:#512c24;font-weight:900;white-space:nowrap}
+.pdv-resumo-recebido{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-top:10px;padding-top:10px;border-top:1px solid #e1c6ae;font-size:13px;font-weight:700;color:#512c24}
+.pdv-resumo-recebido strong{font-size:17px;white-space:nowrap}
 .pdv-resumo-troco{display:flex;justify-content:space-between;gap:10px;margin-top:10px;padding-top:9px;border-top:1px solid #e1c6ae;font-size:13px;font-weight:700}
 .pdv-resumo-troco strong{font-size:16px}
 @media(max-width:480px){.pdv-resumo-comanda{padding:11px}.pdv-resumo-total strong{font-size:21px}.pdv-resumo-linha{gap:8px}}
@@ -1133,7 +1135,12 @@ function atualizarPagamentoPdv(){
     // Atualizar tambem o resumo da comanda, sem depender de nova consulta AJAX.
     var trocoCalculado = dinheiro && !dividido ? Math.max(0, pago - total) : 0;
     var mostrarTroco = dinheiro && !dividido && pago > 0;
-    $('#pdv-resumo-troco-valor').text('R$ ' + trocoCalculado.toFixed(2).replace('.', ','));
+    var formatarMoedaPdv = function(valor) {
+        return 'R$ ' + Number(valor || 0).toLocaleString('pt-BR', {minimumFractionDigits: 2, maximumFractionDigits: 2});
+    };
+    $('#pdv-resumo-recebido-valor').text(formatarMoedaPdv(pago));
+    $('#pdv-resumo-recebido').toggle(mostrarTroco);
+    $('#pdv-resumo-troco-valor').text(formatarMoedaPdv(trocoCalculado));
     $('#pdv-resumo-troco').toggle(mostrarTroco);
     // A tela de troco so faz sentido para dinheiro.
     $('#troco_resultado').prop('readonly', true);
