@@ -411,11 +411,40 @@ function excluirAlert(id) {
             grupo.find('button, input').prop('disabled', false);
         });
     }
+    // Se houver digitacao pendente, aplicar o +/- sobre o numero visivel,
+    // sem disparar duas requisicoes concorrentes (blur + clique).
+    function ajustarQuantidadePdv(id, quantidadeOriginal, passo) {
+        if (window.pdvQuantidadeEmAndamento[id]) return;
+        var campo = $('#input_quant_' + id);
+        var digitado = String(campo.val() || '').trim();
+        var original = Number(String(quantidadeOriginal).replace(',', '.'));
+        var pendente = digitado !== String(quantidadeOriginal);
+        var atual = Number(digitado.replace(',', '.'));
+        if (pendente && (!/^[0-9]+(?:[.,][0-9]{1,3})?$/.test(digitado) || !Number.isFinite(atual) || atual <= 0)) {
+            // Evitar salvar o texto invalido no blur ao clicar no botao.
+            campo.val(String(quantidadeOriginal));
+            mostrarErroQuantidadePdv('Informe uma quantidade válida antes de usar os botões de aumentar ou diminuir.');
+            return;
+        }
+        if (!pendente) {
+            requisitarQuantidadePdv(id, passo > 0 ? 'aumentar' : 'diminuir', quantidadeOriginal);
+            return;
+        }
+        var proxima = Math.round((atual + passo) * 1000) / 1000;
+        if (proxima <= 0) {
+            campo.val(String(quantidadeOriginal));
+            mostrarErroQuantidadePdv('A quantidade deve ser maior que zero. Para remover o item, utilize a opção de excluir.');
+            return;
+        }
+        // O onblur deve ver o valor original e nao iniciar outro salvamento.
+        campo.val(String(quantidadeOriginal));
+        requisitarQuantidadePdv(id, 'alterar_quantidade', String(proxima), quantidadeOriginal);
+    }
     function diminuir(id, quantidade) {
-        requisitarQuantidadePdv(id, 'diminuir', quantidade);
+        ajustarQuantidadePdv(id, quantidade, -1);
     }
     function aumentar(id, quantidade) {
-        requisitarQuantidadePdv(id, 'aumentar', quantidade);
+        ajustarQuantidadePdv(id, quantidade, 1);
     }
     function teclaQuantidadePdv(event, id, anterior) {
         if (event.key === 'Enter') {
