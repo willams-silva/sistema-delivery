@@ -810,6 +810,11 @@ function prepararNovaVendaPdv() {
     $('#valor_restante').val('0');
     $('#total_restante').text('0.00');
     $('#div_pgto2').hide();
+    // O subtotal da venda anterior permanece no campo oculto ate o retorno do AJAX.
+    // Zerar antes de atualizar a interface impede que "Valor Pago" volte ao total antigo.
+    $('#subtotal_venda').val('0');
+    $('#listar_vendas').html('<div class="pdv-comanda-vazia" role="status"><strong>Preparando nova venda...</strong><span>Atualizando a comanda.</span></div>');
+    $('#btn_venda, #btn_limpar').hide();
     atualizarPagamentoPdv();
 }
 function focarNovaVendaPdv() {
@@ -934,9 +939,10 @@ $("#form_venda").submit(function (event) {
                     }
 					$("#img_loading").hide();
 
-					prepararNovaVendaPdv();
-					listar(); 
-					listarVendas();
+                    prepararNovaVendaPdv();
+                    // A consulta apos a confirmacao traz a comanda atual do servidor.
+                    listar();
+                    listarVendas();
 
 					var imp_auto = "<?=$impressao_automatica?>";
 
