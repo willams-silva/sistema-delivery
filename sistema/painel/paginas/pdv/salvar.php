@@ -171,10 +171,13 @@ if ($cliente_fidelidade > 0) {
 }
 
 $total_carrinho = 0;
-$query = $pdo->prepare("SELECT * FROM carrinho WHERE sessao=:sessao AND pedido=0 AND mesa='' AND empresa=:empresa FOR UPDATE");
+$query = $pdo->prepare("SELECT * FROM carrinho WHERE sessao=:sessao AND pedido=0 AND (mesa='' OR mesa='0' OR mesa IS NULL) AND empresa=:empresa FOR UPDATE");
 $query->execute([':sessao'=>(int)$sessao,':empresa'=>(int)$id_empresa]);
 $res = $query->fetchAll(PDO::FETCH_ASSOC);
 $total_reg = @count($res);
+if ($total_reg === 0) {
+    throw new RuntimeException('A comanda está vazia ou os itens já foram finalizados. Atualize a comanda antes de tentar novamente.');
+}
 if ($total_reg > 0) {
   for ($i = 0; $i < $total_reg; $i++) {
     foreach ($res[$i] as $key => $value) {
@@ -359,7 +362,7 @@ if ($parcialSolicitado) {
 
 
 //relacionar itens do carrinho com o pedido
-$itensSt=$pdo->prepare("UPDATE carrinho SET cliente=:cliente,pedido=:pedido WHERE sessao=:sessao AND pedido=0 AND mesa='' AND empresa=:empresa");
+$itensSt=$pdo->prepare("UPDATE carrinho SET cliente=:cliente,pedido=:pedido WHERE sessao=:sessao AND pedido=0 AND (mesa='' OR mesa='0' OR mesa IS NULL) AND empresa=:empresa");
 $itensSt->execute([':cliente'=>$cliente,':pedido'=>$id_pedido,':sessao'=>(int)$id_usuario,':empresa'=>(int)$id_empresa]);
 if ($itensSt->rowCount() !== $total_reg) throw new RuntimeException('O carrinho mudou durante a venda.');
 // Vincula somente os adicionais dos itens efetivamente vendidos nesta empresa.
