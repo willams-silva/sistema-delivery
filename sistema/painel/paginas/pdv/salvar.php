@@ -309,8 +309,15 @@ if ($parcialSolicitado) {
 $itensSt=$pdo->prepare("UPDATE carrinho SET cliente=:cliente,pedido=:pedido WHERE sessao=:sessao AND pedido=0 AND mesa='' AND empresa=:empresa");
 $itensSt->execute([':cliente'=>$cliente,':pedido'=>$id_pedido,':sessao'=>(int)$id_usuario,':empresa'=>(int)$id_empresa]);
 if ($itensSt->rowCount() !== $total_reg) throw new RuntimeException('O carrinho mudou durante a venda.');
-$tempSt=$pdo->prepare("UPDATE temp SET pedido=:pedido WHERE sessao=:sessao AND pedido=0");
-$tempSt->execute([':pedido'=>$id_pedido,':sessao'=>(int)$id_usuario]);
+// Vincula somente os adicionais dos itens efetivamente vendidos nesta empresa.
+// Nao altera registros de outras comandas, mesas ou empresas do operador.
+$idsCarrinhoVenda = array_map('intval', array_column($res, 'id'));
+if (count($idsCarrinhoVenda) !== $total_reg || !$idsCarrinhoVenda) {
+    throw new RuntimeException('Itens da venda inconsistentes.');
+}
+$marcadoresTemp = implode(',', array_fill(0, count($idsCarrinhoVenda), '?'));
+$tempSt = $pdo->prepare("UPDATE temp SET pedido=? WHERE empresa=? AND pedido=0 AND carrinho IN ($marcadoresTemp)");
+$tempSt->execute(array_merge([(int)$id_pedido, (int)$id_empresa], $idsCarrinhoVenda));
 
 
 
