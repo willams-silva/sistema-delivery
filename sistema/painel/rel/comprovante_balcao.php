@@ -48,6 +48,16 @@ $valor_dos_itens = $valor - $taxa_entrega + $cupom - $taxa_extra_pedido;
 $valor_dos_itensF = number_format($valor_dos_itens, 2, ',', '.');
 
 $hora_pedido = date('H:i', strtotime("+$previsao_entrega minutes", strtotime($hora)));
+// Parcelas reais da venda: o PDV registra cada forma em receber.
+$pagamentosComprovante = [];
+try {
+    $stPag = $pdo->prepare("SELECT f.nome AS forma, r.valor, r.pago FROM receber r LEFT JOIN formas_pgto f ON f.id=r.forma_pgto AND f.empresa=r.empresa WHERE r.venda_id=:venda AND r.empresa=:empresa AND r.referencia='Venda' AND r.tipo='Balcão' ORDER BY r.id ASC");
+    $stPag->execute([':venda'=>(int)$id, ':empresa'=>(int)$id_empresa]);
+    $pagamentosComprovante = $stPag->fetchAll(PDO::FETCH_ASSOC);
+} catch (Throwable $e) {
+    // Comprovantes antigos continuam exibindo a forma gravada em vendas.
+}
+
 
 $query2 = $pdo->query("SELECT * FROM clientes where id = '$cliente'");
 $res2 = $query2->fetchAll(PDO::FETCH_ASSOC);
@@ -319,11 +329,28 @@ if ($entrega == 'Consumir Local') {
 		}
 
 
-		$tabela_ad = 'adicionais';
-		if ($sabores > 0) {
-			$nome_produto = $nome_produto_tab;
-			$tabela_ad = 'adicionais_cat';
-		}
+        $ehTapioca = false;
+        if ($categoria) {
+            $stCat = $pdo->prepare("SELECT nome FROM categorias WHERE id=? AND empresa=? LIMIT 1");
+            $stCat->execute([(int)$categoria,(int)$id_empresa]);
+            $ehTapioca = mb_stripos((string)$stCat->fetchColumn(), 'tapioca') !== false;
+        }
+        if ($ehTapioca) $sigla_unidade = ' (Un.)';
+        $tabela_ad = 'adicionais';
+        if ($sabores > 0) {
+            $nome_produto = $nome_produto_tab;
+            $tabela_ad = 'adicionais_cat';
+        }
+        // PDV guarda adicionais de tapioca em temp com tabela='adicionais',
+        // mas seus IDs pertencem ao catalogo adicionais_cat.
+        if ($ehTapioca) $tabela_ad = 'adicionais_cat';
+        $stExtras = $pdo->prepare("SELECT t.id_item,t.quantidade,t.valor_item,a.nome FROM temp t LEFT JOIN adicionais_cat a ON a.id=t.id_item AND a.empresa=t.empresa WHERE t.carrinho=? AND t.empresa=? AND t.tabela='adicionais' ORDER BY t.id");
+        $stExtras->execute([(int)$id_carrinho,(int)$id_empresa]);
+        $extrasComprovante = $ehTapioca ? $stExtras->fetchAll(PDO::FETCH_ASSOC) : [];
+        $totalExtrasUnidade = 0;
+        foreach ($extrasComprovante as $extra) $totalExtrasUnidade += (float)$extra['quantidade'] * (float)$extra['valor_item'];
+        $quantidadeNumerica = max(0.0001,(float)$quantidade);
+        $precoBaseUnidade = max(0,round((float)$total_item/$quantidadeNumerica-$totalExtrasUnidade,2));
 
 
 		$nome_borda = '';
@@ -353,7 +380,8 @@ if ($entrega == 'Consumir Local') {
 
 			<div align="right" class="col-3">
 				R$ <?php
-						$total_itemF = number_format($total_item, 2, ',', '.');
+                        $valorLinha = $ehTapioca ? $precoBaseUnidade * (float)$quantidade : (float)$total_item;
+						$total_itemF = number_format($valorLinha, 2, ',', '.');
 						// $total = number_format( $cp1 , 2, ',', '.');
 						echo $total_itemF;
 						?>
@@ -372,7 +400,8 @@ if ($entrega == 'Consumir Local') {
 			}
 
 
-			$query2 = $pdo->query("SELECT * FROM temp where carrinho = '$id_carrinho' and tabela = 'adicionais'");
+			$query2 = $pdo->prepare("SELECT * FROM temp WHERE carrinho=? AND empresa=? AND tabela='adicionais' ORDER BY id ASC");
+            $query2->execute([(int)$id_carrinho,(int)$id_empresa]);
 			$res2 = $query2->fetchAll(PDO::FETCH_ASSOC);
 			$total_reg2 = @count($res2);
 			if ($total_reg2 > 0) {
@@ -393,15 +422,15 @@ if ($entrega == 'Consumir Local') {
 							$id_item = $res2[$i2]['id_item'];
 							$quantidade_temp = $res2[$i2]['quantidade'];
 
-							$query3 = $pdo->query("SELECT * FROM $tabela_ad where id = '$id_item'");
-							$res3 = $query3->fetchAll(PDO::FETCH_ASSOC);
-							$total_reg3 = @count($res3);
-							$nome_adc = isset($res3[0]['nome']) ? trim((string)$res3[0]['nome']) : '';
+							$query3 = $pdo->prepare("SELECT nome FROM {$tabela_ad} WHERE id=? AND empresa=? LIMIT 1");
+                            $query3->execute([(int)$id_item,(int)$id_empresa]);
+                            $nome_adc = trim((string)$query3->fetchColumn());
                             if ($nome_adc === '') {
                                 // Registro antigo/removido: nao imprimir avisos PHP no cupom.
                                 continue;
                             }
-							echo '(' . $quantidade_temp . ') ' . htmlspecialchars($nome_adc, ENT_QUOTES, 'UTF-8');
+							$precoAdicional = (float)($res2[$i2]['valor_item'] ?? 0) * (float)$quantidade_temp;
+                            echo '(' . $quantidade_temp . ') ' . htmlspecialchars($nome_adc, ENT_QUOTES, 'UTF-8') . ' — R$ ' . number_format($precoAdicional,2,',','.');
 							if ($i2 < ($total_reg2 - 1)) {
 								echo ', ';
 							}
@@ -541,8 +570,16 @@ if ($entrega == 'Consumir Local') {
 
 	<div class="row valores">
 		<div class="col-6">Forma de Pagamento</div>
-		<div class="col-6" align="right"><?php echo @$tipo_pgto ?></div>
+		<div class="col-6" align="right"><?php echo htmlspecialchars((string)$tipo_pgto, ENT_QUOTES, 'UTF-8') ?></div>
 	</div>
+	<?php if (count($pagamentosComprovante) > 0) { ?>
+        <?php foreach ($pagamentosComprovante as $parcela) { ?>
+        <div class="row valores">
+            <div class="col-7"><?php echo htmlspecialchars((string)($parcela['forma'] ?: $tipo_pgto), ENT_QUOTES, 'UTF-8') ?><?php echo $parcela['pago'] === 'Não' ? ' (Pendente)' : '' ?></div>
+            <div class="col-5" align="right">R$ <?php echo number_format((float)$parcela['valor'],2,',','.') ?></div>
+        </div>
+        <?php } ?>
+    <?php } ?>
 
 	<div class="row valores">
 		<div class="col-6">Forma de Entrega</div>
