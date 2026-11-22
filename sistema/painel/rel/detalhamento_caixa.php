@@ -24,10 +24,10 @@ if ($linhas == 0) {
 
 	$data_aberturaF = @implode('/', array_reverse(@explode('-', $data_abertura)));
 
-	$data_fechamentoF = @implode('/', array_reverse(@explode('-', $data_fechamento)));
+	$data_fechamentoF = $data_fechamento ? @implode('/', array_reverse(@explode('-', $data_fechamento))) : 'Em aberto';
 
 	$valor_aberturaF = @number_format($valor_abertura, 2, ',', '.');
-	$valor_fechamentoF = @number_format($valor_fechamento, 2, ',', '.');
+	$valor_fechamentoF = $valor_fechamento === null || $valor_fechamento === '' ? '—' : @number_format($valor_fechamento, 2, ',', '.');
 	$quebraF = @number_format($quebra, 2, ',', '.');
 
 
@@ -198,7 +198,34 @@ $texto_filtro = 'OPERADOR: ' . $nome_operador;
 			opacity: 8%;
 
 		}
-	</style>
+	
+        /* Relatorio PDF A4: tipografia e tabelas consistentes no Dompdf. */
+        @page { margin: 118px 26px 64px 26px; }
+        body { font-family: DejaVu Sans, sans-serif; color:#42251f; font-size:10px; }
+        #header { top:-100px; left:0; right:0; height:86px; bottom:auto; padding:0; text-align:left; }
+        #header > div:first-child { border:1px solid #d7bda6!important; border-radius:5px; height:69px!important; padding:4px; background:#fffaf4; }
+        #header table { border-collapse:collapse; }
+        #header table td { vertical-align:middle; }
+        #header table td:first-child { border:0!important; }
+        #content { margin-top:0!important; }
+        #footer { bottom:-47px; height:37px; left:0; right:0; color:#806357; }
+        #footer table { border-collapse:collapse; }
+        #footer td { font-size:8px!important; }
+        table#cabecalhotabela { border-collapse:collapse!important; width:100%!important; table-layout:fixed; margin-bottom:12px!important; border:1px solid #e2cdbb!important; }
+        table#cabecalhotabela tr:first-child { background:#f1dfce!important; }
+        table#cabecalhotabela td { padding:6px 5px!important; vertical-align:top!important; border-bottom:1px solid #e8d9cc; overflow-wrap:break-word; word-wrap:break-word; }
+        table#cabecalhotabela tr:first-child td { color:#512c24; font-weight:bold; }
+        table#cabecalhotabela tr { page-break-inside:avoid; }
+        #header > div[style*="border-bottom"], #content > div[style*="border-bottom"] { border-color:#b87542!important; }
+        .marca { left:12%; top:24%; width:75%; opacity:0.06; }
+        .report-section-title { margin:19px 0 8px; padding:7px 9px; background:#512c24; color:#fffaf3; font-size:11px; font-weight:bold; }
+        .report-section-title span { color:#fffaf3!important; }
+        .report-total { margin-top:18px; padding:11px; border:1px solid #d7bda6; background:#f1dfce; color:#512c24; font-weight:bold; font-size:13px; }
+        .report-total span { color:#512c24!important; }
+        .report-note { padding:8px; border:1px solid #e2cdbb; background:#fffaf4; margin:8px 0; font-size:10px; }
+        .report-signature { margin-top:35px; text-align:center; font-size:10px; }
+        .report-signature-line { border-top:1px solid #876458; width:260px; margin:0 auto 6px; }
+    </style>
 
 
 
@@ -262,9 +289,9 @@ $texto_filtro = 'OPERADOR: ' . $nome_operador;
 
 				<tr id="cabeca" style="margin-left: 0px;">
 					<td style="width:27%"><?php echo $data_aberturaF ?> <small>(<?php echo $nome_usu_abertura ?>)</small></td>
-					<td style="width:27%"><?php echo $data_fechamentoF ?> <small>(<?php echo $nome_usu_abertura ?>)</small></td>
+					<td style="width:27%"><?php echo $data_fechamentoF ?> <small>(<?php echo $nome_usu_fechamento ?>)</small></td>
 					<td style="width:16%">R$ <?php echo $valor_aberturaF ?></td>
-					<td style="width:16%">R$ <?php echo $valor_fechamentoF ?></td>
+					<td style="width:16%"><?php echo $valor_fechamentoF === '—' ? '—' : 'R$ ' . $valor_fechamentoF ?></td>
 					<td style="width:14%; color:<?php echo $classe_quebra ?>">R$ <?php echo $quebraF ?></td>
 
 				</tr>
@@ -275,16 +302,12 @@ $texto_filtro = 'OPERADOR: ' . $nome_operador;
 
 
 		<?php if ($obs != "") { ?>
-			<table>
-				<thead>
-				<tbody>
+			<table><tbody>
 					<tr>
-						<td style="font-size: 10px; width:332px; text-align: left;"><b>Observações:</b> <?php echo $obs ?></td>
+						<td class="report-note" style="text-align:left"><b>Observações:</b> <?php echo htmlspecialchars((string)$obs, ENT_QUOTES, 'UTF-8') ?></td>
 
 					</tr>
-				</tbody>
-				</thead>
-			</table>
+				</tbody></table>
 
 		<?php } ?>
 
@@ -293,7 +316,7 @@ $texto_filtro = 'OPERADOR: ' . $nome_operador;
 
 		<?php if ($total_recebido > 0 || $total_saidas > 0) { ?>
 
-			<div style="border-bottom: 1px solid #000; margin-top: 30px">
+			<div class="report-section-title">
 
 				<div style="font-size: 11px; margin-bottom: 7px"><b>DETALHAMENTO DE ENTRADAS / TOTAL <span style="color:green">R$ <?php echo $total_recebidoF ?></span></b></div>
 
@@ -489,7 +512,7 @@ $texto_filtro = 'OPERADOR: ' . $nome_operador;
 
 
 
-			<div style="border-bottom: 1px solid #000; margin-top: 30px">
+			<div class="report-section-title">
 
 				<div style="font-size: 11px; margin-bottom: 7px"><b>DETALHAMENTO DE SAÍDAS / TOTAL <span style="color:red">R$ <?php echo $total_saidasF ?></span></b></div>
 
@@ -733,7 +756,7 @@ $texto_filtro = 'OPERADOR: ' . $nome_operador;
 
 		<?php if ($total_sangrias > 0) { ?>
 
-			<div style="border-bottom: 1px solid #000; margin-top: 30px">
+			<div class="report-section-title">
 
 				<div style="font-size: 11px; margin-bottom: 7px"><b>DETALHAMENTO DE SANGRIAS / TOTAL <span style="color:red">R$ <?php echo $total_sangriasF ?></span></b></div>
 
@@ -836,19 +859,16 @@ $texto_filtro = 'OPERADOR: ' . $nome_operador;
 
 		<hr>
 
-		<div style="border-bottom: 1px solid #000; margin-top: 30px">
+		<div class="report-section-title">
 
-			<div style="font-size: 11px; margin-bottom: 7px"><b>VALOR FINAL / TOTAL <span style="color:green">R$ <?php echo $total_caixaF ?></span></b></div>
+			<div class="report-total"><b>VALOR FINAL / TOTAL <span style="color:green">R$ <?php echo $total_caixaF ?></span></b></div>
 
 		</div>
 
 
 
 		<br><br>
-		<div align="center">
-			_____________________________________________________________<br>
-			<small><small>(Assinatura)</small></small>
-		</div>
+		<div class="report-signature"><div class="report-signature-line"></div>Assinatura do responsável</div>
 
 
 	</div>
