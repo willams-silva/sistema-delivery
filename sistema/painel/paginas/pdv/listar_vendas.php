@@ -388,6 +388,7 @@ function excluirAlert(id) {
         if (window.pdvQuantidadeEmAndamento[id]) return;
         window.pdvQuantidadeEmAndamento[id] = true;
         var grupo = $('#input_quant_' + id).closest('.pdv-quantidade-grupo');
+        grupo.addClass('pdv-quantidade-carregando').attr('aria-busy', 'true');
         grupo.find('button, input').prop('disabled', true);
         $.ajax({
             url: 'paginas/' + pag + '/' + operacao + '.php',
@@ -408,6 +409,7 @@ function excluirAlert(id) {
             listarVendas();
         }).always(function() {
             delete window.pdvQuantidadeEmAndamento[id];
+            grupo.removeClass('pdv-quantidade-carregando').removeAttr('aria-busy');
             grupo.find('button, input').prop('disabled', false);
         });
     }
