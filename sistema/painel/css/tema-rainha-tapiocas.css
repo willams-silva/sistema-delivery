@@ -246,3 +246,28 @@ html body .ux-cash-modal .modal-body .btn-success {
  border-color:#512c24!important;
  color:#fff!important;
 }
+
+/* Caixa: uma borda continua para a area de resultados, sem linhas internas desalinhadas. */
+html body .ux-cash-page + br + .row .custom-card,
+html body .ux-cash-page ~ .row .custom-card {
+ border:1px solid #ead9c7!important;
+ border-radius:14px!important;
+ overflow:hidden;
+ background:#fffaf3!important;
+}
+html body .ux-cash-page ~ .row .custom-card > .card-body.ux-cash-list {
+ border:0!important;
+ border-radius:0!important;
+ box-shadow:none!important;
+ background:#fffaf3!important;
+}
+html body .ux-cash-page ~ .row .custom-card::before,
+html body .ux-cash-page ~ .row .custom-card::after,
+html body .ux-cash-page ~ .row .ux-cash-list::before,
+html body .ux-cash-page ~ .row .ux-cash-list::after {
+ border:0!important;
+ box-shadow:none!important;
+}
+html body .ux-cash-page ~ .row .custom-card .table {
+ margin-bottom:0!important;
+}
