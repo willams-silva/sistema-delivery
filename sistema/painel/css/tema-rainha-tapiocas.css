@@ -737,3 +737,104 @@ html body .select2-container--open .select2-results__option[aria-selected="true"
  background:#f0dfd0!important;
  color:#512c24!important;
 }
+
+
+/* Vendas: padrao Rainha das Tapiocas, restrito ao modulo. */
+html body .ux-vendas {
+ background:#fffaf3!important;
+ color:#512c24!important;
+ border:1px solid #ead5c3!important;
+ border-radius:14px!important;
+ box-shadow:none!important;
+}
+html body .ux-vendas .form-control,
+html body .ux-vendas input[type="date"],
+html body .ux-vendas .dataTables_filter input,
+html body .ux-vendas .dataTables_length select {
+ background:#fffaf3!important;
+ color:#512c24!important;
+ border:1px solid #dec2a9!important;
+ border-radius:8px!important;
+}
+html body .ux-vendas .btn-outline-primary,
+html body .ux-vendas .btn-group .btn-outline-primary {
+ background:#fffaf3!important;
+ border-color:#d8bda6!important;
+ color:#512c24!important;
+ box-shadow:none!important;
+}
+html body .ux-vendas .btn-check:checked + .btn-outline-primary,
+html body .ux-vendas .btn-outline-primary:hover,
+html body .ux-vendas .btn-outline-primary:focus {
+ background:#512c24!important;
+ border-color:#512c24!important;
+ color:#fffaf3!important;
+}
+html body .ux-vendas .table-responsive,
+html body .ux-vendas .dataTables_wrapper,
+html body .ux-vendas table#tabela,
+html body .ux-vendas table#tabela tbody,
+html body .ux-vendas table#tabela tbody tr,
+html body .ux-vendas table#tabela tbody td {
+ background:#fffaf3!important;
+ color:#512c24!important;
+}
+html body .ux-vendas table#tabela thead th {
+ background:#f1dfce!important;
+ color:#512c24!important;
+ border-color:#e2cbb8!important;
+ white-space:nowrap!important;
+}
+html body .ux-vendas table#tabela tbody td {
+ border-color:#ead8c9!important;
+ vertical-align:middle!important;
+}
+html body .ux-vendas table#tabela tbody tr:hover td {
+ background:#f6e9dc!important;
+}
+html body .ux-vendas table#tabela .text-primary {color:#a96835!important;}
+html body .ux-vendas table#tabela .text-verde {color:#198754!important;}
+html body .ux-vendas table#tabela .btn-primary-light,
+html body .ux-vendas table#tabela .btn-dark-light {
+ background:#f0dfce!important;
+ border-color:#d8bda6!important;
+ color:#512c24!important;
+}
+html body .ux-vendas table#tabela .btn-primary-light:hover,
+html body .ux-vendas table#tabela .btn-dark-light:hover {
+ background:#512c24!important;
+ color:#fff!important;
+}
+html body .ux-vendas table#tabela .btn-primary-light:hover i,
+html body .ux-vendas table#tabela .btn-dark-light:hover i {color:#fff!important;}
+html body .ux-vendas .dataTables_info,
+html body .ux-vendas .dataTables_length,
+html body .ux-vendas .dataTables_filter {color:#512c24!important;}
+html body .ux-vendas .dataTables_paginate .paginate_button,
+html body .ux-vendas .dataTables_paginate .page-link {
+ background:#f1dfce!important;
+ border:1px solid #dec2a9!important;
+ color:#512c24!important;
+ border-radius:7px!important;
+ box-shadow:none!important;
+}
+html body .ux-vendas .dataTables_paginate .paginate_button.current,
+html body .ux-vendas .dataTables_paginate .paginate_button.current:hover,
+html body .ux-vendas .dataTables_paginate .page-item.active .page-link {
+ background:#512c24!important;
+ color:#fff!important;
+ border-color:#512c24!important;
+}
+html body .ux-vendas .dataTables_paginate .paginate_button.disabled,
+html body .ux-vendas .dataTables_paginate .page-item.disabled .page-link {
+ background:#f2e6db!important;
+ color:#9a8173!important;
+}
+html body #modalDados .modal-header,
+html body #modalDados .bg-primary {
+ background:#512c24!important;
+ color:#fffaf3!important;
+}
+html body #modalDados .modal-content {background:#fffaf3!important;color:#512c24!important;}
+html body #modalDados .table td {border-color:#e2cbb8!important;}
+html body #modalDados .btn-close {filter:none!important;}
