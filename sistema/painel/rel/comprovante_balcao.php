@@ -330,11 +330,17 @@ if ($entrega == 'Consumir Local') {
 
 
         $ehTapioca = false;
-        if ($categoria) {
+        // A coluna carrinho.categoria pode estar vazia ou ter outro significado.
+        // Priorizar a categoria real do produto.
+        $stCat = $pdo->prepare("SELECT cat.nome FROM produtos p JOIN categorias cat ON cat.id=p.categoria AND cat.empresa=p.empresa WHERE p.id=? AND p.empresa=? LIMIT 1");
+        $stCat->execute([(int)$id_produto,(int)$id_empresa]);
+        $nomeCategoriaProduto = (string)$stCat->fetchColumn();
+        if ($nomeCategoriaProduto === '' && $categoria) {
             $stCat = $pdo->prepare("SELECT nome FROM categorias WHERE id=? AND empresa=? LIMIT 1");
             $stCat->execute([(int)$categoria,(int)$id_empresa]);
-            $ehTapioca = mb_stripos((string)$stCat->fetchColumn(), 'tapioca') !== false;
+            $nomeCategoriaProduto = (string)$stCat->fetchColumn();
         }
+        $ehTapioca = mb_stripos($nomeCategoriaProduto,'tapioca') !== false;
         if ($ehTapioca) $sigla_unidade = ' (Un.)';
         $tabela_ad = 'adicionais';
         if ($sabores > 0) {
@@ -425,10 +431,18 @@ if ($entrega == 'Consumir Local') {
 							$query3 = $pdo->prepare("SELECT nome FROM {$tabela_ad} WHERE id=? AND empresa=? LIMIT 1");
                             $query3->execute([(int)$id_item,(int)$id_empresa]);
                             $nome_adc = trim((string)$query3->fetchColumn());
-                            if ($nome_adc === '') {
-                                // Registro antigo/removido: nao imprimir avisos PHP no cupom.
-                                continue;
+                            if ($nome_adc === '' && $tabela_ad === 'adicionais_cat') {
+                                // Vendas antigas podem ter adicionais do catalogo geral.
+                                $stAlternativo = $pdo->prepare("SELECT nome FROM adicionais WHERE id=? AND empresa=? LIMIT 1");
+                                $stAlternativo->execute([(int)$id_item,(int)$id_empresa]);
+                                $nome_adc = trim((string)$stAlternativo->fetchColumn());
                             }
+                            if ($nome_adc === '' && $tabela_ad === 'adicionais') {
+                                $stAlternativo = $pdo->prepare("SELECT nome FROM adicionais_cat WHERE id=? AND empresa=? LIMIT 1");
+                                $stAlternativo->execute([(int)$id_item,(int)$id_empresa]);
+                                $nome_adc = trim((string)$stAlternativo->fetchColumn());
+                            }
+                            if ($nome_adc === '') $nome_adc = 'Adicional #' . (int)$id_item;
 							$precoAdicional = (float)($res2[$i2]['valor_item'] ?? 0) * (float)$quantidade_temp;
                             echo '(' . $quantidade_temp . ') ' . htmlspecialchars($nome_adc, ENT_QUOTES, 'UTF-8') . ' — R$ ' . number_format($precoAdicional,2,',','.');
 							if ($i2 < ($total_reg2 - 1)) {
