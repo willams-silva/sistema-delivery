@@ -237,6 +237,18 @@ $texto_filtro = 'OPERADOR: ' . $nome_operador;
         #header .report-header-logo img { display:block; max-width:115px; max-height:48px; width:auto; height:auto; }
         #header .report-header-info { width:68%; text-align:right; vertical-align:middle; padding:0 2px 0 8px; border:0!important; font-size:9px; line-height:1.55; }
         #header .report-header-title { font-size:13px; font-weight:bold; color:#512c24; margin-bottom:3px; }
+        /* Nomes e titulos em linha unica, com espaco para caber no A4. */
+        #header .report-header-info { width:75%!important; white-space:nowrap!important; font-size:8px!important; }
+        #header .report-header-logo { width:25%!important; }
+        #header .report-header-title { white-space:nowrap!important; font-size:12px!important; }
+        #header .report-header-info div { white-space:nowrap!important; }
+        table#cabecalhotabela tr:first-child td {
+            white-space:nowrap!important;
+            font-size:8px!important;
+            padding:6px 3px!important;
+        }
+        table#cabecalhotabela td small { font-size:8px!important; }
+        table#cabecalhotabela:first-of-type td { font-size:9px; }
 </style>
 
 
