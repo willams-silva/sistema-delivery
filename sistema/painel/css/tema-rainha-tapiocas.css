@@ -564,3 +564,42 @@ html body .ux-cash-list table#tabela td:last-child {min-width:220px;}
  }
  html body .ux-cash-list table#tabela tbody tr.child > td {display:block!important;padding:8px!important;}
 }
+
+/* Caixa: + na mesma celula, imediatamente antes do indicador de status. */
+html body .ux-cash-list table#tabela th:first-child,
+html body .ux-cash-list table#tabela td.caixa-operador-cell:first-child {
+ width:auto!important;
+ min-width:225px!important;
+ max-width:none!important;
+ text-align:left!important;
+ padding:12px 13px!important;
+}
+html body .ux-cash-list .caixa-operador-inline {
+ display:inline-flex!important;
+ align-items:center!important;
+ gap:10px!important;
+ white-space:nowrap!important;
+}
+html body .ux-cash-list .caixa-operador-nome {
+ display:inline-flex!important;
+ align-items:center!important;
+ gap:3px!important;
+}
+html body .ux-cash-list .caixa-operador-inline .caixa-expand-btn {
+ flex:0 0 30px!important;
+}
+@media(max-width:900px){
+ html body .ux-cash-list table#tabela tbody tr:not(.child) {
+  grid-template-columns:minmax(0,1fr)!important;
+ }
+ html body .ux-cash-list table#tabela tbody tr:not(.child) > td:nth-child(1) {
+  display:block!important;
+  width:100%!important;
+  min-width:0!important;
+  max-width:none!important;
+  text-align:left!important;
+ }
+ html body .ux-cash-list table#tabela tbody tr:not(.child) > td:nth-child(2) {
+  display:none!important;
+ }
+}
