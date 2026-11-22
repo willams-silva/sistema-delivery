@@ -649,3 +649,15 @@ html body .ux-cash-list table#tabela td:last-child {
   display:none!important;
  }
 }
+
+/* Caixa: Acoes somente no detalhe aberto pelo +, nunca na linha principal. */
+html body .ux-cash-list table#tabela > thead > tr > th:nth-child(9),
+html body .ux-cash-list table#tabela > tbody > tr:not(.child) > td:nth-child(9),
+html body .ux-cash-list table#tabela > tfoot > tr > th:nth-child(9) {
+ display:none!important;
+ visibility:hidden!important;
+}
+html body .ux-cash-list table#tabela > tbody > tr.child > td {
+ display:table-cell!important;
+ visibility:visible!important;
+}
