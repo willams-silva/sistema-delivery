@@ -33,7 +33,7 @@ $data_final_mes = $ano_atual . "-" . $mes_atual . "-" . $dia_final_mes;
 
 
 
-<div class="bs-example widget-shadow" style="padding:15px">
+<div class="bs-example widget-shadow ux-vendas" style="padding:15px">
 
 	<div class="row">
 		<div class="col-md-5" style="margin-bottom:5px;">
