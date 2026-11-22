@@ -65,8 +65,7 @@ if ($total_reg > 0) {
 		<thead> 
 			<tr> 				
 
-				<th class="caixa-expand-heading">Detalhes</th>
-                <th>Operador</th>				
+				<th>Operador</th>				
 				<th>Data Abertura</th>					
 				<th>Valor Abertura</th> 
 				<th>Valor Fechamento</th> 
@@ -194,10 +193,7 @@ HTML;
 
 		echo <<<HTML
 			<tr> 
-                <td class="caixa-expand-cell"><button type="button" class="caixa-expand-btn" aria-label="Expandir detalhes do caixa" aria-expanded="false">+</button></td>
-				<td>
-
-				<i class="fa fa-square {$classe_aberto} mr-1"></i> {$nome_operador} </td> 
+				<td class="caixa-operador-cell"><span class="caixa-operador-inline"><button type="button" class="caixa-expand-btn" aria-label="Expandir detalhes do caixa" aria-expanded="false">+</button><span class="caixa-operador-nome"><i class="fa fa-square {$classe_aberto} mr-1"></i> {$nome_operador}</span></span></td> 
 				
 				<td>{$data_aberturaF}</td>				
 				<td>R$ {$valor_aberturaF}</td>
@@ -269,10 +265,11 @@ HTML;
             }
             var nomes=['Operador','Data Abertura','Valor Abertura','Valor Fechamento','Sangrias','Quebra','Aberto Por','Fechado Por'];
             var detalhe=$('<div class="caixa-detail-card"></div>');
-            tr.children('td').slice(1,9).each(function(i){
+            tr.children('td').slice(0,8).each(function(i){
                 var campo=$('<div class="caixa-detail-field"></div>');
                 campo.append($('<strong></strong>').text(nomes[i]));
-                campo.append($('<span></span>').text($(this).text().trim() || '—'));
+                var texto=i===0 ? $(this).find('.caixa-operador-nome').text().trim() : $(this).text().trim();
+                campo.append($('<span></span>').text(texto || '—'));
                 detalhe.append(campo);
             });
             row.child(detalhe).show();
