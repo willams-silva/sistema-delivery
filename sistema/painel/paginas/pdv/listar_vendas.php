@@ -265,8 +265,9 @@ echo '<div class="pdv-resumo-linha">';
 echo '<div class="pdv-resumo-itens"><span>Produtos na comanda</span><strong>'.(int)$linhas.' <small>tipos</small> · '.$quantidadeTotalFormatada.' <small>unidades</small></strong></div>';
 echo '<div class="pdv-resumo-total"><span>Total a pagar</span><strong>R$ '.$total_finalF.'</strong></div>';
 echo '</div>';
-// O troco muda quando o operador digita o valor recebido, sem recarregar a comanda.
-echo '<div class="pdv-resumo-troco" id="pdv-resumo-troco" style="display:none"><span>Troco calculado</span><strong id="pdv-resumo-troco-valor">R$ 0,00</strong></div>';
+// Campos de conferencia atualizados no navegador quando o operador informa dinheiro.
+echo '<div class="pdv-resumo-recebido" id="pdv-resumo-recebido" style="display:none"><span>Valor recebido</span><strong id="pdv-resumo-recebido-valor">R$ 0,00</strong></div>';
+echo '<div class="pdv-resumo-troco" id="pdv-resumo-troco" style="display:none"><span>Troco a devolver</span><strong id="pdv-resumo-troco-valor">R$ 0,00</strong></div>';
 echo '</div>';
 
 
