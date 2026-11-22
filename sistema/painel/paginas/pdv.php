@@ -77,6 +77,19 @@ $data_atual = date('Y-m-d');
 <link rel="stylesheet" type="text/css" href="css/pdv.css?v=20261121-marrom2">
 <style>
 .pdv-product-code{font-size:12px;color:#475569;margin:5px 0;overflow-wrap:anywhere;font-weight:600}
+
+.pdv-estoque-popup{border-radius:18px!important;padding:22px 22px 26px!important;max-width:480px!important}
+.pdv-estoque-popup .swal2-title{color:#512c24!important;font-size:25px!important;line-height:1.2!important}
+.pdv-estoque-popup .swal2-html-container{margin:16px 0 0!important;overflow:visible!important}
+.pdv-estoque-produto{font-size:19px;font-weight:800;color:#512c24;margin-bottom:16px;overflow-wrap:anywhere}
+.pdv-estoque-valores{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin-bottom:16px}
+.pdv-estoque-valor{background:#fff8ee;border:1px solid #d6b69a;border-radius:12px;padding:13px 8px;display:flex;flex-direction:column;gap:5px}
+.pdv-estoque-valor span{color:#694537;font-size:14px;font-weight:700}
+.pdv-estoque-valor strong{color:#512c24;font-size:28px;line-height:1.1}
+.pdv-estoque-alerta p,.pdv-estoque-erro{color:#65483b;font-size:15px;line-height:1.5;margin:0}
+.pdv-estoque-popup .swal2-confirm{background:#512c24!important;color:#fff!important;min-height:44px;padding:10px 30px!important;border-radius:8px!important;font-weight:700}
+@media(max-width:480px){.pdv-estoque-popup{width:calc(100% - 28px)!important;padding:16px!important}.pdv-estoque-popup .swal2-title{font-size:22px!important}.pdv-estoque-valor strong{font-size:24px}}
+
 </style>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 
