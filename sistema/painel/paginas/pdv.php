@@ -926,12 +926,10 @@ $("#form_venda").submit(function (event) {
 
 					var imp_auto = "<?=$impressao_automatica?>";
 
-                    var imprimirAutomaticamente = imp_auto != 'Não';
-                    if (imprimirAutomaticamente && /^\d+$/.test(String(msg[1] || '').trim())) {
-                        window.open('rel/comprovante_balcao.php?id=' + encodeURIComponent(String(msg[1]).trim()), '_blank');
-                    }
+                    // Neste fluxo a impressao e uma escolha explicita da operadora.
+                    // Nao abrir o comprovante antes do clique em "Imprimir comprovante".
                     $('#div_pgto2').hide();
-                    confirmarVendaConcluidaPdv(msg[1], imprimirAutomaticamente);
+                    confirmarVendaConcluidaPdv(msg[1], false);
 				} else {
 					alertWarning(msg[0]);
 					$("#btn_venda").show();
