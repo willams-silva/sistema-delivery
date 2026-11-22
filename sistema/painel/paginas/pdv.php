@@ -97,6 +97,11 @@ $data_atual = date('Y-m-d');
 .pdv-resumo-itens small{font-size:11px;font-weight:600}
 .pdv-resumo-total{margin-left:auto;text-align:right}
 .pdv-resumo-total strong{font-size:23px;line-height:1.15;color:#512c24;font-weight:900;white-space:nowrap}
+.pdv-valores-rapidos{margin-top:9px}
+.pdv-valores-rotulo{display:block;color:#512c24;font-size:12px;font-weight:700;margin-bottom:6px}
+.pdv-valores-botoes{display:flex;flex-wrap:wrap;gap:6px}
+.pdv-valores-botoes button{background:#fffaf3;color:#512c24;border:1px solid #b99378;border-radius:8px;padding:8px 10px;min-height:38px;font-size:12px;font-weight:800;cursor:pointer}
+.pdv-valores-botoes button:hover,.pdv-valores-botoes button:focus-visible{background:#512c24;color:#fff;outline:2px solid #b87542;outline-offset:1px}
 .pdv-resumo-recebido{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-top:10px;padding-top:10px;border-top:1px solid #e1c6ae;font-size:13px;font-weight:700;color:#512c24}
 .pdv-resumo-recebido strong{font-size:17px;white-space:nowrap}
 .pdv-resumo-faltante{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-top:10px;padding:10px 12px;background:#fff1e5;border:1px solid #b65d32;border-radius:9px;color:#7d2d13;font-size:13px;font-weight:800}
@@ -296,6 +301,15 @@ $data_atual = date('Y-m-d');
             <div>
               <label class="block text-sm font-medium text-dark mb-1">Valor Pago</label>
               <input type="text" class="form-control" id="valor_pago" name="valor_pago" value="0" oninput="atualizarPagamentoPdv()" readonly="">
+              <div id="pdv-valores-rapidos" class="pdv-valores-rapidos" style="display:none" role="group" aria-label="Valores rápidos de dinheiro recebido">
+                <span class="pdv-valores-rotulo">Recebido em dinheiro</span>
+                <div class="pdv-valores-botoes">
+                  <button type="button" onclick="definirValorRapidoPdv('exato')">Valor exato</button>
+                  <button type="button" onclick="definirValorRapidoPdv(20)">R$ 20</button>
+                  <button type="button" onclick="definirValorRapidoPdv(50)">R$ 50</button>
+                  <button type="button" onclick="definirValorRapidoPdv(100)">R$ 100</button>
+                </div>
+              </div>
             </div>
 
              <div>
@@ -1112,6 +1126,16 @@ function tipoDesc(p){
 
 
 
+function definirValorRapidoPdv(valor) {
+    var forma = String($('#saida').val() || '').trim().toLowerCase();
+    var dinheiro = ['dinheiro', 'espécie', 'especie'].includes(forma);
+    if (!dinheiro || $('#pdv_dividir_pagamento').is(':checked')) return;
+    var total = Number($('#subtotal_venda').val()) || 0;
+    if (total <= 0) return;
+    var recebido = valor === 'exato' ? total : Number(valor);
+    if (!Number.isFinite(recebido) || recebido <= 0) return;
+    $('#valor_pago').data('pdv-dinheiro', true).val(recebido.toFixed(2)).trigger('input');
+}
 function atualizarPagamentoPdv(){
     var forma = ($('#saida').val() || '').trim().toLowerCase();
     var dinheiro = forma === 'dinheiro' || forma === 'espécie' || forma === 'especie';
@@ -1119,6 +1143,7 @@ function atualizarPagamentoPdv(){
     var campo = $('#valor_pago');
     var pago = parseFloat(String(campo.val()).replace(',', '.')) || 0;
     var dividido = $('#pdv_dividir_pagamento').is(':checked');
+    $('#pdv-valores-rapidos').toggle(dinheiro && !dividido && total > 0);
     if (dinheiro || dividido) {
         campo.prop('readonly', false).attr('placeholder', dividido ? 'Valor da primeira parte' : 'Valor recebido em dinheiro');
         // Não sobrescrever o dinheiro digitado quando o carrinho for atualizado.
