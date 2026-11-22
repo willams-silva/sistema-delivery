@@ -42,143 +42,91 @@ $texto_filtro = $datas;
 
 <head>
 
-	<style>
-		@import url('https://fonts.cdnfonts.com/css/tw-cen-mt-condensed');
-
-		@page {
-			margin: 145px 20px 25px 20px;
-		}
-
-		#header {
-			position: fixed;
-			left: 0px;
-			top: -110px;
-			bottom: 100px;
-			right: 0px;
-			height: 35px;
-			text-align: center;
-			padding-bottom: 100px;
-		}
-
-		#content {
-			margin-top: 0px;
-		}
-
-		#footer {
-			position: fixed;
-			left: 0px;
-			bottom: -60px;
-			right: 0px;
-			height: 80px;
-		}
-
-		#footer .page:after {
-			content: counter(page, my-sec-counter);
-		}
-
-		body {
-			font-family: 'Tw Cen MT', sans-serif;
-		}
-
-		.marca {
-			position: fixed;
-			left: 50;
-			top: 100;
-			width: 80%;
-			opacity: 8%;
-
-		}
-	</style>
+<style>
+@page { margin: 115px 22px 55px 22px; }
+body { font-family: DejaVu Sans, sans-serif; font-size:9px; color:#512c24; }
+#header { position:fixed; top:-100px; left:0; right:0; height:91px; }
+#footer { position:fixed; bottom:-42px; left:0; right:0; height:32px; border-top:1px solid #d7bda6; padding-top:5px; color:#806357; }
+#footer .page:after { content:counter(page); }
+.report-head { border:1px solid #d7bda6; background:#fffaf3; padding:8px 10px; height:67px; }
+.report-head table { width:100%; border-collapse:collapse; table-layout:fixed; }
+.report-head td { vertical-align:middle; border:0; }
+.report-logo { width:23%; }
+.report-logo img { max-width:112px; max-height:52px; }
+.report-company { width:37%; font-size:8px; line-height:1.5; }
+.report-title { width:40%; text-align:right; font-size:8px; line-height:1.6; }
+.report-title strong { font-size:12px; white-space:nowrap; color:#512c24; }
+.report-table { width:100%; border-collapse:collapse; table-layout:fixed; font-size:8px; }
+.report-table th { background:#f1dfce; color:#512c24; padding:7px 4px; text-align:left; border-bottom:1px solid #d7bda6; font-size:7px; white-space:nowrap; }
+.report-table td { padding:7px 4px; border-bottom:1px solid #ead9c7; vertical-align:top; overflow-wrap:break-word; }
+.report-table tr { page-break-inside:avoid; }
+.report-table tbody tr:nth-child(even) { background:#fffaf3; }
+.report-table .money { white-space:nowrap; font-size:7px; }
+.report-summary { margin-top:16px; padding:10px; background:#f1dfce; border:1px solid #d7bda6; color:#512c24; font-weight:bold; }
+.report-summary span { margin-right:22px; }
+.report-empty { text-align:center; padding:20px; color:#806357; }
+</style>
 
 </head>
 
 <body>
 
-	<?php
-
-	if ($marca_dagua == 'Sim') { ?>
-		<img class="marca" src="<?php echo $url_sistema ?>/sistema/img/<?php echo $logo_sistema ?>">
-	<?php } ?>
-
-
-
-	<div id="header">
-
-		<div style="border-style: solid; font-size: 10px; height: 60px;">
-			<table style="width: 100%; border: 0px solid #ccc;">
-				<tr>
-					<td style="border: 1px; solid #000; width: 25%; text-align: left;">
-						<img style="margin-top: 0px; margin-left: 7px;" id="imag" src="<?php echo $url_sistema ?>/sistema/img/<?php echo $logo_sistema ?>" width="130px">
-					</td>
-
-					<td style="text-align: center; font-size: 10px; width: 60%;">
-
-						<b><?php echo mb_strtoupper($nome_sistema) ?></b><br>
-						<?php echo mb_strtoupper($cnpj_sistema) ?><br>
-						INSTAGRAM: <b><?php echo mb_strtoupper($instagram_sistema) ?></b><br>
-						<?php echo mb_strtoupper($endereco_sistema) ?>
-
-					</td>
-					<td style="width: 47%; text-align: right; font-size: 9px;padding-right: 10px;">
-						<b><big>RELATÓRIO DE CAIXAS <?php echo $filtro_operador ?></big></b><br> <?php echo mb_strtoupper($texto_filtro) ?> <br> <?php echo mb_strtoupper($data_hoje) ?>
-					</td>
-				</tr>
-			</table>
-
-
-
-		</div>
-
-
-		<br>
-
-
-
-		<table id="cabecalhotabela" style="border-bottom-style: solid; font-size: 8px; margin-bottom:10px; width: 100%; table-layout: fixed;">
-
-			<thead>
-
-
-
-				<tr id="cabeca" style="margin-left: 0px; background-color:#CCC">
-
-					<td style="width:20%">OPERADOR</td>
-					<td style="width:10%">DATA ABERTURA</td>
-					<td style="width:10%">R$ ABERTURA</td>
-					<td style="width:10%">R$ FECHAMENTO</td>
-					<td style="width:10%">SANGRIAS</td>
-					<td style="width:10%">QUEBRA</td>
-					<td style="width:15%">ABERTO POR</td>
-					<td style="width:15%">FECHADO POR</td>
-
-				</tr>
-
-			</thead>
-
-		</table>
-
-	</div>
-
-
-	<div id="footer" class="row">
-		<hr style="margin-bottom: 0;">
-		<table style="width:100%;">
-			<tr style="width:100%;">
-				<td style="width:60%; font-size: 10px; text-align: left;"><?php echo $nome_sistema ?> Telefone: <?php echo $telefone_sistema ?></td>
-				<td style="width:40%; font-size: 10px; text-align: right;">
-					<p class="page">Página </p>
-				</td>
-			</tr>
-		</table>
-	</div>
-
+    <?php
+    // Identidade visual da empresa atual, sem logo fixa do Bora Comanda.
+    $logoArquivo = null;
+    foreach ([$logo_rel ?? '', $logo_sistema ?? ''] as $logoNome) {
+        $logoNome = basename(trim((string)$logoNome));
+        if ($logoNome === '' || $logoNome === 'sem-foto.png') continue;
+        $candidate = realpath(__DIR__ . '/../../img/' . $logoNome);
+        if ($candidate && is_file($candidate) && is_readable($candidate)) { $logoArquivo = $candidate; break; }
+    }
+    $logoData = '';
+    if ($logoArquivo) {
+        $mime = function_exists('mime_content_type') ? mime_content_type($logoArquivo) : '';
+        if (!in_array($mime, ['image/jpeg','image/png','image/gif'], true)) {
+            $ext = strtolower(pathinfo($logoArquivo, PATHINFO_EXTENSION));
+            $mime = ['jpg'=>'image/jpeg','jpeg'=>'image/jpeg','png'=>'image/png','gif'=>'image/gif'][$ext] ?? '';
+        }
+        if ($mime) $logoData = 'data:' . $mime . ';base64,' . base64_encode(file_get_contents($logoArquivo));
+    }
+    ?>
+    <div id="header">
+      <div class="report-head">
+        <table><tr>
+          <td class="report-logo">
+            <?php if ($logoData): ?><img src="<?php echo $logoData ?>" alt="Logo da empresa">
+            <?php else: ?><strong><?php echo htmlspecialchars((string)$nome_sistema, ENT_QUOTES, 'UTF-8') ?></strong><?php endif; ?>
+          </td>
+          <td class="report-company">
+            <strong><?php echo htmlspecialchars(mb_strtoupper((string)$nome_sistema), ENT_QUOTES, 'UTF-8') ?></strong><br>
+            <?php echo htmlspecialchars((string)$cnpj_sistema, ENT_QUOTES, 'UTF-8') ?><br>
+            <?php echo htmlspecialchars((string)$endereco_sistema, ENT_QUOTES, 'UTF-8') ?>
+          </td>
+          <td class="report-title">
+            <strong>RELATÓRIO DE CAIXAS</strong><br>
+            <?php echo htmlspecialchars((string)$texto_filtro, ENT_QUOTES, 'UTF-8') ?><br>
+            <?php echo htmlspecialchars((string)$filtro_operador, ENT_QUOTES, 'UTF-8') ?>
+          </td>
+        </tr></table>
+      </div>
+    </div>
+    <div id="footer">
+      <table style="width:100%;"><tr>
+        <td style="text-align:left;"><?php echo htmlspecialchars((string)$nome_sistema, ENT_QUOTES, 'UTF-8') ?> — <?php echo htmlspecialchars((string)$telefone_sistema, ENT_QUOTES, 'UTF-8') ?></td>
+        <td style="text-align:right;">Página <span class="page"></span></td>
+      </tr></table>
+    </div>
 
 	<div id="content" style="margin-top: 0;">
 
 
-		<table style="width: 100%; table-layout: fixed; font-size:9px; text-transform: uppercase;">
-			<thead>
-			<tbody>
+		<table class="report-table">
+            <thead><tr>
+              <th style="width:18%">OPERADOR</th><th style="width:11%">ABERTURA</th>
+              <th style="width:11%">R$ ABERTURA</th><th style="width:12%">R$ FECHAMENTO</th>
+              <th style="width:10%">SANGRIAS</th><th style="width:9%">QUEBRA</th>
+              <th style="width:15%">ABERTO POR</th><th style="width:14%">FECHADO POR</th>
+            </tr></thead><tbody>
 				<?php
 
 
@@ -214,7 +162,7 @@ $texto_filtro = $datas;
 						$data_aberturaF = @implode('/', array_reverse(@explode('-', $data_abertura)));
 						$data_fechamentoF = @implode('/', array_reverse(@explode('-', $data_fechamento)));
 						$valor_aberturaF = @number_format($valor_abertura, 2, ',', '.');
-						$valor_fechamentoF = @number_format($valor_fechamento, 2, ',', '.');
+                        $valor_fechamentoF = $valor_fechamento === null || $valor_fechamento === '' ? '—' : @number_format($valor_fechamento, 2, ',', '.');
 						$quebraF = @number_format($quebra, 2, ',', '.');
 
 
@@ -313,14 +261,14 @@ $texto_filtro = $datas;
 
 						<tr>
 
-							<td style="width:20%"><?php echo $nome_operador ?></td>
-							<td style="width:10%"><?php echo $data_aberturaF ?></td>
-							<td style="width:10%">R$ <?php echo $valor_aberturaF ?></td>
-							<td style="width:10%">R$ <?php echo $valor_fechamentoF ?></td>
-							<td style="width:10%">R$ <?php echo $total_sangriasF ?></td>
-							<td style="width:10%; color:<?php echo $classe_quebra ?>">R$ <?php echo $quebraF ?></td>
-							<td style="width:15%"><?php echo $nome_usu_abertura ?></td>
-							<td style="width:15%"><?php echo $nome_usu_fechamento ?></td>
+							<td><?php echo htmlspecialchars((string)$nome_operador, ENT_QUOTES, 'UTF-8') ?></td>
+							<td><?php echo $data_aberturaF ?></td>
+							<td class="money">R$ <?php echo $valor_aberturaF ?></td>
+							<td class="money"><?php echo $valor_fechamentoF === '—' ? '—' : 'R$ ' . $valor_fechamentoF ?></td>
+							<td class="money">R$ <?php echo $total_sangriasF ?></td>
+							<td class="money" style="color:<?php echo $classe_quebra ?>">R$ <?php echo $quebraF ?></td>
+							<td><?php echo htmlspecialchars((string)$nome_usu_abertura, ENT_QUOTES, 'UTF-8') ?></td>
+							<td><?php echo htmlspecialchars((string)$nome_usu_fechamento, ENT_QUOTES, 'UTF-8') ?></td>
 
 
 						</tr>
@@ -328,29 +276,15 @@ $texto_filtro = $datas;
 
 				<?php }
 				} ?>
-			</tbody>
-			</thead>
-		</table>
+            </tbody>
+        </table>
 
 
 	</div>
-	<hr>
-	<table>
-		<thead>
-		<tbody>
-			<tr>
-
-				<td style="font-size: 10px; width:300px; text-align: right;"></td>
-				<td style="font-size: 10px; width:70px; text-align: right;"></td>
-				<td style="font-size: 10px; width:70px; text-align: right;"></td>
-
-				<td style="font-size: 10px; width:140px; text-align: right;"><b>Caixas: <span style="color:green"><?php echo $linhas ?></span></td>
-				<td style="font-size: 10px; width:120px; text-align: right;"><b>Quebras: <span style="color:red"><?php echo $total_quebras ?></span></td>
-
-			</tr>
-		</tbody>
-		</thead>
-	</table>
+    <div class="report-summary">
+      <span>CAIXAS: <?php echo (int)$linhas ?></span>
+      <span>QUEBRAS: <?php echo (int)$total_quebras ?></span>
+    </div>
 
 </body>
 
