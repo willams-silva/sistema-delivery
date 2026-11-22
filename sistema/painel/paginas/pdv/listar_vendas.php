@@ -349,13 +349,29 @@ function excluirAlert(id) {
 
     function mostrarErroQuantidadePdv(mensagem) {
         var texto = String(mensagem || 'Não foi possível atualizar a quantidade.').replace(/<[^>]*>/g, ' ').trim();
+        // O servidor devolve dados em texto. Escapar cada campo antes de montar o HTML.
+        var escapar = function(valor) {
+            return $('<div>').text(String(valor || '')).html();
+        };
+        var partes = texto.match(/^Estoque insuficiente para (.+?)\. Disponível: ([0-9.,]+); solicitado: ([0-9.,]+)\./i);
+        var conteudo = partes
+            ? '<div class="pdv-estoque-alerta">' +
+                '<div class="pdv-estoque-produto">' + escapar(partes[1]) + '</div>' +
+                '<div class="pdv-estoque-valores">' +
+                  '<div class="pdv-estoque-valor"><span>Disponível</span><strong>' + escapar(partes[2]) + '</strong></div>' +
+                  '<div class="pdv-estoque-valor"><span>Solicitado</span><strong>' + escapar(partes[3]) + '</strong></div>' +
+                '</div>' +
+                '<p>Ajuste a quantidade para continuar. Os demais itens da comanda foram preservados.</p>' +
+              '</div>'
+            : '<p class="pdv-estoque-erro">' + escapar(texto) + '</p>';
         if (typeof Swal !== 'undefined') {
             Swal.fire({
                 icon: 'warning',
-                title: 'Confira o estoque',
-                text: texto,
+                title: 'Estoque insuficiente',
+                html: conteudo,
                 confirmButtonText: 'Entendi',
-                confirmButtonColor: '#512c24'
+                confirmButtonColor: '#512c24',
+                customClass: {popup: 'pdv-estoque-popup'}
             });
         } else {
             alert(texto);
