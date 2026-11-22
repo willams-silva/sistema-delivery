@@ -232,9 +232,8 @@ HTML;
 	}
 	echo <<<HTML
 		</tbody> 
-		<small><div align="center" id="mensagem-excluir"></div></small>
 	</table>
-
+    <div id="mensagem-excluir" class="text-center small" aria-live="polite"></div>
 </small>
 
 HTML;
