@@ -1021,3 +1021,19 @@ html body .select2-container--default .select2-results__option--highlighted[aria
  html body .main-content select,
  html body .main-content textarea {font-size:16px;}
 }
+
+
+/* PDV: alerta de estoque baixo legivel sob iluminacao intensa. */
+html body .pdv_body .pdv-low-stock-badge {
+ display:inline-flex!important;
+ align-items:center;
+ background:#fff0cc!important;
+ color:#613b00!important;
+ border:1px solid #a46b12!important;
+ border-radius:6px!important;
+ padding:3px 7px!important;
+ font-size:12px!important;
+ font-weight:800!important;
+ line-height:1.25!important;
+ white-space:nowrap!important;
+}
