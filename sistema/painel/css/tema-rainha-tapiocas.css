@@ -669,3 +669,39 @@ html body .ux-cash-list .caixa-detail-actions-buttons a.btn-danger-light:hover i
 html body .ux-cash-list .caixa-detail-actions-buttons a.btn-danger-light:focus i.text-danger {
  color:#fff!important;
 }
+
+/* Caixa > Fechar Caixa: painel de saldo e botao no mesmo tema marrom/creme. */
+html body #modalFechar .modal-body .alert.alert-light {
+ background:#f4e7d9!important;
+ background-image:none!important;
+ border:1px solid #d9bda4!important;
+ border-radius:12px!important;
+ color:#512c24!important;
+ box-shadow:none!important;
+}
+html body #modalFechar .modal-body .alert.alert-light strong,
+html body #modalFechar .modal-body .alert.alert-light #saldo_esperado_visual {
+ color:#512c24!important;
+}
+html body #modalFechar .modal-body .alert.alert-light .text-muted,
+html body #modalFechar .modal-body small.text-muted {
+ color:#806357!important;
+ opacity:1!important;
+}
+html body #modalFechar .modal-footer .btn.btn-primary {
+ background:#512c24!important;
+ background-image:none!important;
+ border:1px solid #512c24!important;
+ border-radius:9px!important;
+ color:#fff8ee!important;
+ box-shadow:none!important;
+}
+html body #modalFechar .modal-footer .btn.btn-primary:hover,
+html body #modalFechar .modal-footer .btn.btn-primary:focus {
+ background:#351b17!important;
+ border-color:#351b17!important;
+ color:#fff!important;
+}
+html body #modalFechar .modal-footer .btn.btn-primary i {
+ color:inherit!important;
+}
