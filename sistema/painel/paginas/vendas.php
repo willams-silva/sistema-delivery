@@ -350,6 +350,38 @@ $data_final_mes = $ano_atual . "-" . $mes_atual . "-" . $dia_final_mes;
 
 
 
+<script>
+function solicitarCancelamentoVenda(id, pago) {
+    // Vendas recebidas nunca devem cair na rotina de exclusao de pendencias.
+    if (pago === 'Sim') {
+        Swal.fire({
+            icon: 'warning',
+            title: 'Estorno financeiro necessário',
+            html: 'A venda <strong>#' + Number(id) + '</strong> já foi recebida.<br>O cancelamento exige conferir as formas de pagamento, registrar o motivo e conciliar o estorno antes de devolver o estoque.<br><br><strong>Nenhum valor ou estoque foi alterado.</strong>',
+            confirmButtonText: 'Consultar histórico de estornos',
+            showCancelButton: true,
+            cancelButtonText: 'Voltar',
+            confirmButtonColor: '#512c24',
+            cancelButtonColor: '#806357'
+        }).then(function(result) {
+            if (result.isConfirmed) window.open('paginas/vendas/visualizar_estornos.php', '_blank', 'noopener');
+        });
+        return;
+    }
+    Swal.fire({
+        icon: 'question',
+        title: 'Cancelar venda pendente?',
+        text: 'A venda #' + Number(id) + ' será validada pelo servidor antes de qualquer alteração financeira ou de estoque.',
+        showCancelButton: true,
+        confirmButtonText: 'Validar cancelamento',
+        cancelButtonText: 'Voltar',
+        confirmButtonColor: '#512c24'
+    }).then(function(result) {
+        if (result.isConfirmed && typeof excluir === 'function') excluir(id);
+    });
+}
+</script>
+
 <script type="text/javascript">
 	function baixar(id) {
 		$.ajax({
