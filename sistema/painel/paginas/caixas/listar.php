@@ -252,7 +252,7 @@ HTML;
             "responsive": false,
             "scrollX": false,
             "autoWidth": false,
-            "stateSave": true,
+            "stateSave": false,
             "columnDefs": [{"targets":8,"visible":false,"searchable":false}]
         });
         // Detalhes por linha, sem sobrepor o indicador de caixa aberto.
