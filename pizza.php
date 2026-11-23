@@ -611,12 +611,12 @@ body.selecao-cardapio { background:#fffaf5 !important; color:#503827; }
 		<?php }
 		} ?>
 
-
-
-
-
-
-
+        <?php
+        // Mistas na mesma lista de sabores, antes das observacoes.
+        if (!empty($eh_tapiocas_salgadas)) {
+            require __DIR__ . '/tapiocas-mistas.php';
+        }
+        ?>
 
 		<?php if (empty($eh_tapiocas_com_adicionais_por_sabor)) {
 		$query = $pdo->query("SELECT * FROM adicionais_cat where categoria = '$id' and ativo = 'Sim'");
@@ -688,12 +688,7 @@ body.selecao-cardapio { background:#fffaf5 !important; color:#503827; }
 			</div>
 
 	</ol>
-<?php
-// Mostra o montador das mistas junto das tradicionais, sem substituir a página.
-if (!empty($eh_tapiocas_salgadas)) {
-    require __DIR__ . '/tapiocas-mistas.php';
-}
-?>
+
 
 </div>
 
