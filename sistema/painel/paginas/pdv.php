@@ -796,6 +796,12 @@ $data_atual = date('Y-m-d');
 			let envioEmAndamento = false;
 
 function prepararNovaVendaPdv() {
+    // Invalidar respostas AJAX antigas antes de limpar a interface.
+    // Uma resposta iniciada durante a venda nao pode restaurar itens/valores antigos.
+    if (typeof pdvListaVersao !== 'undefined') pdvListaVersao++;
+    if (typeof pdvListaRequisicao !== 'undefined' && pdvListaRequisicao && pdvListaRequisicao.readyState !== 4) {
+        pdvListaRequisicao.abort();
+    }
     // Executado em TODA venda concluida, impressa ou nao.
     $('#desconto, #frete').val('');
     $('#troco').val('0');
