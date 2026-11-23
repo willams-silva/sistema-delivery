@@ -1047,6 +1047,8 @@ $("#form_venda").submit(function (event) {
                     clearTimeout(pdvBuscaTemporizador);
                     pdvBuscaTemporizador = setTimeout(function() { buscar(); }, 180);
                 });
+            var pdvUltimaLeitura = {codigo:'', instante:0};
+            var pdvLeituraEmAndamento = false;
             $(document).off('keydown.pdvBuscaCodigo', '#txt_buscar')
                 .on('keydown.pdvBuscaCodigo', '#txt_buscar', function(event) {
                     if (event.key !== 'Enter') return;
@@ -1054,6 +1056,13 @@ $("#form_venda").submit(function (event) {
                     clearTimeout(pdvBuscaTemporizador);
                     var codigoLido = String($('#txt_buscar').val() || '').trim();
                     if (!codigoLido) { buscar(); return; }
+                    // Evita Enter repetido e dois eventos simultaneos do leitor.
+                    // A mesma etiqueta pode ser lida novamente apos 800 ms.
+                    var agoraLeitura = Date.now();
+                    if (pdvLeituraEmAndamento ||
+                        (pdvUltimaLeitura.codigo === codigoLido && agoraLeitura - pdvUltimaLeitura.instante < 800)) return;
+                    pdvUltimaLeitura = {codigo:codigoLido, instante:agoraLeitura};
+                    pdvLeituraEmAndamento = true;
                     // A inclusao automatica so ocorre com um unico codigo exato.
                     // A abertura normal de adicionais/grades continua obrigatoria.
                     $.ajax({
@@ -1073,7 +1082,11 @@ $("#form_venda").submit(function (event) {
                             $('#txt_buscar').val('');
                         }
                     }).fail(function() {
+                        // Permitir tentar novamente imediatamente em caso de falha.
+                        pdvUltimaLeitura = {codigo:'', instante:0};
                         if (typeof alertWarning === 'function') alertWarning('Não foi possível consultar o código. Tente novamente.');
+                    }).always(function() {
+                        pdvLeituraEmAndamento = false;
                     });
                 });
 			function buscar(){
