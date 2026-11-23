@@ -183,16 +183,9 @@ if (!function_exists('escMista')) { function escMista($x) { return htmlspecialch
        Swal.fire({icon:'warning',title:'Limite de sabores',text:mensagem});
      else alert(mensagem);
    }
-   // Validar ANTES do navegador marcar o terceiro sabor.
-   card.querySelectorAll('.mista-item-incluso').forEach(function(linha){
-     linha.addEventListener('click',function(e){
-       var checkbox=linha.querySelector('.proteina-inclusa');
-       if (!checkbox.checked && checks.filter(function(x){return x.checked}).length>=limite){
-         e.preventDefault();
-         avisoLimite();
-       }
-     });
-   });
+   // Nao interceptar o click do <label>: impedir o default aqui
+   // desfaz o estado do checkbox e bloqueia ate a desmarcacao.
+   // O evento change abaixo reverte somente a selecao excedente.
    // Mesma interface +/- dos adicionais tradicionais. O estado real
    // continua nos inputs usados pelo envio do carrinho.
    card.querySelectorAll('.mista-item-quantidade:not(.mista-item-incluso)').forEach(function(linha){
@@ -236,7 +229,10 @@ if (!function_exists('escMista')) { function escMista($x) { return htmlspecialch
        var selecionadas=checks.filter(function(item){return item.checked});
        if (selecionadas.length>limite) {
          x.checked=false;
+         atualizar();
+         atualizarQuantidades();
          avisoLimite();
+         return;
        }
        atualizar();
        atualizarQuantidades();
