@@ -161,7 +161,7 @@ echo <<<HTML
 
 		 <!-- Produto 1 -->
 		 <a href="#" onclick="addVenda('{$id}', '{$estoque_unit}', '{$nome}', '{$nome_unidade}', '$tem_grade')">	
-			  <div class="product-card" data-id="1" data-name="{$nome}" data-price="" data-stock="15">
+			  <div class="product-card" data-id="{$id}" data-codigo="{$codigo_barras_html}" data-price="" data-stock="15">
 			    <div class="card-image">
 			      <img src="images/produtos/{$foto}" alt="{$nome}" class="w-full h-20 object-contain mx-auto">
 			    </div>
