@@ -13,6 +13,8 @@ $pag = 'produtos';
 		<a class="btn ripple btn-primary text-white" onclick="inserir()" type="button"><i class="fe fe-plus me-1"></i>
 			Adicionar <?php echo ucfirst($pag); ?></a>
 
+		<a class="btn btn-outline-primary" href="paginas/produtos/combos.php" title="Configurar combos" style="margin-left:8px"><i class="fe fe-layers me-1"></i> Configurar Combos</a>
+
 		<!-- EXCLUIR MULTIPLO -->
 		<a class="btn btn-danger" href="#" onclick="deletarSelProdutos()" title="Excluir" id="btn-deletar" style="display:none"><i class="fe fe-trash-2"></i> Deletar</a>
 
