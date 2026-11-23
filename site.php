@@ -1417,6 +1417,51 @@ document.addEventListener('keydown', function(evento) { if (evento.key === 'Esca
 document.getElementById('aviso-secao-vazia').addEventListener('click', function(evento) { if (evento.target === this) fecharAvisoSecao(); });
 </script>
 
+<!-- Cards de ofertas e combos: apresentacao responsiva sem alterar regras de venda. -->
+<style>
+@media(max-width:767px){
+  #promocao .tpbrandproduct__item,
+  #combo .tpbrandproduct__item{
+    box-sizing:border-box;
+    background:#fffdf9!important;
+    border:1px solid #efddc9!important;
+    border-radius:16px!important;
+    overflow:hidden;
+    box-shadow:0 4px 14px rgba(100,58,29,.09)!important;
+  }
+  #promocao .tpbrandproduct__item>a,
+  #combo .tpbrandproduct__item>a{
+    display:block;
+    width:100%;
+    min-width:0;
+    text-decoration:none;
+  }
+  #promocao .tpbrandproduct__contact,
+  #combo .tpbrandproduct__contact{
+    min-width:0;
+    padding:10px 12px;
+    overflow-wrap:anywhere;
+    line-height:1.4;
+  }
+  #promocao .tpproduct__price,
+  #combo .tpproduct__price{
+    display:flex;
+    flex-wrap:wrap;
+    align-items:baseline;
+    gap:5px 10px;
+    margin-top:7px;
+  }
+  #promocao .tpproduct__price del,
+  #combo .tpproduct__price del{opacity:.7;font-size:.88em}
+  #promocao .imgem-cat-div img,
+  #combo .img_combo img{
+    display:block;
+    max-width:100%;
+    object-fit:contain!important;
+  }
+  #combo .img_combo{background:#fffaf5}
+}
+</style>
 <!-- Ajustes responsivos dos cards de categorias sem alterar produtos ou precos. -->
 <style>
 @media(max-width:767px){
