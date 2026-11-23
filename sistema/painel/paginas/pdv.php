@@ -957,8 +957,11 @@ $("#form_venda").submit(function (event) {
 					$("#btn_limpar").show();
 				}
 
-				$("#btn_venda").show();
-				$("#btn_limpar").show();
+                // A lista de itens e a unica responsavel por exibir os botoes.
+                // Nao reexibir Finalizar/Limpar apos a venda quando a comanda esta vazia.
+                if (msg[0].trim() !== "Salvo com Sucesso") {
+                    $("#btn_venda, #btn_limpar").show();
+                }
 				envioEmAndamento = false;
 			},
 
