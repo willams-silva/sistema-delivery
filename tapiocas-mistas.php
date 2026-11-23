@@ -45,15 +45,10 @@ if (!function_exists('escMista')) { function escMista($x) { return htmlspecialch
   <?php if (count($proteinas_mistas)<$limite): ?><div class="text-danger">Cadastre pelo menos <?= $limite ?> proteínas nesta categoria.</div><?php endif; ?>
   <div class="mt-2 mb-3">
   <?php foreach ($proteinas_mistas as $a): ?>
-   <div class="mista-item-quantidade">
+   <label class="mista-item-quantidade mista-item-incluso" style="cursor:pointer;justify-content:flex-start">
+    <input type="checkbox" class="form-check-input proteina-inclusa" value="<?= (int)$a['id'] ?>" style="margin:0;flex-shrink:0">
     <span class="mista-item-nome"><?= escMista($a['nome']) ?> <small class="text-success">(incluso)</small></span>
-    <div class="mista-controles">
-     <button type="button" class="mista-menos" aria-label="Remover <?= escMista($a['nome']) ?>">−</button>
-     <span class="mista-valor" aria-live="polite">0</span>
-     <button type="button" class="mista-mais" aria-label="Selecionar <?= escMista($a['nome']) ?>">+</button>
-     <input type="checkbox" class="proteina-inclusa" value="<?= (int)$a['id'] ?>" hidden>
-    </div>
-   </div>
+   </label>
   <?php endforeach; ?>
   </div>
   <div class="text-muted mb-3 contador-inclusas" aria-live="polite">0 de <?= $limite ?> selecionadas</div>
@@ -146,7 +141,7 @@ if (!function_exists('escMista')) { function escMista($x) { return htmlspecialch
        btn.setAttribute('aria-expanded',String(aberto && btn.dataset.abrir==='inclusas'));
      });
      if (!aberto) {
-       checks.forEach(function(x){x.checked=false;});
+       checks.forEach(function(x){x.checked=false;x.disabled=false;});
        card.querySelectorAll('.extra-mista').forEach(function(x){
          if(x.type==='checkbox') x.checked=false;
          else x.value='0';
@@ -182,7 +177,7 @@ if (!function_exists('escMista')) { function escMista($x) { return htmlspecialch
    }
    // Mesma interface +/- dos adicionais tradicionais. O estado real
    // continua nos inputs usados pelo envio do carrinho.
-   card.querySelectorAll('.mista-item-quantidade').forEach(function(linha){
+   card.querySelectorAll('.mista-item-quantidade:not(.mista-item-incluso)').forEach(function(linha){
      var input=linha.querySelector('input');
      var valor=linha.querySelector('.mista-valor');
      var mais=linha.querySelector('.mista-mais');
