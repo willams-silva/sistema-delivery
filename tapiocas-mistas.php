@@ -20,9 +20,9 @@ if (!function_exists('escMista')) { function escMista($x) { return htmlspecialch
  <div class="row mista-linha" style="width:100%;margin:0">
   <div class="col-10" style="padding-left:0">
    <div class="me-auto">
-    <div class="fw-bold titulo-item">
-     <input type="checkbox" class="form-check-input mista-abrir" id="mista-abrir-<?= $pid ?>" aria-controls="mista-opcoes-<?= $pid ?>" aria-expanded="false" style="margin-top:5px">
-     <label for="mista-abrir-<?= $pid ?>" style="cursor:pointer"><?= escMista($p['nome']) ?></label>
+    <div class="fw-bold titulo-item" style="display:flex;align-items:center;gap:5px;font-size:inherit;line-height:1.35">
+     <input type="checkbox" class="form-check-input mista-abrir" id="mista-abrir-<?= $pid ?>" aria-controls="mista-opcoes-<?= $pid ?>" aria-expanded="false" style="margin:0;flex:0 0 auto;accent-color:#a45b23">
+     <label for="mista-abrir-<?= $pid ?>" style="cursor:pointer;font-size:inherit;font-weight:700;color:inherit;margin:0"><?= escMista($p['nome']) ?></label>
     </div>
     <div class="subtitulo-item-menor" style="color:#450703"><?= escMista($p['descricao']) ?></div>
     <span class="valor-item-maior" style="color:green">R$ <?= number_format($preco,2,',','.') ?></span>
