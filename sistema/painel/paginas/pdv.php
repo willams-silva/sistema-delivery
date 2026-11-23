@@ -1923,6 +1923,14 @@ function FormaPg(){
 
                     $('#btn-fechar-grade').click();
                     listarVendas();
+                    // So devolver o foco ao leitor quando nao houver
+                    // janela de adicionais, grade ou quantidade aberta.
+                    // Evita capturar codigos dentro de um modal ativo.
+                    setTimeout(function() {
+                        if (!$('.modal.show:visible, .swal2-container:visible').length) {
+                            $('#txt_buscar').val('').trigger('focus');
+                        }
+                    }, 250);
                 } else {
                     alertWarning(mensagem)
                 }
