@@ -90,7 +90,9 @@ if (!function_exists('escMista')) { function escMista($x) { return htmlspecialch
      painel.hidden=!aberto;
      abrir.checked=aberto;
      abrir.setAttribute('aria-expanded',String(aberto));
-     botoes.forEach(function(btn){btn.disabled=!aberto;btn.setAttribute('aria-disabled',String(!aberto));});
+     // Manter os botoes clicaveis: antes de selecionar, mostrar o mesmo
+     // aviso usado pelos sabores tradicionais em vez de desabilita-los.
+     botoes.forEach(function(btn){btn.disabled=false;btn.removeAttribute('aria-disabled');});
      if (!aberto) {
        checks.forEach(function(x){x.checked=false;});
        card.querySelectorAll('.extra-mista').forEach(function(x){
@@ -111,7 +113,14 @@ if (!function_exists('escMista')) { function escMista($x) { return htmlspecialch
    });
    botoes.forEach(function(btn){
      btn.addEventListener('click',function(){
-       if (!abrir.checked) return;
+       if (!abrir.checked) {
+         if (typeof mostrarAvisoSelecaoSabor === 'function') {
+           mostrarAvisoSelecaoSabor('Selecione o sabor', 'Selecione este sabor primeiro para escolher os adicionais.');
+         } else {
+           alert('Selecione a tapioca primeiro para escolher as opções.');
+         }
+         return;
+       }
        var tipo=btn.getAttribute('data-abrir');
        var inclusas=card.querySelector('.mista-inclusas');
        if (tipo==='inclusas') {
