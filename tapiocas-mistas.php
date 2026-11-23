@@ -32,14 +32,14 @@ if (!function_exists('escMista')) { function escMista($x) { return htmlspecialch
   <div class="col-2 text-end" style="padding-right:0">
    <img src="sistema/painel/images/produtos/<?= escMista(rawurlencode($p['foto'])) ?>" width="60" height="60" style="object-fit:cover;max-width:100%" alt="">
   </div>
-  <div class="col-12 mista-botoes" style="padding:0;margin-top:12px">
+  <div class="col-12 mista-botoes mt-2" style="padding-left:8px">
    <button type="button" class="btn btn-sm btn-outline-success mb-1 me-1 mista-abrir-btn" data-abrir="inclusas">＋ Sabores inclusos</button>
    <button type="button" class="btn btn-sm btn-outline-success mb-1 me-1 mista-abrir-btn" data-abrir="adicional">＋ Adicionais</button>
    <button type="button" class="btn btn-sm btn-outline-success mb-1 me-1 mista-abrir-btn" data-abrir="opcional">＋ Opcionais · retirar sem custo</button>
    <button type="button" class="btn btn-sm btn-outline-success mb-1 me-1 mista-abrir-btn" data-abrir="proteina">＋ Proteínas</button>
   </div>
   <div class="col-12">
-   <div id="mista-opcoes-<?= $pid ?>" class="mista-opcoes mt-3" hidden style="padding:12px;background:#fff8ef;border-radius:10px">
+   <div id="mista-opcoes-<?= $pid ?>" class="mista-opcoes mt-2" hidden style="padding:10px;background:#fff8e8;border-radius:8px">
     <div class="mista-inclusas">
      <strong>Escolha exatamente <?= $limite ?> proteínas inclusas</strong>
   <?php if (count($proteinas_mistas)<$limite): ?><div class="text-danger">Cadastre pelo menos <?= $limite ?> proteínas nesta categoria.</div><?php endif; ?>
@@ -53,7 +53,8 @@ if (!function_exists('escMista')) { function escMista($x) { return htmlspecialch
   <?php foreach (['proteina'=>'Proteínas extras (pagas)', 'adicional'=>'Adicionais', 'opcional'=>'Opcionais (retirar sem custo)'] as $tipo=>$titulo):
     $itens = array_values(array_filter($extras_mistos, function($a) use ($tipo){return ($a['tipo'] ?? 'adicional') === $tipo;}));
     if (!$itens) continue; ?>
-  <details class="mb-3 mista-grupo" data-tipo="<?= escMista($tipo) ?>"><summary style="cursor:pointer;font-weight:600"><?= escMista($titulo) ?></summary>
+  <details class="mb-3 mista-grupo" data-tipo="<?= escMista($tipo) ?>" style="background:#fff8e8;border-radius:8px;padding:10px">
+   <summary style="cursor:pointer;font-weight:600"><?= escMista($titulo) ?></summary>
    <div class="mt-2">
     <?php foreach ($itens as $a): ?>
      <div class="d-flex justify-content-between align-items-center py-2" style="border-bottom:1px solid #eee">
@@ -86,6 +87,12 @@ if (!function_exists('escMista')) { function escMista($x) { return htmlspecialch
    var abrir=card.querySelector('.mista-abrir');
    var botoes=Array.from(card.querySelectorAll('.mista-abrir-btn'));
    var checks=Array.from(card.querySelectorAll('.proteina-inclusa'));
+   function sincronizarPainel() {
+     if (!abrir.checked) return;
+     var inclusasVisiveis=!card.querySelector('.mista-inclusas').hidden;
+     var algumExtra=Array.from(card.querySelectorAll('.mista-grupo')).some(function(g){return g.open});
+     painel.hidden=!(inclusasVisiveis||algumExtra);
+   }
    function alternar(aberto) {
      painel.hidden=!aberto;
      abrir.checked=aberto;
@@ -131,12 +138,14 @@ if (!function_exists('escMista')) { function escMista($x) { return htmlspecialch
        if (tipo==='inclusas') {
          inclusas.hidden=!inclusas.hidden;
          btn.setAttribute('aria-expanded',String(!inclusas.hidden));
+         sincronizarPainel();
          if (!inclusas.hidden) inclusas.scrollIntoView({behavior:'smooth',block:'nearest'});
        } else {
          var grupo=card.querySelector('.mista-grupo[data-tipo="'+tipo+'"]');
          if (grupo) {
            grupo.open=!grupo.open;
            btn.setAttribute('aria-expanded',String(grupo.open));
+           sincronizarPainel();
            if (grupo.open) grupo.scrollIntoView({behavior:'smooth',block:'nearest'});
          }
        }
