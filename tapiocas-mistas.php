@@ -84,15 +84,34 @@ if (!function_exists('escMista')) { function escMista($x) { return htmlspecialch
    var limite=Number(card.dataset.limite);
    var painel=card.querySelector('.mista-opcoes');
    var abrir=card.querySelector('.mista-abrir');
+   var botoes=Array.from(card.querySelectorAll('.mista-abrir-btn'));
+   var checks=Array.from(card.querySelectorAll('.proteina-inclusa'));
    function alternar(aberto) {
      painel.hidden=!aberto;
      abrir.checked=aberto;
      abrir.setAttribute('aria-expanded',String(aberto));
+     botoes.forEach(function(btn){btn.disabled=!aberto;btn.setAttribute('aria-disabled',String(!aberto));});
+     if (!aberto) {
+       checks.forEach(function(x){x.checked=false;});
+       card.querySelectorAll('.extra-mista').forEach(function(x){
+         if(x.type==='checkbox') x.checked=false;
+         else x.value='0';
+       });
+       card.querySelectorAll('.mista-grupo').forEach(function(x){x.open=false;});
+       card.querySelector('.obs-mista').value='';
+       card.querySelector('.resultado-mista').textContent='';
+       atualizar();
+     }
    }
-   abrir.addEventListener('change',function(){alternar(abrir.checked)});
-   card.querySelectorAll('.mista-abrir-btn').forEach(function(btn){
+   abrir.addEventListener('change',function(){
+     alternar(abrir.checked);
+     if (abrir.checked) {
+       card.querySelector('.mista-inclusas').scrollIntoView({behavior:'smooth',block:'nearest'});
+     }
+   });
+   botoes.forEach(function(btn){
      btn.addEventListener('click',function(){
-       alternar(true);
+       if (!abrir.checked) return;
        var tipo=btn.getAttribute('data-abrir');
        var inclusas=card.querySelector('.mista-inclusas');
        if (tipo==='inclusas') {
@@ -103,7 +122,7 @@ if (!function_exists('escMista')) { function escMista($x) { return htmlspecialch
        }
      });
    });
-   var checks=Array.from(card.querySelectorAll('.proteina-inclusa'));
+   alternar(false);
    function atualizar(){
      var n=checks.filter(function(x){return x.checked}).length;
      card.querySelector('.contador-inclusas').textContent=n+' de '+limite+' selecionadas';
@@ -112,6 +131,7 @@ if (!function_exists('escMista')) { function escMista($x) { return htmlspecialch
    checks.forEach(function(x){x.addEventListener('change',atualizar)});atualizar();
    card.querySelector('.btn-mista').addEventListener('click',function(){
      var btn=this, msg=card.querySelector('.resultado-mista');
+     if (!abrir.checked) {msg.textContent='Selecione a tapioca mista antes de escolher os sabores.';return;}
      var incl=checks.filter(function(x){return x.checked}).map(function(x){return Number(x.value)});
      if(incl.length!==limite){msg.textContent='Escolha exatamente '+limite+' proteínas inclusas.';return;}
      var extras={};
