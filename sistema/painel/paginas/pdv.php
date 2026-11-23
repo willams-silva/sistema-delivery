@@ -1052,7 +1052,29 @@ $("#form_venda").submit(function (event) {
                     if (event.key !== 'Enter') return;
                     event.preventDefault();
                     clearTimeout(pdvBuscaTemporizador);
-                    buscar();
+                    var codigoLido = String($('#txt_buscar').val() || '').trim();
+                    if (!codigoLido) { buscar(); return; }
+                    // A inclusao automatica so ocorre com um unico codigo exato.
+                    // A abertura normal de adicionais/grades continua obrigatoria.
+                    $.ajax({
+                        url: 'paginas/' + pag + '/listar.php',
+                        method: 'POST',
+                        data: {p1:'', p2:codigoLido},
+                        dataType: 'html'
+                    }).done(function(html) {
+                        if (String($('#txt_buscar').val() || '').trim() !== codigoLido) return;
+                        $('#listar').html(html);
+                        var correspondencias = $('#listar .product-card').filter(function() {
+                            return String($(this).attr('data-codigo') || '').trim() === codigoLido;
+                        });
+                        if (correspondencias.length === 1 && !$('.modal.show:visible, .swal2-container:visible').length) {
+                            // Reutiliza o clique original: nunca pula a escolha de adicionais.
+                            correspondencias.eq(0).closest('a').trigger('click');
+                            $('#txt_buscar').val('');
+                        }
+                    }).fail(function() {
+                        if (typeof alertWarning === 'function') alertWarning('Não foi possível consultar o código. Tente novamente.');
+                    });
                 });
 			function buscar(){
 				var busca = $('#txt_buscar').val();
