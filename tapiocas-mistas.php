@@ -47,7 +47,7 @@ if (!function_exists('escMista')) { function escMista($x) { return htmlspecialch
   <?php foreach ($proteinas_mistas as $a): ?>
    <label class="mista-item-quantidade mista-item-incluso" style="cursor:pointer;justify-content:flex-start">
     <input type="checkbox" class="form-check-input proteina-inclusa" value="<?= (int)$a['id'] ?>" style="margin:0;flex-shrink:0">
-    <span class="mista-item-nome"><?= escMista($a['nome']) ?> <small class="text-success">(incluso)</small></span>
+    <span class="mista-item-nome"><span aria-hidden="true"><?= function_exists('iconeAdicionalPizza') ? escMista(iconeAdicionalPizza($a['nome'])) : '🍽️' ?></span> <?= escMista($a['nome']) ?> <small class="text-success">(incluso)</small></span>
    </label>
   <?php endforeach; ?>
   </div>
@@ -61,7 +61,7 @@ if (!function_exists('escMista')) { function escMista($x) { return htmlspecialch
    <div class="mt-2">
     <?php foreach ($itens as $a): ?>
      <div class="mista-item-quantidade">
-      <span class="mista-item-nome"><?= escMista($a['nome']) ?>
+      <span class="mista-item-nome"><span aria-hidden="true"><?= function_exists('iconeAdicionalPizza') ? escMista(iconeAdicionalPizza($a['nome'])) : '🍽️' ?></span> <?= escMista($a['nome']) ?>
        <?php if ($tipo !== 'opcional'): ?><small class="text-success">(R$ <?= number_format((float)$a['valor'],2,',','.') ?>)</small><?php else: ?><small class="text-success">(sem custo)</small><?php endif; ?>
       </span>
       <div class="mista-controles">
