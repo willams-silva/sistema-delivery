@@ -61,16 +61,18 @@ if (!function_exists('escMista')) { function escMista($x) { return htmlspecialch
    <div class="mt-2">
     <?php foreach ($itens as $a): ?>
      <div class="mista-item-quantidade">
-      <span class="mista-item-nome"><span aria-hidden="true"><?= function_exists('iconeAdicionalPizza') ? escMista(iconeAdicionalPizza($a['nome'])) : '🍽️' ?></span> <?= escMista($a['nome']) ?>
+      <small class="mista-item-nome"><span aria-hidden="true"><?= function_exists('iconeAdicionalPizza') ? escMista(iconeAdicionalPizza($a['nome'])) : '🍽️' ?></span> <?= escMista($a['nome']) ?>
        <?php if ($tipo !== 'opcional'): ?><small class="text-success">(R$ <?= number_format((float)$a['valor'],2,',','.') ?>)</small><?php else: ?><small class="text-success">(sem custo)</small><?php endif; ?>
-      </span>
+      </small>
       <div class="mista-controles">
-       <button type="button" class="mista-menos" aria-label="Diminuir <?= escMista($a['nome']) ?>">−</button>
-       <span class="mista-valor" aria-live="polite">0</span>
-       <button type="button" class="mista-mais" aria-label="Aumentar <?= escMista($a['nome']) ?>">+</button>
        <?php if ($tipo === 'opcional'): ?>
-        <input type="checkbox" class="extra-mista" data-id="<?= (int)$a['id'] ?>" data-tipo="opcional" hidden>
+        <label class="d-flex align-items-center gap-1" style="white-space:nowrap;cursor:pointer">
+         <input type="checkbox" class="extra-mista" data-id="<?= (int)$a['id'] ?>" data-tipo="opcional"> Retirar
+        </label>
        <?php else: ?>
+        <button type="button" class="mista-menos" aria-label="Retirar uma unidade de <?= escMista($a['nome']) ?>">−</button>
+        <span class="mista-valor" aria-live="polite">0</span>
+        <button type="button" class="mista-mais" aria-label="Adicionar uma unidade de <?= escMista($a['nome']) ?>">+</button>
         <input type="number" class="extra-mista" min="0" max="20" step="1" value="0" data-id="<?= (int)$a['id'] ?>" data-tipo="<?= escMista($tipo) ?>" hidden>
        <?php endif; ?>
       </div>
@@ -89,12 +91,12 @@ if (!function_exists('escMista')) { function escMista($x) { return htmlspecialch
 [data-mista] .mista-item-quantidade{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:8px 0;border-bottom:1px solid #e9e5dc;min-height:56px}
 [data-mista] .mista-item-nome{flex:1;min-width:0;color:#30251d;overflow-wrap:anywhere}
 [data-mista] .mista-controles{display:flex;align-items:center;gap:12px;flex-shrink:0}
-[data-mista] .mista-controles button{display:flex;align-items:center;justify-content:center;width:42px;height:44px;border-radius:12px;font-size:24px;line-height:1;cursor:pointer}
-[data-mista] .mista-menos{background:#fff;color:#f03d4c;border:1px solid #f03d4c}
-[data-mista] .mista-mais{background:#168b56;color:#fff;border:1px solid #168b56}
+[data-mista] .mista-controles button{display:flex;align-items:center;justify-content:center;width:34px;height:34px;border-radius:10px;font-size:23px;line-height:1;cursor:pointer;padding:0}
+[data-mista] .mista-menos{background:#fff;color:#dc3545;border:1.5px solid #dc3545}
+[data-mista] .mista-mais{background:#198754;color:#fff;border:1.5px solid #198754}
 [data-mista] .mista-mais:disabled{opacity:.4;cursor:not-allowed}
-[data-mista] .mista-valor{min-width:18px;text-align:center;font-weight:700;color:#171717}
-@media(max-width:380px){[data-mista] .mista-controles{gap:7px}[data-mista] .mista-controles button{width:38px;height:40px}}
+[data-mista] .mista-valor{min-width:26px;text-align:center;font-weight:700;color:#171717}
+@media(max-width:380px){[data-mista] .mista-controles{gap:5px}}
 </style>
 <script>
 (function(){
