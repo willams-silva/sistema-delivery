@@ -149,11 +149,11 @@ if($total_reg > 0){
 					. ' onclick="removerAdicionalResumo(' . $id_extra . ',' . (int)$id . ')"><i class="bi bi-trash3"></i></button>';
 				$valor_extra_com_acao = '<span class="d-inline-flex align-items-center justify-content-end"><strong>R$ ' . $valor_extra_formatado . '</strong>' . $botao_remover_extra . '</span>';
 				if ($tipo_extra === 'opcional') {
-					$resumo_opcionais_tapioca .= '<div class="d-flex justify-content-between gap-2 py-1" style="font-size:13px"><span><i class="bi bi-dash-circle text-danger"></i> Sem ' . $nome_extra . $texto_sabor . '</span><span class="d-inline-flex align-items-center"><strong>Sem custo</strong>' . $botao_remover_extra . '</span></div>';
+					$resumo_opcionais_tapioca .= '<div class="bc-linha-extra d-flex justify-content-between gap-2 py-1" style="font-size:13px"><span><i class="bi bi-dash-circle text-danger"></i> Sem ' . $nome_extra . $texto_sabor . '</span><span class="d-inline-flex align-items-center"><strong>Sem custo</strong>' . $botao_remover_extra . '</span></div>';
 				} elseif ($tipo_extra === 'proteina') {
-					$resumo_proteinas_tapioca .= '<div class="d-flex justify-content-between gap-2 py-1" style="font-size:13px"><span><i class="bi bi-plus-circle-fill text-success"></i> ' . $qtd_extra . 'x ' . $nome_extra . $texto_sabor . '</span>' . $valor_extra_com_acao . '</div>';
+					$resumo_proteinas_tapioca .= '<div class="bc-linha-extra d-flex justify-content-between gap-2 py-1" style="font-size:13px"><span><i class="bi bi-plus-circle-fill text-success"></i> ' . $qtd_extra . 'x ' . $nome_extra . $texto_sabor . '</span>' . $valor_extra_com_acao . '</div>';
 				} else {
-					$resumo_adicionais_tapioca .= '<div class="d-flex justify-content-between gap-2 py-1" style="font-size:13px"><span><i class="bi bi-plus-circle-fill text-success"></i> ' . $qtd_extra . 'x ' . $nome_extra . $texto_sabor . '</span>' . $valor_extra_com_acao . '</div>';
+					$resumo_adicionais_tapioca .= '<div class="bc-linha-extra d-flex justify-content-between gap-2 py-1" style="font-size:13px"><span><i class="bi bi-plus-circle-fill text-success"></i> ' . $qtd_extra . 'x ' . $nome_extra . $texto_sabor . '</span>' . $valor_extra_com_acao . '</div>';
 				}
 			}
 			$valor_base_total = max(0, (float)$total_item - $total_extras_unidade * (float)$quantidade);
@@ -166,7 +166,7 @@ if($total_reg > 0){
 					. '<div style="font-weight:700;margin-bottom:4px"><i class="bi bi-chat-left-text"></i> Observação</div>'
 					. '<div style="white-space:pre-wrap;overflow-wrap:anywhere;color:#555">' . htmlspecialchars($observacao_tapioca, ENT_QUOTES, 'UTF-8') . '</div></div>';
 			}
-			$resumo_preco_tapioca = '<div class="mt-3 p-3" style="background:#fff8e8;border-radius:12px;border:1px solid #f5e4ba">'
+			$resumo_preco_tapioca = '<div class="bc-resumo-tapioca mt-3 p-3" style="background:#fff8e8;border-radius:12px;border:1px solid #f5e4ba">'
 				. '<div class="d-flex justify-content-between gap-2 pb-2" style="font-size:14px"><span>🫓 Tapioca (' . htmlspecialchars((string)$quantidade, ENT_QUOTES, 'UTF-8') . ' un.)</span><strong>R$ ' . $valor_base_formatado . '</strong></div>'
 				. ($resumo_adicionais_tapioca !== '' ? '<div class="fw-bold mt-2">Adicionais</div>' . $resumo_adicionais_tapioca : '')
 				. ($resumo_proteinas_tapioca !== '' ? '<div class="fw-bold mt-2">Proteínas</div>' . $resumo_proteinas_tapioca : '')
@@ -385,6 +385,22 @@ HTML;
 
 
 	?>
+
+	<style>
+/* Organiza nomes, valores e controles dos extras sem mudar o calculo. */
+.bc-resumo-tapioca .bc-linha-extra{align-items:center;min-width:0}
+.bc-resumo-tapioca .bc-linha-extra>span:first-child{flex:1 1 auto;min-width:0;overflow-wrap:anywhere;padding-right:8px}
+.bc-resumo-tapioca .bc-linha-extra>span:last-child{flex:0 0 auto;gap:5px;font-variant-numeric:tabular-nums}
+.bc-resumo-tapioca .bc-linha-extra button{display:inline-flex;align-items:center;justify-content:center;border-radius:9px}
+.bc-resumo-tapioca .bc-linha-extra button:focus-visible{outline:2px solid #a85b24;outline-offset:2px}
+@media(max-width:575px){
+ .bc-resumo-tapioca{padding:12px!important}
+ .bc-resumo-tapioca .bc-linha-extra{gap:6px!important}
+ .bc-resumo-tapioca .bc-linha-extra>span:first-child{font-size:12px;line-height:1.4}
+ .bc-resumo-tapioca .bc-linha-extra>span:last-child{font-size:12px}
+ .bc-resumo-tapioca .bc-linha-extra button{margin-left:2px!important;min-width:40px!important;min-height:40px!important}
+}
+</style>
 
 	<script type="text/javascript">
 		$("#total-do-pedido").text("<?=$total_carrinhoF?>");
