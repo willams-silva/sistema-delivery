@@ -79,9 +79,6 @@ if (!function_exists('escMista')) { function escMista($x) { return htmlspecialch
    </div>
   </details>
   <?php endforeach; ?>
-  <label for="obs-mista-<?= $pid ?>">Observações</label>
-  <textarea id="obs-mista-<?= $pid ?>" class="form-control obs-mista" maxlength="180" rows="2" placeholder="Alguma observação?"></textarea>
-  <button type="button" class="btn btn-warning w-100 mt-3 btn-mista" <?= count($proteinas_mistas)<$limite ? 'disabled' : '' ?>>Adicionar ao carrinho →</button>
   <div class="resultado-mista mt-2" role="alert" aria-live="polite"></div>
    </div>
   </div>
@@ -146,7 +143,6 @@ if (!function_exists('escMista')) { function escMista($x) { return htmlspecialch
          if(x.type==='checkbox') x.checked=false;
          else x.value='0';
        });
-       card.querySelector('.obs-mista').value='';
        card.querySelector('.resultado-mista').textContent='';
        atualizar();
        if(typeof atualizarQuantidades==='function') atualizarQuantidades();
@@ -213,21 +209,31 @@ if (!function_exists('escMista')) { function escMista($x) { return htmlspecialch
    }
    checks.forEach(function(x){x.addEventListener('change',function(){atualizar();atualizarQuantidades();})});
    atualizar();atualizarQuantidades();
-   card.querySelector('.btn-mista').addEventListener('click',function(){
-     var btn=this, msg=card.querySelector('.resultado-mista');
-     if (!abrir.checked) {msg.textContent='Selecione a tapioca mista antes de escolher os sabores.';return;}
+   card.enviarMista=function(){
+     var msg=card.querySelector('.resultado-mista');
+     if (!abrir.checked) return false;
      var incl=checks.filter(function(x){return x.checked}).map(function(x){return Number(x.value)});
-     if(incl.length!==limite){msg.textContent='Escolha exatamente '+limite+' proteínas inclusas.';return;}
+     if(incl.length!==limite){
+       msg.textContent='Escolha exatamente '+limite+' proteínas inclusas.';
+       mostrarGrupo('inclusas');
+       return true;
+     }
      var extras={};
      card.querySelectorAll('.extra-mista').forEach(function(x){
        var qtd=x.type==='checkbox'?(x.checked?1:0):Number(x.value);
        if(Number.isInteger(qtd)&&qtd>0) extras[x.dataset.id]=qtd;
      });
-     btn.disabled=true;msg.textContent='Adicionando...';
-     fetch('js/ajax/add-carrinho-mista.php',{method:'POST',credentials:'same-origin',headers:{'Content-Type':'application/x-www-form-urlencoded'},body:new URLSearchParams({produto:card.dataset.mista,inclusas:JSON.stringify(incl),extras:JSON.stringify(extras),obs:card.querySelector('.obs-mista').value})})
-       .then(function(r){return r.text()}).then(function(t){if(t.trim()==='Inserido com Sucesso'){location.href='carrinho';}else{msg.textContent=t;btn.disabled=false}})
-       .catch(function(){msg.textContent='Falha de conexão. Tente novamente.';btn.disabled=false});
-   });
+     if(card.dataset.enviando==='1')return true;
+     card.dataset.enviando='1';msg.textContent='Adicionando...';
+     fetch('js/ajax/add-carrinho-mista.php',{method:'POST',credentials:'same-origin',headers:{'Content-Type':'application/x-www-form-urlencoded'},body:new URLSearchParams({produto:card.dataset.mista,inclusas:JSON.stringify(incl),extras:JSON.stringify(extras),obs:document.getElementById('obs')?.value||''})})
+       .then(function(r){return r.text()}).then(function(t){
+         if(t.trim()==='Inserido com Sucesso'){location.href='carrinho';}
+         else{msg.textContent=t;card.dataset.enviando='0';}
+       })
+       .catch(function(){msg.textContent='Falha de conexão. Tente novamente.';card.dataset.enviando='0';});
+     return true;
+   };
+
  });
 })();
 </script>
