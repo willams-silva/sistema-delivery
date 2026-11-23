@@ -1481,34 +1481,35 @@ body:has(.bc-carrinho-fixo.bc-visivel){padding-bottom:85px}
 
 
 <script type="text/javascript">
+  // Busca com atraso curto para evitar uma requisicao a cada tecla.
+  let temporizadorBuscaProduto = null;
+  let requisicaoBuscaProduto = null;
   function buscarProduto(){
-    var buscar = $('#buscar').val();
-    if(buscar == ""){
-      $('#area_busca').hide();
-    }else{
-      $('#area_busca').show();
-
-      $.ajax({
-      url: 'js/ajax/buscar_produtos.php',
-      method: 'POST',
-      data: {
-        buscar
-      },
-      dataType: "text",
-
-      success: function(mensagem) {       
-       
-       $('#area_busca').html(mensagem);
-
-      },
-
-    });
-
+    clearTimeout(temporizadorBuscaProduto);
+    const termo = ($('#buscar').val() || '').trim();
+    const area = $('#area_busca');
+    if (!termo) {
+      if (requisicaoBuscaProduto) requisicaoBuscaProduto.abort();
+      area.hide().empty();
+      return;
     }
-
-
-
-
+    temporizadorBuscaProduto = setTimeout(function(){
+      if (requisicaoBuscaProduto) requisicaoBuscaProduto.abort();
+      area.show().attr('aria-busy','true');
+      requisicaoBuscaProduto = $.ajax({
+        url: 'js/ajax/buscar_produtos.php',
+        method: 'POST',
+        data: { buscar: termo },
+        dataType: 'text',
+        success: function(html) {
+          if (($('#buscar').val() || '').trim() === termo) area.html(html);
+        },
+        error: function(xhr, status) {
+          if (status !== 'abort') area.html('<p role="status">Não foi possível buscar agora. Tente novamente.</p>');
+        },
+        complete: function(){ area.attr('aria-busy','false'); }
+      });
+    }, 300);
   }
 </script>
 
