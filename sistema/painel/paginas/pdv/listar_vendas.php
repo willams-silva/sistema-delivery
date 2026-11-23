@@ -326,8 +326,33 @@ function excluirAlert(id, botao) {
             } else {
                 Swal.fire({title: 'Não foi possível remover', text: String(mensagem), icon: 'error', confirmButtonColor: '#512c24'});
             }
-        }).fail(function() {
-            Swal.fire({title: 'Falha na conexão', text: 'O item pode não ter sido removido. Confira a comanda antes de tentar novamente.', icon: 'error', confirmButtonColor: '#512c24'});
+        }).fail(function(xhr, status) {
+            // Erros HTTP do servidor nao sao necessariamente falhas de conexao.
+            // Mostrar a mensagem real, sem expor HTML ou detalhes internos do PHP.
+            var codigo = Number(xhr && xhr.status) || 0;
+            var mensagemServidor = String(xhr && xhr.responseText || '').replace(/<[^>]*>/g, ' ').replace(/\\s+/g, ' ').trim();
+            var mensagem = '';
+            var titulo = 'Não foi possível remover';
+            if (codigo === 403) {
+                mensagem = 'Sua sessão pode ter expirado. Entre novamente no sistema antes de excluir.';
+            } else if (codigo === 404) {
+                mensagem = 'Este item não está mais na comanda atual. A lista será atualizada.';
+            } else if (codigo === 400) {
+                mensagem = 'O item selecionado é inválido. Atualize a comanda e tente novamente.';
+            } else if (codigo === 0 || status === 'timeout') {
+                titulo = 'Falha na conexão';
+                mensagem = 'Não foi possível confirmar a exclusão. Confira a comanda atualizada antes de tentar novamente.';
+            } else {
+                mensagem = 'O servidor não conseguiu excluir o item. Confira a comanda e tente novamente.';
+            }
+            Swal.fire({
+                title: titulo,
+                text: mensagem,
+                icon: 'error',
+                confirmButtonText: 'Entendi',
+                confirmButtonColor: '#512c24',
+                customClass: {popup: 'pdv-exclusao-popup'}
+            });
             listarVendas();
         }).always(function() {
             delete window.pdvExclusaoEmAndamento[id];
