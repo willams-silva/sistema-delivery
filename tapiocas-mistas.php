@@ -16,24 +16,32 @@ if (!function_exists('escMista')) { function escMista($x) { return htmlspecialch
  $preco = $p['promocao']==='Sim' && (float)$p['val_promocional']>0 ? (float)$p['val_promocional'] : (float)$p['valor_venda'];
  $limite = (int)$p['limite_proteinas'];
  $pid = (int)$p['id']; ?>
-<li class="list-group-item mb-2" data-mista="<?= $pid ?>" data-limite="<?= $limite ?>" style="border:1px solid #efddc9">
- <div class="d-flex justify-content-between align-items-start gap-2 flex-wrap">
-  <div class="d-flex align-items-start gap-2" style="flex:1;min-width:210px">
-   <input type="checkbox" class="form-check-input mista-abrir" id="mista-abrir-<?= $pid ?>" aria-controls="mista-opcoes-<?= $pid ?>" aria-expanded="false">
-   <div>
-    <label for="mista-abrir-<?= $pid ?>" class="fw-bold" style="cursor:pointer"><?= escMista($p['nome']) ?></label>
-    <div class="subtitulo-item-menor" style="font-size:11px;color:#713c20"><?= escMista($p['descricao']) ?></div>
-    <div class="text-success" style="font-size:13px">R$ <?= number_format($preco,2,',','.') ?> · <?= $limite ?> proteínas inclusas</div>
+<li class="list-group-item d-flex justify-content-between align-items-start" data-mista="<?= $pid ?>" data-limite="<?= $limite ?>">
+ <div class="row" style="width:100%">
+  <div class="col-12 col-md-8">
+   <div class="me-auto">
+    <div class="fw-bold titulo-item">
+     <input type="checkbox" class="form-check-input mista-abrir" id="mista-abrir-<?= $pid ?>" aria-controls="mista-opcoes-<?= $pid ?>" aria-expanded="false" style="margin-top:5px">
+     <label for="mista-abrir-<?= $pid ?>" style="cursor:pointer"><?= escMista($p['nome']) ?></label>
+    </div>
+    <div class="subtitulo-item-menor" style="color:#450703"><?= escMista($p['descricao']) ?></div>
+    <span class="valor-item-maior" style="color:green">R$ <?= number_format($preco,2,',','.') ?></span>
+    <small class="d-block text-muted"><?= $limite ?> proteínas inclusas no preço</small>
    </div>
   </div>
-  <img src="sistema/painel/images/produtos/<?= escMista(rawurlencode($p['foto'])) ?>" width="72" height="72" style="object-fit:cover" alt="">
-  <div class="d-flex gap-1 flex-wrap" style="max-width:420px">
-   <button type="button" class="btn btn-sm btn-outline-warning mista-abrir-btn">＋ Escolher proteínas</button>
-   <button type="button" class="btn btn-sm btn-outline-warning mista-abrir-btn">＋ Adicionais e opcionais</button>
+  <div class="col-12 col-md-4 d-flex align-items-start justify-content-md-end gap-2 flex-wrap mt-2 mt-md-0">
+   <img src="sistema/painel/images/produtos/<?= escMista(rawurlencode($p['foto'])) ?>" width="74" height="74" style="object-fit:cover" alt="">
+   <div class="d-flex flex-wrap gap-1" style="max-width:270px">
+    <button type="button" class="btn btn-sm btn-outline-success mista-abrir-btn" data-abrir="inclusas">＋ Sabores inclusos</button>
+    <button type="button" class="btn btn-sm btn-outline-success mista-abrir-btn" data-abrir="adicional">＋ Adicionais</button>
+    <button type="button" class="btn btn-sm btn-outline-success mista-abrir-btn" data-abrir="opcional">＋ Opcionais · retirar sem custo</button>
+    <button type="button" class="btn btn-sm btn-outline-success mista-abrir-btn" data-abrir="proteina">＋ Proteínas</button>
+   </div>
   </div>
- </div>
- <div id="mista-opcoes-<?= $pid ?>" class="mista-opcoes mt-3" hidden style="padding:12px;background:#fff8ef;border-radius:10px">
-  <strong>Escolha exatamente <?= $limite ?> proteínas inclusas</strong>
+  <div class="col-12">
+   <div id="mista-opcoes-<?= $pid ?>" class="mista-opcoes mt-3" hidden style="padding:12px;background:#fff8ef;border-radius:10px">
+    <div class="mista-inclusas">
+     <strong>Escolha exatamente <?= $limite ?> proteínas inclusas</strong>
   <?php if (count($proteinas_mistas)<$limite): ?><div class="text-danger">Cadastre pelo menos <?= $limite ?> proteínas nesta categoria.</div><?php endif; ?>
   <div class="row mt-2 mb-3">
   <?php foreach ($proteinas_mistas as $a): ?>
@@ -41,10 +49,11 @@ if (!function_exists('escMista')) { function escMista($x) { return htmlspecialch
   <?php endforeach; ?>
   </div>
   <div class="text-muted mb-3 contador-inclusas" aria-live="polite">0 de <?= $limite ?> selecionadas</div>
+    </div>
   <?php foreach (['proteina'=>'Proteínas extras (pagas)', 'adicional'=>'Adicionais', 'opcional'=>'Opcionais (retirar sem custo)'] as $tipo=>$titulo):
     $itens = array_values(array_filter($extras_mistos, function($a) use ($tipo){return ($a['tipo'] ?? 'adicional') === $tipo;}));
     if (!$itens) continue; ?>
-  <details class="mb-3"><summary style="cursor:pointer;font-weight:600"><?= escMista($titulo) ?></summary>
+  <details class="mb-3 mista-grupo" data-tipo="<?= escMista($tipo) ?>"><summary style="cursor:pointer;font-weight:600"><?= escMista($titulo) ?></summary>
    <div class="mt-2">
     <?php foreach ($itens as $a): ?>
      <div class="d-flex justify-content-between align-items-center py-2" style="border-bottom:1px solid #eee">
@@ -64,6 +73,8 @@ if (!function_exists('escMista')) { function escMista($x) { return htmlspecialch
   <textarea id="obs-mista-<?= $pid ?>" class="form-control obs-mista" maxlength="180" rows="2" placeholder="Alguma observação?"></textarea>
   <button type="button" class="btn btn-warning w-100 mt-3 btn-mista" <?= count($proteinas_mistas)<$limite ? 'disabled' : '' ?>>Adicionar ao carrinho →</button>
   <div class="resultado-mista mt-2" role="alert" aria-live="polite"></div>
+   </div>
+  </div>
  </div>
 </li>
 <?php endforeach; ?>
@@ -80,7 +91,17 @@ if (!function_exists('escMista')) { function escMista($x) { return htmlspecialch
    }
    abrir.addEventListener('change',function(){alternar(abrir.checked)});
    card.querySelectorAll('.mista-abrir-btn').forEach(function(btn){
-     btn.addEventListener('click',function(){alternar(true);painel.scrollIntoView({behavior:'smooth',block:'nearest'})});
+     btn.addEventListener('click',function(){
+       alternar(true);
+       var tipo=btn.getAttribute('data-abrir');
+       var inclusas=card.querySelector('.mista-inclusas');
+       if (tipo==='inclusas') {
+         inclusas.scrollIntoView({behavior:'smooth',block:'nearest'});
+       } else {
+         var grupo=card.querySelector('.mista-grupo[data-tipo="'+tipo+'"]');
+         if (grupo) {grupo.open=true;grupo.scrollIntoView({behavior:'smooth',block:'nearest'});}
+       }
+     });
    });
    var checks=Array.from(card.querySelectorAll('.proteina-inclusa'));
    function atualizar(){
