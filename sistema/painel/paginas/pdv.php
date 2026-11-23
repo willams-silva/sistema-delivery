@@ -1045,6 +1045,13 @@ $("#form_venda").submit(function (event) {
             $(document).off('input.pdvBuscaCodigo', '#txt_buscar')
                 .on('input.pdvBuscaCodigo', '#txt_buscar', function() {
                     clearTimeout(pdvBuscaTemporizador);
+                    // Invalidar imediatamente resultados de codigos anteriores,
+                    // sem esperar o debounce da digitacao.
+                    ++pdvBuscaVersao;
+                    if (pdvBuscaRequisicao && pdvBuscaRequisicao.readyState !== 4) {
+                        pdvBuscaRequisicao.abort();
+                    }
+                    pdvLeituraEmAndamento = false;
                     pdvBuscaTemporizador = setTimeout(function() { buscar(); }, 180);
                 });
             var pdvUltimaLeitura = {codigo:'', instante:0};
@@ -1058,6 +1065,9 @@ $("#form_venda").submit(function (event) {
                     clearTimeout(pdvBuscaTemporizador);
                     var codigoLido = String($('#txt_buscar').val() || '').trim();
                     if (!codigoLido) { buscar(); return; }
+                    // Nao iniciar uma nova leitura enquanto o operador decide
+                    // adicionais, quantidades ou confirma uma janela.
+                    if ($('.modal.show:visible, .swal2-container:visible').length) return;
                     // Evita Enter repetido e dois eventos simultaneos do leitor.
                     // A mesma etiqueta pode ser lida novamente apos 800 ms.
                     var agoraLeitura = Date.now();
