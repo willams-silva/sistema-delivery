@@ -217,6 +217,25 @@ body.checkout-cardapio { background:#fffaf5; color:#493425; }
   .checkout-cardapio .bc-voltar-carrinho span{display:none}
 }
 </style>
+<style>
+/* Checkout mobile: leitura e preenchimento confortaveis sem alterar validacoes. */
+.checkout-cardapio input:not([type="radio"]):not([type="checkbox"]):not([type="hidden"]),
+.checkout-cardapio textarea,
+.checkout-cardapio select{font-size:16px}
+.checkout-cardapio input:focus-visible,
+.checkout-cardapio textarea:focus-visible,
+.checkout-cardapio select:focus-visible{outline:2px solid #a85b24;outline-offset:2px}
+@media(max-width:767px){
+ .checkout-cardapio .accordion-body{padding:16px!important}
+ .checkout-cardapio .accordion-button{padding:16px!important;line-height:1.4}
+ .checkout-cardapio #telefone,.checkout-cardapio #nome{
+   max-width:100%!important;box-sizing:border-box!important;
+ }
+ .checkout-cardapio #area-endereco .row{row-gap:12px}
+ .checkout-cardapio #area-endereco .group .input{max-width:100%!important}
+ .checkout-cardapio .list-group-item{padding:13px!important}
+}
+</style>
 <script>document.body.classList.add("checkout-cardapio");</script>
 <div class="main-container">
 
@@ -251,12 +270,12 @@ body.checkout-cardapio { background:#fffaf5; color:#493425; }
 
          <div style="display: flex; align-items: center; justify-content: center;">
           <i class="fas fa-phone" style="font-size: 22px; margin-right: 5px;"></i>
-          <input onkeyup="" type="tel" class="input telefone_user" name="telefone" id="telefone" required value="" placeholder="(00) 00000-0000" style="width: 250px; text-align: center; border: 0; margin-top: -15px; font-size: 22px;">
+          <input onkeyup="" type="tel" class="input telefone_user" name="telefone" id="telefone" required autocomplete="tel" inputmode="tel" value="" placeholder="(00) 00000-0000" style="width: 250px; text-align: center; border: 0; margin-top: -15px; font-size: 22px;">
         </div>
 
           <img src="img/user.jpg" width="50px" height="50px">
 
-          <div class="nome_user"> <input onclick="" type="text" class="input" name="nome" id="nome" required value="" placeholder="Seu Nome" style="width:200px; text-align: center; border:0; font-size: 17px"></div>
+          <div class="nome_user"> <input onclick="" type="text" class="input" name="nome" id="nome" required autocomplete="name" value="" placeholder="Seu Nome" style="width:200px; text-align: center; border:0; font-size: 17px"></div>
           
 
 
@@ -365,7 +384,7 @@ body.checkout-cardapio { background:#fffaf5; color:#493425; }
             <div class="row">
               <div class="col-7">
                 <div class="group">
-                  <input type="text" class="input" name="endereco" id="rua" required>
+                  <input type="text" class="input" name="endereco" id="rua" required autocomplete="address-line1">
 
                   <span class="highlight"></span>
                   <span class="bar"></span>
@@ -382,7 +401,7 @@ body.checkout-cardapio { background:#fffaf5; color:#493425; }
 
               <div class="col-3">
                 <div class="group">
-                  <input type="text" class="input" name="numero" id="numero" required>
+                  <input type="text" class="input" name="numero" id="numero" required inputmode="text">
                   <span class="highlight"></span>
                   <span class="bar"></span>
                   <label class="label">Número*</label>
@@ -394,7 +413,7 @@ body.checkout-cardapio { background:#fffaf5; color:#493425; }
             <div class="row">
               <div class="col-5">
                 <div class="group">
-                  <input type="text" class="input" name="complemento" id="complemento" required>
+                  <input type="text" class="input" name="complemento" id="complemento" required autocomplete="address-line2">
                   <span class="highlight"></span>
                   <span class="bar"></span>
                   <label class="label">Complemento</label>
@@ -459,7 +478,7 @@ body.checkout-cardapio { background:#fffaf5; color:#493425; }
 
                   <div class="col-12">
                     <div class="group">
-                      <input type="text" class="input" name="cidade" id="cidade">
+                      <input type="text" class="input" name="cidade" id="cidade" autocomplete="address-level2">
                       <span class="highlight"></span>
                       <span class="bar"></span>
                       <label class="label">Cidade*</label>
