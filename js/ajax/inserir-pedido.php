@@ -14,6 +14,30 @@ require_once("../../sistema/painel/buscar_config.php");
 $id_usuario = @$_SESSION['id'];
 
 $sessao_pedido_balcao = @$_SESSION['pedido_balcao'];
+// Rejeita requisicoes repetidas sem itens antes de atualizar cliente ou estoque.
+// A sessao PHP permanece bloqueada durante esta requisicao, serializando
+// envios simultaneos da mesma sessao no armazenamento padrao.
+$bc_sessao_carrinho = (string)@$_SESSION['sessao_usuario'];
+if ($bc_sessao_carrinho === '') {
+  http_response_code(409);
+  echo 'Carrinho vazio ou pedido ja enviado. Confira seus pedidos antes de tentar novamente.';
+  exit();
+}
+try {
+  $bc_check_carrinho = $pdo->prepare("SELECT id FROM carrinho WHERE sessao = ? AND empresa = ? AND (pedido = 0 OR pedido IS NULL) LIMIT 1");
+  $bc_check_carrinho->execute([$bc_sessao_carrinho, $id_empresa]);
+  if (!$bc_check_carrinho->fetchColumn()) {
+    http_response_code(409);
+    echo 'Carrinho vazio ou pedido ja enviado. Confira seus pedidos antes de tentar novamente.';
+    exit();
+  }
+} catch (PDOException $bc_erro_carrinho) {
+  error_log('Falha na validacao do carrinho: ' . $bc_erro_carrinho->getMessage());
+  http_response_code(503);
+  echo 'Nao foi possivel validar o carrinho. Tente novamente em instantes.';
+  exit();
+}
+
 $tipo_pedido = '';
 if($sessao_pedido_balcao == 'BALCÃO'){
   $tipo_pedido = 'Balcão';
