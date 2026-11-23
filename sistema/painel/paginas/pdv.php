@@ -852,8 +852,12 @@ function confirmarVendaConcluidaPdv(idVenda, impressaoAutomatica) {
         if (resultado.dismiss === Swal.DismissReason.cancel && comprovante) {
             // O modal ja foi fechado pelo SweetAlert. Nao reabri-lo apos imprimir.
             window.open(comprovante, '_blank');
+            // Revalidar a comanda ao solicitar a impressao. Nunca apagar
+            // produtos pendentes de outra venda apenas por imprimir.
+            listarVendas();
             focarNovaVendaPdv();
         } else if (resultado.isConfirmed) {
+            listarVendas();
             focarNovaVendaPdv();
         }
     });
