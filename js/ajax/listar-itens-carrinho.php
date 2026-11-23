@@ -380,7 +380,14 @@ HTML;
 		} 
 
 	}else{
-		echo "<script>window.location='site/".$url_site."'</script>";
+		// Mostra um estado vazio amigavel, sem redirecionamento inesperado.
+		$link_cardapio = 'site/' . rawurlencode((string)$url_site);
+		echo '<div class="bc-carrinho-vazio text-center" data-carrinho-vazio="1" role="status" style="padding:30px 18px!important;max-width:560px;width:100%;margin:0 auto">'
+			. '<i class="bi bi-bag-x" aria-hidden="true" style="display:block;font-size:48px;color:#a85b24;margin-bottom:10px"></i>'
+			. '<h2 style="font-size:21px;font-weight:750;color:#753d1e">Seu carrinho está vazio</h2>'
+			. '<p style="color:#795a43;margin:12px 0 22px">Escolha uma tapioca ou outro produto do cardápio para começar seu pedido.</p>'
+			. '<a class="btn btn-warning" href="' . htmlspecialchars($link_cardapio, ENT_QUOTES, 'UTF-8') . '" style="display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:46px"><i class="bi bi-arrow-left"></i> Voltar ao cardápio</a>'
+			. '</div>';
 	}
 
 
