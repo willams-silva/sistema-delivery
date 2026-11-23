@@ -93,7 +93,12 @@ if (!function_exists('escMista')) { function escMista($x) { return htmlspecialch
      // Manter os botoes clicaveis: antes de selecionar, mostrar o mesmo
      // aviso usado pelos sabores tradicionais em vez de desabilita-los.
      botoes.forEach(function(btn){btn.disabled=false;btn.removeAttribute('aria-disabled');});
+     if (aberto) {
+       // Ao marcar a tapioca, mostrar os sabores inclusos automaticamente.
+       card.querySelector('.mista-inclusas').hidden=false;
+     }
      if (!aberto) {
+       card.querySelector('.mista-inclusas').hidden=true;
        checks.forEach(function(x){x.checked=false;});
        card.querySelectorAll('.extra-mista').forEach(function(x){
          if(x.type==='checkbox') x.checked=false;
@@ -124,10 +129,16 @@ if (!function_exists('escMista')) { function escMista($x) { return htmlspecialch
        var tipo=btn.getAttribute('data-abrir');
        var inclusas=card.querySelector('.mista-inclusas');
        if (tipo==='inclusas') {
-         inclusas.scrollIntoView({behavior:'smooth',block:'nearest'});
+         inclusas.hidden=!inclusas.hidden;
+         btn.setAttribute('aria-expanded',String(!inclusas.hidden));
+         if (!inclusas.hidden) inclusas.scrollIntoView({behavior:'smooth',block:'nearest'});
        } else {
          var grupo=card.querySelector('.mista-grupo[data-tipo="'+tipo+'"]');
-         if (grupo) {grupo.open=true;grupo.scrollIntoView({behavior:'smooth',block:'nearest'});}
+         if (grupo) {
+           grupo.open=!grupo.open;
+           btn.setAttribute('aria-expanded',String(grupo.open));
+           if (grupo.open) grupo.scrollIntoView({behavior:'smooth',block:'nearest'});
+         }
        }
      });
    });
