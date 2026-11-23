@@ -41,6 +41,11 @@ if (isset($_SESSION['pdv_vendas_confirmadas'][$chavePdv])) {
         http_response_code(409);
         exit('A venda anterior ja foi concluida. A comanda atual continua pendente e foi preparada para uma nova tentativa. Confira os itens e finalize somente se ainda nao foram cobrados.');
     }
+    // Repeticao sem itens pendentes: devolver o pedido original e
+    // um token novo para o proximo atendimento.
+    $novoTokenPdv = bin2hex(random_bytes(16));
+    $_SESSION['pdv_token_atual'] = $novoTokenPdv;
+    header('X-PDV-Novo-Token: ' . $novoTokenPdv);
     echo 'Salvo com Sucesso-' . (int)$_SESSION['pdv_vendas_confirmadas'][$chavePdv];
     exit();
 }
@@ -401,6 +406,7 @@ $_SESSION['pdv_vendas_confirmadas'][$chavePdv] = (int)$id_pedido;
 // tambem o token guardado no servidor: se o operador recarregar o PDV,
 // a pagina nao deve reutilizar o token de uma venda ja confirmada.
 $_SESSION['pdv_token_atual'] = bin2hex(random_bytes(16));
+header('X-PDV-Novo-Token: ' . $_SESSION['pdv_token_atual']);
 if (count($_SESSION['pdv_vendas_confirmadas']) > 30) {
     $_SESSION['pdv_vendas_confirmadas'] = array_slice($_SESSION['pdv_vendas_confirmadas'], -30, null, true);
 }
