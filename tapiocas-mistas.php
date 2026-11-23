@@ -57,7 +57,7 @@ if (!function_exists('escMista')) { function escMista($x) { return htmlspecialch
     $itens = array_values(array_filter($extras_mistos, function($a) use ($tipo){return ($a['tipo'] ?? 'adicional') === $tipo;}));
     if (!$itens) continue; ?>
   <details class="mb-3 mista-grupo" data-tipo="<?= escMista($tipo) ?>" style="background:#fff8e8;border-radius:8px;padding:10px">
-   <summary style="cursor:pointer;font-weight:600"><?= escMista($titulo) ?></summary>
+   <summary style="display:none" aria-hidden="true"><?= escMista($titulo) ?></summary>
    <div class="mt-2">
     <?php foreach ($itens as $a): ?>
      <div class="mista-item-quantidade">
