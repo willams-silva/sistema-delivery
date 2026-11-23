@@ -416,6 +416,10 @@ body { background:#fffaf5 !important; color:#493425; }
       success: function(result) {
 
         $("#listar-itens-carrinho").html(result);
+        // Nao oferecer finalizacao enquanto nao houver produtos no carrinho.
+        var vazio = $("#listar-itens-carrinho [data-carrinho-vazio='1']").length > 0;
+        $(".area-pedidos .abaixo a[href='finalizar']").toggle(!vazio);
+        $(".area-pedidos .total-pedido").toggle(!vazio);
 
       }
     });
