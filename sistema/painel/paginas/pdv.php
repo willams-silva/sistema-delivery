@@ -987,6 +987,14 @@ $("#form_venda").submit(function (event) {
                 } else if (!mensagem) {
                     mensagem = 'Não foi possível confirmar a venda. Confira o Caixa ou Vendas antes de tentar novamente.';
                 }
+                // O servidor pode fornecer um novo token quando detecta
+                // uma venda antiga ja confirmada e novos itens pendentes.
+                // Nao reenviar automaticamente: exigir nova confirmacao humana.
+                var tokenRecuperado = xhr.getResponseHeader('X-PDV-Novo-Token');
+                if (xhr.status === 409 && /^[a-f0-9]{32}$/.test(String(tokenRecuperado || ''))) {
+                    $('#pdv_token').val(tokenRecuperado);
+                    listarVendas();
+                }
                 console.error('[PDV finalizar venda]', xhr.status, status, xhr.responseText);
                 if (typeof alertWarning === 'function') alertWarning(mensagem);
                 else alert(mensagem);
