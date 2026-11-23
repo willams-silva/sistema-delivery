@@ -123,7 +123,7 @@ if($total_reg > 0){
 			$exibir_resumo_tapioca = (in_array(strtolower(trim((string)$stmt_categoria->fetchColumn())), ['tapiocas doces', 'tapiocas salgadas'], true));
 		}
 		if ($exibir_resumo_tapioca) {
-			$stmt_extras = $pdo->prepare("SELECT t.quantidade, t.valor_item, t.id_sabor, a.nome, a.tipo, a.valor AS valor_cadastro, p.nome AS nome_sabor
+			$stmt_extras = $pdo->prepare("SELECT t.id AS id_temp, t.quantidade, t.valor_item, t.id_sabor, a.nome, a.tipo, a.valor AS valor_cadastro, p.nome AS nome_sabor
 				FROM temp t
 				JOIN adicionais_cat a ON a.id = t.id_item AND a.empresa = ?
 				LEFT JOIN produtos p ON p.id = t.id_sabor
@@ -142,6 +142,12 @@ if($total_reg > 0){
 				$nome_sabor_extra = htmlspecialchars((string)$extra['nome_sabor'], ENT_QUOTES, 'UTF-8');
 				$texto_sabor = $nome_sabor_extra !== '' ? '<small class="text-muted"> · ' . $nome_sabor_extra . '</small>' : '';
 				$valor_extra_formatado = number_format($subtotal_extra * (float)$quantidade, 2, ',', '.');
+				$id_extra = (int)$extra['id_temp'];
+				$botao_remover_extra = '<button type="button" class="btn btn-link p-1 ms-2 text-danger"'
+					. ' style="min-width:36px;min-height:36px"'
+					. ' aria-label="Remover ' . $nome_extra . ' do pedido" title="Remover apenas este adicional"'
+					. ' onclick="removerAdicionalResumo(' . $id_extra . ',' . (int)$id . ')"><i class="bi bi-trash3"></i></button>';
+				$valor_extra_com_acao = '<span class="d-inline-flex align-items-center justify-content-end"><strong>R$ ' . $valor_extra_formatado . '</strong>' . $botao_remover_extra . '</span>';
 				if ($tipo_extra === 'opcional') {
 					$resumo_opcionais_tapioca .= '<div class="d-flex justify-content-between gap-2 py-1" style="font-size:13px"><span><i class="bi bi-dash-circle text-danger"></i> Sem ' . $nome_extra . $texto_sabor . '</span><strong>Sem custo</strong></div>';
 				} elseif ($tipo_extra === 'proteina') {
@@ -444,6 +450,38 @@ HTML;
 				},
 				complete: function(){
 					delete operacoesCarrinhoPendentes[id];
+				}
+			});
+		}
+
+		function removerAdicionalResumo(idTemp, idCarrinho){
+			if(id_mesa > 0){
+				alert('Você não pode alterar os adicionais deste pedido.');
+				return;
+			}
+			var chave = 'adicional-' + idTemp;
+			if(operacoesCarrinhoPendentes[chave])return;
+			operacoesCarrinhoPendentes[chave] = true;
+			var botao = $('#listar-itens-carrinho button[onclick="removerAdicionalResumo(' + idTemp + ',' + idCarrinho + ')"]');
+			botao.prop('disabled',true).attr('aria-busy','true');
+			$.ajax({
+				url: 'js/ajax/excluir-adicionais.php',
+				method: 'POST',
+				data: {id: idTemp, carrinho: idCarrinho},
+				dataType: 'text',
+				success: function(mensagem){
+					if(mensagem.trim() === 'Excluido com Sucesso'){
+						listarCarrinho();
+					}else{
+						alert(mensagem || 'Não foi possível remover o adicional.');
+					}
+				},
+				error: function(){
+					alert('Falha de conexão ao remover o adicional. Tente novamente.');
+				},
+				complete: function(){
+					delete operacoesCarrinhoPendentes[chave];
+					botao.prop('disabled',false).removeAttr('aria-busy');
 				}
 			});
 		}
