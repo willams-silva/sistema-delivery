@@ -73,7 +73,7 @@ if ($_SERVER['REQUEST_METHOD']==='POST') {
 function h($v){return htmlspecialchars((string)$v,ENT_QUOTES,'UTF-8');}
 try {
  $q=$pdo->prepare("SELECT id,nome,combo,ativo FROM produtos WHERE empresa=? ORDER BY nome");$q->execute([$empresa]);$produtos=$q->fetchAll(PDO::FETCH_ASSOC);
- $q=$pdo->prepare('SELECT c.*,p.nome AS produto_nome FROM combo_configuracoes c JOIN produtos p ON p.id=c.produto_combo_id AND p.empresa=c.empresa WHERE c.empresa=? ORDER BY c.id DESC');$q->execute([$empresa]);$configs=$q->fetchAll(PDO::FETCH_ASSOC);
+ $q=$pdo->prepare('SELECT c.*,p.nome AS produto_nome,p.ativo AS produto_ativo,p.delivery AS produto_delivery FROM combo_configuracoes c JOIN produtos p ON p.id=c.produto_combo_id AND p.empresa=c.empresa WHERE c.empresa=? ORDER BY c.id DESC');$q->execute([$empresa]);$configs=$q->fetchAll(PDO::FETCH_ASSOC);
  $q=$pdo->prepare('SELECT g.*,c.produto_combo_id FROM combo_grupos g JOIN combo_configuracoes c ON c.id=g.combo_configuracao_id AND c.empresa=g.empresa WHERE g.empresa=? ORDER BY g.id');$q->execute([$empresa]);$grupos=$q->fetchAll(PDO::FETCH_ASSOC);
  $q=$pdo->prepare('SELECT i.*,p.nome AS produto_nome FROM combo_grupo_produtos i JOIN combo_grupos g ON g.id=i.combo_grupo_id AND g.empresa=i.empresa JOIN produtos p ON p.id=i.produto_id AND p.empresa=i.empresa WHERE i.empresa=? ORDER BY i.id');$q->execute([$empresa]);$itens=$q->fetchAll(PDO::FETCH_ASSOC);
 } catch(Throwable $e){http_response_code(503);exit('Estrutura de combos indisponível. Confira a migration no banco.');}
@@ -84,7 +84,19 @@ try {
 <section><h2>3. Vincular produtos ao grupo</h2><form method="post"><input type="hidden" name="csrf" value="<?=h($_SESSION['csrf_combos'])?>"><input type="hidden" name="acao" value="item"><label>Grupo<select name="grupo" required><?php foreach($grupos as $g):?><option value="<?=h($g['id'])?>"><?=h($g['nome'])?> (#<?=h($g['combo_configuracao_id'])?>)</option><?php endforeach;?></select></label><label>Produto<select name="produto" required><?php foreach($produtos as $p): if($p['ativo']==='Sim'&&$p['combo']!=='Sim'):?><option value="<?=h($p['id'])?>"><?=h($p['nome'])?></option><?php endif; endforeach;?></select></label><label>Acréscimo (R$)<input name="acrescimo" value="0.00" inputmode="decimal" required></label><button>Adicionar produto</button></form></section>
 <section><h2>Configurações cadastradas</h2><?php if(!$configs):?><p>Nenhum combo configurado ainda.</p><?php endif;?>
 <?php foreach($configs as $c):?>
-<h3><?=h($c['produto_nome'])?> <small>(<?=h($c['tipo'])?> · não publicado)</small></h3>
+<h3><?=h($c['produto_nome'])?> <small>(<?=h($c['tipo'])?> · montagem ainda não integrada)</small></h3>
+<?php
+$gruposCombo=array_values(array_filter($grupos,static function($g)use($c){return (int)$g['combo_configuracao_id']===(int)$c['id'];}));
+$pendencias=[];
+if($c['tipo']==='personalizavel' && !$gruposCombo) $pendencias[]='Crie pelo menos um grupo de escolhas.';
+foreach($gruposCombo as $gc){
+ $quantidade=0;
+ foreach($itens as $item){if((int)$item['combo_grupo_id']===(int)$gc['id']) $quantidade++;}
+ if($quantidade<(int)$gc['minimo']) $pendencias[]='O grupo '.h($gc['nome']).' exige '.(int)$gc['minimo'].' escolhas, mas tem somente '.$quantidade.' produtos.';
+}
+?>
+<?php if($c['produto_ativo']==='Sim' && $c['produto_delivery']==='Sim'):?><p class="alert">Este produto já pode aparecer no cardápio como combo simples. A montagem personalizada ainda não funciona no checkout.</p><?php endif;?>
+<?php if($pendencias):?><div class="alert error"><strong>Pendências do cadastro:</strong><ul><?php foreach($pendencias as $pendencia):?><li><?=$pendencia?></li><?php endforeach;?></ul></div><?php else:?><p class="alert">Grupos cadastrados. Falta integrar seleção, valores e pedidos antes de liberar a montagem.</p><?php endif;?>
 <?php foreach($grupos as $g): if($g['combo_configuracao_id']!=$c['id']) continue;?>
 <div class="group-box"><div class="group-head">
 <form class="inline-form" method="post"><input type="hidden" name="csrf" value="<?=h($_SESSION['csrf_combos'])?>"><input type="hidden" name="acao" value="editar_grupo"><input type="hidden" name="id" value="<?=h($g['id'])?>"><label>Nome<input name="nome" maxlength="120" value="<?=h($g['nome'])?>" required></label><label>Mínimo<input type="number" name="minimo" min="0" max="20" value="<?=h($g['minimo'])?>" required></label><label>Máximo<input type="number" name="maximo" min="1" max="20" value="<?=h($g['maximo'])?>" required></label><button>Salvar grupo</button></form>
