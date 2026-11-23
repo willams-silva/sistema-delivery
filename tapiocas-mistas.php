@@ -131,13 +131,14 @@ if (!function_exists('escMista')) { function escMista($x) { return htmlspecialch
    function alternar(aberto) {
      abrir.checked=aberto;
      abrir.setAttribute('aria-expanded',String(aberto));
-     painel.hidden=!aberto;
-     inclusas.hidden=!aberto;
+     // Selecionar a tapioca nao abre nenhuma categoria automaticamente.
+     painel.hidden=true;
+     inclusas.hidden=true;
      grupos.forEach(function(g){g.hidden=true;g.open=false;});
      botoes.forEach(function(btn){
        btn.disabled=false;
        btn.removeAttribute('aria-disabled');
-       btn.setAttribute('aria-expanded',String(aberto && btn.dataset.abrir==='inclusas'));
+       btn.setAttribute('aria-expanded','false');
      });
      if (!aberto) {
        checks.forEach(function(x){x.checked=false;x.disabled=false;});
@@ -152,7 +153,6 @@ if (!function_exists('escMista')) { function escMista($x) { return htmlspecialch
    }
    abrir.addEventListener('change',function(){
      alternar(abrir.checked);
-     if (abrir.checked) inclusas.scrollIntoView({behavior:'smooth',block:'nearest'});
    });
    botoes.forEach(function(btn){
      btn.addEventListener('click',function(){
