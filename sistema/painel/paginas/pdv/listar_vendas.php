@@ -330,7 +330,7 @@ function excluirAlert(id, botao) {
             // Erros HTTP do servidor nao sao necessariamente falhas de conexao.
             // Mostrar a mensagem real, sem expor HTML ou detalhes internos do PHP.
             var codigo = Number(xhr && xhr.status) || 0;
-            var mensagemServidor = String(xhr && xhr.responseText || '').replace(/<[^>]*>/g, ' ').replace(/\\s+/g, ' ').trim();
+            var mensagemServidor = String(xhr && xhr.responseText || '').replace(/<[^>]*>/g, ' ').replace(/\s+/g, ' ').trim();
             var mensagem = '';
             var titulo = 'Não foi possível remover';
             if (codigo === 403) {
