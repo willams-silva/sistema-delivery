@@ -1417,6 +1417,26 @@ document.addEventListener('keydown', function(evento) { if (evento.key === 'Esca
 document.getElementById('aviso-secao-vazia').addEventListener('click', function(evento) { if (evento.target === this) fecharAvisoSecao(); });
 </script>
 
+<!-- Navegacao acessivel entre secoes do cardapio. -->
+<style>
+html{scroll-behavior:smooth}
+#categoria,#promocao,#combo{scroll-margin-top:95px}
+#buscar{min-height:44px;width:100%;font-size:16px}
+#area_busca[aria-busy="true"]{min-height:36px}
+@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+</style>
+<script>
+(function(){
+  var busca=document.getElementById('buscar');
+  var resultados=document.getElementById('area_busca');
+  if(busca){
+    busca.setAttribute('aria-label','Buscar produtos pelo nome');
+    busca.setAttribute('autocomplete','off');
+    busca.setAttribute('aria-controls','area_busca');
+  }
+  if(resultados)resultados.setAttribute('aria-live','polite');
+})();
+</script>
 <!-- Barra de carrinho responsiva: reaproveita os totais do carrinho existente. -->
 <style>
 .bc-carrinho-fixo{position:fixed;left:50%;bottom:calc(12px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);z-index:9990;display:none;align-items:center;justify-content:space-between;gap:12px;width:min(94vw,520px);padding:11px 14px;background:#fffaf5;border:1px solid #ead3bc;border-radius:17px;box-shadow:0 7px 26px rgba(65,34,15,.2);color:#55351f}
