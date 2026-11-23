@@ -1022,11 +1022,18 @@ body.checkout-cardapio { background:#fffaf5; color:#493425; }
       destacar();
     }
   }
-  document.addEventListener('input', function(evento) {
+  function limparDestaqueCheckout(evento) {
     if (evento.target.classList && evento.target.classList.contains('bc-campo-pendente')) {
       evento.target.classList.remove('bc-campo-pendente');
     }
-  });
+    if (evento.target.matches && evento.target.matches('.bc-opcoes-pagamento input[type="radio"]')) {
+      document.querySelectorAll('.bc-opcoes-pagamento .bc-campo-pendente').forEach(function(campo){
+        campo.classList.remove('bc-campo-pendente');
+      });
+    }
+  }
+  document.addEventListener('input', limparDestaqueCheckout);
+  document.addEventListener('change', limparDestaqueCheckout);
   function finalizarPedido(pedidoauto) {
 
 
@@ -1186,7 +1193,7 @@ body.checkout-cardapio { background:#fffaf5; color:#493425; }
 
     if (entrega == "Delivery" && numero == "") {
       alertWarning('Preencha o Campo Número');
-      $('#colapse-3').click();
+      destacarCampoCheckout('#numero', '#collapseThree');
       $('#botao_finalizar').show();
       $('#div_img').hide();
       return;
@@ -1194,7 +1201,7 @@ body.checkout-cardapio { background:#fffaf5; color:#493425; }
 
     if (entrega == "Delivery" && bairro == "") {
       alertWarning('Escolha um Bairro');
-      $('#colapse-3').click();
+      destacarCampoCheckout('#bairro', '#collapseThree');
       $('#botao_finalizar').show();
       $('#div_img').hide();
       return;
@@ -1210,14 +1217,14 @@ body.checkout-cardapio { background:#fffaf5; color:#493425; }
       alertWarning('Selecione uma forma de pagamento');
       $('#botao_finalizar').show();
       $('#div_img').hide();
-      $('#collapse-4').click();
+      destacarCampoCheckout('#radio_pix', '#collapse4');
       return;
     }
     if (pagamento == "") {
       alertWarning('Selecione uma forma de pagamento');
       $('#botao_finalizar').show();
       $('#div_img').hide();
-      $('#collapse-4').click();
+      destacarCampoCheckout('#radio_pix', '#collapse4');
       return;
     }
 
