@@ -235,6 +235,31 @@ body { background:#fffaf5 !important; color:#493425; }
  #listar-itens-carrinho > li,#listar-itens-carrinho > .list-group-item,#listar-itens-carrinho > div { padding:12px !important; }
  .area-pedidos { padding:10px !important; }
 }
+/* Acessibilidade e toque no resumo do pedido. */
+#listar-itens-carrinho button,
+#listar-itens-carrinho .btn,
+.area-pedidos .abaixo .btn-lg{
+  min-height:44px;
+  touch-action:manipulation;
+}
+#listar-itens-carrinho button:focus-visible,
+#listar-itens-carrinho a:focus-visible,
+.area-pedidos a:focus-visible,
+.main-container .navbar a:focus-visible{
+  outline:3px solid #a85b24;
+  outline-offset:3px;
+}
+#listar-itens-carrinho .tpproduct__price,
+#listar-itens-carrinho .preco,
+#listar-itens-carrinho .valor{
+  font-variant-numeric:tabular-nums;
+}
+.area-pedidos #total-do-pedido{font-variant-numeric:tabular-nums}
+@media(max-width:767px){
+  #listar-itens-carrinho{overflow-wrap:anywhere}
+  #listar-itens-carrinho .btn{white-space:normal}
+  .area-pedidos{padding-bottom:calc(10px + env(safe-area-inset-bottom,0px))!important}
+}
 </style>
 
 <div class="main-container">
