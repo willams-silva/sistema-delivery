@@ -87,31 +87,45 @@ if (!function_exists('escMista')) { function escMista($x) { return htmlspecialch
    var abrir=card.querySelector('.mista-abrir');
    var botoes=Array.from(card.querySelectorAll('.mista-abrir-btn'));
    var checks=Array.from(card.querySelectorAll('.proteina-inclusa'));
-   function sincronizarPainel() {
-     if (!abrir.checked) return;
-     var inclusasVisiveis=!card.querySelector('.mista-inclusas').hidden;
-     var algumExtra=Array.from(card.querySelectorAll('.mista-grupo')).some(function(g){return g.open});
-     painel.hidden=!(inclusasVisiveis||algumExtra);
+   var inclusas=card.querySelector('.mista-inclusas');
+   var grupos=Array.from(card.querySelectorAll('.mista-grupo'));
+   // Um grupo por vez, sem apagar escolhas feitas em outros grupos.
+   function mostrarGrupo(tipo) {
+     var visivel=tipo==='inclusas' ? !inclusas.hidden :
+       grupos.some(function(g){return g.dataset.tipo===tipo && !g.hidden});
+     var abrirGrupo=!visivel;
+     inclusas.hidden=!(abrirGrupo && tipo==='inclusas');
+     grupos.forEach(function(g){
+       var ativo=abrirGrupo && g.dataset.tipo===tipo;
+       g.hidden=!ativo;
+       g.open=ativo;
+     });
+     painel.hidden=!abrirGrupo;
+     botoes.forEach(function(btn){
+       btn.setAttribute('aria-expanded',String(abrirGrupo && btn.dataset.abrir===tipo));
+     });
+     if (abrirGrupo) {
+       var alvo=tipo==='inclusas' ? inclusas : grupos.find(function(g){return g.dataset.tipo===tipo});
+       if (alvo) alvo.scrollIntoView({behavior:'smooth',block:'nearest'});
+     }
    }
    function alternar(aberto) {
-     painel.hidden=!aberto;
      abrir.checked=aberto;
      abrir.setAttribute('aria-expanded',String(aberto));
-     // Manter os botoes clicaveis: antes de selecionar, mostrar o mesmo
-     // aviso usado pelos sabores tradicionais em vez de desabilita-los.
-     botoes.forEach(function(btn){btn.disabled=false;btn.removeAttribute('aria-disabled');});
-     if (aberto) {
-       // Ao marcar a tapioca, mostrar os sabores inclusos automaticamente.
-       card.querySelector('.mista-inclusas').hidden=false;
-     }
+     painel.hidden=!aberto;
+     inclusas.hidden=!aberto;
+     grupos.forEach(function(g){g.hidden=true;g.open=false;});
+     botoes.forEach(function(btn){
+       btn.disabled=false;
+       btn.removeAttribute('aria-disabled');
+       btn.setAttribute('aria-expanded',String(aberto && btn.dataset.abrir==='inclusas'));
+     });
      if (!aberto) {
-       card.querySelector('.mista-inclusas').hidden=true;
        checks.forEach(function(x){x.checked=false;});
        card.querySelectorAll('.extra-mista').forEach(function(x){
          if(x.type==='checkbox') x.checked=false;
          else x.value='0';
        });
-       card.querySelectorAll('.mista-grupo').forEach(function(x){x.open=false;});
        card.querySelector('.obs-mista').value='';
        card.querySelector('.resultado-mista').textContent='';
        atualizar();
@@ -119,36 +133,19 @@ if (!function_exists('escMista')) { function escMista($x) { return htmlspecialch
    }
    abrir.addEventListener('change',function(){
      alternar(abrir.checked);
-     if (abrir.checked) {
-       card.querySelector('.mista-inclusas').scrollIntoView({behavior:'smooth',block:'nearest'});
-     }
+     if (abrir.checked) inclusas.scrollIntoView({behavior:'smooth',block:'nearest'});
    });
    botoes.forEach(function(btn){
      btn.addEventListener('click',function(){
        if (!abrir.checked) {
-         if (typeof mostrarAvisoSelecaoSabor === 'function') {
-           mostrarAvisoSelecaoSabor('Selecione o sabor', 'Selecione este sabor primeiro para escolher os adicionais.');
+         if (typeof mostrarAvisoSelecaoSabor==='function') {
+           mostrarAvisoSelecaoSabor('Selecione o sabor','Selecione este sabor primeiro para escolher os adicionais.');
          } else {
            alert('Selecione a tapioca primeiro para escolher as opções.');
          }
          return;
        }
-       var tipo=btn.getAttribute('data-abrir');
-       var inclusas=card.querySelector('.mista-inclusas');
-       if (tipo==='inclusas') {
-         inclusas.hidden=!inclusas.hidden;
-         btn.setAttribute('aria-expanded',String(!inclusas.hidden));
-         sincronizarPainel();
-         if (!inclusas.hidden) inclusas.scrollIntoView({behavior:'smooth',block:'nearest'});
-       } else {
-         var grupo=card.querySelector('.mista-grupo[data-tipo="'+tipo+'"]');
-         if (grupo) {
-           grupo.open=!grupo.open;
-           btn.setAttribute('aria-expanded',String(grupo.open));
-           sincronizarPainel();
-           if (grupo.open) grupo.scrollIntoView({behavior:'smooth',block:'nearest'});
-         }
-       }
+       mostrarGrupo(btn.dataset.abrir);
      });
    });
    alternar(false);
