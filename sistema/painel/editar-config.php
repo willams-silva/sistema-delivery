@@ -142,7 +142,10 @@ if(@$_FILES['foto-logo']['name'] != ""){
 	$ext = pathinfo($_FILES['foto-logo']['name'], PATHINFO_EXTENSION);   
 
 	if($ext == 'png' || $ext == 'PNG'){ 	
-		move_uploaded_file(@$_FILES['foto-logo']['tmp_name'], '../img/'.$logo);
+		if (!is_dir('../img') || !is_writable('../img') || !move_uploaded_file($_FILES['foto-logo']['tmp_name'], '../img/'.$logo)) {
+            echo 'Não foi possível gravar a imagem (foto-logo). Verifique a pasta de imagens na hospedagem.';
+            exit();
+        }
 	}else{
 		echo 'Extensão de Imagem não permitida para a Logo, use somente PNG!';
 		exit();
@@ -155,7 +158,10 @@ if(@$_FILES['foto-logo-rel']['name'] != ""){
 	$ext = pathinfo(@$_FILES['foto-logo-rel']['name'], PATHINFO_EXTENSION);   
 
 	if($ext == 'jpg' || $ext == 'JPG' || $ext == 'jpeg' || $ext == 'JPEG'){ 	
-		move_uploaded_file(@$_FILES['foto-logo-rel']['tmp_name'], '../img/'.$logo_rel);
+		if (!is_dir('../img') || !is_writable('../img') || !move_uploaded_file($_FILES['foto-logo-rel']['tmp_name'], '../img/'.$logo_rel)) {
+            echo 'Não foi possível gravar a imagem (foto-logo-rel). Verifique a pasta de imagens na hospedagem.';
+            exit();
+        }
 	}else{
 		echo 'Extensão de Imagem não permitida para o relatório, use somente JPG!';
 		exit();
@@ -214,7 +220,10 @@ if(@$_FILES['assinatura_rel']['name'] != ""){
 	$ext = pathinfo(@$_FILES['assinatura_rel']['name'], PATHINFO_EXTENSION);   
 
 	if($ext == 'jpg' || $ext == 'JPG' || $ext == 'jpeg' || $ext == 'JPEG'){ 	
-		move_uploaded_file(@$_FILES['assinatura_rel']['tmp_name'], '../img/'.$assinatura);
+		if (!is_dir('../img') || !is_writable('../img') || !move_uploaded_file($_FILES['assinatura_rel']['tmp_name'], '../img/'.$assinatura)) {
+            echo 'Não foi possível gravar a imagem (assinatura_rel). Verifique a pasta de imagens na hospedagem.';
+            exit();
+        }
 	}else{
 		echo 'Extensão de Imagem não permitida para assinatura, use somente JPG!';
 		exit();
@@ -227,7 +236,10 @@ if(@$_FILES['foto-painel']['name'] != ""){
 	$ext = pathinfo(@$_FILES['foto-painel']['name'], PATHINFO_EXTENSION);   
 
 	if($ext == 'png' || $ext == 'PNG'){ 	
-		move_uploaded_file(@$_FILES['foto-painel']['tmp_name'], '../img/'.$logo_painel);
+		if (!is_dir('../img') || !is_writable('../img') || !move_uploaded_file($_FILES['foto-painel']['tmp_name'], '../img/'.$logo_painel)) {
+            echo 'Não foi possível gravar a imagem (foto-painel). Verifique a pasta de imagens na hospedagem.';
+            exit();
+        }
 	}else{
 		echo 'Extensão de Imagem não permitida para a foto do painel, use somente PNG!';
 		exit();
