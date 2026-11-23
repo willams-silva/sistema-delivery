@@ -803,6 +803,8 @@ function prepararNovaVendaPdv() {
         pdvListaRequisicao.abort();
     }
     // Executado em TODA venda concluida, impressa ou nao.
+    // A busca da venda anterior nao deve filtrar os produtos da proxima.
+    $('#txt_buscar').val('');
     $('#desconto, #frete').val('');
     $('#troco').val('0');
     $('#tipo_desconto').val('reais');
