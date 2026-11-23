@@ -263,6 +263,15 @@ body.checkout-cardapio { background:#fffaf5; color:#493425; }
  .checkout-cardapio .bc-opcoes-pagamento>.form-check small{min-height:54px;padding:11px}
 }
 </style>
+<style>
+.checkout-cardapio .bc-campo-pendente{
+ border-bottom:2px solid #b13f28!important;
+ box-shadow:0 2px 0 rgba(177,63,40,.12);
+}
+.checkout-cardapio .bc-campo-pendente:focus{
+ outline:2px solid #b13f28!important;outline-offset:3px;
+}
+</style>
 <script>document.body.classList.add("checkout-cardapio");</script>
 <div class="main-container">
 
@@ -989,6 +998,35 @@ body.checkout-cardapio { background:#fffaf5; color:#493425; }
 
 
 <script type="text/javascript">
+  // Mostra o campo com erro mesmo quando sua secao do checkout esta recolhida.
+  function destacarCampoCheckout(seletor, secao) {
+    var campo = document.querySelector(seletor);
+    var painel = document.querySelector(secao);
+    if (painel && !painel.classList.contains('show')) {
+      if (typeof bootstrap !== 'undefined' && bootstrap.Collapse) {
+        bootstrap.Collapse.getOrCreateInstance(painel, {toggle:false}).show();
+      } else {
+        var acionador = document.querySelector('[data-bs-target="' + secao + '"]');
+        if (acionador) acionador.click();
+      }
+    }
+    if (!campo) return;
+    campo.classList.add('bc-campo-pendente');
+    var destacar = function() {
+      campo.scrollIntoView({behavior:'smooth',block:'center'});
+      try { campo.focus({preventScroll:true}); } catch(e) { campo.focus(); }
+    };
+    if (painel && !painel.classList.contains('show')) {
+      painel.addEventListener('shown.bs.collapse', destacar, {once:true});
+    } else {
+      destacar();
+    }
+  }
+  document.addEventListener('input', function(evento) {
+    if (evento.target.classList && evento.target.classList.contains('bc-campo-pendente')) {
+      evento.target.classList.remove('bc-campo-pendente');
+    }
+  });
   function finalizarPedido(pedidoauto) {
 
 
@@ -1015,7 +1053,7 @@ body.checkout-cardapio { background:#fffaf5; color:#493425; }
 
     if (telefone.length < 15) {
       alertWarning("Coloque o número de telefone completo");
-      $('#telefone').focus();
+      destacarCampoCheckout('#telefone', '#collapseOne');
       $('#botao_finalizar').show();
       $('#div_img').hide();
       return;
@@ -1033,7 +1071,7 @@ body.checkout-cardapio { background:#fffaf5; color:#493425; }
 
     if (nome == "") {
       alertWarning('Preencha seu Nome');
-      $('#nome').focus();
+      destacarCampoCheckout('#nome', '#collapseOne');
       $('#botao_finalizar').show();
       $('#div_img').hide();
       return;
@@ -1081,7 +1119,7 @@ body.checkout-cardapio { background:#fffaf5; color:#493425; }
     if (entrega == "Delivery") {
       if (cep.length !== 8) {
         alertWarning("Preencha um CEP válido com 8 dígitos");
-        $('#cep').focus();
+        destacarCampoCheckout('#cep', '#collapseThree');
         $('#botao_finalizar').show();
         $('#div_img').hide();
         return;
@@ -1139,7 +1177,7 @@ body.checkout-cardapio { background:#fffaf5; color:#493425; }
 
     if (entrega == "Delivery" && rua == "") {
       alertWarning('Preencha o Campo Rua');
-      $('#colapse-3').click();
+      destacarCampoCheckout('#rua', '#collapseThree');
       $('#botao_finalizar').show();
       $('#div_img').hide();
 
