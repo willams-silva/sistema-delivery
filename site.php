@@ -1435,27 +1435,25 @@ body:has(.bc-carrinho-fixo.bc-visivel){padding-bottom:85px}
 </div>
 <script>
 (function(){
-  var barra=document.getElementById('bc-carrinho-fixo');
-  var qtd=document.getElementById('bc-carrinho-qtd');
-  var valor=document.getElementById('bc-carrinho-valor');
-  if(!barra)return;
-  function atualizar(){
-    var contador=document.getElementById('total-itens-carrinho');
-    var preco=document.getElementById('total-carrinho-icone');
-    var numero=contador ? parseInt((contador.textContent||'').replace(/[^0-9]/g,''),10) : 0;
-    var precoTexto=preco ? (preco.textContent||'').trim() : '';
-    var temPreco=/[1-9]/.test(precoTexto);
-    var temItens=Number.isFinite(numero)&&numero>0;
-    barra.classList.toggle('bc-visivel',temItens||temPreco);
-    qtd.textContent=temItens ? numero+(numero===1?' item no carrinho':' itens no carrinho') : 'Seu pedido está pronto para conferir';
-    valor.textContent=precoTexto ? 'Total: R$ '+precoTexto.replace(/^R\$\s*/,'') : 'Ver seu pedido';
-  }
-  var contador=document.getElementById('total-itens-carrinho');
-  var preco=document.getElementById('total-carrinho-icone');
-  var observer=new MutationObserver(atualizar);
-  [contador,preco].forEach(function(el){if(el)observer.observe(el,{childList:true,characterData:true,subtree:true});});
-  atualizar();
-  document.addEventListener('visibilitychange',function(){if(!document.hidden && typeof listarCarrinhoIcone==='function')listarCarrinhoIcone();});
+ var barra=document.getElementById('bc-carrinho-fixo'),qtd=document.getElementById('bc-carrinho-qtd'),valor=document.getElementById('bc-carrinho-valor');
+ if(!barra)return;
+ function atualizar(){
+   // O menu mobile pode nao renderizar os contadores do carrinho lateral.
+   // Consultar a mesma sessao no servidor, independentemente do menu desktop.
+   fetch('js/ajax/resumo-carrinho-flutuante.php',{credentials:'same-origin',cache:'no-store'})
+     .then(function(r){if(!r.ok)throw Error('Resumo indisponivel');return r.json();})
+     .then(function(d){
+       var n=Number(d.itens)||0;
+       barra.classList.toggle('bc-visivel',n>0);
+       qtd.textContent=n+(n===1?' item no carrinho':' itens no carrinho');
+       valor.textContent='Total: '+Number(d.total||0).toLocaleString('pt-BR',{style:'currency',currency:'BRL'});
+     }).catch(function(){barra.classList.remove('bc-visivel');});
+ }
+ atualizar();
+ window.addEventListener('pageshow',atualizar);
+ document.addEventListener('visibilitychange',function(){if(!document.hidden)atualizar();});
+ // Sincroniza quando o cliente retorna ao cardapio ou altera o carrinho.
+ document.addEventListener('click',function(e){if(e.target.closest('.tp-cart-toggle'))setTimeout(atualizar,350);});
 })();
 </script>
 <!-- JS here -->
