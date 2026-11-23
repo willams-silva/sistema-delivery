@@ -461,6 +461,28 @@ HTML;
 			}
 			var chave = 'adicional-' + idTemp;
 			if(operacoesCarrinhoPendentes[chave])return;
+			// Evita remover um extra por toque acidental, sem excluir a tapioca.
+			if(typeof Swal !== 'undefined' && typeof Swal.fire === 'function'){
+				Swal.fire({
+					title: 'Remover este adicional?',
+					text: 'A tapioca e os demais adicionais serão mantidos.',
+					icon: 'question',
+					showCancelButton: true,
+					confirmButtonText: 'Sim, remover',
+					cancelButtonText: 'Cancelar',
+					confirmButtonColor: '#a85b24',
+					reverseButtons: true
+				}).then(function(resultado){
+					if(resultado.isConfirmed)executarRemocaoAdicionalResumo(idTemp,idCarrinho);
+				});
+			}else if(window.confirm('Remover apenas este adicional? A tapioca será mantida.')){
+				executarRemocaoAdicionalResumo(idTemp,idCarrinho);
+			}
+		}
+
+		function executarRemocaoAdicionalResumo(idTemp,idCarrinho){
+			var chave = 'adicional-' + idTemp;
+			if(operacoesCarrinhoPendentes[chave])return;
 			operacoesCarrinhoPendentes[chave] = true;
 			var botao = $('#listar-itens-carrinho button[onclick="removerAdicionalResumo(' + idTemp + ',' + idCarrinho + ')"]');
 			botao.prop('disabled',true).attr('aria-busy','true');
