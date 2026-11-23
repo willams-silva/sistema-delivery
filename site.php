@@ -1453,7 +1453,10 @@ body:has(.bc-carrinho-fixo.bc-visivel){padding-bottom:85px}
  window.addEventListener('pageshow',atualizar);
  document.addEventListener('visibilitychange',function(){if(!document.hidden)atualizar();});
  // Sincroniza quando o cliente retorna ao cardapio ou altera o carrinho.
- document.addEventListener('click',function(e){if(e.target.closest('.tp-cart-toggle'))setTimeout(atualizar,350);});
+ document.addEventListener('click',function(e){if(e.target.closest('.tp-cart-toggle, .btn-add-carrinho, [onclick*="adicionarCarrinho"], [onclick*="addCarrinho"]'))setTimeout(atualizar,700);});
+ // Mantem o resumo atualizado mesmo quando a adicao e feita por AJAX no mobile.
+ window.addEventListener('focus',atualizar);
+ window.setInterval(function(){if(!document.hidden)atualizar();},15000);
 })();
 </script>
 <!-- JS here -->
