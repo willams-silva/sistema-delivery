@@ -1028,10 +1028,16 @@ $("#form_venda").submit(function (event) {
                     if (typeof atualizarPagamentoPdv === 'function') atualizarPagamentoPdv();
                 }).fail(function(xhr, status) {
                     if (status === 'abort' || versao !== pdvListaVersao) return;
-                    // Nunca substituir a comanda por dados vazios numa falha de rede.
-                    if ($('#pdv-aviso-atualizacao').length) $('#pdv-aviso-atualizacao').show();
+                    // Falha ao atualizar nao significa que a venda falhou.
+                    // Manter a comanda protegida ate confirmar os itens atuais no servidor.
+                    $('#btn_venda, #btn_limpar').hide();
+                    var aviso = 'Não foi possível confirmar os itens atuais da comanda. A venda anterior pode ter sido concluída normalmente. <button type="button" onclick="listarVendas()">Atualizar comanda</button>';
+                    if ($('#pdv-aviso-atualizacao').length) $('#pdv-aviso-atualizacao').html(aviso).show();
                     else {
-                        $('#listar_vendas').before('<div id="pdv-aviso-atualizacao" class="pdv-aviso-atualizacao" role="alert">Não foi possível atualizar a comanda. <button type="button" onclick="listarVendas()">Tentar novamente</button></div>');
+                        $('#listar_vendas').before('<div id="pdv-aviso-atualizacao" class="pdv-aviso-atualizacao" role="alert">' + aviso + '</div>');
+                    }
+                    if ($('#listar_vendas .pdv-comanda-vazia').length && $('#listar_vendas').text().indexOf('Preparando nova venda') !== -1) {
+                        $('#listar_vendas').html('<div class="pdv-comanda-vazia" role="status"><strong>Aguardando atualização</strong><span>Use o botão Atualizar comanda para carregar os itens atuais.</span></div>');
                     }
                 });
                 FormaPg();
