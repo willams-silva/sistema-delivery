@@ -171,9 +171,13 @@ if (!function_exists('escMista')) { function escMista($x) { return htmlspecialch
    function atualizar(){
      var n=checks.filter(function(x){return x.checked}).length;
      card.querySelector('.contador-inclusas').textContent=n+' de '+limite+' selecionadas';
-     // Nao desabilitar checkboxes: manter clique acessivel para informar o limite.
+     // Bloqueio nativo: ao atingir o limite, somente os sabores ainda
+     // nao marcados ficam desabilitados. Os marcados continuam livres
+     // para desmarcar, inclusive por toque no texto do label.
      checks.forEach(function(x){
-       x.setAttribute('aria-disabled',String(!x.checked && n>=limite));
+       var bloquear=!x.checked && n>=limite;
+       x.disabled=bloquear;
+       x.setAttribute('aria-disabled',String(bloquear));
      });
    }
    function avisoLimite(){
