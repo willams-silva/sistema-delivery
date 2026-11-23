@@ -700,6 +700,24 @@ body.selecao-cardapio { background:#fffaf5 !important; color:#503827; }
 <script type="text/javascript">
 	var requisicoesAdicionaisSabor = [];
 	function addCarrinho() {
+        // O mesmo botao e campo de observacoes atendem mistas e tradicionais.
+        var mistasSelecionadas = Array.from(document.querySelectorAll('[data-mista]')).filter(function(card){
+            return !!card.querySelector('.mista-abrir:checked');
+        });
+        if (mistasSelecionadas.length) {
+            if (mistasSelecionadas.length !== 1 || ($('#ids').val() || '').trim() !== '') {
+                if (typeof mostrarAvisoSelecaoSabor === 'function')
+                    mostrarAvisoSelecaoSabor('Escolha uma tapioca', 'Selecione somente uma tapioca mista ou uma tapioca tradicional por vez.');
+                else alert('Selecione somente uma tapioca mista ou uma tapioca tradicional por vez.');
+                return;
+            }
+            if (typeof mistasSelecionadas[0].enviarMista === 'function') {
+                mistasSelecionadas[0].enviarMista();
+            } else {
+                alert('Não foi possível preparar a tapioca mista. Atualize a página e tente novamente.');
+            }
+            return;
+        }
 		if (requisicoesAdicionaisSabor.length > 0) {
 			var pendentes = requisicoesAdicionaisSabor.slice();
 			requisicoesAdicionaisSabor = [];
