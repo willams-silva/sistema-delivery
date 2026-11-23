@@ -46,7 +46,7 @@ if (!function_exists('escMista')) { function escMista($x) { return htmlspecialch
   <div class="mt-2 mb-3">
   <?php foreach ($proteinas_mistas as $a): ?>
    <div class="mista-item-quantidade mista-item-incluso" style="justify-content:flex-start">
-    <input type="checkbox" id="mista-proteina-<?= $pid ?>-<?= (int)$a['id'] ?>" class="form-check-input proteina-inclusa" value="<?= (int)$a['id'] ?>" style="margin:0;flex-shrink:0">
+    <input type="checkbox" id="mista-proteina-<?= $pid ?>-<?= (int)$a['id'] ?>" class="form-check-input proteina-inclusa" value="<?= (int)$a['id'] ?>" onchange="(function(x){var card=x.closest('[data-mista]'),lista=Array.from(card.querySelectorAll('.proteina-inclusa')),limite=Number(card.dataset.limite),marcados=lista.filter(function(i){return i.checked});if(x.checked&&marcados.length>limite){x.checked=false;marcados=lista.filter(function(i){return i.checked});}lista.forEach(function(i){i.disabled=!i.checked&&marcados.length>=limite});var contador=card.querySelector('.contador-inclusas');if(contador)contador.textContent=marcados.length+' de '+limite+' selecionadas';})(this)" style="margin:0;flex-shrink:0">
     <label for="mista-proteina-<?= $pid ?>-<?= (int)$a['id'] ?>" class="mista-item-nome" style="cursor:pointer;margin:0"><span aria-hidden="true"><?= function_exists('iconeAdicionalPizza') ? escMista(iconeAdicionalPizza($a['nome'])) : '🍽️' ?></span> <?= escMista($a['nome']) ?> <small class="text-success">(incluso)</small></label>
    </div>
   <?php endforeach; ?>
@@ -88,6 +88,9 @@ if (!function_exists('escMista')) { function escMista($x) { return htmlspecialch
 </li>
 <?php endforeach; ?>
 <style>
+[data-mista] .mista-item-incluso .mista-item-nome{font-size:16px;line-height:1.4}
+[data-mista] .mista-item-incluso .mista-item-nome>span[aria-hidden="true"]{font-size:19px;line-height:1;display:inline-block;vertical-align:middle;margin-right:4px}
+[data-mista] .mista-item-incluso .mista-item-nome small{font-size:13px}
 [data-mista] .mista-item-quantidade{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:8px 0;border-bottom:1px solid #e9e5dc;min-height:56px}
 [data-mista] .mista-item-nome{flex:1;min-width:0;color:#30251d;overflow-wrap:anywhere}
 [data-mista] .mista-controles{display:flex;align-items:center;gap:12px;flex-shrink:0}
