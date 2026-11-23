@@ -236,6 +236,33 @@ body.checkout-cardapio { background:#fffaf5; color:#493425; }
  .checkout-cardapio .list-group-item{padding:13px!important}
 }
 </style>
+<style>
+/* Pagamento: cartoes visuais sem alterar names, onchange ou integracoes. */
+.checkout-cardapio .bc-opcoes-pagamento{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin:0}
+.checkout-cardapio .bc-opcoes-pagamento>.form-check{
+ width:auto;max-width:none;min-width:0;margin:0;padding:0;
+ border:1px solid #e9d4bd;border-radius:12px;background:#fffdf9;
+ transition:background .15s,border-color .15s,box-shadow .15s;
+}
+.checkout-cardapio .bc-opcoes-pagamento>.form-check small{
+ display:flex;align-items:center;justify-content:space-between;gap:8px;
+ min-height:52px;padding:12px;font-size:14px;font-weight:700;color:#67472f;
+ cursor:pointer;
+}
+.checkout-cardapio .bc-opcoes-pagamento .form-check-input{
+ position:static;float:none;margin:0;flex-shrink:0;cursor:pointer;
+}
+.checkout-cardapio .bc-opcoes-pagamento>.form-check:has(input:checked){
+ background:#fff0df;border-color:#a85b24;box-shadow:0 0 0 1px #a85b24;
+}
+.checkout-cardapio .bc-opcoes-pagamento>.form-check:focus-within{
+ outline:2px solid #a85b24;outline-offset:2px;
+}
+@media(max-width:575px){
+ .checkout-cardapio .bc-opcoes-pagamento{grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}
+ .checkout-cardapio .bc-opcoes-pagamento>.form-check small{min-height:54px;padding:11px}
+}
+</style>
 <script>document.body.classList.add("checkout-cardapio");</script>
 <div class="main-container">
 
@@ -519,7 +546,7 @@ body.checkout-cardapio { background:#fffaf5; color:#493425; }
         data-bs-parent="#accordionExample">
         <div class="accordion-body">
 
-          <div class="row" style="font-size:14px">
+          <div class="row bc-opcoes-pagamento" role="group" aria-label="Forma de pagamento" style="font-size:14px">
 
             <div class="col-3 form-check" style="display:<?php echo $visualizar_pagamento ?>">
               <small>Dinheiro
