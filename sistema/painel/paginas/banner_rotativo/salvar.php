@@ -47,6 +47,10 @@ try{
   if($info[0]<1||$info[1]<1||$info[0]>6000||$info[1]>6000){http_response_code(400);exit('Dimensões da imagem não permitidas');}
   $ext=$tipos[$info[2]];
   $dir=__DIR__.'/../../images/banner_rotativo/';
+  if (!is_dir($dir) || !is_writable($dir)) {
+   http_response_code(503);
+   exit('Pasta de banners indisponível para gravação. Verifique a hospedagem.');
+  }
   $novoArquivo=bin2hex(random_bytes(16)).'.'.$ext;
   if(!move_uploaded_file($upload['tmp_name'],$dir.$novoArquivo)){http_response_code(503);exit('Não foi possível salvar a imagem');}
   $foto=$novoArquivo;
@@ -66,14 +70,7 @@ try{
   if($novoArquivo&&is_file($dir.$novoArquivo))@unlink($dir.$novoArquivo);
   throw $e;
  }
- if($novoArquivo&&$fotoAnterior!=='sem-foto.jpg'&&preg_match('/^[a-zA-Z0-9_.-]+$/D',(string)$fotoAnterior)){
-  $q=$pdo->prepare('SELECT COUNT(*) FROM banner_rotativo WHERE foto=:foto');
-  $q->execute([':foto'=>$fotoAnterior]);
-  if(!(int)$q->fetchColumn()){
-   $antigo=__DIR__.'/../../images/banner_rotativo/'.$fotoAnterior;
-   if(is_file($antigo))@unlink($antigo);
-  }
- }
+ // Preservar o arquivo anterior como backup para recuperar imagens apos falhas de deploy.
  echo 'Salvo com Sucesso';
 }catch(Throwable $e){
  if($pdo->inTransaction())$pdo->rollBack();
