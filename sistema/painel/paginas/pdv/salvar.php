@@ -381,6 +381,10 @@ $pdo->commit();
 // A sessao PHP mantem o lock durante toda a requisicao. Registrar a
 // confirmacao antes de responder para que um retry retorne o mesmo pedido.
 $_SESSION['pdv_vendas_confirmadas'][$chavePdv] = (int)$id_pedido;
+// O formulario recebe um token novo no navegador apos o sucesso. Renovar
+// tambem o token guardado no servidor: se o operador recarregar o PDV,
+// a pagina nao deve reutilizar o token de uma venda ja confirmada.
+$_SESSION['pdv_token_atual'] = bin2hex(random_bytes(16));
 if (count($_SESSION['pdv_vendas_confirmadas']) > 30) {
     $_SESSION['pdv_vendas_confirmadas'] = array_slice($_SESSION['pdv_vendas_confirmadas'], -30, null, true);
 }
