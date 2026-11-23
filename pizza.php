@@ -711,11 +711,57 @@ body.selecao-cardapio { background:#fffaf5 !important; color:#503827; }
                 else alert('Selecione somente uma tapioca mista ou uma tapioca tradicional por vez.');
                 return;
             }
-            if (typeof mistasSelecionadas[0].enviarMista === 'function') {
-                mistasSelecionadas[0].enviarMista();
-            } else {
-                alert('Não foi possível preparar a tapioca mista. Atualize a página e tente novamente.');
+            // Envio independente da inicializacao dos controles da Mista.
+            // A selecao dos checkboxes funciona mesmo se o script visual
+            // do fragmento PHP nao tiver sido executado pelo navegador.
+            var cardMista = mistasSelecionadas[0];
+            var limiteMista = Number(cardMista.dataset.limite);
+            var inclusasMista = Array.from(cardMista.querySelectorAll('.proteina-inclusa:checked')).map(function(x){return Number(x.value);});
+            var msgMista = cardMista.querySelector('.resultado-mista');
+            if (!Number.isInteger(limiteMista) || limiteMista < 1 ||
+                inclusasMista.length !== limiteMista ||
+                new Set(inclusasMista).size !== limiteMista) {
+                if (msgMista) msgMista.textContent = 'Escolha exatamente '+limiteMista+' proteínas inclusas.';
+                var botaoInclusas = cardMista.querySelector('[data-abrir="inclusas"]');
+                if (botaoInclusas) botaoInclusas.click();
+                if (typeof Swal !== 'undefined' && Swal.fire) {
+                    Swal.fire({icon:'warning',title:'Sabores inclusos',text:'Escolha exatamente '+limiteMista+' sabores inclusos para continuar.'});
+                }
+                return;
             }
+            if (cardMista.dataset.enviando === '1') return;
+            var extrasMista = {};
+            cardMista.querySelectorAll('.extra-mista').forEach(function(x){
+                var qtd = x.type === 'checkbox' ? (x.checked ? 1 : 0) : Number(x.value);
+                if (Number.isInteger(qtd) && qtd > 0) extrasMista[x.dataset.id] = qtd;
+            });
+            cardMista.dataset.enviando = '1';
+            if (msgMista) msgMista.textContent = 'Adicionando...';
+            fetch('js/ajax/add-carrinho-mista.php',{
+                method:'POST',
+                credentials:'same-origin',
+                headers:{'Content-Type':'application/x-www-form-urlencoded'},
+                body:new URLSearchParams({
+                    produto:cardMista.dataset.mista,
+                    inclusas:JSON.stringify(inclusasMista),
+                    extras:JSON.stringify(extrasMista),
+                    obs:document.getElementById('obs')?.value || ''
+                })
+            }).then(function(r){return r.text();}).then(function(t){
+                if (t.trim() === 'Inserido com Sucesso') {
+                    location.href = 'carrinho';
+                } else {
+                    if (msgMista) msgMista.textContent = t;
+                    cardMista.dataset.enviando = '0';
+                    if (typeof Swal !== 'undefined' && Swal.fire)
+                        Swal.fire({icon:'error',title:'Não foi possível adicionar',text:t.slice(0,300)});
+                }
+            }).catch(function(){
+                cardMista.dataset.enviando = '0';
+                if (msgMista) msgMista.textContent = 'Falha de conexão. Tente novamente.';
+                if (typeof Swal !== 'undefined' && Swal.fire)
+                    Swal.fire({icon:'error',title:'Falha de conexão',text:'Não foi possível adicionar a Mista. Tente novamente.'});
+            });
             return;
         }
 		if (requisicoesAdicionaisSabor.length > 0) {
