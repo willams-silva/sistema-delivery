@@ -25,6 +25,16 @@ if (!isset($_SESSION['pdv_vendas_confirmadas']) || !is_array($_SESSION['pdv_vend
 }
 $chavePdv = (int)$id_empresa . ':' . (int)$id_usuario . ':' . $pdvToken;
 if (isset($_SESSION['pdv_vendas_confirmadas'][$chavePdv])) {
+    // Um retry da mesma tentativa so pode receber a confirmacao antiga
+    // se nao houver novos produtos pendentes na comanda. Caso contrario,
+    // retornar sucesso faria a operadora acreditar que os itens atuais
+    // foram vendidos, embora nenhum deles tenha sido processado.
+    $verificarPendentes = $pdo->prepare("SELECT id FROM carrinho WHERE sessao=:sessao AND empresa=:empresa AND pedido=0 AND (mesa='' OR mesa='0' OR mesa IS NULL) LIMIT 1");
+    $verificarPendentes->execute([':sessao'=>(int)$id_usuario, ':empresa'=>(int)$id_empresa]);
+    if ($verificarPendentes->fetchColumn() !== false) {
+        http_response_code(409);
+        exit('Esta tentativa de venda ja foi concluida, mas ha produtos pendentes na comanda. Atualize o PDV antes de finalizar novamente. Nenhuma nova venda foi registrada.');
+    }
     echo 'Salvo com Sucesso-' . (int)$_SESSION['pdv_vendas_confirmadas'][$chavePdv];
     exit();
 }
