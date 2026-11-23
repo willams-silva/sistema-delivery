@@ -18,7 +18,8 @@ $total_reg = @count($res);
 
 
 if ($total_reg == 0) {
-  echo "<script>window.location='index'</script>";
+  // Sem itens, devolve o cliente ao resumo com a mensagem de carrinho vazio.
+  header('Location: carrinho');
   exit();
 } else {
   for ($i = 0; $i < $total_reg; $i++) {
@@ -201,6 +202,21 @@ body.checkout-cardapio { background:#fffaf5; color:#493425; }
 }
 </style>
 
+<style>
+/* Retorno visivel ao carrinho durante o checkout, inclusive no celular. */
+.checkout-cardapio .bc-voltar-carrinho{
+  display:inline-flex;align-items:center;justify-content:center;gap:7px;
+  min-height:44px;padding:9px 12px;border:1px solid #e8c9a9;
+  border-radius:11px;background:#fff8ee;color:#82451f;
+  font-size:13px;font-weight:700;text-decoration:none;white-space:nowrap;
+}
+.checkout-cardapio .bc-voltar-carrinho:hover{background:#fff0dc;color:#753d1e}
+.checkout-cardapio .bc-voltar-carrinho:focus-visible{outline:3px solid #a85b24;outline-offset:2px}
+@media(max-width:575px){
+  .checkout-cardapio .bc-voltar-carrinho{padding:9px;min-width:44px}
+  .checkout-cardapio .bc-voltar-carrinho span{display:none}
+}
+</style>
 <script>document.body.classList.add("checkout-cardapio");</script>
 <div class="main-container">
 
@@ -210,6 +226,8 @@ body.checkout-cardapio { background:#fffaf5; color:#493425; }
         <img src="sistema/img/<?php echo $logo_sistema ?>" alt="" width="80px" class="d-inline-block align-text-top">
         Finalizar Pedido
       </a>
+
+      <a href="carrinho" class="bc-voltar-carrinho" aria-label="Voltar ao resumo do carrinho"><i class="bi bi-arrow-left" aria-hidden="true"></i> <span>Voltar ao carrinho</span></a>
 
       <?php require_once("icone-carrinho.php") ?>
 
