@@ -1417,6 +1417,36 @@ document.addEventListener('keydown', function(evento) { if (evento.key === 'Esca
 document.getElementById('aviso-secao-vazia').addEventListener('click', function(evento) { if (evento.target === this) fecharAvisoSecao(); });
 </script>
 
+<!-- Ajustes responsivos dos cards de categorias sem alterar produtos ou precos. -->
+<style>
+@media(max-width:767px){
+  .category-area .category__item{
+    box-sizing:border-box;
+    border:1px solid #efddc9;
+    border-radius:16px;
+    overflow:hidden;
+    background:#fffdf9!important;
+    box-shadow:0 4px 14px rgba(100,58,29,.09)!important;
+  }
+  .category-area .category__item .quadrado,
+  .category-area .category__item .fix{overflow:hidden}
+  .category-area .category__item img{
+    display:block;
+    max-width:100%;
+    object-fit:contain;
+  }
+  .category-area .category__content{
+    padding:8px 10px;
+    overflow-wrap:anywhere;
+  }
+  .category-area .category__content h6{
+    line-height:1.3;
+    margin-bottom:6px;
+  }
+  .category-area .swiper-slide>a,
+  .category-area a:has(>.swiper-slide){text-decoration:none}
+}
+</style>
 <!-- Navegacao acessivel entre secoes do cardapio. -->
 <style>
 html{scroll-behavior:smooth}
