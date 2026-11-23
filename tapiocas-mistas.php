@@ -17,8 +17,8 @@ if (!function_exists('escMista')) { function escMista($x) { return htmlspecialch
  $limite = (int)$p['limite_proteinas'];
  $pid = (int)$p['id']; ?>
 <li class="list-group-item d-flex justify-content-between align-items-start" data-mista="<?= $pid ?>" data-limite="<?= $limite ?>">
- <div class="row" style="width:100%">
-  <div class="col-12 col-md-8">
+ <div class="row mista-linha" style="width:100%;margin:0">
+  <div class="col-10" style="padding-left:0">
    <div class="me-auto">
     <div class="fw-bold titulo-item">
      <input type="checkbox" class="form-check-input mista-abrir" id="mista-abrir-<?= $pid ?>" aria-controls="mista-opcoes-<?= $pid ?>" aria-expanded="false" style="margin-top:5px">
@@ -26,17 +26,17 @@ if (!function_exists('escMista')) { function escMista($x) { return htmlspecialch
     </div>
     <div class="subtitulo-item-menor" style="color:#450703"><?= escMista($p['descricao']) ?></div>
     <span class="valor-item-maior" style="color:green">R$ <?= number_format($preco,2,',','.') ?></span>
-    <small class="d-block text-muted"><?= $limite ?> proteínas inclusas no preço</small>
+    <small class="d-block text-muted" style="font-size:11px"><?= $limite ?> proteínas inclusas no preço</small>
    </div>
   </div>
-  <div class="col-12 col-md-4 d-flex align-items-start justify-content-md-end gap-2 flex-wrap mt-2 mt-md-0">
-   <img src="sistema/painel/images/produtos/<?= escMista(rawurlencode($p['foto'])) ?>" width="74" height="74" style="object-fit:cover" alt="">
-   <div class="d-flex flex-wrap gap-1" style="max-width:270px">
-    <button type="button" class="btn btn-sm btn-outline-success mista-abrir-btn" data-abrir="inclusas">＋ Sabores inclusos</button>
-    <button type="button" class="btn btn-sm btn-outline-success mista-abrir-btn" data-abrir="adicional">＋ Adicionais</button>
-    <button type="button" class="btn btn-sm btn-outline-success mista-abrir-btn" data-abrir="opcional">＋ Opcionais · retirar sem custo</button>
-    <button type="button" class="btn btn-sm btn-outline-success mista-abrir-btn" data-abrir="proteina">＋ Proteínas</button>
-   </div>
+  <div class="col-2 text-end" style="padding-right:0">
+   <img src="sistema/painel/images/produtos/<?= escMista(rawurlencode($p['foto'])) ?>" width="60" height="60" style="object-fit:cover;max-width:100%" alt="">
+  </div>
+  <div class="col-12 mista-botoes" style="padding:0;margin-top:12px">
+   <button type="button" class="btn btn-sm btn-outline-success mb-1 me-1 mista-abrir-btn" data-abrir="inclusas">＋ Sabores inclusos</button>
+   <button type="button" class="btn btn-sm btn-outline-success mb-1 me-1 mista-abrir-btn" data-abrir="adicional">＋ Adicionais</button>
+   <button type="button" class="btn btn-sm btn-outline-success mb-1 me-1 mista-abrir-btn" data-abrir="opcional">＋ Opcionais · retirar sem custo</button>
+   <button type="button" class="btn btn-sm btn-outline-success mb-1 me-1 mista-abrir-btn" data-abrir="proteina">＋ Proteínas</button>
   </div>
   <div class="col-12">
    <div id="mista-opcoes-<?= $pid ?>" class="mista-opcoes mt-3" hidden style="padding:12px;background:#fff8ef;border-radius:10px">
