@@ -38,6 +38,11 @@ $pag = 'produtos';
 </div>
 
 
+<div class="ux-products-view-toolbar" role="group" aria-label="Visualização dos produtos">
+  <span>Visualização:</span>
+  <button type="button" class="ux-view-btn" data-product-view="cards" aria-pressed="true"><i class="fe fe-grid"></i> Cartões</button>
+  <button type="button" class="ux-view-btn" data-product-view="table" aria-pressed="false"><i class="fe fe-list"></i> Tabela</button>
+</div>
 <div class="bs-example widget-shadow" style="padding:15px" id="listar">
 
 </div>
@@ -1617,5 +1622,60 @@ function excluirProduto(id) {
      });
    }
  });
+})();
+</script>
+
+<style>
+.ux-products-view-toolbar{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin:14px 0 10px}.ux-products-view-toolbar>span{font-weight:600;margin-right:4px}.ux-view-btn{border:1px solid #d7c5b7;border-radius:9px;background:#fff;color:#6c4631;padding:9px 14px;font-weight:600}.ux-view-btn[aria-pressed=true]{background:#914a29;color:white;border-color:#914a29}.ux-product-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:16px;margin:14px 0}.ux-product-card{border:1px solid #ebdfd6;border-radius:14px;overflow:hidden;background:#fff;box-shadow:0 3px 14px #0000000b;display:flex;flex-direction:column}.ux-product-card-photo{height:150px;background:#f8f3ee;display:flex;align-items:center;justify-content:center}.ux-product-card-photo img{width:100%;height:100%;object-fit:contain}.ux-product-card-body{padding:14px;display:flex;flex-direction:column;gap:8px;flex:1}.ux-product-card-name{font-weight:750;line-height:1.3;overflow-wrap:anywhere}.ux-product-card-price{font-size:1.2rem;font-weight:800;color:#8e4526}.ux-product-card-meta{font-size:.85rem;color:#6c625e}.ux-product-card-actions{display:flex;gap:6px;flex-wrap:wrap;margin-top:auto;padding-top:9px;border-top:1px solid #f1e8e2}.ux-product-card-actions a{margin:0!important}.ux-product-card-stock{font-size:.85rem}.ux-product-card-disabled{opacity:.72}.ux-product-grid-empty{padding:24px;text-align:center;color:#6c625e}.ux-products-cards-mode #tabela_wrapper .dataTables_scroll,.ux-products-cards-mode #tabela_wrapper table#tabela{display:none!important}@media(max-width:600px){.ux-product-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}.ux-product-card-photo{height:115px}.ux-product-card-body{padding:10px}.ux-product-card-actions{gap:4px}.ux-product-card-actions .btn{padding:5px 7px}.ux-product-card-price{font-size:1rem}}
+</style>
+<script>
+(function(){
+  var key='bora-produtos-visualizacao';
+  var view='cards';
+  try { if(localStorage.getItem(key)==='table') view='table'; } catch(e){}
+  function escapeText(value){return $('<div>').text(value||'').html();}
+  function applyView(){
+    $('.ux-view-btn').each(function(){var active=$(this).attr('data-product-view')===view;$(this).attr('aria-pressed',String(active));});
+    $('#listar').toggleClass('ux-products-cards-mode',view==='cards');
+    if(view==='cards') renderCards();
+    else $('#ux-product-grid').hide();
+  }
+  function renderCards(){
+    var $table=$('#listar #tabela');
+    if(!$table.length)return;
+    var $grid=$('#ux-product-grid');
+    if(!$grid.length){$grid=$('<div id="ux-product-grid" class="ux-product-grid" aria-label="Produtos em cartões"></div>');$('#tabela_wrapper').before($grid);}
+    $grid.empty().show();
+    // Usa somente as linhas visíveis da página atual do DataTables, mantendo busca e paginação existentes.
+    $table.find('tbody tr').each(function(){
+      var $cells=$(this).children('td');
+      if($cells.length<8)return;
+      var $img=$cells.eq(1).find('img').first().clone();
+      var $name=$cells.eq(1).clone();$name.find('img,span').remove();
+      var name=$name.text().trim();
+      var $card=$('<article class="ux-product-card"></article>');
+      if($cells.eq(1).css('color')==='rgb(196, 196, 196)')$card.addClass('ux-product-card-disabled');
+      var $photo=$('<div class="ux-product-card-photo"></div>').append($img);
+      var $body=$('<div class="ux-product-card-body"></div>');
+      $body.append($('<div class="ux-product-card-name"></div>').text(name));
+      $body.append($('<div class="ux-product-card-meta"></div>').text($cells.eq(2).text().trim()));
+      $body.append($('<div class="ux-product-card-price"></div>').text($cells.eq(3).text().trim()));
+      $body.append($('<div class="ux-product-card-stock"></div>').text('Estoque: '+$cells.eq(4).text().trim()));
+      $body.append($('<div class="ux-product-card-meta"></div>').text('Delivery: '+$cells.eq(5).text().trim()+' · Preparado: '+$cells.eq(6).text().trim()));
+      // Clona as ações originais para preservar os mesmos handlers de edição, estoque e exclusão.
+      $body.append($('<div class="ux-product-card-actions"></div>').append($cells.eq(7).children().clone()));
+      $card.append($photo,$body);$grid.append($card);
+    });
+    if(!$grid.children().length)$grid.append('<p class="ux-product-grid-empty">Nenhum produto encontrado nesta página.</p>');
+  }
+  $(document).on('click','.ux-view-btn',function(){view=$(this).attr('data-product-view');try{localStorage.setItem(key,view);}catch(e){}applyView();});
+  $(document).on('draw.dt','#tabela',function(){if(view==='cards')renderCards();});
+  // A listagem é substituída via AJAX ao filtrar/salvar: reconstruir os cartões após a atualização.
+  var root=document.getElementById('listar');
+  if(root&&window.MutationObserver){
+    var scheduled=false;
+    new MutationObserver(function(){if(scheduled)return;scheduled=true;setTimeout(function(){scheduled=false;applyView();},60);}).observe(root,{childList:true,subtree:false});
+  }
+  $(function(){applyView();});
 })();
 </script>
