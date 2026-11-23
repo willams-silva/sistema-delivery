@@ -12,22 +12,29 @@ $proteinas_mistas = array_values(array_filter($extras_mistos, function($a){retur
 if (!function_exists('escMista')) { function escMista($x) { return htmlspecialchars((string)$x, ENT_QUOTES, 'UTF-8'); } }
 ?>
 <?php if ($produtos_mistos): ?>
-<div class="container" style="max-width:850px;padding:24px 12px 100px">
-<h2 style="color:#713c20;text-align:center">Monte sua tapioca mista</h2>
-<p style="text-align:center">Escolha uma tapioca, selecione as proteínas inclusas e acrescente extras, se desejar.</p>
-<?php if (!$produtos_mistos): ?><p class="alert alert-info">Ainda não há tapiocas mistas configuradas no painel.</p><?php endif; ?>
-<?php if (!$proteinas_mistas): ?><p class="alert alert-warning">Cadastre os ingredientes do tipo <strong>Proteína</strong> nos adicionais desta categoria.</p><?php endif; ?>
 <?php foreach ($produtos_mistos as $p):
  $preco = $p['promocao']==='Sim' && (float)$p['val_promocional']>0 ? (float)$p['val_promocional'] : (float)$p['valor_venda'];
- $limite = (int)$p['limite_proteinas']; ?>
-<section class="card mb-3 shadow-sm" style="border-radius:15px" data-mista="<?= (int)$p['id'] ?>" data-limite="<?= $limite ?>">
- <div class="card-body">
-  <div class="d-flex gap-3 align-items-center mb-3">
-   <img src="sistema/painel/images/produtos/<?= escMista(rawurlencode($p['foto'])) ?>" width="82" height="82" style="object-fit:cover;border-radius:12px" alt="">
-   <div><h4 style="margin:0"><?= escMista($p['nome']) ?></h4><small><?= escMista($p['descricao']) ?></small>
-    <div><strong>R$ <?= number_format($preco,2,',','.') ?></strong> · <?= $limite ?> proteínas inclusas</div></div>
+ $limite = (int)$p['limite_proteinas'];
+ $pid = (int)$p['id']; ?>
+<li class="list-group-item mb-2" data-mista="<?= $pid ?>" data-limite="<?= $limite ?>" style="border:1px solid #efddc9">
+ <div class="d-flex justify-content-between align-items-start gap-2 flex-wrap">
+  <div class="d-flex align-items-start gap-2" style="flex:1;min-width:210px">
+   <input type="checkbox" class="form-check-input mista-abrir" id="mista-abrir-<?= $pid ?>" aria-controls="mista-opcoes-<?= $pid ?>" aria-expanded="false">
+   <div>
+    <label for="mista-abrir-<?= $pid ?>" class="fw-bold" style="cursor:pointer"><?= escMista($p['nome']) ?></label>
+    <div class="subtitulo-item-menor" style="font-size:11px;color:#713c20"><?= escMista($p['descricao']) ?></div>
+    <div class="text-success" style="font-size:13px">R$ <?= number_format($preco,2,',','.') ?> · <?= $limite ?> proteínas inclusas</div>
+   </div>
   </div>
-  <strong>Escolha exatamente <?= $limite ?> proteínas (inclusas)</strong>
+  <img src="sistema/painel/images/produtos/<?= escMista(rawurlencode($p['foto'])) ?>" width="72" height="72" style="object-fit:cover" alt="">
+  <div class="d-flex gap-1 flex-wrap" style="max-width:420px">
+   <button type="button" class="btn btn-sm btn-outline-warning mista-abrir-btn">＋ Escolher proteínas</button>
+   <button type="button" class="btn btn-sm btn-outline-warning mista-abrir-btn">＋ Adicionais e opcionais</button>
+  </div>
+ </div>
+ <div id="mista-opcoes-<?= $pid ?>" class="mista-opcoes mt-3" hidden style="padding:12px;background:#fff8ef;border-radius:10px">
+  <strong>Escolha exatamente <?= $limite ?> proteínas inclusas</strong>
+  <?php if (count($proteinas_mistas)<$limite): ?><div class="text-danger">Cadastre pelo menos <?= $limite ?> proteínas nesta categoria.</div><?php endif; ?>
   <div class="row mt-2 mb-3">
   <?php foreach ($proteinas_mistas as $a): ?>
    <label class="col-6 col-md-4 mb-2"><input type="checkbox" class="proteina-inclusa" value="<?= (int)$a['id'] ?>"> <?= escMista($a['nome']) ?></label>
@@ -41,30 +48,40 @@ if (!function_exists('escMista')) { function escMista($x) { return htmlspecialch
    <div class="mt-2">
     <?php foreach ($itens as $a): ?>
      <div class="d-flex justify-content-between align-items-center py-2" style="border-bottom:1px solid #eee">
-      <label for="extra-<?= (int)$p['id'] ?>-<?= (int)$a['id'] ?>"><?= escMista($a['nome']) ?>
+      <label for="extra-<?= $pid ?>-<?= (int)$a['id'] ?>"><?= escMista($a['nome']) ?>
       <?php if ($tipo !== 'opcional'): ?><small class="text-success">+ R$ <?= number_format((float)$a['valor'],2,',','.') ?></small><?php endif; ?></label>
       <?php if ($tipo === 'opcional'): ?>
-      <input id="extra-<?= (int)$p['id'] ?>-<?= (int)$a['id'] ?>" type="checkbox" class="extra-mista" data-id="<?= (int)$a['id'] ?>" data-tipo="opcional" aria-label="Retirar <?= escMista($a['nome']) ?>">
+      <input id="extra-<?= $pid ?>-<?= (int)$a['id'] ?>" type="checkbox" class="extra-mista" data-id="<?= (int)$a['id'] ?>" data-tipo="opcional" aria-label="Retirar <?= escMista($a['nome']) ?>">
       <?php else: ?>
-      <input id="extra-<?= (int)$p['id'] ?>-<?= (int)$a['id'] ?>" type="number" class="form-control extra-mista" style="width:80px" min="0" max="20" step="1" value="0" data-id="<?= (int)$a['id'] ?>" data-tipo="<?= escMista($tipo) ?>" aria-label="Quantidade extra de <?= escMista($a['nome']) ?>">
+      <input id="extra-<?= $pid ?>-<?= (int)$a['id'] ?>" type="number" class="form-control extra-mista" style="width:80px" min="0" max="20" step="1" value="0" data-id="<?= (int)$a['id'] ?>" data-tipo="<?= escMista($tipo) ?>" aria-label="Quantidade extra de <?= escMista($a['nome']) ?>">
       <?php endif; ?>
      </div>
     <?php endforeach; ?>
    </div>
   </details>
   <?php endforeach; ?>
-  <label for="obs-mista-<?= (int)$p['id'] ?>">Observações</label>
-  <textarea id="obs-mista-<?= (int)$p['id'] ?>" class="form-control obs-mista" maxlength="180" rows="2" placeholder="Alguma observação?"></textarea>
-  <button type="button" class="btn btn-warning w-100 mt-3 btn-mista" <?= count($proteinas_mistas)<$limite ? 'disabled' : '' ?>>Adicionar ao carrinho <span aria-hidden="true">→</span></button>
+  <label for="obs-mista-<?= $pid ?>">Observações</label>
+  <textarea id="obs-mista-<?= $pid ?>" class="form-control obs-mista" maxlength="180" rows="2" placeholder="Alguma observação?"></textarea>
+  <button type="button" class="btn btn-warning w-100 mt-3 btn-mista" <?= count($proteinas_mistas)<$limite ? 'disabled' : '' ?>>Adicionar ao carrinho →</button>
   <div class="resultado-mista mt-2" role="alert" aria-live="polite"></div>
  </div>
-</section>
+</li>
 <?php endforeach; ?>
-</div>
 <script>
 (function(){
  document.querySelectorAll('[data-mista]').forEach(function(card){
    var limite=Number(card.dataset.limite);
+   var painel=card.querySelector('.mista-opcoes');
+   var abrir=card.querySelector('.mista-abrir');
+   function alternar(aberto) {
+     painel.hidden=!aberto;
+     abrir.checked=aberto;
+     abrir.setAttribute('aria-expanded',String(aberto));
+   }
+   abrir.addEventListener('change',function(){alternar(abrir.checked)});
+   card.querySelectorAll('.mista-abrir-btn').forEach(function(btn){
+     btn.addEventListener('click',function(){alternar(true);painel.scrollIntoView({behavior:'smooth',block:'nearest'})});
+   });
    var checks=Array.from(card.querySelectorAll('.proteina-inclusa'));
    function atualizar(){
      var n=checks.filter(function(x){return x.checked}).length;
