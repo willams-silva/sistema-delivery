@@ -737,7 +737,12 @@ body.selecao-cardapio { background:#fffaf5 !important; color:#503827; }
             });
             cardMista.dataset.enviando = '1';
             if (msgMista) msgMista.textContent = 'Adicionando...';
-            fetch('js/ajax/add-carrinho-mista.php',{
+            // Usar a origem HTTPS atual, nao o <base href> que pode apontar
+            // para HTTP ou outro host e perder o cookie PHPSESSID.
+            var endpointMista = new URL('js/ajax/add-carrinho-mista.php', document.baseURI);
+            endpointMista.protocol = window.location.protocol;
+            endpointMista.host = window.location.host;
+            fetch(endpointMista.href,{
                 method:'POST',
                 credentials:'same-origin',
                 headers:{'Content-Type':'application/x-www-form-urlencoded'},
