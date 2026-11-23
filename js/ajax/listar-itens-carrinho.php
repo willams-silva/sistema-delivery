@@ -149,11 +149,11 @@ if($total_reg > 0){
 					. ' onclick="removerAdicionalResumo(' . $id_extra . ',' . (int)$id . ')"><i class="bi bi-trash3"></i></button>';
 				$valor_extra_com_acao = '<span class="d-inline-flex align-items-center justify-content-end"><strong>R$ ' . $valor_extra_formatado . '</strong>' . $botao_remover_extra . '</span>';
 				if ($tipo_extra === 'opcional') {
-					$resumo_opcionais_tapioca .= '<div class="d-flex justify-content-between gap-2 py-1" style="font-size:13px"><span><i class="bi bi-dash-circle text-danger"></i> Sem ' . $nome_extra . $texto_sabor . '</span><strong>Sem custo</strong></div>';
+					$resumo_opcionais_tapioca .= '<div class="d-flex justify-content-between gap-2 py-1" style="font-size:13px"><span><i class="bi bi-dash-circle text-danger"></i> Sem ' . $nome_extra . $texto_sabor . '</span><span class="d-inline-flex align-items-center"><strong>Sem custo</strong>' . $botao_remover_extra . '</span></div>';
 				} elseif ($tipo_extra === 'proteina') {
-					$resumo_proteinas_tapioca .= '<div class="d-flex justify-content-between gap-2 py-1" style="font-size:13px"><span><i class="bi bi-plus-circle-fill text-success"></i> ' . $qtd_extra . 'x ' . $nome_extra . $texto_sabor . '</span><strong>R$ ' . $valor_extra_formatado . '</strong></div>';
+					$resumo_proteinas_tapioca .= '<div class="d-flex justify-content-between gap-2 py-1" style="font-size:13px"><span><i class="bi bi-plus-circle-fill text-success"></i> ' . $qtd_extra . 'x ' . $nome_extra . $texto_sabor . '</span>' . $valor_extra_com_acao . '</div>';
 				} else {
-					$resumo_adicionais_tapioca .= '<div class="d-flex justify-content-between gap-2 py-1" style="font-size:13px"><span><i class="bi bi-plus-circle-fill text-success"></i> ' . $qtd_extra . 'x ' . $nome_extra . $texto_sabor . '</span><strong>R$ ' . $valor_extra_formatado . '</strong></div>';
+					$resumo_adicionais_tapioca .= '<div class="d-flex justify-content-between gap-2 py-1" style="font-size:13px"><span><i class="bi bi-plus-circle-fill text-success"></i> ' . $qtd_extra . 'x ' . $nome_extra . $texto_sabor . '</span>' . $valor_extra_com_acao . '</div>';
 				}
 			}
 			$valor_base_total = max(0, (float)$total_item - $total_extras_unidade * (float)$quantidade);
