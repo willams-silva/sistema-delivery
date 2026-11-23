@@ -5,6 +5,12 @@ $pag = 'pdv';
 if (empty($_SESSION['pdv_token_atual']) || !preg_match('/^[a-f0-9]{32}$/', (string)$_SESSION['pdv_token_atual'])) {
     $_SESSION['pdv_token_atual'] = bin2hex(random_bytes(16));
 }
+// Se o formulario for recarregado com um token de venda ja confirmada,
+// preparar um identificador novo antes de exibir o PDV.
+$chaveTokenAtual = (int)$id_empresa . ':' . (int)$id_usuario . ':' . $_SESSION['pdv_token_atual'];
+if (isset($_SESSION['pdv_vendas_confirmadas'][$chaveTokenAtual])) {
+    $_SESSION['pdv_token_atual'] = bin2hex(random_bytes(16));
+}
 
 
 $id_mesa = @$_POST['id_mesa'];
@@ -936,18 +942,22 @@ $("#form_venda").submit(function (event) {
 			url: 'paginas/' + pag + "/salvar.php",
 			type: 'POST',
 			data: formData,
-			success: function (mensagem) {				
+			success: function (mensagem, textStatus, xhr) {				
 				var msg = mensagem.split("-");
 
 				$('#mensagem').text('');
 				$('#mensagem').removeClass();
 
 				if (msg[0].trim() == "Salvo com Sucesso") {
-                    // Gera token novo apenas depois da confirmacao da venda.
-                    if (window.crypto && window.crypto.getRandomValues) {
-                        var bytesPdv = new Uint8Array(16);
-                        window.crypto.getRandomValues(bytesPdv);
-                        $('#pdv_token').val(Array.from(bytesPdv, b => b.toString(16).padStart(2,'0')).join(''));
+                    // Usar o mesmo token emitido pelo servidor, nunca criar
+                    // outro apenas no navegador apos uma venda concluida.
+                    var proximoToken = xhr.getResponseHeader('X-PDV-Novo-Token');
+                    if (/^[a-f0-9]{32}$/.test(String(proximoToken || ''))) {
+                        $('#pdv_token').val(proximoToken);
+                    } else {
+                        // Compatibilidade com respostas antigas: evitar reutilizar
+                        // silenciosamente um token ja consumido.
+                        $('#pdv_token').val('');
                     }
 					$("#img_loading").hide();
 
