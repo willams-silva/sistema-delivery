@@ -226,6 +226,17 @@ if (!function_exists('escMista')) { function escMista($x) { return htmlspecialch
        if(linha.atualizarQuantidade)linha.atualizarQuantidade();
      });
    }
+   // Guardar a selecao no evento do proprio checkbox (nao no label).
+   // O clique no texto do label tambem dispara click no input; assim
+   // bloqueamos apenas o terceiro sabor, sem impedir desmarcacoes.
+   checks.forEach(function(x){
+     x.addEventListener('click',function(e){
+       if (!x.checked && checks.filter(function(y){return y.checked}).length>=limite) {
+         e.preventDefault();
+         e.stopImmediatePropagation();
+       }
+     },true);
+   });
    checks.forEach(function(x){
      x.addEventListener('change',function(){
        // Bloqueio efetivo mesmo quando o navegador altera o checkbox
