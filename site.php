@@ -1516,6 +1516,9 @@ html{scroll-behavior:smooth}
 <style>
 .bc-carrinho-fixo{position:fixed;left:50%;bottom:calc(12px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);z-index:9990;display:none;align-items:center;justify-content:space-between;gap:12px;width:min(94vw,520px);padding:11px 14px;background:#fffaf5;border:1px solid #ead3bc;border-radius:17px;box-shadow:0 7px 26px rgba(65,34,15,.2);color:#55351f}
 .bc-carrinho-fixo.bc-visivel{display:flex}
+.bc-carrinho-fixo.bc-confirmado{border-color:#a85b24;box-shadow:0 7px 26px rgba(65,34,15,.2),0 0 0 3px rgba(168,91,36,.15)}
+.bc-carrinho-fixo.bc-confirmado #bc-carrinho-qtd{color:#82451f;font-weight:700}
+@media(prefers-reduced-motion:no-preference){.bc-carrinho-fixo{transition:border-color .2s,box-shadow .2s}}
 .bc-carrinho-fixo__dados{display:flex;flex-direction:column;min-width:0;line-height:1.25}
 .bc-carrinho-fixo__dados strong{font-size:15px}
 .bc-carrinho-fixo__dados small{font-size:12px;color:#795a43}
@@ -1532,17 +1535,31 @@ body:has(.bc-carrinho-fixo.bc-visivel){padding-bottom:85px}
 (function(){
  var barra=document.getElementById('bc-carrinho-fixo'),qtd=document.getElementById('bc-carrinho-qtd'),valor=document.getElementById('bc-carrinho-valor');
  if(!barra)return;
+ var ultimaQuantidade=null, sequencia=0, temporizadorConfirmacao=null;
  function atualizar(){
+   var consulta=++sequencia;
    // O menu mobile pode nao renderizar os contadores do carrinho lateral.
    // Consultar a mesma sessao no servidor, independentemente do menu desktop.
    fetch('js/ajax/resumo-carrinho-flutuante.php',{credentials:'same-origin',cache:'no-store'})
      .then(function(r){if(!r.ok)throw Error('Resumo indisponivel');return r.json();})
      .then(function(d){
-       var n=Number(d.itens)||0;
+       if(consulta!==sequencia)return;
+       var n=Math.max(0,Number(d.itens)||0);
+       var aumentou=ultimaQuantidade!==null && n>ultimaQuantidade;
+       ultimaQuantidade=n;
        barra.classList.toggle('bc-visivel',n>0);
        qtd.textContent=n+(n===1?' item no carrinho':' itens no carrinho');
        valor.textContent='Total: '+Number(d.total||0).toLocaleString('pt-BR',{style:'currency',currency:'BRL'});
-     }).catch(function(){barra.classList.remove('bc-visivel');});
+       if(aumentou){
+         clearTimeout(temporizadorConfirmacao);
+         barra.classList.add('bc-confirmado');
+         qtd.textContent='Produto adicionado! '+n+(n===1?' item':' itens');
+         temporizadorConfirmacao=setTimeout(function(){
+           barra.classList.remove('bc-confirmado');
+           qtd.textContent=n+(n===1?' item no carrinho':' itens no carrinho');
+         },2200);
+       }
+     }).catch(function(){ /* Mantem o ultimo estado conhecido se a rede falhar. */ });
  }
  atualizar();
  window.addEventListener('pageshow',atualizar);
