@@ -90,37 +90,32 @@ if($total_reg > 0){
 }
 
 
-//SCRIPT PARA SUBIR FOTO NO SERVIDOR
-$nome_img = date('d-m-Y H:i:s') .'-'.@$_FILES['foto']['name'];
-$nome_img = preg_replace('/[ :]+/' , '-' , $nome_img);
-
-$caminho = '../../images/produtos/' .$nome_img;
-
-$imagem_temp = @$_FILES['foto']['tmp_name']; 
-
-if(@$_FILES['foto']['name'] != ""){
-	$ext = pathinfo($nome_img, PATHINFO_EXTENSION);   
-	if($ext == 'png' or $ext == 'jpg' or $ext == 'jpeg' or $ext == 'gif' or $ext == 'pdf' or $ext == 'rar' or $ext == 'zip' or $ext == 'doc' or $ext == 'docx' or $ext == 'webp' or $ext == 'PNG' or $ext == 'JPG' or $ext == 'JPEG' or $ext == 'GIF' or $ext == 'PDF' or $ext == 'RAR' or $ext == 'ZIP' or $ext == 'DOC' or $ext == 'DOCX' or $ext == 'WEBP' or $ext == 'xlsx' or $ext == 'xlsm' or $ext == 'xls' or $ext == 'xml'){ 
-	
-			//EXCLUO A FOTO ANTERIOR
-			if($foto != "sem-foto.jpg"){
-				@unlink('../../images/produtos/'.$foto);
-			}
-
-			$foto = $nome_img;
-
-		//pegar o tamanho da imagem
-		list($largura, $altura) = getimagesize($imagem_temp);
-		if ($largura > 1400) {
-			echo 'Diminua a imagem para um tamanho de no máximo 1400px de largura!';
-			exit();
-		} else {
-			move_uploaded_file($imagem_temp, $caminho);
-		}
-	}else{
-		echo 'Extensão de Imagem não permitida!';
-		exit();
-	}
+// Upload seguro: manter a imagem anterior se a nova falhar.
+if (isset($_FILES['foto']) && $_FILES['foto']['error'] !== UPLOAD_ERR_NO_FILE) {
+    if ($_FILES['foto']['error'] !== UPLOAD_ERR_OK || !is_uploaded_file($_FILES['foto']['tmp_name'])) {
+        echo 'Falha ao receber a imagem. Tente novamente.';
+        exit();
+    }
+    $imagem_temp = $_FILES['foto']['tmp_name'];
+    $extensoes = ['jpg', 'jpeg', 'png', 'gif', 'webp'];
+    $ext = strtolower(pathinfo($_FILES['foto']['name'], PATHINFO_EXTENSION));
+    $info_imagem = @getimagesize($imagem_temp);
+    if (!in_array($ext, $extensoes, true) || !$info_imagem || $info_imagem[0] > 1400) {
+        echo 'Imagem inválida ou maior que 1400px de largura. Use JPG, PNG, GIF ou WEBP.';
+        exit();
+    }
+    $pasta_imagens = __DIR__ . '/../../images/produtos/';
+    if (!is_dir($pasta_imagens) || !is_writable($pasta_imagens)) {
+        echo 'Pasta de imagens indisponível para gravação. Verifique a hospedagem.';
+        exit();
+    }
+    $novo_nome = date('YmdHis') . '-' . bin2hex(random_bytes(8)) . '.' . $ext;
+    if (!move_uploaded_file($imagem_temp, $pasta_imagens . $novo_nome)) {
+        echo 'Não foi possível salvar a imagem no servidor.';
+        exit();
+    }
+    // Não apagar a imagem anterior: pode ser necessária para recuperação.
+    $foto = $novo_nome;
 }
 
 
