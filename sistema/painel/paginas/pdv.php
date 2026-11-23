@@ -835,6 +835,19 @@ function focarNovaVendaPdv() {
     var busca = $('#txt_buscar');
     if (busca.length) busca.trigger('focus');
 }
+// Atalho explicito para devolver o foco ao leitor de codigo de barras,
+// sem capturar teclas digitadas em campos de pagamento ou modais.
+$(document).off('keydown.pdvBusca').on('keydown.pdvBusca', function(event) {
+    if (!event.altKey || event.ctrlKey || event.metaKey || event.repeat) return;
+    if (String(event.key || '').toLowerCase() !== 'b') return;
+    if ($('.modal.show:visible, .swal2-container:visible').length) return;
+    event.preventDefault();
+    var busca = $('#txt_buscar');
+    if (busca.length) {
+        busca.trigger('focus');
+        busca.trigger('select');
+    }
+});
 function confirmarVendaConcluidaPdv(idVenda, impressaoAutomatica) {
     var id = String(idVenda || '').trim();
     var comprovante = /^\d+$/.test(id) ? 'rel/comprovante_balcao.php?id=' + encodeURIComponent(id) : '';
