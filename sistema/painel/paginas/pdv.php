@@ -1682,6 +1682,13 @@ function FormaPg(){
        if(sucesso){
          bootstrap.Modal.getOrCreateInstance(document.getElementById('modalPdvExtras')).hide();
          listarVendas();limparCampos();
+         // Apos salvar os adicionais, aguardar o modal terminar de fechar
+         // antes de devolver o foco ao leitor. Nao interromper outras janelas.
+         $('#modalPdvExtras').one('hidden.bs.modal.pdvFocoLeitor', function() {
+           if (!$('.modal.show:visible, .swal2-container:visible').length) {
+             $('#txt_buscar').val('').trigger('focus');
+           }
+         });
        }else erroExtras(r||'O servidor não confirmou a gravação do produto.');
      },
      error:function(xhr,status){
@@ -1696,38 +1703,8 @@ function FormaPg(){
 </script>
 
   <script type="text/javascript">
-  // Processa o Enter somente no campo do leitor, sem disparar durante formulários.
-  $('#txt_buscar').on('keydown', function(e) {
-    if (e.key !== 'Enter') return;
-    e.preventDefault();
-    var codigo = String($(this).val() || '').trim();
-    if (!codigo) return;
-    $.ajax({
-      url: 'paginas/' + pag + '/buscar_produto.php',
-      method: 'POST',
-      data: {codigo: codigo},
-      dataType: 'html',
-      success: function(result) {
-        result = String(result).trim();
-        if (result === 'Código do Produto não encontrado!') {
-          alertCodigo(result);
-          return;
-        }
-        var partes = result.split(',');
-        if (partes.length < 4 || !/^\d+$/.test(partes[0])) {
-          alertWarning('Não foi possível identificar o produto pelo código.');
-          return;
-        }
-        // addVenda verifica grades e unidades antes de inserir o item.
-        addVenda(partes[0], partes[1], partes.slice(2, -1).join(','), partes[partes.length - 1]);
-        if (partes[1] !== 'Não') {
-          var audio = new Audio('../img/barCode.wav');
-          audio.play().catch(function() {});
-        }
-      },
-      error: function() { alertWarning('Erro ao consultar o código de barras.'); }
-    });
-  });
+  // A leitura por Enter e tratada exclusivamente por keydown.pdvBuscaCodigo.
+  // Nao registrar outro listener aqui: dois handlers geravam inclusoes duplicadas.
   </script>
 
 
