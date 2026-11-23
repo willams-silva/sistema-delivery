@@ -209,7 +209,21 @@ if (!function_exists('escMista')) { function escMista($x) { return htmlspecialch
        if(linha.atualizarQuantidade)linha.atualizarQuantidade();
      });
    }
-   checks.forEach(function(x){x.addEventListener('change',function(){atualizar();atualizarQuantidades();})});
+   checks.forEach(function(x){
+     x.addEventListener('change',function(){
+       // Bloqueio efetivo mesmo quando o navegador altera o checkbox
+       // por teclado, label ou scripts externos.
+       var selecionadas=checks.filter(function(item){return item.checked});
+       if (selecionadas.length>limite) {
+         x.checked=false;
+         if (typeof Swal!=='undefined' && typeof Swal.fire==='function') {
+           Swal.fire({icon:'warning',title:'Limite de sabores',text:'Esta tapioca permite escolher somente '+limite+' sabores inclusos.'});
+         }
+       }
+       atualizar();
+       atualizarQuantidades();
+     });
+   });
    atualizar();atualizarQuantidades();
    card.enviarMista=function(){
      var msg=card.querySelector('.resultado-mista');
