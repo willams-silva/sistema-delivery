@@ -32,8 +32,14 @@ if (isset($_SESSION['pdv_vendas_confirmadas'][$chavePdv])) {
     $verificarPendentes = $pdo->prepare("SELECT id FROM carrinho WHERE sessao=:sessao AND empresa=:empresa AND pedido=0 AND (mesa='' OR mesa='0' OR mesa IS NULL) LIMIT 1");
     $verificarPendentes->execute([':sessao'=>(int)$id_usuario, ':empresa'=>(int)$id_empresa]);
     if ($verificarPendentes->fetchColumn() !== false) {
+        // Recuperacao segura: o token antigo ja foi consumido, portanto
+        // entregar um novo para a proxima venda sem apagar o carrinho.
+        // A operadora deve confirmar novamente, nunca reenviar automaticamente.
+        $novoTokenPdv = bin2hex(random_bytes(16));
+        $_SESSION['pdv_token_atual'] = $novoTokenPdv;
+        header('X-PDV-Novo-Token: ' . $novoTokenPdv);
         http_response_code(409);
-        exit('Esta tentativa de venda ja foi concluida, mas ha produtos pendentes na comanda. Atualize o PDV antes de finalizar novamente. Nenhuma nova venda foi registrada.');
+        exit('A venda anterior ja foi concluida. A comanda atual continua pendente e foi preparada para uma nova tentativa. Confira os itens e finalize somente se ainda nao foram cobrados.');
     }
     echo 'Salvo com Sucesso-' . (int)$_SESSION['pdv_vendas_confirmadas'][$chavePdv];
     exit();
