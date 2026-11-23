@@ -1417,6 +1417,47 @@ document.addEventListener('keydown', function(evento) { if (evento.key === 'Esca
 document.getElementById('aviso-secao-vazia').addEventListener('click', function(evento) { if (evento.target === this) fecharAvisoSecao(); });
 </script>
 
+<!-- Barra de carrinho responsiva: reaproveita os totais do carrinho existente. -->
+<style>
+.bc-carrinho-fixo{position:fixed;left:50%;bottom:calc(12px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);z-index:9990;display:none;align-items:center;justify-content:space-between;gap:12px;width:min(94vw,520px);padding:11px 14px;background:#fffaf5;border:1px solid #ead3bc;border-radius:17px;box-shadow:0 7px 26px rgba(65,34,15,.2);color:#55351f}
+.bc-carrinho-fixo.bc-visivel{display:flex}
+.bc-carrinho-fixo__dados{display:flex;flex-direction:column;min-width:0;line-height:1.25}
+.bc-carrinho-fixo__dados strong{font-size:15px}
+.bc-carrinho-fixo__dados small{font-size:12px;color:#795a43}
+.bc-carrinho-fixo__link{display:inline-flex;align-items:center;justify-content:center;gap:7px;white-space:nowrap;padding:11px 14px;background:#a85b24;color:#fff!important;border-radius:12px;font-weight:700;font-size:14px;text-decoration:none}
+@media(min-width:992px){.bc-carrinho-fixo{left:auto;right:22px;transform:none;width:360px}}
+body:has(.bc-carrinho-fixo.bc-visivel){padding-bottom:85px}
+#buscar:focus{border-bottom:2px solid #a85b24!important;box-shadow:0 3px 0 -1px #e9c5a5}
+</style>
+<div id="bc-carrinho-fixo" class="bc-carrinho-fixo" aria-live="polite">
+ <div class="bc-carrinho-fixo__dados"><strong id="bc-carrinho-valor">Ver seu pedido</strong><small id="bc-carrinho-qtd">Itens no carrinho</small></div>
+ <a class="bc-carrinho-fixo__link" href="carrinho" aria-label="Abrir resumo do pedido"><i class="bi bi-bag-check"></i> Ver carrinho <i class="bi bi-arrow-right"></i></a>
+</div>
+<script>
+(function(){
+  var barra=document.getElementById('bc-carrinho-fixo');
+  var qtd=document.getElementById('bc-carrinho-qtd');
+  var valor=document.getElementById('bc-carrinho-valor');
+  if(!barra)return;
+  function atualizar(){
+    var contador=document.getElementById('total-itens-carrinho');
+    var preco=document.getElementById('total-carrinho-icone');
+    var numero=contador ? parseInt((contador.textContent||'').replace(/[^0-9]/g,''),10) : 0;
+    var precoTexto=preco ? (preco.textContent||'').trim() : '';
+    var temPreco=/[1-9]/.test(precoTexto);
+    var temItens=Number.isFinite(numero)&&numero>0;
+    barra.classList.toggle('bc-visivel',temItens||temPreco);
+    qtd.textContent=temItens ? numero+(numero===1?' item no carrinho':' itens no carrinho') : 'Seu pedido está pronto para conferir';
+    valor.textContent=precoTexto ? 'Total: R$ '+precoTexto.replace(/^R\$\s*/,'') : 'Ver seu pedido';
+  }
+  var contador=document.getElementById('total-itens-carrinho');
+  var preco=document.getElementById('total-carrinho-icone');
+  var observer=new MutationObserver(atualizar);
+  [contador,preco].forEach(function(el){if(el)observer.observe(el,{childList:true,characterData:true,subtree:true});});
+  atualizar();
+  document.addEventListener('visibilitychange',function(){if(!document.hidden && typeof listarCarrinhoIcone==='function')listarCarrinhoIcone();});
+})();
+</script>
 <!-- JS here -->
 <script src="assets/js/waypoints.js"></script>
 <script src="assets/js/bootstrap.bundle.min.js"></script>
