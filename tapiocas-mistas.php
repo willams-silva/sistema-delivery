@@ -45,10 +45,10 @@ if (!function_exists('escMista')) { function escMista($x) { return htmlspecialch
   <?php if (count($proteinas_mistas)<$limite): ?><div class="text-danger">Cadastre pelo menos <?= $limite ?> proteínas nesta categoria.</div><?php endif; ?>
   <div class="mt-2 mb-3">
   <?php foreach ($proteinas_mistas as $a): ?>
-   <label class="mista-item-quantidade mista-item-incluso" style="cursor:pointer;justify-content:flex-start">
-    <input type="checkbox" class="form-check-input proteina-inclusa" value="<?= (int)$a['id'] ?>" style="margin:0;flex-shrink:0">
-    <span class="mista-item-nome"><span aria-hidden="true"><?= function_exists('iconeAdicionalPizza') ? escMista(iconeAdicionalPizza($a['nome'])) : '🍽️' ?></span> <?= escMista($a['nome']) ?> <small class="text-success">(incluso)</small></span>
-   </label>
+   <div class="mista-item-quantidade mista-item-incluso" style="justify-content:flex-start">
+    <input type="checkbox" id="mista-proteina-<?= $pid ?>-<?= (int)$a['id'] ?>" class="form-check-input proteina-inclusa" value="<?= (int)$a['id'] ?>" style="margin:0;flex-shrink:0">
+    <label for="mista-proteina-<?= $pid ?>-<?= (int)$a['id'] ?>" class="mista-item-nome" style="cursor:pointer;margin:0"><span aria-hidden="true"><?= function_exists('iconeAdicionalPizza') ? escMista(iconeAdicionalPizza($a['nome'])) : '🍽️' ?></span> <?= escMista($a['nome']) ?> <small class="text-success">(incluso)</small></label>
+   </div>
   <?php endforeach; ?>
   </div>
   <div class="text-muted mb-3 contador-inclusas" aria-live="polite">0 de <?= $limite ?> selecionadas</div>
@@ -226,28 +226,12 @@ if (!function_exists('escMista')) { function escMista($x) { return htmlspecialch
        if(linha.atualizarQuantidade)linha.atualizarQuantidade();
      });
    }
-   // Guardar a selecao no evento do proprio checkbox (nao no label).
-   // O clique no texto do label tambem dispara click no input; assim
-   // bloqueamos apenas o terceiro sabor, sem impedir desmarcacoes.
-   checks.forEach(function(x){
-     x.addEventListener('click',function(e){
-       if (!x.checked && checks.filter(function(y){return y.checked}).length>=limite) {
-         e.preventDefault();
-         e.stopImmediatePropagation();
-       }
-     },true);
-   });
+   // Uma unica validacao por change. Sem preventDefault nem captura
+   // do clique: o checkbox marcado sempre pode ser desmarcado.
    checks.forEach(function(x){
      x.addEventListener('change',function(){
-       // Bloqueio efetivo mesmo quando o navegador altera o checkbox
-       // por teclado, label ou scripts externos.
-       var selecionadas=checks.filter(function(item){return item.checked});
-       if (selecionadas.length>limite) {
+       if (x.checked && checks.filter(function(item){return item.checked}).length>limite) {
          x.checked=false;
-         atualizar();
-         atualizarQuantidades();
-         avisoLimite();
-         return;
        }
        atualizar();
        atualizarQuantidades();
