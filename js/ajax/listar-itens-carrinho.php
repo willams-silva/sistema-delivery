@@ -393,8 +393,9 @@ HTML;
 			return;
 		}
 
-			if(acao == 'menos' && quantidade == 1){
-				excluirCarrinho(id);
+			if(acao == 'menos' && Number(quantidade) <= 1){
+				excluir(id);
+				return;
 			}
 			$.ajax({
 				url: 'js/ajax/mudar-quant-carrinho.php',
@@ -444,12 +445,17 @@ HTML;
 
 		function excluir(id){
 			var popup = 'popup-excluir' + id;
-			document.getElementById(popup).style.display = 'block';
+			var elemento = document.getElementById(popup);
+			if(!elemento)return;
+			elemento.style.display = 'flex';
+			var cancelar = elemento.querySelector('button[onclick*="fecharExcluir"]');
+			if(cancelar)cancelar.focus();
 		}
 
 		function fecharExcluir(id){
 			var popup = 'popup-excluir' + id;
-			document.getElementById(popup).style.display = 'none';
+			var elemento = document.getElementById(popup);
+			if(elemento)elemento.style.display = 'none';
 		}
 
 		function obs(nome, obs, id){
