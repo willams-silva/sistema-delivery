@@ -1626,7 +1626,7 @@ function excluirProduto(id) {
 </script>
 
 <style>
-.ux-products-view-toolbar{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin:14px 0 10px}.ux-products-view-toolbar>span{font-weight:600;margin-right:4px}.ux-view-btn{border:1px solid #d7c5b7;border-radius:9px;background:#fff;color:#6c4631;padding:9px 14px;font-weight:600}.ux-view-btn[aria-pressed=true]{background:#914a29;color:white;border-color:#914a29}.ux-product-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:16px;margin:14px 0}.ux-product-card{border:1px solid #ebdfd6;border-radius:14px;overflow:hidden;background:#fff;box-shadow:0 3px 14px #0000000b;display:flex;flex-direction:column}.ux-product-card-photo{height:150px;background:#fff;display:flex;align-items:center;justify-content:center}.ux-product-card-photo img{width:100%;height:100%;object-fit:contain}.ux-product-card-body{padding:14px;display:flex;flex-direction:column;gap:8px;flex:1}.ux-product-card-name{font-weight:750;line-height:1.3;overflow-wrap:anywhere}.ux-product-card-price{font-size:1.2rem;font-weight:800;color:#8e4526}.ux-product-card-meta{font-size:.85rem;color:#6c625e}.ux-product-card-actions{display:flex;gap:6px;flex-wrap:wrap;margin-top:auto;padding-top:9px;border-top:1px solid #f1e8e2}.ux-product-card-actions a{margin:0!important}.ux-product-card-stock{font-size:.85rem}.ux-product-card-disabled{opacity:.72}.ux-product-grid-empty{padding:24px;text-align:center;color:#6c625e}.ux-products-cards-mode #tabela_wrapper .dataTables_scroll,.ux-products-cards-mode #tabela_wrapper table#tabela{display:none!important}@media(max-width:600px){.ux-product-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}.ux-product-card-photo{height:115px}.ux-product-card-body{padding:10px}.ux-product-card-actions{gap:4px}.ux-product-card-actions .btn{padding:5px 7px}.ux-product-card-price{font-size:1rem}}
+.ux-products-view-toolbar{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin:14px 0 10px}.ux-products-view-toolbar>span{font-weight:600;margin-right:4px}.ux-view-btn{border:1px solid #d7c5b7;border-radius:9px;background:#fff;color:#6c4631;padding:9px 14px;font-weight:600}.ux-view-btn[aria-pressed=true]{background:#914a29;color:white;border-color:#914a29}.ux-product-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:16px;margin:14px 0}.ux-product-card{border:1px solid #ebdfd6;border-radius:14px;overflow:hidden;background:#fff;box-shadow:0 3px 14px #0000000b;display:flex;flex-direction:column}.ux-product-card-photo{height:150px;background:#fff;display:flex;align-items:center;justify-content:center}.ux-product-card-photo img{width:100%;height:100%;object-fit:contain}.ux-product-card-body{padding:14px;display:flex;flex-direction:column;gap:8px;flex:1}.ux-product-card-name{font-weight:750;line-height:1.3;overflow-wrap:anywhere}.ux-product-card-price{font-size:1.2rem;font-weight:800;color:#8e4526}.ux-product-card-meta{font-size:.85rem;color:#6c625e}.ux-product-card-actions{display:flex;gap:6px;flex-wrap:wrap;margin-top:auto;padding-top:9px;border-top:1px solid #f1e8e2}.ux-product-card-actions a{margin:0!important}.ux-product-card-stock{font-size:.85rem}.ux-product-card-disabled{opacity:.72}.ux-product-grid-empty{padding:24px;text-align:center;color:#6c625e}.ux-products-cards-mode #tabela_wrapper .dataTables_scroll,.ux-products-cards-mode #tabela_wrapper table#tabela,.ux-products-cards-mode #tabela_wrapper .dataTables_paginate{display:none!important}.ux-card-pagination{display:flex;justify-content:center;align-items:center;flex-wrap:wrap;gap:6px;padding:16px 0}.ux-card-pagination button{border:1px solid #d7c5b7;border-radius:8px;background:#fff;color:#6c4631;padding:7px 12px;min-width:38px}.ux-card-pagination button[aria-current=page]{background:#914a29;color:#fff;border-color:#914a29}.ux-card-pagination button:disabled{opacity:.45;cursor:not-allowed}@media(max-width:600px){.ux-product-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}.ux-product-card-photo{height:115px}.ux-product-card-body{padding:10px}.ux-product-card-actions{gap:4px}.ux-product-card-actions .btn{padding:5px 7px}.ux-product-card-price{font-size:1rem}}
 </style>
 <script>
 (function(){
@@ -1638,7 +1638,7 @@ function excluirProduto(id) {
     $('.ux-view-btn').each(function(){var active=$(this).attr('data-product-view')===view;$(this).attr('aria-pressed',String(active));});
     $('#listar').toggleClass('ux-products-cards-mode',view==='cards');
     if(view==='cards') setTimeout(renderCards,0);
-    else $('#ux-product-grid').hide();
+    else $('#ux-product-grid,#ux-card-pagination').hide();
   }
   function renderCards(){
     var $table=$('#listar #tabela');
@@ -1646,6 +1646,19 @@ function excluirProduto(id) {
     var $grid=$('#ux-product-grid');
     if(!$grid.length){$grid=$('<div id="ux-product-grid" class="ux-product-grid" aria-label="Produtos em cartões"></div>');$('#tabela_wrapper').prepend($grid);}
     $grid.empty().show();
+    var api=($.fn.DataTable && $.fn.DataTable.isDataTable($table[0])) ? $table.DataTable() : null;
+    var $pager=$('#ux-card-pagination');
+    if(!$pager.length){$pager=$('<nav id="ux-card-pagination" class="ux-card-pagination" aria-label="Páginas de produtos"></nav>');$('#tabela_wrapper').append($pager);}
+    $pager.empty().show();
+    if(api){
+      var info=api.page.info();
+      if(info.pages>1){
+        var makeButton=function(label,page,disabled,current){var $b=$('<button type="button"></button>').text(label).prop('disabled',disabled).attr('data-page',page);if(current)$b.attr('aria-current','page');$pager.append($b);};
+        makeButton('Anterior',Math.max(0,info.page-1),info.page===0,false);
+        for(var n=0;n<info.pages;n++){if(info.pages>9 && Math.abs(n-info.page)>2 && n!==0 && n!==info.pages-1)continue;makeButton(String(n+1),n,false,n===info.page);}
+        makeButton('Próxima',Math.min(info.pages-1,info.page+1),info.page>=info.pages-1,false);
+      }
+    }
     // Usa somente as linhas visíveis da página atual do DataTables, mantendo busca e paginação existentes.
     var rows=($.fn.DataTable && $.fn.DataTable.isDataTable($table[0])) ? $table.DataTable().rows({page:'current',search:'applied'}).nodes() : $table.find('tbody tr').toArray();
     $(rows).each(function(){
@@ -1669,6 +1682,7 @@ function excluirProduto(id) {
     });
     if(!$grid.children().length)$grid.append('<p class="ux-product-grid-empty">Nenhum produto encontrado nesta página.</p>');
   }
+  $(document).on('click','#ux-card-pagination button[data-page]',function(){var $table=$('#listar #tabela');if(!$.fn.DataTable || !$.fn.DataTable.isDataTable($table[0]))return;var api=$table.DataTable();var target=Number($(this).attr('data-page'));if(Number.isInteger(target)&&target>=0&&target<api.page.info().pages){api.page(target).draw('page');renderCards();}});
   $(document).on('click','.ux-view-btn',function(){view=$(this).attr('data-product-view');try{localStorage.setItem(key,view);}catch(e){}applyView();});
   $(document).on('draw.dt','#tabela',function(){if(view==='cards')setTimeout(renderCards,0);});
   // A listagem é substituída via AJAX ao filtrar/salvar: reconstruir os cartões após a atualização.
