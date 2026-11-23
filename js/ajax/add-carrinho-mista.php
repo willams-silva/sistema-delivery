@@ -2,9 +2,23 @@
 @session_start();
 require_once('../../sistema/conexao.php');
 $id_empresa = (int)($_SESSION['empresa'] ?? 0);
-if (!$id_empresa || empty($_SESSION['sessao_usuario'])) { http_response_code(403); exit('Sessão expirada. Atualize a página.'); }
+if (!$id_empresa || empty($_SESSION['url_site'])) {
+    http_response_code(403);
+    exit('Sessão expirada. Atualize a página.');
+}
+// Conferir a loja da sessão contra o banco; não confiar no ID da empresa
+// recebido do navegador nem aceitar outra loja por engano.
+$stmt_loja = $pdo->prepare('SELECT empresa FROM config WHERE url_site = ? AND empresa = ? LIMIT 1');
+$stmt_loja->execute([(string)$_SESSION['url_site'], $id_empresa]);
+if (!$stmt_loja->fetchColumn()) { http_response_code(403); exit('Loja inválida'); }
 require_once('../../sistema/painel/buscar_config.php');
 if (($url_site ?? '') !== 'rainhadastapiocas') { http_response_code(403); exit('Loja inválida'); }
+// O cardápio tradicional aceita a sessão da loja sem exigir que
+// sessao_usuario já tenha sido criada. Criar apenas quando ausente,
+// mantendo a mesma chave durante as próximas operações do carrinho.
+if (empty($_SESSION['sessao_usuario'])) {
+    $_SESSION['sessao_usuario'] = bin2hex(random_bytes(16));
+}
 $produto_id = (int)($_POST['produto'] ?? 0);
 $inclusas = json_decode($_POST['inclusas'] ?? '', true);
 $extras = json_decode($_POST['extras'] ?? '', true);
