@@ -386,60 +386,65 @@ HTML;
 
 		
 
+		// Impede cliques repetidos enquanto uma alteracao do item esta em andamento.
+		var operacoesCarrinhoPendentes = {};
 		function mudarQuant(id, quantidade, acao){
-
 			if(id_mesa > 0){
-			alert('Você não pode alterar a quantidade!');
-			return;
-		}
-
+				alert('Você não pode alterar a quantidade!');
+				return;
+			}
+			if(operacoesCarrinhoPendentes[id])return;
 			if(acao == 'menos' && Number(quantidade) <= 1){
 				excluir(id);
 				return;
 			}
+			operacoesCarrinhoPendentes[id] = true;
 			$.ajax({
 				url: 'js/ajax/mudar-quant-carrinho.php',
 				method: 'POST',
-				data: {id, quantidade, acao},
-				dataType: "text",
-
-				success: function (mensagem) {  
-
-					if (mensagem.trim() == "Alterado com Sucesso") {                
-						listarCarrinho();         
-					}else{
-						alert(mensagem);
-						listarCarrinho();
-					} 
-
-				},      
-
+				data: {id: id, quantidade: quantidade, acao: acao},
+				dataType: 'text',
+				success: function(mensagem){
+					if(mensagem.trim() !== 'Alterado com Sucesso'){
+						alert(mensagem || 'Não foi possível alterar a quantidade.');
+					}
+					listarCarrinho();
+				},
+				error: function(){
+					alert('Falha de conexão ao alterar a quantidade. Tente novamente.');
+				},
+				complete: function(){
+					delete operacoesCarrinhoPendentes[id];
+				}
 			});
 		}
 
-
 		function excluirCarrinho(id, id_sabor){
-
 			if(id_mesa > 0){
-			alert('Você não pode alterar a quantidade!');
-			return;
-		}
-
+				alert('Você não pode alterar a quantidade!');
+				return;
+			}
+			if(operacoesCarrinhoPendentes[id])return;
+			operacoesCarrinhoPendentes[id] = true;
 			$.ajax({
 				url: 'js/ajax/excluir-carrinho.php',
 				method: 'POST',
-				data: {id, id_sabor},
-				dataType: "text",
-
-				success: function (mensagem) {  
-					
-					
-					if (mensagem.trim() == "Excluido com Sucesso") {                
-						listarCarrinho();         
-					} 
-
-				},      
-
+				data: {id: id, id_sabor: id_sabor},
+				dataType: 'text',
+				success: function(mensagem){
+					if(mensagem.trim() === 'Excluido com Sucesso'){
+						fecharExcluir(id);
+						listarCarrinho();
+					}else{
+						alert(mensagem || 'Não foi possível remover o produto.');
+					}
+				},
+				error: function(){
+					alert('Falha de conexão ao remover o produto. Tente novamente.');
+				},
+				complete: function(){
+					delete operacoesCarrinhoPendentes[id];
+				}
 			});
 		}
 
