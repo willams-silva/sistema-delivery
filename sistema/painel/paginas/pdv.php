@@ -845,7 +845,7 @@ function confirmarVendaConcluidaPdv(idVenda, impressaoAutomatica) {
     Swal.fire({
         icon: 'success',
         title: 'Venda finalizada!',
-        text: 'A venda foi registrada com sucesso. Você pode imprimir o comprovante ou iniciar outra venda.',
+        text: 'Venda ' + (comprovante ? '#' + id + ' ' : '') + 'registrada com sucesso. Você pode imprimir o comprovante ou iniciar outra venda.',
         showCancelButton: !!comprovante,
         confirmButtonText: 'Nova venda',
         cancelButtonText: 'Imprimir comprovante',
