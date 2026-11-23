@@ -34,7 +34,7 @@ if (!function_exists('escMista')) { function escMista($x) { return htmlspecialch
   </div>
   <div class="col-12 mista-botoes mt-2" style="padding-left:8px">
    <button type="button" class="btn btn-sm btn-outline-success mb-1 me-1 mista-abrir-btn" data-abrir="inclusas">＋ Sabores inclusos</button>
-   <button type="button" class="btn btn-sm btn-outline-success mb-1 me-1 mista-abrir-btn" data-abrir="adicional">＋ Adicionais</button>
+   <button type="button" class="btn btn-sm btn-outline-success mb-1 me-1 mista-abrir-btn" data-abrir="adicional"><span aria-hidden="true">+</span> Adicionais</button>
    <button type="button" class="btn btn-sm btn-outline-success mb-1 me-1 mista-abrir-btn" data-abrir="opcional">＋ Opcionais · retirar sem custo</button>
    <button type="button" class="btn btn-sm btn-outline-success mb-1 me-1 mista-abrir-btn" data-abrir="proteina">＋ Proteínas</button>
   </div>
