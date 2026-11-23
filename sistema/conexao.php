@@ -6,10 +6,17 @@ $senha = 'Ti@v3n3z@22';
 $banco = 'u719820352_db_delivery';
 $servidor = 'localhost';
 
-$url_sistema = "http://$_SERVER[HTTP_HOST]/";
-$url = explode("//", $url_sistema);
-if($url[1] == 'localhost/'){
-	$url_sistema = "http://$_SERVER[HTTP_HOST]/delivery-interativo/";
+// Preservar HTTPS nas paginas publicas, links e requisicoes AJAX.
+// O <base href> do cabecalho usa esta URL; forcar HTTP aqui fazia
+// navegadores perderem o cookie de sessao ao trocar de pagina.
+$host_sistema = $_SERVER['HTTP_HOST'] ?? 'localhost';
+$https_sistema = (!empty($_SERVER['HTTPS']) && strtolower((string)$_SERVER['HTTPS']) !== 'off')
+    || (($_SERVER['SERVER_PORT'] ?? '') == '443')
+    || (strtolower(trim(explode(',', (string)($_SERVER['HTTP_X_FORWARDED_PROTO'] ?? ''))[0])) === 'https');
+$protocolo_sistema = $https_sistema ? 'https' : 'http';
+$url_sistema = $protocolo_sistema . '://' . $host_sistema . '/';
+if (preg_match('/^localhost(?::[0-9]+)?$/i', $host_sistema)) {
+    $url_sistema .= 'delivery-interativo/';
 }
 
 date_default_timezone_set('America/Sao_Paulo');
