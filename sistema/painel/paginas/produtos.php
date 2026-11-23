@@ -1637,17 +1637,18 @@ function excluirProduto(id) {
   function applyView(){
     $('.ux-view-btn').each(function(){var active=$(this).attr('data-product-view')===view;$(this).attr('aria-pressed',String(active));});
     $('#listar').toggleClass('ux-products-cards-mode',view==='cards');
-    if(view==='cards') renderCards();
+    if(view==='cards') setTimeout(renderCards,0);
     else $('#ux-product-grid').hide();
   }
   function renderCards(){
     var $table=$('#listar #tabela');
     if(!$table.length)return;
     var $grid=$('#ux-product-grid');
-    if(!$grid.length){$grid=$('<div id="ux-product-grid" class="ux-product-grid" aria-label="Produtos em cartões"></div>');$('#tabela_wrapper').before($grid);}
+    if(!$grid.length){$grid=$('<div id="ux-product-grid" class="ux-product-grid" aria-label="Produtos em cartões"></div>');$('#tabela_wrapper').prepend($grid);}
     $grid.empty().show();
     // Usa somente as linhas visíveis da página atual do DataTables, mantendo busca e paginação existentes.
-    $table.find('tbody tr').each(function(){
+    var rows=($.fn.DataTable && $.fn.DataTable.isDataTable($table[0])) ? $table.DataTable().rows({page:'current',search:'applied'}).nodes() : $table.find('tbody tr').toArray();
+    $(rows).each(function(){
       var $cells=$(this).children('td');
       if($cells.length<8)return;
       var $img=$cells.eq(1).find('img').first().clone();
@@ -1669,7 +1670,7 @@ function excluirProduto(id) {
     if(!$grid.children().length)$grid.append('<p class="ux-product-grid-empty">Nenhum produto encontrado nesta página.</p>');
   }
   $(document).on('click','.ux-view-btn',function(){view=$(this).attr('data-product-view');try{localStorage.setItem(key,view);}catch(e){}applyView();});
-  $(document).on('draw.dt','#tabela',function(){if(view==='cards')renderCards();});
+  $(document).on('draw.dt','#tabela',function(){if(view==='cards')setTimeout(renderCards,0);});
   // A listagem é substituída via AJAX ao filtrar/salvar: reconstruir os cartões após a atualização.
   var root=document.getElementById('listar');
   if(root&&window.MutationObserver){
