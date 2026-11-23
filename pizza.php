@@ -754,7 +754,12 @@ body.selecao-cardapio { background:#fffaf5 !important; color:#503827; }
                 })
             }).then(function(r){return r.text();}).then(function(t){
                 if (t.trim() === 'Inserido com Sucesso') {
-                    location.href = 'carrinho';
+                    // <base href> pode apontar para HTTP e descartar a
+                    // sessao HTTPS ao abrir o resumo. Manter a origem atual.
+                    var urlCarrinhoMista = new URL('carrinho', document.baseURI);
+                    urlCarrinhoMista.protocol = window.location.protocol;
+                    urlCarrinhoMista.host = window.location.host;
+                    window.location.assign(urlCarrinhoMista.href);
                 } else {
                     if (msgMista) msgMista.textContent = t;
                     cardMista.dataset.enviando = '0';
