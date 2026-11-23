@@ -1296,6 +1296,11 @@ body.checkout-cardapio { background:#fffaf5; color:#493425; }
         $('#mensagem').text('');
         $('#mensagem').removeClass()
 
+        if (msg.length < 3) {
+          liberarEnvioPedido();
+          alertWarning('Resposta inesperada do servidor. Confira se o pedido foi registrado antes de tentar novamente.');
+          return;
+        }
         var msg1 = msg[1].trim();
         var msg2 = msg[2].trim();
         var previsao = msg[0].trim();
@@ -1346,7 +1351,7 @@ body.checkout-cardapio { background:#fffaf5; color:#493425; }
 
 
 
-        if (pedido_whatsapp == 'manual') {
+        if (msg1 === "Pedido Finalizado" && pedido_whatsapp == 'manual') {
           let a = document.createElement('a');
           //a.target= '_blank';
           a.href = 'http://api.whatsapp.com/send?1=pt_BR&phone=<?= $tel_whats ?>&text= *Novo Pedido*  %0A%0A Hora: *' + hora + '* %0A Total: R$ *' + total_compra_finalF + '* %0A Entrega: *' + entrega + '* %0A Pagamento: *' + pagamento + '* %0A Cliente: *' + nome_cliente + '* %0A Previsão de Entrega: *' + previsao + '*';
