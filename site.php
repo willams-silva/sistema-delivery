@@ -427,7 +427,11 @@ a[href="/meus-pedidos"].btn-warning { background:#a85b24 !important; border-colo
 #slider .bc-banner-slide { display:none !important; width:100%; }
 #slider .bc-banner-slide.bc-banner-active { display:block !important; }
 #slider .bc-banner-slide img { display:block !important; width:100%; height:auto; object-fit:contain; }
-@media(min-width:768px) { #slider.bc-banner-publico { margin-top:80px !important; } }
+/* Banners apenas no celular; alertas de funcionamento continuam visíveis no desktop. */
+@media (min-width:768px) {
+  #slider.bc-banner-publico .bc-banner-carousel { display:none !important; }
+  #slider.bc-banner-publico { margin-top:80px !important; }
+}
 @media(max-width:767px) { #slider .bc-banner-carousel { border-radius:0; } }
 
 /* Cabeçalho mobile compacto: mantém a logo legível e elimina espaço vazio antes do banner. */
