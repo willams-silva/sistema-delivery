@@ -1034,7 +1034,16 @@ body.checkout-cardapio { background:#fffaf5; color:#493425; }
   }
   document.addEventListener('input', limparDestaqueCheckout);
   document.addEventListener('change', limparDestaqueCheckout);
+  var envioPedidoEmAndamento = false;
+  function liberarEnvioPedido() {
+    envioPedidoEmAndamento = false;
+    $('#botao_finalizar').show().removeAttr('aria-busy').removeAttr('aria-disabled');
+    $('#div_img').hide();
+  }
   function finalizarPedido(pedidoauto) {
+    if (envioPedidoEmAndamento) return;
+    envioPedidoEmAndamento = true;
+    $('#botao_finalizar').attr('aria-busy','true').attr('aria-disabled','true');
 
 
 
@@ -1061,8 +1070,7 @@ body.checkout-cardapio { background:#fffaf5; color:#493425; }
     if (telefone.length < 15) {
       alertWarning("Coloque o número de telefone completo");
       destacarCampoCheckout('#telefone', '#collapseOne');
-      $('#botao_finalizar').show();
-      $('#div_img').hide();
+      liberarEnvioPedido();
       return;
     }
 
@@ -1070,8 +1078,7 @@ body.checkout-cardapio { background:#fffaf5; color:#493425; }
     if (telefone == "") {
       alertWarning('Preencha seu Telefone');
       $('#telefone').focus();
-      $('#botao_finalizar').show();
-      $('#div_img').hide();
+      liberarEnvioPedido();
       return;
     }
 
@@ -1079,8 +1086,7 @@ body.checkout-cardapio { background:#fffaf5; color:#493425; }
     if (nome == "") {
       alertWarning('Preencha seu Nome');
       destacarCampoCheckout('#nome', '#collapseOne');
-      $('#botao_finalizar').show();
-      $('#div_img').hide();
+      liberarEnvioPedido();
       return;
     }
 
@@ -1090,8 +1096,7 @@ body.checkout-cardapio { background:#fffaf5; color:#493425; }
 
     if (modo == "") {
       alertWarning('Escolha um modo de entrega');
-      $('#botao_finalizar').show();
-      $('#div_img').hide();
+      liberarEnvioPedido();
       return;
     }
 
@@ -1127,8 +1132,7 @@ body.checkout-cardapio { background:#fffaf5; color:#493425; }
       if (cep.length !== 8) {
         alertWarning("Preencha um CEP válido com 8 dígitos");
         destacarCampoCheckout('#cep', '#collapseThree');
-        $('#botao_finalizar').show();
-        $('#div_img').hide();
+        liberarEnvioPedido();
         return;
       }
     }
@@ -1137,8 +1141,7 @@ body.checkout-cardapio { background:#fffaf5; color:#493425; }
 
     if (entrega == "Delivery" && taxa_entrega == "") {
       alertWarning("Selecione um bairro válido para calcular a taxa de entrega.");
-      $('#botao_finalizar').show();
-      $('#div_img').hide();
+      liberarEnvioPedido();
       $('#colapse-').click();
       return;
     }
@@ -1166,8 +1169,7 @@ body.checkout-cardapio { background:#fffaf5; color:#493425; }
     if (pedido_minimo > 0) {
       if (parseFloat(total_compra) < parseFloat(pedido_minimo)) {
         alertWarning('Seu pedido precisar ser superior a R$' + pedido_minimo);
-        $('#botao_finalizar').show();
-        $('#div_img').hide();
+        liberarEnvioPedido();
         return;
       }
     }
@@ -1175,8 +1177,7 @@ body.checkout-cardapio { background:#fffaf5; color:#493425; }
     if (entrega == "") {
       alertWarning('Selecione uma forma de entrega');
       $('#colapse-2').click();
-      $('#botao_finalizar').show();
-      $('#div_img').hide();
+      liberarEnvioPedido();
       return;
     }
 
@@ -1185,8 +1186,7 @@ body.checkout-cardapio { background:#fffaf5; color:#493425; }
     if (entrega == "Delivery" && rua == "") {
       alertWarning('Preencha o Campo Rua');
       destacarCampoCheckout('#rua', '#collapseThree');
-      $('#botao_finalizar').show();
-      $('#div_img').hide();
+      liberarEnvioPedido();
 
       return;
     }
@@ -1194,16 +1194,14 @@ body.checkout-cardapio { background:#fffaf5; color:#493425; }
     if (entrega == "Delivery" && numero == "") {
       alertWarning('Preencha o Campo Número');
       destacarCampoCheckout('#numero', '#collapseThree');
-      $('#botao_finalizar').show();
-      $('#div_img').hide();
+      liberarEnvioPedido();
       return;
     }
 
     if (entrega == "Delivery" && bairro == "") {
       alertWarning('Escolha um Bairro');
       destacarCampoCheckout('#bairro', '#collapseThree');
-      $('#botao_finalizar').show();
-      $('#div_img').hide();
+      liberarEnvioPedido();
       return;
     }
 
@@ -1215,15 +1213,13 @@ body.checkout-cardapio { background:#fffaf5; color:#493425; }
       !document.getElementById('radio_debito').checked
     ){
       alertWarning('Selecione uma forma de pagamento');
-      $('#botao_finalizar').show();
-      $('#div_img').hide();
+      liberarEnvioPedido();
       destacarCampoCheckout('#radio_pix', '#collapse4');
       return;
     }
     if (pagamento == "") {
       alertWarning('Selecione uma forma de pagamento');
-      $('#botao_finalizar').show();
-      $('#div_img').hide();
+      liberarEnvioPedido();
       destacarCampoCheckout('#radio_pix', '#collapse4');
       return;
     }
@@ -1241,8 +1237,7 @@ body.checkout-cardapio { background:#fffaf5; color:#493425; }
 
     if (pagamento == "Dinheiro" && troco < total_compra_final && troco != "") {
       alertWarning('Digite um valor maior que o total da compra!');
-      $('#botao_finalizar').show();
-      $('#div_img').hide();
+      liberarEnvioPedido();
       return;
     }
 
@@ -1287,8 +1282,7 @@ body.checkout-cardapio { background:#fffaf5; color:#493425; }
             alertWarning('Realize o Pagamento antes de Prosseguir!!');
           }
 
-          $('#botao_finalizar').show();
-          $('#div_img').hide();
+          liberarEnvioPedido();
           return;
         }
 
@@ -1361,9 +1355,16 @@ body.checkout-cardapio { background:#fffaf5; color:#493425; }
 
 
 
-        $('#botao_finalizar').show();
-        $('#div_img').hide();
+        if (msg1 !== "Pedido Finalizado") {
+          liberarEnvioPedido();
+          alertWarning('Não foi possível confirmar o pedido. Revise os dados e tente novamente.');
+        }
 
+
+      },
+      error: function() {
+        liberarEnvioPedido();
+        alertWarning('Falha na conexão. Antes de tentar novamente, confira se o pedido já foi registrado.');
       }
     });
 
