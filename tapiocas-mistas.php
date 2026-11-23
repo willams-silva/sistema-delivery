@@ -43,9 +43,17 @@ if (!function_exists('escMista')) { function escMista($x) { return htmlspecialch
     <div class="mista-inclusas">
      <strong>Escolha exatamente <?= $limite ?> proteínas inclusas</strong>
   <?php if (count($proteinas_mistas)<$limite): ?><div class="text-danger">Cadastre pelo menos <?= $limite ?> proteínas nesta categoria.</div><?php endif; ?>
-  <div class="row mt-2 mb-3">
+  <div class="mt-2 mb-3">
   <?php foreach ($proteinas_mistas as $a): ?>
-   <label class="col-6 col-md-4 mb-2"><input type="checkbox" class="proteina-inclusa" value="<?= (int)$a['id'] ?>"> <?= escMista($a['nome']) ?></label>
+   <div class="mista-item-quantidade">
+    <span class="mista-item-nome"><?= escMista($a['nome']) ?> <small class="text-success">(incluso)</small></span>
+    <div class="mista-controles">
+     <button type="button" class="mista-menos" aria-label="Remover <?= escMista($a['nome']) ?>">−</button>
+     <span class="mista-valor" aria-live="polite">0</span>
+     <button type="button" class="mista-mais" aria-label="Selecionar <?= escMista($a['nome']) ?>">+</button>
+     <input type="checkbox" class="proteina-inclusa" value="<?= (int)$a['id'] ?>" hidden>
+    </div>
+   </div>
   <?php endforeach; ?>
   </div>
   <div class="text-muted mb-3 contador-inclusas" aria-live="polite">0 de <?= $limite ?> selecionadas</div>
@@ -57,14 +65,20 @@ if (!function_exists('escMista')) { function escMista($x) { return htmlspecialch
    <summary style="cursor:pointer;font-weight:600"><?= escMista($titulo) ?></summary>
    <div class="mt-2">
     <?php foreach ($itens as $a): ?>
-     <div class="d-flex justify-content-between align-items-center py-2" style="border-bottom:1px solid #eee">
-      <label for="extra-<?= $pid ?>-<?= (int)$a['id'] ?>"><?= escMista($a['nome']) ?>
-      <?php if ($tipo !== 'opcional'): ?><small class="text-success">+ R$ <?= number_format((float)$a['valor'],2,',','.') ?></small><?php endif; ?></label>
-      <?php if ($tipo === 'opcional'): ?>
-      <input id="extra-<?= $pid ?>-<?= (int)$a['id'] ?>" type="checkbox" class="extra-mista" data-id="<?= (int)$a['id'] ?>" data-tipo="opcional" aria-label="Retirar <?= escMista($a['nome']) ?>">
-      <?php else: ?>
-      <input id="extra-<?= $pid ?>-<?= (int)$a['id'] ?>" type="number" class="form-control extra-mista" style="width:80px" min="0" max="20" step="1" value="0" data-id="<?= (int)$a['id'] ?>" data-tipo="<?= escMista($tipo) ?>" aria-label="Quantidade extra de <?= escMista($a['nome']) ?>">
-      <?php endif; ?>
+     <div class="mista-item-quantidade">
+      <span class="mista-item-nome"><?= escMista($a['nome']) ?>
+       <?php if ($tipo !== 'opcional'): ?><small class="text-success">(R$ <?= number_format((float)$a['valor'],2,',','.') ?>)</small><?php else: ?><small class="text-success">(sem custo)</small><?php endif; ?>
+      </span>
+      <div class="mista-controles">
+       <button type="button" class="mista-menos" aria-label="Diminuir <?= escMista($a['nome']) ?>">−</button>
+       <span class="mista-valor" aria-live="polite">0</span>
+       <button type="button" class="mista-mais" aria-label="Aumentar <?= escMista($a['nome']) ?>">+</button>
+       <?php if ($tipo === 'opcional'): ?>
+        <input type="checkbox" class="extra-mista" data-id="<?= (int)$a['id'] ?>" data-tipo="opcional" hidden>
+       <?php else: ?>
+        <input type="number" class="extra-mista" min="0" max="20" step="1" value="0" data-id="<?= (int)$a['id'] ?>" data-tipo="<?= escMista($tipo) ?>" hidden>
+       <?php endif; ?>
+      </div>
      </div>
     <?php endforeach; ?>
    </div>
@@ -79,6 +93,17 @@ if (!function_exists('escMista')) { function escMista($x) { return htmlspecialch
  </div>
 </li>
 <?php endforeach; ?>
+<style>
+[data-mista] .mista-item-quantidade{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:8px 0;border-bottom:1px solid #e9e5dc;min-height:56px}
+[data-mista] .mista-item-nome{flex:1;min-width:0;color:#30251d;overflow-wrap:anywhere}
+[data-mista] .mista-controles{display:flex;align-items:center;gap:12px;flex-shrink:0}
+[data-mista] .mista-controles button{display:flex;align-items:center;justify-content:center;width:42px;height:44px;border-radius:12px;font-size:24px;line-height:1;cursor:pointer}
+[data-mista] .mista-menos{background:#fff;color:#f03d4c;border:1px solid #f03d4c}
+[data-mista] .mista-mais{background:#168b56;color:#fff;border:1px solid #168b56}
+[data-mista] .mista-mais:disabled{opacity:.4;cursor:not-allowed}
+[data-mista] .mista-valor{min-width:18px;text-align:center;font-weight:700;color:#171717}
+@media(max-width:380px){[data-mista] .mista-controles{gap:7px}[data-mista] .mista-controles button{width:38px;height:40px}}
+</style>
 <script>
 (function(){
  document.querySelectorAll('[data-mista]').forEach(function(card){
@@ -129,6 +154,7 @@ if (!function_exists('escMista')) { function escMista($x) { return htmlspecialch
        card.querySelector('.obs-mista').value='';
        card.querySelector('.resultado-mista').textContent='';
        atualizar();
+       if(typeof atualizarQuantidades==='function') atualizarQuantidades();
      }
    }
    abrir.addEventListener('change',function(){
@@ -154,7 +180,44 @@ if (!function_exists('escMista')) { function escMista($x) { return htmlspecialch
      card.querySelector('.contador-inclusas').textContent=n+' de '+limite+' selecionadas';
      checks.forEach(function(x){x.disabled=!x.checked && n>=limite});
    }
-   checks.forEach(function(x){x.addEventListener('change',atualizar)});atualizar();
+   // Mesma interface +/- dos adicionais tradicionais. O estado real
+   // continua nos inputs usados pelo envio do carrinho.
+   card.querySelectorAll('.mista-item-quantidade').forEach(function(linha){
+     var input=linha.querySelector('input');
+     var valor=linha.querySelector('.mista-valor');
+     var mais=linha.querySelector('.mista-mais');
+     var menos=linha.querySelector('.mista-menos');
+     function sincronizar(){
+       var qtd=input.type==='checkbox'?(input.checked?1:0):Math.max(0,Math.min(20,Number(input.value)||0));
+       valor.textContent=String(qtd);
+       mais.disabled=input.classList.contains('proteina-inclusa') ?
+         (!input.checked && checks.filter(function(x){return x.checked}).length>=limite) :
+         (input.type==='checkbox' ? input.checked : qtd>=20);
+     }
+     mais.addEventListener('click',function(){
+       if(input.type==='checkbox') {
+         if(input.checked)return;
+         if(input.classList.contains('proteina-inclusa') && checks.filter(function(x){return x.checked}).length>=limite)return;
+         input.checked=true;
+       }else{input.value=Math.min(20,(Number(input.value)||0)+1);}
+       atualizar();atualizarQuantidades();
+     });
+     menos.addEventListener('click',function(){
+       if(input.type==='checkbox')input.checked=false;
+       else input.value=Math.max(0,(Number(input.value)||0)-1);
+       atualizar();atualizarQuantidades();
+     });
+     input.addEventListener('change',sincronizar);
+     linha.atualizarQuantidade=sincronizar;
+     sincronizar();
+   });
+   function atualizarQuantidades(){
+     card.querySelectorAll('.mista-item-quantidade').forEach(function(linha){
+       if(linha.atualizarQuantidade)linha.atualizarQuantidade();
+     });
+   }
+   checks.forEach(function(x){x.addEventListener('change',function(){atualizar();atualizarQuantidades();})});
+   atualizar();atualizarQuantidades();
    card.querySelector('.btn-mista').addEventListener('click',function(){
      var btn=this, msg=card.querySelector('.resultado-mista');
      if (!abrir.checked) {msg.textContent='Selecione a tapioca mista antes de escolher os sabores.';return;}
