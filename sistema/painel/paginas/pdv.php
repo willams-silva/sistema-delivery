@@ -1049,6 +1049,8 @@ $("#form_venda").submit(function (event) {
                 });
             var pdvUltimaLeitura = {codigo:'', instante:0};
             var pdvLeituraEmAndamento = false;
+            var pdvBuscaRequisicao = null;
+            var pdvBuscaVersao = 0;
             $(document).off('keydown.pdvBuscaCodigo', '#txt_buscar')
                 .on('keydown.pdvBuscaCodigo', '#txt_buscar', function(event) {
                     if (event.key !== 'Enter') return;
@@ -1065,13 +1067,18 @@ $("#form_venda").submit(function (event) {
                     pdvLeituraEmAndamento = true;
                     // A inclusao automatica so ocorre com um unico codigo exato.
                     // A abertura normal de adicionais/grades continua obrigatoria.
-                    $.ajax({
+                    var versaoLeitura = ++pdvBuscaVersao;
+                    if (pdvBuscaRequisicao && pdvBuscaRequisicao.readyState !== 4) {
+                        pdvBuscaRequisicao.abort();
+                    }
+                    pdvBuscaRequisicao = $.ajax({
                         url: 'paginas/' + pag + '/listar.php',
                         method: 'POST',
                         data: {p1:'', p2:codigoLido},
                         dataType: 'html'
                     }).done(function(html) {
-                        if (String($('#txt_buscar').val() || '').trim() !== codigoLido) return;
+                        if (versaoLeitura !== pdvBuscaVersao ||
+                            String($('#txt_buscar').val() || '').trim() !== codigoLido) return;
                         $('#listar').html(html);
                         var correspondencias = $('#listar .product-card').filter(function() {
                             return String($(this).attr('data-codigo') || '').trim() === codigoLido;
@@ -1081,17 +1088,33 @@ $("#form_venda").submit(function (event) {
                             correspondencias.eq(0).closest('a').trigger('click');
                             $('#txt_buscar').val('');
                         }
-                    }).fail(function() {
-                        // Permitir tentar novamente imediatamente em caso de falha.
+                    }).fail(function(xhr, status) {
+                        if (status === 'abort' || versaoLeitura !== pdvBuscaVersao) return;
                         pdvUltimaLeitura = {codigo:'', instante:0};
                         if (typeof alertWarning === 'function') alertWarning('Não foi possível consultar o código. Tente novamente.');
                     }).always(function() {
-                        pdvLeituraEmAndamento = false;
+                        if (versaoLeitura === pdvBuscaVersao) pdvLeituraEmAndamento = false;
                     });
                 });
 			function buscar(){
-				var busca = $('#txt_buscar').val();
-				listar('', busca);
+                var busca = String($('#txt_buscar').val() || '');
+                var versao = ++pdvBuscaVersao;
+                if (pdvBuscaRequisicao && pdvBuscaRequisicao.readyState !== 4) {
+                    pdvBuscaRequisicao.abort();
+                }
+                pdvLeituraEmAndamento = false;
+                pdvBuscaRequisicao = $.ajax({
+                    url: 'paginas/' + pag + '/listar.php',
+                    method: 'POST',
+                    data: {p1:'', p2:busca},
+                    dataType: 'html'
+                }).done(function(html) {
+                    if (versao !== pdvBuscaVersao || String($('#txt_buscar').val() || '') !== busca) return;
+                    $('#listar').html(html);
+                }).fail(function(xhr, status) {
+                    if (status !== 'abort' && versao === pdvBuscaVersao &&
+                        typeof alertWarning === 'function') alertWarning('Falha ao pesquisar produtos.');
+                });
 			}
 
 			
