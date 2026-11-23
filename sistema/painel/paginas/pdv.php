@@ -191,7 +191,7 @@ $data_atual = date('Y-m-d');
         <div class="bg-white rounded-xl shadow-sm p-4 mb-6">
           <div class="search-container mb-4">
             <i class="fas fa-search search-icon"></i>
-            <input style="font-weight: normal" onkeyup="buscar()" type="text" placeholder="Buscar por nome ou código / bipar produto..." class="form-input" name="txt_buscar" id="txt_buscar">
+            <input style="font-weight: normal" type="text" autocomplete="off" placeholder="Buscar por nome ou código / bipar produto..." class="form-input" name="txt_buscar" id="txt_buscar">
            
           </div>
           
@@ -1039,9 +1039,24 @@ $("#form_venda").submit(function (event) {
 
 
 
+            // Evita uma requisicao por tecla ao digitar e processa
+            // imediatamente o Enter enviado pela maioria dos leitores.
+            var pdvBuscaTemporizador = null;
+            $(document).off('input.pdvBuscaCodigo', '#txt_buscar')
+                .on('input.pdvBuscaCodigo', '#txt_buscar', function() {
+                    clearTimeout(pdvBuscaTemporizador);
+                    pdvBuscaTemporizador = setTimeout(function() { buscar(); }, 180);
+                });
+            $(document).off('keydown.pdvBuscaCodigo', '#txt_buscar')
+                .on('keydown.pdvBuscaCodigo', '#txt_buscar', function(event) {
+                    if (event.key !== 'Enter') return;
+                    event.preventDefault();
+                    clearTimeout(pdvBuscaTemporizador);
+                    buscar();
+                });
 			function buscar(){
 				var busca = $('#txt_buscar').val();
-				listar('', busca)
+				listar('', busca);
 			}
 
 			
