@@ -17,8 +17,8 @@ if (!function_exists('escMista')) { function escMista($x) { return htmlspecialch
  $limite = (int)$p['limite_proteinas'];
  $pid = (int)$p['id']; ?>
 <li class="list-group-item d-flex justify-content-between align-items-start" data-mista="<?= $pid ?>" data-limite="<?= $limite ?>">
- <div class="row mista-linha" style="width:100%;margin:0">
-  <div class="col-10" style="padding-left:0">
+ <div class="row mista-linha" style="width:100%">
+  <div class="col-10" >
    <div class="me-auto">
     <div class="fw-bold titulo-item" style="display:flex;align-items:center;gap:5px;font-size:inherit;line-height:1.35">
      <input type="checkbox" class="form-check-input mista-abrir" id="mista-abrir-<?= $pid ?>" aria-controls="mista-opcoes-<?= $pid ?>" aria-expanded="false" style="margin:0;flex:0 0 auto;accent-color:#a45b23">
@@ -29,8 +29,8 @@ if (!function_exists('escMista')) { function escMista($x) { return htmlspecialch
     <small class="d-block text-muted" style="font-size:11px"><?= $limite ?> proteínas inclusas no preço</small>
    </div>
   </div>
-  <div class="col-2 text-end" style="padding-right:0">
-   <img src="/media-delivery.php?tipo=produtos&amp;arquivo=<?= escMista(rawurlencode($p['foto'])) ?>" width="60" height="60" style="object-fit:cover;max-width:100%;border-radius:12px" alt="">
+  <div class="col-2 text-end" style="margin-top:10px">
+   <img src="/media-delivery.php?tipo=produtos&amp;arquivo=<?= escMista(rawurlencode($p['foto'])) ?>" width="60" height="60" style="object-fit:cover;border-radius:12px;width:60px;height:60px" alt="">
   </div>
   <div class="col-12 mista-botoes mt-2" style="padding-left:8px">
    <button type="button" class="btn btn-sm btn-outline-success bora-sabor-extra mb-1 me-1 mista-abrir-btn" data-abrir="inclusas">＋ Sabores inclusos</button>
