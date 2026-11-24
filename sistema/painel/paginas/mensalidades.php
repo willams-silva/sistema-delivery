@@ -106,9 +106,15 @@ if($ref_pix != ""){
 
 
 
+<style>
+html body .bc-subscription-page{background:#fff!important;border:1px solid #e5d4c6!important;border-radius:14px!important}
+html body .bc-subscription-page :is(input,select){border-color:#d7c5b7!important;color:#4e2d20!important;color-scheme:light}
+html body .swal2-popup .bc-subscription-copy{background:#914a29!important;color:#fff!important;border-color:#914a29!important;border-radius:9px!important}
+</style>
+<div class="card mb-3" style="margin-top:16px;border:1px solid #e5d4c6;border-radius:14px"><div class="card-body d-flex align-items-center flex-wrap gap-3"><h2 class="mb-0" style="font-size:21px;font-weight:600;color:#4e2d20"><i class="fa-solid fa-calendar-check me-2"></i>Mensalidades do Sistema</h2><span style="font-size:12px;color:#795038">Consulte mensalidades, vencimentos, pagamentos e recibos da sua assinatura.</span></div></div>
 <div class="row row-sm">
 	<div class="col-lg-12">
-		<div class="card custom-card">
+		<div class="card custom-card bc-subscription-page">
 			<div class="card-body" id="listar">
 
 			</div>
