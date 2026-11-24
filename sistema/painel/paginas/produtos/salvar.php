@@ -104,7 +104,7 @@ if (isset($_FILES['foto']) && $_FILES['foto']['error'] !== UPLOAD_ERR_NO_FILE) {
         echo 'Imagem inválida ou maior que 1400px de largura. Use JPG, PNG, GIF ou WEBP.';
         exit();
     }
-    $pasta_imagens = __DIR__ . '/../../images/produtos/';
+    $pasta_imagens = dirname(__DIR__, 5) . '/upload_delivery/produtos/';
     if (!is_dir($pasta_imagens) || !is_writable($pasta_imagens)) {
         echo 'Pasta de imagens indisponível para gravação. Verifique a hospedagem.';
         exit();
