@@ -1291,7 +1291,7 @@ if ($id_mesa == "" && $sessão_balcao == "") {
 
 
                 <article class="bora-combo-card">
-                  <a class="bora-combo-photo" href="<?php echo htmlspecialchars($url_produto, ENT_QUOTES, 'UTF-8') ?>">
+                  <a class="bora-combo-photo<?php echo preg_match('/\\bmista\\b/iu', $nome) ? ' bora-combo-photo-mista' : '' ?>" href="<?php echo htmlspecialchars($url_produto, ENT_QUOTES, 'UTF-8') ?>">
                     <img src="/media-delivery.php?tipo=produtos&amp;arquivo=<?php echo rawurlencode($foto) ?>" alt="<?php echo htmlspecialchars($nome, ENT_QUOTES, 'UTF-8') ?>" loading="lazy">
                     <span class="bora-combo-tag">♛ Combo</span>
                   </a>
@@ -1325,6 +1325,8 @@ if ($id_mesa == "" && $sessão_balcao == "") {
 #combo .bora-combo-card{display:flex;flex-direction:column;min-width:0;max-width:540px;background:#fffaf5;border:1px solid #efd5bb;border-radius:20px;padding:14px;box-shadow:0 8px 24px rgba(100,53,20,.08)}
 #combo .bora-combo-photo{display:block;position:relative;aspect-ratio:16/9;overflow:hidden;border-radius:14px;background:#fff}
 #combo .bora-combo-photo img{display:block;width:100%;height:100%;object-fit:cover;margin:0;padding:0}
+#combo .bora-combo-photo-mista img{transform:scale(1.22);transform-origin:50% 43%}
+#combo .bora-combo-photo-mista{clip-path:inset(0 round 14px)}
 #combo .bora-combo-tag{position:absolute;bottom:10px;left:10px;background:#74380e;color:#fff;padding:5px 12px;border-radius:20px;font-size:13px;font-weight:700}
 #combo .bora-combo-body{display:flex;flex-direction:column;flex:1;padding:14px 4px 4px}
 #combo .bora-combo-body h3{font-size:21px;color:#71380f;margin:0 0 8px;line-height:1.25}
