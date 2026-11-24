@@ -382,6 +382,15 @@ html body .main-header.side-header .main-header-left{gap:4px}
 html body .main-header.side-header .responsive-logo img{max-width:clamp(64px,23vw,110px)!important;max-height:34px!important}
 html body .main-content.app-content>.main-container{padding-inline:10px!important}
 }
+@media (max-width:1023px){
+html body .main-header.side-header .main-header-left{display:grid!important;grid-template-columns:44px minmax(0,1fr);align-items:center;column-gap:8px}
+html body .main-header.side-header .main-header-left .app-sidebar__toggle{grid-column:1;grid-row:1;position:relative!important;inset:auto!important;transform:none!important;width:44px!important;height:44px!important;flex:none!important;z-index:2}
+html body .main-header.side-header .app-sidebar__toggle a{position:relative!important;inset:auto!important;transform:none!important;margin:0!important;width:44px!important;text-align:center}
+html body .main-header.side-header .main-header-left .responsive-logo{grid-column:2;grid-row:1;justify-self:start;position:relative!important;inset:auto!important;transform:none!important;width:auto!important;max-width:100%;padding:0!important}
+html body .main-header.side-header .responsive-logo .header-logo{position:relative!important;inset:auto!important;transform:none!important;padding:0!important}
+html body .main-header.side-header .responsive-logo img{position:static!important;transform:none!important}
+html body .main-header.side-header .main-header-left .logo-horizontal{display:none!important}
+}
 </style>
 </head>
 
