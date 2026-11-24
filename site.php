@@ -479,7 +479,7 @@ a[href="/meus-pedidos"].btn-warning { background:#a85b24 !important; border-colo
 
 
       <a class="navbar-brand" href="site/<?php echo $url_site ?>">
-        <img src="sistema/img/<?php echo $logo_sistema ?>" alt="" width="80" class="d-inline-block align-text-top logo-loja-topo">
+        <img src="/media-delivery.php?tipo=logos&amp;arquivo=<?php echo rawurlencode($logo_sistema) ?>" alt="" width="80" class="d-inline-block align-text-top logo-loja-topo">
         <small>
           <?php
           if ($id_mesa == "") {
@@ -574,7 +574,7 @@ if ($id_mesa == "" && $sessão_balcao == "") {
               <a class="bc-banner-slide<?php echo $indice === 0 ? ' bc-banner-active' : ''; ?>"
                  href="<?php echo htmlspecialchars($url, ENT_QUOTES, 'UTF-8'); ?>"
                  <?php echo $indice === 0 ? '' : 'aria-hidden="true" tabindex="-1"'; ?>>
-                <img src="/sistema/painel/images/banner_rotativo/<?php echo rawurlencode($foto); ?>"
+                <img src="/media-delivery.php?tipo=banners&amp;arquivo=<?php echo rawurlencode($foto); ?>"
                      alt="Banner promocional" <?php echo $indice === 0 ? 'fetchpriority="high"' : 'loading="lazy"'; ?>>
               </a>
             <?php } ?>
@@ -781,7 +781,7 @@ if ($id_mesa == "" && $sessão_balcao == "") {
                   <div class="category__item mb-30" style="height: 200px; background: #f5f5f5; box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px">
                     <div class="quadrado">
                       <div class="fix">
-                        <img src="/sistema/painel/images/categorias/<?php echo $foto ?>" alt="category-thumb" class="img-fluid w-100 h-100 object-fit-contain">
+                        <img src="/media-delivery.php?tipo=categorias&amp;arquivo=<?php echo rawurlencode($foto) ?>" alt="category-thumb" class="img-fluid w-100 h-100 object-fit-contain">
 
                       </div>
 
@@ -872,7 +872,7 @@ if ($id_mesa == "" && $sessão_balcao == "") {
                     <div class="col-xl-4 col-lg-6">
                       <div class="tpbrandproduct__item d-flex mb-20">
                         <div class="tpbrandproduct__img p-relative">
-                          <img src="/sistema/painel/images/produtos/<?php echo $foto ?>" alt="">
+                          <img src="/media-delivery.php?tipo=produtos&amp;arquivo=<?php echo rawurlencode($foto) ?>" alt="">
                           <div class="tpproduct__info bage tpbrandproduct__bage">
 
                           </div>
@@ -999,7 +999,7 @@ if ($id_mesa == "" && $sessão_balcao == "") {
                   <a href="<?php echo $link_cat ?>">
                     <div class="tpbrandproduct__item d-flex mb-10" style="box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;">
                       <div class="imgem-cat-div p-relative">
-                        <img class="imagem-cat" src="/sistema/painel/images/categorias/<?php echo $foto ?>" alt="">
+                        <img class="imagem-cat" src="/media-delivery.php?tipo=categorias&amp;arquivo=<?php echo rawurlencode($foto) ?>" alt="">
                       </div>
 
                       <div class="tpbrandproduct__contact">
@@ -1146,7 +1146,7 @@ if ($id_mesa == "" && $sessão_balcao == "") {
                   <div class="tpbrandproduct__item d-flex mb-20" style="box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;">
                     <a href="<?php echo $url_produto ?>">
                       <div class="imgem-cat-div p-relative">
-                        <img src="/sistema/painel/images/produtos/<?php echo $foto ?>" alt="">
+                        <img src="/media-delivery.php?tipo=produtos&amp;arquivo=<?php echo rawurlencode($foto) ?>" alt="">
                         <div class="tpproduct__info bage tpbrandproduct__bage">
                           <span class="tpproduct__info-discount bage__discount">-<?php echo $valor_porcentagemF ?></span>
                         </div>
@@ -1285,7 +1285,7 @@ if ($id_mesa == "" && $sessão_balcao == "") {
 
                         <div class="img_combo" style="height: 220px; width: 100%;">
                           <a href="<?php echo $url_produto ?>">
-                            <img src="/sistema/painel/images/produtos/<?php echo $foto ?>" alt="" 
+                            <img src="/media-delivery.php?tipo=produtos&amp;arquivo=<?php echo rawurlencode($foto) ?>" alt="" 
                                  style="width: 100%; height: 100%; object-fit: cover; display: block;">
                           </a>
                         </div>
