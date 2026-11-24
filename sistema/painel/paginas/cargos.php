@@ -8,11 +8,17 @@ if (@$cargos == 'ocultar') {
 $pag = 'cargos';
 ?>
 
+<style>
+html body .card.bc-people-heading{margin-top:16px!important;border:1px solid #e2e8f0!important;border-radius:14px!important;box-shadow:0 3px 12px rgba(65,33,22,.04)!important}
+</style>
+<div class="card mb-3 bc-people-heading">
+ <div class="card-body d-flex align-items-center flex-wrap gap-3">
+  <h2 class="mb-0" style="font-size:21px;font-weight:600;color:#4e2d20"><i class="fa-solid fa-id-badge me-2" aria-hidden="true"></i>Gestão de Cargos</h2>
+  <span style="font-size:12px;color:#795038">Organize as funções da equipe e consulte quantos funcionários utilizam cada cargo.</span>
+ </div>
+</div>
 <div class="breadcrumb-header justify-content-between align-items-center">
-    <div class="left-content mt-2">
-        <h4 class="mb-1"><i class="fa-solid fa-id-badge me-2" aria-hidden="true"></i>Gestão de Cargos</h4>
-        <p class="text-muted mb-0">Organize as funções da equipe e consulte quantos funcionários utilizam cada cargo.</p>
-    </div>
+    
     <div class="mt-2 d-flex gap-2 flex-wrap">
         <button class="btn btn-primary" type="button" onclick="inserir()"><i class="fa-solid fa-plus me-1"></i>Novo Cargo</button>
         <button class="btn btn-outline-danger" type="button" onclick="deletarSel()" id="btn-deletar" style="display:none"><i class="fa-solid fa-trash-can me-1"></i>Excluir selecionados</button>
