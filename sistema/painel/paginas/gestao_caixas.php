@@ -62,8 +62,29 @@ foreach (['receber','pagar'] as $origem) {
 $h=static function($v){return htmlspecialchars((string)$v,ENT_QUOTES,'UTF-8');};
 $moeda=static function($v){return 'R$ '.number_format((float)$v,2,',','.');};
 ?>
-<div class="d-flex flex-wrap align-items-center justify-content-between gap-2 mb-3">
-  <div><h3 class="mb-1">Gestão de Caixas</h3><small class="text-muted">Acompanhamento gerencial — sem alterar os caixas operacionais.</small></div>
+<style>
+html body .bc-gc .card{background:#fff!important;border:1px solid #e5d4c6!important;border-radius:14px!important;box-shadow:0 3px 12px rgba(78,45,32,.06)!important;color:#4e2d20}
+html body .bc-gc .card small,html body .bc-gc .text-muted{color:#795038!important}
+html body .bc-gc .card h3{font-weight:700;color:#4e2d20}
+html body .bc-gc .form-control{background:#fff!important;border:1px solid #d7c5b7!important;border-radius:9px!important;color:#4e2d20!important}
+html body .bc-gc .form-label{color:#795038!important}
+html body .bc-gc .btn-primary{background:#914a29!important;border-color:#914a29!important;color:#fff!important;border-radius:9px!important}
+html body .bc-gc .btn-outline-primary{background:#fff!important;border-color:#d7c5b7!important;color:#63351e!important;border-radius:8px!important}
+html body .bc-gc .btn-outline-primary:hover{background:#914a29!important;color:#fff!important}
+html body .bc-gc .alert-warning{background:#fff4dc!important;color:#855900!important;border-color:#ecd5a0!important}
+html body .bc-gc .alert-warning *{color:#855900!important}
+html body .bc-gc table thead th{background:#f4e9df!important;color:#63351e!important}
+html body .bc-gc table :is(th,td),html body .bc-gc .list-group-item,html body .bc-gc .border{border-color:#eaded4!important}
+html body .bc-gc .list-group-item{background:#fff!important;color:#4e2d20!important}
+html body .bc-gc table tbody tr:hover{background:#fcf8f4!important}
+html body .bc-gc .badge.bg-primary{background:#914a29!important;color:#fff!important}
+html body .bc-gc .text-success{color:#13745a!important}
+html body .bc-gc .text-danger{color:#b42332!important}
+html body .bc-gc .text-warning{color:#855900!important}
+</style>
+<div class="bc-gc">
+<div class="card mb-3" style="margin-top:16px"><div class="card-body d-flex align-items-center flex-wrap gap-3"><h2 class="mb-0" style="font-size:21px;font-weight:600;color:#4e2d20"><i class="fa-solid fa-cash-register me-2"></i>Gestão de Caixas</h2><span style="font-size:12px;color:#795038">Acompanhamento gerencial — sem alterar os caixas operacionais.</span></div></div>
+<div class="d-flex justify-content-end mb-3">
   <a href="caixas" class="btn btn-primary"><i class="fa fa-briefcase me-1"></i> Abrir menu Caixas</a>
 </div>
 <form method="get" action="index.php" class="card card-body mb-3">
@@ -162,3 +183,5 @@ $moeda=static function($v){return 'R$ '.number_format((float)$v,2,',','.');};
 <?php if(!$caixas): ?><tr><td colspan="10" class="text-center text-muted">Nenhum caixa encontrado no período.</td></tr><?php endif; ?>
 </tbody></table><small class="text-muted">Exibindo até 300 caixas no período. Diferença positiva indica sobra; negativa indica falta.</small>
 </div></div>
+
+</div>
