@@ -463,6 +463,22 @@ a[href="/meus-pedidos"].btn-warning { background:#a85b24 !important; border-colo
 .bora-rainha-header .header__info-cart button i::after{display:block!important;margin:0!important;white-space:nowrap}
 .bora-rainha-header #total-itens-carrinho{flex:0 0 auto!important;inset:auto!important;margin:0!important;position:static!important;transform:none!important;background:#fff!important;color:#a85b24!important;min-width:20px;height:20px;line-height:20px;border-radius:50%;text-align:center}
 }
+@media(max-width:767px){
+.main-container > .bora-rainha-header{background:#fff8ef!important;border-bottom:1px solid #ead3bc;box-shadow:0 3px 12px rgba(100,53,20,.08)!important}
+.bora-rainha-header > .container-fluid{display:grid!important;grid-template-columns:minmax(0,1fr) auto;grid-template-rows:30px 30px;column-gap:8px;padding:0 10px!important;align-items:center}
+.bora-rainha-header .navbar-brand{grid-column:1;grid-row:1/3;display:flex!important;align-items:flex-start;gap:8px;min-width:0;width:100%;height:60px}
+.bora-rainha-header .bora-header-brand{display:block;padding-top:5px;min-width:0;white-space:normal;color:#512c24;line-height:1.15}
+.bora-rainha-header .bora-header-brand strong{font-size:clamp(12px,3.8vw,16px);font-weight:700}
+.bora-rainha-header .bora-header-brand small{display:none!important}
+.bora-rainha-header .status-delivery-topo{grid-column:1;grid-row:2;position:static!important;transform:none!important;margin:0 0 0 64px!important;justify-self:start;align-self:center;z-index:1;pointer-events:none}
+.bora-rainha-header .status-delivery-topo span{font-size:10px!important;padding:3px 8px!important}
+.bora-rainha-header > .container-fluid > .col-xl-3{grid-column:2;grid-row:1/3;width:auto!important;margin:0!important}
+.bora-rainha-header .header__info-cart{margin:0!important}
+.bora-rainha-header .header__info-cart button{display:flex!important;align-items:center;justify-content:center;gap:6px;background:#a85b24!important;border-radius:15px!important;width:auto!important;height:44px!important;padding:8px 10px!important}
+.bora-rainha-header .header__info-cart button i{display:flex!important;align-items:center;justify-content:center;width:auto!important;height:auto!important;background:transparent!important;padding:0!important;margin:0!important;position:static!important}
+.bora-rainha-header .header__info-cart button i img{width:19px!important;height:19px!important;filter:brightness(0) invert(1)}
+.bora-rainha-header #total-itens-carrinho{position:static!important;transform:none!important;inset:auto!important;margin:0!important;background:#fff!important;color:#a85b24!important;min-width:18px;height:18px;line-height:18px;border-radius:50%;text-align:center}
+}
 /* Cabeçalho mobile compacto: mantém a logo legível e elimina espaço vazio antes do banner. */
 @media (max-width: 767px) {
   .main-container > .navbar {
