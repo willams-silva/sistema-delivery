@@ -46,7 +46,7 @@ try{
   if(!$info||!isset($tipos[$info[2]])){http_response_code(400);exit('Envie uma imagem JPG, PNG ou GIF válida');}
   if($info[0]<1||$info[1]<1||$info[0]>6000||$info[1]>6000){http_response_code(400);exit('Dimensões da imagem não permitidas');}
   $ext=$tipos[$info[2]];
-  $dir=__DIR__.'/../../images/banner_rotativo/';
+  $dir=dirname(__DIR__, 5).'/upload_delivery/banners/';
   if (!is_dir($dir) || !is_writable($dir)) {
    http_response_code(503);
    exit('Pasta de banners indisponível para gravação. Verifique a hospedagem.');
