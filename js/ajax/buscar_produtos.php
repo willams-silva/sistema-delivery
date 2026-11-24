@@ -16,7 +16,7 @@ echo <<<HTML
 
 
 <style>
-#area_busca .bora-search-grid{list-style:none;display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,340px),1fr));gap:14px;max-width:1120px;margin:42px auto 24px;padding:0 16px}
+#area_busca .bora-search-grid{list-style:none;display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,340px),1fr));gap:14px;max-width:1120px;margin:42px auto 24px;padding:0 16px}
 #area_busca .bora-search-grid>a{display:block;min-width:0;text-decoration:none;color:#512c24}
 #area_busca .bora-search-grid li{background:#fffaf5;border:1px solid #efd5bb;border-radius:18px;padding:14px;box-shadow:0 5px 18px rgba(100,53,20,.08);height:100%;margin:0!important}
 #area_busca .bora-search-grid .titulo-item{font-size:18px;font-weight:700!important;color:#512c24}
@@ -24,7 +24,7 @@ echo <<<HTML
 #area_busca .bora-search-grid .valor-item-maior{font-size:18px;font-weight:700;color:#a85b24}
 #area_busca .bora-search-content{display:flex;align-items:center;gap:12px;width:100%}
 #area_busca .bora-search-text{flex:1;min-width:0}
-#area_busca .bora-search-photo{width:96px;height:96px;flex:0 0 96px;object-fit:cover;border-radius:12px;background:#f3e5d5}
+#area_busca .bora-search-promo{position:absolute;top:8px;right:8px;background:#a85b24;color:#fff;padding:5px 10px;border-radius:12px;font-size:14px;font-weight:700;z-index:1;line-height:1.2}#area_busca .bora-search-promo.ocultar{display:none!important}#area_busca .bora-search-photo{width:96px;height:96px;flex:0 0 96px;object-fit:cover;border-radius:12px;background:#f3e5d5}
 @media(max-width:600px){#area_busca .bora-search-grid{grid-template-columns:1fr;padding:0 12px}#area_busca .bora-search-photo{width:80px;height:80px;flex-basis:80px}}
 </style>
 <ol class="bora-search-grid">
@@ -162,7 +162,7 @@ HTML;
 if($mostrar != "") {
 
 echo <<<HTML
-								<img class="{$mostrar_promo}" src="img/promocao2.png" width="65px" height="65px" style="position:absolute; right:0; top:0px; opacity:80%">
+								<span class="bora-search-promo {$mostrar_promo}">Promoção</span>
 
 HTML;
 
