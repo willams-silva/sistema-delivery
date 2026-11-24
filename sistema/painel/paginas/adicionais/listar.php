@@ -52,16 +52,7 @@ html body #listar #tabela_wrapper .dataTables_paginate .page-item.disabled .page
 html body #listar #tabela_wrapper .dataTables_paginate li.page-item:before,html body #listar #tabela_wrapper .dataTables_paginate li.page-item:after{content:none!important}
 </style>
 <div id="bc-extra-list-view"><span>Visualização:</span><button type="button" data-view="cards" aria-pressed="true"><i class="fe fe-grid"></i> Cartões</button><button type="button" data-view="table" aria-pressed="false"><i class="fe fe-list"></i> Tabela</button></div>
-<script>
-(function(){
- var root=document.getElementById('listar'), bar=document.getElementById('bc-extra-list-view');
- if(!root||!bar)return;
- var old=document.getElementById('bc-extra-view');if(old)old.style.display='none';
- function apply(mode){root.dataset.extraView=mode;root.classList.toggle('bc-extra-cards',mode==='cards');var table=root.querySelector('#tabela');if(table)table.classList.toggle('table-hover',mode!=='cards');bar.querySelectorAll('button').forEach(function(b){b.setAttribute('aria-pressed',String(b.dataset.view===mode));});}
- bar.addEventListener('click',function(e){var b=e.target.closest('button[data-view]');if(b){apply(b.dataset.view);if(jQuery.fn.dataTable.isDataTable('#tabela'))jQuery('#tabela').DataTable().columns.adjust();}});
- apply(root.dataset.extraView||'cards');
-})();
-</script>
+
 BCVIEW;
 if ($total_reg > 0) {
 
@@ -145,6 +136,19 @@ HTML;
 
 <script type="text/javascript">
 	$(document).ready(function() {
+        var root=document.getElementById('listar'),bar=document.getElementById('bc-extra-list-view');
+        if(root&&bar){
+          function apply(mode){
+            root.dataset.extraView=mode;
+            root.classList.toggle('bc-extra-cards',mode==='cards');
+            $('#tabela').toggleClass('table-hover',mode==='table');
+            $(bar).find('button').each(function(){this.setAttribute('aria-pressed',String(this.dataset.view===mode));});
+            if(mode==='cards'){$(root).find('input[type=checkbox]').prop('checked',false);$('#ids').val('');$('#btn-deletar').hide();}
+          }
+          $(bar).off('click.bcExtra').on('click.bcExtra','button[data-view]',function(){apply(this.dataset.view);if($.fn.dataTable&&$.fn.dataTable.isDataTable('#tabela'))$('#tabela').DataTable().columns.adjust();});
+          apply(root.dataset.extraView||'cards');
+        }
+
 		if (!$('#tabela').length) return;
 		$('#tabela').DataTable({
 			"ordering": false,
