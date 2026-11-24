@@ -181,6 +181,8 @@ body { background:#fffaf5 !important; color:#493425; }
 .main-container .navbar .container-fluid { max-width:1360px; margin:auto; }
 .main-container .navbar-brand { display:flex; align-items:center; gap:12px; color:#753d1e; font-weight:750; }
 .main-container .navbar-brand a { color:#a85b24; }
+.main-container .navbar-brand .bc-resumo-logo{width:48px;height:48px;flex:0 0 48px;object-fit:contain;border-radius:50%;clip-path:circle(49% at 50% 50%)}
+@media(max-width:767px){.main-container .navbar-brand .bc-resumo-logo{width:32px;height:32px;flex-basis:32px}.main-container .navbar-brand:has(.bc-resumo-logo){min-width:0;white-space:normal}.main-container .navbar-brand:has(.bc-resumo-logo) span{font-size:11px!important}}
 .main-container .navbar-brand span { font-size:18px !important; margin-left:0 !important; }
 .main-container .btn-warning,.area-pedidos .btn-warning { background:#a85b24 !important; border:1px solid #a85b24 !important; color:#fff !important; font-weight:750; border-radius:11px; padding:10px 17px; }
 .main-container .btn-warning:hover,.area-pedidos .btn-warning:hover { background:#87441b !important; }
@@ -280,6 +282,9 @@ body { background:#fffaf5 !important; color:#493425; }
     <div class="container-fluid">
       <div class="navbar-brand">
         <a href="site/<?php echo $url_site ?>"><big><i class="bi bi-arrow-left"></i></big></a>
+        <?php if ($url_site === 'rainhadastapiocas') { ?>
+          <img class="bc-resumo-logo" src="/media-delivery.php?tipo=logos&amp;arquivo=<?php echo rawurlencode($logo_sistema) ?>" alt="Rainha das Tapiocas">
+        <?php } ?>
         <span style="margin-left: 15px; font-size:14px">RESUMO DO PEDIDO <?php echo $nome_mesa ?> <?php echo @$_SESSION['pedido_balcao'] ?></span>
 
       </div>
