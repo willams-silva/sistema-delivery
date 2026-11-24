@@ -262,6 +262,18 @@ html body #listar.bc-pedidos-cartoes .ux-orders-table > tbody > tr > td:last-chi
 @media(max-width:800px){html body #listar.bc-pedidos-cartoes .ux-orders-table > tbody{grid-template-columns:minmax(0,1fr)!important}}
 @media(prefers-reduced-motion:reduce){html body #listar.bc-pedidos-cartoes .ux-orders-table > tbody > tr > td:last-child .btn{transition:none!important;transform:none!important}}
 
+
+/* Match the validated product action button palette in both order views. */
+html body #listar .ux-orders-table > tbody > tr > td:last-child .btn{--bc-fg:#795038;--bc-bg:#f4e7dc;min-width:36px!important;min-height:36px!important;padding:7px!important;border-radius:9px!important;border:1px solid var(--bc-fg)!important;background:var(--bc-bg)!important;color:var(--bc-fg)!important;transition:background .2s,color .2s,transform .2s,box-shadow .2s!important}
+html body #listar .ux-orders-table > tbody > tr > td:last-child .btn-info-light{--bc-fg:#17658a;--bc-bg:#e1f2fa}
+html body #listar .ux-orders-table > tbody > tr > td:last-child .btn-primary-light,html body #listar .ux-orders-table > tbody > tr > td:last-child .btn-warning-light{--bc-fg:#89500a;--bc-bg:#fff0d7}
+html body #listar .ux-orders-table > tbody > tr > td:last-child .btn-danger-light{--bc-fg:#b42332;--bc-bg:#fde5e7}
+html body #listar .ux-orders-table > tbody > tr > td:last-child .btn-success-light{--bc-fg:#13745a;--bc-bg:#def3e9}
+html body #listar .ux-orders-table > tbody > tr > td:last-child .btn-dark-light{--bc-fg:#41434a;--bc-bg:#e9eaed}
+html body #listar .ux-orders-table > tbody > tr > td:last-child .btn i{color:inherit!important;font-size:16px!important}
+html body #listar .ux-orders-table > tbody > tr > td:last-child .btn:not(.disabled):not([aria-disabled=true]):hover{background:var(--bc-fg)!important;color:#fff!important;transform:translateY(-2px);filter:none!important;box-shadow:0 4px 9px #63351e30!important}
+html body #listar .ux-orders-table > tbody > tr > td:last-child .btn:focus-visible{outline:2px solid var(--bc-fg)!important;outline-offset:2px}
+@media(prefers-reduced-motion:reduce){html body #listar .ux-orders-table > tbody > tr > td:last-child .btn{transition:none!important;transform:none!important}}
 </style>
 <script>
 (function(){
