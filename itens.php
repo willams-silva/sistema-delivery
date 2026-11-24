@@ -132,15 +132,13 @@ if (@$_SESSION['nome_mesa'] != '') {
 
 							<img class="<?php echo $mostrar ?>" src="img/esgotado.png" width="65px" height="65px" style="position:absolute; right:0; top:0px">
 
-							<?php if ($mostrar != "") { ?>
-								<img class="<?php echo $mostrar_promo ?>" src="img/promocao2.png" width="65px" height="65px" style="position:absolute; right:0; top:0px; opacity:80%">
-							<?php } ?>
+							
 
 							<div class="row" style="width:100%">
 								<div class="col-10">
 
 									<div class="me-auto">
-										<div class="fw-bold titulo-item" style="font-weight: 600"><?php echo $nome ?></div>
+										<div class="fw-bold titulo-item" style="font-weight: 600"><?php echo $nome ?><?php if ($promocao == 'Sim' && (float)$val_promocional > 0 && (float)$val_promocional < (float)$valor) { ?> <span style="display:inline-block;vertical-align:middle;margin-left:6px;padding:3px 8px;border-radius:20px;background:#b45b20;color:#fff;font-size:10px;font-weight:700;line-height:1.2;white-space:nowrap">OFERTA</span><?php } ?></div>
 										<div class="subtitulo-item-menor" style="font-size:10px; font-weight: 380"><?php echo $descricao ?></div>
 										<span class="valor-item-maior">
 											<?php
