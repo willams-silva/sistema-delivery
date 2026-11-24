@@ -345,6 +345,10 @@ if($linhas == 0){
 .app-sidebar .main-sidebar-header, .app-sidebar .main-sidebar-header .header-logo {border-color:#4d2b22!important;box-shadow:none!important}
 .app-sidebar .main-sidebar-header::before,.app-sidebar .main-sidebar-header::after{border-color:#4d2b22!important}
 </style>
+<style>
+body .app-sidebar .main-sidebar-header,body .app-sidebar .main-sidebar-header.active,body .app-sidebar .main-sidebar-header .header-logo{border:0!important;outline:0!important;box-shadow:none!important}
+body .app-sidebar .main-sidebar-header::before,body .app-sidebar .main-sidebar-header::after{border:0!important;box-shadow:none!important}
+</style>
 </head>
 
 <body class="ltr main-body app sidebar-mini">
