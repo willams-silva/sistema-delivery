@@ -376,7 +376,14 @@ HTML;
 </small>
 
 
-<div class="" align="center">
+<style>
+html body #listar .bc-orders-pagination{display:flex;justify-content:center;align-items:center;gap:6px;flex-wrap:wrap;padding:16px 0}
+html body #listar .bc-orders-pagination .btn{min-width:38px;min-height:38px;border:1px solid #d7c5b7!important;border-radius:8px!important;background:#fff!important;color:#6c4631!important;padding:7px 12px!important;transition:background .2s,color .2s}
+html body #listar .bc-orders-pagination .btn.active,html body #listar .bc-orders-pagination .btn:hover{background:#914a29!important;color:#fff!important;border-color:#914a29!important}
+html body #listar .bc-orders-pagination .btn i{color:inherit!important}
+html body #listar .bc-orders-pagination .btn:focus-visible{outline:2px solid #914a29;outline-offset:2px}
+</style>
+<div class="bc-orders-pagination" align="center">
 <a href="#" onclick="listar(undefined, 0)" class="btn btn-outline-primary "><i class="fa fa-chevron-left"></i></a>
 HTML;
 
