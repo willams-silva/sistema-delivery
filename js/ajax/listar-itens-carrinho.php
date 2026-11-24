@@ -262,11 +262,12 @@ if($total_reg > 0){
 
 
 
+$foto_produto_url = '/media-delivery.php?tipo=produtos&amp;arquivo=' . rawurlencode((string)$foto_produto);
 echo <<<HTML
 
 		
 		<li class="list-group-item mb-1" style="border:  solid 1px #ababab; border-radius: 10px; box-shadow: 0px 3px 5px rgba(0, 0, 0, 0.20);">
-		<img class="" src="sistema/painel/images/produtos/{$foto_produto}" width="30px">		    	
+		<img class="bc-cart-product-photo" src="{$foto_produto_url}" width="30px" alt="">		    	
 		<span class="nome-produto"><b>{$nome_produto} {$sigla_variacao} {$sigla_grade}</b></span>
 		<span class="{$classe_borda}" style="font-size:11px; color:#450703"><b> {$nome_borda}</b></span>
 
