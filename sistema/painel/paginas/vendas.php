@@ -33,6 +33,18 @@ $data_final_mes = $ano_atual . "-" . $mes_atual . "-" . $dia_final_mes;
 
 
 
+<style>
+html body .ux-vendas{background:#fff!important;border:1px solid #e5d4c6!important;border-radius:14px!important}
+html body .ux-vendas .form-control{background:#fff!important;color:#4e2d20!important;border:1px solid #d7c5b7!important;border-radius:9px!important;color-scheme:light}
+html body .ux-vendas .btn-outline-primary{background:#fff!important;color:#63351e!important;border-color:#d7c5b7!important}
+html body .ux-vendas .btn-check:checked+.btn-outline-primary,html body .ux-vendas a.btn-outline-primary{background:#914a29!important;color:#fff!important;border-color:#914a29!important}
+html body #modalDados .modal-header{background:#914a29!important;color:#fff!important}
+html body #modalDados .modal-title{color:#fff!important}
+html body #modalDados .modal-content{background:#fff!important;border:1px solid #e5d4c6!important;border-radius:14px!important;overflow:hidden}
+html body #modalDados td.bg-primary{background:#f4e9df!important;color:#63351e!important}
+html body #modalDados td{border-color:#eaded4!important}
+</style>
+<div class="card mb-3" style="margin-top:16px;border:1px solid #e5d4c6;border-radius:14px"><div class="card-body d-flex align-items-center flex-wrap gap-3"><h2 class="mb-0" style="font-size:21px;font-weight:600;color:#4e2d20"><i class="fa-solid fa-cart-shopping me-2"></i>Vendas e Pedidos</h2><span style="font-size:12px;color:#795038">Acompanhe vendas, pedidos, pagamentos e histórico de estornos.</span></div></div>
 <div class="bs-example widget-shadow ux-vendas" style="padding:15px">
 
 	<div class="row">
