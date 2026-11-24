@@ -272,6 +272,19 @@ body.checkout-cardapio { background:#fffaf5; color:#493425; }
  outline:2px solid #b13f28!important;outline-offset:3px;
 }
 </style>
+<style>
+@media(min-width:768px){
+.checkout-cardapio .main-container{width:100%;max-width:988px!important;margin-left:auto!important;margin-right:auto!important}
+.checkout-cardapio #accordionExample{width:100%!important;max-width:960px!important;margin-left:auto!important;margin-right:auto!important;margin-bottom:250px!important}
+.checkout-cardapio .total-finalizar{position:fixed!important;left:0!important;right:0!important;bottom:0!important;width:100%!important;height:auto!important;display:flex!important;flex-direction:column!important;align-items:center!important;gap:10px!important;padding:12px 20px!important;box-sizing:border-box!important}
+.checkout-cardapio .total-finalizar .total-pedido,.checkout-cardapio .total-finalizar .abaixo{position:static!important;float:none!important;transform:none!important;inset:auto!important;width:min(100%,420px)!important;max-width:420px!important;margin:0 auto!important}
+.checkout-cardapio .total-finalizar .total-pedido{min-height:0!important;height:auto!important}
+.checkout-cardapio .total-finalizar .total-pedido > br{display:none}
+.checkout-cardapio .total-finalizar .total-pedido > big{margin-top:6px}
+.checkout-cardapio .total-finalizar .abaixo{margin-top:0!important;flex-direction:column!important}
+.checkout-cardapio .total-finalizar #botao_finalizar{width:100%!important;max-width:420px!important}
+}
+</style>
 <script>document.body.classList.add("checkout-cardapio");</script>
 <div class="main-container">
 
