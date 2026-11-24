@@ -10,7 +10,24 @@ if (@$chamados == 'ocultar') {
 
 ?>
 
-<div class="justify-content-between" style="margin-top: 20px">
+<style>
+html body .bc-ticket-page .nav-tabs{border-color:#e5d4c6!important;gap:8px}
+html body .bc-ticket-page .nav-link{background:#fff!important;color:#63351e!important;border:1px solid #d7c5b7!important;border-radius:9px!important;padding:10px 16px}
+html body .bc-ticket-page .nav-link.active{background:#914a29!important;color:#fff!important;border-color:#914a29!important}
+html body #nav-tabContent.bc-ticket-content .custom-card,html body #nav-tabContent.bc-ticket-content #form{background:#fff!important;border:1px solid #e5d4c6!important;border-radius:14px!important}
+html body #nav-tabContent.bc-ticket-content #form{padding:20px}
+html body :is(.bc-ticket-content,#modalResposta,#modalArquivos) .form-control{background:#fff!important;color:#4e2d20!important;border:1px solid #d7c5b7!important;border-radius:9px!important}
+html body :is(.bc-ticket-content,#modalResposta,#modalArquivos) .form-control::placeholder{color:#927d70!important;opacity:1}
+html body :is(.bc-ticket-content,#modalResposta,#modalArquivos) .btn-primary{background:#914a29!important;color:#fff!important;border-color:#914a29!important}
+html body :is(#modalResposta,#modalArquivos) .modal-header{background:#914a29!important;color:#fff!important}
+html body :is(#modalResposta,#modalArquivos) .modal-title{color:#fff!important}
+html body :is(#modalResposta,#modalArquivos) .modal-content{background:#fff!important;border:1px solid #e5d4c6!important;border-radius:14px!important}
+html body .bc-ticket-content .ql-toolbar{background:#f8efe6!important;border-color:#d7c5b7!important;border-radius:9px 9px 0 0}
+html body .bc-ticket-content .ql-container{background:#fff!important;border-color:#d7c5b7!important;border-radius:0 0 9px 9px;color:#4e2d20!important}
+html body .bc-ticket-content .ql-editor.ql-blank::before{color:#927d70!important}
+</style>
+<div class="card mb-3" style="margin-top:16px;border:1px solid #e5d4c6;border-radius:14px"><div class="card-body d-flex align-items-center flex-wrap gap-3"><h2 class="mb-0" style="font-size:21px;font-weight:600;color:#4e2d20"><i class="fa-solid fa-headset me-2"></i>Abertura de Chamados</h2><span style="font-size:12px;color:#795038">Abra solicitações de suporte, acompanhe respostas e gerencie anexos.</span></div></div>
+<div class="justify-content-between bc-ticket-page" style="margin-top: 20px">
 	<nav style="margin-bottom: 20px">
 		<div class="nav nav-tabs" id="nav-tab" role="tablist">
 			<button class="nav-link active" id="nav-home-tab" data-bs-toggle="tab" data-bs-target="#nav-home" type="button"
@@ -23,7 +40,7 @@ if (@$chamados == 'ocultar') {
 	</nav>
 </div>
 
-<div class="tab-content" id="nav-tabContent">
+<div class="tab-content bc-ticket-content" id="nav-tabContent">
 	<div class="tab-pane fade show active" id="nav-home" role="tabpanel" aria-labelledby="nav-home-tab">
 		<div class="row row-sm">
 			<div class="col-lg-12">
