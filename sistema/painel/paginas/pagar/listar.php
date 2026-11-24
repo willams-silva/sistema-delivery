@@ -248,6 +248,14 @@ html body #listar #tabela tbody td:last-child :is(a,button).ocultar{display:none
 html body #listar.bc-pay-cards #tabela tbody td:last-child :is(a,button):hover{background:#fff!important;transform:none!important;box-shadow:none!important}
 html body #listar #tabela_wrapper .dataTables_paginate li.page-item.disabled{opacity:1!important}
 html body #listar #tabela_wrapper .dataTables_paginate li.page-item .page-link::before,html body #listar #tabela_wrapper .dataTables_paginate li.page-item .page-link::after{content:none!important}
+html body #listar #tabela tbody td:last-child :is(a,button){border:1px solid var(--bc-action,#795038)!important;background:var(--bc-bg,#fff0df)!important;color:var(--bc-action,#795038)!important;vertical-align:middle;box-shadow:none!important}
+html body #listar #tabela tbody td:last-child :is(a,button) i{color:inherit!important;font-size:16px!important}
+html body #listar #tabela tbody td:last-child a:is([onclick^="editar("],[onclick^="mostrar("]){--bc-action:#17658a;--bc-bg:#e1f2fa}
+html body #listar #tabela tbody td:last-child a[onclick^="excluirConta("],html body #listar #tabela tbody td:last-child form[action*="recibo_conta_pagar_class"] button{--bc-action:#b42332;--bc-bg:#fde5e7}
+html body #listar #tabela tbody td:last-child a[onclick^="baixar("]{--bc-action:#13745a;--bc-bg:#def3e9}
+html body #listar #tabela tbody td:last-child a[onclick^="parcelar("],html body #listar #tabela tbody td:last-child form[action*="imp_recibo_pagar"] button{--bc-action:#41434a;--bc-bg:#e9eaed}
+html body #listar.bc-pay-cards #tabela tbody td:last-child :is(a,button):hover{background:var(--bc-bg,#fff0df)!important;color:var(--bc-action,#795038)!important;transform:none!important;box-shadow:none!important}
+html body #listar #tabela tbody td:last-child :is(a,button).ocultar{display:none!important}
 </style>
 <div id="bc-pay-list-view"><span>Visualização:</span><button type="button" data-view="cards" aria-pressed="true"><i class="fe fe-grid"></i> Cartões</button><button type="button" data-view="table" aria-pressed="false"><i class="fe fe-list"></i> Tabela</button></div>
 <script>
