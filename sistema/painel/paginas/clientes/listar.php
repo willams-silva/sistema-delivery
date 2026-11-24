@@ -51,6 +51,9 @@ html body #listar #tabela tbody td:last-child a.btn.btn-dark-light{--bc-action:#
 html body #listar #tabela tbody td:last-child a.btn i{color:inherit!important;font-size:16px}
 html body #listar #tabela tbody td:last-child a.btn:hover{background:var(--bc-action,#795038)!important;color:#fff!important;transform:translateY(-2px)}
 html body #listar #tabela tbody td:last-child a.btn:focus-visible{outline:2px solid #914a29;outline-offset:2px}
+html body #listar.bc-client-cards #tabela tbody tr td:first-child{display:none!important}
+html body #listar.bc-client-cards #tabela tbody td:last-child a.btn:hover{background:var(--bc-bg,#fff0df)!important;color:var(--bc-action,#795038)!important;transform:none!important;box-shadow:none!important}
+html body #listar.bc-client-cards #tabela tbody td:last-child a.btn{transition:none!important}
 #listar #bc-client-list-view{display:flex!important;align-items:center;gap:8px;flex-wrap:wrap;margin:0 0 16px;color:#4e2d20;font-weight:600}
 #listar #bc-client-list-view button{border:1px solid #d7c5b7!important;border-radius:9px;background:#fff!important;color:#6c4631!important;padding:9px 14px;font-weight:600}
 #listar #bc-client-list-view button[aria-pressed=true]{background:#914a29!important;color:#fff!important}
