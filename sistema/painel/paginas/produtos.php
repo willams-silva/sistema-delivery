@@ -1646,6 +1646,7 @@ function excluirProduto(id) {
     var $grid=$('#ux-product-grid');
     if(!$grid.length){$grid=$('<div id="ux-product-grid" class="ux-product-grid" aria-label="Produtos em cartões"></div>');$('#tabela_wrapper').prepend($grid);}
     $grid.empty().show();
+
     var api=($.fn.DataTable && $.fn.DataTable.isDataTable($table[0])) ? $table.DataTable() : null;
     var $pager=$('#ux-card-pagination');
     if(!$pager.length){$pager=$('<nav id="ux-card-pagination" class="ux-card-pagination" aria-label="Páginas de produtos"></nav>');$('#tabela_wrapper').append($pager);}
@@ -1684,7 +1685,20 @@ function excluirProduto(id) {
   }
   $(document).on('click','#ux-card-pagination button[data-page]',function(){var $table=$('#listar #tabela');if(!$.fn.DataTable || !$.fn.DataTable.isDataTable($table[0]))return;var api=$table.DataTable();var target=Number($(this).attr('data-page'));if(Number.isInteger(target)&&target>=0&&target<api.page.info().pages){api.page(target).draw('page');renderCards();}});
   $(document).on('click','.ux-view-btn',function(){view=$(this).attr('data-product-view');try{localStorage.setItem(key,view);}catch(e){}applyView();});
-  $(document).on('draw.dt','#tabela',function(){if(view==='cards')setTimeout(renderCards,0);});
+  var cardSearchTimer;
+  $(document).on('input keyup search','#listar #tabela_wrapper .dataTables_filter input',function(){
+    if(view!=='cards')return;
+    var value=this.value;
+    clearTimeout(cardSearchTimer);
+    cardSearchTimer=setTimeout(function(){
+      var table=$('#listar #tabela')[0];
+      if(!table || !$.fn.DataTable || !$.fn.DataTable.isDataTable(table))return;
+      var api=$(table).DataTable();
+      api.search(value).draw();
+      renderCards();
+    },120);
+  });
+  $(document).on('draw.dt search.dt length.dt','#tabela',function(){if(view==='cards')setTimeout(renderCards,0);});
   // A listagem é substituída via AJAX ao filtrar/salvar: reconstruir os cartões após a atualização.
   var root=document.getElementById('listar');
   if(root&&window.MutationObserver){
