@@ -39,10 +39,35 @@ html body .card.bc-people-heading{margin-top:16px!important;border:1px solid #e2
 </div>
 
 
+<style>
+#bc-client-view{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin:14px 0 10px;color:#4e2d20;font-weight:600}
+#bc-client-view button{border:1px solid #d7c5b7!important;border-radius:9px;background:white!important;color:#6c4631!important;padding:9px 14px;font-weight:600}
+#bc-client-view button[aria-pressed=true],#bc-client-view button:hover{background:#914a29!important;color:white!important}
+html body #listar.bc-client-cards #tabela{display:block!important;border:0!important;width:100%!important}
+html body #listar.bc-client-cards #tabela thead{display:none!important}
+html body #listar.bc-client-cards #tabela tbody{display:grid!important;grid-template-columns:repeat(auto-fit,minmax(min(100%,270px),1fr));gap:16px;padding:12px 0}
+html body #listar.bc-client-cards #tabela tbody tr:not(.child){display:flex!important;flex-direction:column;min-width:0;border:1px solid #e5d4c6;border-radius:14px;padding:16px;background:#fff;box-shadow:0 4px 14px #522c1810}
+html body #listar.bc-client-cards #tabela tbody td{display:block!important;border:0!important;white-space:normal!important;overflow-wrap:anywhere;padding:7px 0!important}
+#listar.bc-client-cards #tabela tbody td:nth-child(2){font-weight:700;color:#63351e;font-size:16px}
+#listar.bc-client-cards #tabela tbody td:nth-child(3)::before{content:'Telefone: ';font-weight:600}
+#listar.bc-client-cards #tabela tbody td:nth-child(4)::before{content:'E-mail: ';font-weight:600}
+#listar.bc-client-cards #tabela tbody td:last-child{margin-top:auto;border-top:1px solid #eaded4!important;text-align:center}
+#listar.bc-client-cards #tabela tbody td:last-child .btn{margin:3px;border-radius:9px;min-width:36px;min-height:36px}
+#listar.bc-client-cards #tabela tbody tr.table-danger{border-top:4px solid #b42332!important}
+</style>
+<div id="bc-client-view"><span>Visualização:</span><button type="button" aria-pressed="true" onclick="bcClienteVisao(true)"><i class="fe fe-grid"></i> Cartões</button><button type="button" aria-pressed="false" onclick="bcClienteVisao(false)"><i class="fe fe-list"></i> Tabela</button></div>
+<script>
+function bcClienteVisao(cards){
+ var list=document.getElementById('listar');if(!list)return;
+ list.classList.toggle('bc-client-cards',cards);
+ document.querySelectorAll('#bc-client-view button').forEach(function(b,i){b.setAttribute('aria-pressed',String(cards?i===0:i===1));});
+ if(window.jQuery&&jQuery.fn.dataTable&&jQuery.fn.dataTable.isDataTable('#tabela')){var dt=jQuery('#tabela').DataTable();if(!cards)dt.columns.adjust();if(dt.responsive)dt.responsive.recalc();}
+}
+</script>
 <div class="row row-sm">
 	<div class="col-lg-12">
 		<div class="card custom-card">
-			<div class="card-body" id="listar">
+			<div class="card-body bc-client-cards" id="listar">
 
 			</div>
 		</div>
