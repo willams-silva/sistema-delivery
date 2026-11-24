@@ -487,10 +487,7 @@ body.selecao-cardapio { background:#fffaf5 !important; color:#503827; }
 					<img onclick="selectPizzas('<?php echo $id_produto ?>')" class="<?php echo $mostrar ?>" src="img/esgotado.png"
 						width="65px" height="65px" style="position:absolute; right:0; top:0px">
 
-					<?php if ($mostrar != "") { ?>
-						<img onclick="selectPizzas('<?php echo $id_produto ?>')" class="<?php echo $mostrar_promo ?>"
-							src="img/promocao2.png" width="65px" height="65px" style="position:absolute; right:0; top:0px; opacity:80%">
-					<?php } ?>
+					
 
 					<div class="row" style="width:100%">
 						<div class="col-10">
@@ -500,7 +497,7 @@ body.selecao-cardapio { background:#fffaf5 !important; color:#503827; }
 									<input class="form-check-input" type="checkbox" value="<?php echo $id_produto ?>"
 										id="seletor-<?php echo $id_produto ?>" onchange="selecionar('<?php echo $id_produto ?>')"
 										style="margin-top: 5px">
-									<small onclick="selectPizzas('<?php echo $id_produto ?>')"> <?php echo $nome ?></small>
+									<small onclick="selectPizzas('<?php echo $id_produto ?>')"> <?php echo $nome ?></small><?php if ($tem_promocao_valida) { ?> <span style="display:inline-block;vertical-align:middle;margin-left:6px;padding:3px 8px;border-radius:20px;background:#b45b20;color:#fff;font-size:10px;font-weight:700;line-height:1.2;white-space:nowrap">OFERTA</span><?php } ?>
 								</div>
 
 								<div onclick="selectPizzas('<?php echo $id_produto ?>')" class="subtitulo-item-menor" style="color:#450703">
