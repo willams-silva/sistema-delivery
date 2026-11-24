@@ -15,7 +15,7 @@ $linhas = @count($res);
             <!-- Card para conter a tabela -->
             <div class="card shadow-sm border-0 mb-4">
                 <div class="card-header bg-white py-3">
-                    <h5 class="mb-0 text-primary">
+                    <h5 class="mb-0" style="color:#63351e">
                         <i class="fas fa-video me-2"></i>Tutoriais em Vídeo
                     </h5>
                 </div>
@@ -23,7 +23,7 @@ $linhas = @count($res);
                     <?php if ($linhas > 0): ?>
                         <!-- Tabela responsiva simplificada -->
                         <div class="table-responsive">
-                            <table class="table table-hover border-bottom dt-responsive nowrap w-100" id="tabela">
+                            <table class="table border-bottom w-100" id="tabela">
                                 <thead class="table-light"> 
                                     <tr> 
                                         <th>Título do Tutorial</th>
@@ -32,16 +32,16 @@ $linhas = @count($res);
                                 <tbody>
                                     <?php foreach ($res as $row): ?>
                                         <tr class="tutorial-row" 
-                                            style="cursor: pointer;" 
-                                            data-link="<?php echo $row['link']; ?>" 
-                                            data-title="<?php echo addslashes($row['titulo']); ?>"
+                                            style="cursor: pointer;" tabindex="0" role="button" onkeydown="if(event.key==='Enter' || event.key===' '){event.preventDefault();this.click();}" 
+                                            data-link="<?php echo htmlspecialchars((string)$row['link'], ENT_QUOTES, 'UTF-8'); ?>" 
+                                            data-title="<?php echo htmlspecialchars((string)$row['titulo'], ENT_QUOTES, 'UTF-8'); ?>"
                                             onclick="visualizarVideo(this.dataset.link, this.dataset.title)">
                                             <td class="align-middle">
                                                 <div class="d-flex align-items-center">
                                                     <div class="tutorial-icon-wrapper me-3">
                                                         <i class="fas fa-play-circle tutorial-icon"></i>
                                                     </div>
-                                                    <span class="tutorial-title"><?php echo $row['titulo']; ?></span>
+                                                    <span class="tutorial-title"><?php echo htmlspecialchars((string)$row['titulo'], ENT_QUOTES, 'UTF-8'); ?><span class="bc-watch">Assistir tutorial</span></span>
                                                 </div>
                                             </td>
                                         </tr>
@@ -62,10 +62,85 @@ $linhas = @count($res);
     </div>
 </div>
 
-<!-- Modal para visualizar vídeo (extremamente simplificado) -->
+<style>
+html body #listar #tabela tbody td:last-child a.btn{display:inline-flex!important;align-items:center;justify-content:center;width:38px;height:38px;padding:0!important;margin:3px;border:1px solid currentColor!important;border-radius:9px!important;color:var(--bc-action,#795038)!important;background:var(--bc-bg,#fff0df)!important;transition:background .18s,color .18s,transform .18s}
+html body #listar #tabela tbody td:last-child a.btn.ocultar{display:none!important}
+html body #listar #tabela tbody td:last-child a.btn.btn-info-light,html body #listar #tabela tbody td:last-child a.btn.btn-info{--bc-action:#17658a;--bc-bg:#e1f2fa}
+html body #listar #tabela tbody td:last-child a.btn.btn-danger-light{--bc-action:#b42332;--bc-bg:#fde5e7}
+html body #listar #tabela tbody td:last-child a.btn.btn-success-light{--bc-action:#13745a;--bc-bg:#def3e9}
+html body #listar #tabela tbody td:last-child a.btn.btn-dark-light{--bc-action:#41434a;--bc-bg:#e9eaed}
+html body #listar #tabela tbody td:last-child a.btn i{color:inherit!important;font-size:16px}
+html body #listar #tabela tbody td:last-child a.btn:hover{background:var(--bc-action,#795038)!important;color:#fff!important;transform:translateY(-2px)}
+html body #listar #tabela tbody td:last-child a.btn:focus-visible{outline:2px solid #914a29;outline-offset:2px}
+html body #listar.bc-tutorial-cards #tabela tbody td:last-child a.btn:hover{background:var(--bc-bg,#fff0df)!important;color:var(--bc-action,#795038)!important;transform:none!important;box-shadow:none!important}
+html body #listar.bc-tutorial-cards #tabela tbody td:last-child a.btn{transition:none!important}
+#listar #bc-tutorial-list-view{display:flex!important;align-items:center;gap:8px;flex-wrap:wrap;margin:0 0 16px;color:#4e2d20;font-weight:600}
+#listar #bc-tutorial-list-view button{border:1px solid #d7c5b7!important;border-radius:9px;background:#fff!important;color:#6c4631!important;padding:9px 14px;font-weight:600}
+#listar #bc-tutorial-list-view button[aria-pressed=true]{background:#914a29!important;color:#fff!important}
+html body #listar.bc-tutorial-cards #tabela{display:block!important;width:100%!important;border:0!important}
+html body #listar.bc-tutorial-cards #tabela thead{display:none!important}
+html body #listar.bc-tutorial-cards #tabela tbody{display:grid!important;grid-template-columns:repeat(auto-fill,minmax(min(100%,270px),1fr));gap:16px;padding:12px 0}
+html body #listar.bc-tutorial-cards #tabela tbody tr:not(.child){display:flex!important;flex-direction:column;min-width:0;border:1px solid #e5d4c6;border-radius:14px;padding:16px;background:#fff}
+html body #listar.bc-tutorial-cards #tabela tbody td{display:block!important;width:auto!important;border:0!important;white-space:normal!important;overflow-wrap:anywhere;padding:7px 0!important}
+#listar.bc-tutorial-cards #tabela tbody td:last-child{margin-top:auto;border-top:1px solid #eaded4!important;text-align:center}
+#listar.bc-tutorial-cards #tabela tbody tr.table-danger{border-top:4px solid #b42332!important}
+
+html body #listar.bc-tutorial-cards #tabela tbody tr:hover,html body #listar.bc-tutorial-cards #tabela tbody tr:hover > td{--bs-table-accent-bg:transparent!important;--bs-table-bg-state:transparent!important;--bs-table-hover-bg:transparent!important;box-shadow:none!important;transform:none!important;filter:none!important;background-image:none!important}
+html body #listar.bc-tutorial-cards #tabela tbody tr:hover{background:#fff!important;border-color:#e5d4c6!important}
+html body #listar.bc-tutorial-cards #tabela tbody tr:hover > td{background:transparent!important}
+html body #listar.bc-tutorial-cards #tabela tbody tr td:last-child a.btn:hover,html body #listar.bc-tutorial-cards #tabela tbody tr td:last-child a.btn:hover i{transform:none!important;filter:none!important;box-shadow:none!important;opacity:1!important;animation:none!important;transition:none!important}
+html body #listar.bc-tutorial-cards #tabela tbody tr td:last-child a.btn:hover{background:var(--bc-bg,#fff0df)!important;color:var(--bc-action,#795038)!important;border-color:var(--bc-action,#795038)!important}
+html body #listar.bc-tutorial-cards #tabela tbody tr td:last-child a.btn:hover i{color:inherit!important}
+
+html body #listar #tabela_wrapper .dataTables_paginate{padding:16px 0 0!important;float:none!important;text-align:center!important}
+html body #listar #tabela_wrapper .dataTables_paginate ul.pagination{display:flex!important;justify-content:center;align-items:center;gap:6px;flex-wrap:wrap;margin:0!important}
+html body #listar #tabela_wrapper .dataTables_paginate li.page-item{background:transparent!important;border:0!important;box-shadow:none!important;padding:0!important;margin:0!important}
+html body #listar #tabela_wrapper .dataTables_paginate .page-link,html body #listar #tabela_wrapper .dataTables_paginate a.paginate_button{display:inline-flex!important;align-items:center;justify-content:center;min-width:40px;min-height:40px;padding:8px 12px!important;margin:0!important;border:1px solid #d7c5b7!important;border-radius:8px!important;background:#fff!important;color:#6c4631!important;box-shadow:none!important;text-shadow:none!important;font-weight:600;line-height:1.2!important}
+html body #listar #tabela_wrapper .dataTables_paginate .page-item.active .page-link,html body #listar #tabela_wrapper .dataTables_paginate a.paginate_button.current,html body #listar #tabela_wrapper .dataTables_paginate .page-link:hover,html body #listar #tabela_wrapper .dataTables_paginate a.paginate_button:hover{background:#914a29!important;color:#fff!important;border-color:#914a29!important}
+html body #listar #tabela_wrapper .dataTables_paginate .page-item.disabled .page-link,html body #listar #tabela_wrapper .dataTables_paginate a.paginate_button.disabled{background:#f4eee8!important;color:#806e63!important;border-color:#e5d4c6!important;opacity:1!important;cursor:default!important;pointer-events:none}
+html body #listar #tabela_wrapper .dataTables_paginate li.page-item:before,html body #listar #tabela_wrapper .dataTables_paginate li.page-item:after{content:none!important}
+html body #listar.bc-tutorial-cards #tabela tbody td:last-child::before{content:none!important}
+html body #listar #tabela tbody td:last-child a.btn-primary-light{--bc-action:#17658a;--bc-bg:#e1f2fa}
+html body #listar #tabela thead th{background:#f4e9df!important;color:#63351e!important}
+html body #listar #tabela .bc-no-attachment{display:inline-flex;align-items:center;gap:6px;padding:6px 9px;border:1px solid #e5d4c6;border-radius:8px;background:#f8efe6;color:#795038;font-size:12px}
+html body #listar #tabela tbody td:last-child a.btn i{color:inherit!important}
+html body #listar #tabela tbody td:last-child a.btn-primary-light{--bc-action:#17658a;--bc-bg:#e1f2fa}
+html body #listar #tabela tbody td:last-child a.btn-primary{--bc-action:#17658a;--bc-bg:#e1f2fa}
+html body #listar #tabela tbody td:last-child a.btn-danger{--bc-action:#b42332;--bc-bg:#fde5e7}
+html body #listar #tabela tbody td:last-child a.btn-success{--bc-action:#13745a;--bc-bg:#def3e9}
+html body #listar.bc-tutorial-cards #tabela tbody tr,html body #listar.bc-tutorial-cards #tabela tbody td{overflow:visible!important}
+html body #listar.bc-tutorial-cards #tabela tbody td .badge{width:auto!important;padding:6px 10px}
+html body #listar #tabela tbody td:last-child a.btn-info:not(.btn-info-light){--bc-action:#795038;--bc-bg:#fff0df}
+html body #listar.bc-tutorial-cards #tabela tbody td:last-child{border:0!important;text-align:left;margin:0}
+html body #listar .tutorial-icon-wrapper{background:#f4e9df!important;color:#914a29!important;flex-shrink:0}
+html body #listar .tutorial-icon{color:#914a29!important}
+html body #listar .tutorial-title{color:#4e2d20!important;font-weight:600}
+html body #listar.bc-tutorial-cards .tutorial-row:hover{transform:none!important;background:#fff!important}
+html body #listar.bc-tutorial-cards .tutorial-row:hover .tutorial-icon-wrapper{background:#f4e9df!important}
+html body #listar.bc-tutorial-cards .tutorial-row td>div{flex-direction:column;align-items:flex-start!important;gap:12px}
+html body #listar.bc-tutorial-cards .tutorial-icon-wrapper{width:100%;height:90px;border-radius:10px}
+html body #listar.bc-tutorial-cards .tutorial-icon{font-size:32px}
+html body #listar .bc-watch{display:block;font-size:12px;color:#914a29;margin-top:6px}
+html body #listar #tabela_filter input{border:1px solid #d7c5b7!important;border-radius:8px!important;background:#fff!important;color:#4e2d20!important}
+html body #modalVideo .modal-header{background:#914a29;color:#fff;border:0}
+html body #modalVideo .modal-title{color:#fff}
+</style>
+<div id="bc-tutorial-list-view"><span>Visualização:</span><button type="button" data-view="cards" aria-pressed="true"><i class="fe fe-grid"></i> Cartões</button><button type="button" data-view="table" aria-pressed="false"><i class="fe fe-list"></i> Tabela</button></div>
+<script>
+(function(){
+ var root=document.getElementById('listar'), bar=document.getElementById('bc-tutorial-list-view');
+ if(!root||!bar)return;
+ 
+ function apply(mode){root.dataset.tutorialView=mode;root.classList.toggle('bc-tutorial-cards',mode==='cards');var table=root.querySelector('#tabela');if(table)table.classList.toggle('table-hover',mode!=='cards');bar.querySelectorAll('button').forEach(function(b){b.setAttribute('aria-pressed',String(b.dataset.view===mode));});}
+ bar.addEventListener('click',function(e){var b=e.target.closest('button[data-view]');if(b){apply(b.dataset.view);if(jQuery.fn.dataTable.isDataTable('#tabela'))jQuery('#tabela').DataTable().columns.adjust();}});
+ apply(root.dataset.tutorialView||'cards');
+})();
+</script>
+<!-- Modal para visualizar vídeo -->
 <div class="modal fade video-modal" id="modalVideo" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
+            <div class="modal-header"><h5 class="modal-title" id="bc-tutorial-video-title">Tutorial</h5><button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Fechar"></button></div>
             <!-- Conteúdo do vídeo -->
             <div class="video-container">
                 <div class="ratio ratio-16x9">
@@ -283,13 +358,13 @@ $linhas = @count($res);
 <script>
     // Inicialização do DataTables com configurações responsivas
     $(document).ready(function() {
-        $('#tabela').DataTable({
+        if ($('#tabela').length) $('#tabela').DataTable({
             "language": {
                 "url": '//cdn.datatables.net/plug-ins/1.13.2/i18n/pt-BR.json'
             },
             "ordering": false,
             "stateSave": true,
-            "responsive": true,
+            "responsive": false,
             "pageLength": 10,
             "lengthMenu": [[5, 10, 25, 50, -1], [5, 10, 25, 50, "Todos"]],
             // Configuração personalizada para melhor responsividade
@@ -311,7 +386,8 @@ $linhas = @count($res);
         });
         
         // Ajustar DataTables quando a janela for redimensionada
-        $(window).resize(function() {
+        $(window).off('resize.bcTutorial').on('resize.bcTutorial',function() {
+            if (!$('#tabela').length || !$.fn.dataTable.isDataTable('#tabela')) return;
             if (window.innerWidth < 768) {
                 $('#tabela').DataTable().page.len(5).draw();
                 
@@ -373,6 +449,7 @@ $linhas = @count($res);
         }
         
         // Definir a URL do iframe
+        $('#bc-tutorial-video-title').text(titulo);
         $('#videoFrame').attr('src', embedUrl);
         
         // Mostrar o modal
@@ -387,7 +464,7 @@ $linhas = @count($res);
     // Detectar orientação do dispositivo e ajustar a visualização
     window.addEventListener('orientationchange', function() {
         setTimeout(function() {
-            $('#tabela').DataTable().columns.adjust().responsive.recalc();
+            if ($('#tabela').length && $.fn.dataTable.isDataTable('#tabela')) $('#tabela').DataTable().columns.adjust();
             
             // Reajustar o campo de busca após a mudança de orientação
             $('.dataTables_filter input').attr('placeholder', 'Digite para buscar...');
