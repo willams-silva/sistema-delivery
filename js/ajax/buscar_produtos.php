@@ -24,7 +24,7 @@ echo <<<HTML
 #area_busca .bora-search-grid .valor-item-maior{font-size:18px;font-weight:700;color:#a85b24}
 #area_busca .bora-search-content{display:flex;align-items:center;gap:12px;width:100%}
 #area_busca .bora-search-text{flex:1;min-width:0}
-#area_busca .bora-search-promo{position:absolute;top:8px;right:8px;background:#a85b24;color:#fff;padding:5px 10px;border-radius:12px;font-size:14px;font-weight:700;z-index:1;line-height:1.2}#area_busca .bora-search-promo.ocultar{display:none!important}#area_busca .bora-search-photo{width:96px;height:96px;flex:0 0 96px;object-fit:cover;border-radius:12px;background:#f3e5d5}
+#area_busca .bora-search-promo{position:absolute;top:8px;right:8px;background:#a85b24;color:#fff;padding:5px 10px;border-radius:12px;font-size:14px;font-weight:700;z-index:1;line-height:1.2}#area_busca .bora-search-promo.ocultar{display:none!important}@media(min-width:768px){#area_busca .bora-search-grid li:has(.bora-search-promo:not(.ocultar)) .bora-search-photo{margin-top:28px}#area_busca .bora-search-promo{top:10px;right:14px;font-size:12px;padding:4px 8px;border-radius:8px}}#area_busca .bora-search-photo{width:96px;height:96px;flex:0 0 96px;object-fit:cover;border-radius:12px;background:#f3e5d5}
 @media(max-width:600px){#area_busca .bora-search-grid{grid-template-columns:1fr;padding:0 12px}#area_busca .bora-search-photo{width:80px;height:80px;flex-basis:80px}}
 </style>
 <ol class="bora-search-grid">
