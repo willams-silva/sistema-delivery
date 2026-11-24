@@ -266,6 +266,14 @@ body.cardapio-unificado .rodape { background:#fffdf9 !important; border-top:1px 
 
 <?php if ($url_site == 'rainhadastapiocas') { ?>
 <style>
+/* Recorte circular da marca: elimina os cantos pretos sem alterar o arquivo original. */
+.main-container > .navbar .navbar-brand .logo-loja-topo {
+  aspect-ratio: 1 / 1;
+  object-fit: contain;
+  border-radius: 50% !important;
+  clip-path: circle(49% at 50% 50%);
+}
+
 /* Menu de atalhos: impedir que os títulos ultrapassem os cards no celular. */
 @media (max-width: 767px) {
   .container-xxl .tab-class > .nav-pills {
