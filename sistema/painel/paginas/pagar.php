@@ -78,7 +78,7 @@ html body .ux-finance-list #tabela td:last-child a .text-primary,html body .ux-f
   <h5 class="mb-3"><i class="fe fe-bell me-2"></i>Alertas de vencimento</h5>
   <div class="d-flex align-items-end gap-2 flex-wrap mb-3">
   <div><label for="dias-alerta-pagar" class="form-label mb-1">Avisar com antecedência de</label><select class="form-select form-select-sm" id="dias-alerta-pagar"><?php foreach ([1,3,5,7,10,15,20,30] as $opcao): ?><option value="<?php echo $opcao; ?>" <?php echo $diasAlerta===$opcao?'selected':''; ?>><?php echo $opcao; ?> dias</option><?php endforeach; ?></select></div>
-  <button type="button" class="btn btn-outline-primary btn-sm" id="salvar-dias-alerta">Salvar configuração</button>
+  <button type="button" class="btn btn-primary btn-sm" id="salvar-dias-alerta">Salvar configuração</button>
   <span id="retorno-dias-alerta" role="status" class="small"></span>
  </div>
  <script>
@@ -142,7 +142,7 @@ html body .ux-finance-list #tabela td:last-child a .text-primary,html body .ux-f
  <div class="card-body">
   <div class="d-flex justify-content-between align-items-center flex-wrap gap-2">
    <h5 class="mb-0"><i class="fe fe-shield me-2"></i>Histórico de auditoria</h5>
-   <button class="btn btn-outline-primary btn-sm" type="button" id="auditoria-pagar-toggle" aria-expanded="false" aria-controls="auditoria-pagar-conteudo">Consultar histórico</button>
+   <button class="btn btn-primary btn-sm" type="button" id="auditoria-pagar-toggle" aria-expanded="false" aria-controls="auditoria-pagar-conteudo">Consultar histórico</button>
   </div>
   <div id="auditoria-pagar-conteudo" style="display:none" class="mt-3">
    <div class="row g-2 mb-3">
