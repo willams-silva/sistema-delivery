@@ -225,6 +225,36 @@ if (@$_SESSION['nome_mesa'] != '') {
 	</div>
 </div>
 
+<style>
+li.list-group-item:has(img[src*="media-delivery.php?tipo=produtos"]){border:1px solid #efd5bb!important;border-radius:16px!important;margin-bottom:12px;padding:16px!important;background:#fffdf9;box-shadow:0 3px 12px #512c240b!important}
+li.list-group-item:has(input[type=checkbox]:checked):has(img[src*="media-delivery.php?tipo=produtos"]){border-color:#a85b24!important;background:#fff3e5}
+li.list-group-item .row:has(img[src*="media-delivery.php?tipo=produtos"]){display:flex;flex-wrap:nowrap;gap:12px;margin:0!important;width:100%!important}
+li.list-group-item .row:has(img[src*="media-delivery.php?tipo=produtos"])>.col-10{flex:1;min-width:0;width:auto;padding:0}
+li.list-group-item .row:has(img[src*="media-delivery.php?tipo=produtos"])>.col-2{flex:0 0 140px;width:140px;padding:0;margin-top:0!important}
+li.list-group-item img[src*="media-delivery.php?tipo=produtos"]{width:140px!important;height:140px!important;max-width:100%;object-fit:cover!important;border-radius:12px!important;cursor:zoom-in}
+li.list-group-item:has(img[src*="media-delivery.php?tipo=produtos"]) .titulo-item,li.list-group-item:has(img[src*="media-delivery.php?tipo=produtos"]) .titulo-item small{font-size:18px!important;color:#512c24;font-weight:700}
+li.list-group-item:has(img[src*="media-delivery.php?tipo=produtos"]) .subtitulo-item-menor{font-size:14px!important;line-height:1.5}
+li.list-group-item:has(img[src*="media-delivery.php?tipo=produtos"]) .valor-item-maior,li.list-group-item:has(img[src*="media-delivery.php?tipo=produtos"]) .valor-item-maior span{font-size:17px!important;font-weight:700}
+li.list-group-item .valor-item-maior del{font-size:13px!important}
+.bora-photo-dialog{border:0;border-radius:18px;padding:12px;background:#fffaf3;max-width:94vw;max-height:90vh;color:#512c24}
+.bora-photo-dialog::backdrop{background:#24140ecc}
+.bora-photo-dialog img{display:block;max-width:85vw;max-height:72vh;object-fit:contain;border-radius:12px}
+.bora-photo-dialog button{display:block;margin:8px 0 8px auto;border:0;background:#a85b24;color:white;border-radius:20px;padding:8px 16px}
+@media(max-width:600px){li.list-group-item .row:has(img[src*="media-delivery.php?tipo=produtos"])>.col-2{flex-basis:100px;width:100px}li.list-group-item img[src*="media-delivery.php?tipo=produtos"]{width:100px!important;height:100px!important}li.list-group-item:has(img[src*="media-delivery.php?tipo=produtos"]){padding:12px!important}}
+</style>
+<dialog class="bora-photo-dialog" id="bora-photo-dialog" aria-label="Foto do produto"><button type="button" aria-label="Fechar foto">Fechar ×</button><img alt="Foto ampliada do produto"></dialog>
+<script>
+(function(){
+const d=document.getElementById('bora-photo-dialog');if(!d||!d.showModal)return;
+const selector='li.list-group-item img[src*="media-delivery.php?tipo=produtos"]';
+function open(e){const img=e.target.closest(selector);if(!img)return;e.preventDefault();e.stopImmediatePropagation();d.querySelector('img').src=img.currentSrc||img.src;d.showModal();}
+document.addEventListener('click',open,true);
+document.querySelectorAll(selector).forEach(img=>{img.tabIndex=0;img.setAttribute('role','button');img.setAttribute('aria-label','Ampliar foto do produto');img.title='Ampliar foto';});
+document.addEventListener('keydown',e=>{if((e.key==='Enter'||e.key===' ')&&e.target.matches(selector))open(e);},true);
+d.querySelector('button').addEventListener('click',()=>d.close());d.addEventListener('click',e=>{if(e.target===d)d.close();});
+})();
+</script>
+
 </body>
 
 </html>
