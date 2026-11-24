@@ -1363,32 +1363,23 @@ if ($id_mesa == "" && $sessão_balcao == "") {
 
 
 <?php if ($id_mesa == "" and $sessão_balcao == "") { ?>
-  <footer class="rodape">
-    <div class="row">
-      <div class="col-md-6">
-        <?php if ($endereco_sistema == "") { ?>
-          <span class="ocultar-mobile"><?php echo $nome_sistema ?></span>
-        <?php } else { ?>
-          <span><?php echo $endereco_sistema ?></span>
-        <?php } ?>
-      </div>
-      <div class="col-md-6">
-        <span style="margin-left: 15px"><a target="_blank"
-            href="http://api.whatsapp.com/send?1=pt_BR&phone=<?php echo $tel_whats ?>" class="link-neutro"><i
-              class="bi bi-whatsapp text-success"></i> <?php echo $telefone_sistema ?></a></span>
-        /
-        <span style="margin-left: 15px"><a target="_blank" href="<?php echo $url_instagram ?>"
-            class="link-neutro"><i class="bi bi-instagram" style="color:#d11144"></i> @Instagram</a></span>
-
-
-        <span class="" style="margin-left: 15px"> / <a href="sistema" class="link-neutro "><i
-              class="bi bi-lock" style="color:red"></i> Painel Sistema</a></span>
-      </div>
-
-
-
-
+  <footer class="rodape bora-contact-footer">
+    <div class="bora-footer-address"><?php echo htmlspecialchars($endereco_sistema ?: $nome_sistema, ENT_QUOTES, 'UTF-8') ?></div>
+    <nav class="bora-footer-links" aria-label="Contatos e acesso administrativo">
+      <a target="_blank" rel="noopener noreferrer" href="https://api.whatsapp.com/send?1=pt_BR&amp;phone=<?php echo htmlspecialchars($tel_whats, ENT_QUOTES, 'UTF-8') ?>" aria-label="WhatsApp" title="WhatsApp"><i class="bi bi-whatsapp" style="color:#168342" aria-hidden="true"></i><span>WhatsApp</span></a>
+      <a target="_blank" rel="noopener noreferrer" href="<?php echo htmlspecialchars($url_instagram, ENT_QUOTES, 'UTF-8') ?>" aria-label="Instagram" title="Instagram"><i class="bi bi-instagram" style="color:#d11144" aria-hidden="true"></i><span>Instagram</span></a>
+      <a href="sistema" aria-label="Painel administrativo" title="Painel administrativo"><i class="bi bi-lock" aria-hidden="true"></i><span>Painel</span></a>
+    </nav>
   </footer>
+<style>
+footer.rodape.bora-contact-footer{display:flex!important;align-items:center;justify-content:center;flex-wrap:wrap;gap:6px 24px;height:auto!important;padding:8px 12px!important;background:#fffaf4;color:#512c24;border-top:1px solid #efd5bb}
+.bora-footer-address{text-align:center;font-size:12px;line-height:1.35}
+.bora-footer-links{display:flex;justify-content:center;align-items:center;gap:8px}
+.bora-footer-links a{display:inline-flex;align-items:center;justify-content:center;gap:7px;min-height:36px;padding:5px 13px;border:1px solid #dcb897;border-radius:24px;background:#fffdf9;color:#512c24!important;text-decoration:none!important;font-size:13px;font-weight:600;transition:background .18s,border-color .18s}
+.bora-footer-links a i{font-size:19px;line-height:1}
+.bora-footer-links a:hover,.bora-footer-links a:focus-visible{background:#f5e3d0;border-color:#a85b24}
+@media(max-width:767px){footer.rodape.bora-contact-footer{flex-direction:column;gap:5px;padding:6px 10px!important}.bora-footer-links a{width:44px;height:44px;padding:0}.bora-footer-links a span{display:none}.bora-footer-links a i{font-size:23px}.bora-footer-links{gap:12px}}
+</style>
 
 <?php 
 
