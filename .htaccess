@@ -1,4 +1,8 @@
 RewriteEngine On
+# Persistent delivery media; preserve existing URLs in storefront and admin.
+RewriteRule ^sistema/painel/images/(produtos|categorias)/([^/]+\.(?:jpe?g|png|gif|webp|avif))$ media-delivery.php?tipo=$1&arquivo=$2 [B,L,NC]
+RewriteRule ^sistema/painel/images/banner_rotativo/([^/]+\.(?:jpe?g|png|gif|webp|avif))$ media-delivery.php?tipo=banners&arquivo=$1 [B,L,NC]
+RewriteRule ^sistema/img/([^/]+\.(?:jpe?g|png|gif|webp|avif))$ media-delivery.php?tipo=logos&arquivo=$1 [B,L,NC]
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME} !-d
 
