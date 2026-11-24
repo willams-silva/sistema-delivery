@@ -95,7 +95,7 @@ html body .bc-gc .btn-outline-primary[aria-expanded="true"]{background:#f4e9df!i
 </style>
 <div class="bc-gc">
 <div class="card mb-3" style="margin-top:16px"><div class="card-body d-flex align-items-center flex-wrap gap-3"><h2 class="mb-0" style="font-size:21px;font-weight:600;color:#4e2d20"><i class="fa-solid fa-cash-register me-2"></i>Gestão de Caixas</h2><span style="font-size:12px;color:#795038">Acompanhamento gerencial — sem alterar os caixas operacionais.</span></div></div>
-<div class="d-flex justify-content-end mb-3">
+<div class="d-flex justify-content-start mb-3">
   <a href="caixas" class="btn btn-primary"><i class="fa fa-briefcase me-1"></i> Abrir menu Caixas</a>
 </div>
 <form method="get" action="index.php" class="card card-body mb-3">
