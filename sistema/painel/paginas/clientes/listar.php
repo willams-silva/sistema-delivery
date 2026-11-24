@@ -39,7 +39,36 @@ if ($mostrar_registros == 'Não') {
 }
 
 $res = $query->fetchAll(PDO::FETCH_ASSOC);
-$linhas = @count($res);
+$linhas = @count($res); 
+echo <<<'BCVIEW'
+<style>
+#listar #bc-client-list-view{display:flex!important;align-items:center;gap:8px;flex-wrap:wrap;margin:0 0 16px;color:#4e2d20;font-weight:600}
+#listar #bc-client-list-view button{border:1px solid #d7c5b7!important;border-radius:9px;background:#fff!important;color:#6c4631!important;padding:9px 14px;font-weight:600}
+#listar #bc-client-list-view button[aria-pressed=true]{background:#914a29!important;color:#fff!important}
+html body #listar.bc-client-cards #tabela{display:block!important;width:100%!important;border:0!important}
+html body #listar.bc-client-cards #tabela thead{display:none!important}
+html body #listar.bc-client-cards #tabela tbody{display:grid!important;grid-template-columns:repeat(auto-fill,minmax(min(100%,270px),1fr));gap:16px;padding:12px 0}
+html body #listar.bc-client-cards #tabela tbody tr:not(.child){display:flex!important;flex-direction:column;min-width:0;border:1px solid #e5d4c6;border-radius:14px;padding:16px;background:#fff}
+html body #listar.bc-client-cards #tabela tbody td{display:block!important;width:auto!important;border:0!important;white-space:normal!important;overflow-wrap:anywhere;padding:7px 0!important}
+#listar.bc-client-cards #tabela tbody td:nth-child(2){font-weight:700;color:#63351e}
+#listar.bc-client-cards #tabela tbody td:nth-child(3)::before{content:'Telefone: '}
+#listar.bc-client-cards #tabela tbody td:nth-child(4)::before{content:'E-mail: '}
+#listar.bc-client-cards #tabela tbody td:last-child{margin-top:auto;border-top:1px solid #eaded4!important;text-align:center}
+#listar.bc-client-cards #tabela tbody tr.table-danger{border-top:4px solid #b42332!important}
+</style>
+<div id="bc-client-list-view"><span>Visualização:</span><button type="button" data-view="cards" aria-pressed="true"><i class="fe fe-grid"></i> Cartões</button><button type="button" data-view="table" aria-pressed="false"><i class="fe fe-list"></i> Tabela</button></div>
+<script>
+(function(){
+ var root=document.getElementById('listar'), bar=document.getElementById('bc-client-list-view');
+ if(!root||!bar)return;
+ var old=document.getElementById('bc-client-view');if(old)old.style.display='none';
+ function apply(mode){root.dataset.clientView=mode;root.classList.toggle('bc-client-cards',mode==='cards');bar.querySelectorAll('button').forEach(function(b){b.setAttribute('aria-pressed',String(b.dataset.view===mode));});}
+ bar.addEventListener('click',function(e){var b=e.target.closest('button[data-view]');if(b){apply(b.dataset.view);if(jQuery.fn.dataTable.isDataTable('#tabela'))jQuery('#tabela').DataTable().columns.adjust();}});
+ apply(root.dataset.clientView||'cards');
+})();
+</script>
+BCVIEW;
+
 if ($linhas > 0) {
 	echo <<<HTML
 <small>
@@ -204,6 +233,7 @@ HTML;
 				//"url" : '//cdn.datatables.net/plug-ins/1.13.2/i18n/pt-BR.json'
 			},
 			"ordering": false,
+            "responsive": false,
 			"stateSave": true
 		});
 	});
