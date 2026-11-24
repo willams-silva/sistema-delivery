@@ -10,14 +10,41 @@ if ($_SERVER['REQUEST_METHOD']==='POST') {
   if (!hash_equals($_SESSION['csrf_combos'],(string)($_POST['csrf']??''))) throw new RuntimeException('Sessão expirada. Atualize a página.');
   $acao=(string)($_POST['acao']??'');
   $pdo->beginTransaction();
-  if ($acao==='config') {
+  $configAntes=0;
+  if (in_array($acao,['item','editar_grupo','excluir_grupo'],true)){
+   $q=$pdo->prepare('SELECT combo_configuracao_id FROM combo_grupos WHERE id=? AND empresa=?');
+   $q->execute([(int)($_POST[$acao==='item'?'grupo':'id']??0),$empresa]);$configAntes=(int)$q->fetchColumn();
+  } elseif(in_array($acao,['editar_item','excluir_item'],true)){
+   $q=$pdo->prepare('SELECT g.combo_configuracao_id FROM combo_grupo_produtos i JOIN combo_grupos g ON g.id=i.combo_grupo_id AND g.empresa=i.empresa WHERE i.id=? AND i.empresa=?');
+   $q->execute([(int)($_POST['id']??0),$empresa]);$configAntes=(int)$q->fetchColumn();
+  }
+  if ($acao==='ativar' || $acao==='desativar') {
+   $id=(int)($_POST['id']??0);
+   $q=$pdo->prepare("SELECT c.*,p.ativo AS produto_ativo,p.delivery AS produto_delivery,p.combo AS produto_combo FROM combo_configuracoes c JOIN produtos p ON p.id=c.produto_combo_id AND p.empresa=c.empresa WHERE c.id=? AND c.empresa=? FOR UPDATE");
+   $q->execute([$id,$empresa]);$c=$q->fetch(PDO::FETCH_ASSOC);
+   if (!$c) throw new RuntimeException('Combo não encontrado.');
+   if ($acao==='ativar') {
+    if ($c['produto_ativo']!=='Sim' || $c['produto_delivery']!=='Sim' || $c['produto_combo']!=='Sim') throw new RuntimeException('O produto principal precisa estar ativo, marcado como combo e disponível no delivery.');
+    $q=$pdo->prepare('SELECT * FROM combo_grupos WHERE combo_configuracao_id=? AND empresa=?');
+    $q->execute([$id,$empresa]);$gs=$q->fetchAll(PDO::FETCH_ASSOC);
+    if (!$gs) throw new RuntimeException('Cadastre pelo menos um grupo.');
+    foreach($gs as $g){
+     $q=$pdo->prepare("SELECT COUNT(*) FROM combo_grupo_produtos i JOIN produtos p ON p.id=i.produto_id AND p.empresa=i.empresa WHERE i.combo_grupo_id=? AND i.empresa=? AND p.ativo='Sim' AND COALESCE(p.combo,'Não')<>'Sim' AND i.acrescimo>=0");
+     $q->execute([$g['id'],$empresa]);$n=(int)$q->fetchColumn();
+     if ((int)$g['minimo']<0 || (int)$g['maximo']<1 || (int)$g['maximo']>20 || (int)$g['minimo']>(int)$g['maximo'] || $n<(int)$g['maximo']) throw new RuntimeException('Revise os limites e produtos ativos do grupo '.$g['nome'].'.');
+     if ($c['tipo']==='fixo' && ((int)$g['minimo']!==$n || (int)$g['maximo']!==$n)) throw new RuntimeException('No combo fixo, mínimo e máximo devem corresponder ao número de produtos do grupo '.$g['nome'].'.');
+    }
+   }
+   $q=$pdo->prepare('UPDATE combo_configuracoes SET ativo=? WHERE id=? AND empresa=?');
+   $q->execute([$acao==='ativar'?'Sim':'Não',$id,$empresa]);
+  } elseif ($acao==='config') {
    $produto=(int)($_POST['produto_combo_id']??0);
    $q=$pdo->prepare("SELECT id FROM produtos WHERE id=? AND empresa=? AND combo='Sim'");
    $q->execute([$produto,$empresa]);
    if (!$q->fetchColumn()) throw new RuntimeException('Selecione um produto marcado como Combo.');
    $tipo=(string)($_POST['tipo']??'fixo');
    if (!in_array($tipo,['fixo','personalizavel'],true)) throw new RuntimeException('Tipo inválido.');
-   $q=$pdo->prepare("INSERT INTO combo_configuracoes (empresa,produto_combo_id,tipo,ativo) VALUES (?,?,?,'Não') ON DUPLICATE KEY UPDATE tipo=VALUES(tipo)");
+   $q=$pdo->prepare("INSERT INTO combo_configuracoes (empresa,produto_combo_id,tipo,ativo) VALUES (?,?,?,'Não') ON DUPLICATE KEY UPDATE tipo=VALUES(tipo),ativo='Não'");
    $q->execute([$empresa,$produto,$tipo]);
   } elseif ($acao==='grupo') {
    $config=(int)($_POST['config']??0);
@@ -64,7 +91,13 @@ if ($_SERVER['REQUEST_METHOD']==='POST') {
    $q=$pdo->prepare('DELETE FROM combo_grupo_produtos WHERE id=? AND empresa=?');$q->execute([$id,$empresa]);
    if (!$q->rowCount()) throw new RuntimeException('Produto vinculado não encontrado.');
   } else throw new RuntimeException('Operação inválida.');
-  $pdo->commit();$sucesso='Configuração salva. Ainda não está disponível no cardápio.';
+  if (!in_array($acao,['ativar','desativar','config'],true)) {
+   // Invalidate only the edited configuration, requiring a fresh review.
+   if ($acao==='grupo') $configAfetado=$config;
+   else $configAfetado=$configAntes??0;
+   if ($configAfetado>0){$q=$pdo->prepare("UPDATE combo_configuracoes SET ativo='Não' WHERE id=? AND empresa=?");$q->execute([$configAfetado,$empresa]);}
+  }
+  $pdo->commit();$sucesso=$acao==='ativar'?'Configuração validada e ativada internamente. Venda personalizada ainda não liberada.':($acao==='desativar'?'Configuração desativada.':'Configuração salva. Valide novamente antes de liberar a montagem.');
  } catch (Throwable $e) {
   if ($pdo->inTransaction()) $pdo->rollBack();
   $erro=$e instanceof RuntimeException?$e->getMessage():'Não foi possível salvar. Confira se o SQL foi executado.';
@@ -84,7 +117,7 @@ try {
 <section><h2>3. Vincular produtos ao grupo</h2><form method="post"><input type="hidden" name="csrf" value="<?=h($_SESSION['csrf_combos'])?>"><input type="hidden" name="acao" value="item"><label>Grupo<select name="grupo" required><?php foreach($grupos as $g):?><option value="<?=h($g['id'])?>"><?=h($g['nome'])?> (#<?=h($g['combo_configuracao_id'])?>)</option><?php endforeach;?></select></label><label>Produto<select name="produto" required><?php foreach($produtos as $p): if($p['ativo']==='Sim'&&$p['combo']!=='Sim'):?><option value="<?=h($p['id'])?>"><?=h($p['nome'])?></option><?php endif; endforeach;?></select></label><label>Acréscimo (R$)<input name="acrescimo" value="0.00" inputmode="decimal" required></label><button>Adicionar produto</button></form></section>
 <section><h2>Configurações cadastradas</h2><?php if(!$configs):?><p>Nenhum combo configurado ainda.</p><?php endif;?>
 <?php foreach($configs as $c):?>
-<h3><?=h($c['produto_nome'])?> <small>(<?=h($c['tipo'])?> · montagem ainda não integrada)</small></h3>
+<h3><?=h($c['produto_nome'])?> <small>(<?=h($c['tipo'])?> · <?= $c['ativo']==='Sim'?'Validado internamente':'Em configuração' ?>)</small></h3>
 <?php
 $gruposCombo=array_values(array_filter($grupos,static function($g)use($c){return (int)$g['combo_configuracao_id']===(int)$c['id'];}));
 $pendencias=[];
@@ -97,6 +130,7 @@ foreach($gruposCombo as $gc){
 ?>
 <?php if($c['produto_ativo']==='Sim' && $c['produto_delivery']==='Sim'):?><p class="alert">Este produto já pode aparecer no cardápio como combo simples. A montagem personalizada ainda não funciona no checkout.</p><?php endif;?>
 <?php if($pendencias):?><div class="alert error"><strong>Pendências do cadastro:</strong><ul><?php foreach($pendencias as $pendencia):?><li><?=$pendencia?></li><?php endforeach;?></ul></div><?php else:?><p class="alert">Grupos cadastrados. Falta integrar seleção, valores e pedidos antes de liberar a montagem.</p><?php endif;?>
+<form method="post"><input type="hidden" name="csrf" value="<?=h($_SESSION['csrf_combos'])?>"><input type="hidden" name="id" value="<?=h($c['id'])?>"><input type="hidden" name="acao" value="<?=$c['ativo']==='Sim'?'desativar':'ativar'?>"><button><?=$c['ativo']==='Sim'?'Desativar configuração':'Validar e ativar configuração'?></button><small>Ativação interna; não libera venda personalizada no cardápio.</small></form>
 <?php foreach($grupos as $g): if($g['combo_configuracao_id']!=$c['id']) continue;?>
 <div class="group-box"><div class="group-head">
 <form class="inline-form" method="post"><input type="hidden" name="csrf" value="<?=h($_SESSION['csrf_combos'])?>"><input type="hidden" name="acao" value="editar_grupo"><input type="hidden" name="id" value="<?=h($g['id'])?>"><label>Nome<input name="nome" maxlength="120" value="<?=h($g['nome'])?>" required></label><label>Mínimo<input type="number" name="minimo" min="0" max="20" value="<?=h($g['minimo'])?>" required></label><label>Máximo<input type="number" name="maximo" min="1" max="20" value="<?=h($g['maximo'])?>" required></label><button>Salvar grupo</button></form>
