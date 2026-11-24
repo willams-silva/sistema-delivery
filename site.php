@@ -1661,64 +1661,19 @@ body:has(.bc-carrinho-fixo.bc-visivel){padding-bottom:85px}
 
 
 <script>
-  let deferredPrompt;
-
-  window.addEventListener('beforeinstallprompt', (e) => {
-    e.preventDefault();
-    deferredPrompt = e;
-    document.getElementById('botao-instalar').style.display = 'block';
-
-    document.getElementById('botao-instalar').addEventListener('click', async () => {
-      deferredPrompt.prompt();
-      const { outcome } = await deferredPrompt.userChoice;
-      console.log('Resultado da instalação:', outcome);
-      deferredPrompt = null;
-    });
-  });
-
-  window.addEventListener('appinstalled', () => {
-    console.log('✅ App instalado!');
-  });
+(function(){
+ let promptEvent=null;
+ const btn=document.getElementById('botao-instalar');
+ const installed=()=>window.matchMedia('(display-mode: standalone)').matches||navigator.standalone===true;
+ if(btn&&!installed())btn.style.display='inline-flex';
+ window.addEventListener('beforeinstallprompt',e=>{e.preventDefault();promptEvent=e;if(btn&&!installed())btn.style.display='inline-flex';});
+ if(btn)btn.addEventListener('click',async()=>{
+ if(promptEvent){const p=promptEvent;promptEvent=null;try{await p.prompt();await p.userChoice;}catch(e){console.warn(e);}return;}
+ alert('No Chrome, abra o menu de três pontos e escolha Instalar aplicativo ou Adicionar à tela inicial. Se a opção não aparecer, confira se o aplicativo já está instalado ou se existe uma instalação pendente.');
+ });
+ window.addEventListener('appinstalled',()=>{if(btn)btn.style.display='none';promptEvent=null;});
+ if('serviceWorker' in navigator)navigator.serviceWorker.register('/sw.js',{scope:'/'}).catch(console.error);
+})();
 </script>
-
-
-<script>
-  document.addEventListener("DOMContentLoaded", function () {
-      
-
-    // Registrar Service Worker
-    if ('serviceWorker' in navigator) {
-      navigator.serviceWorker.register('sw.js')
-        .then(reg => console.log('✅ SW registrado:', reg.scope))
-        .catch(err => console.error('❌ Erro ao registrar SW:', err));
-    }
-
-    // Gerenciar instalação do PWA
-    let deferredPrompt;
-    window.addEventListener('beforeinstallprompt', (e) => {
-      e.preventDefault();
-      deferredPrompt = e;
-      const btn = document.getElementById('botao-instalar');
-      if (btn) {
-        btn.style.display = 'block';
-
-        btn.addEventListener('click', () => {
-          btn.style.display = 'none';
-          deferredPrompt.prompt();
-          deferredPrompt.userChoice.then((result) => {
-            console.log('Resultado da instalação:', result.outcome);
-            deferredPrompt = null;
-          });
-        });
-      }
-    });
-
-    window.addEventListener('appinstalled', () => {
-      console.log('✅ App instalado!');
-    });
-  });
-</script>
-
- 
 <script src="app_assets/js/custom.js"></script>
 
