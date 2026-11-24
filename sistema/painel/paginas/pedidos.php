@@ -244,6 +244,24 @@ if (@$pausar_delivery == 'Sim') {
 #listar.bc-pedidos-cartoes .ux-orders-table tbody tr td:nth-child(8){border-top:1px solid #e2e8f0!important;padding-top:10px!important;flex-wrap:wrap;justify-content:flex-start}
 #listar.bc-pedidos-cartoes .ux-orders-table tbody tr td:nth-child(8)::before{content:"Ações";flex-basis:100%}
 @media(max-width:600px){#listar.bc-pedidos-cartoes .ux-orders-table tbody{grid-template-columns:minmax(0,1fr)}}
+
+/* Bora Comanda: compact order cards, scoped to card mode. */
+html body #listar.bc-pedidos-cartoes .ux-orders-table > tbody{display:grid!important;grid-template-columns:repeat(3,minmax(0,1fr))!important;gap:16px!important;align-items:stretch!important;width:100%!important}
+html body #listar.bc-pedidos-cartoes .ux-orders-table > tbody > tr{display:flex!important;flex-direction:column!important;width:100%!important;max-width:none!important;min-width:0!important;box-sizing:border-box!important;margin:0!important;padding:16px!important;gap:3px!important;border:1px solid #e5d4c6!important;border-top:4px solid #b77c51!important;border-radius:14px!important;box-shadow:0 4px 14px rgba(82,44,24,.08)!important}
+html body #listar.bc-pedidos-cartoes .ux-orders-table > tbody > tr > td{min-width:0!important;box-sizing:border-box!important;align-items:center!important;font-size:13px!important;padding:6px 0!important}
+html body #listar.bc-pedidos-cartoes .ux-orders-table > tbody > tr > td:first-child{display:block!important;line-height:1.7!important;border-bottom:1px solid #eaded4!important;padding-bottom:10px!important}
+html body #listar.bc-pedidos-cartoes .ux-orders-table > tbody > tr > td:first-child::before{display:none!important}
+html body #listar.bc-pedidos-cartoes .ux-orders-table > tbody > tr > td:first-child b{color:#713b23!important;font-size:15px!important}
+html body #listar.bc-pedidos-cartoes .ux-orders-table > tbody > tr > td:nth-child(2){background:#f6ece3!important;border-radius:8px!important;padding:10px!important;color:#894323!important;font-size:20px!important;font-weight:700!important;margin-top:5px!important}
+html body #listar.bc-pedidos-cartoes .ux-orders-table > tbody > tr > td:nth-child(6) a{max-width:180px!important;width:auto!important;white-space:normal!important}
+html body #listar.bc-pedidos-cartoes .ux-orders-table > tbody > tr > td:last-child{margin-top:auto!important;justify-content:center!important;gap:8px!important}
+html body #listar.bc-pedidos-cartoes .ux-orders-table > tbody > tr > td:last-child .btn{min-width:38px;min-height:38px;border-radius:9px!important;align-items:center;justify-content:center;transition:transform .2s,box-shadow .2s,filter .2s;font-size:15px!important}
+html body #listar.bc-pedidos-cartoes .ux-orders-table > tbody > tr > td:last-child .btn:not(.d-none):hover{transform:translateY(-2px);filter:brightness(.88);box-shadow:0 4px 9px #63351e30}
+html body #listar.bc-pedidos-cartoes .ux-orders-table > tbody > tr > td:last-child .btn:focus-visible{outline:2px solid #894323;outline-offset:2px}
+@media(max-width:1350px){html body #listar.bc-pedidos-cartoes .ux-orders-table > tbody{grid-template-columns:repeat(2,minmax(0,1fr))!important}}
+@media(max-width:800px){html body #listar.bc-pedidos-cartoes .ux-orders-table > tbody{grid-template-columns:minmax(0,1fr)!important}}
+@media(prefers-reduced-motion:reduce){html body #listar.bc-pedidos-cartoes .ux-orders-table > tbody > tr > td:last-child .btn{transition:none!important;transform:none!important}}
+
 </style>
 <script>
 (function(){
