@@ -38,12 +38,18 @@ if (@count($res2) > 0) {
 .bc-mesa-card{background:#fff;transition:transform .15s ease,box-shadow .15s ease}
 .bc-mesa-card:hover{transform:translateY(-2px);box-shadow:0 8px 22px rgba(0,0,0,.08)}
 .bc-mesas-controls{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin:12px 0}
-.bc-mesas-controls .btn.active{background:#ff8700;color:#fff;border-color:#ff8700}
+html body .bc-mesas-controls .bc-mesas-view-label{font-weight:600;color:#4e2d20;margin-right:4px}
+html body .bc-mesas-controls .bc-mesas-view-options{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+html body .bc-mesas-controls .bc-mesas-view-btn{border:1px solid #d7c5b7!important;border-radius:9px!important;background:#fff!important;color:#6c4631!important;padding:9px 14px;font-weight:600;transition:background .2s,color .2s}
+html body .bc-mesas-controls .bc-mesas-view-btn.active{background:#914a29!important;color:#fff!important;border-color:#914a29!important}
+html body .bc-mesas-controls .bc-mesas-view-btn:not(.active):hover{background:#f4e7dc!important}
+html body .bc-mesas-controls .bc-mesas-view-btn:focus-visible{outline:2px solid #914a29;outline-offset:2px}
 </style>
 <div class="bc-mesas-controls" aria-label="Visualização e filtros das mesas">
- <div class="btn-group" role="group" aria-label="Modo de visualização">
-  <button type="button" class="btn btn-outline-secondary active" id="bc-mesas-btn-cards" onclick="bcDefinirVisaoMesas('cards')"><i class="fa fa-th-large me-1"></i> Cartões</button>
-  <button type="button" class="btn btn-outline-secondary" id="bc-mesas-btn-table" onclick="bcDefinirVisaoMesas('table')"><i class="fa fa-list me-1"></i> Tabela</button>
+ <span class="bc-mesas-view-label">Visualização:</span>
+ <div class="bc-mesas-view-options" role="group" aria-label="Modo de visualização">
+  <button type="button" class="bc-mesas-view-btn active" aria-pressed="true" id="bc-mesas-btn-cards" onclick="bcDefinirVisaoMesas('cards')"><i class="fa fa-th-large me-1"></i> Cartões</button>
+  <button type="button" class="bc-mesas-view-btn" aria-pressed="false" id="bc-mesas-btn-table" onclick="bcDefinirVisaoMesas('table')"><i class="fa fa-list me-1"></i> Tabela</button>
  </div>
  <label for="bc-mesas-filtro" class="small mb-0">Filtrar:</label>
  <select id="bc-mesas-filtro" class="form-select form-select-sm" style="max-width:180px" onchange="bcAplicarVisaoMesas()">
@@ -145,8 +151,8 @@ if (@count($res2) > 0) {
   if(cards)cards.style.display=isCards?'':'none';
   if(table)table.style.display=isCards?'none':'';
   var btnCards=document.getElementById('bc-mesas-btn-cards'),btnTable=document.getElementById('bc-mesas-btn-table');
-  if(btnCards)btnCards.classList.toggle('active',isCards);
-  if(btnTable)btnTable.classList.toggle('active',!isCards);
+  if(btnCards){btnCards.classList.toggle('active',isCards);btnCards.setAttribute('aria-pressed',String(isCards));}
+  if(btnTable){btnTable.classList.toggle('active',!isCards);btnTable.setAttribute('aria-pressed',String(!isCards));}
   if(cards&&filtro){
    Array.prototype.forEach.call(cards.querySelectorAll('.bc-mesa-item'),function(item){
     item.style.display=(filtro.value==='todas'||item.dataset.tipo===filtro.value)?'':'none';
