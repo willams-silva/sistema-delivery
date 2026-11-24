@@ -330,6 +330,18 @@ body.selecao-cardapio { background:#fffaf5 !important; color:#503827; }
 .selecao-cardapio .btn-outline-success:hover, .selecao-cardapio .btn-outline-success:active, .selecao-cardapio .btn-outline-success:focus-visible { color:#fff !important; background:#a85b24 !important; border-color:#a85b24 !important; }
 .selecao-cardapio .item-tapioca-doce > .mt-2 > .btn-outline-success { transition:background-color .18s ease,color .18s ease,border-color .18s ease; }
 .selecao-cardapio .item-tapioca-doce > .mt-2 > .btn-outline-success:hover { color:#fff !important; background-color:#a85b24 !important; border-color:#a85b24 !important; }
+button.btn.bora-sabor-extra {
+ --bs-btn-color:#a85b24; --bs-btn-border-color:#a85b24;
+ --bs-btn-hover-color:#fff; --bs-btn-hover-bg:#a85b24; --bs-btn-hover-border-color:#a85b24;
+ --bs-btn-active-color:#fff; --bs-btn-active-bg:#a85b24; --bs-btn-active-border-color:#a85b24;
+ --bs-btn-focus-shadow-rgb:168,91,36;
+ color:#a85b24 !important; background:#fff !important; border-color:#a85b24 !important;
+}
+button.btn.bora-sabor-extra:hover, button.btn.bora-sabor-extra:active, button.btn.bora-sabor-extra:focus, button.btn.bora-sabor-extra:focus-visible {
+ color:#fff !important; background:#a85b24 !important; border-color:#a85b24 !important;
+ box-shadow:none !important;
+}
+button.btn.bora-sabor-extra:focus-visible { outline:2px solid #a85b24; outline-offset:3px; }
 .selecao-cardapio .form-check-input:checked { background-color:#a85b24; border-color:#a85b24; }
 .selecao-cardapio textarea,.selecao-cardapio .form-control { border:1px solid #ddc4ad; border-radius:11px; background:#fffdfb; color:#503827; }
 .selecao-cardapio textarea:focus,.selecao-cardapio .form-control:focus { border-color:#a85b24; box-shadow:0 0 0 .2rem rgba(168,91,36,.12); }
@@ -592,7 +604,7 @@ body.selecao-cardapio { background:#fffaf5 !important; color:#503827; }
 									if (!$itens_grupo) continue;
 									$rotulo_grupo = ['adicional'=>'Adicionais', 'opcional'=>'Opcionais · retirar sem custo', 'proteina'=>'Proteínas'][$tipo_grupo];
 									$chave_grupo = $tipo_grupo . '-' . (int)$id_produto; ?>
-									<button type="button" class="btn btn-sm btn-outline-success mb-1 me-1" onclick="toggleAdicionaisSabor('<?php echo $id_produto ?>','<?php echo $tipo_grupo ?>')">＋ <?php echo $rotulo_grupo ?></button>
+									<button type="button" class="btn btn-sm btn-outline-success bora-sabor-extra mb-1 me-1" onclick="toggleAdicionaisSabor('<?php echo $id_produto ?>','<?php echo $tipo_grupo ?>')">＋ <?php echo $rotulo_grupo ?></button>
 									<div id="adicionais-sabor-<?php echo $chave_grupo ?>" style="display:none;margin-top:8px;padding:10px;background:#fff8e8;border-radius:8px;">
 										<?php foreach ($itens_grupo as $adc_sabor) {
 											$id_adc_sabor = (int)$adc_sabor['id'];
