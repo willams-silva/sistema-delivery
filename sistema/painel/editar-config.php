@@ -237,7 +237,10 @@ if(@$_FILES['foto-painel']['name'] != ""){
 	$ext = pathinfo(@$_FILES['foto-painel']['name'], PATHINFO_EXTENSION);   
 
 	if($ext == 'png' || $ext == 'PNG'){ 	
-		if (!is_dir('../img') || !is_writable('../img') || !move_uploaded_file($_FILES['foto-painel']['tmp_name'], '../img/'.$logo_painel)) {
+		if ($_FILES['foto-painel']['error'] !== UPLOAD_ERR_OK || (@getimagesize($_FILES['foto-painel']['tmp_name'])['mime'] ?? '') !== 'image/png') {
+            echo 'Envie uma imagem PNG válida para o painel.'; exit();
+        }
+        if (!is_dir($logoDir) || !is_writable($logoDir) || !move_uploaded_file($_FILES['foto-painel']['tmp_name'], $logoDir.'/'.$logo_painel)) {
             echo 'Não foi possível gravar a imagem (foto-painel). Verifique a pasta de imagens na hospedagem.';
             exit();
         }
