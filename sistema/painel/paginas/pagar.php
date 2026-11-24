@@ -53,6 +53,26 @@ try {
     error_log('Resumo de vencimentos pagar: '.$e->getMessage());
 }
 ?>
+<style>
+html body :is(#alertas-vencimentos-pagar,#auditoria-pagar,.ux-finance-page .card,.ux-finance-list,.bc-pay-heading){background:#fff!important;border-color:#e5d4c6!important;border-radius:14px!important;color:#4e2d20;box-shadow:0 3px 12px rgba(78,45,32,.06)}
+html body :is(#alertas-vencimentos-pagar,#auditoria-pagar) h5{color:#4e2d20!important;font-weight:700}
+html body #alertas-vencimentos-pagar [data-filtro-vencimento]{background:#fcf8f4!important;border-color:#e5d4c6!important;border-radius:12px!important}
+html body #alertas-vencimentos-pagar .bg-info{background:#914a29!important;color:#fff!important}
+html body :is(#alertas-vencimentos-pagar,#auditoria-pagar,.ux-finance-page,.ux-finance-list,.ux-finance-modal) .btn-primary{background:#914a29!important;border-color:#914a29!important;color:#fff!important;border-radius:9px!important}
+html body :is(#alertas-vencimentos-pagar,#auditoria-pagar,.ux-finance-page,.ux-finance-list,.ux-finance-modal) .btn-outline-primary{background:#fff!important;border-color:#d7c5b7!important;color:#63351e!important;border-radius:9px!important}
+html body :is(#alertas-vencimentos-pagar,#auditoria-pagar,.ux-finance-page,.ux-finance-list,.ux-finance-modal) :is(.form-control,.form-control2,.form-select,.select2-selection,input[type=search]){background:#fff!important;border:1px solid #d7c5b7!important;color:#4e2d20!important;border-radius:9px!important}
+html body :is(#auditoria-pagar,.ux-finance-list) table thead th{background:#f4e9df!important;color:#63351e!important}
+html body :is(#auditoria-pagar,.ux-finance-list) table :is(td,th){border-color:#eaded4!important}
+html body .ux-finance-page .card-header{background:#f4e9df!important;color:#63351e!important;border-color:#e5d4c6!important}
+html body .ux-finance-modal .modal-header{background:#914a29!important;color:#fff!important}
+html body .ux-finance-modal .modal-header :is(h4,h5,.modal-title){color:#fff!important}
+html body .ux-finance-modal .modal-content{background:#fff!important;border:1px solid #e5d4c6!important;border-radius:14px!important}
+html body .ux-finance-list .dataTables_paginate .page-link{background:#fff!important;border:1px solid #d7c5b7!important;color:#63351e!important;border-radius:8px!important;margin:2px}
+html body .ux-finance-list .dataTables_paginate .active .page-link{background:#914a29!important;color:#fff!important;border-color:#914a29!important}
+html body .ux-finance-list .dataTables_paginate .disabled .page-link{background:#f4eee8!important;color:#806e63!important}
+html body .ux-finance-list #tabela td:last-child a .text-primary,html body .ux-finance-list #tabela td:last-child a .text-info{color:#914a29!important}
+</style>
+<div class="card mb-3 bc-pay-heading" style="margin-top:16px;border:1px solid #e5d4c6;border-radius:14px"><div class="card-body d-flex align-items-center flex-wrap gap-3"><h2 class="mb-0" style="font-size:21px;font-weight:600;color:#4e2d20"><i class="fa-solid fa-file-invoice-dollar me-2"></i>Contas a Pagar</h2><span style="font-size:12px;color:#795038">Gerencie despesas, vencimentos, pagamentos e acompanhe suas obrigações financeiras.</span></div></div>
 <section class="card mb-3" id="alertas-vencimentos-pagar">
  <div class="card-body">
   <h5 class="mb-3"><i class="fe fe-bell me-2"></i>Alertas de vencimento</h5>
