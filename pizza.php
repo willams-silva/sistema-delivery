@@ -731,9 +731,9 @@ li.list-group-item:has(img[src*="media-delivery.php?tipo=produtos"]) .titulo-ite
 li.list-group-item:has(img[src*="media-delivery.php?tipo=produtos"]) .subtitulo-item-menor{font-size:14px!important;line-height:1.5}
 li.list-group-item:has(img[src*="media-delivery.php?tipo=produtos"]) .valor-item-maior,li.list-group-item:has(img[src*="media-delivery.php?tipo=produtos"]) .valor-item-maior span{font-size:17px!important;font-weight:700}
 li.list-group-item .valor-item-maior del{font-size:13px!important}
-.bora-photo-dialog{border:0;border-radius:18px;padding:12px;background:#fffaf3;max-width:94vw;max-height:90vh;color:#512c24}
+.bora-photo-dialog{position:fixed!important;inset:0!important;margin:auto!important;width:max-content;height:max-content;overflow:auto;box-sizing:border-box;border:0;border-radius:18px;padding:12px;background:#fffaf3;max-width:94vw;max-height:90vh;color:#512c24}
 .bora-photo-dialog::backdrop{background:#24140ecc}
-.bora-photo-dialog img{display:block;max-width:85vw;max-height:72vh;object-fit:contain;border-radius:12px}
+.bora-photo-dialog img{display:block;margin:0 auto;max-height:calc(90dvh - 80px);max-width:85vw;max-height:72vh;object-fit:contain;border-radius:12px}
 .bora-photo-dialog button{display:block;margin:8px 0 8px auto;border:0;background:#a85b24;color:white;border-radius:20px;padding:8px 16px}
 @media(max-width:600px){li.list-group-item .row:has(img[src*="media-delivery.php?tipo=produtos"])>.col-2{flex-basis:100px;width:100px}li.list-group-item img[src*="media-delivery.php?tipo=produtos"]{width:100px!important;height:100px!important}li.list-group-item:has(img[src*="media-delivery.php?tipo=produtos"]){padding:12px!important}}
 </style>
