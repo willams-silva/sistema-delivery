@@ -40,6 +40,17 @@ if (@$formas_pgto == 'ocultar') {
 </div>
 
 
+<style>
+html body #modalForm.ux-admin-register-modal .modal-header{background:#914a29!important;color:#fff!important;border-color:#e5d4c6!important}
+html body #modalForm .modal-title,html body #modalForm .modal-title span,html body #modalForm .btn-close{color:#fff!important}
+html body #modalForm .modal-content{background:#fff!important;border:1px solid #e5d4c6!important;border-radius:14px!important;overflow:hidden}
+html body #modalForm .modal-footer{border-color:#e5d4c6!important}
+html body #modalForm .form-control{background:#fff!important;color:#4e2d20!important;border:1px solid #d7c5b7!important}
+html body #modalForm .form-control::placeholder{color:#927d70!important;opacity:1}
+html body #modalForm .btn-primary{background:#914a29!important;border-color:#914a29!important;color:#fff!important}
+html body #modalForm #taxa{text-align:center!important;appearance:textfield!important}
+html body #modalForm #taxa::-webkit-inner-spin-button,html body #modalForm #taxa::-webkit-outer-spin-button{-webkit-appearance:none;margin:0}
+</style>
 <!-- Modal Inserir-->
 <div class="modal fade ux-admin-register-modal" id="modalForm" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
 	<div class="modal-dialog">
