@@ -13,6 +13,27 @@ $pag = 'caixas';
 
 <style>
 html body .card.bc-cash-heading{margin-top:16px!important;border:1px solid #e2e8f0!important;border-radius:14px!important;box-shadow:0 3px 12px rgba(65,33,22,.04)!important}
+
+html body .card.bc-cash-heading{background:#fff!important;border-color:#e5d4c6!important}
+html body :is(.ux-cash-page,.ux-cash-modal,.ux-cash-list) .btn-primary{background:#914a29!important;border-color:#914a29!important;color:#fff!important;border-radius:9px!important}
+html body :is(.ux-cash-page,.ux-cash-modal,.ux-cash-list) .btn-primary:hover{background:#71391f!important}
+html body .ux-cash-modal .modal-header{background:#914a29!important;color:#fff!important}
+html body .ux-cash-modal .modal-content{background:#fff!important;border:1px solid #e5d4c6!important;border-radius:14px!important}
+html body :is(.ux-cash-page,.ux-cash-modal,.ux-cash-list) :is(.form-control,.form-select,.select2-selection,input[type="search"]){background:#fff!important;color:#4e2d20!important;border:1px solid #d7c5b7!important;border-radius:9px!important}
+html body :is(.ux-cash-page,.ux-cash-modal,.ux-cash-list) :is(.form-control,.form-select,input[type="search"]):focus{border-color:#914a29!important;box-shadow:0 0 0 3px rgba(145,74,41,.12)!important}
+html body .ux-cash-modal label,html body .ux-cash-list label{color:#795038!important}
+html body .ux-cash-modal .alert-light{background:#f8efe6!important;color:#63351e!important;border-color:#e5d4c6!important}
+html body .ux-cash-list #tabela thead th{background:#f4e9df!important;color:#63351e!important}
+html body .ux-cash-list #tabela :is(td,th){border-color:#eaded4!important}
+html body .ux-cash-list #tabela tbody tr:hover{background:#fcf8f4!important}
+html body .ux-cash-list .caixa-detail-card{background:#fcf8f4!important;border-color:#e5d4c6!important;color:#4e2d20!important}
+html body .ux-cash-list .caixa-detail-field{background:#fff!important;border-color:#e5d4c6!important}
+html body .ux-cash-list .caixa-expand-btn{background:#fff!important;border:1px solid #d7c5b7!important;color:#914a29!important}
+html body .ux-cash-list .dataTables_paginate .page-link{background:#fff!important;border:1px solid #d7c5b7!important;color:#63351e!important;border-radius:8px!important;margin:2px}
+html body .ux-cash-list .dataTables_paginate .active .page-link,html body .ux-cash-list .dataTables_paginate .page-link:hover{background:#914a29!important;color:#fff!important;border-color:#914a29!important}
+html body .ux-cash-list .dataTables_paginate .disabled .page-link{background:#f4eee8!important;color:#806e63!important}
+html body .ux-cash-list .caixa-operador-nome .text-danger{color:#13745a!important}
+html body .ux-cash-list .caixa-operador-nome .verde{color:#b42332!important}
 </style>
 <div class="card mb-3 bc-cash-heading">
  <div class="card-body d-flex align-items-center flex-wrap gap-3">
