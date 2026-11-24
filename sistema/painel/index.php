@@ -341,6 +341,10 @@ if($linhas == 0){
 .app-sidebar .main-sidebar-header .desktop-logo,.app-sidebar .main-sidebar-header .desktop-dark{width:auto!important;max-width:min(260px,90%)!important;height:65px!important;max-height:65px!important;object-fit:contain!important}
 .app-sidebar .main-sidebar-header .header-logo{max-width:100%}
 </style>
+<style>
+.app-sidebar .main-sidebar-header, .app-sidebar .main-sidebar-header .header-logo {border-color:#4d2b22!important;box-shadow:none!important}
+.app-sidebar .main-sidebar-header::before,.app-sidebar .main-sidebar-header::after{border-color:#4d2b22!important}
+</style>
 </head>
 
 <body class="ltr main-body app sidebar-mini">
