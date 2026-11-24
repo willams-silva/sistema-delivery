@@ -680,7 +680,8 @@ if ($id_mesa == "" && $sessão_balcao == "") {
     </a>
   </div>
   <?php if($id_mesa == ""){ ?>
-  <div class="text-center" style="margin:0 auto 22px;padding:0 12px">
+  <style>@media (min-width: 768px){#bora-install-mobile{display:none!important}}</style>
+  <div id="bora-install-mobile" class="text-center" style="margin:0 auto 22px;padding:0 12px">
     <button type="button" id="botao-instalar" style="display:none;position:static;margin:0 auto;padding:9px 20px;background:#fff8ef;color:#a85b24;border:1px solid #a85b24;border-radius:25px;font-weight:600;cursor:pointer"><i class="bi bi-download" aria-hidden="true"></i> Instalar App</button>
   </div>
   <?php } ?>
