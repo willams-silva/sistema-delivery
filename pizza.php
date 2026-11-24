@@ -87,6 +87,23 @@ if ($total_reg > 0) {
 	// Regra emitida na própria página para evitar cache antigo do arquivo CSS.
 	if ($eh_tapiocas_com_adicionais_por_sabor) {
 		echo '<style>
+            @media (min-width: 768px) {
+                li.item-tapioca-doce {
+                    display: flex !important;
+                    flex-direction: column !important;
+                    align-items: stretch !important;
+                }
+                li.item-tapioca-doce > .row,
+                li.item-tapioca-doce > .mt-2 {
+                    width: 100% !important;
+                    max-width: 100% !important;
+                    flex: 0 0 auto !important;
+                }
+                li.item-tapioca-doce > .mt-2 {
+                    margin-top: 8px !important;
+                    padding-left: 0 !important;
+                }
+            }
 			@media (max-width: 767px) {
 				li.item-tapioca-doce {
 					display: flex !important;
