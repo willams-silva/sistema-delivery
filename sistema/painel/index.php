@@ -391,6 +391,20 @@ html body .main-header.side-header .responsive-logo .header-logo{position:relati
 html body .main-header.side-header .responsive-logo img{position:static!important;transform:none!important}
 html body .main-header.side-header .main-header-left .logo-horizontal{display:none!important}
 }
+@media (max-width:1023px){
+html body .main-header.side-header .main-header-left{position:relative!important;display:flex!important;flex-direction:row!important;align-items:center!important;justify-content:flex-start!important;padding:0!important;margin:0!important;gap:6px!important}
+html body .main-header.side-header .main-header-left .app-sidebar__toggle{position:relative!important;left:auto!important;right:auto!important;top:auto!important;bottom:auto!important;order:0!important;flex:0 0 40px!important;width:40px!important;min-width:40px!important;margin:0!important;padding:0!important}
+html body .main-header.side-header .app-sidebar__toggle .header-icon{position:static!important;margin:0!important;transform:none!important}
+html body .main-header.side-header .main-header-left .responsive-logo.logo_painel{position:relative!important;left:auto!important;right:auto!important;top:auto!important;bottom:auto!important;order:1!important;flex:0 1 auto!important;margin:0!important;padding:0!important;transform:none!important}
+html body .main-header.side-header .responsive-logo.logo_painel .header-logo{display:flex!important;align-items:center!important;position:static!important;margin:0!important;transform:none!important}
+html body .main-header.side-header .responsive-logo.logo_painel img{margin:0!important;position:static!important;transform:none!important;max-width:90px!important}
+html body .main-header.side-header .main-header-center{display:none!important}
+html body .app-sidebar .side-menu__item{display:flex!important;align-items:center!important;gap:10px!important;padding-inline:14px!important}
+html body .app-sidebar .side-menu__item>i:first-child{flex:0 0 22px!important;width:22px!important;margin:0!important;text-align:center}
+html body .app-sidebar .side-menu__item>.side-menu__label{flex:1 1 auto!important;width:auto!important;max-width:none!important;min-width:0!important;margin:0!important;white-space:normal!important;word-break:normal!important;overflow-wrap:normal!important;font-size:14px!important;line-height:1.35!important}
+html body .app-sidebar .side-menu__item>.angle{position:static!important;flex:0 0 12px!important;margin:0!important}
+html body .app-sidebar .bc-caixa-status{display:inline-flex!important;white-space:nowrap!important;margin-left:4px!important;font-size:9px!important}
+}
 </style>
 </head>
 
@@ -417,8 +431,8 @@ html body .main-header.side-header .main-header-left .logo-horizontal{display:no
 
 						<div class="responsive-logo logo_painel">
 							<a href="index.php" class="header-logo">
-								<img src="/media-delivery.php?tipo=logos&amp;arquivo=<?php echo rawurlencode($logo_painel) ?>&amp;v=<?php echo (int)(@filemtime(dirname(__DIR__,3)."/upload_delivery/logos/".basename($logo_painel)) ?: @filemtime(__DIR__."/../img/".basename($logo_painel))) ?>" class="mobile-logo logo-1" alt="logo" style="width:90px !important; margin-left: -120px !important">
-										<img src="/media-delivery.php?tipo=logos&amp;arquivo=<?php echo rawurlencode($logo_painel) ?>&amp;v=<?php echo (int)(@filemtime(dirname(__DIR__,3)."/upload_delivery/logos/".basename($logo_painel)) ?: @filemtime(__DIR__."/../img/".basename($logo_painel))) ?>" class="mobile-logo dark-logo-1" alt="logo" style="width:40% !important; margin-left: 50px !important">
+								<img src="/media-delivery.php?tipo=logos&amp;arquivo=<?php echo rawurlencode($logo_painel) ?>&amp;v=<?php echo (int)(@filemtime(dirname(__DIR__,3)."/upload_delivery/logos/".basename($logo_painel)) ?: @filemtime(__DIR__."/../img/".basename($logo_painel))) ?>" class="mobile-logo logo-1" alt="logo" style="width:90px !important">
+										<img src="/media-delivery.php?tipo=logos&amp;arquivo=<?php echo rawurlencode($logo_painel) ?>&amp;v=<?php echo (int)(@filemtime(dirname(__DIR__,3)."/upload_delivery/logos/".basename($logo_painel)) ?: @filemtime(__DIR__."/../img/".basename($logo_painel))) ?>" class="mobile-logo dark-logo-1" alt="logo" style="width:90px !important">
 							</a>
 						</div>
 
