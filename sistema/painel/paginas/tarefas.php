@@ -10,7 +10,34 @@ if (@$tarefas == 'ocultar') {
 
 <link rel="stylesheet" type="text/css" href="css/style-calendario.css">
 
-<div class="justify-content-between mt-4">
+<style>
+html body .bc-agenda{--header-color-calendar:#63351e;--header-button-calendar:#914a29;--color-weekdays-calendar:#795038;--hover-calendar:#f4e9df;--body-color-calendar:#fff;--color-day-calendar:#fff;--box-shadow-calendar:#e5d4c6}
+.bc-agenda .left-content{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+html body .bc-agenda .btn-primary,html body #modalForm .btn-primary{background:#914a29!important;border-color:#914a29!important;color:#fff!important}
+html body .bc-agenda #container{float:none!important;width:100%!important;max-width:380px;background:#fff;border:1px solid #e5d4c6;border-radius:14px;padding:14px}
+.bc-agenda-layout{display:grid!important;grid-template-columns:minmax(240px,380px) minmax(0,1fr);gap:20px;align-items:start;width:100%}
+html body .bc-agenda #calendar,html body .bc-agenda #weekdays{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:5px}
+html body .bc-agenda #weekdays div{width:auto;text-align:center;font-size:12px}
+html body .bc-agenda .day{width:auto;height:34px;margin:0;justify-content:center;border-radius:7px;color:#4e2d20}
+html body .bc-agenda .day#currentDay{background:#914a29!important;color:#fff!important}
+html body .bc-agenda .day#diaOcupado{background:#f8d9c5;color:#63351e;font-weight:700}
+html body .bc-agenda .day#diasPassados{background:#f4f0ed;color:#806e63}
+html body .bc-agenda .botao_calendar{min-width:32px;min-height:32px;box-shadow:none}
+html body .bc-agenda .bc-agenda-summary{float:none!important;width:auto!important;margin:0!important;display:block!important}
+html body .bc-agenda-summary .card-group{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:12px;margin:0!important}
+html body .bc-agenda-summary .card{margin:0!important;border:1px solid #e5d4c6!important;box-shadow:none!important;height:auto!important;overflow:hidden}
+html body .bc-agenda-summary .card-header{background:#f4e9df!important;color:#63351e!important}
+html body .bc-agenda-summary .card-body{padding:16px!important}
+html body .bc-agenda-summary .card-text{margin:0!important}
+html body #modalForm .modal-content{width:100%!important;max-width:480px;background:#fff;border:1px solid #e5d4c6;border-radius:14px}
+html body #modalForm .modal-header{background:#914a29!important;color:#fff!important}
+html body #modalForm .modal-title{color:#fff!important}
+html body :is(.bc-agenda,#modalForm) :is(.form-control,.form-select,.select2-selection){background:#fff!important;color:#4e2d20!important;border:1px solid #d7c5b7!important;border-radius:9px!important;color-scheme:light}
+html body .bc-agenda #usuario_selecionado{max-width:100%}
+@media(max-width:767px){.bc-agenda-layout{grid-template-columns:1fr}.bc-agenda .left-content>span{max-width:100%}.bc-agenda .select2-container{max-width:100%}}
+</style>
+<div class="card mb-3" style="margin-top:16px;border:1px solid #e5d4c6;border-radius:14px"><div class="card-body d-flex align-items-center flex-wrap gap-3"><h2 class="mb-0" style="font-size:21px;font-weight:600;color:#4e2d20"><i class="fa-solid fa-calendar-days me-2"></i>Tarefas / Agenda</h2><span style="font-size:12px;color:#795038">Organize compromissos, prioridades e tarefas da equipe.</span></div></div>
+<div class="justify-content-between mt-4 bc-agenda">
 
 	<div class="left-content mt-2 mb-3">
 		<span style="margin-right: 20px;"><a class="btn ripple btn-primary text-white" onclick="inserir()" type="button"><i class="fa fa-plus" aria-hidden="true"></i> Adicionar Tarefa</a></span>
@@ -40,14 +67,14 @@ if (@$tarefas == 'ocultar') {
 
 
 
-	<div style="display: inline-block;">
+	<div class="bc-agenda-layout">
 		<div class="" id="container" style="float:left;">
 			<div id="header">
 				<div id="monthDisplay"></div>
 
 				<div>
-					<button class="botao_calendar" id="backButton"> < </button>
-							<button class="botao_calendar" id="nextButton"> > </button>
+					<button class="botao_calendar" id="backButton" aria-label="Mês anterior"><i class="fa fa-chevron-left"></i></button>
+							<button class="botao_calendar" id="nextButton" aria-label="Próximo mês"><i class="fa fa-chevron-right"></i></button>
 				</div>
 
 			</div>
@@ -70,7 +97,7 @@ if (@$tarefas == 'ocultar') {
 		</div>
 
 
-		<div class="ocultar_mobile" style="float:left;  margin-top: 25px; margin-left: 15px; width:800px">
+		<div class="bc-agenda-summary">
 
 			<div class="card-group" style="margin-bottom: -30px">
 
@@ -104,7 +131,7 @@ if (@$tarefas == 'ocultar') {
 				<div class="card text-center mb-5" style="width: 100%; margin-right: 10px; border-radius: 10px; height:110px; box-shadow: 2px 2px 2px 1px rgba(0, 0, 0, 0.1);">
 
 					<div class="card-header border-light" style="background: #189ca1; color:#FFF">
-						Pendentes Hoje
+						Pendentes na data selecionada
 
 					</div>
 					<div class="card-body">
