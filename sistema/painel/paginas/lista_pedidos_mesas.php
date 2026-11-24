@@ -33,7 +33,20 @@ $data_final_mes = $ano_atual . "-" . $mes_atual . "-" . $dia_final_mes;
 
 
 
-<div class="bs-example widget-shadow" style="padding:15px">
+<style>
+html body .ux-tableorders{background:#fff!important;border:1px solid #e5d4c6!important;border-radius:14px!important}
+html body .ux-tableorders :is(.form-control,.form-select){background:#fff!important;color:#4e2d20!important;border:1px solid #d7c5b7!important;border-radius:9px!important;color-scheme:light}
+html body .ux-tableorders .btn-outline-primary{background:#fff!important;color:#63351e!important;border-color:#d7c5b7!important}
+html body .ux-tableorders .btn-check:checked+.btn-outline-primary,html body .ux-tableorders a.btn-outline-primary{background:#914a29!important;color:#fff!important;border-color:#914a29!important}
+html body #modalDados .modal-header{background:#914a29!important;color:#fff!important}
+html body #modalDados .modal-title{color:#fff!important}
+html body #modalDados .modal-content{background:#fff!important;border:1px solid #e5d4c6!important;border-radius:14px!important;overflow:hidden}
+html body #modalDados td.bg-primary{background:#f4e9df!important;color:#63351e!important}
+html body #modalDados td{border-color:#eaded4!important}
+html body #bc-filtro-mesa option{background:#f8efe6!important;color:#4e2d20!important}
+</style>
+<div class="card mb-3" style="margin-top:16px;border:1px solid #e5d4c6;border-radius:14px"><div class="card-body d-flex align-items-center flex-wrap gap-3"><h2 class="mb-0" style="font-size:21px;font-weight:600;color:#4e2d20"><i class="fa-solid fa-list-alt me-2"></i>Lista de Pedidos das Mesas</h2><span style="font-size:12px;color:#795038">Consulte o histórico de mesas encerradas, consumo, pagamentos e comprovantes.</span></div></div>
+<div class="bs-example widget-shadow ux-tableorders" style="padding:15px">
 
 	<div class="row">
 		<div class="col-md-5" style="margin-bottom:5px;">
