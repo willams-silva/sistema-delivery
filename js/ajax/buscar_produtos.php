@@ -15,7 +15,19 @@ $buscar = $_POST['buscar'];
 echo <<<HTML
 
 
-<ol class="list-group " style="margin-top: 65px">
+<style>
+#area_busca .bora-search-grid{list-style:none;display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,340px),1fr));gap:14px;max-width:1120px;margin:42px auto 24px;padding:0 16px}
+#area_busca .bora-search-grid>a{display:block;min-width:0;text-decoration:none;color:#512c24}
+#area_busca .bora-search-grid li{background:#fffaf5;border:1px solid #efd5bb;border-radius:18px;padding:14px;box-shadow:0 5px 18px rgba(100,53,20,.08);height:100%;margin:0!important}
+#area_busca .bora-search-grid .titulo-item{font-size:18px;font-weight:700!important;color:#512c24}
+#area_busca .bora-search-grid .subtitulo-item-menor{font-size:13px!important;line-height:1.45;color:#705445;margin:5px 0 8px}
+#area_busca .bora-search-grid .valor-item-maior{font-size:18px;font-weight:700;color:#a85b24}
+#area_busca .bora-search-content{display:flex;align-items:center;gap:12px;width:100%}
+#area_busca .bora-search-text{flex:1;min-width:0}
+#area_busca .bora-search-photo{width:96px;height:96px;flex:0 0 96px;object-fit:cover;border-radius:12px;background:#f3e5d5}
+@media(max-width:600px){#area_busca .bora-search-grid{grid-template-columns:1fr;padding:0 12px}#area_busca .bora-search-photo{width:80px;height:80px;flex-basis:80px}}
+</style>
+<ol class="bora-search-grid">
 
 
 HTML;
@@ -27,20 +39,20 @@ HTML;
 			$sql = "
 			  SELECT p.*
 			    FROM produtos p
-			   WHERE p.ativo = 'Sim' and empresa = '$id_empresa' 
+			   WHERE p.ativo = 'Sim' and p.empresa = :empresa 
 			     AND (
-			       p.nome LIKE :q
+			       p.nome LIKE :q1
 			       OR p.categoria IN (
 			            SELECT c.id FROM categorias c
-			             WHERE c.ativo = 'Sim'
-			               AND (c.nome LIKE :q OR c.url LIKE :q)
+			             WHERE c.ativo = 'Sim' AND c.empresa = p.empresa
+			               AND (c.nome LIKE :q2 OR c.url LIKE :q3)
 			       )
 			     )
 			   ORDER BY p.valor_venda ASC
 			";
 
 			$stmt = $pdo->prepare($sql);
-			$stmt->execute([':q' => $like]);
+			$stmt->execute([':empresa' => $id_empresa, ':q1' => $like, ':q2' => $like, ':q3' => $like]);
 			$res = $stmt->fetchAll(PDO::FETCH_ASSOC);
 			$total_reg = count($res);
 
@@ -130,10 +142,14 @@ HTML;
 
 
 
+$foto_url = '/media-delivery.php?tipo=produtos&amp;arquivo=' . rawurlencode($foto);
+$nome = htmlspecialchars($nome, ENT_QUOTES, 'UTF-8');
+$descricao = htmlspecialchars($descricao, ENT_QUOTES, 'UTF-8');
+$link_red = htmlspecialchars($link_red, ENT_QUOTES, 'UTF-8');
 echo <<<HTML
 
 					<a href="{$link_red}" class="link-neutro">
-						<li class="list-group-item d-flex justify-content-between align-items-start mb-2" style="box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px; border-radius: 8px;">
+						<li class="list-group-item d-flex justify-content-between align-items-start mb-2" >
 
 							<img class="{$mostrar}" src="img/esgotado.png" width="65px" height="65px" style="position:absolute; right:0; top:0px">
 
@@ -150,8 +166,8 @@ HTML;
 
 echo <<<HTML
 
-							<div class="row" style="width:100%">
-								<div class="col-10">
+							<div class="bora-search-content">
+								<div class="bora-search-text">
 
 									<div class="me-auto">
 										<div class="fw-bold titulo-item" style="font-weight: 600">{$nome}</div>
@@ -187,7 +203,7 @@ HTML;
 
 													if($val_promocional != 0 and $promocao != 'Não'){
 														echo 'R$ ' . $val_promocionalF;
-														echo '  <del style="color: red">R$ ' . $valorF . ' </del';
+														echo '  <del style="color: red">R$ ' . $valorF . ' </del>';
 
 														//$valor = $val_promocional;
 													}else{
@@ -205,9 +221,7 @@ echo <<<HTML
 								</div>
 
 
-								<div class="col-2" style="margin-top: 10px;" align="right">
-									<img class="" src="sistema/painel/images/produtos/{$foto}" width="60px" height="60px">
-								</div>
+								<img class="bora-search-photo" src="{$foto_url}" alt="{$nome}" loading="lazy">
 
 
 
