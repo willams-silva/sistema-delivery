@@ -100,8 +100,8 @@ if (isset($_FILES['foto']) && $_FILES['foto']['error'] !== UPLOAD_ERR_NO_FILE) {
     $extensoes = ['jpg', 'jpeg', 'png', 'gif', 'webp'];
     $ext = strtolower(pathinfo($_FILES['foto']['name'], PATHINFO_EXTENSION));
     $info_imagem = @getimagesize($imagem_temp);
-    if (!in_array($ext, $extensoes, true) || !$info_imagem || $info_imagem[0] > 1400) {
-        echo 'Imagem inválida ou maior que 1400px de largura. Use JPG, PNG, GIF ou WEBP.';
+    if (!in_array($ext, $extensoes, true) || !$info_imagem || !in_array($info_imagem['mime'] ?? '', ['image/jpeg','image/png','image/gif','image/webp'], true) || $info_imagem[0] > 6000 || $info_imagem[1] > 6000 || $_FILES['foto']['size'] > 10 * 1024 * 1024) {
+        echo 'Imagem inválida. Use JPG, PNG, GIF ou WEBP de até 6000 x 6000 pixels e 10 MB.';
         exit();
     }
     $pasta_imagens = dirname(__DIR__, 5) . '/upload_delivery/produtos/';
