@@ -44,10 +44,34 @@ try {
     }
 } catch (Throwable $e) { error_log('Resumo contas a receber: '.$e->getMessage()); }
 ?>
+<style>
+html body :is(#alertas-vencimentos-receber,#auditoria-receber,.ux-finance-page .card,.ux-finance-list,.bc-receive-heading){background:#fff!important;border-color:#e5d4c6!important;border-radius:14px!important;color:#4e2d20;box-shadow:0 3px 12px rgba(78,45,32,.06)}
+html body :is(#alertas-vencimentos-receber,#auditoria-receber) h5{color:#4e2d20!important;font-weight:700}
+html body #alertas-vencimentos-receber [data-filtro-receber]{background:#fcf8f4!important;border-color:#e5d4c6!important;border-radius:12px!important}
+html body #alertas-vencimentos-receber .bg-info{background:#914a29!important;color:#fff!important}
+html body :is(#alertas-vencimentos-receber,#auditoria-receber,.ux-finance-page,.ux-finance-list,.ux-finance-modal) .btn-primary{background:#914a29!important;border-color:#914a29!important;color:#fff!important;border-radius:9px!important}
+html body :is(#alertas-vencimentos-receber,#auditoria-receber,.ux-finance-page,.ux-finance-list,.ux-finance-modal) .btn-outline-primary{background:#fff!important;border-color:#d7c5b7!important;color:#63351e!important;border-radius:9px!important}
+html body :is(#alertas-vencimentos-receber,#auditoria-receber,.ux-finance-page,.ux-finance-list,.ux-finance-modal) :is(.form-control,.form-control2,.form-select,.select2-selection,input[type=search]){background:#fff!important;border:1px solid #d7c5b7!important;color:#4e2d20!important;border-radius:9px!important}
+html body :is(#auditoria-receber,.ux-finance-list) table thead th{background:#f4e9df!important;color:#63351e!important}
+html body :is(#auditoria-receber,.ux-finance-list) table :is(td,th){border-color:#eaded4!important}
+html body .ux-finance-page .card-header{background:#f4e9df!important;color:#63351e!important;border-color:#e5d4c6!important}
+html body .ux-finance-modal .modal-header{background:#914a29!important;color:#fff!important}
+html body .ux-finance-modal .modal-header :is(h4,h5,.modal-title){color:#fff!important}
+html body .ux-finance-modal .modal-content{background:#fff!important;border:1px solid #e5d4c6!important;border-radius:14px!important}
+html body .ux-finance-list .dataTables_paginate .page-link{background:#fff!important;border:1px solid #d7c5b7!important;color:#63351e!important;border-radius:8px!important;margin:2px}
+html body .ux-finance-list .dataTables_paginate .active .page-link{background:#914a29!important;color:#fff!important;border-color:#914a29!important}
+html body .ux-finance-list .dataTables_paginate .disabled .page-link{background:#f4eee8!important;color:#806e63!important}
+html body .ux-finance-list #tabela td:last-child a .text-primary,html body .ux-finance-list #tabela td:last-child a .text-info{color:#914a29!important}
+html body #dias-alerta-receber{color-scheme:light!important;background-color:#fff!important;color:#4e2d20!important}
+html body #dias-alerta-receber option{background:#f8efe6!important;color:#4e2d20!important}
+html body #dias-alerta-receber option:checked{background:#914a29!important;color:#fff!important}
+html body #dias-alerta-receber:focus{border-color:#914a29!important;box-shadow:0 0 0 3px rgba(145,74,41,.12)!important}
+</style>
+<div class="card mb-3 bc-receive-heading" style="margin-top:16px;border:1px solid #e5d4c6;border-radius:14px"><div class="card-body d-flex align-items-center flex-wrap gap-3"><h2 class="mb-0" style="font-size:21px;font-weight:600;color:#4e2d20"><i class="fa-solid fa-file-invoice-dollar me-2"></i>Contas a Receber</h2><span style="font-size:12px;color:#795038">Gerencie receitas, vencimentos, recebimentos e acompanhe seus créditos.</span></div></div>
 <section class="card mb-3" id="alertas-vencimentos-receber">
  <div class="card-body">
   <h5 class="mb-3"><i class="fe fe-bell me-2"></i>Alertas de recebimentos</h5>
-  <div class="d-flex align-items-end gap-2 flex-wrap mb-3"><div><label for="dias-alerta-receber" class="form-label mb-1">Antecedência</label><select id="dias-alerta-receber" class="form-select form-select-sm"><?php foreach([1,3,5,7,10,15,20,30] as $opcao): ?><option value="<?php echo $opcao; ?>" <?php echo $diasAlertaReceber===$opcao?'selected':''; ?>><?php echo $opcao; ?> dias</option><?php endforeach; ?></select></div><button type="button" id="salvar-alerta-receber" class="btn btn-outline-primary btn-sm">Salvar configuração</button><span id="retorno-alerta-receber" role="status" class="small"></span></div>
+  <div class="d-flex align-items-end gap-2 flex-wrap mb-3"><div><label for="dias-alerta-receber" class="form-label mb-1">Antecedência</label><select id="dias-alerta-receber" class="form-select form-select-sm"><?php foreach([1,3,5,7,10,15,20,30] as $opcao): ?><option value="<?php echo $opcao; ?>" <?php echo $diasAlertaReceber===$opcao?'selected':''; ?>><?php echo $opcao; ?> dias</option><?php endforeach; ?></select></div><button type="button" id="salvar-alerta-receber" class="btn btn-primary btn-sm">Salvar configuração</button><span id="retorno-alerta-receber" role="status" class="small"></span></div>
   <div class="row g-3">
   <?php foreach ([
     ['chave'=>'vencidas','titulo'=>'Vencidas','cor'=>'danger'],
@@ -89,7 +113,7 @@ document.addEventListener('DOMContentLoaded',function(){
  <div class="card-body">
   <div class="d-flex justify-content-between align-items-center flex-wrap gap-2">
    <h5 class="mb-0"><i class="fe fe-shield me-2"></i>Histórico de auditoria</h5>
-   <button class="btn btn-outline-primary btn-sm" type="button" id="auditoria-receber-toggle" aria-expanded="false" aria-controls="auditoria-receber-conteudo">Consultar histórico</button>
+   <button class="btn btn-primary btn-sm" type="button" id="auditoria-receber-toggle" aria-expanded="false" aria-controls="auditoria-receber-conteudo">Consultar histórico</button>
   </div>
   <div id="auditoria-receber-conteudo" style="display:none" class="mt-3">
    <div class="row g-2 mb-3">
