@@ -406,6 +406,68 @@ html body .app-sidebar .side-menu__item>.angle{position:static!important;flex:0 
 html body .app-sidebar .bc-caixa-status{display:inline-flex!important;white-space:nowrap!important;margin-left:4px!important;font-size:9px!important}
 }
 </style>
+<?php if (in_array($pagina, ['pedidos','pedidos_esteiras','pedidos_mesa','pedidos_bar','pedidos_outros','novo_pedido','mesas'], true)) { ?>
+<style id="bc-mobile-order-operations">
+@media(max-width:1023px){
+html body :is(.bc-orders-heading,.bc-esteira-heading,.bc-local-heading,.bc-table-orders-heading) .card-body{padding:14px!important;gap:8px!important}
+html body :is(.bc-orders-heading,.bc-esteira-heading,.bc-local-heading,.bc-table-orders-heading) h2{font-size:19px!important;line-height:1.3}
+html body .ux-orders-statusbar{padding:12px!important;gap:8px!important}
+html body .ux-orders-filters{display:flex!important;flex-wrap:wrap!important;align-items:center;justify-content:flex-start!important;gap:6px}
+html body .ux-orders-filters :is(.btn,select){min-height:44px;max-width:100%}
+html body #bc-orders-search{max-width:100%!important;width:100%!important;margin-inline:0!important}
+html body #bc-orders-search input{min-height:44px;width:100%}
+html body .bc-orders-view-toolbar{flex-wrap:wrap!important;gap:8px!important}
+html body :is(.bc-orders-view-btn,.bc-mesas-view-btn){min-height:44px}
+html body .bc-orders-automation :is(input,select,button){min-height:44px;max-width:100%}
+html body #listar.bc-pedidos-cartoes .ux-orders-table>tbody>tr{min-width:0;padding:12px!important}
+html body #listar.bc-pedidos-cartoes .ux-orders-table>tbody>tr>td:last-child .btn{min-width:44px!important;min-height:44px!important}
+html body .ux-orders-scroll-region{max-width:100%}
+html body .esteira-indicadores{gap:8px!important}
+html body .esteira-indicadores>div{min-width:0;padding:10px!important}
+html body .esteira-quadro{grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:10px!important}
+html body .esteira-coluna{min-width:0;padding:10px!important}
+html body .esteira-coluna .esteira-cartao{min-width:0;overflow-wrap:break-word}
+html body .esteira-cartao .btn,html body #bc-kanban .btn{min-height:44px;max-width:100%;white-space:normal}
+html body .esteira-barra{gap:8px!important}
+html body #bc-fila-painel{min-width:0;padding:12px!important}
+html body :is(#bc-fila-toggle,#bc-kanban-toggle,#bc-fila-atualizar){min-height:44px;white-space:normal}
+html body #bc-kanban>div{min-width:0}
+html body #bc-kanban .bc-kanban-col{padding:10px!important}
+html body #bc-kanban .bc-kanban-items>.widget>div{max-height:none!important}
+html body .bc-mesa-lista{display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:10px!important}
+html body .bc-mesa-lista>.mesa-card{min-width:0!important;width:100%!important;max-width:100%!important;margin:0!important}
+html body .bc-mesa-lista .mesa-card .btn,html body .bc-mesa-card .btn{min-height:44px;max-width:100%;white-space:normal}
+html body .bc-mesas-controls{gap:8px!important}
+html body .bc-mesas-controls #bc-mesas-filtro{min-height:44px;max-width:100%!important}
+html body .bc-mesas-controls label.ms-auto{margin-left:0!important}
+html body .bc-mesa-card{min-width:0;overflow-wrap:break-word}
+html body .bc-mesa-card:hover{transform:none!important;box-shadow:none!important}
+html body .modal .modal-dialog{max-width:calc(100% - 24px)!important;margin-inline:auto!important}
+html body .modal .modal-content{min-width:0}
+html body .modal .modal-header{gap:8px}
+html body .modal .modal-title{white-space:normal;overflow-wrap:break-word;min-width:0}
+html body .modal .modal-body :is(input:not([type=checkbox]):not([type=radio]):not([type=hidden]),select,textarea){max-width:100%;min-height:42px}
+html body .modal .modal-body .select2-container{max-width:100%!important}
+html body .modal .modal-footer .btn{min-height:44px;white-space:normal}
+html body .modal .table-responsive{max-width:100%;overflow-x:auto}
+}
+@media(max-width:767px){
+html body #listar.bc-pedidos-cartoes .ux-orders-table>tbody{grid-template-columns:minmax(0,1fr)!important;gap:10px!important}
+html body #listar.bc-pedidos-cartoes .ux-orders-table>tbody>tr>td{gap:6px!important}
+html body #listar.bc-pedidos-cartoes .ux-orders-table>tbody>tr>td:not(:last-child)::before{flex-basis:76px!important}
+html body .esteira-quadro{grid-template-columns:minmax(0,1fr)!important}
+html body .esteira-indicadores{grid-template-columns:repeat(2,minmax(0,1fr))!important}
+html body .esteira-indicadores>div:last-child{grid-column:1/-1}
+html body #bc-kanban>div{width:100%!important;flex:0 0 100%!important}
+html body .bc-mesa-lista{grid-template-columns:minmax(0,1fr)!important}
+html body .bc-mesas-controls .bc-mesas-view-options{width:100%}
+html body .bc-mesas-controls .bc-mesas-view-btn{flex:1}
+html body .bc-mesas-cards{--bs-gutter-x:8px;--bs-gutter-y:8px}
+html body .bc-mesas-cards .bc-mesa-card{padding:10px!important}
+html body .modal .modal-body{padding:12px!important}
+}
+</style>
+<?php } ?>
 </head>
 
 <body class="ltr main-body app sidebar-mini">
