@@ -34,7 +34,7 @@ $autenticado = (
 .mp-container{max-width:960px;margin:0 auto}
 .mp-topbar{background:#fff;border-radius:16px;padding:13px 18px;display:flex;align-items:center;justify-content:space-between;gap:12px;box-shadow:0 3px 15px rgba(0,0,0,.06);margin-bottom:26px}
 .mp-brand{display:flex;align-items:center;gap:12px;color:#333;text-decoration:none;font-weight:700}
-.mp-brand img{max-width:76px;max-height:52px;object-fit:contain}
+.mp-brand img{width:52px;height:52px;object-fit:cover;border-radius:50%;clip-path:circle(46% at 50% 50%);flex-shrink:0}
 .mp-brand span{font-size:15px}
 .mp-back{color:#555;text-decoration:none;font-size:13px;font-weight:600}
 .mp-hero{text-align:center;padding:18px 10px 24px}
