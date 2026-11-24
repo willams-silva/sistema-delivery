@@ -553,7 +553,7 @@ body.selecao-cardapio { background:#fffaf5 !important; color:#503827; }
 
 						<div class="col-2" style="margin-top: 10px;" align="right">
 							<img onclick="selectPizzas('<?php echo $id_produto ?>')" class=""
-								src="sistema/painel/images/produtos/<?php echo $foto ?>" width="60px" height="60px">
+								src="/media-delivery.php?tipo=produtos&amp;arquivo=<?php echo rawurlencode($foto) ?>" width="60px" height="60px">
 						</div>
 
 
