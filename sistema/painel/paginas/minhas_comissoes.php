@@ -32,7 +32,19 @@ if(@$minhas_comissoes == 'ocultar'){
     exit();
 }
 ?>
-<div class="justify-content-between">
+<style>
+html body .bc-mycommission-page .left-content{background:#fff;border:1px solid #e5d4c6;border-radius:14px;padding:16px}
+html body .bc-mycommission-page input[type=date]{background:#fff!important;color:#4e2d20!important;border:1px solid #d7c5b7!important;border-radius:8px;color-scheme:light}
+html body .bc-mycommission-page .bc-mycommission-filter{display:inline-flex!important;align-items:center;gap:8px;flex-wrap:wrap;border:1px solid #e5d4c6!important;background:#f8efe6;border-radius:9px;padding:8px!important}
+html body .bc-mycommission-page .bc-mycommission-filter a{color:#63351e!important;font-weight:600}
+html body .bc-mycommission-page .link-botao{background:#914a29!important;border-color:#914a29!important;color:#fff!important}
+html body #modalDados .modal-header{background:#914a29!important;color:#fff!important}
+html body #modalDados .modal-title,html body #modalDados .close{color:#fff!important}
+html body #modalDados .modal-content{background:#fff!important;border:1px solid #e5d4c6!important;border-radius:14px}
+html body #modalDados .modal-body .row{padding:12px 0;border-color:#e5d4c6!important;color:#4e2d20}
+</style>
+<div class="card mb-3" style="margin-top:16px;border:1px solid #e5d4c6;border-radius:14px"><div class="card-body d-flex align-items-center flex-wrap gap-3"><h2 class="mb-0" style="font-size:21px;font-weight:600;color:#4e2d20"><i class="fa-solid fa-wallet me-2"></i>Minhas Comissões</h2><span style="font-size:12px;color:#795038">Acompanhe suas comissões, valores recebidos e pagamentos pendentes.</span></div></div>
+<div class="justify-content-between bc-mycommission-page">
 	<div class="left-content mt-4 mb-3">
 
 		<!-- Botão Relatório -->
@@ -65,7 +77,7 @@ if(@$minhas_comissoes == 'ocultar'){
 
 		<div style="display: inline-block; margin-top: 16px;">	
 			<div > 
-				<span class="ocultar_mobile" style="font-size: 14px; border:1px solid #6092a8; padding:5px; ">
+				<span class="bc-mycommission-filter">
 					<a title="Conta de Ontem" class="text-muted" href="#" onclick="valorData('<?php echo $data_ontem ?>', '<?php echo $data_ontem ?>')"><span>Ontem</span></a> / 
 					<a title="Conta de Hoje" class="text-muted" href="#" onclick="valorData('<?php echo $data_hoje ?>', '<?php echo $data_hoje ?>')"><span>Hoje</span></a> / 
 					<a title="Conta do Mês" class="text-muted" href="#" onclick="valorData('<?php echo $data_inicio_mes ?>', '<?php echo $data_final_mes ?>')"><span>Mês</span></a>
@@ -75,9 +87,9 @@ if(@$minhas_comissoes == 'ocultar'){
 
 
 
-	<div class="ocultar_mobile" style="display: inline-block; margin-top: 16px;">	
+	<div style="display: inline-block; margin-top: 16px;">	
 			<div > 
-				<span class="ocultar_mobile" style="font-size: 14px; border:1px solid #6092a8; padding:5px; ">
+				<span class="bc-mycommission-filter">
 					<a title="Todos os Serviços" class="text-muted" href="#" onclick="buscarContas('')"><span>Todos</span></a> / 
 					<a title="Pendentes" class="text-muted" href="#" onclick="buscarContas('Não')"><span>Pendentes</span></a> / 
 					<a title="Pagos" class="text-muted" href="#" onclick="buscarContas('Sim')"><span>Pagos</span></a>
@@ -112,7 +124,7 @@ if(@$minhas_comissoes == 'ocultar'){
 		<div class="modal-content">
 			<div class="modal-header">
 				<h4 class="modal-title" id="exampleModalLabel"><span id="nome_dados"></span></h4>
-				<button id="btn-fechar-perfil" type="button" class="close" data-dismiss="modal" aria-label="Close" style="margin-top: -20px">
+				<button id="btn-fechar-perfil" type="button" class="close" data-bs-dismiss="modal" aria-label="Close" style="margin-top: -20px">
 					<span aria-hidden="true" >&times;</span>
 				</button>
 			</div>
