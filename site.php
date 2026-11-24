@@ -1591,6 +1591,19 @@ html{scroll-behavior:smooth}
 .bc-carrinho-fixo__link{display:inline-flex;align-items:center;justify-content:center;gap:7px;white-space:nowrap;padding:11px 14px;background:#a85b24;color:#fff!important;border-radius:12px;font-weight:700;font-size:14px;text-decoration:none}
 @media(min-width:992px){.bc-carrinho-fixo{left:auto;right:22px;transform:none;width:360px}}
 body:has(.bc-carrinho-fixo.bc-visivel){padding-bottom:85px}
+@media(max-width:767px){
+body.bc-mobile-cart-layout{--bc-footer-height:82px;--bc-bar-height:64px}
+body.bc-mobile-cart-layout .bora-contact-footer{padding-bottom:calc(6px + env(safe-area-inset-bottom,0px))!important}
+body.bc-mobile-cart-layout .bc-carrinho-fixo{bottom:calc(var(--bc-footer-height) + 8px);width:calc(100% - 24px);box-sizing:border-box;gap:8px;padding:9px 10px}
+body.bc-mobile-cart-layout .bc-carrinho-fixo__link{font-size:13px;padding:10px;min-height:44px}
+body.bc-mobile-cart-layout .scroll-top{bottom:calc(var(--bc-footer-height) + 12px)!important;margin-bottom:0!important}
+body.bc-mobile-cart-layout:has(.bc-carrinho-fixo.bc-visivel) .scroll-top{bottom:calc(var(--bc-footer-height) + var(--bc-bar-height) + 18px)!important}
+body.bc-mobile-cart-layout:has(.bc-carrinho-fixo.bc-visivel){padding-bottom:calc(var(--bc-footer-height) + var(--bc-bar-height) + 24px)!important}
+}
+@media(max-width:767px) and (prefers-reduced-motion:no-preference){
+body.bc-mobile-cart-layout .bc-carrinho-fixo.bc-confirmado{animation:bc-cart-pulse .35s ease-out}
+@keyframes bc-cart-pulse{50%{transform:translateX(-50%) scale(1.025)}}
+}
 #buscar:focus{border-bottom:2px solid #a85b24!important;box-shadow:0 3px 0 -1px #e9c5a5}
 </style>
 <div id="bc-carrinho-fixo" class="bc-carrinho-fixo" aria-live="polite">
@@ -1601,6 +1614,21 @@ body:has(.bc-carrinho-fixo.bc-visivel){padding-bottom:85px}
 (function(){
  var barra=document.getElementById('bc-carrinho-fixo'),qtd=document.getElementById('bc-carrinho-qtd'),valor=document.getElementById('bc-carrinho-valor');
  if(!barra)return;
+ var rodape=document.querySelector('.bora-contact-footer');
+ if(rodape){
+   document.body.classList.add('bc-mobile-cart-layout');
+   function medir(){
+     var altura=Math.ceil(rodape.getBoundingClientRect().height);
+     if(altura>0)document.body.style.setProperty('--bc-footer-height',altura+'px');
+     var alturaBarra=Math.ceil(barra.getBoundingClientRect().height);
+     if(alturaBarra>0)document.body.style.setProperty('--bc-bar-height',alturaBarra+'px');
+   }
+   if(window.ResizeObserver){var observador=new ResizeObserver(medir);observador.observe(rodape);observador.observe(barra);}
+   window.addEventListener('resize',medir);
+   window.addEventListener('pageshow',medir);
+   medir();
+ }
+
  var ultimaQuantidade=null, sequencia=0, temporizadorConfirmacao=null;
  function atualizar(){
    var consulta=++sequencia;
@@ -1614,6 +1642,7 @@ body:has(.bc-carrinho-fixo.bc-visivel){padding-bottom:85px}
        var aumentou=ultimaQuantidade!==null && n>ultimaQuantidade;
        ultimaQuantidade=n;
        barra.classList.toggle('bc-visivel',n>0);
+       if(rodape)medir();
        qtd.textContent=n+(n===1?' item no carrinho':' itens no carrinho');
        valor.textContent='Total: '+Number(d.total||0).toLocaleString('pt-BR',{style:'currency',currency:'BRL'});
        if(aumentou){
