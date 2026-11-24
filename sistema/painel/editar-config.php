@@ -133,7 +133,9 @@ if (isset($_FILES['qrcode-pix']) && $_FILES['qrcode-pix']['error'] !== UPLOAD_ER
 $logo = 'logo_'.$id_empresa.'.png';
 $logo_rel = 'logo_rel_'.$id_empresa.'.jpg';
 $icone = 'icone_'.$id_empresa.'.png';
-$logo_painel = 'foto-painel_'.$id_empresa.'.png';
+$qLogoPainel = $pdo->prepare("SELECT logo_painel FROM config WHERE empresa = ? LIMIT 1");
+$qLogoPainel->execute([$id_empresa]);
+$logo_painel = basename((string)$qLogoPainel->fetchColumn()) ?: 'foto-painel_'.$id_empresa.'.png';
 $assinatura = 'assinatura_'.$id_empresa.'.jpg';
 
 
@@ -233,7 +235,11 @@ if(@$_FILES['assinatura_rel']['name'] != ""){
 
 
 //foto painel
-if(@$_FILES['foto-painel']['name'] != ""){
+if(isset($_FILES['foto-painel']) && $_FILES['foto-painel']['error'] !== UPLOAD_ERR_NO_FILE){
+    if ($_FILES['foto-painel']['error'] !== UPLOAD_ERR_OK) {
+        echo 'Falha no envio da logo do painel. Código: '.(int)$_FILES['foto-painel']['error']; exit();
+    }
+    $logo_painel = 'foto-painel_'.(int)$id_empresa.'_'.bin2hex(random_bytes(8)).'.png';
 	$ext = pathinfo(@$_FILES['foto-painel']['name'], PATHINFO_EXTENSION);   
 
 	if($ext == 'png' || $ext == 'PNG'){ 	
@@ -255,7 +261,7 @@ if(@$_FILES['foto-painel']['name'] != ""){
 $query = $pdo->prepare("UPDATE $tabela SET nome = :nome, email = :email, telefone = :telefone, endereco = :endereco, instagram = :instagram, multa_atraso = :multa_atraso, juros_atraso = :juros_atraso, marca_dagua = :marca_dagua, marca_dagua = :marca_dagua, assinatura_recibo = :assinatura_recibo, impressao_automatica = :impressao_automatica, cnpj = :cnpj_sistema, entrar_automatico = :entrar_automatico, mostrar_preloader = :mostrar_preloader, ocultar_mobile = :ocultar_mobile, api_whatsapp = '$api_whatsapp', token_whatsapp = :token_whatsapp, instancia_whatsapp = :instancia_whatsapp, dados_pagamento = :dados_pagamento, telefone_fixo = :telefone_fixo, tipo_rel = :tipo_rel, tipo_miniatura = :tipo_miniatura, previsao_entrega = :previsao_entrega, horario_abertura = :horario_abertura, horario_fechamento = :horario_fechamento, texto_fechamento_horario = :texto_fechamento_horario, texto_fechamento = :texto_fechamento, status_estabelecimento = :status_estabelecimento, tempo_atualizar = :tempo_atualizar, tipo_chave = :tipo_chave, dias_apagar = :dias_apagar, banner_rotativo = :banner_rotativo, pedido_minimo = :pedido_minimo, mostrar_aberto = :mostrar_aberto, entrega_distancia = :entrega_distancia, chave_api_maps = :chave_api_maps, latitude_rest = :latitude_rest, longitude_rest = :longitude_rest, distancia_entrega_km = :distancia_entrega_km, valor_km = :valor_km, abrir_comprovante = '$abrir_comprovante', fonte_comprovante = :fonte_comprovante, mensagem_auto = '$mensagem_auto', api_merc = :api_merc, comissao_garcon = :comissao_garcon, couvert = :couvert, mostrar_acessos = '$mostrar_acessos', abertura_caixa = '$abertura_caixa', mais_sabores = :mais_sabores, link_retorno = :link_retorno, dias_retorno = :dias_retorno, mensagem_retorno = :mensagem_retorno, total_cartoes = :total_cartoes, valor_cupom = :valor_cupom, taxa_extra = :taxa_extra, titulo_taxa = :titulo_taxa, retirar_local = :retirar_local, consumir_local = :consumir_local, entrega_delivery = :entrega_delivery, delivery_monitor = :delivery_monitor, somente_pix_delivery = :somente_pix_delivery, impressao_cozinha = :impressao_cozinha, url_evolution = :url_evolution, pedidos_pdv_delivery = :pedidos_pdv_delivery, logo = '$logo',
 logo_rel = '$logo_rel',
 icone = '$icone',
-logo_painel = '$logo_painel' where empresa = '$id_empresa' ");
+logo_painel = :logo_painel where empresa = '$id_empresa' ");
 
 $query->bindValue(":nome", "$nome");
 $query->bindValue(":email", "$email");
@@ -315,7 +321,7 @@ $query->bindValue(":somente_pix_delivery", "$somente_pix_delivery");
 $query->bindValue(":impressao_cozinha", "$impressao_cozinha");
 $query->bindValue(":url_evolution", "$url_evolution");
 $query->bindValue(":pedidos_pdv_delivery", "$pedidos_pdv_delivery");
-$query->execute();
-$query->execute();
+$query->bindValue(":logo_painel", $logo_painel);
+if (!$query->execute()) { echo 'Não foi possível salvar as configurações.'; exit(); }
 
 echo 'Editado com Sucesso';
