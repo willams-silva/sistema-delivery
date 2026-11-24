@@ -137,12 +137,13 @@ $logo_painel = 'foto-painel_'.$id_empresa.'.png';
 $assinatura = 'assinatura_'.$id_empresa.'.jpg';
 
 
+$logoDir = dirname(__DIR__, 3).'/upload_delivery/logos';
 //foto logo
 if(@$_FILES['foto-logo']['name'] != ""){
 	$ext = pathinfo($_FILES['foto-logo']['name'], PATHINFO_EXTENSION);   
 
 	if($ext == 'png' || $ext == 'PNG'){ 	
-		if (!is_dir('../img') || !is_writable('../img') || !move_uploaded_file($_FILES['foto-logo']['tmp_name'], '../img/'.$logo)) {
+		if (!is_dir($logoDir) || !is_writable($logoDir) || !move_uploaded_file($_FILES['foto-logo']['tmp_name'], $logoDir.'/'.$logo)) {
             echo 'Não foi possível gravar a imagem (foto-logo). Verifique a pasta de imagens na hospedagem.';
             exit();
         }
@@ -158,7 +159,7 @@ if(@$_FILES['foto-logo-rel']['name'] != ""){
 	$ext = pathinfo(@$_FILES['foto-logo-rel']['name'], PATHINFO_EXTENSION);   
 
 	if($ext == 'jpg' || $ext == 'JPG' || $ext == 'jpeg' || $ext == 'JPEG'){ 	
-		if (!is_dir('../img') || !is_writable('../img') || !move_uploaded_file($_FILES['foto-logo-rel']['tmp_name'], '../img/'.$logo_rel)) {
+		if (!is_dir($logoDir) || !is_writable($logoDir) || !move_uploaded_file($_FILES['foto-logo-rel']['tmp_name'], $logoDir.'/'.$logo_rel)) {
             echo 'Não foi possível gravar a imagem (foto-logo-rel). Verifique a pasta de imagens na hospedagem.';
             exit();
         }
