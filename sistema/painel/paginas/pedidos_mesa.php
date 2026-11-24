@@ -34,11 +34,14 @@ $segundos = $tempo_atualizar * 1000;
 
 ?>
 
-<div class="breadcrumb-header justify-content-between">
-	<div class="left-content mt-2">
-
-
-	</div>
+<style>
+html body .card.bc-local-heading{margin-top:16px!important;border:1px solid #e2e8f0!important;border-radius:14px!important;box-shadow:0 3px 12px rgba(65,33,22,.04)!important}
+</style>
+<div class="card mb-3 bc-local-heading">
+ <div class="card-body d-flex align-items-center flex-wrap gap-3">
+  <h2 class="mb-0" style="font-size:21px;font-weight:600;color:#4e2d20"><i class="fa-solid fa-utensils me-2" aria-hidden="true"></i>Pedidos Cozinha</h2>
+  <span style="font-size:12px;color:#795038">Acompanhe os pedidos da cozinha, do recebimento até a finalização do preparo.</span>
+ </div>
 </div>
 
 
