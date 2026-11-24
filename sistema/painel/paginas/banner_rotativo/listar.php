@@ -63,7 +63,7 @@ HTML;
 </div>
 </td>
 <td>{$nome_cat}</td>
-<td class="esc"><img src="images/{$tabela}/{$foto}" alt="Miniatura do banner" style="width:140px;max-height:75px;object-fit:cover;border-radius:8px"></td><td>{$badge}</td><td>{$ordem}</td><td><small>{$periodo}</small></td>
+<td class="esc"><img src="/media-delivery.php?tipo=banners&amp;arquivo={$foto}" alt="Miniatura do banner" style="width:140px;max-height:75px;object-fit:cover;border-radius:8px"></td><td>{$badge}</td><td>{$ordem}</td><td><small>{$periodo}</small></td>
 <td>
 	<a class="btn btn-info-light btn-sm" href="#" onclick="editar('{$id}','{$categoria}', '{$foto}', '{$ativo}', '{$ordem}', '{$inicioForm}', '{$fimForm}')" title="Editar Dados"><i class="fa fa-edit"></i></a>
 
@@ -109,7 +109,7 @@ HTML;
 		$('#titulo_inserir').text('Editar Registro');
 		$('#modalForm').modal('show');
 		$('#foto').val('');
-		$('#target').attr('src', 'images/banner_rotativo/' + foto);
+		$('#target').attr('src', '/media-delivery.php?tipo=banners&arquivo=' + encodeURIComponent(foto));
 	}
 
 
