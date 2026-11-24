@@ -14,6 +14,7 @@ $query = $pdo->query("SELECT * FROM $tabela where empresa = '$id_empresa' order 
 $res = $query->fetchAll(PDO::FETCH_ASSOC);
 $total_reg = @count($res);
 $indicadoresMesa = ['livres'=>0,'ocupadas'=>0,'inativas'=>0,'total'=>0];
+ob_start();
 if ($total_reg > 0) {
 
 
@@ -243,6 +244,7 @@ HTML;
 
 
 
+$bcMesaCards = ob_get_clean();
 ?>
 <div class="mesa-resumo" id="mesa-resumo">
     <div><small>Total de mesas</small><strong><?= (int)$indicadoresMesa['total'] ?></strong></div>
@@ -256,7 +258,10 @@ HTML;
     <button type="button" class="btn btn-sm btn-outline-warning mesa-filtro" data-filtro="Ocupada">Ocupadas</button>
     <button type="button" class="btn btn-sm btn-outline-secondary mesa-filtro" data-filtro="Inativa">Inativas</button>
 </div>
+<div class="bc-mesa-lista"><?= $bcMesaCards ?></div>
 <style>
+html body #listar .mesa-filtro{border-radius:8px!important;border:1px solid #d7c5b7!important;color:#795038!important;background:#fff!important;padding:8px 14px!important}
+html body #listar .mesa-filtro.ativo,html body #listar .mesa-filtro:hover{background:#914a29!important;color:#fff!important;border-color:#914a29!important;box-shadow:none!important}
 .mesa-resumo{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;clear:both;margin:14px 0}
 .mesa-resumo>div{border:1px solid #e2e8f0;border-radius:12px;background:#fff;padding:12px}
 .mesa-resumo small{display:block;color:#64748b}.mesa-resumo strong{font-size:22px}
