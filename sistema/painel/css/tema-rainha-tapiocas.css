@@ -1060,3 +1060,12 @@ html body .app-sidebar::-webkit-scrollbar-track {background:#512c24!important}
 html body .app-sidebar::-webkit-scrollbar-thumb {background:#92604a!important}
 
 html body .app-sidebar .main-sidebar-header.active,html body.dark-theme .app-sidebar .main-sidebar-header.active {border-bottom-color:var(--rainha-cacau)!important;box-shadow:none!important;}
+
+/* Icone compacto: recorta os cantos pretos sem alterar a logo horizontal. */
+html body .app-sidebar .main-sidebar-header img.main-logo.mobile-logo,
+html body .app-sidebar .main-sidebar-header img.main-logo.mobile-dark {
+ border-radius:24%!important;
+ clip-path:inset(0 round 24%);
+ background:transparent!important;
+ object-fit:contain!important;
+}
