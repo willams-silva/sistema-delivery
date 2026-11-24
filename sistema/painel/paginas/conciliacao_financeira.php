@@ -395,8 +395,32 @@ $escConc=static function($v){return htmlspecialchars((string)$v,ENT_QUOTES,'UTF-
 .bc-conc-fold-toggle{font:inherit;font-size:13px;font-weight:600;border:1px solid #cbd5e1;border-radius:8px;background:#f8fafc;color:#334155;padding:7px 11px;cursor:pointer;white-space:nowrap}
 .bc-conc-fold-toggle:focus-visible{outline:3px solid #2563eb;outline-offset:2px}
 .bc-conc-fold-body[hidden]{display:none!important}
+
+html body .bc-conc{--bc-accent:#914a29;--bc-ink:#4e2d20;--bc-muted:#795038;--bc-line:#e5d4c6}
+html body .bc-conc .bc-conc-card{background:#fff!important;border-color:#e5d4c6!important;box-shadow:0 3px 12px rgba(78,45,32,.06)!important;color:#4e2d20}
+html body .bc-conc [data-conc-panel]>.bc-conc-grid>.bc-conc-card{border-left:3px solid #914a29!important}
+html body .bc-conc h5,html body .bc-conc h6,html body .bc-conc [data-conc-panel]::before{color:#4e2d20!important}
+html body .bc-conc .bc-conc-note,html body .bc-conc .bc-conc-card small{color:#795038!important}
+html body .bc-conc .bc-conc-tabs{background:#f4e9df!important;border-color:#e5d4c6!important}
+html body .bc-conc .bc-conc-tabs button{color:#63351e!important}
+html body .bc-conc .bc-conc-tabs button[aria-selected="true"]{background:#914a29!important;color:#fff!important}
+html body .bc-conc .bc-conc-tabs button:hover:not([aria-selected="true"]){background:#ead8c9!important}
+html body .bc-conc .bc-conc-tabs button:focus-visible,html body .bc-conc .bc-conc-fold-toggle:focus-visible{outline-color:#914a29!important}
+html body .bc-conc input:not([type=hidden]):not([type=checkbox]):not([type=radio]),html body .bc-conc select,html body .bc-conc textarea{border:1px solid #d7c5b7!important;border-radius:9px!important;background:#fff!important;color:#4e2d20!important}
+html body .bc-conc input:focus,html body .bc-conc select:focus,html body .bc-conc textarea:focus{border-color:#914a29!important;box-shadow:0 0 0 3px rgba(145,74,41,.12)!important}
+html body .bc-conc .btn-primary{background:#914a29!important;border-color:#914a29!important;color:#fff!important}
+html body .bc-conc .btn-outline-primary,html body .bc-conc .bc-conc-fold-toggle{background:#fff!important;border:1px solid #d7c5b7!important;color:#63351e!important}
+html body .bc-conc .btn-outline-primary:hover,html body .bc-conc .bc-conc-fold-toggle:hover{background:#914a29!important;color:#fff!important}
+html body .bc-conc .bc-conc-table,html body .bc-conc .bc-conc-table td,html body .bc-conc .bc-conc-table th{border-color:#eaded4!important}
+html body .bc-conc .bc-conc-table th{background:#f4e9df!important;color:#63351e!important}
+html body .bc-conc .bc-conc-table tbody tr:nth-child(even),html body .bc-conc .bc-conc-table tbody tr:hover{background:#fcf8f4!important}
+html body .bc-conc .alert-light,html body .bc-conc .alert-info{background:#f8efe6!important;color:#63351e!important;border-color:#e5d4c6!important}
+html body .bc-conc .alert-warning{background:#fff4dc!important;color:#855900!important;border-color:#ecd5a0!important}
+html body .bc-conc .alert-danger{background:#fdebed!important;color:#b42332!important;border-color:#efc4ca!important}
+html body .bc-conc .alert-success{background:#e8f5ed!important;color:#13745a!important;border-color:#c5e4d1!important}
 </style>
 <div class="bc-conc">
+<div class="card mb-3 bc-conc-heading" style="margin-top:16px;border:1px solid #e2e8f0;border-radius:14px"><div class="card-body d-flex align-items-center flex-wrap gap-3"><h2 class="mb-0" style="font-size:21px;font-weight:600;color:#4e2d20"><i class="fa-solid fa-check-double me-2"></i>Conciliação Financeira</h2><span style="font-size:12px;color:#795038">Conferência de contas a receber baixadas por forma de pagamento. Os valores representam baixas registradas no sistema, não depósitos bancários confirmados.</span></div></div>
 <nav class="bc-conc-tabs" aria-label="Seções da conciliação financeira" id="bc-conc-tabs">
 <button type="button" data-conc-tab="geral">Visão Geral</button>
 <button type="button" data-conc-tab="liquidacoes">Liquidações</button>
@@ -412,8 +436,7 @@ $escConc=static function($v){return htmlspecialchars((string)$v,ENT_QUOTES,'UTF-
 <section data-conc-panel="configuracoes" aria-label="Configurações"></section>
 </div>
 <div class="bc-conc-card">
-<h3><i class="fa fa-check-square-o"></i> Conciliação Financeira</h3>
-<p class="bc-conc-note">Conferência de contas a receber baixadas por forma de pagamento. Os valores representam baixas registradas no sistema, não depósitos bancários confirmados.</p>
+<h5>Consultar período</h5>
 <form class="bc-conc-filter" method="get" action="index.php">
 <input type="hidden" name="pagina" value="conciliacao_financeira">
 <div><label for="conc-inicio">Início</label><input id="conc-inicio" type="date" name="inicio" value="<?php echo $escConc($inicioConc); ?>"></div>
@@ -919,7 +942,7 @@ if($audUsuarioConc!=='')$queryAudConc['cancel_usuario']=$audUsuarioConc;
   if(el.classList.contains('bc-conc-grid')){panel('geral').appendChild(el);return;}
   if(el.classList.contains('bc-conc-card')){
    const h=el.querySelector('h3,h5');
-   if(h&&h.tagName==='H3'){root.insertBefore(el,nav);return;}
+   if(h&&(h.tagName==='H3'||h.textContent.trim()==='Consultar período')){root.insertBefore(el,nav);return;}
    panel(classify(h&&h.textContent)).appendChild(el);
    return;
   }
