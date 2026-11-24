@@ -563,11 +563,12 @@ if ($id_mesa == "" && $sessão_balcao == "") {
               $categoria = (int)$banner['categoria'];
               $url = '#';
               if ($categoria > 0) {
-                $query2 = $pdo->prepare('SELECT url FROM categorias WHERE id = :id AND empresa = :empresa LIMIT 1');
+                $query2 = $pdo->prepare('SELECT url, mais_sabores FROM categorias WHERE id = :id AND empresa = :empresa LIMIT 1');
                 $query2->execute([':id' => $categoria, ':empresa' => (int)$id_empresa]);
-                $categoriaUrl = $query2->fetchColumn();
-                if ($categoriaUrl !== false && $categoriaUrl !== '') {
-                  $url = 'categoria-' . rawurlencode((string)$categoriaUrl);
+                $categoriaBanner = $query2->fetch(PDO::FETCH_ASSOC);
+                if ($categoriaBanner && !empty($categoriaBanner['url'])) {
+                  $prefixo = $categoriaBanner['mais_sabores'] === 'Sim' ? 'categoria-sabores-' : 'categoria-';
+                  $url = $prefixo . rawurlencode((string)$categoriaBanner['url']);
                 }
               }
             ?>
