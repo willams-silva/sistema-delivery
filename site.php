@@ -457,7 +457,11 @@ a[href="/meus-pedidos"].btn-warning { background:#a85b24 !important; border-colo
 .bora-rainha-header .header__info-cart button{display:flex!important;align-items:center;gap:9px;background:#a85b24!important;color:#fff!important;border-radius:24px!important;width:auto!important;height:auto!important;padding:12px 16px!important;white-space:nowrap}
 .bora-rainha-header .header__info-cart button i img{filter:brightness(0) invert(1)}
 .bora-rainha-header .header__info-cart button i::after{content:"Meu carrinho";font-size:14px;font-weight:600;line-height:1.2;color:#fff;font-style:normal;margin-left:8px}
-.bora-rainha-header #total-itens-carrinho{position:static!important;transform:none!important;background:#fff!important;color:#a85b24!important;min-width:20px;height:20px;line-height:20px;border-radius:50%;text-align:center}
+.bora-rainha-header .header__info-cart button{min-width:172px!important;min-height:44px!important;justify-content:center!important;padding:10px 14px!important;line-height:1.2!important}
+.bora-rainha-header .header__info-cart button i{display:inline-flex!important;align-items:center!important;justify-content:center!important;gap:8px;width:auto!important;height:auto!important;min-width:0!important;background:transparent!important;border:0!important;border-radius:0!important;padding:0!important;margin:0!important;position:static!important;line-height:1.2!important;white-space:nowrap}
+.bora-rainha-header .header__info-cart button i img{width:19px!important;height:19px!important;display:block!important}
+.bora-rainha-header .header__info-cart button i::after{display:block!important;margin:0!important;white-space:nowrap}
+.bora-rainha-header #total-itens-carrinho{flex:0 0 auto!important;inset:auto!important;margin:0!important;position:static!important;transform:none!important;background:#fff!important;color:#a85b24!important;min-width:20px;height:20px;line-height:20px;border-radius:50%;text-align:center}
 }
 /* Cabeçalho mobile compacto: mantém a logo legível e elimina espaço vazio antes do banner. */
 @media (max-width: 767px) {
