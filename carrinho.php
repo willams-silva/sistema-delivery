@@ -235,6 +235,18 @@ body { background:#fffaf5 !important; color:#493425; }
  #listar-itens-carrinho > li,#listar-itens-carrinho > .list-group-item,#listar-itens-carrinho > div { padding:12px !important; }
  .area-pedidos { padding:10px !important; }
 }
+@media(min-width:768px){
+#listar-itens-carrinho{width:min(100%,960px)!important;margin-left:auto!important;margin-right:auto!important}
+#listar-itens-carrinho .bc-cart-product-photo{width:64px!important;height:64px!important;border-radius:12px;vertical-align:middle;margin-right:10px}
+#listar-itens-carrinho .nome-produto{font-size:18px;color:#512c24}
+#listar-itens-carrinho .carrinho-qtd{background:#fff2e4!important;border-radius:12px;padding:10px!important;margin-top:12px}
+#listar-itens-carrinho .menos-mais{background:#a85b24!important;color:#fff!important;border-radius:8px;min-width:34px;text-align:center}
+#listar-itens-carrinho .qtd-item-carrinho{background:#fff!important;border-radius:8px}
+#listar-itens-carrinho .valor-carrinho-it{color:#a85b24!important;background:transparent!important}
+.area-pedidos{position:fixed!important;left:0!important;right:0!important;bottom:0!important;width:100%!important;height:auto!important;display:flex!important;flex-direction:column!important;align-items:center!important;gap:10px!important;padding:12px 20px!important;box-sizing:border-box!important}
+.area-pedidos .total-pedido,.area-pedidos .abaixo{position:static!important;float:none!important;transform:none!important;inset:auto!important;width:min(100%,420px)!important;max-width:420px!important;margin:0 auto!important}
+.area-pedidos .abaixo{margin-top:0!important}
+}
 /* Acessibilidade e toque no resumo do pedido. */
 #listar-itens-carrinho button,
 #listar-itens-carrinho .btn,
