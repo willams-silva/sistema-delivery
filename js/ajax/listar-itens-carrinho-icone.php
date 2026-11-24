@@ -154,6 +154,7 @@ if ($total_reg > 0) {
 
 
 
+		$foto_url = '/media-delivery.php?tipo=produtos&amp;arquivo=' . rawurlencode((string)$foto_produto);
 		echo <<<HTML
 
 
@@ -161,7 +162,7 @@ if ($total_reg > 0) {
 						<li>
   <div class="tpcart__item" style="position:relative; padding-right:48px;">
     <div class="tpcart__img">
-      <img src="sistema/painel/images/produtos/{$foto_produto}" alt="">
+      <img src="{$foto_url}" alt="">
     </div>
 
     <div class="tpcart__content">
@@ -174,7 +175,7 @@ if ($total_reg > 0) {
 
     <!-- agora ancorado ao próprio item -->
     <div style="position:absolute; right:12px; top:50%; transform:translateY(-50%);">
-      <a href="javascript:void(0)" onclick="excluirCarrinhoIcone('{$id}')" class="link-neutro {$ocultar_excluir}">
+      <a href="javascript:void(0)" aria-label="Remover produto" onclick="excluirCarrinhoIcone('{$id}')" class="link-neutro {$ocultar_excluir}">
         <i class="icon-x-circle text-warning"></i>
       </a>
     </div>
