@@ -418,6 +418,8 @@ html body .bc-conc .alert-light,html body .bc-conc .alert-info{background:#f8efe
 html body .bc-conc .alert-warning{background:#fff4dc!important;color:#855900!important;border-color:#ecd5a0!important}
 html body .bc-conc .alert-danger{background:#fdebed!important;color:#b42332!important;border-color:#efc4ca!important}
 html body .bc-conc .alert-success{background:#e8f5ed!important;color:#13745a!important;border-color:#c5e4d1!important}
+html body .bc-conc input[type="number"][name^="prazos["]{text-align:center!important;text-indent:0!important;padding-inline:0!important;appearance:textfield!important;-moz-appearance:textfield!important}
+html body .bc-conc input[type="number"][name^="prazos["]::-webkit-inner-spin-button,html body .bc-conc input[type="number"][name^="prazos["]::-webkit-outer-spin-button{-webkit-appearance:none!important;margin:0!important}
 </style>
 <div class="bc-conc">
 <div class="card mb-3 bc-conc-heading" style="margin-top:16px;border:1px solid #e2e8f0;border-radius:14px"><div class="card-body d-flex align-items-center flex-wrap gap-3"><h2 class="mb-0" style="font-size:21px;font-weight:600;color:#4e2d20"><i class="fa-solid fa-check-double me-2"></i>Conciliação Financeira</h2><span style="font-size:12px;color:#795038">Conferência de contas a receber baixadas por forma de pagamento. Os valores representam baixas registradas no sistema, não depósitos bancários confirmados.</span></div></div>
