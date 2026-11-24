@@ -256,6 +256,10 @@ html body #listar #tabela tbody td:last-child a[onclick^="baixar("]{--bc-action:
 html body #listar #tabela tbody td:last-child a[onclick^="parcelar("],html body #listar #tabela tbody td:last-child form[action*="imp_recibo_pagar"] button{--bc-action:#41434a;--bc-bg:#e9eaed}
 html body #listar.bc-pay-cards #tabela tbody td:last-child :is(a,button):hover{background:var(--bc-bg,#fff0df)!important;color:var(--bc-action,#795038)!important;transform:none!important;box-shadow:none!important}
 html body #listar #tabela tbody td:last-child :is(a,button).ocultar{display:none!important}
+html body #listar #tabela .bc-no-attachment,html body #listar #tabela .bc-attachment-fallback{align-items:center;gap:6px;padding:6px 9px;border:1px solid #e5d4c6;border-radius:8px;background:#f8efe6;color:#795038;font-size:12px;font-weight:500;white-space:nowrap}
+html body #listar #tabela .bc-no-attachment{display:inline-flex}
+html body #listar #tabela .bc-attachment-fallback{display:none}
+html body #listar #tabela .bc-attachment-error .bc-attachment-fallback{display:inline-flex}
 </style>
 <div id="bc-pay-list-view"><span>Visualização:</span><button type="button" data-view="cards" aria-pressed="true"><i class="fe fe-grid"></i> Cartões</button><button type="button" data-view="table" aria-pressed="false"><i class="fe fe-list"></i> Tabela</button></div>
 <script>
@@ -504,6 +508,8 @@ HTML;
 
 
 
+		$bcSemAnexo = '<span class="bc-no-attachment"><i class="fa fa-file-o" aria-hidden="true"></i> Sem anexo</span>';
+		$bcArquivoHtml = in_array(strtolower(trim((string)$arquivo)), ['', 'sem-foto.png', 'sem-foto.jpg', 'sem-arquivo.png'], true) ? $bcSemAnexo : '<a href="images/contas/'.htmlspecialchars($arquivo, ENT_QUOTES, 'UTF-8').'" target="_blank" rel="noopener"><img class="rounded-circle" src="images/contas/'.htmlspecialchars($tumb_arquivo, ENT_QUOTES, 'UTF-8').'" width="30" height="30" alt="Anexo" onerror="this.hidden=true;this.parentElement.classList.add(\'bc-attachment-error\')"><span class="bc-attachment-fallback"><i class="fa fa-file-o"></i> Ver arquivo</span></a>';
 		echo <<<HTML
 <tr style="background: {$classe_pago2}">
 <td align="center">
@@ -518,9 +524,7 @@ HTML;
 <td class="esc {$classe_venc}">{$vencimentoF}</td>
 <td class="esc">{$data_pgtoF}</td>
 
-<td class="text-center"><a href="images/contas/{$arquivo}" target="_blank">
-	<img class="rounded-circle" src="images/contas/{$tumb_arquivo}" width="30px" height="30px"></a>
-	</td>
+<td class="text-center">{$bcArquivoHtml}</td>
 
 <td>
 	<big><a class="{$ocultar}" href="#" onclick="editar('{$id}','{$descricao}','{$valor}','{$fornecedor}','{$funcionario}','{$vencimento}','{$data_pgto}','{$forma_pgto}','{$frequencia}','{$obs}','{$tumb_arquivo}')" title="Editar Dados"><i class="fa fa-edit text-info"></i></a></big>
