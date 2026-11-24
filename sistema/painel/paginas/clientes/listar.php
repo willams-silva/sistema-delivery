@@ -67,6 +67,13 @@ html body #listar.bc-client-cards #tabela tbody td{display:block!important;width
 #listar.bc-client-cards #tabela tbody td:nth-child(4)::before{content:'E-mail: '}
 #listar.bc-client-cards #tabela tbody td:last-child{margin-top:auto;border-top:1px solid #eaded4!important;text-align:center}
 #listar.bc-client-cards #tabela tbody tr.table-danger{border-top:4px solid #b42332!important}
+
+html body #listar.bc-client-cards #tabela tbody tr:hover,html body #listar.bc-client-cards #tabela tbody tr:hover > td{--bs-table-accent-bg:transparent!important;--bs-table-bg-state:transparent!important;--bs-table-hover-bg:transparent!important;box-shadow:none!important;transform:none!important;filter:none!important;background-image:none!important}
+html body #listar.bc-client-cards #tabela tbody tr:hover{background:#fff!important;border-color:#e5d4c6!important}
+html body #listar.bc-client-cards #tabela tbody tr:hover > td{background:transparent!important}
+html body #listar.bc-client-cards #tabela tbody tr td:last-child a.btn:hover,html body #listar.bc-client-cards #tabela tbody tr td:last-child a.btn:hover i{transform:none!important;filter:none!important;box-shadow:none!important;opacity:1!important;animation:none!important;transition:none!important}
+html body #listar.bc-client-cards #tabela tbody tr td:last-child a.btn:hover{background:var(--bc-bg,#fff0df)!important;color:var(--bc-action,#795038)!important;border-color:var(--bc-action,#795038)!important}
+html body #listar.bc-client-cards #tabela tbody tr td:last-child a.btn:hover i{color:inherit!important}
 </style>
 <div id="bc-client-list-view"><span>Visualização:</span><button type="button" data-view="cards" aria-pressed="true"><i class="fe fe-grid"></i> Cartões</button><button type="button" data-view="table" aria-pressed="false"><i class="fe fe-list"></i> Tabela</button></div>
 <script>
@@ -74,7 +81,7 @@ html body #listar.bc-client-cards #tabela tbody td{display:block!important;width
  var root=document.getElementById('listar'), bar=document.getElementById('bc-client-list-view');
  if(!root||!bar)return;
  var old=document.getElementById('bc-client-view');if(old)old.style.display='none';
- function apply(mode){root.dataset.clientView=mode;root.classList.toggle('bc-client-cards',mode==='cards');bar.querySelectorAll('button').forEach(function(b){b.setAttribute('aria-pressed',String(b.dataset.view===mode));});}
+ function apply(mode){root.dataset.clientView=mode;root.classList.toggle('bc-client-cards',mode==='cards');var table=root.querySelector('#tabela');if(table)table.classList.toggle('table-hover',mode!=='cards');bar.querySelectorAll('button').forEach(function(b){b.setAttribute('aria-pressed',String(b.dataset.view===mode));});}
  bar.addEventListener('click',function(e){var b=e.target.closest('button[data-view]');if(b){apply(b.dataset.view);if(jQuery.fn.dataTable.isDataTable('#tabela'))jQuery('#tabela').DataTable().columns.adjust();}});
  apply(root.dataset.clientView||'cards');
 })();
@@ -84,7 +91,7 @@ BCVIEW;
 if ($linhas > 0) {
 	echo <<<HTML
 <small>
-	<table class="table table-hover table-bordered text-nowrap border-bottom dt-responsive" id="tabela">
+	<table class="table table-bordered text-nowrap border-bottom dt-responsive" id="tabela">
 	<thead>
 	<tr>
 	<th align="center" width="5%" class="text-center">Selecionar</th>
