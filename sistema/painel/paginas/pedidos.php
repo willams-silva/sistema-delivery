@@ -273,7 +273,7 @@ html body #bc-pedidos-modos .bc-orders-view-btn:focus-visible{outline:2px solid 
 @media(max-width:600px){#listar.bc-pedidos-cartoes .ux-orders-table tbody{grid-template-columns:minmax(0,1fr)}}
 
 /* Bora Comanda: compact order cards, scoped to card mode. */
-html body #listar.bc-pedidos-cartoes .ux-orders-table > tbody{display:grid!important;grid-template-columns:repeat(3,minmax(0,1fr))!important;gap:16px!important;align-items:stretch!important;width:100%!important}
+html body #listar.bc-pedidos-cartoes .ux-orders-table > tbody{padding-top:16px!important;box-sizing:border-box!important;display:grid!important;grid-template-columns:repeat(3,minmax(0,1fr))!important;gap:16px!important;align-items:stretch!important;width:100%!important}
 html body #listar.bc-pedidos-cartoes .ux-orders-table > tbody > tr{display:flex!important;flex-direction:column!important;width:100%!important;max-width:none!important;min-width:0!important;box-sizing:border-box!important;margin:0!important;padding:16px!important;gap:3px!important;border:1px solid #e5d4c6!important;border-top:4px solid #b77c51!important;border-radius:14px!important;box-shadow:0 4px 14px rgba(82,44,24,.08)!important}
 html body #listar.bc-pedidos-cartoes .ux-orders-table > tbody > tr > td{min-width:0!important;box-sizing:border-box!important;align-items:center!important;font-size:13px!important;padding:6px 0!important}
 html body #listar.bc-pedidos-cartoes .ux-orders-table > tbody > tr > td:first-child{display:block!important;line-height:1.7!important;border-bottom:1px solid #eaded4!important;padding-bottom:10px!important}
