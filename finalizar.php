@@ -294,7 +294,7 @@ body.checkout-cardapio { background:#fffaf5; color:#493425; }
     <div class="container-fluid">
       <a class="navbar-brand" href="site/<?php echo $url_site ?>">
         <img src="/media-delivery.php?tipo=logos&amp;arquivo=<?php echo rawurlencode($logo_sistema) ?>" alt="" width="80px" class="d-inline-block align-text-top<?php echo $url_site === 'rainhadastapiocas' ? ' bc-checkout-logo-rainha' : '' ?>">
-        Finalizar Pedido
+        FINALIZAR PEDIDO
       </a>
 
       <a href="carrinho" class="bc-voltar-carrinho" aria-label="Voltar ao resumo do carrinho"><i class="bi bi-arrow-left" aria-hidden="true"></i> <span>Voltar ao carrinho</span></a>
