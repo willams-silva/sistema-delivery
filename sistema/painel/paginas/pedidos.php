@@ -36,6 +36,12 @@ $segundos = $tempo_atualizar * 1000;
 ?>
 
 <input type="hidden" name="pagina" id="pagina">
+<div class="card mb-3 bc-orders-heading">
+ <div class="card-body d-flex align-items-center flex-wrap gap-3">
+  <h2 class="mb-0" style="font-size:21px;font-weight:600;color:#4e2d20"><i class="fa fa-shopping-bag me-2" aria-hidden="true"></i>Gestão de Pedidos</h2>
+  <span style="font-size:12px;color:#795038">Acompanhe e gerencie seus pedidos, pagamentos e etapas de preparação e entrega.</span>
+ </div>
+</div>
 <?php if (isset($nome_usuario) && $nome_usuario === 'Administrador'): ?>
 <div class="card mb-3" style="border-radius:14px;border:1px solid #dce4ee">
  <div class="card-body">
@@ -69,12 +75,7 @@ $(function(){
 </script>
 <?php endif; ?>
 
-<div class="breadcrumb-header justify-content-between">
-	<div class="left-content mt-2">
 
-
-	</div>
-</div>
 
 
 
