@@ -125,3 +125,18 @@ hr.separador {
 .font-size-11{
     font-size: 11px !important;
 }
+
+/* Bora Comanda - shared compact action buttons (panel and SaaS). */
+html body .main-content .btn.btn-sm:is(.btn-primary-light,.btn-info-light,.btn-warning-light,.btn-danger-light,.btn-success-light,.btn-secondary-light,.btn-dark-light){color:var(--bc-action-fg,#795038)!important;background:var(--bc-action-bg,#f4e7dc)!important;border:1px solid var(--bc-action-fg,#795038)!important;border-radius:9px!important;min-width:36px;min-height:36px;padding:7px 9px!important;line-height:1.25!important;vertical-align:middle;text-align:center;transition:background-color .2s,color .2s,box-shadow .2s,transform .2s!important;}
+html body .main-content .btn.btn-sm.btn-primary-light{--bc-action-fg:#795038;--bc-action-bg:#f4e7dc;}
+html body .main-content .btn.btn-sm.btn-info-light{--bc-action-fg:#17658a;--bc-action-bg:#e1f2fa;}
+html body .main-content .btn.btn-sm.btn-warning-light{--bc-action-fg:#89500a;--bc-action-bg:#fff0d7;}
+html body .main-content .btn.btn-sm.btn-danger-light{--bc-action-fg:#b42332;--bc-action-bg:#fde5e7;}
+html body .main-content .btn.btn-sm.btn-success-light{--bc-action-fg:#13745a;--bc-action-bg:#def3e9;}
+html body .main-content .btn.btn-sm.btn-secondary-light{--bc-action-fg:#66516e;--bc-action-bg:#eee7f2;}
+html body .main-content .btn.btn-sm.btn-dark-light{--bc-action-fg:#41434a;--bc-action-bg:#e9eaed;}
+html body .main-content .btn.btn-sm:is(.btn-primary-light,.btn-info-light,.btn-warning-light,.btn-danger-light,.btn-success-light,.btn-secondary-light,.btn-dark-light) :is(i,svg){color:inherit!important;font-size:15px!important;}
+html body .main-content .btn.btn-sm:is(.btn-primary-light,.btn-info-light,.btn-warning-light,.btn-danger-light,.btn-success-light,.btn-secondary-light,.btn-dark-light):not(:disabled):not(.disabled):not([aria-disabled=true]):hover{background:var(--bc-action-fg,#795038)!important;color:#fff!important;transform:translateY(-2px);box-shadow:0 4px 9px rgba(65,33,22,.18)!important;}
+html body .main-content .btn.btn-sm:is(.btn-primary-light,.btn-info-light,.btn-warning-light,.btn-danger-light,.btn-success-light,.btn-secondary-light,.btn-dark-light):focus-visible{outline:2px solid var(--bc-action-fg,#795038)!important;outline-offset:2px;}
+@media(pointer:coarse){html body .main-content .btn.btn-sm:is(.btn-primary-light,.btn-info-light,.btn-warning-light,.btn-danger-light,.btn-success-light,.btn-secondary-light,.btn-dark-light){min-width:40px;min-height:40px;}}
+@media(prefers-reduced-motion:reduce){html body .main-content .btn.btn-sm:is(.btn-primary-light,.btn-info-light,.btn-warning-light,.btn-danger-light,.btn-success-light,.btn-secondary-light,.btn-dark-light){transition:none!important;transform:none!important;}}
