@@ -39,7 +39,9 @@ HTML;
 			$sql = "
 			  SELECT p.*
 			    FROM produtos p
-			   WHERE p.ativo = 'Sim' and p.empresa = :empresa 
+			   WHERE p.ativo = 'Sim' and p.empresa = :empresa
+                 AND (COALESCE(p.tem_estoque, 'Não') <> 'Sim' OR COALESCE(p.estoque, 0) > 0)
+                 AND EXISTS (SELECT 1 FROM categorias ca WHERE ca.id = p.categoria AND ca.empresa = p.empresa AND ca.ativo = 'Sim') 
 			     AND (
 			       p.nome LIKE :q1
 			       OR p.categoria IN (
@@ -58,6 +60,7 @@ HTML;
 
 
 			$total_reg = @count($res);
+            $exibidos = 0;
 			if ($total_reg > 0) {
 				for ($i = 0; $i < $total_reg; $i++) {
 					foreach ($res[$i] as $key => $value) {
@@ -142,6 +145,7 @@ HTML;
 
 
 
+$exibidos++;
 $foto_url = '/media-delivery.php?tipo=produtos&amp;arquivo=' . rawurlencode($foto);
 $nome = htmlspecialchars($nome, ENT_QUOTES, 'UTF-8');
 $descricao = htmlspecialchars($descricao, ENT_QUOTES, 'UTF-8');
@@ -235,6 +239,7 @@ HTML;
 		 }
 			} 
 
+if ($exibidos === 0) { echo '<li role="status" style="grid-column:1/-1;text-align:center;color:#705445">Nenhum produto disponível encontrado.</li>'; }
 echo <<<HTML
 
 		</ol>
