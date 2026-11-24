@@ -87,6 +87,7 @@ $autenticado = (
 @media(max-width:575px){.mp-topbar{gap:8px}.mp-back{font-size:12px}.mp-order-head{gap:8px}.mp-line{align-items:flex-start}.mp-line span:last-child{white-space:nowrap}}
 
 .mp-container{max-width:1200px}.mp-hero{background:#512c24;border-radius:20px;padding:26px 16px;margin-bottom:22px}.mp-hero h1,.mp-hero p{color:#fffaf5}.mp-btn,.mp-btn-outline{border-radius:25px;min-height:44px}.mp-order{border-color:#efd5bb;padding:22px}.mp-order-title{font-size:20px;color:#512c24}.mp-total{font-size:20px;color:#a85b24}.mp-tools{display:flex;gap:12px;margin:16px 0}.mp-tools .mp-input{margin:0;min-width:0}.mp-tools select{max-width:220px}.mp-status[data-tone="success"]{background:#e5f4e8;color:#176535}.mp-status[data-tone="danger"]{background:#fce7e7;color:#a32222}.mp-status[data-tone="active"]{background:#fff0d6;color:#92500c}.mp-order[hidden]{display:none!important}.mp-order details summary{cursor:pointer;color:#a85b24;font-weight:700;padding:10px 0}.mp-order details summary:focus-visible{outline:2px solid #a85b24}.mp-footer-link{border:1px solid #a85b24;border-radius:25px;padding:12px 20px}.mp-line{font-size:15px}.mp-order .mp-btn{width:auto}@media(max-width:575px){.mp-tools{flex-direction:column}.mp-tools select{max-width:none}.mp-order .mp-btn{width:100%}.mp-order-title{font-size:17px}.mp-total{font-size:17px}.mp-order{padding:15px}.mp-hero{padding:20px 12px}}
+.mp-product{display:flex;align-items:center;gap:12px;min-width:0}.mp-product img{width:76px;height:76px;object-fit:cover;border-radius:12px;flex-shrink:0}.mp-extra{font-size:12px;color:#80634e;line-height:1.5}.mp-progress{display:flex;list-style:none;padding:0;margin:12px 0 18px;gap:4px}.mp-progress li{flex:1;text-align:center;font-size:12px;color:#80634e;border-top:3px solid #ead7c3;padding-top:8px}.mp-progress li.done{border-color:#a85b24;color:#753d1e;font-weight:700}.mp-progress li span{display:block;margin:0 auto 4px;border-radius:50%;width:25px;height:25px;line-height:25px;background:#f2e6da}.mp-progress li.done span{background:#a85b24;color:white}@media(max-width:575px){.mp-progress li{font-size:10px}.mp-product img{width:56px;height:56px}.mp-product{gap:8px}}
 </style>
 
 <div class="mp-page">
@@ -143,7 +144,7 @@ $autenticado = (
 <?php foreach ($pedidos as $pedido) {
         $dataF = !empty($pedido['data']) ? date('d/m/Y', strtotime($pedido['data'])) : '';
         $valorF = number_format((float)$pedido['valor'], 2, ',', '.');
-        $itensQ = $pdo->prepare("SELECT nome_produto, quantidade, (total_item * quantidade) AS total_item FROM carrinho WHERE pedido = :pedido AND empresa = :empresa ORDER BY id");
+        $itensQ = $pdo->prepare("SELECT c.id, c.nome_produto, c.quantidade, (c.total_item * c.quantidade) AS total_item, p.foto FROM carrinho c LEFT JOIN produtos p ON p.id=c.produto AND p.empresa=c.empresa WHERE c.pedido = :pedido AND c.empresa = :empresa ORDER BY c.id");
         $itensQ->execute([':pedido'=>$pedido['id'], ':empresa'=>$id_empresa]);
         $itens = $itensQ->fetchAll(PDO::FETCH_ASSOC);
       ?>
@@ -156,9 +157,18 @@ $autenticado = (
             <span class="mp-status" data-tone="<?php $st=mb_strtolower(trim($pedido['status']),'UTF-8'); echo preg_match('/cancel|recus/',$st)?'danger':(preg_match('/conclu|entregue|finaliz/',$st)?'success':'active'); ?>"><?php echo htmlspecialchars($pedido['status']) ?></span>
           </div>
           <hr class="mp-separator">
-          <details open><summary>Produtos do pedido</summary><?php foreach ($itens as $item) { ?>
+          <?php $etapas=['Iniciado'=>'Enviado','Aceito'=>'Aceito','Preparando'=>'Preparando','Entrega'=>'Em rota','Finalizado'=>'Finalizado']; $etapa=array_search($pedido['status'],array_keys($etapas),true); if($etapa!==false){ ?>
+<ol class="mp-progress" aria-label="Progresso do pedido"><?php foreach(array_values($etapas) as $i=>$rotulo){ ?><li class="<?php echo $i<=$etapa?'done':'' ?>" <?php if($i===$etapa) echo 'aria-current="step"'; ?>><span><?php echo $i<$etapa?'✓':$i+1 ?></span><?php echo $rotulo ?></li><?php } ?></ol>
+<?php } ?>
+<details open><summary>Produtos do pedido</summary><?php foreach ($itens as $item) { ?>
             <div class="mp-line">
-              <span><?php echo htmlspecialchars($item['quantidade']) ?>x <?php echo htmlspecialchars($item['nome_produto']) ?></span>
+              <div class="mp-product"><?php if(!empty($item['foto'])){ ?><img loading="lazy" src="/media-delivery.php?tipo=produtos&amp;arquivo=<?php echo rawurlencode($item['foto']) ?>" alt="" onerror="this.hidden=true"><?php } ?><div><strong><?php echo htmlspecialchars($item['quantidade']) ?>x <?php echo htmlspecialchars($item['nome_produto']) ?></strong>
+<?php
+$extrasQ=$pdo->prepare("SELECT t.quantidade, t.valor_item, a.nome, p.nome AS sabor FROM temp t LEFT JOIN adicionais_cat a ON a.id=t.id_item LEFT JOIN produtos p ON p.id=t.id_sabor AND p.empresa=:empresa WHERE t.carrinho=:carrinho AND t.tabela='adicionais' ORDER BY t.id_sabor,t.id");
+$extrasQ->execute([':empresa'=>$id_empresa,':carrinho'=>$item['id']]);
+foreach($extrasQ->fetchAll(PDO::FETCH_ASSOC) as $extra){ ?>
+<div class="mp-extra">+ <?php echo htmlspecialchars($extra['quantidade']) ?>x <?php echo htmlspecialchars($extra['nome'] ?? 'Adicional') ?><?php if(!empty($extra['sabor'])) echo ' ('.htmlspecialchars($extra['sabor']).')'; ?></div>
+<?php } ?></div></div>
               <span>R$ <?php echo number_format((float)$item['total_item'],2,',','.') ?></span>
             </div>
           <?php } ?></details>
