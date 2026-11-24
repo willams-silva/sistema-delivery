@@ -367,6 +367,21 @@ button.btn.bora-sabor-extra:focus-visible { outline:2px solid #a85b24; outline-o
 .selecao-cardapio .main-container:has(.bc-selecao-logo) button[onclick="addCarrinho()"]{width:100%;min-height:48px;font-size:18px!important}
 }
 </style>
+<style>
+@media(max-width:767px){
+.selecao-cardapio .main-container:has(.bc-selecao-logo){width:100%;max-width:100%;padding:0 12px;box-sizing:border-box}
+.selecao-cardapio .navbar:has(.bc-selecao-logo)>.container-fluid{display:flex;flex-wrap:nowrap;gap:8px;padding:4px 10px}
+.selecao-cardapio .navbar-brand:has(.bc-selecao-logo){flex:1;min-width:0;margin-right:0}
+.selecao-cardapio .main-container:has(.bc-selecao-logo)>ol{margin-top:76px!important;padding-left:0;min-width:0}
+.selecao-cardapio .main-container:has(.bc-selecao-logo) .list-group-item{min-width:0;overflow-wrap:anywhere}
+.selecao-cardapio .main-container:has(.bc-selecao-logo) .destaque-qtd{background:#fffdf9!important;border:1px solid #efddc9;border-radius:14px;padding:14px!important;box-shadow:0 3px 12px rgba(100,58,29,.06)!important;margin-top:14px}
+.selecao-cardapio .main-container:has(.bc-selecao-logo) #obs{width:100%;min-height:80px;font-size:16px;box-sizing:border-box}
+.selecao-cardapio .main-container:has(.bc-selecao-logo) .d-grid:has(>button[onclick="addCarrinho()"]){width:100%!important;max-width:420px;margin:18px auto 24px!important}
+.selecao-cardapio .main-container:has(.bc-selecao-logo) button[onclick="addCarrinho()"]{width:100%;min-height:48px;font-size:clamp(14px,4vw,18px)!important}
+.selecao-cardapio .main-container:has(.bc-selecao-logo) .row:has(img[src*="media-delivery.php?tipo=produtos"])>.col-2{flex:0 0 clamp(76px,26vw,120px)!important;width:clamp(76px,26vw,120px)!important}
+.selecao-cardapio .main-container:has(.bc-selecao-logo) .row img[src*="media-delivery.php?tipo=produtos"]{width:100%!important;height:auto!important;aspect-ratio:1;object-fit:cover}
+}
+</style>
 <script>document.body.classList.add('selecao-cardapio');</script>
 
 
