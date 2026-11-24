@@ -59,6 +59,7 @@ html body #listar #tabela_wrapper .dataTables_paginate li.page-item:before,html 
 #listar.bc-category-cards #tabela tbody td:nth-child(8)::before{content:'Produtos: '}
 html body #listar #tabela tbody td:last-child a.btn.btn-warning-light{--bc-action:#946000;--bc-bg:#fff2d0}
 html body #listar #tabela tbody td:last-child a.btn.btn-primary-light{--bc-action:#795038;--bc-bg:#fff0df}
+html body #listar #tabela tbody tr td input[id^="posicao_"]{box-sizing:border-box!important;width:44px!important;min-width:44px!important;max-width:44px!important;height:44px!important;padding:0!important;text-align:center!important;text-indent:0!important;line-height:normal!important;direction:ltr!important}
 </style>
 <div id="bc-category-list-view"><span>Visualização:</span><button type="button" data-view="cards" aria-pressed="true"><i class="fe fe-grid"></i> Cartões</button><button type="button" data-view="table" aria-pressed="false"><i class="fe fe-list"></i> Tabela</button></div>
 <script>
