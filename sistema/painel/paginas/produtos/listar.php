@@ -146,7 +146,7 @@ HTML;
 </div>
 </td>
 <td style="color:{$classe_linha}">
-<img class="rounded-circle mr-2" src="images/produtos/{$foto}" width="30px" height="30px">
+<img class="rounded-circle mr-2" src="/media-delivery.php?tipo=produtos&amp;arquivo={$foto}" width="30px" height="30px">
 {$nomeF} <span class="{$classe_promo} text-primary" style="font-size: 10px">(Promoção)</span>
 </td>
 <td style="color:{$classe_linha}">{$nome_cat}</td>
@@ -236,7 +236,7 @@ HTML;
 		$('#titulo_inserir').text('Editar Registro');
 		$('#modalForm').modal('show');
 		$('#foto').val('');
-		$('#target').attr('src', 'images/produtos/' + foto);
+		$('#target').attr('src', '/media-delivery.php?tipo=produtos&arquivo=' + encodeURIComponent(foto));
 	}
 
 	function limparCampos() {
@@ -289,7 +289,7 @@ HTML;
 		$('#val_promocional_dados').text(val_promocional);
 
 
-		$('#target_mostrar').attr('src', 'images/produtos/' + foto);
+		$('#target_mostrar').attr('src', '/media-delivery.php?tipo=produtos&arquivo=' + encodeURIComponent(foto));
 
 		$('#modalDados').modal('show');
 	}
