@@ -1049,7 +1049,7 @@ html body .app-sidebar .main-sidemenu {
  outline:none!important;
 }
 html body .app-sidebar .main-sidebar-header.active {
- border-bottom:1px solid var(--rainha-cacau-escuro)!important;
+ border-bottom:1px solid var(--rainha-cacau)!important;
 }
 html body aside.app-sidebar {border-right:1px solid var(--rainha-cacau-escuro)!important;scrollbar-color:#b87542 #512c24}
 html body .app-sidebar .ps__rail-y,html body .app-sidebar.ps > .ps__rail-y,
@@ -1058,3 +1058,5 @@ html body .app-sidebar .ps__thumb-y,html body .app-sidebar.ps > .ps__rail-y > .p
 html body .app-sidebar .ps__thumb-x {background:#92604a!important}
 html body .app-sidebar::-webkit-scrollbar-track {background:#512c24!important}
 html body .app-sidebar::-webkit-scrollbar-thumb {background:#92604a!important}
+
+html body .app-sidebar .main-sidebar-header.active,html body.dark-theme .app-sidebar .main-sidebar-header.active {border-bottom-color:var(--rainha-cacau)!important;box-shadow:none!important;}
