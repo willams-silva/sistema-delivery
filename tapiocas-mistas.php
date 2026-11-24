@@ -103,6 +103,13 @@ if (!function_exists('escMista')) { function escMista($x) { return htmlspecialch
 [data-mista] .mista-mais:disabled{opacity:.4;cursor:not-allowed}
 [data-mista] .mista-valor{min-width:26px;text-align:center;font-weight:700;color:#171717}
 @media(max-width:380px){[data-mista] .mista-controles{gap:5px}}
+li.list-group-item[data-mista] > .row.mista-linha{display:grid!important;grid-template-columns:minmax(0,1fr) 140px;gap:12px;align-items:start;flex-wrap:wrap!important;margin:0!important;width:100%!important}
+li.list-group-item[data-mista] > .mista-linha > .col-10,li.list-group-item[data-mista] > .mista-linha > .col-2{width:100%!important;max-width:100%!important;min-width:0;padding:0!important;margin:0!important}
+li.list-group-item[data-mista] > .mista-linha > .col-12{grid-column:1/-1;width:100%!important;padding:0!important;margin:0!important;min-width:0}
+li.list-group-item[data-mista] .mista-linha > .col-2 img{width:140px!important;height:140px!important;object-fit:cover!important;border-radius:12px!important}
+li.list-group-item[data-mista] .mista-botoes{display:flex;flex-wrap:wrap;gap:6px}
+li.list-group-item[data-mista] .titulo-item label{font-size:18px!important}
+@media(max-width:600px){li.list-group-item[data-mista] > .row.mista-linha{grid-template-columns:minmax(0,1fr) 100px}li.list-group-item[data-mista] .mista-linha > .col-2 img{width:100px!important;height:100px!important}}
 </style>
 <script>
 (function(){
