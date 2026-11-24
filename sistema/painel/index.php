@@ -337,6 +337,10 @@ if($linhas == 0){
 .app-sidebar .bc-caixa-fechado {background:#ef4444!important;}
 .app-sidebar .bc-caixa-status i {font-size:9px;}
 </style>
+<style>
+.app-sidebar .main-sidebar-header .desktop-logo,.app-sidebar .main-sidebar-header .desktop-dark{width:auto!important;max-width:min(260px,90%)!important;height:65px!important;max-height:65px!important;object-fit:contain!important}
+.app-sidebar .main-sidebar-header .header-logo{max-width:100%}
+</style>
 </head>
 
 <body class="ltr main-body app sidebar-mini">
@@ -362,8 +366,8 @@ if($linhas == 0){
 
 						<div class="responsive-logo logo_painel">
 							<a href="index.php" class="header-logo">
-								<img src="../img/<?php echo $logo_painel ?>" class="mobile-logo logo-1" alt="logo" style="width:90px !important; margin-left: -120px !important">
-										<img src="../img/<?php echo $logo_painel ?>" class="mobile-logo dark-logo-1" alt="logo" style="width:40% !important; margin-left: 50px !important">
+								<img src="/media-delivery.php?tipo=logos&amp;arquivo=<?php echo rawurlencode($logo_painel) ?>&amp;v=<?php echo (int)(@filemtime(dirname(__DIR__,3)."/upload_delivery/logos/".basename($logo_painel)) ?: @filemtime(__DIR__."/../img/".basename($logo_painel))) ?>" class="mobile-logo logo-1" alt="logo" style="width:90px !important; margin-left: -120px !important">
+										<img src="/media-delivery.php?tipo=logos&amp;arquivo=<?php echo rawurlencode($logo_painel) ?>&amp;v=<?php echo (int)(@filemtime(dirname(__DIR__,3)."/upload_delivery/logos/".basename($logo_painel)) ?: @filemtime(__DIR__."/../img/".basename($logo_painel))) ?>" class="mobile-logo dark-logo-1" alt="logo" style="width:40% !important; margin-left: 50px !important">
 							</a>
 						</div>
 
@@ -374,8 +378,8 @@ if($linhas == 0){
 						</div>
 						<div class="logo-horizontal">
 							<a href="index.php" class="header-logo">
-								<img src="../img/<?php echo $logo_painel ?>" class="mobile-logo logo-1" alt="logo">
-								<img src="../img/<?php echo $logo_painel ?>" class="mobile-logo dark-logo-1" alt="logo">
+								<img src="/media-delivery.php?tipo=logos&amp;arquivo=<?php echo rawurlencode($logo_painel) ?>&amp;v=<?php echo (int)(@filemtime(dirname(__DIR__,3)."/upload_delivery/logos/".basename($logo_painel)) ?: @filemtime(__DIR__."/../img/".basename($logo_painel))) ?>" class="mobile-logo logo-1" alt="logo">
+								<img src="/media-delivery.php?tipo=logos&amp;arquivo=<?php echo rawurlencode($logo_painel) ?>&amp;v=<?php echo (int)(@filemtime(dirname(__DIR__,3)."/upload_delivery/logos/".basename($logo_painel)) ?: @filemtime(__DIR__."/../img/".basename($logo_painel))) ?>" class="mobile-logo dark-logo-1" alt="logo">
 							</a>
 						</div>
 						<div class="main-header-center ms-4 d-sm-none d-md-none d-lg-block form-group">
@@ -798,8 +802,8 @@ if($linhas == 0){
 				<aside class="app-sidebar">
 					<div class="main-sidebar-header active">
 						<a class="header-logo active" href="index.php">
-							<img src="../img/<?php echo $logo_painel ?>" class="main-logo  desktop-logo" alt="logo" >
-							<img src="../img/<?php echo $logo_painel ?>" class="main-logo  desktop-dark" alt="logo" >
+							<img src="/media-delivery.php?tipo=logos&amp;arquivo=<?php echo rawurlencode($logo_painel) ?>&amp;v=<?php echo (int)(@filemtime(dirname(__DIR__,3)."/upload_delivery/logos/".basename($logo_painel)) ?: @filemtime(__DIR__."/../img/".basename($logo_painel))) ?>" class="main-logo  desktop-logo" alt="logo" >
+							<img src="/media-delivery.php?tipo=logos&amp;arquivo=<?php echo rawurlencode($logo_painel) ?>&amp;v=<?php echo (int)(@filemtime(dirname(__DIR__,3)."/upload_delivery/logos/".basename($logo_painel)) ?: @filemtime(__DIR__."/../img/".basename($logo_painel))) ?>" class="main-logo  desktop-dark" alt="logo" >
 							<img src="../img/<?php echo $icone_sistema ?>" class="main-logo  mobile-logo" alt="logo">
 							<img src="../img/<?php echo $icone_sistema ?>" class="main-logo  mobile-dark" alt="logo">
 						</a>
@@ -2081,7 +2085,7 @@ if($linhas == 0){
 						</div>
 						<div class="col-md-2">
 							<div id="divImg">
-								<img src="../img/<?php echo $logo_painel ?>" width="80px" id="target-painel">
+								<img src="/media-delivery.php?tipo=logos&amp;arquivo=<?php echo rawurlencode($logo_painel) ?>&amp;v=<?php echo (int)(@filemtime(dirname(__DIR__,3)."/upload_delivery/logos/".basename($logo_painel)) ?: @filemtime(__DIR__."/../img/".basename($logo_painel))) ?>" width="80px" id="target-painel">
 							</div>
 						</div>
 
