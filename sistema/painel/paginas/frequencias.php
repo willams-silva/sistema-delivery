@@ -8,9 +8,20 @@ if (@$frequencias == 'ocultar') {
 }
 ?>
 
+<style>
+html body #modalForm .modal-header{background:#914a29!important;color:#fff!important;border-color:#e5d4c6!important}
+html body #modalForm .modal-title,html body #modalForm .modal-title span,html body #modalForm .btn-close{color:#fff!important}
+html body #modalForm .modal-content{background:#fff!important;border:1px solid #e5d4c6!important;border-radius:14px!important;overflow:hidden}
+html body #modalForm .form-control{background:#fff!important;color:#4e2d20!important;border:1px solid #d7c5b7!important}
+html body #modalForm .form-control::placeholder{color:#927d70!important;opacity:1}
+html body #modalForm .btn-primary{background:#914a29!important;border-color:#914a29!important;color:#fff!important}
+html body #modalForm #dias{text-align:center!important;padding-inline:0!important;appearance:textfield!important}
+html body #modalForm #dias::-webkit-inner-spin-button,html body #modalForm #dias::-webkit-outer-spin-button{-webkit-appearance:none;margin:0}
+</style>
+<div class="card mb-3" style="margin-top:16px;border:1px solid #e5d4c6;border-radius:14px"><div class="card-body d-flex align-items-center flex-wrap gap-3"><h2 class="mb-0" style="font-size:21px;font-weight:600;color:#4e2d20"><i class="fa-solid fa-calendar-days me-2"></i>Frequências</h2><span style="font-size:12px;color:#795038">Gerencie os intervalos de recorrência das contas financeiras.</span></div></div>
 <div class="breadcrumb-header justify-content-between">
 	<div class="left-content mt-2">
-		<a class="btn ripple btn-primary text-white" onclick="inserir()" type="button"><i class="fe fe-plus me-1"></i> Adicionar <?php echo ucfirst($pag); ?></a>
+		<a class="btn ripple btn-primary text-white" onclick="inserir()" type="button"><i class="fe fe-plus me-1"></i> Adicionar Frequência</a>
 
 
 
