@@ -65,11 +65,29 @@ $detalheAuditoria = static function ($json) use ($escAuditoria) {
 .bc-audit-table th,.bc-audit-table td{padding:11px;border-bottom:1px solid #e5e7eb;vertical-align:top;text-align:left}
 .bc-audit-table th{background:#f8fafc;white-space:nowrap}.bc-audit-details{max-width:320px;overflow-wrap:anywhere}
 .bc-audit-details summary{cursor:pointer;color:#2563eb}.bc-audit-pages{display:flex;gap:12px;align-items:center;margin-top:14px}
+
+html body .bc-audit-wrap .bc-audit-card{background:#fff!important;border-color:#e5d4c6!important;border-radius:14px!important;color:#4e2d20!important;box-shadow:0 3px 12px rgba(78,45,32,.06)}
+html body .bc-audit-wrap h5{color:#4e2d20!important;font-weight:700;margin-bottom:14px}
+html body .bc-audit-wrap .bc-audit-filter label{color:#795038!important}
+html body .bc-audit-wrap .bc-audit-filter input,html body .bc-audit-wrap .bc-audit-filter select{background:#fff!important;color:#4e2d20!important;border:1px solid #d7c5b7!important;border-radius:9px!important}
+html body .bc-audit-wrap .bc-audit-filter input:focus,html body .bc-audit-wrap .bc-audit-filter select:focus{border-color:#914a29!important;box-shadow:0 0 0 3px rgba(145,74,41,.12)!important}
+html body .bc-audit-wrap .btn-primary{background:#914a29!important;border-color:#914a29!important;color:#fff!important;border-radius:9px!important}
+html body .bc-audit-wrap .btn-primary:hover{background:#71391f!important}
+html body .bc-audit-wrap .bc-audit-table{border:1px solid #e5d4c6;border-radius:10px}
+html body .bc-audit-wrap .bc-audit-table th{background:#f4e9df!important;color:#63351e!important}
+html body .bc-audit-wrap .bc-audit-table td,html body .bc-audit-wrap .bc-audit-table th{border-color:#eaded4!important}
+html body .bc-audit-wrap .bc-audit-table tbody tr:nth-child(even){background:#fcf8f4!important}
+html body .bc-audit-wrap .bc-audit-details summary{color:#914a29!important;font-weight:600}
+html body .bc-audit-wrap .bc-audit-pages{justify-content:center;flex-wrap:wrap;color:#795038}
+html body .bc-audit-wrap .bc-audit-pages .btn{background:#fff!important;border:1px solid #d7c5b7!important;color:#63351e!important;border-radius:8px!important;padding:8px 12px}
+html body .bc-audit-wrap .bc-audit-pages .btn:hover{background:#914a29!important;color:#fff!important}
+html body .bc-audit-wrap .alert-warning{background:#fff4dc!important;color:#855900!important;border-color:#ecd5a0!important}
+@media(max-width:600px){.bc-audit-wrap .bc-audit-card{padding:14px}.bc-audit-filter>div{width:100%}.bc-audit-filter input,.bc-audit-filter select{width:100%}}
 </style>
 <div class="bc-audit-wrap">
+<div class="card mb-3" style="margin-top:16px;border:1px solid #e2e8f0;border-radius:14px"><div class="card-body d-flex align-items-center flex-wrap gap-3"><h2 class="mb-0" style="font-size:21px;font-weight:600;color:#4e2d20"><i class="fa-solid fa-clock-rotate-left me-2"></i>Auditoria Financeira</h2><span style="font-size:12px;color:#795038">Histórico de operações financeiras registradas automaticamente. Consulta somente leitura, restrita ao estabelecimento atual.</span></div></div>
 <div class="bc-audit-card">
-<h3><i class="fa fa-history"></i> Auditoria Financeira</h3>
-<p>Histórico de operações financeiras registradas automaticamente. Consulta somente leitura, restrita ao estabelecimento atual.</p>
+<h5>Filtrar operações</h5>
 <form method="get" action="index.php" class="bc-audit-filter">
 <input type="hidden" name="pagina" value="auditoria_financeira">
 <div><label for="aud-inicio">De</label><input id="aud-inicio" type="date" name="inicio" value="<?php echo $escAuditoria($inicioAuditoria); ?>"></div>
