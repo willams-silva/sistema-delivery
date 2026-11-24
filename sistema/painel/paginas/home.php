@@ -359,6 +359,48 @@ $dashboardTicketMedio=(int)$dashboardResumoHoje['quantidade']>0
 ?>
 
 
+<style id="bc-dashboard-mobile">
+@media(max-width:1023px){
+html body .bc-dashboard-mobile{min-width:0;max-width:100%}
+html body .bc-dashboard-mobile .ux-home-intro{display:flex!important;flex-direction:column!important;align-items:stretch!important;gap:12px!important;padding:16px!important}
+html body .bc-dashboard-mobile .ux-home-intro h1{font-size:clamp(20px,4vw,26px)!important;line-height:1.25!important}
+html body .bc-dashboard-mobile .ux-home-shortcuts{display:grid!important;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px!important;width:100%!important}
+html body .bc-dashboard-mobile .ux-shortcut{display:flex!important;flex-direction:column;align-items:center;justify-content:center;min-height:48px;min-width:0;padding:8px 4px!important;font-size:12px!important;white-space:normal!important;text-align:center}
+html body .bc-dashboard-mobile .bc-dashboard-filter{display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px!important;padding:12px;border:1px solid #e5d4c6;border-radius:12px;background:#fff}
+html body .bc-dashboard-mobile .bc-dashboard-filter>label[for=periodo_dash],html body .bc-dashboard-mobile .bc-dashboard-filter>select,html body .bc-dashboard-mobile .bc-dashboard-filter>.text-muted{grid-column:1/-1}
+html body .bc-dashboard-mobile .bc-dashboard-filter :is(input,select){width:100%!important;min-width:0;min-height:42px;color-scheme:light}
+html body .bc-dashboard-mobile .bc-dashboard-filter label[for=inicio_dash]{grid-column:1;grid-row:4}
+html body .bc-dashboard-mobile .bc-dashboard-filter label[for=fim_dash]{grid-column:2;grid-row:4}
+html body .bc-dashboard-mobile .bc-dashboard-filter input{grid-row:5}
+html body .bc-dashboard-mobile .bc-dashboard-filter .btn{min-height:44px;display:flex;align-items:center;justify-content:center}
+html body .bc-dashboard-mobile .row[aria-label]{--bs-gutter-x:10px;--bs-gutter-y:10px}
+html body .bc-dashboard-mobile .row[aria-label]>div{min-width:0}
+html body .bc-dashboard-mobile .row[aria-label] .card{margin-bottom:0!important;min-width:0;overflow-wrap:break-word}
+html body .bc-dashboard-mobile .row[aria-label] .fs-5{font-size:clamp(17px,3.5vw,22px)!important;line-height:1.3}
+html body .bc-dashboard-mobile .sales-card{height:auto!important;min-height:120px}
+html body .bc-dashboard-mobile .sales-card .col-8{width:76%!important;min-width:0}
+html body .bc-dashboard-mobile .sales-card .col-4{width:24%!important;min-width:0}
+html body .bc-dashboard-mobile .sales-card .col-8>div{padding:14px!important}
+html body .bc-dashboard-mobile .sales-card h4{white-space:normal!important;overflow-wrap:break-word;font-size:18px!important}
+html body .bc-dashboard-mobile .sales-card .circle-icon{max-width:40px;max-height:40px;margin-inline:auto!important}
+html body .bc-dashboard-mobile .sales-card p{white-space:normal!important;line-height:1.5}
+html body .bc-dashboard-mobile .ux-home-secondary-row .sales-card p span[style*="margin-left"]{display:block;margin-left:0!important}
+html body .bc-dashboard-mobile .bc-dashboard-annual{display:block!important}
+html body .bc-dashboard-mobile #statistics1{min-width:0;max-width:100%}
+html body .bc-dashboard-mobile .bc-dashboard-daily{max-width:100%;overflow-x:auto!important;overscroll-behavior-x:contain;padding-bottom:8px}
+html body .bc-dashboard-mobile .table-responsive{max-width:100%;overflow-x:auto}
+html body .bc-dashboard-mobile .table-responsive td:nth-child(2){white-space:normal!important;overflow-wrap:break-word}
+html body .bc-dashboard-mobile .table-responsive th{white-space:normal!important}
+}
+@media(max-width:767px){
+html body .bc-dashboard-mobile .row[aria-label="Resumo financeiro do período"]>div,html body .bc-dashboard-mobile .row[aria-label="Resumo operacional"]>div,html body .bc-dashboard-mobile .row[aria-label="Indicadores complementares"]>div{width:50%!important}
+html body .bc-dashboard-mobile .row[aria-label="Resumo financeiro do período"]>div:last-child,html body .bc-dashboard-mobile .row[aria-label="Resumo operacional"]>div:last-child{width:100%!important}
+html body .bc-dashboard-mobile .row[aria-label] .card{padding:12px!important}
+html body .bc-dashboard-mobile .ux-home-kpi-row>div{width:100%!important}
+html body .bc-dashboard-mobile .bc-dashboard-annual .card-body{padding:8px!important}
+}
+</style>
+<div class="bc-dashboard-mobile">
 <section class="ux-home-intro" aria-label="Resumo do painel">
   <div>
     <span class="ux-home-eyebrow"><i class="fa fa-chart-line" aria-hidden="true"></i> Visão geral</span>
@@ -371,7 +413,7 @@ $dashboardTicketMedio=(int)$dashboardResumoHoje['quantidade']>0
     <a href="pagar" class="ux-shortcut"><i class="fa fa-file-invoice-dollar" aria-hidden="true"></i> Despesas</a>
   </div>
 </section>
-<form method="get" class="d-flex flex-wrap align-items-center gap-2 mt-3 mb-2" aria-label="Filtrar indicadores financeiros">
+<form method="get" class="d-flex flex-wrap align-items-center gap-2 mt-3 mb-2 bc-dashboard-filter" aria-label="Filtrar indicadores financeiros">
   <label for="periodo_dash" class="fw-semibold mb-0">Período dos indicadores:</label>
   <select name="periodo_dash" id="periodo_dash" class="form-select form-select-sm" style="width:auto">
     <option value="hoje" <?php echo $dashboardPeriodo==='hoje'?'selected':''; ?>>Hoje</option>
@@ -429,7 +471,7 @@ $dashboardTicketMedio=(int)$dashboardResumoHoje['quantidade']>0
 <div class="row g-3 mb-3" aria-label="Análise de vendas e pagamentos">
   <div class="col-12 col-lg-7"><section class="card p-3 h-100">
     <h5>Evolução do faturamento</h5>
-    <div class="d-flex align-items-end gap-2 overflow-auto" style="min-height:170px" role="img" aria-label="Barras de faturamento por dia">
+    <div class="d-flex align-items-end gap-2 overflow-auto bc-dashboard-daily" style="min-height:170px" role="img" aria-label="Barras de faturamento por dia">
     <?php foreach ($dashboardSerie as $ponto): ?>
       <div class="text-center" style="min-width:55px;flex:1">
         <div class="small text-muted">R$ <?php echo number_format((float)$ponto['total'],2,',','.'); ?></div>
@@ -758,7 +800,7 @@ HTML;
 
 
 
-	<div class="card custom-card overflow-hidden ocultar_mobile">
+	<div class="card custom-card overflow-hidden ocultar_mobile bc-dashboard-annual">
 		<div class="card-header border-bottom-0">
 			<div>
 				<h3 class="card-title mb-2 ">Recebimentos / Despesas <?php echo $ano_atual ?></h3> <span
@@ -980,7 +1022,16 @@ HTML;
 					}
 				}
 			};
-			document.getElementById('statistics1').innerHTML = '';
+			if (window.matchMedia('(max-width: 1023px)').matches) {
+ options1.chart.height = 300;
+ options1.chart.toolbar = {show:false};
+ options1.xaxis.labels.rotate = -45;
+ options1.xaxis.labels.style = {fontSize:'10px'};
+ options1.yaxis.title.text = '';
+ options1.legend.fontSize = '11px';
+ options1.stroke.width = 1;
+}
+ document.getElementById('statistics1').innerHTML = '';
 			var chart1 = new ApexCharts(document.querySelector("#statistics1"), options1);
 			chart1.render();
 		}, 300);
@@ -991,6 +1042,7 @@ HTML;
 
 
 
+</div><!-- bc-dashboard-mobile -->
 <div class="modal fade" id="modalAlertaSaas" tabindex="-1" aria-hidden="true"
      data-bs-backdrop="static" data-bs-keyboard="false">
   <div class="modal-dialog modal-dialog-centered modal-lg">
