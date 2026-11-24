@@ -1,36 +1,13 @@
 <?php
-@session_start();
-$id_empresa = $_SESSION['empresa'];
-header('Content-Type: application/json');
-
-require_once("sistema/conexao.php");
-require_once("sistema/painel/buscar_config.php");
-
-// Monta os caminhos completos para os ícones, usando pasta "images/"
-$icon_path_192 = "/sistema/img/icone_192_".$id_empresa.".png";
-$icon_path_512 = "/sistema/img/icone_512_".$id_empresa.".png";
-
-$manifest = [
-    "name" => $nome_sistema,
-    "short_name" => $nome_sistema,
-    "start_url" => "/site/".$url_site,
-    "scope" => "/site/",
-    "display" => "standalone",
-    "orientation" => "portrait",
-    "background_color" => "#ffffff",
-    "theme_color" => "#ffffff",
-    "icons" => [
-        [
-            "src" => $icon_path_192,
-            "sizes" => "192x192",
-            "type" => "image/png"
-        ],
-        [
-            "src" => $icon_path_512,
-            "sizes" => "512x512",
-            "type" => "image/png"
-        ]
-    ]
-];
-
-echo json_encode($manifest, JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT);
+require_once __DIR__.'/sistema/conexao.php';
+header('Content-Type: application/manifest+json; charset=utf-8');
+header('Cache-Control: no-store');
+$slug=$_GET['loja'] ?? '';
+if(!is_string($slug)||!preg_match('/^[a-zA-Z0-9_-]+$/D',$slug)){http_response_code(404);exit;}
+$q=$pdo->prepare('SELECT nome, url_site, icone, logo FROM config WHERE url_site = ? LIMIT 1');
+$q->execute([$slug]);$loja=$q->fetch(PDO::FETCH_ASSOC);
+if(!$loja){http_response_code(404);exit;}
+$nome=$slug==='rainhadastapiocas'?'Rainha das Tapiocas':($loja['nome'] ?: $slug);
+$icons=[];
+foreach([192,512] as $size){$icons[]=['src'=>'/pwa-icon.php?loja='.rawurlencode($slug).'&size='.$size,'sizes'=>$size.'x'.$size,'type'=>'image/png','purpose'=>'any'];}
+echo json_encode(['id'=>'/site/'.$slug,'name'=>$nome,'short_name'=>$nome,'start_url'=>'/site/'.$slug,'scope'=>'/','display'=>'standalone','orientation'=>'portrait','background_color'=>'#fffaf5','theme_color'=>'#512c24','icons'=>$icons],JSON_UNESCAPED_SLASHES|JSON_UNESCAPED_UNICODE);
