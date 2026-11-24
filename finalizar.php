@@ -98,6 +98,8 @@ body.checkout-cardapio { background:#fffaf5; color:#493425; }
 .checkout-cardapio .navbar { background:#fffdf9 !important; border-bottom:1px solid #f0dfce; box-shadow:0 3px 16px rgba(94,53,25,.09) !important; }
 .checkout-cardapio .navbar-brand { color:#753d1e; font-weight:750; display:flex; align-items:center; gap:12px; font-size:clamp(15px,2.5vw,20px); }
 .checkout-cardapio .navbar-brand img { width:64px; max-height:58px; object-fit:contain; }
+.checkout-cardapio .navbar-brand img.bc-checkout-logo-rainha{width:58px;height:58px;aspect-ratio:1;object-fit:contain;border-radius:50%!important;clip-path:circle(49% at 50% 50%)}
+@media(max-width:767px){.checkout-cardapio .navbar-brand img.bc-checkout-logo-rainha{width:47px;height:47px}}
 .checkout-cardapio #accordionExample { margin-top:90px !important; margin-bottom:215px !important; overflow:visible !important; height:auto !important; display:grid; gap:14px; }
 .checkout-cardapio .accordion-item { border:1px solid #efddc9; border-radius:16px !important; overflow:hidden; background:#fff; box-shadow:0 4px 20px rgba(100,58,29,.055); }
 .checkout-cardapio .accordion-button { padding:19px 22px; font-size:15px !important; font-weight:750; color:#75401f; background:#fff; box-shadow:none; }
@@ -291,7 +293,7 @@ body.checkout-cardapio { background:#fffaf5; color:#493425; }
   <nav class="navbar bg-light fixed-top" style="box-shadow: 0px 3px 5px rgba(0, 0, 0, 0.20);">
     <div class="container-fluid">
       <a class="navbar-brand" href="site/<?php echo $url_site ?>">
-        <img src="sistema/img/<?php echo $logo_sistema ?>" alt="" width="80px" class="d-inline-block align-text-top">
+        <img src="/media-delivery.php?tipo=logos&amp;arquivo=<?php echo rawurlencode($logo_sistema) ?>" alt="" width="80px" class="d-inline-block align-text-top<?php echo $url_site === 'rainhadastapiocas' ? ' bc-checkout-logo-rainha' : '' ?>">
         Finalizar Pedido
       </a>
 
