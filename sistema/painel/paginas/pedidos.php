@@ -46,7 +46,15 @@ html body .main-content .card.bc-orders-heading, html body .card.bc-orders-headi
  </div>
 </div>
 <?php if (isset($nome_usuario) && $nome_usuario === 'Administrador'): ?>
-<div class="card mb-3" style="border-radius:14px;border:1px solid #dce4ee">
+<style>
+html body .card.bc-orders-automation{border:1px solid #e2e8f0!important;border-radius:14px!important;box-shadow:0 3px 12px rgba(65,33,22,.04)!important}
+html body .bc-orders-automation button[data-bs-target="#automacao-pedidos-painel"]{background:#fff!important;color:#795038!important;border:1px solid #d7c5b7!important;border-radius:9px!important;padding:9px 14px!important;font-weight:600;transition:background .2s,color .2s}
+html body .bc-orders-automation button[data-bs-target="#automacao-pedidos-painel"]:hover,html body .bc-orders-automation button[data-bs-target="#automacao-pedidos-painel"][aria-expanded=true]{background:#914a29!important;color:#fff!important;border-color:#914a29!important}
+html body .bc-orders-automation button[data-bs-target="#automacao-pedidos-painel"] i{color:inherit!important}
+html body .bc-orders-automation button[data-bs-target="#automacao-pedidos-painel"]:focus-visible{outline:2px solid #914a29;outline-offset:2px}
+html body .bc-orders-automation button[type=submit]{background:#914a29!important;color:#fff!important;border-color:#914a29!important;border-radius:9px!important}
+</style>
+<div class="card mb-3 bc-orders-automation">
  <div class="card-body">
   <button type="button" class="btn btn-outline-primary btn-sm" data-bs-toggle="collapse" data-bs-target="#automacao-pedidos-painel" aria-expanded="false"><i class="fa fa-clock-o"></i> Automação de pedidos / tempos</button>
   <div class="collapse mt-3" id="automacao-pedidos-painel">
