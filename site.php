@@ -1200,18 +1200,18 @@ if ($id_mesa == "" && $sessão_balcao == "") {
 
 
     <!-- APROVEITE NOSSO COMBOS -->
-    <section class="blog-area pt-75 pb-30" style="margin-top: -80px; margin-bottom: 80px;" id="combo">
+    <section class="blog-area pt-75 pb-30" style="margin-top: 0; margin-bottom: 40px;" id="combo">
       <div class="container">
         <div class="row">
           <div class="col-lg-12 text-center">
             <div class="tpsection mb-35">
-              <h4 class="tpsection__sub-title">Combos Especiais</h4>
+              <h4 class="tpsection__sub-title">Combos Especiais</h4><p class="bora-combo-subtitle">Combinações irresistíveis para você</p>
             </div>
           </div>
         </div>
 
-        <div class="swiper-container tpblog-active">
-          <div class="swiper-wrapper">
+        <div class="bora-combo-container">
+          <div class="bora-combo-grid">
 
 
             <?php
@@ -1276,33 +1276,20 @@ if ($id_mesa == "" && $sessão_balcao == "") {
             ?>
 
 
-                <div class="swiper-slide">
-                  <div class="tpbrandproduct__item d-flex" style="box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px">
-                    <a href="<?php echo $url_produto ?>">
-                      <div class="tpblog__item">
-
-
-
-                        <div class="img_combo" style="height: 220px; width: 100%;">
-                          <a href="<?php echo $url_produto ?>">
-                            <img src="/media-delivery.php?tipo=produtos&amp;arquivo=<?php echo rawurlencode($foto) ?>" alt="" 
-                                 style="width: 100%; height: 100%; object-fit: cover; display: block;">
-                          </a>
-                        </div>
-                        <br><hr>
-                        <span><b><?php echo $nome ?></b></span><br>
-                        <span style="font-size: 12px; color: #939393"><b><?php echo $descricaoF ?></b></span>
-                        <div class="tpproduct__price mb-10">
-                          <span>R$ <?php echo $valorF ?></span>
-
-                        </div>
-
-
-
-                      </div>
-                    </a>
+                <article class="bora-combo-card">
+                  <a class="bora-combo-photo" href="<?php echo htmlspecialchars($url_produto, ENT_QUOTES, 'UTF-8') ?>">
+                    <img src="/media-delivery.php?tipo=produtos&amp;arquivo=<?php echo rawurlencode($foto) ?>" alt="<?php echo htmlspecialchars($nome, ENT_QUOTES, 'UTF-8') ?>" loading="lazy">
+                    <span class="bora-combo-tag">♛ Combo</span>
+                  </a>
+                  <div class="bora-combo-body">
+                    <h3><?php echo htmlspecialchars($nome, ENT_QUOTES, 'UTF-8') ?></h3>
+                    <p><?php echo htmlspecialchars($descricaoF, ENT_QUOTES, 'UTF-8') ?></p>
+                    <div class="bora-combo-bottom">
+                      <strong>R$ <?php echo $valorF ?></strong>
+                      <a class="bora-combo-action" href="<?php echo htmlspecialchars($url_produto, ENT_QUOTES, 'UTF-8') ?>"><i class="bi bi-cart3"></i> Escolher combo <span aria-hidden="true">›</span></a>
+                    </div>
                   </div>
-                </div>
+                </article>
             <?php }
             } else { ?>
               <div class="swiper-slide" style="width:100%;">
@@ -1317,7 +1304,24 @@ if ($id_mesa == "" && $sessão_balcao == "") {
 
       </div>
     </section><br>
-    <!-- FIM APROVEITE NOSSO COMBOS -->
+    <style>
+#combo{scroll-margin-top:100px}
+#combo .bora-combo-subtitle{color:#806e60;margin:8px 0 0}
+#combo .bora-combo-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,280px),1fr));gap:24px;max-width:1100px;margin:auto}
+#combo .bora-combo-card{display:flex;flex-direction:column;min-width:0;max-width:540px;background:#fffaf5;border:1px solid #efd5bb;border-radius:20px;padding:14px;box-shadow:0 8px 24px rgba(100,53,20,.08)}
+#combo .bora-combo-photo{display:block;position:relative;aspect-ratio:16/9;overflow:hidden;border-radius:14px;background:#fff}
+#combo .bora-combo-photo img{display:block;width:100%;height:100%;object-fit:cover;margin:0;padding:0}
+#combo .bora-combo-tag{position:absolute;bottom:10px;left:10px;background:#74380e;color:#fff;padding:5px 12px;border-radius:20px;font-size:13px;font-weight:700}
+#combo .bora-combo-body{display:flex;flex-direction:column;flex:1;padding:14px 4px 4px}
+#combo .bora-combo-body h3{font-size:21px;color:#71380f;margin:0 0 8px;line-height:1.25}
+#combo .bora-combo-body p{font-size:14px;color:#75685e;line-height:1.5;margin:0 0 16px}
+#combo .bora-combo-bottom{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-top:auto}
+#combo .bora-combo-bottom strong{font-size:23px;color:#a85b24;white-space:nowrap}
+#combo .bora-combo-action{display:inline-flex;align-items:center;justify-content:center;gap:8px;background:#a85b24;color:#fff;border-radius:24px;padding:10px 16px;font-weight:700;font-size:14px;text-decoration:none}
+#combo .bora-combo-action:hover,#combo .bora-combo-action:focus{background:#783b13;color:#fff}
+@media(max-width:600px){#combo .bora-combo-grid{grid-template-columns:1fr;gap:16px}#combo .bora-combo-card{max-width:none}#combo .bora-combo-action{flex:1}#combo .bora-combo-bottom strong{font-size:20px}}
+</style>
+<!-- FIM APROVEITE NOSSO COMBOS -->
 
 
   <?php } ?>
