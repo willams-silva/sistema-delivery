@@ -124,6 +124,11 @@ html body .bc-financeiro .alert-warning strong{color:#855900!important}
 html body .bc-financeiro .alert-danger strong{color:#b42332!important}
 html body .bc-financeiro .bc-value-in{color:#13745a!important}
 html body .bc-financeiro .bc-value-out{color:#b42332!important}
+html body .bc-financeiro .bc-card .alert.alert-light{background:#f8efe6!important;background-color:#f8efe6!important;color:#4e2d20!important;border:1px solid #e5d4c6!important}
+html body .bc-financeiro .bc-card .alert.alert-light p,html body .bc-financeiro .bc-card .alert.alert-light strong,html body .bc-financeiro .bc-card .alert.alert-light small{color:#63351e!important}
+html body .bc-financeiro .bc-card .alert.alert-warning{background:#fff4dc!important;color:#855900!important;border-color:#ecd5a0!important}
+html body .bc-financeiro .bc-card .alert.alert-danger{background:#fdebed!important;color:#b42332!important;border-color:#efc4ca!important}
+html body .bc-financeiro .bc-card .alert > strong{font-size:18px!important;display:block;margin-bottom:6px}
 </style>
 <div class="container-fluid bc-financeiro">
 <div class="card mb-3 bc-finance-heading" style="margin-top:16px;border:1px solid #e2e8f0;border-radius:14px"><div class="card-body d-flex align-items-center flex-wrap gap-3"><h2 class="mb-0" style="font-size:21px;font-weight:600;color:#4e2d20"><i class="fa-solid fa-chart-line me-2"></i>Visão Financeira</h2><span style="font-size:12px;color:#795038">Movimentações realizadas e contas previstas · Somente leitura</span></div></div>
