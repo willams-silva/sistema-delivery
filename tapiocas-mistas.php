@@ -30,13 +30,13 @@ if (!function_exists('escMista')) { function escMista($x) { return htmlspecialch
    </div>
   </div>
   <div class="col-2 text-end" style="padding-right:0">
-   <img src="sistema/painel/images/produtos/<?= escMista(rawurlencode($p['foto'])) ?>" width="60" height="60" style="object-fit:cover;max-width:100%" alt="">
+   <img src="/media-delivery.php?tipo=produtos&amp;arquivo=<?= escMista(rawurlencode($p['foto'])) ?>" width="60" height="60" style="object-fit:cover;max-width:100%;border-radius:12px" alt="">
   </div>
   <div class="col-12 mista-botoes mt-2" style="padding-left:8px">
-   <button type="button" class="btn btn-sm btn-outline-success mb-1 me-1 mista-abrir-btn" data-abrir="inclusas">＋ Sabores inclusos</button>
-   <button type="button" class="btn btn-sm btn-outline-success mb-1 me-1 mista-abrir-btn" data-abrir="adicional"><span aria-hidden="true">+</span> Adicionais</button>
-   <button type="button" class="btn btn-sm btn-outline-success mb-1 me-1 mista-abrir-btn" data-abrir="opcional">＋ Opcionais · retirar sem custo</button>
-   <button type="button" class="btn btn-sm btn-outline-success mb-1 me-1 mista-abrir-btn" data-abrir="proteina">＋ Proteínas</button>
+   <button type="button" class="btn btn-sm btn-outline-success bora-sabor-extra mb-1 me-1 mista-abrir-btn" data-abrir="inclusas">＋ Sabores inclusos</button>
+   <button type="button" class="btn btn-sm btn-outline-success bora-sabor-extra mb-1 me-1 mista-abrir-btn" data-abrir="adicional"><span aria-hidden="true">+</span> Adicionais</button>
+   <button type="button" class="btn btn-sm btn-outline-success bora-sabor-extra mb-1 me-1 mista-abrir-btn" data-abrir="opcional">＋ Opcionais · retirar sem custo</button>
+   <button type="button" class="btn btn-sm btn-outline-success bora-sabor-extra mb-1 me-1 mista-abrir-btn" data-abrir="proteina">＋ Proteínas</button>
   </div>
   <div class="col-12">
    <div id="mista-opcoes-<?= $pid ?>" class="mista-opcoes mt-2" hidden style="padding:10px;background:#fff8e8;border-radius:8px">
@@ -88,6 +88,9 @@ if (!function_exists('escMista')) { function escMista($x) { return htmlspecialch
 </li>
 <?php endforeach; ?>
 <style>
+[data-mista] button.mista-abrir-btn:hover,[data-mista] button.mista-abrir-btn:active,[data-mista] button.mista-abrir-btn:focus,[data-mista] button.mista-abrir-btn[aria-expanded="true"]{background:#a85b24!important;color:#fff!important;border-color:#a85b24!important;box-shadow:none!important}
+[data-mista] button.mista-abrir-btn{transition:background-color .18s ease,color .18s ease;border-radius:10px}
+
 [data-mista] .mista-item-incluso .mista-item-nome{font-size:16px;line-height:1.4}
 [data-mista] .mista-item-incluso .mista-item-nome>span[aria-hidden="true"]{font-size:19px;line-height:1;display:inline-block;vertical-align:middle;margin-right:4px}
 [data-mista] .mista-item-incluso .mista-item-nome small{font-size:13px}
