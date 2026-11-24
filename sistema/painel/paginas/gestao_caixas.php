@@ -81,6 +81,17 @@ html body .bc-gc .badge.bg-primary{background:#914a29!important;color:#fff!impor
 html body .bc-gc .text-success{color:#13745a!important}
 html body .bc-gc .text-danger{color:#b42332!important}
 html body .bc-gc .text-warning{color:#855900!important}
+ 
+html body .bc-gc .gc-detail-grid{padding:18px;background:#fcf8f4;border-radius:12px;align-items:stretch}
+html body .bc-gc .gc-detail-panel{background:#fff;border:1px solid #e5d4c6;border-radius:12px;padding:16px;height:100%;font-weight:400}
+html body .bc-gc .gc-detail-panel>strong{display:block;font-size:16px;margin-bottom:12px;color:#63351e}
+html body .bc-gc .gc-detail-grid .list-group-item{padding:12px;font-weight:400}
+html body .bc-gc .gc-detail-grid .list-group-item strong{font-weight:600}
+html body .bc-gc .gc-detail-grid .gc-amount{font-size:24px;font-weight:700;color:#63351e}
+html body .bc-gc .gc-detail-grid .gc-detail-panel .row>div{padding:12px;font-weight:400}
+html body .bc-gc table tbody tr:hover,html body .bc-gc table tbody tr:hover>td{--bs-table-accent-bg:transparent!important;--bs-table-bg-state:transparent!important;box-shadow:none!important;background-color:transparent!important}
+html body .bc-gc .btn-outline-primary:hover{background:#fff!important;color:#63351e!important;border-color:#d7c5b7!important;box-shadow:none!important;transform:none!important}
+html body .bc-gc .btn-outline-primary[aria-expanded="true"]{background:#f4e9df!important;color:#63351e!important}
 </style>
 <div class="bc-gc">
 <div class="card mb-3" style="margin-top:16px"><div class="card-body d-flex align-items-center flex-wrap gap-3"><h2 class="mb-0" style="font-size:21px;font-weight:600;color:#4e2d20"><i class="fa-solid fa-cash-register me-2"></i>Gestão de Caixas</h2><span style="font-size:12px;color:#795038">Acompanhamento gerencial — sem alterar os caixas operacionais.</span></div></div>
@@ -112,7 +123,7 @@ html body .bc-gc .text-warning{color:#855900!important}
  <div class="col-md-4"><div class="card card-body"><small>Total de faltas</small><h3 class="text-danger"><?= $moeda($totalFaltas) ?></h3></div></div>
 </div>
 <div class="card"><div class="card-body table-responsive">
-<table class="table table-striped table-hover"><thead><tr><th>Caixa</th><th>Operador</th><th>Abertura</th><th>Fechamento</th><th>Saldo inicial</th><th>Valor informado</th><th>Diferença</th><th>Status</th><th>Responsável pelo fechamento</th><th>Detalhes</th></tr></thead><tbody>
+<table class="table table-striped"><thead><tr><th>Caixa</th><th>Operador</th><th>Abertura</th><th>Fechamento</th><th>Saldo inicial</th><th>Valor informado</th><th>Diferença</th><th>Status</th><th>Responsável pelo fechamento</th><th>Detalhes</th></tr></thead><tbody>
 <?php foreach($caixas as $c): ?>
 <?php
   $diferencaCaixa = round((float)$c['quebra'],2);
@@ -135,18 +146,18 @@ html body .bc-gc .text-warning{color:#855900!important}
 <div class="text-muted small"><?= $h($aud['criado_em']) ?></div>
 <?php else: ?><span class="text-muted"><?= $fechado ? 'Fechamento anterior à auditoria' : 'Caixa ainda aberto' ?></span><?php endif; ?>
 </td>
-<td><button class="btn btn-outline-primary btn-sm" type="button" data-bs-toggle="collapse" data-bs-target="#gc-detalhe-<?= (int)$c['id'] ?>" aria-expanded="false" aria-controls="gc-detalhe-<?= (int)$c['id'] ?>">Detalhar</button></td>
+<td><button class="btn btn-outline-primary btn-sm" type="button" data-bs-toggle="collapse" data-bs-target="#gc-detalhe-<?= (int)$c['id'] ?>" aria-expanded="false" aria-controls="gc-detalhe-<?= (int)$c['id'] ?>"><i class="fa fa-list-ul me-1"></i> Detalhar</button></td>
 </tr>
 <tr class="collapse" id="gc-detalhe-<?= (int)$c['id'] ?>"><td colspan="10">
- <div class="row g-3">
+ <div class="row g-3 gc-detail-grid">
  <?php foreach (['entradas'=>'Recebimentos','saidas'=>'Pagamentos'] as $tipo=>$titulo): ?>
- <div class="col-md-5"><strong><?= $h($titulo) ?> por forma</strong>
+ <div class="col-md-5"><div class="gc-detail-panel"><strong><i class="fa <?= $tipo === 'entradas' ? 'fa-arrow-down' : 'fa-arrow-up' ?> me-2"></i><?= $h($titulo) ?> por forma</strong>
  <ul class="list-group mt-2">
  <?php foreach(($detalhes[(int)$c['id']][$tipo] ?? []) as $mov): ?>
  <li class="list-group-item d-flex justify-content-between"><span><?= $h($mov['forma']) ?> (<?= (int)$mov['quantidade'] ?>)</span><strong><?= $moeda($mov['total']) ?></strong></li>
  <?php endforeach; ?>
  <?php if(empty($detalhes[(int)$c['id']][$tipo])): ?><li class="list-group-item text-muted">Sem movimentações pagas.</li><?php endif; ?>
- </ul></div>
+ </ul></div></div>
  <?php endforeach; ?>
  <?php
  $dadosAuditados = null;
@@ -158,7 +169,7 @@ html body .bc-gc .text-warning{color:#855900!important}
  }
  ?>
  <div class="col-12 mt-3">
- <div class="border rounded p-3">
+ <div class="gc-detail-panel">
  <strong><i class="fa fa-calculator me-1"></i> Conferência do numerário</strong>
  <?php if ($dadosAuditados): ?>
  <small class="d-block text-muted mb-2">Valores registrados no momento do fechamento (auditoria).</small>
@@ -176,7 +187,7 @@ html body .bc-gc .text-warning{color:#855900!important}
  <p class="text-muted mb-0 mt-2">Caixa em aberto. A conferência definitiva será registrada no fechamento.</p>
  <?php endif; ?>
  </div></div>
- <div class="col-md-2"><strong>Sangrias</strong><p class="mt-2 mb-0"><?= $moeda($detalhes[(int)$c['id']]['sangrias']['total'] ?? 0) ?></p><small><?= (int)($detalhes[(int)$c['id']]['sangrias']['quantidade'] ?? 0) ?> retirada(s)</small></div>
+ <div class="col-md-2 order-md-first"><div class="gc-detail-panel"><strong><i class="fa fa-money-bill me-2"></i>Sangrias</strong><p class="mt-2 mb-0 gc-amount"><?= $moeda($detalhes[(int)$c['id']]['sangrias']['total'] ?? 0) ?></p><small><?= (int)($detalhes[(int)$c['id']]['sangrias']['quantidade'] ?? 0) ?> retirada(s)</small></div></div>
  </div>
 </td></tr>
 <?php endforeach; ?>
