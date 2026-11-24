@@ -1037,3 +1037,24 @@ html body .pdv_body .pdv-low-stock-badge {
  line-height:1.25!important;
  white-space:nowrap!important;
 }
+
+/* Divisorias e trilho de rolagem da barra lateral na paleta cacau. */
+html body aside.app-sidebar,
+html body.dark-theme aside.app-sidebar.ps.ps--active-y.open,
+html body .app-sidebar .main-sidebar-header.active,
+html body.dark-theme .app-sidebar .main-sidebar-header,
+html body .app-sidebar .main-sidemenu {
+ border-color:var(--rainha-cacau)!important;
+ box-shadow:none!important;
+ outline:none!important;
+}
+html body .app-sidebar .main-sidebar-header.active {
+ border-bottom:1px solid var(--rainha-cacau-escuro)!important;
+}
+html body aside.app-sidebar {border-right:1px solid var(--rainha-cacau-escuro)!important;scrollbar-color:#b87542 #512c24}
+html body .app-sidebar .ps__rail-y,html body .app-sidebar.ps > .ps__rail-y,
+html body .app-sidebar .ps__rail-x {background:#512c24!important;opacity:1!important}
+html body .app-sidebar .ps__thumb-y,html body .app-sidebar.ps > .ps__rail-y > .ps__thumb-y,
+html body .app-sidebar .ps__thumb-x {background:#92604a!important}
+html body .app-sidebar::-webkit-scrollbar-track {background:#512c24!important}
+html body .app-sidebar::-webkit-scrollbar-thumb {background:#92604a!important}
