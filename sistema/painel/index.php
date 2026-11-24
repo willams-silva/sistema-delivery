@@ -249,7 +249,7 @@ if($linhas == 0){
 
 
 	<meta charset="UTF-8">
-	<meta name='viewport' content='width=device-width, initial-scale=1.0, user-scalable=0'>
+	<meta name='viewport' content='width=device-width, initial-scale=1.0'>
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
 	<meta name="Description" content="Sistema para Delivery Interativo, sistemas para delivery, delivery interativo, sistemas Hugo Vasconcelos, sistemas hugocursos, sistemas hugo">
 	<meta name="Author" content="Hugo Vasconcelos do Portal HugoCursos">
@@ -355,6 +355,34 @@ html body .slide-menu .bc-catalog-link > i{flex:0 0 17px;width:17px;text-align:c
 body .app-sidebar .main-sidebar-header,body .app-sidebar .main-sidebar-header.active,body .app-sidebar .main-sidebar-header .header-logo{border:0!important;outline:0!important;box-shadow:none!important}
 body .app-sidebar .main-sidebar-header::before,body .app-sidebar .main-sidebar-header::after{border:0!important;box-shadow:none!important}
 </style>
+<style id="bc-admin-mobile-shell">
+@media (max-width:1023px){
+html body .main-header.side-header .main-container{display:flex;align-items:center;justify-content:space-between;gap:8px;padding-inline:12px!important;min-width:0}
+html body .main-header.side-header .main-header-left{display:flex;align-items:center;gap:8px;min-width:0;flex:1 1 auto}
+html body .main-header.side-header .responsive-logo{position:static!important;transform:none!important;margin:0!important;min-width:0;flex:0 1 auto;order:2}
+html body .main-header.side-header .responsive-logo .header-logo{margin:0!important;position:static!important}
+html body .main-header.side-header .responsive-logo img{width:auto!important;max-width:clamp(76px,24vw,150px)!important;height:auto!important;max-height:40px!important;margin:0!important;object-fit:contain}
+html body .main-header.side-header .app-sidebar__toggle{order:1;flex:0 0 44px;margin:0!important;position:relative!important}
+html body .main-header.side-header .app-sidebar__toggle a{min-width:44px;min-height:44px;line-height:44px;text-align:center}
+html body .main-header.side-header .main-header-right{min-width:0;flex:0 1 auto;margin:0!important}
+html body .main-header.side-header .header-icons{gap:2px;align-items:center;flex-wrap:nowrap}
+html body .main-header.side-header .header-icons>li:first-child[style*="opacity: 0"]{display:none!important}
+html body .main-header.side-header .header-icons>li>a{min-height:44px;display:flex;align-items:center;justify-content:center}
+html body .main-header.side-header .dropdown-menu{max-width:calc(100vw - 24px);overflow-wrap:anywhere}
+html body .app-sidebar .side-menu__item{min-height:44px;align-items:center;padding-block:10px}
+html body .app-sidebar .side-menu__label{white-space:normal;line-height:1.35;overflow-wrap:anywhere}
+html body .app-sidebar .slide-item{min-height:40px;line-height:1.4;white-space:normal;padding-block:9px}
+html body .app-sidebar .main-sidebar-header .header-logo img{max-width:90%!important;object-fit:contain}
+html body .main-content.app-content>.main-container{min-width:0;padding-inline:12px!important}
+html body .main-footer{white-space:normal;overflow-wrap:anywhere;text-align:center}
+}
+@media (max-width:767px){
+html body .main-header.side-header .main-container{padding-inline:8px!important;gap:4px}
+html body .main-header.side-header .main-header-left{gap:4px}
+html body .main-header.side-header .responsive-logo img{max-width:clamp(64px,23vw,110px)!important;max-height:34px!important}
+html body .main-content.app-content>.main-container{padding-inline:10px!important}
+}
+</style>
 </head>
 
 <body class="ltr main-body app sidebar-mini">
@@ -387,8 +415,8 @@ body .app-sidebar .main-sidebar-header::before,body .app-sidebar .main-sidebar-h
 
 
 						<div class="app-sidebar__toggle" data-bs-toggle="sidebar">
-							<a id="btn_ocultar_menu" class="open-toggle" href="javascript:void(0);"><i class="header-icon fe fe-align-left"></i></a>
-							<a class="close-toggle" href="javascript:void(0);"><i class="header-icon fe fe-x"></i></a>
+							<a id="btn_ocultar_menu" aria-label="Abrir menu lateral" class="open-toggle" href="javascript:void(0);"><i class="header-icon fe fe-align-left"></i></a>
+							<a class="close-toggle" aria-label="Fechar menu lateral" href="javascript:void(0);"><i class="header-icon fe fe-x"></i></a>
 						</div>
 						<div class="logo-horizontal">
 							<a href="index.php" class="header-logo">
