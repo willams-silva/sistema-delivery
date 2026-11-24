@@ -96,9 +96,11 @@ body.resumo-cardapio { background:#fffaf5 !important; color:#503827; margin:0; }
   .resumo-cardapio .resumo-itens > .col-9 { width:72%; }
   .resumo-cardapio .resumo-itens > .col-3 { width:28%; }
 }
+.resumo-cardapio .resumo-container a.resumo-voltar{display:inline-flex;align-items:center;gap:8px;min-height:44px;padding:8px 20px;border:1px solid #a85b24;border-radius:25px;background:#fffaf5;color:#a85b24;text-decoration:none}.resumo-cardapio .resumo-container a.resumo-voltar:hover{background:#a85b24;color:#fff}
 </style>
 
 	<div class="container resumo-container" align="center" style="padding:10px; font-size: 'Verdana';">
+<div style="display:flex;justify-content:flex-start;margin-bottom:12px"><a class="resumo-voltar" href="/meus-pedidos" onclick="if(document.referrer){try{const r=new URL(document.referrer);if(r.origin===location.origin &amp;&amp; /^\/meus-pedidos\/?$/.test(r.pathname)){history.back();return false;}}catch(e){}}"><i class="bi bi-arrow-left" aria-hidden="true"></i> Voltar</a></div>
 		<img src="<?php echo $url_sistema ?>img/check_ok.png" width="80px">
 		<br>
 		<span style="font-size: 18px; margin-top: 5px"><b>Nº PEDIDO <?php echo $n_pedido ?></b></span>
