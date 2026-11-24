@@ -11,6 +11,15 @@ $pag = 'caixas';
 ?>
 
 
+<style>
+html body .card.bc-cash-heading{margin-top:16px!important;border:1px solid #e2e8f0!important;border-radius:14px!important;box-shadow:0 3px 12px rgba(65,33,22,.04)!important}
+</style>
+<div class="card mb-3 bc-cash-heading">
+ <div class="card-body d-flex align-items-center flex-wrap gap-3">
+  <h2 class="mb-0" style="font-size:21px;font-weight:600;color:#4e2d20"><i class="fa-solid fa-cash-register me-2" aria-hidden="true"></i>Gestão de Caixas</h2>
+  <span style="font-size:12px;color:#795038">Gerencie a abertura e o fechamento dos caixas, acompanhe movimentações financeiras e confira os saldos.</span>
+ </div>
+</div>
 <div class="justify-content-between ux-cash-page" style="margin-top: 20px">
 	<div class="left-content mt-2 mb-3">
 		<form action="rel/caixas_class.php" method="POST" target="_blank">
