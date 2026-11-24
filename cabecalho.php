@@ -50,7 +50,8 @@ if ($config_contatos_loja) {
 	<meta name="author" content="Hugo Vasconcelos" />
 
 	<link rel="shortcut icon" href="sistema/img/icone.png" type="image/x-icon">
-	<link rel="manifest" href="manifest.php">
+	<link rel="manifest" href="/manifest.php?loja=<?php echo rawurlencode($url_site ?? '') ?>&amp;v=2">
+<link rel="apple-touch-icon" href="/pwa-icon.php?loja=<?php echo rawurlencode($url_site ?? '') ?>&amp;size=192">
 
 
 	<!-- CSS here -->
