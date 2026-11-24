@@ -195,7 +195,7 @@ if (@$_SESSION['nome_mesa'] != '') {
 
 
 								<div class="col-2" style="margin-top: 10px;" align="right">
-									<img class="" src="sistema/painel/images/produtos/<?php echo $foto ?>" width="60px" height="60px">
+									<img class="" src="/media-delivery.php?tipo=produtos&amp;arquivo=<?php echo rawurlencode($foto) ?>" width="60px" height="60px">
 								</div>
 
 
