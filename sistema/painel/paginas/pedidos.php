@@ -301,6 +301,11 @@ html body #listar .ux-orders-table > tbody > tr > td:last-child .btn i{color:inh
 html body #listar .ux-orders-table > tbody > tr > td:last-child .btn:not(.disabled):not([aria-disabled=true]):hover{background:var(--bc-fg)!important;color:#fff!important;transform:translateY(-2px);filter:none!important;box-shadow:0 4px 9px #63351e30!important}
 html body #listar .ux-orders-table > tbody > tr > td:last-child .btn:focus-visible{outline:2px solid var(--bc-fg)!important;outline-offset:2px}
 @media(prefers-reduced-motion:reduce){html body #listar .ux-orders-table > tbody > tr > td:last-child .btn{transition:none!important;transform:none!important}}
+
+html body #listar.bc-pedidos-cartoes .ux-orders-table > tbody > tr > td:nth-child(n+2):nth-child(-n+7){display:block!important;text-align:right!important;min-height:32px;line-height:1.6}
+html body #listar.bc-pedidos-cartoes .ux-orders-table > tbody > tr > td:nth-child(n+2):nth-child(-n+7)::before{float:left;text-align:left;margin-right:12px;line-height:inherit}
+html body #listar.bc-pedidos-cartoes .ux-orders-table > tbody > tr > td:nth-child(6) a{display:inline-block!important;vertical-align:middle}
+html body #listar.bc-pedidos-cartoes .ux-orders-table > tbody > tr > td:nth-child(3) small{display:inline!important;float:none!important}
 </style>
 <script>
 (function(){
