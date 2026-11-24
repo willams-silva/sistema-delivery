@@ -219,14 +219,21 @@ if (@$pausar_delivery == 'Sim') {
     </div>
 </div>
 
-<div class="d-flex align-items-center justify-content-between flex-wrap gap-2 mb-3" id="bc-pedidos-modos">
- <span class="small text-muted">Visualização dos pedidos</span>
- <div class="btn-group" role="group" aria-label="Modo de visualização dos pedidos">
-  <button type="button" class="btn btn-outline-primary btn-sm active" id="bc-pedidos-cartoes" aria-pressed="true" onclick="bcMudarVisaoPedidos('cartoes')"><i class="fa fa-th-large me-1"></i> Cartões</button>
-  <button type="button" class="btn btn-outline-primary btn-sm" id="bc-pedidos-tabela" aria-pressed="false" onclick="bcMudarVisaoPedidos('tabela')"><i class="fa fa-list me-1"></i> Tabela</button>
+<div id="bc-pedidos-modos" class="bc-orders-view-toolbar">
+ <span>Visualização:</span>
+ <div class="bc-orders-view-options" role="group" aria-label="Modo de visualização dos pedidos">
+  <button type="button" class="bc-orders-view-btn active" id="bc-pedidos-cartoes" aria-pressed="true" onclick="bcMudarVisaoPedidos('cartoes')"><i class="fe fe-grid"></i> Cartões</button>
+  <button type="button" class="bc-orders-view-btn" id="bc-pedidos-tabela" aria-pressed="false" onclick="bcMudarVisaoPedidos('tabela')"><i class="fe fe-list"></i> Tabela</button>
  </div>
 </div>
 <style>
+html body #bc-pedidos-modos{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin:14px 0 10px}
+html body #bc-pedidos-modos>span{font-weight:600;margin-right:4px;color:#4e2d20}
+html body #bc-pedidos-modos .bc-orders-view-options{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+html body #bc-pedidos-modos .bc-orders-view-btn{border:1px solid #d7c5b7!important;border-radius:9px!important;background:#fff!important;color:#6c4631!important;padding:9px 14px;font-weight:600;transition:background .2s,color .2s}
+html body #bc-pedidos-modos .bc-orders-view-btn[aria-pressed=true]{background:#914a29!important;color:#fff!important;border-color:#914a29!important}
+html body #bc-pedidos-modos .bc-orders-view-btn[aria-pressed=false]:hover{background:#f4e7dc!important}
+html body #bc-pedidos-modos .bc-orders-view-btn:focus-visible{outline:2px solid #914a29;outline-offset:2px}
 #listar.bc-pedidos-cartoes .ux-orders-scroll-region{overflow:visible!important}
 #listar.bc-pedidos-cartoes .ux-orders-table{display:block!important;width:100%!important;border:0!important;background:transparent!important}
 #listar.bc-pedidos-cartoes .ux-orders-table thead{display:none!important}
@@ -291,7 +298,7 @@ html body #listar .ux-orders-table > tbody > tr > td:last-child .btn:focus-visib
 })();
 </script>
 	<hr>
-	<div id="listar">
+	<div id="listar" class="bc-pedidos-cartoes">
 
 	</div>
 
