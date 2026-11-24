@@ -1,8 +1,21 @@
 <!-- BOTÃO DO CARRINHO -->
-<div class="col-xl-3 mr-5">
+<?php $bc_cart_rainha = ($url_site ?? $_SESSION['url_site'] ?? '') === 'rainhadastapiocas'; ?>
+<?php if ($bc_cart_rainha) { ?>
+<style>
+.bc-cart-rainha{width:auto!important;flex:0 0 auto!important;margin-right:0!important}
+.bc-cart-rainha .header__info-cart{margin:0!important}
+.bc-cart-rainha .header__info-cart button{display:flex!important;align-items:center!important;justify-content:center!important;gap:9px;background:#a85b24!important;color:#fff!important;border-radius:24px!important;width:auto!important;height:auto!important;min-height:44px!important;padding:10px 14px!important;white-space:nowrap;line-height:1.2!important}
+.bc-cart-rainha .header__info-cart button i{display:inline-flex!important;align-items:center!important;justify-content:center!important;gap:8px;width:auto!important;height:auto!important;min-width:0!important;background:transparent!important;border:0!important;border-radius:0!important;padding:0!important;margin:0!important;position:static!important;line-height:1.2!important}
+.bc-cart-rainha .header__info-cart button i img{width:19px!important;height:19px!important;display:block!important;filter:brightness(0) invert(1)}
+.bc-cart-rainha #total-itens-carrinho{flex:0 0 auto!important;position:static!important;transform:none!important;inset:auto!important;margin:0!important;background:#fff!important;color:#a85b24!important;min-width:20px;height:20px;line-height:20px;border-radius:50%;text-align:center}
+@media(min-width:768px){.bc-cart-rainha .header__info-cart button{min-width:172px!important}.bc-cart-rainha .header__info-cart button i::after{content:"Meu carrinho";display:block!important;font-size:14px;font-weight:600;font-style:normal;color:#fff;white-space:nowrap;margin:0!important}}
+@media(max-width:767px){.bc-cart-rainha .header__info-cart button{gap:6px;padding:8px 10px!important;border-radius:15px!important;height:44px!important}.bc-cart-rainha #total-itens-carrinho{min-width:18px;height:18px;line-height:18px}}
+</style>
+<?php } ?>
+<div class="col-xl-3 mr-5<?php echo $bc_cart_rainha ? ' bc-cart-rainha' : ''; ?>">
   <div class="header__info d-flex align-items-center">
     <div class="header__info-cart tpcolor__oasis ml-10 tp-cart-toggle">
-      <button><i><img src="img/icon/cart-1.svg" alt=""></i>
+      <button type="button" aria-label="Meu carrinho"><i><img src="img/icon/cart-1.svg" alt=""></i>
         <span id="total-itens-carrinho"></span>
       </button>
     </div>
