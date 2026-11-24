@@ -37,9 +37,26 @@ $agendadas_hoje = @count($res);
 $query = $pdo->query("SELECT * from $tabela where usuario = '$usuario' and data = '$data' and empresa = '$id_empresa' order by hora asc");
 $res = $query->fetchAll(PDO::FETCH_ASSOC);
 $linhas = @count($res);
+echo <<<'BCAGENDA'
+<style>
+#listar .bc-agenda-task-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,250px),1fr));gap:14px}
+html body #listar .bc-agenda-task{margin:0!important;border:1px solid #e5d4c6!important;border-radius:14px!important;box-shadow:none!important;min-width:0}
+html body #listar .bc-agenda-task .card-header{background:#f4e9df!important;color:#63351e!important;padding:12px!important;border-radius:13px 13px 0 0}
+html body #listar .bc-agenda-task .card-header.bg-success{background:#def3e9!important;color:#13745a!important}
+html body #listar .bc-agenda-task .card-header .fa-close{color:#b42332!important}
+html body #listar .bc-agenda-task .card-body{background:#fff!important;padding:16px!important;border-radius:0 0 13px 13px}
+html body #listar .bc-agenda-task .card-text{margin:0!important}
+html body #listar .bc-agenda-task .dropdown-item-text{white-space:normal;overflow-wrap:anywhere}
+html body #listar .bc-agenda-task .bc-task-edit,html body #listar .bc-agenda-task .bc-task-done>a{display:inline-flex;align-items:center;justify-content:center;width:38px;height:38px;border-radius:9px;border:1px solid #17658a;background:#e1f2fa;margin:8px 3px 0}
+html body #listar .bc-agenda-task .bc-task-edit i{color:#17658a!important}
+html body #listar .bc-agenda-task .bc-task-done>a{border-color:#13745a;background:#def3e9}
+html body #listar .bc-agenda-task .bc-task-done>a i{color:#13745a!important}
+html body #listar .bc-agenda-task:hover{transform:none!important;box-shadow:none!important}
+</style>
+BCAGENDA;
 if($linhas > 0){
 echo <<<HTML
-	<div class="row">
+	<div class="bc-agenda-task-grid">
 HTML;
 for($i=0; $i<$linhas; $i++){
 	$id = $res[$i]['id'];
@@ -75,9 +92,9 @@ for($i=0; $i<$linhas; $i++){
 	$descricaoF = mb_strimwidth($descricao, 0, 50, "...");
 
 echo <<<HTML
-		<div class="card text-center col-md-3" style="box-shadow: 2px 2px 2px 1px rgba(0, 0, 0, 0.1);">		
+		<div class="card text-center bc-agenda-task" style="box-shadow: 2px 2px 2px 1px rgba(0, 0, 0, 0.1);">		
 			<div class="card-header {$bg_card} border-light" style="font-size: 17px; padding:2px">
-	             {$horaF}
+	             {$horaF} <small>· {$status}</small>
 	            
 
 	            <div class="dropdown pull-right" style="display: inline-block; margin-right: 5px;">                      
@@ -106,9 +123,9 @@ echo <<<HTML
 
 	        	<div style="margin-top: -10px" class="{$ocultar_itens}">
 
-	        		<big><a class="icones_mobile" href="#" onclick="editar('{$id}','{$usuario}','{$data}','{$hora}','{$hora_mensagem}','{$descricao}','{$prioridade}')" title="Editar Dados"><i class="fa fa-edit " style="color:blue"></i></a></big>
+	        		<big><a class="icones_mobile bc-task-edit" href="#" onclick="editar('{$id}','{$usuario}','{$data}','{$hora}','{$hora_mensagem}','{$descricao}','{$prioridade}')" title="Editar Dados"><i class="fa fa-edit " style="color:blue"></i></a></big>
 
-	        		<div class="icones_mobile" class="dropdown" style="display: inline-block;">                      
+	        		<div class="icones_mobile dropdown bc-task-done" style="display: inline-block;">                      
                         <a title="Concluir Tarefa" href="#" aria-expanded="false" aria-haspopup="true" data-bs-toggle="dropdown" class="dropdown"><i class="fa fa-check-square " style="color:green"></i> </a>
                         <div  class="dropdown-menu tx-13">
                         <div class="dropdown-item-text botao_verde">
@@ -130,7 +147,7 @@ echo <<<HTML
 HTML;
 
 }else{
-	echo '<small>Nenhum Registro Encontrado!</small>';
+	echo '<small>Nenhuma tarefa para a data selecionada.</small>';
 }
 
 ?>
@@ -144,7 +161,7 @@ HTML;
 	$('#tarefas_dia').text("<?=$agendadas_hoje?>");
 	$('#tarefas_atrasadas').text("<?=$tarefas_atrasadas?>");
 
-    $('#tabela').DataTable({
+    if ($('#tabela').length) $('#tabela').DataTable({
     	"language" : {
             //"url" : '//cdn.datatables.net/plug-ins/1.13.2/i18n/pt-BR.json'
         },
@@ -164,7 +181,7 @@ HTML;
     	}
 
     	$('#id').val(id);
-    	$('#data').val(data);
+    	$('#data_tarefa').val(data);
     	$('#hora').val(hora);
     	$('#hora_alerta').val(hora_mensagem);
     	$('#descricao').val(descricao);
