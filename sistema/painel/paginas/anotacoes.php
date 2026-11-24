@@ -9,13 +9,29 @@ if (@$anotacoes == 'ocultar') {
 }
 ?>
 
-<div class="justify-content-between" style="margin-top: 20px">
+<style>
+html body .bc-note-page .nav-tabs{border-color:#e5d4c6!important;gap:8px}
+html body .bc-note-page .nav-link{background:#fff!important;color:#63351e!important;border:1px solid #d7c5b7!important;border-radius:9px!important;padding:10px 16px}
+html body .bc-note-page .nav-link.active{background:#914a29!important;color:#fff!important;border-color:#914a29!important}
+html body .bc-note-content .custom-card,html body .bc-note-content #form_contrato{background:#fff!important;border:1px solid #e5d4c6!important;border-radius:14px!important}
+html body .bc-note-content #form_contrato{padding:20px}
+html body .bc-note-content :is(.form-control,.form-select){background:#fff!important;color:#4e2d20!important;border:1px solid #d7c5b7!important;border-radius:9px!important;color-scheme:light}
+html body .bc-note-content .btn-primary{background:#914a29!important;color:#fff!important;border-color:#914a29!important}
+html body .bc-note-content .nicEdit-panelContain{background:#f4e9df!important;border-color:#d7c5b7!important}
+html body .bc-note-content .nicEdit-main{color:#4e2d20!important;background:#fff!important}
+html body #modalDados .modal-header{background:#914a29!important;color:#fff!important}
+html body #modalDados .modal-title{color:#fff!important}
+html body #modalDados .modal-content{background:#fff!important;border:1px solid #e5d4c6!important;border-radius:14px!important}
+html body #modalDados #titulo_dados{color:#63351e;font-weight:700}
+</style>
+<div class="card mb-3" style="margin-top:16px;border:1px solid #e5d4c6;border-radius:14px"><div class="card-body d-flex align-items-center flex-wrap gap-3"><h2 class="mb-0" style="font-size:21px;font-weight:600;color:#4e2d20"><i class="fa-solid fa-note-sticky me-2"></i>Anotações</h2><span style="font-size:12px;color:#795038">Organize informações, lembretes e anotações da equipe.</span></div></div>
+<div class="justify-content-between bc-note-page" style="margin-top: 20px">
 	<nav style="margin-bottom: 20px">
 		<div class="nav nav-tabs" id="nav-tab" role="tablist">
 			<button class="nav-link active" id="nav-home-tab" data-bs-toggle="tab" data-bs-target="#nav-home" type="button" role="tab" aria-controls="nav-home" aria-selected="true">Listar Anotações</button>
 			<button onclick="limparCampos()" class="nav-link" id="nav-profile-tab" data-bs-toggle="tab" data-bs-target="#nav-profile" type="button" role="tab" aria-controls="nav-profile" aria-selected="false">
 				<i class="fa fa-plus "></i>
-				Adicionar Novo</button>
+				Nova Anotação</button>
 
 		</div>
 	</nav>
@@ -23,7 +39,7 @@ if (@$anotacoes == 'ocultar') {
 </div>
 
 
-<div class="tab-content" id="nav-tabContent">
+<div class="tab-content bc-note-content" id="nav-tabContent">
 
 	<div class="tab-pane fade show active" id="nav-home" role="tabpanel" aria-labelledby="nav-home-tab">
 		<div class="row row-sm">
@@ -112,7 +128,7 @@ if (@$anotacoes == 'ocultar') {
 	<div class="modal-dialog modal-lg">
 		<div class="modal-content">
 			<div class="modal-header bg-primary text-white">
-				<h4 class="modal-title" id="exampleModalLabel">MOSTRAR DADOS</h4>
+				<h4 class="modal-title" id="exampleModalLabel">Detalhes da Anotação</h4>
 				<button id="btn-fechar-dados" aria-label="Close" class="btn-close" data-bs-dismiss="modal" type="button"><span
 						class="text-white" aria-hidden="true">&times;</span></button>
 			</div>
