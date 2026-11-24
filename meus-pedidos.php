@@ -86,6 +86,7 @@ $autenticado = (
 .mp-footer-link,.mp-footer-link:hover{color:#a85b24}
 @media(max-width:575px){.mp-topbar{gap:8px}.mp-back{font-size:12px}.mp-order-head{gap:8px}.mp-line{align-items:flex-start}.mp-line span:last-child{white-space:nowrap}}
 
+.mp-container{max-width:1200px}.mp-hero{background:#512c24;border-radius:20px;padding:26px 16px;margin-bottom:22px}.mp-hero h1,.mp-hero p{color:#fffaf5}.mp-btn,.mp-btn-outline{border-radius:25px;min-height:44px}.mp-order{border-color:#efd5bb;padding:22px}.mp-order-title{font-size:20px;color:#512c24}.mp-total{font-size:20px;color:#a85b24}.mp-tools{display:flex;gap:12px;margin:16px 0}.mp-tools .mp-input{margin:0;min-width:0}.mp-tools select{max-width:220px}.mp-status[data-tone="success"]{background:#e5f4e8;color:#176535}.mp-status[data-tone="danger"]{background:#fce7e7;color:#a32222}.mp-status[data-tone="active"]{background:#fff0d6;color:#92500c}.mp-order[hidden]{display:none!important}.mp-order details summary{cursor:pointer;color:#a85b24;font-weight:700;padding:10px 0}.mp-order details summary:focus-visible{outline:2px solid #a85b24}.mp-footer-link{border:1px solid #a85b24;border-radius:25px;padding:12px 20px}.mp-line{font-size:15px}.mp-order .mp-btn{width:auto}@media(max-width:575px){.mp-tools{flex-direction:column}.mp-tools select{max-width:none}.mp-order .mp-btn{width:100%}.mp-order-title{font-size:17px}.mp-total{font-size:17px}.mp-order{padding:15px}.mp-hero{padding:20px 12px}}
 </style>
 
 <div class="mp-page">
@@ -135,28 +136,32 @@ $autenticado = (
           <p class="mp-muted mb-0 mt-2">Não encontramos pedidos vinculados a este telefone.</p>
         </div>
       <?php } ?>
-      <?php foreach ($pedidos as $pedido) {
+      <?php if ($pedidos) { ?>
+<div class="mp-tools"><input class="mp-input" id="mp-search" type="search" placeholder="Buscar pedido, produto ou data" aria-label="Buscar pedidos"><select class="mp-input" id="mp-filter" aria-label="Filtrar por status"><option value="">Todos os status</option><?php foreach (array_unique(array_column($pedidos,'status')) as $status) { ?><option value="<?php echo htmlspecialchars($status,ENT_QUOTES,'UTF-8') ?>"><?php echo htmlspecialchars($status) ?></option><?php } ?></select></div>
+<p id="mp-empty-filter" class="mp-muted" hidden>Nenhum pedido corresponde à busca.</p>
+<?php } ?>
+<?php foreach ($pedidos as $pedido) {
         $dataF = !empty($pedido['data']) ? date('d/m/Y', strtotime($pedido['data'])) : '';
         $valorF = number_format((float)$pedido['valor'], 2, ',', '.');
         $itensQ = $pdo->prepare("SELECT nome_produto, quantidade, (total_item * quantidade) AS total_item FROM carrinho WHERE pedido = :pedido AND empresa = :empresa ORDER BY id");
         $itensQ->execute([':pedido'=>$pedido['id'], ':empresa'=>$id_empresa]);
         $itens = $itensQ->fetchAll(PDO::FETCH_ASSOC);
       ?>
-        <div class="mp-order">
+        <div class="mp-order" data-status="<?php echo htmlspecialchars($pedido['status'],ENT_QUOTES,'UTF-8') ?>">
           <div class="mp-order-head">
             <div>
               <div class="mp-order-title">Pedido #<?php echo htmlspecialchars($pedido['pedido']) ?></div>
               <div class="mp-muted mt-1"><?php echo $dataF ?> às <?php echo htmlspecialchars(substr($pedido['hora'],0,5)) ?></div>
             </div>
-            <span class="mp-status"><?php echo htmlspecialchars($pedido['status']) ?></span>
+            <span class="mp-status" data-tone="<?php $st=mb_strtolower(trim($pedido['status']),'UTF-8'); echo preg_match('/cancel|recus/',$st)?'danger':(preg_match('/conclu|entregue|finaliz/',$st)?'success':'active'); ?>"><?php echo htmlspecialchars($pedido['status']) ?></span>
           </div>
           <hr class="mp-separator">
-          <?php foreach ($itens as $item) { ?>
+          <details open><summary>Produtos do pedido</summary><?php foreach ($itens as $item) { ?>
             <div class="mp-line">
               <span><?php echo htmlspecialchars($item['quantidade']) ?>x <?php echo htmlspecialchars($item['nome_produto']) ?></span>
               <span>R$ <?php echo number_format((float)$item['total_item'],2,',','.') ?></span>
             </div>
-          <?php } ?>
+          <?php } ?></details>
           <hr class="mp-separator">
           <div class="mp-total"><span>Total do pedido</span><span>R$ <?php echo $valorF ?></span></div>
           <div class="mp-muted mt-2"><?php echo htmlspecialchars($pedido['entrega']) ?> · <?php echo htmlspecialchars($pedido['tipo_pgto']) ?> · Pagamento: <?php echo htmlspecialchars($pedido['pago']) ?></div>
@@ -192,4 +197,6 @@ $autenticado = (
 })();
 </script>
 <?php } ?>
-</body></html>
+<script>
+(function(){const q=document.getElementById('mp-search'),s=document.getElementById('mp-filter');if(!q||!s)return;const cards=Array.from(document.querySelectorAll('.mp-order'));function filter(){let n=0;const term=q.value.trim().toLocaleLowerCase('pt-BR');cards.forEach(c=>{const ok=(!s.value||c.dataset.status===s.value)&&c.textContent.toLocaleLowerCase('pt-BR').includes(term);c.hidden=!ok;if(ok)n++});document.getElementById('mp-empty-filter').hidden=n!==0;}q.addEventListener('input',filter);s.addEventListener('change',filter);})();
+</script></body></html>
