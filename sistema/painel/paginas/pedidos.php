@@ -222,7 +222,15 @@ if (@$pausar_delivery == 'Sim') {
                 </select>
             </label>
         </div>
-		<div class="d-flex justify-content-end me-2" style="max-width: 300px; margin-left: auto; margin-bottom: 10px">
+		<style>
+html body #bc-orders-search .input-group{flex-wrap:nowrap;border:1px solid #d7c5b7;border-radius:9px;overflow:hidden;background:#fff;transition:border-color .2s,box-shadow .2s}
+html body #bc-orders-search .input-group-text{background:#f4e7dc!important;color:#795038!important;border:0!important;border-radius:0!important;padding:10px 14px}
+html body #bc-orders-search .input-group-text i{color:#795038!important}
+html body #bc-orders-search #busca{background:#fff!important;color:#4e2d20!important;border:0!important;border-radius:0!important;box-shadow:none!important;min-width:0}
+html body #bc-orders-search #busca::placeholder{color:#806e63!important;opacity:1}
+html body #bc-orders-search .input-group:focus-within{border-color:#914a29;box-shadow:0 0 0 3px #914a2920}
+</style>
+<div id="bc-orders-search" class="d-flex justify-content-end me-2" style="max-width: 300px; margin-left: auto; margin-bottom: 10px">
     <div class="input-group">
         <span class="input-group-text bg-light border border-primary">
             <i class="fas fa-search text-secondary"></i>
