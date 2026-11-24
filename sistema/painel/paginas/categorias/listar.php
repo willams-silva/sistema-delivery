@@ -139,7 +139,7 @@ HTML;
 <label for="seletor-{$id}" class="custom-control-label mt-1 text-dark"></label>
 </div>
 </td>
-	<td><input value="{$posicao}" onblur="editarPosicao('{$id}')" type="text" name="posicao" id="posicao_{$id}" style="width:35px; border:none; border-bottom:1px solid #000; outline:none; background:transparent;"></td>
+	<td><input value="{$posicao}" onblur="editarPosicao('{$id}')" type="text" name="posicao" id="posicao_{$id}" style="width:35px; text-align:center !important; padding-left:0 !important; padding-right:0 !important; border:none; border-bottom:1px solid #000; outline:none; background:transparent;"></td>
 	<td class="text-center" style="color:{$classe_linha}">
 	<img alt="avatar" class="rounded-circle" src="/media-delivery.php?tipo=categorias&amp;arquivo={$foto}" width="30px" height="30px">
 	</td>
