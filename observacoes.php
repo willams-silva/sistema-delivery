@@ -317,7 +317,7 @@ body.selecao-cardapio { background:#fffaf5 !important; color:#503827; }
 		<b><?php echo mb_strtoupper($nome); ?></b>
 		<div class="col-lg-4 col-md-6">
 			<div class="tpbanner__item">
-				<img class="ocultar_img" src="sistema/painel/images/produtos/<?php echo $foto ?>" width="70%" height="70%">
+				<img class="ocultar_img" src="/media-delivery.php?tipo=produtos&amp;arquivo=<?php echo rawurlencode($foto) ?>" width="70%" height="70%">
 			</div>
 		</div>
 	</div>
