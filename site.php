@@ -1049,15 +1049,15 @@ if ($id_mesa == "" && $sessão_balcao == "") {
     <!-- OFERTAS DA SEMANA -->
     <section class="brand-product" style="margin-top: 20px" id="promocao">
       <div class="container">
-        <div class="sections__wrapper white-bg pl-50 pr-50 pb-40 brand-product">
+        <div class="bora-offer-wrapper">
           <div class="row">
             <div class="col-lg-12 text-center mb-20">
               <div class="tpsection">
-                <h4 class="tpsection__sub-title">Ofertas da Semana</h4>
+                <h4 class="tpsection__sub-title">Ofertas da Semana</h4><p class="bora-offer-subtitle">Aproveite nossas promoções exclusivas!</p>
               </div>
             </div>
           </div>
-          <div class="row">
+          <div class="bora-offer-grid">
 
             <?php
             $query = $pdo->query("SELECT * FROM produtos where ativo = 'Sim' and promocao = 'Sim'  and delivery = 'Sim' and empresa = '$id_empresa' and (tem_estoque = 'Não' OR estoque > 0)");
@@ -1085,9 +1085,10 @@ if ($id_mesa == "" && $sessão_balcao == "") {
 
                 $valor_porc = $valor - $val_promocional;
 
+                if ($valor <= 0 || $val_promocional <= 0 || $val_promocional >= $valor) { continue; }
                 $valor_porcentagem = ($valor_porc / $valor) * 100;
 
-                $valor_porcentagemF = number_format($valor_porcentagem, 2, ',', '.') . '%';
+                $valor_porcentagemF = rtrim(rtrim(number_format($valor_porcentagem, 2, ',', '.'), '0'), ',') . '%';
 
 
                 if ($tem_estoque == 'Sim' and $estoque <= 0) {
@@ -1142,36 +1143,20 @@ if ($id_mesa == "" && $sessão_balcao == "") {
 
 
 
-                <div class="col-xl-4">
-                  <div class="tpbrandproduct__item d-flex mb-20" style="box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;">
-                    <a href="<?php echo $url_produto ?>">
-                      <div class="imgem-cat-div p-relative">
-                        <img src="/media-delivery.php?tipo=produtos&amp;arquivo=<?php echo rawurlencode($foto) ?>" alt="">
-                        <div class="tpproduct__info bage tpbrandproduct__bage">
-                          <span class="tpproduct__info-discount bage__discount">-<?php echo $valor_porcentagemF ?></span>
-                        </div>
-                      </div>
-
-
-                      <div class="tpbrandproduct__contact">
-                        <span><?php echo $nome ?></span><br>
-                        <div class="tpproduct__rating">
-                          <a href="<?php echo $url_produto ?>"><i class="icon-star"></i></a>
-                          <a href="<?php echo $url_produto ?>"><i class="icon-star"></i></a>
-                          <a href="<?php echo $url_produto ?>"><i class="icon-star"></i></a>
-                          <a href="<?php echo $url_produto ?>"><i class="icon-star"></i></a>
-                          <a href="<?php echo $url_produto ?>"><i class="icon-star"></i></a>
-                        </div>
-                        <div class="tpproduct__price">
-                          <span>R$ <?php echo $val_promocionalF    ?></span>
-                          <del>R$ <?php echo $valorF ?></del>
-                        </div>
-                      </div>
-                    </a>
+                <article class="bora-offer-card">
+                  <a class="bora-offer-photo" href="<?php echo htmlspecialchars($url_produto, ENT_QUOTES, 'UTF-8') ?>">
+                    <img src="/media-delivery.php?tipo=produtos&amp;arquivo=<?php echo rawurlencode($foto) ?>" alt="<?php echo htmlspecialchars($nome, ENT_QUOTES, 'UTF-8') ?>" loading="lazy">
+                    <span class="bora-offer-tag">-<?php echo $valor_porcentagemF ?></span>
+                  </a>
+                  <div class="bora-offer-body">
+                    <h3><?php echo htmlspecialchars($nome, ENT_QUOTES, 'UTF-8') ?></h3>
+                    <p><?php echo htmlspecialchars($descricaoF, ENT_QUOTES, 'UTF-8') ?></p>
+                    <div class="bora-offer-bottom">
+                      <div class="bora-offer-prices"><strong>R$ <?php echo $val_promocionalF ?></strong><del>R$ <?php echo $valorF ?></del></div>
+                      <a class="bora-offer-action" href="<?php echo htmlspecialchars($url_produto, ENT_QUOTES, 'UTF-8') ?>"><i class="bi bi-cart3"></i> Aproveitar oferta <span aria-hidden="true">›</span></a>
+                    </div>
                   </div>
-
-                </div>
-
+                </article>
 
             <?php }
             } ?>
@@ -1184,7 +1169,26 @@ if ($id_mesa == "" && $sessão_balcao == "") {
         </div>
       </div>
     </section>
-    <!-- FIM OFERTA DA SEMANA -->
+    <style>
+#promocao{scroll-margin-top:100px;padding:24px 0 36px}
+#promocao .bora-offer-subtitle{color:#806e60;margin:8px 0 0}
+#promocao .bora-offer-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,480px),1fr));gap:24px;max-width:1100px;margin:auto}
+#promocao .bora-offer-card{display:flex;align-items:stretch;gap:16px;min-width:0;max-width:540px;background:#fffaf5;border:1px solid #efd5bb;border-radius:20px;padding:14px;box-shadow:0 8px 24px rgba(100,53,20,.08)}
+#promocao .bora-offer-photo{display:block;position:relative;flex:0 0 36%;aspect-ratio:1;overflow:hidden;border-radius:14px;background:#fff;align-self:center}
+#promocao .bora-offer-photo img{display:block;width:100%;height:100%;object-fit:cover;margin:0;padding:0}
+#promocao .bora-offer-tag{position:absolute;top:8px;left:8px;background:#a85b24;color:#fff;padding:5px 10px;border-radius:12px;font-size:14px;font-weight:700}
+#promocao .bora-offer-body{display:flex;flex-direction:column;flex:1;min-width:0;padding:4px 0}
+#promocao .bora-offer-body h3{font-size:21px;color:#71380f;margin:0 0 8px;line-height:1.25}
+#promocao .bora-offer-body p{font-size:14px;color:#75685e;line-height:1.5;margin:0 0 12px}
+#promocao .bora-offer-bottom{display:flex;flex-wrap:wrap;align-items:center;gap:10px;margin-top:auto}
+#promocao .bora-offer-prices{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+#promocao .bora-offer-prices strong{font-size:23px;color:#c51d43;white-space:nowrap}
+#promocao .bora-offer-prices del{font-size:14px;color:#75685e}
+#promocao .bora-offer-action{display:inline-flex;align-items:center;justify-content:center;gap:8px;background:#a85b24;color:#fff;border-radius:24px;padding:10px 14px;font-weight:700;font-size:14px;text-decoration:none}
+#promocao .bora-offer-action:hover,#promocao .bora-offer-action:focus{background:#783b13;color:#fff}
+@media(max-width:600px){#promocao .bora-offer-grid{grid-template-columns:1fr;gap:16px}#promocao .bora-offer-card{max-width:none;gap:12px;padding:12px}#promocao .bora-offer-photo{flex-basis:34%}#promocao .bora-offer-body h3{font-size:18px}#promocao .bora-offer-prices strong{font-size:20px}#promocao .bora-offer-action{width:100%;font-size:13px;padding:9px 8px}}
+</style>
+<!-- FIM OFERTA DA SEMANA -->
 
 
 
