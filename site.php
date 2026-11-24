@@ -678,6 +678,11 @@ if ($id_mesa == "" && $sessão_balcao == "") {
       <i class="bi bi-receipt-cutoff"></i> Meus Pedidos
     </a>
   </div>
+  <?php if($id_mesa == ""){ ?>
+  <div class="text-center" style="margin:0 auto 22px;padding:0 12px">
+    <button type="button" id="botao-instalar" style="display:none;position:static;margin:0 auto;padding:9px 20px;background:#fff8ef;color:#a85b24;border:1px solid #a85b24;border-radius:25px;font-weight:600;cursor:pointer"><i class="bi bi-download" aria-hidden="true"></i> Instalar App</button>
+  </div>
+  <?php } ?>
   <!-- Menu End -->
 
 
@@ -1350,9 +1355,7 @@ if ($id_mesa == "" && $sessão_balcao == "") {
 }
 ?>
 
-<?php if($id_mesa == ""){ ?>
-<button id="botao-instalar" style="display: none; position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); padding: 12px 20px; background: #007bff; color: #fff; border: none; border-radius: 8px; z-index: 9999;">Instalar App</button>
-<?php } ?>
+
 
 <!-- Font Awesome -->
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" integrity="sha512-..." crossorigin="anonymous" referrerpolicy="no-referrer" />
