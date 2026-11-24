@@ -302,6 +302,12 @@ if($linhas == 0){
 .slide-menu li:has(> .pedidos-locais-link)::before { content: none !important; display: none !important; }
 </style>
 
+<style id="bc-catalog-menu-icons">
+html body .slide-menu .bc-catalog-link{display:flex!important;align-items:center;gap:10px;padding-left:24px!important;white-space:normal}
+html body .slide-menu .bc-catalog-link::before,html body .slide-menu .bc-catalog-link::after,html body .slide-menu li:has(> .bc-catalog-link)::before,html body .slide-menu li:has(> .bc-catalog-link)::after{content:none!important;display:none!important}
+html body .slide-menu li:has(> .bc-catalog-link){list-style:none!important}
+html body .slide-menu .bc-catalog-link > i{flex:0 0 17px;width:17px;text-align:center;font-size:14px;margin-right:0!important}
+</style>
 <style id="bc-config-menu-icons">
 /* Configurações: remove marcadores do tema, mantendo os ícones. */
 .slide-menu .bc-config-link { display:flex !important; align-items:center; gap:10px; }
@@ -925,7 +931,7 @@ body .app-sidebar .main-sidebar-header::before,body .app-sidebar .main-sidebar-h
 							<li class="slide <?php echo @$banner_rotativo ?>">
 								<a class="side-menu__item" data-bs-toggle="slide" href="javascript:void(0);"><i class="fa-solid fa-book-open text-white mt-1"></i><span class="side-menu__label" style="margin-left: 15px">Cardápio Online</span><i class="angle fe fe-chevron-right"></i></a>
 								<ul class="slide-menu">
-									<li class="<?php echo @$banner_rotativo ?>"><a class="slide-item" href="banner_rotativo"><i class="fa-solid fa-images me-2"></i>Banner Rotativo</a></li>
+									<li class="<?php echo @$banner_rotativo ?>"><a class="slide-item bc-catalog-link" href="banner_rotativo"><i class="fa-solid fa-images me-2"></i>Banner Rotativo</a></li>
 								</ul>
 							</li>
 
@@ -935,14 +941,14 @@ body .app-sidebar .main-sidebar-header::before,body .app-sidebar .main-sidebar-h
 									<span class="side-menu__label" style="margin-left: 15px">Produtos</span><i
 										class="angle fe fe-chevron-right"></i></a>
 								<ul class="slide-menu">
-									<li class="<?php echo @$categorias ?>"><a class="slide-item" href="categorias"> Categorias</a></li>
-									<li class="<?php echo @$produtos ?>"><a class="slide-item" href="produtos"> Produtos</a></li>
-									<li class="<?php echo @$adicionais ?>"><a class="slide-item" href="adicionais"><i class="fa-solid fa-circle-plus me-2"></i>Adicionais</a></li>
-									<li class="<?php echo @$unidade_medida ?>"><a class="slide-item" href="unidade_medida"><i class="fa-solid fa-ruler me-2"></i>Unidades de Medida</a></li>
+									<li class="<?php echo @$categorias ?>"><a class="slide-item bc-catalog-link" href="categorias"><i class="fa-solid fa-layer-group me-2"></i> Categorias</a></li>
+									<li class="<?php echo @$produtos ?>"><a class="slide-item bc-catalog-link" href="produtos"><i class="fa-solid fa-box me-2"></i> Produtos</a></li>
+									<li class="<?php echo @$adicionais ?>"><a class="slide-item bc-catalog-link" href="adicionais"><i class="fa-solid fa-circle-plus me-2"></i>Adicionais</a></li>
+									<li class="<?php echo @$unidade_medida ?>"><a class="slide-item bc-catalog-link" href="unidade_medida"><i class="fa-solid fa-ruler me-2"></i>Unidades de Medida</a></li>
 
-									<li class="<?php echo @$estoque ?>"><a class="slide-item" href="estoque"> Estoque</a></li>
-									<li class="<?php echo @$entradas ?>"><a class="slide-item" href="entradas"> Entradas</a></li>
-									<li class="<?php echo @$saidas ?>"><a class="slide-item" href="saidas"> Saídas</a></li>
+									<li class="<?php echo @$estoque ?>"><a class="slide-item bc-catalog-link" href="estoque"><i class="fa-solid fa-boxes-stacked me-2"></i> Estoque</a></li>
+									<li class="<?php echo @$entradas ?>"><a class="slide-item bc-catalog-link" href="entradas"><i class="fa-solid fa-arrow-right-to-bracket me-2"></i> Entradas</a></li>
+									<li class="<?php echo @$saidas ?>"><a class="slide-item bc-catalog-link" href="saidas"><i class="fa-solid fa-arrow-right-from-bracket me-2"></i> Saídas</a></li>
 
 								</ul>
 							</li>
