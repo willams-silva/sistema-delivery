@@ -71,6 +71,10 @@ html body .ux-finance-list .dataTables_paginate .page-link{background:#fff!impor
 html body .ux-finance-list .dataTables_paginate .active .page-link{background:#914a29!important;color:#fff!important;border-color:#914a29!important}
 html body .ux-finance-list .dataTables_paginate .disabled .page-link{background:#f4eee8!important;color:#806e63!important}
 html body .ux-finance-list #tabela td:last-child a .text-primary,html body .ux-finance-list #tabela td:last-child a .text-info{color:#914a29!important}
+html body #dias-alerta-pagar{color-scheme:light!important;background-color:#fff!important;color:#4e2d20!important}
+html body #dias-alerta-pagar option{background:#f8efe6!important;color:#4e2d20!important}
+html body #dias-alerta-pagar option:checked{background:#914a29!important;color:#fff!important}
+html body #dias-alerta-pagar:focus{border-color:#914a29!important;box-shadow:0 0 0 3px rgba(145,74,41,.12)!important}
 </style>
 <div class="card mb-3 bc-pay-heading" style="margin-top:16px;border:1px solid #e5d4c6;border-radius:14px"><div class="card-body d-flex align-items-center flex-wrap gap-3"><h2 class="mb-0" style="font-size:21px;font-weight:600;color:#4e2d20"><i class="fa-solid fa-file-invoice-dollar me-2"></i>Contas a Pagar</h2><span style="font-size:12px;color:#795038">Gerencie despesas, vencimentos, pagamentos e acompanhe suas obrigações financeiras.</span></div></div>
 <section class="card mb-3" id="alertas-vencimentos-pagar">
