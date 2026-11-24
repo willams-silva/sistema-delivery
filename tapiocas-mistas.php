@@ -29,7 +29,7 @@ if (!function_exists('escMista')) { function escMista($x) { return htmlspecialch
     <small class="d-block text-muted" style="font-size:11px"><?= $limite ?> proteínas inclusas no preço</small>
    </div>
   </div>
-  <div class="col-2 text-end" style="margin-top:10px">
+  <div class="col-2 text-end mista-foto" style="margin-top:10px">
    <img src="/media-delivery.php?tipo=produtos&amp;arquivo=<?= escMista(rawurlencode($p['foto'])) ?>" width="60" height="60" style="object-fit:cover;border-radius:12px;width:60px;height:60px" alt="">
   </div>
   <div class="col-12 mista-botoes mt-2" style="padding-left:8px">
@@ -110,6 +110,8 @@ li.list-group-item[data-mista] .mista-linha > .col-2 img{width:140px!important;h
 li.list-group-item[data-mista] .mista-botoes{display:flex;flex-wrap:wrap;gap:6px}
 li.list-group-item[data-mista] .titulo-item label{font-size:18px!important}
 @media(max-width:600px){li.list-group-item[data-mista] > .row.mista-linha{grid-template-columns:minmax(0,1fr) 100px}li.list-group-item[data-mista] .mista-linha > .col-2 img{width:100px!important;height:100px!important}}
+li[data-mista] .mista-foto{border-radius:12px!important;overflow:hidden!important;clip-path:inset(0 round 12px);aspect-ratio:1;align-self:start}
+li[data-mista] .mista-foto img{display:block!important;width:100%!important;height:100%!important;object-fit:cover!important;transform:scale(1.12);border-radius:12px!important}
 </style>
 <script>
 (function(){
