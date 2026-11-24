@@ -317,7 +317,6 @@ html body #listar .ux-orders-table > tbody > tr > td:last-child .btn:focus-visib
  window.bcMudarVisaoPedidos('cartoes');
 })();
 </script>
-	<hr>
 	<div id="listar" class="bc-pedidos-cartoes">
 
 	</div>
