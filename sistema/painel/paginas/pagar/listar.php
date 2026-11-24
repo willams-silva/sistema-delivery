@@ -196,15 +196,79 @@ if ($filtro == 'Vencidas') {
 
 $res = $query->fetchAll(PDO::FETCH_ASSOC);
 $linhas = @count($res);
+echo <<<'BCVIEW'
+<style>
+html body #listar #tabela tbody td:last-child a.btn{display:inline-flex!important;align-items:center;justify-content:center;width:38px;height:38px;padding:0!important;margin:3px;border:1px solid currentColor!important;border-radius:9px!important;color:var(--bc-action,#795038)!important;background:var(--bc-bg,#fff0df)!important;transition:background .18s,color .18s,transform .18s}
+html body #listar #tabela tbody td:last-child a.btn.ocultar{display:none!important}
+html body #listar #tabela tbody td:last-child a.btn.btn-info-light,html body #listar #tabela tbody td:last-child a.btn.btn-info{--bc-action:#17658a;--bc-bg:#e1f2fa}
+html body #listar #tabela tbody td:last-child a.btn.btn-danger-light{--bc-action:#b42332;--bc-bg:#fde5e7}
+html body #listar #tabela tbody td:last-child a.btn.btn-success-light{--bc-action:#13745a;--bc-bg:#def3e9}
+html body #listar #tabela tbody td:last-child a.btn.btn-dark-light{--bc-action:#41434a;--bc-bg:#e9eaed}
+html body #listar #tabela tbody td:last-child a.btn i{color:inherit!important;font-size:16px}
+html body #listar #tabela tbody td:last-child a.btn:hover{background:var(--bc-action,#795038)!important;color:#fff!important;transform:translateY(-2px)}
+html body #listar #tabela tbody td:last-child a.btn:focus-visible{outline:2px solid #914a29;outline-offset:2px}
+html body #listar.bc-pay-cards #tabela tbody tr td:first-child{display:none!important}
+html body #listar.bc-pay-cards #tabela tbody td:last-child a.btn:hover{background:var(--bc-bg,#fff0df)!important;color:var(--bc-action,#795038)!important;transform:none!important;box-shadow:none!important}
+html body #listar.bc-pay-cards #tabela tbody td:last-child a.btn{transition:none!important}
+#listar #bc-pay-list-view{display:flex!important;align-items:center;gap:8px;flex-wrap:wrap;margin:0 0 16px;color:#4e2d20;font-weight:600}
+#listar #bc-pay-list-view button{border:1px solid #d7c5b7!important;border-radius:9px;background:#fff!important;color:#6c4631!important;padding:9px 14px;font-weight:600}
+#listar #bc-pay-list-view button[aria-pressed=true]{background:#914a29!important;color:#fff!important}
+html body #listar.bc-pay-cards #tabela{display:block!important;width:100%!important;border:0!important}
+html body #listar.bc-pay-cards #tabela thead{display:none!important}
+html body #listar.bc-pay-cards #tabela tbody{display:grid!important;grid-template-columns:repeat(auto-fill,minmax(min(100%,270px),1fr));gap:16px;padding:12px 0}
+html body #listar.bc-pay-cards #tabela tbody tr:not(.child){display:flex!important;flex-direction:column;min-width:0;border:1px solid #e5d4c6;border-radius:14px;padding:16px;background:#fff}
+html body #listar.bc-pay-cards #tabela tbody td{display:block!important;width:auto!important;border:0!important;white-space:normal!important;overflow-wrap:anywhere;padding:7px 0!important}
+#listar.bc-pay-cards #tabela tbody td:nth-child(2){font-weight:700;color:#63351e}
+#listar.bc-pay-cards #tabela tbody td:nth-child(3)::before{content:'Favorecido: '}
+#listar.bc-pay-cards #tabela tbody td:nth-child(4)::before{content:'Valor: '}
+#listar.bc-pay-cards #tabela tbody td:last-child{margin-top:auto;border-top:1px solid #eaded4!important;text-align:center}
+#listar.bc-pay-cards #tabela tbody tr.table-danger{border-top:4px solid #b42332!important}
+
+html body #listar.bc-pay-cards #tabela tbody tr:hover,html body #listar.bc-pay-cards #tabela tbody tr:hover > td{--bs-table-accent-bg:transparent!important;--bs-table-bg-state:transparent!important;--bs-table-hover-bg:transparent!important;box-shadow:none!important;transform:none!important;filter:none!important;background-image:none!important}
+html body #listar.bc-pay-cards #tabela tbody tr:hover{background:#fff!important;border-color:#e5d4c6!important}
+html body #listar.bc-pay-cards #tabela tbody tr:hover > td{background:transparent!important}
+html body #listar.bc-pay-cards #tabela tbody tr td:last-child a.btn:hover,html body #listar.bc-pay-cards #tabela tbody tr td:last-child a.btn:hover i{transform:none!important;filter:none!important;box-shadow:none!important;opacity:1!important;animation:none!important;transition:none!important}
+html body #listar.bc-pay-cards #tabela tbody tr td:last-child a.btn:hover{background:var(--bc-bg,#fff0df)!important;color:var(--bc-action,#795038)!important;border-color:var(--bc-action,#795038)!important}
+html body #listar.bc-pay-cards #tabela tbody tr td:last-child a.btn:hover i{color:inherit!important}
+
+html body #listar #tabela_wrapper .dataTables_paginate{padding:16px 0 0!important;float:none!important;text-align:center!important}
+html body #listar #tabela_wrapper .dataTables_paginate ul.pagination{display:flex!important;justify-content:center;align-items:center;gap:6px;flex-wrap:wrap;margin:0!important}
+html body #listar #tabela_wrapper .dataTables_paginate li.page-item{background:transparent!important;border:0!important;box-shadow:none!important;padding:0!important;margin:0!important}
+html body #listar #tabela_wrapper .dataTables_paginate .page-link,html body #listar #tabela_wrapper .dataTables_paginate a.paginate_button{display:inline-flex!important;align-items:center;justify-content:center;min-width:40px;min-height:40px;padding:8px 12px!important;margin:0!important;border:1px solid #d7c5b7!important;border-radius:8px!important;background:#fff!important;color:#6c4631!important;box-shadow:none!important;text-shadow:none!important;font-weight:600;line-height:1.2!important}
+html body #listar #tabela_wrapper .dataTables_paginate .page-item.active .page-link,html body #listar #tabela_wrapper .dataTables_paginate a.paginate_button.current,html body #listar #tabela_wrapper .dataTables_paginate .page-link:hover,html body #listar #tabela_wrapper .dataTables_paginate a.paginate_button:hover{background:#914a29!important;color:#fff!important;border-color:#914a29!important}
+html body #listar #tabela_wrapper .dataTables_paginate .page-item.disabled .page-link,html body #listar #tabela_wrapper .dataTables_paginate a.paginate_button.disabled{background:#f4eee8!important;color:#806e63!important;border-color:#e5d4c6!important;opacity:1!important;cursor:default!important;pointer-events:none}
+html body #listar #tabela_wrapper .dataTables_paginate li.page-item:before,html body #listar #tabela_wrapper .dataTables_paginate li.page-item:after{content:none!important}
+html body #listar.bc-pay-cards #tabela tbody td:nth-child(5)::before{content:'Vencimento: '}
+html body #listar.bc-pay-cards #tabela tbody td:nth-child(6)::before{content:'Pagamento: '}
+html body #listar.bc-pay-cards #tabela tbody td:nth-child(7)::before{content:'Arquivo: ';margin-right:8px}
+html body #listar.bc-pay-cards #tabela tbody td:nth-child(7){text-align:left!important}
+html body #listar.bc-pay-cards #tabela tbody td:nth-child(4){font-size:20px;font-weight:700;color:#63351e}
+html body #listar #tabela tbody td:last-child :is(a,button){display:inline-flex!important;align-items:center;justify-content:center;width:38px;height:38px;margin:3px!important;padding:0!important;border:1px solid #d7c5b7!important;border-radius:9px!important;background:#fff!important;color:#914a29!important}
+html body #listar #tabela tbody td:last-child :is(a,button).ocultar{display:none!important}
+html body #listar.bc-pay-cards #tabela tbody td:last-child :is(a,button):hover{background:#fff!important;transform:none!important;box-shadow:none!important}
+html body #listar #tabela_wrapper .dataTables_paginate li.page-item.disabled{opacity:1!important}
+html body #listar #tabela_wrapper .dataTables_paginate li.page-item .page-link::before,html body #listar #tabela_wrapper .dataTables_paginate li.page-item .page-link::after{content:none!important}
+</style>
+<div id="bc-pay-list-view"><span>Visualização:</span><button type="button" data-view="cards" aria-pressed="true"><i class="fe fe-grid"></i> Cartões</button><button type="button" data-view="table" aria-pressed="false"><i class="fe fe-list"></i> Tabela</button></div>
+<script>
+(function(){
+ var root=document.getElementById('listar'), bar=document.getElementById('bc-pay-list-view');
+ if(!root||!bar)return;
+ 
+ function apply(mode){if(mode==='cards'){root.querySelectorAll('input[id^=seletor-]').forEach(function(x){x.checked=false;});jQuery('#ids').val('');jQuery('#btn-deletar,#btn-baixar').hide();}root.dataset.payView=mode;root.classList.toggle('bc-pay-cards',mode==='cards');var table=root.querySelector('#tabela');if(table)table.classList.toggle('table-hover',mode!=='cards');bar.querySelectorAll('button').forEach(function(b){b.setAttribute('aria-pressed',String(b.dataset.view===mode));});}
+ bar.addEventListener('click',function(e){var b=e.target.closest('button[data-view]');if(b){apply(b.dataset.view);if(jQuery.fn.dataTable && jQuery.fn.dataTable.isDataTable('#tabela'))jQuery('#tabela').DataTable().columns.adjust();}});
+ apply(root.dataset.payView||'cards');
+})();
+</script>
+BCVIEW;
 if ($linhas > 0) {
 	echo <<<HTML
-<small>
-	<table class="table table-striped table-hover table-bordered text-nowrap border-bottom dt-responsive" id="tabela">
+	<table class="table table-bordered text-nowrap border-bottom" id="tabela">
 	<thead> 
 	<tr> 
 	<th align="center" width="5%" class="text-center">Selecionar</th>
 	<th>Descrição</th>
-	<th>Favoreciso</th>
+	<th>Favorecido</th>
 	<th>Valor</th>	
 	<th>Vencimento</th>	
 	<th>Pagamento</th>	
@@ -212,8 +276,7 @@ if ($linhas > 0) {
 	<th>Ações</th>
 	</tr> 
 	</thead> 
-	<tbody>	
-	<small>
+	<tbody>
 HTML;
 
 
@@ -461,7 +524,7 @@ HTML;
 <big><a href="#" onclick="mostrar('{$descricao}','{$valorF}','{$nome_pessoa}','{$vencimentoF}','{$data_pgtoF}','{$nome_pgto}','{$nome_frequencia}','{$obs}','{$tumb_arquivo}','{$multaF}','{$jurosF}','{$descontoF}','{$subtotalF}','{$nome_usu_lanc}','{$nome_usu_pgto}', '{$pago}', '{$arquivo}','{$telefone_pessoa}','{$pix_pessoa}','{$tipo_pessoa}')" title="Mostrar Dados"><i class="fa fa-info-circle text-primary"></i></a></big>
 
 
-<big><a class="{$ocultar}" href="#" onclick="baixar('{$id}', '{$valor}', '{$descricao}', '{$forma_pgto}', '{$valor_multa}', '{$valor_juros}')" title="Baixar Conta"><i class="fa fa-check-square" style="color:#079934"></i></a>
+<big><a class="{$ocultar}" href="#" onclick="baixar('{$id}', '{$valor}', '{$descricao}', '{$forma_pgto}', '{$valor_multa}', '{$valor_juros}')" title="Baixar Conta"><i class="fa fa-check-square" style="color:#079934"></i></a></big>
 
 	<big><a class="{$ocultar}" href="#" onclick="parcelar('{$id}', '{$valor}', '{$descricao}')" title="Parcelar Conta"><i class="fa fa-calendar-o" style="color:#7f7f7f"></i></a></big>
 
@@ -487,12 +550,9 @@ HTML;
 
 
 	echo <<<HTML
-</small>
 </tbody>
-<small><div align="center" id="mensagem-excluir"></div></small>
-
 </table>
-</small>
+<div align="center" id="mensagem-excluir"></div>
 <br>
 
 
@@ -512,11 +572,12 @@ HTML;
 
 <script type="text/javascript">
 	$(document).ready(function() {
-		$('#tabela').DataTable({
+		if ($('#tabela').length) $('#tabela').DataTable({
 			"language": {
 				//"url" : '//cdn.datatables.net/plug-ins/1.13.2/i18n/pt-BR.json'
 			},
 			"ordering": false,
+            "responsive": false,
 			"stateSave": true
 		});
 
