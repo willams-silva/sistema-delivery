@@ -77,7 +77,7 @@ HTML;
 </td>
 	<td><input value="{$posicao}" onblur="editarPosicao('{$id}')" type="text" name="posicao" id="posicao_{$id}" style="width:35px; border:none; border-bottom:1px solid #000; outline:none; background:transparent;"></td>
 	<td class="text-center" style="color:{$classe_linha}">
-	<img alt="avatar" class="rounded-circle" src="images/{$tabela}/{$foto}" width="30px" height="30px">
+	<img alt="avatar" class="rounded-circle" src="/media-delivery.php?tipo=categorias&amp;arquivo={$foto}" width="30px" height="30px">
 	</td>
 <td style="color:{$classe_linha}">{$nome}</td>
 <td style="color:{$classe_linha}">{$descricaoF}</td>
@@ -141,7 +141,7 @@ HTML;
 		$('#titulo_inserir').text('Editar Registro');
 		$('#modalForm').modal('show');
 		$('#foto').val('');
-		$('#target').attr('src', 'images/categorias/' + foto);
+		$('#target').attr('src', '/media-delivery.php?tipo=categorias&arquivo=' + encodeURIComponent(foto));
 	}
 
 
