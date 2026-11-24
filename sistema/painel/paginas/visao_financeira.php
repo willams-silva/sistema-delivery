@@ -106,10 +106,29 @@ $saldoPeriodo = $entradas - $saidas;
 .bc-financeiro .bc-chart{display:flex;align-items:end;gap:5px;height:150px;border-bottom:1px solid #cbd5e1;padding-top:12px}
 .bc-financeiro .bc-chart div{flex:1;min-width:2px}
 .bc-financeiro .bc-chart .bc-in{background:#16a34a}.bc-financeiro .bc-chart .bc-out{background:#dc2626}
+
+html body .bc-financeiro .bc-card{border-color:#e5d4c6!important;background:#fff!important;box-shadow:0 3px 12px rgba(78,45,32,.06)!important;color:#4e2d20}
+html body .bc-financeiro .bc-card h5{color:#4e2d20!important;font-weight:700}
+html body .bc-financeiro .bc-card small,html body .bc-financeiro .bc-note{color:#795038!important}
+html body .bc-financeiro .bc-card strong{color:#63351e}
+html body .bc-financeiro form label{color:#63351e;font-weight:600}
+html body .bc-financeiro form .form-control{border:1px solid #d7c5b7!important;border-radius:9px!important;background:#fff!important;color:#4e2d20!important}
+html body .bc-financeiro form .form-control:focus{border-color:#914a29!important;box-shadow:0 0 0 3px rgba(145,74,41,.12)!important}
+html body .bc-financeiro form .btn-primary{background:#914a29!important;border-color:#914a29!important;color:#fff!important;border-radius:9px!important}
+html body .bc-financeiro form .btn-primary:hover{background:#71391f!important;border-color:#71391f!important}
+html body .bc-financeiro table th,html body .bc-financeiro table td{border-color:#eaded4!important}
+html body .bc-financeiro table thead th,html body .bc-financeiro table tfoot th{background:#f4e9df!important;color:#63351e!important}
+html body .bc-financeiro table tbody tr:nth-child(even){background:#fcf8f4}
+html body .bc-financeiro .bc-chart{border-color:#d7c5b7!important}
+html body .bc-financeiro .alert-warning strong{color:#855900!important}
+html body .bc-financeiro .alert-danger strong{color:#b42332!important}
+html body .bc-financeiro .bc-value-in{color:#13745a!important}
+html body .bc-financeiro .bc-value-out{color:#b42332!important}
 </style>
 <div class="container-fluid bc-financeiro">
-<div class="d-flex flex-wrap justify-content-between align-items-center gap-2 my-3">
- <div><h3 class="mb-1">Visão Financeira</h3><p class="bc-note">Movimentações realizadas e contas previstas · Somente leitura</p></div>
+<div class="card mb-3 bc-finance-heading" style="margin-top:16px;border:1px solid #e2e8f0;border-radius:14px"><div class="card-body d-flex align-items-center flex-wrap gap-3"><h2 class="mb-0" style="font-size:21px;font-weight:600;color:#4e2d20"><i class="fa-solid fa-chart-line me-2"></i>Visão Financeira</h2><span style="font-size:12px;color:#795038">Movimentações realizadas e contas previstas · Somente leitura</span></div></div>
+<div class="d-flex flex-wrap justify-content-start align-items-center gap-2 my-3">
+ 
  <form method="get" action="index.php" class="d-flex flex-wrap gap-2 align-items-end">
  <input type="hidden" name="pagina" value="visao_financeira">
  <label>De <input class="form-control" type="date" name="inicio" value="<?php echo htmlspecialchars($inicioFinanceiro, ENT_QUOTES); ?>" required></label>
@@ -127,7 +146,7 @@ $saldoPeriodo = $entradas - $saidas;
  ['A receber no período', $pendenteReceber],
  ['A pagar no período', $pendentePagar]
 ] as $card): ?>
-<div class="col-12 col-sm-6 col-xl-3"><div class="bc-card"><small><?php echo htmlspecialchars($card[0], ENT_QUOTES, 'UTF-8'); ?></small><strong><?php echo $valorFinanceiro($card[1]); ?></strong></div></div>
+<div class="col-12 col-sm-6 col-xl-3"><div class="bc-card"><small><?php echo htmlspecialchars($card[0], ENT_QUOTES, 'UTF-8'); ?></small><strong class="<?php echo in_array($card[0], ['Entradas recebidas','A receber no período'], true) ? 'bc-value-in' : (in_array($card[0], ['Saídas pagas','A pagar no período'], true) || $card[1] < 0 ? 'bc-value-out' : ''); ?>"><?php echo $valorFinanceiro($card[1]); ?></strong></div></div>
 <?php endforeach; ?>
 </div>
 <div class="bc-card mt-3">
