@@ -442,6 +442,23 @@ a[href="/meus-pedidos"].btn-warning { background:#a85b24 !important; border-colo
 }
 @media(max-width:767px) { #slider .bc-banner-carousel { border-radius:0; } }
 
+.bora-header-brand{display:none}
+@media(min-width:768px){
+.main-container > .bora-rainha-header{background:#fff8ef!important;border-bottom:1px solid #ead3bc;box-shadow:0 3px 12px rgba(100,53,20,.08)!important;padding:8px 0!important}
+.bora-rainha-header > .container-fluid{max-width:1240px;margin:auto;padding:0 24px;display:flex!important;flex-wrap:nowrap!important;justify-content:flex-start!important;gap:20px;min-height:64px}
+.bora-rainha-header .navbar-brand{display:flex!important;align-items:center;gap:14px;margin-right:auto!important;padding:0!important;min-width:0}
+.bora-rainha-header .logo-loja-topo{width:64px!important;height:64px!important;object-fit:contain}
+.bora-rainha-header .bora-header-brand{display:flex;flex-direction:column;gap:3px;color:#512c24;line-height:1.25}
+.bora-rainha-header .bora-header-brand strong{font-size:21px;font-weight:700}
+.bora-rainha-header .bora-header-brand small{font-size:12px;color:#956b4c}
+.bora-rainha-header .status-delivery-topo{position:static!important;transform:none!important;margin:0!important;flex:0 0 auto}
+.bora-rainha-header > .container-fluid > .col-xl-3{width:auto!important;flex:0 0 auto!important;margin:0!important}
+.bora-rainha-header .header__info-cart{margin:0!important}
+.bora-rainha-header .header__info-cart button{display:flex!important;align-items:center;gap:9px;background:#a85b24!important;color:#fff!important;border-radius:24px!important;width:auto!important;height:auto!important;padding:12px 16px!important;white-space:nowrap}
+.bora-rainha-header .header__info-cart button i img{filter:brightness(0) invert(1)}
+.bora-rainha-header .header__info-cart button i::after{content:"Meu carrinho";font-size:14px;font-weight:600;line-height:1.2;color:#fff;font-style:normal;margin-left:8px}
+.bora-rainha-header #total-itens-carrinho{position:static!important;transform:none!important;background:#fff!important;color:#a85b24!important;min-width:20px;height:20px;line-height:20px;border-radius:50%;text-align:center}
+}
 /* Cabeçalho mobile compacto: mantém a logo legível e elimina espaço vazio antes do banner. */
 @media (max-width: 767px) {
   .main-container > .navbar {
@@ -474,12 +491,13 @@ a[href="/meus-pedidos"].btn-warning { background:#a85b24 !important; border-colo
 
 <div class="main-container">
 
-  <nav class="navbar bg-light fixed-top" style="box-shadow: 0px 3px 5px rgba(0, 0, 0, 0.20);">
+  <nav class="navbar bg-light fixed-top <?php echo $url_site === 'rainhadastapiocas' && $id_mesa == "" ? 'bora-rainha-header' : '' ?>" style="box-shadow: 0px 3px 5px rgba(0, 0, 0, 0.20);">
     <div class="container-fluid">
 
 
       <a class="navbar-brand" href="site/<?php echo $url_site ?>">
         <img src="/media-delivery.php?tipo=logos&amp;arquivo=<?php echo rawurlencode($logo_sistema) ?>" alt="" width="80" class="d-inline-block align-text-top logo-loja-topo">
+        <?php if ($url_site === 'rainhadastapiocas' && $id_mesa == "") { ?><span class="bora-header-brand"><strong>Rainha das Tapiocas</strong><small>Sabor e tradição em cada mordida!</small></span><?php } ?>
         <small>
           <?php
           if ($id_mesa == "") {
