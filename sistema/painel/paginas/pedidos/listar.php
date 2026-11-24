@@ -63,7 +63,13 @@ $tipoFiltro=trim((string)($_POST['tipo_pedido'] ?? ''));
 $tiposPermitidos=['Balcão','Delivery','Retirar'];
 if (!in_array($tipoFiltro,$tiposPermitidos,true)) $tipoFiltro='';
 if ($tipoFiltro==='Balcão' && $pedidos_pdv_delivery!='Sim') $tipoFiltro='';
-$sqlFiltroTipo=$tipoFiltro!=='' ? ' AND tipo_pedido=:tipo_pedido' : '';
+// Balcão identifica a origem da venda; Delivery e Retirar identificam a entrega.
+$sqlFiltroTipo='';
+if ($tipoFiltro==='Balcão') {
+    $sqlFiltroTipo=' AND tipo_pedido=:tipo_pedido';
+} elseif ($tipoFiltro==='Delivery' || $tipoFiltro==='Retirar') {
+    $sqlFiltroTipo=" AND (tipo_pedido IS NULL OR tipo_pedido <> 'Balcão') AND TRIM(entrega)=:tipo_pedido";
+}
 $parametrosPedidos=[
     ':empresa'=>(int)$id_empresa,
     ':status'=>'%'.$statusFiltro.'%',
