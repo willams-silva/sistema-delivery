@@ -708,7 +708,7 @@ if ($id_mesa == "" && $sessão_balcao == "") {
 
 
     <!-- CATEGORIAS -->
-    <section class="category-area ocultar_dasktop" id="categoria">
+    <section class="category-area ocultar_dasktop" id="categoria-legado" style="display:none!important">
       <div class="row">
         <div class="col-lg-12 text-center mb-10">
           <h4 class="tpsection__sub-title">Nossas Categorias</h4>
@@ -926,17 +926,17 @@ if ($id_mesa == "" && $sessão_balcao == "") {
 
 
     <!-- CATEGORIAS DASKTOP -->
-    <section class="brand-product ocultar_mobile" id="categoria">
+    <section class="brand-product bora-category-section" id="categoria">
       <div class="container">
-        <div class="sections__wrapper white-bg pl-50 pr-50 pb-40 brand-product">
+        <div class="bora-category-wrapper">
           <div class="row">
             <div class="col-lg-12 text-center mb-20">
               <div class="tpsection">
-                <h4 class="tpsection__sub-title">Nossas Categorias</h4>
+                <h4 class="tpsection__sub-title">Categorias do Cardápio</h4><p class="bora-category-subtitle">Escolha a categoria e confira nossas delícias!</p>
               </div>
             </div>
           </div>
-          <div class="row">
+          <div class="bora-category-grid">
 
             <?php
             $query = $pdo->query("SELECT * FROM categorias where ativo = 'Sim' and delivery = 'Sim' and empresa = '$id_empresa' order by posicao asc");
@@ -959,7 +959,7 @@ if ($id_mesa == "" && $sessão_balcao == "") {
                   continue;
                 }
 
-                $query2 = $pdo->query("SELECT * FROM produtos where categoria = '$id' and ativo = 'Sim'  and delivery = 'Sim'");
+                $query2 = $pdo->query("SELECT * FROM produtos where categoria = '$id' and empresa = '$id_empresa' and ativo = 'Sim'  and delivery = 'Sim'");
                 $res2 = $query2->fetchAll(PDO::FETCH_ASSOC);
                 $tem_produto = @count($res2);
                 $mostrar = 'ocultar';
@@ -995,25 +995,18 @@ if ($id_mesa == "" && $sessão_balcao == "") {
 
 
 
-                <div class="col-xl-4">
-                  <a href="<?php echo $link_cat ?>">
-                    <div class="tpbrandproduct__item d-flex mb-10" style="box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;">
-                      <div class="imgem-cat-div p-relative">
-                        <img class="imagem-cat" src="/media-delivery.php?tipo=categorias&amp;arquivo=<?php echo rawurlencode($foto) ?>" alt="">
-                      </div>
-
-                      <div class="tpbrandproduct__contact">
-                        <span><?php echo $nome ?></span><br>
-                        <span class="" style="color:#474747; font-size: 13px"><?php echo $descricaoF ?></span>
-
-                        <div class="tpproduct__price">
-                          <span style="color:#474747; font-size: 12px"><?php echo $tem_produto ?> Itens</span>
-                        </div>
-                      </div>
-                    </div>
-                  </a>
-                </div>
-
+                <article class="bora-category-card">
+                  <div class="bora-category-photo"><img src="/media-delivery.php?tipo=categorias&amp;arquivo=<?php echo rawurlencode($foto) ?>" alt="<?php echo htmlspecialchars($nome, ENT_QUOTES, 'UTF-8') ?>" loading="lazy"></div>
+                  <div class="bora-category-body">
+                    <h3><?php echo htmlspecialchars($nome, ENT_QUOTES, 'UTF-8') ?></h3>
+                    <p><?php echo $tem_produto ?> <?php echo $tem_produto == 1 ? 'item' : 'itens' ?></p>
+                    <?php if ($mostrar === '') { ?>
+                      <a class="bora-category-action" href="<?php echo htmlspecialchars($link_cat, ENT_QUOTES, 'UTF-8') ?>"><i class="bi bi-cart3"></i> Ver itens <span aria-hidden="true">›</span></a>
+                    <?php } else { ?>
+                      <span class="bora-category-unavailable"><?php echo $tem_produto == 0 ? 'Em breve' : 'Indisponível' ?></span>
+                    <?php } ?>
+                  </div>
+                </article>
 
             <?php }
             } ?>
@@ -1026,7 +1019,24 @@ if ($id_mesa == "" && $sessão_balcao == "") {
         </div>
       </div>
     </section>
-    <!-- FIM CATEGORIAS DASKTOP -->
+    <style>
+.bora-category-section{padding:24px 0 36px}
+.bora-category-section .bora-category-subtitle{color:#806e60;margin:8px 0 0}
+.bora-category-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:20px}
+.bora-category-card{display:flex;min-width:0;overflow:hidden;align-items:stretch;background:#fffaf5;border:1px solid #efd5bb;border-radius:20px;box-shadow:0 8px 24px rgba(100,53,20,.08);padding:6px}
+.bora-category-photo{flex:0 0 43%;min-width:0;position:relative;overflow:hidden;border-radius:14px 38% 38% 14px;border-right:4px solid #a85b24;min-height:148px}
+.bora-category-photo img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block}
+.bora-category-body{display:flex;flex:1;min-width:0;flex-direction:column;justify-content:center;padding:12px}
+.bora-category-body h3{font-size:18px;line-height:1.25;color:#71380f;margin:0 0 8px;text-transform:none;overflow-wrap:anywhere}
+.bora-category-body p{font-size:14px;color:#75685e;margin:0 0 12px}
+.bora-category-action,.bora-category-unavailable{display:inline-flex;align-items:center;justify-content:center;gap:7px;border-radius:24px;padding:9px 12px;font-size:14px;font-weight:700;text-decoration:none}
+.bora-category-action{background:#a85b24;color:#fff}
+.bora-category-action:hover,.bora-category-action:focus{background:#783b13;color:#fff}
+.bora-category-unavailable{background:#eee5dc;color:#75685e}
+@media(max-width:1050px){.bora-category-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:600px){.bora-category-grid{grid-template-columns:1fr;gap:14px}.bora-category-photo{min-height:130px}.bora-category-body h3{font-size:17px}}
+</style>
+<!-- FIM CATEGORIAS DASKTOP -->
 
 
   <?php } ?>
