@@ -9,5 +9,5 @@ $q->execute([$slug]);$loja=$q->fetch(PDO::FETCH_ASSOC);
 if(!$loja){http_response_code(404);exit;}
 $nome=$slug==='rainhadastapiocas'?'Rainha das Tapiocas':($loja['nome'] ?: $slug);
 $icons=[];
-foreach([192,512] as $size){$icons[]=['src'=>'/pwa-icon.php?loja='.rawurlencode($slug) .'&size='.$size.'&v=3','sizes'=>$size.'x'.$size,'type'=>'image/png','purpose'=>'any'];}
+foreach([192,512] as $size){$icons[]=['src'=>'/pwa-icon.php?loja='.rawurlencode($slug) .'&size='.$size.'&v=4','sizes'=>$size.'x'.$size,'type'=>'image/png','purpose'=>'any'];}
 echo json_encode(['id'=>'/site/'.$slug,'name'=>$nome,'short_name'=>$nome,'start_url'=>'/site/'.$slug,'scope'=>'/','display'=>'standalone','orientation'=>'portrait','background_color'=>'#fffaf5','theme_color'=>'#512c24','icons'=>$icons],JSON_UNESCAPED_SLASHES|JSON_UNESCAPED_UNICODE);
