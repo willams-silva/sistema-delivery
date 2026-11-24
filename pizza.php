@@ -354,6 +354,19 @@ button.btn.bora-sabor-extra:focus-visible { outline:2px solid #a85b24; outline-o
  .selecao-cardapio .titulo-itens,.selecao-cardapio .titulo-itens-pizza { padding:10px !important; }
 }
 </style>
+<style>
+.selecao-cardapio .bc-selecao-logo{width:48px;height:48px;flex:0 0 48px;object-fit:contain;border-radius:50%;clip-path:circle(49% at 50% 50%)}
+.selecao-cardapio .navbar-brand:has(.bc-selecao-logo) span{margin-left:0!important}
+@media(max-width:767px){.selecao-cardapio .bc-selecao-logo{width:32px;height:32px;flex-basis:32px}.selecao-cardapio .navbar-brand:has(.bc-selecao-logo){min-width:0;white-space:normal;gap:6px}.selecao-cardapio .navbar-brand:has(.bc-selecao-logo) span{font-size:11px!important}}
+@media(min-width:768px){
+.selecao-cardapio .main-container:has(.bc-selecao-logo){max-width:988px!important;width:100%}
+.selecao-cardapio .navbar:has(.bc-selecao-logo)>.container-fluid{max-width:1240px;margin:auto;padding:0 24px}
+.selecao-cardapio .main-container:has(.bc-selecao-logo)>ol{margin-top:90px!important}
+.selecao-cardapio .main-container:has(.bc-selecao-logo) .destaque-qtd{background:#fffdf9!important;border:1px solid #efddc9;border-radius:14px;padding:16px!important;box-shadow:0 3px 12px rgba(100,58,29,.06)!important;margin-top:16px}
+.selecao-cardapio .main-container:has(.bc-selecao-logo) .d-grid:has(>button[onclick="addCarrinho()"]){width:min(100%,420px)!important;max-width:420px;margin:20px auto 24px!important}
+.selecao-cardapio .main-container:has(.bc-selecao-logo) button[onclick="addCarrinho()"]{width:100%;min-height:48px;font-size:18px!important}
+}
+</style>
 <script>document.body.classList.add('selecao-cardapio');</script>
 
 
@@ -363,6 +376,7 @@ button.btn.bora-sabor-extra:focus-visible { outline:2px solid #a85b24; outline-o
 		<div class="container-fluid">
 			<div class="navbar-brand">
 				<a href="site/<?php echo $url_site ?>"><big><i class="bi bi-arrow-left"></i></big></a>
+				<?php if ($url_site === 'rainhadastapiocas') { ?><img class="bc-selecao-logo" src="/media-delivery.php?tipo=logos&amp;arquivo=<?php echo rawurlencode($logo_sistema) ?>" alt="Rainha das Tapiocas"><?php } ?>
 				<span style="margin-left: 15px; font-size:14px"><?php echo mb_strtoupper($nome) ?>
 					<?php echo @$_SESSION['nome_mesa'] ?><?php echo @$_SESSION['pedido_balcao'] ?></span>
 			</div>
