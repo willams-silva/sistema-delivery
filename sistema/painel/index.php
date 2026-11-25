@@ -568,6 +568,71 @@ html body .ux-products-view-toolbar .ux-view-btn{flex:1 1 0}
 @media(max-width:359px){html body .ux-product-grid{grid-template-columns:minmax(0,1fr)!important}}
 </style>
 <?php } ?>
+<?php if (in_array($pagina, ['visao_financeira','conciliacao_financeira','auditoria_financeira','gestao_caixas','pagar','receber','formas_pgto','frequencias','vendas','lista_pedidos_mesas','compras','comissoes'], true)) { ?>
+<style id="bc-mobile-finance">
+@media(max-width:1023px){
+html body .breadcrumb-header{flex-wrap:wrap!important;gap:10px!important}
+html body .breadcrumb-header .left-content{min-width:0;max-width:100%;display:flex;flex-wrap:wrap;gap:8px}
+html body .breadcrumb-header :is(.btn,.form-control,.form-select){min-height:44px;max-width:100%}
+html body #listar{min-width:0;max-width:100%;padding:12px!important}
+html body #listar [id$="-list-view"]{gap:6px!important}
+html body #listar [id$="-list-view"] button{min-height:44px}
+html body #listar :is(.dataTables_filter,.dataTables_length){float:none!important;text-align:left!important;max-width:100%}
+html body #listar .dataTables_filter label{display:flex;align-items:center;gap:6px;flex-wrap:wrap;width:100%}
+html body #listar .dataTables_filter input{flex:1 1 140px;width:auto!important;min-width:0;max-width:100%;min-height:44px;margin:0!important;font-size:16px}
+html body #listar .dataTables_length select{min-height:40px}
+html body #listar :is(.dataTables_wrapper,.table-responsive){min-width:0;max-width:100%}
+html body #listar:not([class*="-cards"]){overflow-x:auto}
+html body #listar :is(#tabela,#bc-grupos-tabela) tbody td:last-child :is(a,button).btn{min-width:44px;min-height:44px}
+html body #listar :is(.page-link,a.paginate_button){min-height:44px;min-width:44px}
+html body #listar .dataTables_paginate ul.pagination{flex-wrap:wrap;justify-content:center}
+html body .modal .modal-dialog{max-width:calc(100% - 20px)!important;margin-inline:auto!important}
+html body .modal .modal-content{min-width:0}
+html body .modal .modal-body{padding:12px!important;overflow-wrap:break-word}
+html body .modal .modal-title{min-width:0;white-space:normal}
+html body .modal :is(.form-control,.form-select){min-height:44px;max-width:100%;font-size:16px}
+html body .modal .select2-container{max-width:100%!important}
+html body .modal .modal-footer{flex-wrap:wrap;gap:6px}
+html body .modal .modal-footer .btn{min-height:44px}
+html body .modal .table-responsive{max-width:100%;overflow-x:auto}
+html body .modal :is(.form-check,.form-switch){min-height:32px}
+html body .modal .form-check-label{white-space:normal;overflow-wrap:break-word}
+}
+@media(max-width:767px){
+html body #listar[class*="-cards"] :is(#tabela,#bc-grupos-tabela) tbody{grid-template-columns:minmax(0,1fr)!important;gap:10px!important}
+html body #listar[class*="-cards"] :is(#tabela,#bc-grupos-tabela) tbody tr:not(.child){padding:12px!important}
+html body #listar[class*="-cards"] :is(#tabela,#bc-grupos-tabela) tbody td{overflow-wrap:anywhere}
+html body #listar [id$="-list-view"]>span{flex:0 0 100%}
+html body #listar [id$="-list-view"] button{flex:1 1 0}
+html body .modal .modal-body .row>div[class*="col-md-"]{width:100%;max-width:100%}
+}
+@media(max-width:1023px){
+html body :is(.bc-financeiro,.bc-conc,.bc-audit-wrap,.bc-gc,.ux-finance-page,.ux-vendas,.ux-tableorders,.bc-purchases-toolbar,.bc-commission-page){min-width:0;max-width:100%}
+html body :is(.bc-financeiro,.bc-conc,.bc-audit-wrap) :is(.bc-card,.bc-conc-card,.bc-audit-card){min-width:0;padding:12px!important}
+html body :is(.bc-financeiro,.bc-conc,.bc-audit-wrap,.ux-finance-page,.ux-vendas,.ux-tableorders,.bc-purchases-toolbar,.bc-commission-page) :is(.form-control,.form-select,.btn){min-height:44px;max-width:100%}
+html body :is(.bc-conc-filter,.bc-audit-filter){display:flex!important;flex-wrap:wrap;gap:10px!important;align-items:end}
+html body :is(.bc-conc-filter,.bc-audit-filter)>*{min-width:0;max-width:100%}
+html body .bc-conc-tabs{display:flex!important;flex-wrap:wrap;gap:6px}
+html body .bc-conc-tabs :is(a,button){min-height:44px;white-space:normal}
+html body :is(.bc-conc-table,.bc-audit-table,.bc-financeiro .table-responsive,.bc-gc .table-responsive){max-width:100%;overflow-x:auto}
+html body .bc-financeiro .bc-chart{max-width:100%;overflow-x:auto}
+html body :is(.bc-card,.bc-conc-card) strong{overflow-wrap:anywhere}
+html body .bc-audit-details details{max-width:320px;white-space:normal;overflow-wrap:anywhere}
+html body .bc-audit-details summary{min-height:44px;cursor:pointer}
+html body .bc-audit-pages{flex-wrap:wrap;gap:6px}
+html body :is(.ux-finance-page,.ux-vendas,.ux-tableorders,.bc-purchases-toolbar,.bc-commission-page) .select2-container{max-width:100%!important}
+html body :is(.ux-finance-page,.ux-vendas,.ux-tableorders,.bc-purchases-toolbar,.bc-commission-page) .btn-group{flex-wrap:wrap;max-width:100%}
+html body :is(.ux-finance-page,.ux-vendas,.ux-tableorders,.bc-purchases-toolbar,.bc-commission-page) .btn-group .btn{white-space:normal}
+}
+@media(max-width:767px){
+html body .bc-conc-grid{grid-template-columns:minmax(0,1fr)!important}
+html body :is(.bc-conc-filter,.bc-audit-filter)>div{flex:1 1 100%}
+html body :is(.bc-conc-filter,.bc-audit-filter) :is(input:not([type=hidden]),select){max-width:100%;width:100%}
+html body .bc-financeiro .bc-card strong,html body .bc-conc-card strong{font-size:clamp(18px,5vw,24px)!important}
+html body :is(.ux-finance-page,.ux-vendas,.ux-tableorders,.bc-purchases-toolbar,.bc-commission-page) .row>div[class*="col-md-"]{width:100%;max-width:100%}
+}
+</style>
+<?php } ?>
 </head>
 
 <body class="ltr main-body app sidebar-mini">
