@@ -316,7 +316,7 @@ body.checkout-cardapio { background:#fffaf5; color:#493425; }
 .checkout-cardapio #collapseOne .bc-checkout-name #nome.bc-campo-pendente{border-color:#b13f28!important}
 @media(max-width:767px){.checkout-cardapio #collapseOne .bc-checkout-name #nome{font-size:18px!important;height:50px!important}}
 </style>
-<script>document.body.classList.add("checkout-cardapio");</script>
+<style id="bc-checkout-bairro-theme">.select2-container--default .select2-results__option--highlighted[aria-selected],.select2-container--default .select2-results__option--highlighted.select2-results__option--selectable{background:#914a29!important;color:#fff!important}.select2-dropdown{border-color:#d7b5a0!important}</style><script>document.body.classList.add("checkout-cardapio");</script>
 <style id="bc-unified-checkout-header">
 html body .bc-unified-header .navbar-brand,html body .bc-unified-header .navbar-brand > span{font-size:18px!important;font-weight:750!important;line-height:1.25!important;color:#753d1e!important}
 html body .bc-unified-header .navbar-brand{display:flex!important;align-items:center!important;gap:10px!important;min-width:0;white-space:normal}
@@ -530,7 +530,7 @@ html body .bc-unified-header a.bc-unified-back:hover{background:#fff0dc!importan
             $classe_bairro = '';
           }
 
-          echo '<option value="' . $res[$i]['nome'] . '" ' . $classe_bairro . '>' . $res[$i]['nome'] . ' - ' . $valorF . '</option>';
+          echo '<option value="' . htmlspecialchars($res[$i]['nome'], ENT_QUOTES, 'UTF-8') . '" ' . $classe_bairro . '>' . htmlspecialchars($res[$i]['nome'], ENT_QUOTES, 'UTF-8') . '</option>';
         }
       } else {
         echo '<option value="">Cadastre um Bairro</option>';
