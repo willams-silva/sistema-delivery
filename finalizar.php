@@ -317,16 +317,25 @@ body.checkout-cardapio { background:#fffaf5; color:#493425; }
 @media(max-width:767px){.checkout-cardapio #collapseOne .bc-checkout-name #nome{font-size:18px!important;height:50px!important}}
 </style>
 <script>document.body.classList.add("checkout-cardapio");</script>
+<style id="bc-unified-checkout-header">
+html body .bc-unified-header .navbar-brand,html body .bc-unified-header .navbar-brand > span{font-size:18px!important;font-weight:750!important;line-height:1.25!important;color:#753d1e!important}
+html body .bc-unified-header .navbar-brand{display:flex!important;align-items:center!important;gap:10px!important;min-width:0;white-space:normal}
+html body .bc-unified-header a.bc-unified-back{display:inline-flex!important;align-items:center!important;justify-content:center!important;gap:7px!important;min-height:44px;flex-shrink:0;padding:9px 12px!important;border:1px solid #e8c9a9!important;border-radius:11px!important;background:#fff8ee!important;color:#82451f!important;text-decoration:none!important;white-space:nowrap!important;font-size:13px!important;font-weight:700!important}
+html body .bc-unified-header a.bc-unified-back > span{font-size:13px!important;font-weight:700!important;margin:0!important}
+html body .bc-unified-header a.bc-unified-back > i{font-size:16px!important;line-height:1}
+html body .bc-unified-header a.bc-unified-back:hover{background:#fff0dc!important}
+@media(max-width:767px){html body .bc-unified-header .navbar-brand,html body .bc-unified-header .navbar-brand > span{font-size:13px!important}html body .bc-unified-header .navbar-brand{gap:6px!important}html body .bc-unified-header a.bc-unified-back{min-width:44px;padding:9px!important}html body .bc-unified-header a.bc-unified-back > span{display:none!important}}
+</style>
 <div class="main-container">
 
-  <nav class="navbar bg-light fixed-top" style="box-shadow: 0px 3px 5px rgba(0, 0, 0, 0.20);">
+  <nav class="navbar bg-light fixed-top bc-unified-header" style="box-shadow: 0px 3px 5px rgba(0, 0, 0, 0.20);">
     <div class="container-fluid">
       <a class="navbar-brand" href="site/<?php echo $url_site ?>">
         <img src="/media-delivery.php?tipo=logos&amp;arquivo=<?php echo rawurlencode($logo_sistema) ?>" alt="" width="80px" class="d-inline-block align-text-top<?php echo $url_site === 'rainhadastapiocas' ? ' bc-checkout-logo-rainha' : '' ?>">
         FINALIZAR PEDIDO
       </a>
 
-      <a href="carrinho" class="bc-voltar-carrinho" aria-label="Voltar ao resumo do carrinho"><i class="bi bi-arrow-left" aria-hidden="true"></i> <span>Voltar ao carrinho</span></a>
+      <a href="carrinho" class="bc-voltar-carrinho bc-unified-back" aria-label="Voltar ao resumo do carrinho"><i class="bi bi-arrow-left" aria-hidden="true"></i> <span>Voltar ao carrinho</span></a>
 
       <?php require_once("icone-carrinho.php") ?>
 
