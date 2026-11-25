@@ -181,12 +181,47 @@ $data_atual = date('Y-m-d');
 </style>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 
+<style id="bc-mobile-stage4">
+@media(max-width:1023px){
+html body .pdv_body .pdv-container{display:flex!important;flex-direction:column!important;gap:16px!important;padding:0!important;min-width:0}
+html body .pdv_body :is(.products-section,.cart-section){width:100%!important;max-width:100%!important;min-width:0;position:static!important}
+html body .pdv_body :is(.products-section,.cart-section)>div{min-width:0}
+html body .pdv_body .products-section>div:first-child,html body .pdv_body .cart-section>div{padding:12px!important}
+html body .pdv_body .search-container input{width:100%;min-height:44px;font-size:16px!important}
+html body .pdv_body .category-pill{flex:0 0 auto;min-height:64px}
+html body .pdv_body #listar{display:grid!important;grid-template-columns:repeat(3,minmax(0,1fr))!important;gap:10px!important}
+html body .pdv_body #listar .product-card{min-width:0;max-width:100%;overflow-wrap:break-word}
+html body .pdv_body #listar .product-card img{max-width:100%;object-fit:contain}
+html body .pdv_body #form_venda .grid{gap:10px!important;grid-template-columns:repeat(2,minmax(0,1fr))!important}
+html body .pdv_body #form_venda .grid>div{min-width:0}
+html body .pdv_body #form_venda :is(input:not([type=hidden]):not([type=checkbox]),select){width:100%;min-width:0;min-height:44px;font-size:16px!important}
+html body .pdv_body #form_venda .col-md-10{flex:1;min-width:0}
+html body .pdv_body #form_venda .col-md-2{flex:0 0 44px}
+html body .pdv_body #form_venda .select2-container{width:100%!important;max-width:100%}
+html body .pdv_body .pdv-valores-botoes{display:flex;flex-wrap:wrap;gap:6px}
+html body .pdv_body .pdv-valores-botoes button{min-height:44px;flex:1 1 100px}
+html body .pdv_body :is(.btn-finalize,.btn-cancel,.btn-search){min-height:44px;white-space:normal}
+html body .pdv_body .pdv-comanda-lista{max-height:380px;overflow-y:auto}
+html body :is(#modalCliente,#modalPdvExtras,#modalQuantidade,#modalGrade,#modalSabores,#modalVerGrade) .modal-dialog{max-width:calc(100% - 20px)!important;margin-inline:auto!important}
+html body :is(#modalCliente,#modalPdvExtras,#modalQuantidade,#modalGrade,#modalSabores,#modalVerGrade) .modal-body{padding:12px!important;overflow-wrap:break-word}
+html body :is(#modalCliente,#modalPdvExtras,#modalQuantidade,#modalGrade,#modalSabores,#modalVerGrade) :is(.form-control,.form-select,.btn){min-height:44px;max-width:100%}
+}
+@media(max-width:767px){
+html body .pdv_body #listar{grid-template-columns:repeat(2,minmax(0,1fr))!important}
+html body .pdv_body #form_venda>.flex.mt-6{flex-wrap:wrap}
+html body .pdv_body #form_venda>.flex.mt-6 :is(.btn-finalize,.btn-cancel){flex:1 1 100%}
+html body .pdv_body .bc-pdv-mobile-nav{display:flex!important;gap:8px;flex-wrap:wrap;margin:10px 0}
+html body .pdv_body .bc-pdv-mobile-nav a{flex:1;min-height:44px;display:flex;align-items:center;justify-content:center;border:1px solid #d7c5b7;border-radius:9px;color:#63351e;background:#fff;text-decoration:none}
+html body .pdv_body :is(#bc-pdv-produtos,#bc-pdv-comanda){scroll-margin-top:100px}
+}
+</style>
 <div class="pdv_body">
+<nav class="bc-pdv-mobile-nav" style="display:none" aria-label="Atalhos do PDV"><a href="#bc-pdv-produtos">Produtos</a><a href="#bc-pdv-comanda">Comanda e pagamento</a></nav>
  <!-- Main Content -->
   <main class="">
     <div class="flex flex-col lg:flex-row gap-6 pdv-container bg-white">
       <!-- Produtos Section -->
-      <div class="w-full lg:w-2/3 products-section">
+      <div id="bc-pdv-produtos" class="w-full lg:w-2/3 products-section">
         <!-- Barra de Busca e Categorias -->
         <div class="bg-white rounded-xl shadow-sm p-4 mb-6">
           <div class="search-container mb-4">
@@ -246,7 +281,7 @@ $data_atual = date('Y-m-d');
       </div>
       
       <!-- Carrinho Section -->
-      <div class="w-full lg:w-1/3 cart-section">
+      <div id="bc-pdv-comanda" class="w-full lg:w-1/3 cart-section">
         <div class="bg-white rounded-xl shadow-sm p-4">
                    <!-- Lista de Itens no Carrinho -->
          <div id="listar_vendas" style="margin-top: -10px"></div>
