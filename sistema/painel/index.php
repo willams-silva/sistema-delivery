@@ -508,6 +508,66 @@ html body .modal .modal-body .row>div[class*="col-md-"]{width:100%;max-width:100
 }
 </style>
 <?php } ?>
+<?php if (in_array($pagina, ['produtos','categorias','adicionais','unidade_medida','estoque','entradas','saidas'], true)) { ?>
+<style id="bc-mobile-catalog">
+@media(max-width:1023px){
+html body .breadcrumb-header{flex-wrap:wrap!important;gap:10px!important}
+html body .breadcrumb-header .left-content{min-width:0;max-width:100%;display:flex;flex-wrap:wrap;gap:8px}
+html body .breadcrumb-header :is(.btn,.form-control,.form-select){min-height:44px;max-width:100%}
+html body #listar{min-width:0;max-width:100%;padding:12px!important}
+html body #listar [id$="-list-view"]{gap:6px!important}
+html body #listar [id$="-list-view"] button{min-height:44px}
+html body #listar :is(.dataTables_filter,.dataTables_length){float:none!important;text-align:left!important;max-width:100%}
+html body #listar .dataTables_filter label{display:flex;align-items:center;gap:6px;flex-wrap:wrap;width:100%}
+html body #listar .dataTables_filter input{flex:1 1 140px;width:auto!important;min-width:0;max-width:100%;min-height:44px;margin:0!important;font-size:16px}
+html body #listar .dataTables_length select{min-height:40px}
+html body #listar :is(.dataTables_wrapper,.table-responsive){min-width:0;max-width:100%}
+html body #listar:not([class*="-cards"]){overflow-x:auto}
+html body #listar :is(#tabela,#bc-grupos-tabela) tbody td:last-child :is(a,button).btn{min-width:44px;min-height:44px}
+html body #listar :is(.page-link,a.paginate_button){min-height:44px;min-width:44px}
+html body #listar .dataTables_paginate ul.pagination{flex-wrap:wrap;justify-content:center}
+html body .modal .modal-dialog{max-width:calc(100% - 20px)!important;margin-inline:auto!important}
+html body .modal .modal-content{min-width:0}
+html body .modal .modal-body{padding:12px!important;overflow-wrap:break-word}
+html body .modal .modal-title{min-width:0;white-space:normal}
+html body .modal :is(.form-control,.form-select){min-height:44px;max-width:100%;font-size:16px}
+html body .modal .select2-container{max-width:100%!important}
+html body .modal .modal-footer{flex-wrap:wrap;gap:6px}
+html body .modal .modal-footer .btn{min-height:44px}
+html body .modal .table-responsive{max-width:100%;overflow-x:auto}
+html body .modal :is(.form-check,.form-switch){min-height:32px}
+html body .modal .form-check-label{white-space:normal;overflow-wrap:break-word}
+}
+@media(max-width:767px){
+html body #listar[class*="-cards"] :is(#tabela,#bc-grupos-tabela) tbody{grid-template-columns:minmax(0,1fr)!important;gap:10px!important}
+html body #listar[class*="-cards"] :is(#tabela,#bc-grupos-tabela) tbody tr:not(.child){padding:12px!important}
+html body #listar[class*="-cards"] :is(#tabela,#bc-grupos-tabela) tbody td{overflow-wrap:anywhere}
+html body #listar [id$="-list-view"]>span{flex:0 0 100%}
+html body #listar [id$="-list-view"] button{flex:1 1 0}
+html body .modal .modal-body .row>div[class*="col-md-"]{width:100%;max-width:100%}
+}
+@media(max-width:1023px){
+html body .ux-products-view-toolbar .ux-view-btn{min-height:44px}
+html body .ux-product-grid{grid-template-columns:repeat(3,minmax(0,1fr))!important;gap:10px!important}
+html body .ux-product-card{min-width:0}
+html body .ux-product-card-actions :is(a,button).btn{min-width:44px;min-height:44px;display:inline-flex;align-items:center;justify-content:center}
+html body .ux-card-pagination button{min-width:44px;min-height:44px}
+html body .ux-catalog-toolbar .select2-container{max-width:100%!important}
+html body #listar.ux-products-cards-mode{overflow-x:visible}
+html body .modal .modal-body :is(img,canvas){max-width:100%;object-fit:contain}
+}
+@media(max-width:767px){
+html body .ux-product-grid{grid-template-columns:repeat(2,minmax(0,1fr))!important}
+html body .ux-product-card-body{padding:10px!important}
+html body .ux-product-card-photo{height:115px!important}
+html body .ux-product-card-name{white-space:normal!important;overflow-wrap:anywhere}
+html body .ux-product-card-actions{gap:5px!important}
+html body .ux-products-view-toolbar>span{flex:0 0 100%}
+html body .ux-products-view-toolbar .ux-view-btn{flex:1 1 0}
+}
+@media(max-width:359px){html body .ux-product-grid{grid-template-columns:minmax(0,1fr)!important}}
+</style>
+<?php } ?>
 </head>
 
 <body class="ltr main-body app sidebar-mini">
