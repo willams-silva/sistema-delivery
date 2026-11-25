@@ -98,6 +98,15 @@ $total_pago = str_replace(',', '.', $total_pago);
 $esta_pago = filter_var(@$_POST['esta_pago'], @FILTER_SANITIZE_STRING);
 
 
+require_once __DIR__.'/frete_ruas_helper.php';
+if ($entrega !== 'Delivery' || ($entrega_distancia != 'Sim' || empty($chave_api_maps))) {
+  $bc_taxa = bcFreteRua($pdo,(int)$id_empresa,(string)$bairro,(string)$rua,(string)$entrega);
+  if ($bc_taxa === null || ($entrega === 'Delivery' && (!is_numeric($taxa_entrega) || abs((float)$taxa_entrega-$bc_taxa)>0.005))) {
+    echo 'Taxa de entrega alterada ou inválida. Atualize o endereço e tente novamente.'; exit;
+  }
+  $taxa_entrega = number_format($bc_taxa,2,'.','');
+}
+
 //verificar pgto pix
 require ("verificar_pgto.php");
 if (@$status_api == 'approved' or $esta_pago == 'Sim') {
