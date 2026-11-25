@@ -5,6 +5,7 @@ $_SESSION['url_site'] = $url_site;
 // Identifica que esta requisição é a página pública de uma loja específica.
 $configurar_config_site = true;
 require_once("cabecalho.php");
+unset($_SESSION['bc_categoria_retorno'][(string)$id_empresa]);
 
  // Verifica se cada seção possui produtos disponíveis para delivery.
 $query_disp = $pdo->query("SELECT COUNT(*) FROM categorias c WHERE c.ativo = 'Sim' AND c.delivery = 'Sim' AND c.empresa = '$id_empresa' AND EXISTS (SELECT 1 FROM produtos p WHERE p.categoria = c.id AND p.ativo = 'Sim' AND p.delivery = 'Sim' AND p.empresa = '$id_empresa' AND (p.tem_estoque = 'Não' OR p.estoque > 0))");
