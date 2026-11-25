@@ -276,12 +276,21 @@ body { background:#fffaf5 !important; color:#493425; }
 }
 </style>
 
+<style id="bc-unified-checkout-header">
+html body .bc-unified-header .navbar-brand,html body .bc-unified-header .navbar-brand > span{font-size:18px!important;font-weight:750!important;line-height:1.25!important;color:#753d1e!important}
+html body .bc-unified-header .navbar-brand{display:flex!important;align-items:center!important;gap:10px!important;min-width:0;white-space:normal}
+html body .bc-unified-header a.bc-unified-back{display:inline-flex!important;align-items:center!important;justify-content:center!important;gap:7px!important;min-height:44px;flex-shrink:0;padding:9px 12px!important;border:1px solid #e8c9a9!important;border-radius:11px!important;background:#fff8ee!important;color:#82451f!important;text-decoration:none!important;white-space:nowrap!important;font-size:13px!important;font-weight:700!important}
+html body .bc-unified-header a.bc-unified-back > span{font-size:13px!important;font-weight:700!important;margin:0!important}
+html body .bc-unified-header a.bc-unified-back > i{font-size:16px!important;line-height:1}
+html body .bc-unified-header a.bc-unified-back:hover{background:#fff0dc!important}
+@media(max-width:767px){html body .bc-unified-header .navbar-brand,html body .bc-unified-header .navbar-brand > span{font-size:13px!important}html body .bc-unified-header .navbar-brand{gap:6px!important}html body .bc-unified-header a.bc-unified-back{min-width:44px;padding:9px!important}html body .bc-unified-header a.bc-unified-back > span{display:none!important}}
+</style>
 <div class="main-container">
 
-  <nav class="navbar bg-light fixed-top" style="box-shadow: 0px 3px 5px rgba(0, 0, 0, 0.20);">
+  <nav class="navbar bg-light fixed-top bc-unified-header" style="box-shadow: 0px 3px 5px rgba(0, 0, 0, 0.20);">
     <div class="container-fluid">
       <div class="navbar-brand">
-        <a href="site/<?php echo $url_site ?>"><big><i class="bi bi-arrow-left"></i></big></a>
+        <a class="bc-unified-back" href="site/<?php echo $url_site ?>" aria-label="Voltar ao cardápio"><i class="bi bi-arrow-left" aria-hidden="true"></i><span>Voltar ao cardápio</span></a>
         <?php if ($url_site === 'rainhadastapiocas') { ?>
           <img class="bc-resumo-logo" src="/media-delivery.php?tipo=logos&amp;arquivo=<?php echo rawurlencode($logo_sistema) ?>" alt="Rainha das Tapiocas">
         <?php } ?>
