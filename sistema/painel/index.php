@@ -650,6 +650,73 @@ html body .ux-report-modal .modal-body .row>div[class*="col-md-"]{width:100%;max
 html body .ux-report-modal .modal-footer .btn{flex:1 1 100%;margin:0!important}
 }
 </style>
+<?php if (in_array($pagina, ['chamados','tutoriais','tarefas','anotacoes','mensalidades','minhas_comissoes'], true)) { ?>
+<style id="bc-mobile-support">
+@media(max-width:1023px){
+html body .breadcrumb-header{flex-wrap:wrap!important;gap:10px!important}
+html body .breadcrumb-header .left-content{min-width:0;max-width:100%;display:flex;flex-wrap:wrap;gap:8px}
+html body .breadcrumb-header :is(.btn,.form-control,.form-select){min-height:44px;max-width:100%}
+html body #listar{min-width:0;max-width:100%;padding:12px!important}
+html body #listar [id$="-list-view"]{gap:6px!important}
+html body #listar [id$="-list-view"] button{min-height:44px}
+html body #listar :is(.dataTables_filter,.dataTables_length){float:none!important;text-align:left!important;max-width:100%}
+html body #listar .dataTables_filter label{display:flex;align-items:center;gap:6px;flex-wrap:wrap;width:100%}
+html body #listar .dataTables_filter input{flex:1 1 140px;width:auto!important;min-width:0;max-width:100%;min-height:44px;margin:0!important;font-size:16px}
+html body #listar .dataTables_length select{min-height:40px}
+html body #listar :is(.dataTables_wrapper,.table-responsive){min-width:0;max-width:100%}
+html body #listar:not([class*="-cards"]){overflow-x:auto}
+html body #listar :is(#tabela,#bc-grupos-tabela) tbody td:last-child :is(a,button).btn{min-width:44px;min-height:44px}
+html body #listar :is(.page-link,a.paginate_button){min-height:44px;min-width:44px}
+html body #listar .dataTables_paginate ul.pagination{flex-wrap:wrap;justify-content:center}
+html body .modal .modal-dialog{max-width:calc(100% - 20px)!important;margin-inline:auto!important}
+html body .modal .modal-content{min-width:0}
+html body .modal .modal-body{padding:12px!important;overflow-wrap:break-word}
+html body .modal .modal-title{min-width:0;white-space:normal}
+html body .modal :is(.form-control,.form-select){min-height:44px;max-width:100%;font-size:16px}
+html body .modal .select2-container{max-width:100%!important}
+html body .modal .modal-footer{flex-wrap:wrap;gap:6px}
+html body .modal .modal-footer .btn{min-height:44px}
+html body .modal .table-responsive{max-width:100%;overflow-x:auto}
+html body .modal :is(.form-check,.form-switch){min-height:32px}
+html body .modal .form-check-label{white-space:normal;overflow-wrap:break-word}
+}
+@media(max-width:767px){
+html body #listar[class*="-cards"] :is(#tabela,#bc-grupos-tabela) tbody{grid-template-columns:minmax(0,1fr)!important;gap:10px!important}
+html body #listar[class*="-cards"] :is(#tabela,#bc-grupos-tabela) tbody tr:not(.child){padding:12px!important}
+html body #listar[class*="-cards"] :is(#tabela,#bc-grupos-tabela) tbody td{overflow-wrap:anywhere}
+html body #listar [id$="-list-view"]>span{flex:0 0 100%}
+html body #listar [id$="-list-view"] button{flex:1 1 0}
+html body .modal .modal-body .row>div[class*="col-md-"]{width:100%;max-width:100%}
+}
+@media(max-width:1023px){
+html body :is(.bc-ticket-page,.bc-ticket-content,.bc-note-page,.bc-note-content,.bc-agenda,.bc-subscription-page,.bc-mycommission-page){min-width:0;max-width:100%}
+html body :is(.bc-ticket-page,.bc-note-page) .nav{flex-wrap:wrap;gap:6px}
+html body :is(.bc-ticket-page,.bc-note-page) .nav-link{min-height:44px;white-space:normal}
+html body :is(.bc-ticket-content,.bc-note-content,.bc-agenda,.bc-mycommission-page) :is(.form-control,.form-select,.btn){min-height:44px;max-width:100%}
+html body .bc-ticket-content :is(.ql-toolbar,.ql-container){max-width:100%;width:100%}
+html body .bc-ticket-content .ql-toolbar{display:flex;flex-wrap:wrap;gap:4px}
+html body .bc-ticket-content .ql-editor{min-height:150px;overflow-wrap:anywhere}
+html body .bc-note-content :is(.nicEdit-panelContain,.nicEdit-main){max-width:100%!important;box-sizing:border-box}
+html body .bc-note-content .nicEdit-main{min-height:150px;overflow-wrap:anywhere}
+html body .bc-agenda #container{max-width:100%;min-width:0}
+html body .bc-agenda #calendar,html body .bc-agenda #weekdays{gap:3px}
+html body .bc-agenda .day{min-width:0;height:40px}
+html body .bc-agenda #header :is(button,a){min-height:44px;min-width:44px}
+html body #listar .bc-agenda-task-grid{min-width:0;max-width:100%}
+html body #listar .bc-agenda-task-grid .btn{min-height:44px}
+html body .bc-mycommission-page .bc-mycommission-filter{display:flex;flex-wrap:wrap;gap:6px;max-width:100%}
+html body .video-modal .modal-dialog{width:calc(100% - 20px)!important;max-width:calc(100% - 20px)!important}
+html body .video-modal #videoFrame{width:100%;max-width:100%;border:0}
+}
+@media(max-width:767px){
+html body .bc-agenda-layout{grid-template-columns:minmax(0,1fr)!important}
+html body #listar .bc-agenda-task-grid{grid-template-columns:minmax(0,1fr)!important}
+html body .bc-agenda-summary .card-group{grid-template-columns:minmax(0,1fr)!important}
+html body :is(.bc-ticket-content,.bc-note-content,.bc-mycommission-page) .row>div[class*="col-md-"]{width:100%;max-width:100%}
+html body .video-modal #videoFrame{height:auto!important;aspect-ratio:16/9}
+}
+</style>
+<?php } ?>
 </head>
 
 <body class="ltr main-body app sidebar-mini">
