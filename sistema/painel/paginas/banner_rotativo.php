@@ -8,6 +8,37 @@ $pag = 'banner_rotativo';
 ?>
 
 
+<style id="bc-banner-mobile">
+@media(max-width:1023px){
+html body .breadcrumb-header .left-content{display:flex;flex-wrap:wrap;gap:8px;max-width:100%}
+html body .breadcrumb-header .btn{min-height:44px;display:inline-flex;align-items:center}
+html body #listar{min-width:0;max-width:100%;padding:12px!important}
+html body #listar:not(.bc-banner-cards){overflow-x:auto}
+html body #listar #bc-banner-list-view button{min-height:44px}
+html body #listar #tabela tbody td:last-child a.btn{min-width:44px;min-height:44px}
+html body #listar #tabela_wrapper .dataTables_paginate .page-link,html body #listar #tabela_wrapper .dataTables_paginate a.paginate_button{min-height:44px;min-width:44px}
+html body #listar .dataTables_filter{float:none!important;text-align:left!important}
+html body #listar .dataTables_filter label{display:flex;flex-wrap:wrap;align-items:center;gap:8px}
+html body #listar .dataTables_filter input{flex:1 1 140px;min-width:0;max-width:100%;min-height:44px;margin:0!important}
+html body #modalForm .modal-dialog{max-width:calc(100% - 20px)!important;margin-inline:auto!important}
+html body #modalForm .modal-body{padding:12px!important}
+html body #modalForm :is(.form-control,.form-select){min-height:44px;max-width:100%;min-width:0;font-size:16px;color-scheme:light}
+html body #modalForm .select2-container{max-width:100%!important}
+html body #modalForm #ordem{text-align:center}
+html body #modalForm #divImg{padding:8px;background:#f8efe6;border-radius:10px}
+html body #modalForm #target{display:block;width:100%!important;aspect-ratio:7/3;max-height:220px!important;object-fit:contain!important}
+html body #modalForm .modal-footer .btn{min-height:44px}
+}
+@media(max-width:767px){
+html body #listar.bc-banner-cards #tabela tbody{grid-template-columns:minmax(0,1fr)!important;gap:10px!important}
+html body #listar.bc-banner-cards #tabela tbody tr:not(.child){padding:12px!important}
+html body #listar #bc-banner-list-view>span{flex:0 0 100%}
+html body #listar #bc-banner-list-view button{flex:1 1 0}
+html body #modalForm .modal-body .row>div[class*="col-md-"]{width:100%;max-width:100%}
+html body #modalForm .modal-footer{gap:8px}
+html body #modalForm .modal-footer .btn{flex:1 1 0;margin:0}
+}
+</style>
 <div class="card mb-3" style="margin-top:16px;border:1px solid #e2e8f0;border-radius:14px"><div class="card-body d-flex align-items-center flex-wrap gap-3"><h2 class="mb-0" style="font-size:21px;font-weight:600;color:#4e2d20"><i class="fa-solid fa-images me-2"></i>Banner Rotativo</h2><span style="font-size:12px;color:#795038">Gerencie as imagens de destaque do cardápio online.</span></div></div>
 <div class="justify-content-between breadcrumb-header">
 	<div class="left-content mt-2">
