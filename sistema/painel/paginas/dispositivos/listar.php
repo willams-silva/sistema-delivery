@@ -21,15 +21,15 @@ if($res)
 {
 
 echo <<<HTML
-<small>
-<table class="table table-hover text-center">
+<div class="bc-device-view"><button type="button" data-view="cards" onclick="bcDeviceView('cards')" aria-pressed="true"><i class="fe fe-grid"></i> Cartões</button><button type="button" data-view="table" onclick="bcDeviceView('table')" aria-pressed="false"><i class="fe fe-list"></i> Tabela</button></div>
+<table class="table text-center bc-device-table">
      <thead class="thead-light">
         <tr>
-            <th scope="col" class="esc" style="padding-left: 50px !important;">ID</th>
-            <th scope="col" class="esc" style="padding-left: 50px !important;">Telefone</th>
-            <th scope="col" class="esc" style="padding-left: 190px !important; ">Appkey</th>
-            <th scope="col" class="esc" style="padding-left: 100px !important;">Status</th>
-            <th scope="col" class="esc" style="padding-left: 120px !important; p">Ações</th>
+            <th scope="col" class="esc">ID</th>
+            <th scope="col" class="esc">Telefone</th>
+            <th scope="col" class="esc">Appkey</th>
+            <th scope="col" class="esc">Status</th>
+            <th scope="col" class="esc">Ações</th>
         </tr>
     </thead>
 <tbody>
@@ -76,17 +76,17 @@ if($appkey == $token_whatsapp){
 ?>
 
 <tr style="" class="tabelaResultados">
-    <td class="esc"><?= $i; ?> </td>
-    <td class="esc"><?= $telefone; ?></td>
-    <td class="esc"><?= $appkey;?></td>
-    <td class="esc"><?=$status_mostrar;?> <?php echo $principal ?></td>
-    <td class="esc">
+    <td class="esc" data-label="ID"><?= $i; ?> </td>
+    <td class="esc" data-label="Telefone"><?= $telefone; ?></td>
+    <td class="esc" data-label="Appkey"><?= $appkey;?></td>
+    <td class="esc" data-label="Status"><?=$status_mostrar;?> <?php echo $principal ?></td>
+    <td class="esc" data-label="Ações">
     	
             <big><a href="#" class="btn btn-danger-light btn-sm" onclick="excluirDisp('<?= $id; ?>')" title="Excluir"><i class="fa fa-trash-can"></i></a></big>
 
         <big>
-            <a href="#" onclick="add('<?= $appkey; ?>')" title="Reconectar Dispositivo">
-                <i class="fa fa-wifi" style="color:#3d1002"></i>
+            <a class="btn btn-info-light btn-sm" href="#" onclick="add('<?= $appkey; ?>')" title="Reconectar Dispositivo">
+                <i class="fa fa-wifi" ></i>
             </a>
         </big>
 
@@ -115,9 +115,8 @@ echo <<<HTML
 
 </tbody>
 
-<small><div align="center" id="mensagem-excluir"></div></small>
-
 </table>
+<div class="small text-center" id="mensagem-excluir"></div>
 
 <br>
 
@@ -139,6 +138,8 @@ HTML;
 ?>
 
 <script>
+function bcDeviceView(view){var root=document.getElementById("listar");if(!root)return;root.dataset.view=view;root.querySelectorAll(".bc-device-view button").forEach(function(btn){var active=btn.dataset.view===view;btn.classList.toggle("active",active);btn.setAttribute("aria-pressed",String(active));});}
+bcDeviceView(document.getElementById("listar")?.dataset.view || "cards");
 
    function alterarStatus(status, id = '')
    {
