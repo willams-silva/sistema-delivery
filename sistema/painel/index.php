@@ -633,6 +633,23 @@ html body :is(.ux-finance-page,.ux-vendas,.ux-tableorders,.bc-purchases-toolbar,
 }
 </style>
 <?php } ?>
+<style id="bc-mobile-reports">
+@media(max-width:1023px){
+html body .ux-report-modal .modal-dialog{max-width:calc(100% - 20px)!important;margin-inline:auto!important}
+html body .ux-report-modal .modal-content{min-width:0}
+html body .ux-report-modal .modal-header{gap:8px;background:#914a29!important;color:#fff!important}
+html body .ux-report-modal .modal-title{font-size:18px;white-space:normal;overflow-wrap:break-word;min-width:0}
+html body .ux-report-modal .modal-body{padding:14px!important}
+html body .ux-report-modal .modal-body .row{row-gap:12px}
+html body .ux-report-modal :is(.form-control,.form-select){min-height:44px;width:100%;min-width:0;max-width:100%;font-size:16px;color-scheme:light}
+html body .ux-report-modal .modal-footer{gap:8px;flex-wrap:wrap}
+html body .ux-report-modal .modal-footer .btn{min-height:44px;white-space:normal}
+}
+@media(max-width:767px){
+html body .ux-report-modal .modal-body .row>div[class*="col-md-"]{width:100%;max-width:100%}
+html body .ux-report-modal .modal-footer .btn{flex:1 1 100%;margin:0!important}
+}
+</style>
 </head>
 
 <body class="ltr main-body app sidebar-mini">
@@ -1270,32 +1287,32 @@ html body :is(.ux-finance-page,.ux-vendas,.ux-tableorders,.bc-purchases-toolbar,
 										class="angle fe fe-chevron-right"></i></a>
 								<ul class="slide-menu">
 
-									<li class="<?php echo @$rel_produtos ?> ocultar_mobile_app"><a target="_blank" class="slide-item"
+									<li class="<?php echo @$rel_produtos ?>"><a target="_blank" class="slide-item"
 											href="rel/produtos_class.php"> Rel Produtos</a></li>
 
-									<li class="<?php echo @$rel_vendas ?> ocultar_mobile_app"><a class="slide-item" href=""
+									<li class="<?php echo @$rel_vendas ?>"><a class="slide-item" href=""
 											data-bs-toggle="modal" data-bs-target="#RelVen"> Rel Vendas/Pedidos</a></li>
 
 
-									<li class="<?php echo @$rel_financeiro ?> ocultar_mobile_app"><a class="slide-item" href=""
+									<li class="<?php echo @$rel_financeiro ?>"><a class="slide-item" href=""
 											data-bs-toggle="modal" data-bs-target="#modalRelFin"> Rel Financeiro</a></li>
 
-									<li class="<?php echo @$rel_lucro ?> ocultar_mobile_app"><a class="slide-item" href=""
+									<li class="<?php echo @$rel_lucro ?>"><a class="slide-item" href=""
 											data-bs-toggle="modal" data-bs-target="#modalRelLucro"> Rel Lucro</a></li>
 
 
-									<li class="<?php echo @$rel_sintetico_despesas ?> ocultar_mobile_app"><a target="_blank"
+									<li class="<?php echo @$rel_sintetico_despesas ?>"><a target="_blank"
 											class="slide-item" href="" data-bs-toggle="modal" data-bs-target="#modalRelSinDesp"> Rel Sintético
 											Desp</a>
 									</li>
 
-									<li class="<?php echo @$rel_sintetico_receber ?> ocultar_mobile_app"><a target="_blank"
+									<li class="<?php echo @$rel_sintetico_receber ?>"><a target="_blank"
 											class="slide-item" href="" data-bs-toggle="modal" data-bs-target="#modalRelSinRec"> Rel Sintético
 											Recb</a>
 									</li>
 
 
-									<li class="<?php echo @$rel_balanco ?> ocultar_mobile_app"><a class="slide-item"
+									<li class="<?php echo @$rel_balanco ?>"><a class="slide-item"
 											href="rel/balanco_anual_class.php" target="_blank"> Rel Balanço Anual</a></li>
 
 
