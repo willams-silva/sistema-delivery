@@ -1525,9 +1525,9 @@ html body #listar .progress{max-width:100%}
 										<li class="slide <?php echo @$marketing ?> <?php echo @$cupons ?> <?php echo @$grupos_disparos ?>">
 											<a class="side-menu__item" data-bs-toggle="slide" href="javascript:void(0);"><i class="fa-solid fa-bullhorn text-white mt-1"></i><span class="side-menu__label" style="margin-left: 15px">Marketing</span><i class="angle fe fe-chevron-right"></i></a>
 											<ul class="slide-menu">
-												<li class="<?php echo @$marketing ?> <?php echo $recursos_marketing_whats ?>"><a class="slide-item" href="marketing"><i class="fa-solid fa-comment-dots me-2"></i>Disparos</a></li>
-												<li class="<?php echo @$cupons ?>"><a class="slide-item" href="cupons"><i class="fa-solid fa-ticket me-2"></i>Cupons de Desconto</a></li>
-												<li class="<?php echo @$grupos_disparos ?>"><a class="slide-item" href="grupos_disparos"><i class="fa-solid fa-layer-group me-2"></i>Grupos de Disparo</a></li>
+												<li class="<?php echo @$marketing ?> <?php echo $recursos_marketing_whats ?>"><a class="slide-item bc-config-link" href="marketing"><i class="fa-solid fa-comment-dots me-2"></i>Disparos</a></li>
+												<li class="<?php echo @$cupons ?>"><a class="slide-item bc-config-link" href="cupons"><i class="fa-solid fa-ticket me-2"></i>Cupons de Desconto</a></li>
+												<li class="<?php echo @$grupos_disparos ?>"><a class="slide-item bc-config-link" href="grupos_disparos"><i class="fa-solid fa-layer-group me-2"></i>Grupos de Disparo</a></li>
 											</ul>
 										</li>
 
