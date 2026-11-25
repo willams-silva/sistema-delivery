@@ -10,6 +10,7 @@ if ($total_reg > 0) {
 	$nome = $res[0]['nome'];
 	$descricao = $res[0]['descricao'];
 	$id = $res[0]['id'];
+	$_SESSION['bc_categoria_retorno'][(string)$id_empresa] = (int)$id;
 
 
 	@session_start();
