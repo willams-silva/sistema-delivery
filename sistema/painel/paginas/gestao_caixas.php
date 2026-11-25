@@ -93,6 +93,22 @@ html body .bc-gc table tbody tr:hover,html body .bc-gc table tbody tr:hover>td{-
 html body .bc-gc .btn-outline-primary:hover{background:#fff!important;color:#63351e!important;border-color:#d7c5b7!important;box-shadow:none!important;transform:none!important}
 html body .bc-gc .btn-outline-primary[aria-expanded="true"]{background:#f4e9df!important;color:#63351e!important}
 </style>
+<style id="bc-mobile-stage4">
+@media(max-width:1023px){
+html body .bc-gc{min-width:0;max-width:100%}
+html body .bc-gc :is(.form-control,.btn){min-height:44px;max-width:100%}
+html body .bc-gc .card-body{padding:12px!important;min-width:0}
+html body .bc-gc .table-responsive{max-width:100%;overflow-x:auto}
+html body .bc-gc .gc-detail-panel{min-width:0;overflow-wrap:break-word}
+html body .bc-gc .gc-detail-panel .list-group-item{flex-wrap:wrap;gap:6px}
+}
+@media(max-width:767px){
+html body .bc-gc>.row.g-3>div{width:50%;min-width:0}
+html body .bc-gc>.row.g-3>div:last-child{width:100%}
+html body .bc-gc>.row.g-3 h3{font-size:18px!important;overflow-wrap:break-word}
+html body .bc-gc .gc-detail-grid>div{width:100%}
+}
+</style>
 <div class="bc-gc">
 <div class="card mb-3" style="margin-top:16px"><div class="card-body d-flex align-items-center flex-wrap gap-3"><h2 class="mb-0" style="font-size:21px;font-weight:600;color:#4e2d20"><i class="fa-solid fa-cash-register me-2"></i>Gestão de Caixas</h2><span style="font-size:12px;color:#795038">Acompanhamento gerencial — sem alterar os caixas operacionais.</span></div></div>
 <div class="d-flex justify-content-start mb-3">
