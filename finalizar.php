@@ -1438,35 +1438,18 @@ html body .bc-unified-header a.bc-unified-back:hover{background:#fff0dc!importan
 
 
 <script type="text/javascript">
+  var bcFreteRequest;
   function calcularFrete() {
-
-    var bairro = $('#bairro').val();
-    var total_compra = "<?= $total_carrinho ?>";
-    var entrega = $('#entrega').val();
-
-    $.ajax({
-      url: 'js/ajax/calcular-frete.php',
-      method: 'POST',
-      data: {
-        bairro,
-        total_compra,
-        entrega
-      },
-      dataType: "html",
-
-      success: function(result) {
-        var split = result.split("-");
-        $('#taxa-entrega').text(split[0]);
-        $('#total-carrinho-finalizar').text(split[1]);
-        $('#taxa-entrega-input').val(split[0]);
-
-
-      }
+    if(bcFreteRequest) bcFreteRequest.abort();
+    $('#taxa-entrega-input').val('');
+    bcFreteRequest=$.ajax({
+      url:'js/ajax/calcular-frete.php',method:'POST',
+      data:{bairro:$('#bairro').val(),rua:$('#rua').val(),total_compra:<?= json_encode($total_carrinho) ?>,entrega:$('#entrega').val()},
+      success:function(result){var split=result.split('-');$('#taxa-entrega').text(split[0]);$('#total-carrinho-finalizar').text(split[1]);$('#taxa-entrega-input').val(split[0].replace(/\./g,''));pix();},
+      error:function(xhr,status){if(status!=='abort'){$('#taxa-entrega').text('—');$('#taxa-entrega-input').val('');}}
     });
-
-
-    setTimeout(pix, 1000);
   }
+  $(document).on('change blur','#rua',function(){if($('#entrega').val()==='Delivery' && <?= json_encode($entrega_distancia != 'Sim' || $chave_api_maps == '') ?>) calcularFrete();});
 </script>
 
 
