@@ -287,6 +287,19 @@ body.checkout-cardapio { background:#fffaf5; color:#493425; }
 .checkout-cardapio .total-finalizar #botao_finalizar{width:100%!important;max-width:420px!important}
 }
 </style>
+<style id="bc-checkout-mobile-compact-total">
+@media(max-width:767px){
+.checkout-cardapio .total-finalizar{position:fixed!important;bottom:0!important;height:auto!important;min-height:0!important;display:flex!important;flex-direction:column!important;align-items:center!important;gap:8px!important;padding:8px 12px calc(8px + env(safe-area-inset-bottom,0px))!important}
+.checkout-cardapio .total-finalizar .total-pedido,.checkout-cardapio .total-finalizar .abaixo{position:static!important;inset:auto!important;transform:none!important;float:none!important;margin:0 auto!important;width:min(100%,360px)!important;max-width:360px!important;height:auto!important;min-height:0!important}
+.checkout-cardapio .total-finalizar .total-pedido{padding:12px 14px!important}
+.checkout-cardapio .total-finalizar .total-pedido > br{display:none!important}
+.checkout-cardapio .total-finalizar .total-pedido > big{margin:0!important;padding:0!important;min-height:0!important}
+.checkout-cardapio .total-finalizar .total-pedido .previsao_entrega{line-height:1.4}
+.checkout-cardapio .total-finalizar .abaixo{flex-direction:column!important}
+.checkout-cardapio .total-finalizar #botao_finalizar{width:100%!important;min-height:48px}
+.checkout-cardapio #accordionExample{margin-bottom:210px!important}
+}
+</style>
 <script>document.body.classList.add("checkout-cardapio");</script>
 <div class="main-container">
 
