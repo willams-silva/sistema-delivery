@@ -35,6 +35,23 @@ html body .ux-cash-list .dataTables_paginate .disabled .page-link{background:#f4
 html body .ux-cash-list .caixa-operador-nome .text-danger{color:#13745a!important}
 html body .ux-cash-list .caixa-operador-nome .verde{color:#b42332!important}
 </style>
+<style id="bc-mobile-stage4">
+@media(max-width:1023px){
+html body .ux-cash-page .left-content form{display:flex!important;flex-wrap:wrap;gap:10px;align-items:center}
+html body .ux-cash-page .left-content form>div{float:none!important;position:static!important;margin:0!important;min-width:0}
+html body .ux-cash-page .left-content form>div:has(input[type=date]){display:block!important;flex:1 1 130px}
+html body .ux-cash-page .left-content form>div:has(#status-busca){flex:1 1 100%}
+html body .ux-cash-page #status-busca,html body .ux-cash-page .select2-container{width:100%!important;max-width:100%!important}
+html body .ux-cash-page :is(.btn,.form-control,.form-select){min-height:44px}
+html body .ux-cash-list{padding:10px!important;max-width:100%;overflow-x:auto}
+html body .ux-cash-list :is(.caixa-expand-btn,.btn){min-width:44px;min-height:44px}
+html body .ux-cash-list .caixa-detail-actions-buttons{display:flex;flex-wrap:wrap;gap:6px}
+html body .ux-cash-modal .modal-dialog{max-width:calc(100% - 20px)!important;margin-inline:auto!important}
+html body .ux-cash-modal .modal-body{padding:12px!important}
+html body .ux-cash-modal :is(.form-control,.form-select,.btn){min-height:44px;max-width:100%}
+html body .ux-cash-modal .select2-container{max-width:100%!important}
+}
+</style>
 <div class="card mb-3 bc-cash-heading">
  <div class="card-body d-flex align-items-center flex-wrap gap-3">
   <h2 class="mb-0" style="font-size:21px;font-weight:600;color:#4e2d20"><i class="fa-solid fa-cash-register me-2" aria-hidden="true"></i>Gestão de Caixas</h2>
