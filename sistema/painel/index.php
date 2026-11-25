@@ -717,6 +717,43 @@ html body .video-modal #videoFrame{height:auto!important;aspect-ratio:16/9}
 }
 </style>
 <?php } ?>
+<style id="bc-mobile-settings">
+@media(max-width:1023px){
+html body :is(#modalConfig,#modalPerfil) .modal-dialog{max-width:calc(100% - 20px)!important;margin-inline:auto!important}
+html body :is(#modalConfig,#modalPerfil) .modal-header{background:#914a29!important;color:#fff!important}
+html body :is(#modalConfig,#modalPerfil) .modal-body{padding:14px!important}
+html body :is(#modalConfig,#modalPerfil) .modal-body .row{row-gap:12px;margin-bottom:12px}
+html body :is(#modalConfig,#modalPerfil) .modal-body .row>div{min-width:0}
+html body :is(#modalConfig,#modalPerfil) :is(.form-control,.form-select){min-height:44px;max-width:100%;font-size:16px;color-scheme:light}
+html body :is(#modalConfig,#modalPerfil) .select2-container{max-width:100%!important}
+html body :is(#modalConfig,#modalPerfil) .modal-body img{max-width:100%;object-fit:contain}
+html body #modalConfig :is(.dropdown-menu,.dropdown-item-text){max-width:calc(100vw - 48px)!important;white-space:normal;overflow-wrap:anywhere}
+html body :is(#modalConfig,#modalPerfil) .modal-footer .btn{min-height:44px}
+html body :is(#modalConfig,#modalPerfil) label{white-space:normal;overflow-wrap:anywhere}
+}
+@media(max-width:767px){
+html body :is(#modalConfig,#modalPerfil) .modal-body .row>div[class*="col-md-"]{width:100%;max-width:100%}
+html body :is(#modalConfig,#modalPerfil) .modal-footer .btn{flex:1 1 auto}
+}
+</style>
+<?php if ($pagina === 'dias') { ?>
+<style id="bc-mobile-closed-days">
+@media(max-width:1023px){
+html body .breadcrumb-header{flex-wrap:wrap;gap:10px}
+html body .breadcrumb-header .btn,html body :is(#bc-excecoes-form,#bc-horario-form,#bc-previsao-form) .btn,html body #bc-agenda-atualizar{min-height:44px}
+html body :is(#bc-excecoes-form,#bc-horario-form,#bc-previsao-form) .form-control,html body #bc-agenda-inicio{min-height:44px;font-size:16px;max-width:100%}
+html body .card-body{min-width:0}
+html body .table-responsive,html body #listar{max-width:100%;overflow-x:auto}
+html body #modalForm .modal-dialog{max-width:calc(100% - 20px)!important;margin-inline:auto!important}
+html body #modalForm :is(.form-select,.btn){min-height:44px}
+}
+@media(max-width:767px){
+html body :is(#bc-excecoes-form,#bc-horario-form,#bc-previsao-form) >div[class*="col-md-"]{width:100%;max-width:100%}
+html body #modalForm .row>div[class*="col-md-"]{width:100%;max-width:100%}
+html body #modalForm #btn_salvar{width:100%}
+}
+</style>
+<?php } ?>
 </head>
 
 <body class="ltr main-body app sidebar-mini">
