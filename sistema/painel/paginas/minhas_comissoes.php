@@ -42,6 +42,7 @@ html body #modalDados .modal-header{background:#914a29!important;color:#fff!impo
 html body #modalDados .modal-title,html body #modalDados .close{color:#fff!important}
 html body #modalDados .modal-content{background:#fff!important;border:1px solid #e5d4c6!important;border-radius:14px}
 html body #modalDados .modal-body .row{padding:12px 0;border-color:#e5d4c6!important;color:#4e2d20}
+html body .main-footer,html body .main-footer .container-fluid,html body .main-footer strong{color:#fff!important}
 </style>
 <div class="card mb-3" style="margin-top:16px;border:1px solid #e5d4c6;border-radius:14px"><div class="card-body d-flex align-items-center flex-wrap gap-3"><h2 class="mb-0" style="font-size:21px;font-weight:600;color:#4e2d20"><i class="fa-solid fa-wallet me-2"></i>Minhas Comissões</h2><span style="font-size:12px;color:#795038">Acompanhe suas comissões, valores recebidos e pagamentos pendentes.</span></div></div>
 <div class="justify-content-between bc-mycommission-page">
