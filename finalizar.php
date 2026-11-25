@@ -300,6 +300,14 @@ body.checkout-cardapio { background:#fffaf5; color:#493425; }
 .checkout-cardapio #accordionExample{margin-bottom:210px!important}
 }
 </style>
+<style id="bc-checkout-phone-field">
+.checkout-cardapio #collapseOne .bc-checkout-phone{display:flex;align-items:center;justify-content:center;gap:10px;width:min(100%,320px);margin:0 auto 16px;box-sizing:border-box}
+.checkout-cardapio #collapseOne .bc-checkout-phone > i{font-size:20px;color:#914a29;flex-shrink:0}
+.checkout-cardapio #collapseOne .bc-checkout-phone #telefone{display:block!important;position:static!important;flex:1 1 0;min-width:0!important;width:100%!important;height:54px!important;box-sizing:border-box!important;margin:0!important;padding:10px 12px!important;border:1px solid #cbb29a!important;border-radius:12px!important;background:#fff!important;text-align:center;font-size:20px!important;outline:none!important}
+.checkout-cardapio #collapseOne .bc-checkout-phone #telefone:focus{border-color:#a85b24!important;box-shadow:0 0 0 2px rgba(168,91,36,.15)!important}
+.checkout-cardapio #collapseOne .bc-checkout-phone #telefone.bc-campo-pendente{border-color:#b13f28!important}
+@media(max-width:767px){.checkout-cardapio #collapseOne .bc-checkout-phone #telefone{font-size:18px!important;height:50px!important}}
+</style>
 <script>document.body.classList.add("checkout-cardapio");</script>
 <div class="main-container">
 
@@ -332,9 +340,9 @@ body.checkout-cardapio { background:#fffaf5; color:#493425; }
         data-bs-parent="#accordionExample">
         <div class="accordion-body" align="center">
 
-         <div style="display: flex; align-items: center; justify-content: center;">
-          <i class="fas fa-phone" style="font-size: 22px; margin-right: 5px;"></i>
-          <input onkeyup="" type="tel" class="input telefone_user" name="telefone" id="telefone" required autocomplete="tel" inputmode="tel" value="" placeholder="(00) 00000-0000" style="width: 250px; text-align: center; border: 0; margin-top: -15px; font-size: 22px;">
+         <div class="bc-checkout-phone">
+          <i class="fas fa-phone" aria-hidden="true"></i>
+          <input onkeyup="" type="tel" class="input telefone_user" name="telefone" id="telefone" required autocomplete="tel" inputmode="tel" value="" placeholder="(00) 00000-0000" aria-label="Telefone">
         </div>
 
           <img src="img/user.jpg" width="50px" height="50px">
