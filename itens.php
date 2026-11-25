@@ -43,9 +43,10 @@ html body .bc-unified-header a.bc-unified-back:hover{background:#fff0dc!importan
 		<nav class="navbar bg-light fixed-top bc-unified-header" style="box-shadow: 0px 3px 5px rgba(0, 0, 0, 0.20);">
 			<div class="container-fluid">
 				<div class="navbar-brand">
-					<a class="bc-unified-back" href="site/<?php echo $url_site ?>" aria-label="Voltar ao cardápio"><i class="bi bi-arrow-left" aria-hidden="true"></i><span>Voltar ao cardápio</span></a>
+					
 					<span style="margin-left: 15px; font-size:14px"><?php echo mb_strtoupper($nome) ?> <?php echo @$_SESSION['nome_mesa'] ?> <?php echo @$_SESSION['pedido_balcao'] ?></span>
 				</div>
+			<a class="bc-unified-back" href="site/<?php echo $url_site ?>" aria-label="Voltar ao cardápio"><i class="bi bi-arrow-left" aria-hidden="true"></i><span>Voltar ao cardápio</span></a>
 
 				<?php require_once("icone-carrinho.php") ?>
 
