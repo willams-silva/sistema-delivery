@@ -802,6 +802,12 @@ html body #listar .progress{max-width:100%}
 }
 </style>
 <?php } ?>
+<style id="bc-header-counter-alignment">
+html body .main-header .main-header-message > a.new.nav-link:has(> .header-badge){position:relative!important;display:inline-flex!important;align-items:center!important;justify-content:center!important;min-width:40px;min-height:44px;padding:8px 12px!important;box-sizing:border-box}
+html body .main-header .main-header-message > a.new.nav-link:has(> .header-badge) > small{display:flex;align-items:center;justify-content:center;line-height:1}
+html body .main-header .main-header-message > a.new.nav-link > .header-badge{position:absolute!important;top:2px!important;right:1px!important;left:auto!important;bottom:auto!important;transform:none!important;margin:0!important;display:inline-flex!important;align-items:center;justify-content:center;min-width:19px;height:19px;padding:0 4px!important;border:1px solid #4e2d20;border-radius:12px!important;color:#fff!important;font-size:11px!important;line-height:1!important;box-sizing:border-box;z-index:1}
+@media(max-width:767px){html body .main-header .main-header-message > a.new.nav-link:has(> .header-badge){min-width:34px;padding:8px!important}html body .main-header .main-header-message > a.new.nav-link > .header-badge{right:0!important;top:2px!important;min-width:17px;height:17px;font-size:10px!important}}
+</style>
 </head>
 
 <body class="ltr main-body app sidebar-mini">
