@@ -37,6 +37,12 @@ if($limite_dispositivos == '' || $limite_dispositivos == 0){
  
 <style id="bc-devices-style">
 .bc-devices-summary .sales-card{background:#fff!important;border:1px solid #e5d4c6!important;box-shadow:0 3px 12px #522c1810!important;height:auto!important;min-height:110px;color:#4e2d20}
+.bc-devices-summary .sales-card > .row{display:flex!important;align-items:center!important;flex-wrap:nowrap!important;margin:0!important;min-height:110px}
+.bc-devices-summary .sales-card > .row > .col-8{flex:1 1 0!important;width:auto!important;min-width:0}
+.bc-devices-summary .sales-card > .row > .col-4{display:flex!important;align-items:center!important;justify-content:center!important;flex:0 0 76px!important;width:76px!important;padding:10px!important}
+html body .bc-devices-summary .sales-card .circle-icon{position:static!important;inset:auto!important;float:none!important;transform:none!important;margin:0!important;display:flex!important;align-items:center!important;justify-content:center!important;width:48px!important;height:48px!important;min-width:48px!important;border-radius:10px!important}
+html body .bc-devices-summary .sales-card .circle-icon i{font-size:20px!important;line-height:1!important;margin:0!important}
+@media(max-width:767px){.bc-devices-summary .sales-card > .row{min-height:95px}.bc-devices-summary .sales-card > .row > .col-4{flex-basis:64px!important;width:64px!important}.bc-devices-summary .sales-card .circle-icon{width:42px!important;height:42px!important;min-width:42px!important}}
 .bc-devices-summary .circle-icon{background:#914a29!important}
 .bc-devices-summary .iconBgSusses{background:#13745a!important}
 .bc-devices-summary .iconBgDanger{background:#b42332!important}
