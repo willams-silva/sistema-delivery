@@ -48,6 +48,7 @@ body { margin: 0; font-family: DejaVu Sans, sans-serif; font-size: 8px; color: #
 .report-table td { border-bottom: 1px solid #e2e8f0; padding: 7px 4px; vertical-align: top; overflow-wrap: break-word; word-wrap: break-word; }
 .report-table tr { page-break-inside: avoid; }
 .report-table tbody tr:nth-child(even) { background: #f8fafc; }
+.barcode-code { font-size: 8px; word-wrap: break-word; }
 .numeric { text-align: right !important; white-space: nowrap; }
 .center { text-align: center !important; }
 .inactive { color: #94a3b8; }
@@ -79,8 +80,8 @@ body { margin: 0; font-family: DejaVu Sans, sans-serif; font-size: 8px; color: #
 </tr></table>
 </div>
 <table class="report-table">
-<colgroup><col style="width:27%"><col style="width:17%"><col style="width:13%"><col style="width:13%"><col style="width:9%"><col style="width:12%"><col style="width:9%"></colgroup>
-<thead><tr><th>PRODUTO</th><th>CATEGORIA</th><th class="numeric">VALOR COMPRA</th><th class="numeric">VALOR VENDA</th><th class="center">ESTOQUE</th><th class="center">NÍVEL MÍN.</th><th class="center">ATIVO</th></tr></thead>
+<colgroup><col style="width:22%"><col style="width:15%"><col style="width:15%"><col style="width:12%"><col style="width:12%"><col style="width:8%"><col style="width:9%"><col style="width:7%"></colgroup>
+<thead><tr><th>PRODUTO</th><th>CATEGORIA</th><th>CÓDIGO DE BARRAS</th><th class="numeric">VALOR COMPRA</th><th class="numeric">VALOR VENDA</th><th class="center">ESTOQUE</th><th class="center">NÍVEL MÍN.</th><th class="center">ATIVO</th></tr></thead>
 <tbody>
 <?php foreach ($produtos as $produto):
 $ativo = ($produto['ativo'] ?? '') === 'Sim';
@@ -89,6 +90,7 @@ $baixo = $ativo && (float)($produto['estoque'] ?? 0) < (float)($produto['nivel_e
 <tr class="<?php echo $ativo ? '' : 'inactive'; ?>">
 <td><?php echo $esc($produto['nome'] ?? ''); ?></td>
 <td><?php echo $esc($produto['nome_categoria'] ?? ''); ?></td>
+<td class="barcode-code"><?php echo $esc(trim((string)($produto['codigo'] ?? '')) !== '' ? $produto['codigo'] : 'Sem código'); ?></td>
 <td class="numeric"><?php echo $moeda($produto['valor_compra'] ?? 0); ?></td>
 <td class="numeric"><?php echo $moeda($produto['valor_venda'] ?? 0); ?></td>
 <td class="center <?php echo $baixo ? 'low' : ''; ?>"><?php echo $esc($produto['estoque'] ?? 0); ?></td>
@@ -96,7 +98,7 @@ $baixo = $ativo && (float)($produto['estoque'] ?? 0) < (float)($produto['nivel_e
 <td class="center"><?php echo $ativo ? 'Sim' : 'Não'; ?></td>
 </tr>
 <?php endforeach; ?>
-<?php if (!$total_reg): ?><tr><td colspan="7" class="center">Nenhum produto cadastrado.</td></tr><?php endif; ?>
+<?php if (!$total_reg): ?><tr><td colspan="8" class="center">Nenhum produto cadastrado.</td></tr><?php endif; ?>
 </tbody></table>
 <div class="summary">
 <div class="summary-title">RESUMO DO RELATÓRIO</div>
