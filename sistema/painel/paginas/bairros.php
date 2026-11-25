@@ -32,6 +32,12 @@ $bc_bairros->execute([(int)$_SESSION['empresa']]);
 <div class="col-md-2"><label for="bc-frete-valor">Frete (R$)</label><input id="bc-frete-valor" name="valor" class="form-control" inputmode="decimal" required></div>
 <div class="col-md-2"><button class="btn btn-primary w-100" type="submit">Salvar regra</button></div>
 </form>
+<style id="bc-frete-bairro-theme">
+#bc-frete-bairro{color:#4e2d20!important;background-color:#fffaf5!important;border:1px solid #d7b5a0!important;accent-color:#914a29;color-scheme:light}
+#bc-frete-bairro:focus{border-color:#914a29!important;box-shadow:0 0 0 .2rem rgba(145,74,41,.16)!important;outline:none}
+#bc-frete-bairro option{color:#4e2d20;background:#fffaf5}
+#bc-frete-bairro option:checked{color:#fff;background:#914a29}
+</style>
 <div id="bc-frete-msg" role="status" class="mt-2"></div>
 <div class="table-responsive mt-3"><table class="table"><thead><tr><th>Bairro</th><th>Rua</th><th>Frete</th><th>Ações</th></tr></thead><tbody id="bc-frete-list"></tbody></table></div>
 </div></div>
