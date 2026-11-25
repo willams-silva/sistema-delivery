@@ -35,8 +35,32 @@ if($limite_dispositivos == '' || $limite_dispositivos == 0){
 
 ?>
  
-<br>
-<div class="row">
+<style id="bc-devices-style">
+.bc-devices-summary .sales-card{background:#fff!important;border:1px solid #e5d4c6!important;box-shadow:0 3px 12px #522c1810!important;height:auto!important;min-height:110px;color:#4e2d20}
+.bc-devices-summary .circle-icon{background:#914a29!important}
+.bc-devices-summary .iconBgSusses{background:#13745a!important}
+.bc-devices-summary .iconBgDanger{background:#b42332!important}
+.bc-devices-toolbar .btn,#modaldispositivo .btn-primary{background:#914a29!important;border-color:#914a29!important;color:#fff!important;min-height:44px}
+#modaldispositivo .modal-header{background:#914a29!important;color:#fff!important}
+html body #listar.bc-devices-list{background:#fff;border:1px solid #e5d4c6;border-radius:14px;min-width:0;max-width:100%}
+.bc-devices-list .bc-device-table{width:100%;color:#4e2d20}
+.bc-devices-list .bc-device-table th{background:#f4e9df;color:#795038;padding:12px!important}
+.bc-devices-list .bc-device-table td{vertical-align:middle;overflow-wrap:anywhere;white-space:normal}
+.bc-devices-list .bc-device-table td:last-child .btn{display:inline-flex;align-items:center;justify-content:center;min-width:38px;min-height:38px;margin:3px;border-radius:9px}
+.bc-devices-list .bc-device-view{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px}
+.bc-devices-list .bc-device-view button{border:1px solid #d7c5b7;background:#fff;color:#795038;border-radius:9px;padding:9px 14px;min-height:44px}
+.bc-devices-list .bc-device-view button.active{background:#914a29;color:#fff;border-color:#914a29}
+.bc-devices-list[data-view=cards] .bc-device-table{display:block}
+.bc-devices-list[data-view=cards] thead{display:none}
+.bc-devices-list[data-view=cards] tbody{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,280px),1fr));gap:12px}
+.bc-devices-list[data-view=cards] tr{display:flex;flex-direction:column;border:1px solid #e5d4c6;border-radius:12px;padding:12px;min-width:0;background:#fff}
+.bc-devices-list[data-view=cards] td{display:block;text-align:left;border:0;padding:7px 0}
+.bc-devices-list[data-view=cards] td::before{content:attr(data-label);display:block;color:#795038;font-size:12px;font-weight:600}
+.bc-devices-list[data-view=cards] td:last-child{border-top:1px solid #e5d4c6}
+@media(max-width:767px){.bc-devices-list[data-view=cards] tbody{grid-template-columns:minmax(0,1fr)}.bc-devices-toolbar .btn{width:100%}.bc-devices-list .bc-device-view button{flex:1}.bc-devices-summary .sales-card{min-height:95px}}
+</style>
+<div class="card mb-3" style="margin-top:16px;border:1px solid #e5d4c6;border-radius:14px"><div class="card-body d-flex align-items-center flex-wrap gap-3"><h2 class="mb-0" style="font-size:21px;font-weight:600;color:#4e2d20"><i class="fa-solid fa-mobile-screen-button me-2"></i>Dispositivos</h2><span style="font-size:12px;color:#795038">Gerencie os dispositivos e acompanhe as conexões do WhatsApp.</span></div></div>
+<div class="row bc-devices-summary">
 
     <div class="col-xl-4 col-lg-12 col-md-6 col-xs-12">
         <div class="card sales-card"
@@ -116,7 +140,7 @@ if($limite_dispositivos == '' || $limite_dispositivos == 0){
 </div>
  
 
-<div class="main-page margin-mobile" style="margin-top: 10px">
+<div class="main-page margin-mobile bc-devices-toolbar" style="margin-top: 10px">
     <div class="row">
         <div class="col-md-4">
             <button type="button" class="btn btn-primary" onclick="add()">
@@ -127,7 +151,7 @@ if($limite_dispositivos == '' || $limite_dispositivos == 0){
 </div>
 
 
-<div class="bs-example widget-shadow" style="padding:15px; margin-top:0px" id="listar"></div>
+<div class="bs-example widget-shadow bc-devices-list" style="padding:15px; margin-top:0px" id="listar" data-view="cards"></div>
 <input type="hidden" id="ids">
 
 <div class="modal fade" id="modaldispositivo" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
