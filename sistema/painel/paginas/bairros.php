@@ -17,6 +17,36 @@ $pag = 'bairros';
 <div class="row row-sm"><div class="col-md-4 mb-3"><div class="card custom-card"><div class="card-body"><small class="text-muted">Localidades cadastradas</small><h3 class="mb-0" id="bc-total-bairros">—</h3></div></div></div></div>
 <div class="row row-sm"><div class="col-lg-12"><div class="card custom-card"><div class="card-body" id="listar"></div></div></div></div>
 <input type="hidden" id="ids">
+<?php
+if (empty($_SESSION['bc_frete_csrf'])) $_SESSION['bc_frete_csrf'] = bin2hex(random_bytes(32));
+$bc_bairros = $pdo->prepare("SELECT id,nome FROM bairros WHERE empresa=? ORDER BY nome");
+$bc_bairros->execute([(int)$_SESSION['empresa']]);
+?>
+<div class="card mt-3" style="border:1px solid #e5d4c6;border-radius:14px">
+<div class="card-body">
+<h5 style="color:#4e2d20"><i class="fa-solid fa-road me-2"></i>Taxas específicas por rua</h5>
+<p class="text-muted">Cadastre uma exceção para uma rua do bairro. Para alterar o valor, salve novamente a mesma rua.</p>
+<form id="bc-frete-form" class="row g-2 align-items-end">
+<div class="col-md-4"><label for="bc-frete-bairro">Bairro</label><select id="bc-frete-bairro" class="form-control" name="bairro_id" required><option value="">Selecione</option><?php foreach ($bc_bairros as $b): ?><option value="<?= (int)$b['id'] ?>"><?= htmlspecialchars($b['nome'],ENT_QUOTES,'UTF-8') ?></option><?php endforeach; ?></select></div>
+<div class="col-md-4"><label for="bc-frete-rua">Rua</label><input id="bc-frete-rua" name="rua" class="form-control" maxlength="150" required></div>
+<div class="col-md-2"><label for="bc-frete-valor">Frete (R$)</label><input id="bc-frete-valor" name="valor" class="form-control" inputmode="decimal" required></div>
+<div class="col-md-2"><button class="btn btn-primary w-100" type="submit">Salvar regra</button></div>
+</form>
+<div id="bc-frete-msg" role="status" class="mt-2"></div>
+<div class="table-responsive mt-3"><table class="table"><thead><tr><th>Bairro</th><th>Rua</th><th>Frete</th><th>Ações</th></tr></thead><tbody id="bc-frete-list"></tbody></table></div>
+</div></div>
+<script>
+(function(){
+const url='paginas/bairros/frete_ruas.php', csrf=<?= json_encode($_SESSION['bc_frete_csrf']) ?>;
+const msg=$('#bc-frete-msg'), list=$('#bc-frete-list');
+function request(data){return $.ajax({url:url,method:'POST',dataType:'json',data:Object.assign({csrf:csrf},data)});}
+function error(){msg.text('Não foi possível concluir a operação. Verifique a sessão e a tabela de fretes.');}
+function load(){request({acao:'listar'}).done(function(rows){list.empty();if(!rows.length){list.append($('<tr>').append($('<td colspan="4">').text('Nenhuma regra cadastrada.')));return;}rows.forEach(function(r){const tr=$('<tr>');[r.bairro,r.rua,Number(r.valor).toLocaleString('pt-BR',{style:'currency',currency:'BRL'})].forEach(v=>tr.append($('<td>').text(v)));tr.append($('<td>').append($('<button type="button" class="btn btn-outline-danger btn-sm">').text('Excluir').on('click',function(){if(confirm('Excluir esta regra?'))request({acao:'excluir',id:r.id}).done(load).fail(error);})));list.append(tr);});}).fail(error);}
+$('#bc-frete-form').on('submit',function(e){e.preventDefault();const form=this, btn=$(form).find('button');btn.prop('disabled',true);request({acao:'salvar',bairro_id:form.bairro_id.value,rua:form.rua.value,valor:form.valor.value}).done(function(){msg.text('Regra salva com sucesso.');form.reset();load();}).fail(error).always(()=>btn.prop('disabled',false));});
+load();
+})();
+</script>
+
 
 
 <!-- Modal Inserir-->
