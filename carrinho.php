@@ -1,6 +1,19 @@
 <?php
 @session_start();
 require_once("cabecalho.php");
+$bc_voltar_url = 'site/' . rawurlencode($url_site);
+$bc_voltar_label = 'Voltar ao cardápio';
+$bc_categoria_id = (int)($_SESSION['bc_categoria_retorno'][(string)$id_empresa] ?? 0);
+if ($bc_categoria_id > 0) {
+  $bc_cat_query = $pdo->prepare("SELECT url, mais_sabores FROM categorias WHERE id = ? AND empresa = ? AND ativo = 'Sim' LIMIT 1");
+  $bc_cat_query->execute([$bc_categoria_id, $id_empresa]);
+  $bc_cat = $bc_cat_query->fetch(PDO::FETCH_ASSOC);
+  if ($bc_cat && !empty($bc_cat['url'])) {
+    $bc_voltar_url = ($bc_cat['mais_sabores'] === 'Sim' ? 'categoria-sabores-' : 'categoria-') . rawurlencode($bc_cat['url']);
+    $bc_voltar_label = 'Voltar à categoria';
+  }
+}
+
 
 $sessao = @$_SESSION['sessao_usuario'];
 $nome_mesa = @$_SESSION['nome_mesa'];
@@ -298,7 +311,7 @@ html body .bc-unified-header a.bc-unified-back:hover{background:#fff0dc!importan
 
       </div>
 
-      <a class="bc-unified-back" href="site/<?php echo $url_site ?>" aria-label="Voltar ao cardápio"><i class="bi bi-arrow-left" aria-hidden="true"></i><span>Voltar ao cardápio</span></a>
+      <a class="bc-unified-back" href="<?php echo htmlspecialchars($bc_voltar_url, ENT_QUOTES, 'UTF-8'); ?>" aria-label="<?php echo $bc_voltar_label; ?>"><i class="bi bi-arrow-left" aria-hidden="true"></i><span><?php echo $bc_voltar_label; ?></span></a>
 
       <a class="" href="site/<?php echo $url_site ?>">
         <div class="">
