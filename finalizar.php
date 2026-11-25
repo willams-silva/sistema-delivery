@@ -308,6 +308,14 @@ body.checkout-cardapio { background:#fffaf5; color:#493425; }
 .checkout-cardapio #collapseOne .bc-checkout-phone #telefone.bc-campo-pendente{border-color:#b13f28!important}
 @media(max-width:767px){.checkout-cardapio #collapseOne .bc-checkout-phone #telefone{font-size:18px!important;height:50px!important}}
 </style>
+<style id="bc-checkout-name-field">
+.checkout-cardapio #collapseOne .bc-checkout-name{display:flex!important;align-items:center;justify-content:center;gap:10px;width:min(100%,320px)!important;margin:0 auto 16px!important;box-sizing:border-box}
+.checkout-cardapio #collapseOne .bc-checkout-name > i{font-size:20px;color:#914a29;flex:0 0 20px;text-align:center}
+.checkout-cardapio #collapseOne .bc-checkout-name #nome{display:block!important;position:static!important;flex:1 1 0;min-width:0!important;width:100%!important;height:54px!important;box-sizing:border-box!important;margin:0!important;padding:10px 12px!important;border:1px solid #cbb29a!important;border-radius:12px!important;background:#fff!important;text-align:center;font-size:20px!important;outline:none!important}
+.checkout-cardapio #collapseOne .bc-checkout-name #nome:focus{border-color:#a85b24!important;box-shadow:0 0 0 2px rgba(168,91,36,.15)!important}
+.checkout-cardapio #collapseOne .bc-checkout-name #nome.bc-campo-pendente{border-color:#b13f28!important}
+@media(max-width:767px){.checkout-cardapio #collapseOne .bc-checkout-name #nome{font-size:18px!important;height:50px!important}}
+</style>
 <script>document.body.classList.add("checkout-cardapio");</script>
 <div class="main-container">
 
@@ -345,9 +353,9 @@ body.checkout-cardapio { background:#fffaf5; color:#493425; }
           <input onkeyup="" type="tel" class="input telefone_user" name="telefone" id="telefone" required autocomplete="tel" inputmode="tel" value="" placeholder="(00) 00000-0000" aria-label="Telefone">
         </div>
 
-          <img src="img/user.jpg" width="50px" height="50px">
+          
 
-          <div class="nome_user"> <input onclick="" type="text" class="input" name="nome" id="nome" required autocomplete="name" value="" placeholder="Seu Nome" style="width:200px; text-align: center; border:0; font-size: 17px"></div>
+          <div class="nome_user bc-checkout-name"><i class="fas fa-user" aria-hidden="true"></i><input onclick="" type="text" class="input" name="nome" id="nome" required autocomplete="name" value="" placeholder="Seu Nome" aria-label="Seu Nome"></div>
           
 
 
