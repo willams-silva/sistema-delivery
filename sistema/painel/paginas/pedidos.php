@@ -322,7 +322,23 @@ html body #listar.bc-pedidos-cartoes .ux-orders-table > tbody > tr > td:nth-chil
  window.bcMudarVisaoPedidos('cartoes');
 })();
 </script>
-	<div id="listar" class="bc-pedidos-cartoes">
+	<style id="bc-orders-mobile-width">
+@media(max-width:800px){
+html body #listar.bc-pedidos-cartoes,
+html body #listar.bc-pedidos-cartoes .ux-orders-scroll-region,
+html body #listar.bc-pedidos-cartoes .ux-orders-table,
+html body #listar.bc-pedidos-cartoes .ux-orders-table > tbody,
+html body #listar.bc-pedidos-cartoes .ux-orders-table > tbody > tr{width:100%!important;max-width:100%!important;min-width:0!important;box-sizing:border-box!important;margin-inline:0!important}
+html body #listar.bc-pedidos-cartoes .ux-orders-table > tbody{grid-template-columns:minmax(0,1fr)!important;gap:10px!important;padding-inline:0!important}
+html body #listar.bc-pedidos-cartoes .ux-orders-table > tbody > tr{padding:10px!important}
+html body #listar.bc-pedidos-cartoes .ux-orders-table > tbody > tr > td{min-width:0!important;max-width:100%!important;white-space:normal!important;overflow-wrap:anywhere!important}
+html body #listar.bc-pedidos-cartoes .ux-orders-table > tbody > tr > td :is(a,b,span,small,div){max-width:100%!important;white-space:normal!important;overflow-wrap:anywhere!important}
+html body #listar.bc-pedidos-cartoes .ux-orders-table > tbody > tr > td:nth-child(6) a{width:auto!important;max-width:100%!important}
+html body #listar.bc-pedidos-cartoes .ux-orders-table > tbody > tr > td:last-child{display:flex!important;flex-wrap:wrap!important;gap:6px!important}
+html body #listar.bc-pedidos-cartoes .ux-orders-table > tbody > tr > td:last-child .btn{min-width:44px!important;min-height:44px!important}
+}
+</style>
+<div id="listar" class="bc-pedidos-cartoes">
 
 	</div>
 
