@@ -11,6 +11,14 @@ $agora = date('Y-m-d H:i:s');
 $cfgs = $pdo->query("SELECT empresa, aceitar_segundos, preparar_segundos, imprimir_ao_aceitar FROM automacao_pedidos_config WHERE ativo = 1")->fetchAll(PDO::FETCH_ASSOC);
 foreach ($cfgs as $cfg) {
     $empresa = (int)$cfg['empresa'];
+    // Recupera itens de pedidos liberados, inclusive os aceitos manualmente.
+    // PIX sem baixa fica fora por precaucao; nunca reinicia itens em producao.
+    try {
+        $sync = $pdo->prepare("UPDATE carrinho c INNER JOIN vendas v ON v.id=c.pedido AND v.empresa=c.empresa INNER JOIN produtos p ON p.id=c.produto AND p.empresa=c.empresa INNER JOIN config cfg ON cfg.empresa=c.empresa SET c.status='Aguardando' WHERE c.empresa=? AND cfg.delivery_monitor='Sim' AND v.status IN ('Aceito','Preparando') AND v.data >= DATE_SUB(CURDATE(), INTERVAL 1 DAY) AND p.preparado IN ('Cozinha','Bar','Outro') AND (c.status IS NULL OR c.status IN ('','Iniciado')) AND (v.pago='Sim' OR (v.tipo_pgto IS NOT NULL AND TRIM(v.tipo_pgto)<>'' AND LOWER(v.tipo_pgto) NOT LIKE '%pix%'))");
+        $sync->execute([$empresa]);
+    } catch (Throwable $e) {
+        error_log('Sincronizacao producao empresa ' . $empresa . ': ' . $e->getMessage());
+    }
     $aceitar = max(30, (int)$cfg['aceitar_segundos']);
     $preparar = max(30, (int)$cfg['preparar_segundos']);
     // Um pedido nunca e avancado se um operador ja mudou seu status.
