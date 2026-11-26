@@ -10,6 +10,9 @@ $sessao_pedido_balcao = @$_SESSION['pedido_balcao'];
 
 
 
+if(empty($_SESSION['bc_consulta_csrf'])) $_SESSION['bc_consulta_csrf']=bin2hex(random_bytes(32));
+$bc_consulta_ativo=false;
+try {$bcq=$pdo->prepare("SELECT ativo FROM bc_frete_consulta_config WHERE empresa=?");$bcq->execute([(int)$id_empresa]);$bc_consulta_ativo=(int)$bcq->fetchColumn()===1;}catch(PDOException $e){}
 $total_carrinho = 0;
 $total_carrinhoF = 0;
 $query = $pdo->query("SELECT * FROM carrinho where sessao = '$sessao' and empresa = '$id_empresa' ");
@@ -581,7 +584,15 @@ html body .bc-unified-header a.bc-unified-back:hover{background:#fff0dc!importan
               <?php } ?>
 
 
-              <div align="center" class="avancar-pgto">
+              <?php if($bc_consulta_ativo){ ?>
+<div id="bc-consulta-box" style="display:none;border:1px solid #d7b5a0;border-radius:12px;padding:14px;margin:12px 0;background:#fffaf5;color:#4e2d20">
+<strong>Frete sob consulta</strong>
+<p id="bc-consulta-status" role="status">Solicite o valor da entrega ao estabelecimento.</p>
+<button type="button" id="bc-consulta-solicitar" style="background:#914a29;color:white;border:0;border-radius:8px;padding:10px 14px;width:100%"><i class="fa fa-calculator"></i> Solicitar valor da entrega</button>
+<button type="button" id="bc-consulta-cancelar" style="display:none;background:white;color:#914a29;border:1px solid #914a29;border-radius:8px;padding:8px;margin-top:8px;width:100%">Cancelar consulta</button>
+</div>
+<?php } ?>
+<div align="center" class="avancar-pgto">
 
 
 
@@ -1438,6 +1449,24 @@ html body .bc-unified-header a.bc-unified-back:hover{background:#fff0dc!importan
 
 
 <script type="text/javascript">
+  $(function(){
+    const box=$('#bc-consulta-box');if(!box.length)return;
+    const status=$('#bc-consulta-status'), solicitar=$('#bc-consulta-solicitar'), cancelar=$('#bc-consulta-cancelar');
+    let timer=null, busy=false;
+    function req(acao){return $.ajax({url:'js/ajax/frete_consulta.php',method:'POST',dataType:'json',data:{acao:acao,csrf:<?= json_encode($_SESSION['bc_consulta_csrf']) ?>,rua:$('#rua').val(),numero:$('#numero').val(),bairro:$('#bairro').val(),cidade:$('#cidade').val(),cep:$('#cep').val()}});}
+    function render(r){
+      if(r.status==='pendente'||r.status==='cotado'||r.status==='aceito'){
+        if($('#entrega').val()==='Delivery')box.show();
+        solicitar.hide();cancelar.show();
+        status.text(r.status==='pendente'?'Aguardando resposta do estabelecimento (até 15 minutos).':'Frete informado: R$ '+Number(r.valor).toFixed(2).replace('.',',')+'. A confirmação ainda não está disponível.');
+        if(!timer)timer=setInterval(check,5000);
+      }else{clearInterval(timer);timer=null;solicitar.show();cancelar.hide();status.text(r.status==='expirado'?'Consulta expirada. Solicite novamente.':'Solicite o valor da entrega ao estabelecimento.');}
+    }
+    function check(){if(busy)return;busy=true;req('status').done(render).always(()=>busy=false);}
+    solicitar.on('click',function(){if(busy)return;busy=true;solicitar.prop('disabled',true);req('solicitar').done(render).fail(x=>status.text(x.responseJSON?.erro||'Não foi possível solicitar o frete.')).always(()=>{busy=false;solicitar.prop('disabled',false);});});
+    cancelar.on('click',function(){if(busy)return;busy=true;req('cancelar').done(render).fail(()=>status.text('Não foi possível cancelar.')).always(()=>busy=false);});
+    check();
+  });
   var bcFreteRequest;
   function calcularFrete() {
     if(bcFreteRequest) bcFreteRequest.abort();
@@ -1445,8 +1474,8 @@ html body .bc-unified-header a.bc-unified-back:hover{background:#fff0dc!importan
     bcFreteRequest=$.ajax({
       url:'js/ajax/calcular-frete.php',method:'POST',
       data:{bairro:$('#bairro').val(),rua:$('#rua').val(),numero:$('#numero').val(),cidade:$('#cidade').val(),cep:$('#cep').val(),total_compra:<?= json_encode($total_carrinho) ?>,entrega:$('#entrega').val()},
-      success:function(result){var split=result.split('-');$('#taxa-entrega').text(split[0]);$('#total-carrinho-finalizar').text(split[1]);$('#taxa-entrega-input').val(split[0].replace(/\./g,''));pix();},
-      error:function(xhr,status){if(status!=='abort'){$('#taxa-entrega').text('—');$('#taxa-entrega-input').val('');}}
+      success:function(result){$('#bc-consulta-box').hide();var split=result.split('-');$('#taxa-entrega').text(split[0]);$('#total-carrinho-finalizar').text(split[1]);$('#taxa-entrega-input').val(split[0].replace(/\./g,''));pix();},
+      error:function(xhr,status){if(status!=='abort'){$('#taxa-entrega').text('—');$('#taxa-entrega-input').val('');if(xhr.status===422 && $('#entrega').val()==='Delivery') $('#bc-consulta-box').show();}}
     });
   }
   $(document).on('change','#rua,#numero,#bairro,#cidade,#cep',function(){if($('#entrega').val()==='Delivery') calcularFrete();});
