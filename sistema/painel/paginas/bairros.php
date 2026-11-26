@@ -96,6 +96,37 @@ $('#bc-zona-cancelar').on('click',reset);load();
 })();
 </script>
 
+<div class="card mb-3" style="border:1px solid #e5d4c6;border-radius:14px">
+<div class="card-body">
+<h4 style="color:#4e2d20"><i class="fa-solid fa-calculator me-2"></i>Frete sob consulta</h4>
+<p style="color:#795038">Permita solicitar uma cotação quando não houver taxa automática válida.</p>
+<label><input type="checkbox" id="bc-consulta-ativo" disabled> Ativar frete sob consulta</label>
+<button type="button" id="bc-consulta-refresh" class="btn btn-sm ms-2" style="background:#914a29;color:white"><i class="fa-solid fa-rotate"></i> Atualizar</button>
+<div id="bc-consulta-msg" role="status" class="mt-2"></div>
+<div id="bc-consulta-list" class="mt-3"></div>
+</div></div>
+<script>
+$(function(){
+const ativo=$('#bc-consulta-ativo'), lista=$('#bc-consulta-list'), msg=$('#bc-consulta-msg');
+function req(data){return $.ajax({url:'paginas/bairros/frete_consulta.php',method:'POST',dataType:'json',data:Object.assign({csrf:<?= json_encode($_SESSION['bc_frete_csrf']) ?>},data)});}
+let busy=false;
+function load(){if(busy||lista.find('input:focus').length)return;busy=true;req({acao:'listar'}).done(function(r){
+ativo.prop('checked',Number(r.ativo)===1).prop('disabled',false);lista.empty();
+if(!r.consultas.length){lista.text('Nenhuma solicitação em aberto.');return;}
+r.consultas.forEach(function(v){
+const card=$('<div>').addClass('border rounded p-3 mb-2').appendTo(lista);
+$('<strong>').text('Consulta #'+v.id+' — '+(v.status==='pendente'?'Aguardando cotação':'Cotado')).appendTo(card);
+$('<p>').text(v.endereco).appendTo(card);
+if(v.status==='cotado'){$('<span>').text('R$ '+Number(v.valor).toFixed(2).replace('.',',')).appendTo(card);return;}
+const input=$('<input type="text" inputmode="decimal" placeholder="Valor do frete (R$)" aria-label="Valor do frete">').addClass('form-control mb-2').appendTo(card);
+const btn=$('<button type="button">').addClass('btn btn-sm').css({background:'#914a29',color:'white'}).text('Enviar cotação').appendTo(card);
+btn.on('click',function(){btn.prop('disabled',true);req({acao:'cotar',id:v.id,valor:input.val()}).done(function(){msg.text('Cotação enviada.');load();}).fail(function(){msg.text('Não foi possível enviar a cotação.');btn.prop('disabled',false);});});
+});
+}).fail(function(){msg.text('Não foi possível carregar as consultas.');}).always(function(){busy=false;});}
+ativo.on('change',function(){ativo.prop('disabled',true);req({acao:'config',ativo:ativo.prop('checked')?'1':'0'}).done(function(){msg.text('Configuração salva.');}).fail(function(){msg.text('Erro ao salvar configuração.');}).always(load);});
+$('#bc-consulta-refresh').on('click',load);load();
+});
+</script>
 <!-- Modal Inserir-->
 <div class="modal fade" id="modalForm" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
 	<div class="modal-dialog" role="document">
