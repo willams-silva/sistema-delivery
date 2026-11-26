@@ -35,10 +35,10 @@ try {
     $st->execute([':empresa'=>$empresa,':nome'=>$forma]);
     $formaId=(int)$st->fetchColumn();
     if (!$formaId) {throw new DomainException('Forma de pagamento não cadastrada');}
-    $st=$pdo->prepare('SELECT id FROM caixas WHERE empresa=:empresa AND operador=:usuario AND data_fechamento IS NULL ORDER BY id DESC LIMIT 1');
+    $st=$pdo->prepare('SELECT id FROM caixas WHERE empresa=:empresa AND operador=:usuario AND data_fechamento IS NULL ORDER BY id DESC LIMIT 1 FOR UPDATE');
     $st->execute([':empresa'=>$empresa,':usuario'=>$usuario]);
     $caixa=(int)$st->fetchColumn();
-    if (!$caixa) {throw new DomainException('Abra seu caixa antes de receber pagamentos');}
+    if (!$caixa) {throw new DomainException('Nenhum caixa aberto para o operador #'.$usuario.' na empresa #'.$empresa.'. Confira o operador conectado e abra seu caixa.');}
     $st=$pdo->prepare('SELECT COUNT(*) FROM receber WHERE empresa=:empresa AND venda_id=:venda');
     $st->execute([':empresa'=>$empresa,':venda'=>$vendaId]);
     if ((int)$st->fetchColumn()>0) {
