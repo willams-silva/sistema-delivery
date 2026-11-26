@@ -204,22 +204,22 @@ HTML;
 				<td>{$nome_usu_fechamento}</td>
 				<td>
 
-		<big><a class="{$ocultar} btn btn-info-light btn-sm" href="#" onclick="editar('{$id}', '{$operador}', '{$data_abertura}','{$valor_abertura}',{$obsJs})" title="Editar Dados"><i class="fa fa-edit "></i></a></big>
+		<big><a class="{$ocultar} btn btn-info-light btn-sm" href="#" onclick="editar('{$id}', '{$operador}', '{$data_abertura}','{$valor_abertura}',{$obsJs})" title="Editar Dados"><i class="bi bi-pencil-square"></i></a></big>
 
 
-		<big><a href="#" class="btn btn-danger-light btn-sm {$ocultar}" onclick="excluirBusca('{$id}')" title="Excluir"><i class="fa fa-trash-can text-danger"></i></a></big>
+		<big><a href="#" class="btn btn-danger-light btn-sm {$ocultar}" onclick="excluirBusca('{$id}')" title="Excluir"><i class="bi bi-trash text-danger"></i></a></big>
 
 
-		<big><a class="{$ocultar} btn btn-success-light btn-sm" href="#" onclick="fechamento('{$id}', {$nomeOperadorJs}, '{$valor_abertura}', '{$total_caixa}')" title="Fechar Caixa"><i class="fa fa-check-square"></i></a></big>
+		<big><a class="{$ocultar} btn btn-success-light btn-sm" href="#" onclick="fechamento('{$id}', {$nomeOperadorJs}, '{$valor_abertura}', '{$total_caixa}')" title="Fechar Caixa"><i class="bi bi-lock"></i></a></big>
 
 
-		<big><a class="{$ocultar} btn btn-success-light btn-sm" href="#" onclick="sangria('{$id}')" title="Sangria"><i class="fa fa-money  "></i></a></big>
+		<big><a class="{$ocultar} btn btn-success-light btn-sm" href="#" onclick="sangria('{$id}')" title="Sangria"><i class="bi bi-cash-stack"></i></a></big>
 
 
 
 		<form   method="POST" action="rel/detalhamento_caixa_class.php" target="_blank" style="display:inline-block">
 			<input type="hidden" name="id" value="{$id}">
-			<button class="btn btn-danger-light btn-sm" title="Detalhamento do Caixa"><i class="fa fa-file-pdf-o " ></i></button>
+			<button class="btn btn-danger-light btn-sm" title="Detalhamento do Caixa"><i class="bi bi-file-earmark-pdf" ></i></button>
 		</form>
 
 
@@ -246,7 +246,7 @@ HTML;
 
 
 <style>
-.bc-caixa-toolbar{display:flex;gap:6px;margin-bottom:16px}.bc-caixa-toolbar button{border:1px solid #d7c5b7;color:#63351e}.bc-caixa-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,300px),1fr));gap:14px;margin:12px 0}.bc-caixa-card{background:#fffaf5;border:1px solid #e5d4c6;border-radius:12px;padding:15px;color:#4e2d20}.bc-caixa-top{display:flex;align-items:center;justify-content:space-between;gap:8px;border-bottom:1px solid #e5d4c6;padding-bottom:12px}.bc-caixa-status{font-size:12px;border-radius:20px;padding:4px 9px}.bc-caixa-status.aberto{background:#e1f4e9;color:#13745a}.bc-caixa-status.fechado{background:#f8e7e7;color:#b42332}.bc-caixa-fields{display:grid;grid-template-columns:1fr 1fr;gap:12px;padding:12px 0}.bc-caixa-fields small,.bc-caixa-fields strong{display:block;overflow-wrap:anywhere}.bc-caixa-fields small{color:#795038}.bc-caixa-actions{border-top:1px solid #e5d4c6;padding-top:10px;display:flex;gap:6px;flex-wrap:wrap}.bc-caixa-actions .ocultar{display:none!important}
+.bc-caixa-icon{display:inline-block!important;color:#914a29!important;font-size:16px!important;margin-right:5px}.bc-caixa-toolbar{display:flex;gap:6px;margin-bottom:16px}.bc-caixa-toolbar button{border:1px solid #d7c5b7;color:#63351e}.bc-caixa-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,300px),1fr));gap:14px;margin:12px 0}.bc-caixa-card{background:#fffaf5;border:1px solid #e5d4c6;border-radius:12px;padding:15px;color:#4e2d20}.bc-caixa-top{display:flex;align-items:center;justify-content:space-between;gap:8px;border-bottom:1px solid #e5d4c6;padding-bottom:12px}.bc-caixa-status{font-size:12px;border-radius:20px;padding:4px 9px}.bc-caixa-status.aberto{background:#e1f4e9;color:#13745a}.bc-caixa-status.fechado{background:#f8e7e7;color:#b42332}.bc-caixa-fields{display:grid;grid-template-columns:1fr 1fr;gap:12px;padding:12px 0}.bc-caixa-fields small,.bc-caixa-fields strong{display:block;overflow-wrap:anywhere}.bc-caixa-fields small{color:#795038}.bc-caixa-actions{border-top:1px solid #e5d4c6;padding-top:10px;display:flex;gap:6px;flex-wrap:wrap}.bc-caixa-actions .ocultar{display:none!important}
 </style>
 <script type="text/javascript">
 	$(document).ready(function() {
@@ -259,12 +259,12 @@ HTML;
             "columnDefs": [{"targets":8,"visible":false,"searchable":false}]
         });
         var modo=window.bcCaixaModo||'cartao';
-        var barra=$('<div class="bc-caixa-toolbar"><button type="button" class="btn btn-sm" data-modo="cartao"><i class="fa fa-th-large"></i> Cartões</button> <button type="button" class="btn btn-sm" data-modo="tabela"><i class="fa fa-list"></i> Tabela</button></div>');
+        var barra=$('<div class="bc-caixa-toolbar"><button type="button" class="btn btn-sm" data-modo="cartao"><i class="bi bi-grid"></i> Cartões</button> <button type="button" class="btn btn-sm" data-modo="tabela"><i class="bi bi-list-ul"></i> Tabela</button></div>');
         var grade=$('<div class="bc-caixa-grid"></div>');
         $('#tabela_wrapper').prepend(barra);
         $('#tabela').after(grade);
         var campos=['Operador','Data de abertura','Valor de abertura','Valor de fechamento','Sangrias','Quebra','Aberto por','Fechado por'];
-        var icones=['fa-user','fa-calendar','fa-wallet','fa-cash-register','fa-money','fa-balance-scale','fa-user-plus','fa-user-check'];
+        var icones=['bi-person-circle','bi-calendar-event','bi-wallet2','bi-cash-stack','bi-arrow-up-circle','bi-calculator','bi-person-plus','bi-person-check'];
         function renderCaixas(){
             grade.empty();
             barra.find('button').each(function(){ $(this).toggleClass('btn-primary',$(this).data('modo')===modo); });
@@ -275,12 +275,12 @@ HTML;
                 var aberto=tds.eq(0).find('i.fa-square').hasClass('text-danger');
                 var card=$('<article class="bc-caixa-card"></article>');
                 var topo=$('<div class="bc-caixa-top"></div>');
-                topo.append($('<strong></strong>').text(tds.eq(0).find('.caixa-operador-nome').text().trim()));
+                topo.append($('<strong></strong>').append($('<i class="bi bi-person-circle bc-caixa-icon me-2" aria-hidden="true"></i>'),document.createTextNode(tds.eq(0).find('.caixa-operador-nome').text().trim())));
                 topo.append($('<span class="bc-caixa-status"></span>').addClass(aberto?'aberto':'fechado').text(aberto?'Aberto':'Fechado'));
                 card.append(topo);
                 var corpo=$('<div class="bc-caixa-fields"></div>');
                 for(var i=1;i<8;i++){
-                    var campo=$('<div></div>');campo.append($('<small></small>').append($('<i class="fa"></i>').addClass(icones[i]),document.createTextNode(' '+campos[i])));
+                    var campo=$('<div></div>');campo.append($('<small></small>').append($('<i class="bi bc-caixa-icon" aria-hidden="true"></i>').addClass(icones[i]),document.createTextNode(' '+campos[i])));
                     campo.append($('<strong></strong>').text(tds.eq(i).text().trim()||'—'));corpo.append(campo);
                 }
                 card.append(corpo);
