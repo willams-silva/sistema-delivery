@@ -349,7 +349,7 @@ HTML;
         $query3 = $pdo->query("SELECT * FROM $tabela_ad where id = '$id_item'");
         $res3 = $query3->fetchAll(PDO::FETCH_ASSOC);
         $total_reg3 = @count($res3);
-        $nome_adc = $res3[0]['nome'];
+        $nome_adc = $res3[0]['nome'] ?? ('Item indisponível #' . (int)$id_item);
         echo '(' . $quantidade_temp . ') ' . $nome_adc;
         if ($i2 < ($total_reg2 - 1)) {
           echo ', ';
@@ -390,7 +390,7 @@ HTML;
         $query3 = $pdo->query("SELECT * FROM guarnicoes where id = '$id_item'");
         $res3 = $query3->fetchAll(PDO::FETCH_ASSOC);
         $total_reg3 = @count($res3);
-        $nome_adc = $res3[0]['nome'];
+        $nome_adc = $res3[0]['nome'] ?? ('Item indisponível #' . (int)$id_item);
         echo $nome_adc;
         if ($i2 < ($total_reg2 - 1)) {
           echo ', ';
@@ -427,7 +427,7 @@ HTML;
         $query3 = $pdo->query("SELECT * FROM ingredientes where id = '$id_item'");
         $res3 = $query3->fetchAll(PDO::FETCH_ASSOC);
         $total_reg3 = @count($res3);
-        $nome_adc = $res3[0]['nome'];
+        $nome_adc = $res3[0]['nome'] ?? ('Item indisponível #' . (int)$id_item);
         echo $nome_adc;
         if ($i2 < ($total_reg2 - 1)) {
           echo ', ';
@@ -482,7 +482,7 @@ HTML;
             $query3 = $pdo->query("SELECT * FROM itens_grade where id = '$id_item'");
             $res3 = $query3->fetchAll(PDO::FETCH_ASSOC);
             $total_reg3 = @count($res3);
-            $nome_item = $res3[0]['texto'];
+            $nome_item = $res3[0]['texto'] ?? ('Item indisponível #' . (int)$id_item);
             if ($i2 < ($total_reg2 - 1)) {
               $nome_item .= ', ';
             }
