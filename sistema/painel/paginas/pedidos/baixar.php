@@ -3,13 +3,17 @@
 header('Content-Type: text/plain; charset=utf-8');
 header('Cache-Control: no-store, private');
 $empresa=filter_var($_SESSION['empresa']??null,FILTER_VALIDATE_INT,['options'=>['min_range'=>1]]);
-$usuario=filter_var($_SESSION['id']??null,FILTER_VALIDATE_INT,['options'=>['min_range'=>1]]);
+$operadorId=filter_var($_SESSION['id']??null,FILTER_VALIDATE_INT,['options'=>['min_range'=>1]]);
 $vendaId=filter_var($_POST['id']??null,FILTER_VALIDATE_INT,['options'=>['min_range'=>1]]);
 $forma=trim((string)($_POST['pgto']??''));
 if (($_SERVER['REQUEST_METHOD']??'')!=='POST') {http_response_code(405);exit('Método inválido');}
-if (!$empresa || !$usuario || !$vendaId) {http_response_code(403);exit('Sessão ou venda inválida');}
+if (!$empresa || !$operadorId || !$vendaId) {http_response_code(403);exit('Sessão ou venda inválida');}
 if ($forma==='' || strlen($forma)>100) {http_response_code(422);exit('Forma de pagamento inválida');}
 require_once('../../../conexao.php');
+// A conexao utiliza $usuario para as credenciais do banco; preserve a identidade da sessao.
+$operadorId=filter_var($_SESSION['id']??null,FILTER_VALIDATE_INT,['options'=>['min_range'=>1]]);
+$empresa=filter_var($_SESSION['empresa']??null,FILTER_VALIDATE_INT,['options'=>['min_range'=>1]]);
+if (!$operadorId || !$empresa) {http_response_code(403);exit('Sessão inválida');}
 try {
     $pdo->beginTransaction();
     $st=$pdo->prepare('SELECT id,valor,entrega,cliente,custo,pago,ref_api FROM vendas WHERE id=:id AND empresa=:empresa FOR UPDATE');
@@ -36,9 +40,9 @@ try {
     $formaId=(int)$st->fetchColumn();
     if (!$formaId) {throw new DomainException('Forma de pagamento não cadastrada');}
     $st=$pdo->prepare('SELECT id FROM caixas WHERE empresa=:empresa AND operador=:usuario AND data_fechamento IS NULL ORDER BY id DESC LIMIT 1 FOR UPDATE');
-    $st->execute([':empresa'=>$empresa,':usuario'=>$usuario]);
+    $st->execute([':empresa'=>$empresa,':usuario'=>$operadorId]);
     $caixa=(int)$st->fetchColumn();
-    if (!$caixa) {throw new DomainException('Nenhum caixa aberto para o operador #'.$usuario.' na empresa #'.$empresa.'. Confira o operador conectado e abra seu caixa.');}
+    if (!$caixa) {throw new DomainException('Nenhum caixa aberto para o operador #'.$operadorId.' na empresa #'.$empresa.'. Confira o operador conectado e abra seu caixa.');}
     $st=$pdo->prepare('SELECT COUNT(*) FROM receber WHERE empresa=:empresa AND venda_id=:venda');
     $st->execute([':empresa'=>$empresa,':venda'=>$vendaId]);
     if ((int)$st->fetchColumn()>0) {
@@ -51,13 +55,13 @@ try {
                 CURDATE(),CURDATE(),'sem-foto.png','sem-foto.png',:forma,:caixa,:referencia,:custo,:empresa,:venda)");
     $st->execute([
         ':descricao'=>$venda['entrega'],':cliente'=>$venda['cliente'],
-        ':valor'=>$venda['valor'],':subtotal'=>$venda['valor'],':usuario'=>$usuario,
+        ':valor'=>$venda['valor'],':subtotal'=>$venda['valor'],':usuario'=>$operadorId,
         ':forma'=>$formaId,':caixa'=>$caixa,':referencia'=>$venda['entrega'],
         ':custo'=>$venda['custo'],':empresa'=>$empresa,':venda'=>$vendaId
     ]);
     $st=$pdo->prepare("UPDATE vendas SET pago='Sim',usuario_baixa=:usuario,tipo_pgto=:forma
         WHERE id=:venda AND empresa=:empresa AND pago<>'Sim'");
-    $st->execute([':usuario'=>$usuario,':forma'=>$forma,':venda'=>$vendaId,':empresa'=>$empresa]);
+    $st->execute([':usuario'=>$operadorId,':forma'=>$forma,':venda'=>$vendaId,':empresa'=>$empresa]);
     if ($st->rowCount()!==1) throw new RuntimeException('A venda foi alterada durante a baixa');
     $pdo->commit();
     echo 'Baixado com Sucesso';
