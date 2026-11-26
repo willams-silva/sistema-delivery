@@ -294,7 +294,7 @@ if ($total_reg > 0) {
 
         <div style="border-bottom: 1px solid #000">
           <span id="area_status_{$id}"><small><i>Status <b>
-            <a title="{$titulo_link}" href="#" onclick="ativarPedido('{$id}','{$acao_link}')" class="btn {$class_btn} btn-rounded mb-1" style="font-size: 9px; padding: 5px">{$status}<i class="fa fa-arrow-right {$cor_icone_link}"></i>
+            <a title="{$titulo_link}" href="#" onclick="ativarPedido('{$id}','{$acao_link}')" class="btn {$class_btn} btn-rounded mb-1" style="display:inline-flex!important;align-items:center;justify-content:center;gap:4px;height:26px!important;min-height:0!important;line-height:1!important;padding:0 8px!important;font-size:11px!important;border-radius:6px!important;white-space:nowrap;margin-bottom:0!important">{$status}<i class="fa fa-arrow-right {$cor_icone_link}"></i>
           </a></b></i></small></span>   
 <img id="status_link_{$id}" src="../../img/loading.gif" width="80px" style="display:none">      
         </div>
