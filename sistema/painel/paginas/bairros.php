@@ -55,6 +55,34 @@ load();
 
 
 
+
+<div class="card mt-3" style="border:1px solid #e5d4c6;border-radius:14px"><div class="card-body">
+<h5 style="color:#4e2d20"><i class="fa-solid fa-map me-2"></i>Zonas de entrega</h5>
+<p class="text-muted">Agrupe ruas do mesmo bairro. A taxa específica por rua terá prioridade quando o cálculo for integrado.</p>
+<form id="bc-zona-form" class="row g-2">
+<input type="hidden" name="zona_id" value="0">
+<div class="col-md-4"><label>Bairro<select name="bairro_id" class="form-control" required></select></label></div>
+<div class="col-md-5"><label>Nome da zona<input name="zona_nome" class="form-control" maxlength="150" required></label></div>
+<div class="col-md-3"><label>Frete (R$)<input name="zona_valor" class="form-control" inputmode="decimal" required></label></div>
+<div class="col-12"><label for="bc-zona-ruas">Ruas da zona (uma por linha)</label><textarea id="bc-zona-ruas" name="zona_ruas" class="form-control" rows="4" placeholder="Rua A&#10;Rua B"></textarea></div>
+<div class="col-12"><button type="submit" class="btn btn-primary">Salvar zona</button> <button type="button" id="bc-zona-cancelar" class="btn btn-outline-secondary">Limpar</button></div>
+</form><div id="bc-zona-msg" role="status" class="mt-2"></div>
+<div class="table-responsive mt-3"><table class="table"><thead><tr><th>Bairro</th><th>Zona</th><th>Frete</th><th>Ruas</th><th>Ações</th></tr></thead><tbody id="bc-zona-list"></tbody></table></div>
+</div></div>
+<style>#bc-zona-form label{display:block;width:100%}#bc-zona-form select{background:#fffaf5;color:#4e2d20;border-color:#d7b5a0}#bc-zona-form .form-control:focus{border-color:#914a29;box-shadow:0 0 0 .2rem rgba(145,74,41,.16)}</style>
+<script>
+(function(){
+const f=document.getElementById('bc-zona-form'), e=f.elements, msg=$('#bc-zona-msg'), list=$('#bc-zona-list');
+$(e.bairro_id).html($('#bc-frete-bairro').html());
+function req(data){return $.ajax({url:'paginas/bairros/frete_zonas.php',method:'POST',dataType:'json',data:Object.assign({csrf:<?= json_encode($_SESSION['bc_frete_csrf']) ?>},data)});}
+function fail(x){msg.text(x.responseJSON?.erro || 'Não foi possível concluir a operação.');}
+function reset(){f.reset();e.zona_id.value='0';e.bairro_id.disabled=false;}
+function load(){req({acao:'listar'}).done(rows=>{list.empty();if(!rows.length)list.append($('<tr>').append($('<td colspan="5">').text('Nenhuma zona cadastrada.')));rows.forEach(r=>{const tr=$('<tr>');[r.bairro,r.nome,Number(r.valor).toLocaleString('pt-BR',{style:'currency',currency:'BRL'}),r.ruas.join(', ')].forEach(v=>tr.append($('<td>').text(v)));const actions=$('<td>');actions.append($('<button type="button" class="btn btn-outline-secondary btn-sm me-1">').text('Editar').on('click',()=>{e.zona_id.value=r.id;e.bairro_id.value=r.bairro_id;e.bairro_id.disabled=true;e.zona_nome.value=r.nome;e.zona_valor.value=r.valor;e.zona_ruas.value=r.ruas.join('\n');f.scrollIntoView({block:'center'});}));actions.append($('<button type="button" class="btn btn-outline-danger btn-sm">').text('Excluir').on('click',()=>{if(confirm('Excluir zona e vínculos de ruas?'))req({acao:'excluir',id:r.id}).done(()=>{reset();load();}).fail(fail);}));tr.append(actions);list.append(tr);});}).fail(fail);}
+$(f).on('submit',function(ev){ev.preventDefault();const btn=$(f).find('[type=submit]').prop('disabled',true);req({acao:'salvar',id:e.zona_id.value,bairro_id:e.bairro_id.value,nome:e.zona_nome.value,valor:e.zona_valor.value,ruas:e.zona_ruas.value}).done(()=>{msg.text('Zona salva com sucesso.');reset();load();}).fail(fail).always(()=>btn.prop('disabled',false));});
+$('#bc-zona-cancelar').on('click',reset);load();
+})();
+</script>
+
 <!-- Modal Inserir-->
 <div class="modal fade" id="modalForm" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
 	<div class="modal-dialog" role="document">
