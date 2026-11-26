@@ -764,12 +764,12 @@ function imprimirPedidoEsteira(id,tipo){
 
 
 <script type="text/javascript">
-	$("#form-baixar").submit(function() {
+	$("#form-baixar").submit(function(event) {
 
 		event.preventDefault();
 		var formData = new FormData(this);
 
-		$('#mensagem-baixar').text('Carregando!!');
+		$('#mensagem-baixar').removeClass('text-danger').text('Carregando!!');
 		$('#btn_confirmar').hide();
 
 		$.ajax({
@@ -791,12 +791,13 @@ function imprimirPedidoEsteira(id,tipo){
 					$('#mensagem-baixar').addClass('text-danger')
 					$('#mensagem-baixar').text(mensagem)
 				}
-
-				$('#mensagem-baixar').text('');
-				$('#btn_confirmar').show();
-
-
-			},
+            },
+            error: function(xhr, status) {
+                var mensagem = status === 'timeout' ? 'Tempo de resposta excedido. Confira o status do pedido antes de tentar novamente.' : (xhr.responseText || 'Falha ao confirmar pagamento. Confira o status do pedido.');
+                $('#mensagem-baixar').addClass('text-danger').text(mensagem);
+            },
+            complete: function() { $('#btn_confirmar').show(); },
+            timeout: 30000,
 
 			cache: false,
 			contentType: false,
