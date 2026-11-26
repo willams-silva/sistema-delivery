@@ -48,6 +48,7 @@ $horaF = date("H:i", strtotime($hora));
     $total_reg2 = @count($res2);
     if ($total_reg2 > 0) {
       $id_pedido = $res2[0]['pedido'];
+      $horaF = date('H:i', strtotime($res2[0]['hora'] ?? $hora));
     } else {
       $id_pedido = '';
     }
@@ -262,7 +263,7 @@ $horaF = date("H:i", strtotime($hora));
 <div class="printer-ticket">
 	<div align="center">
 		<td>
-			<img style="margin: 12px; margin-left: 50px;" id="imag" src="<?php echo $url_sistema ?>sistema/img/<?php echo $logo_sistema ?>"
+			<img style="margin: 12px; border-radius: 50%;" id="imag" src="<?php echo $url_sistema ?>sistema/img/<?php echo (!empty($logo_rel) && $logo_rel !== 'sem-foto.png') ? $logo_rel : $logo_sistema ?>"
 				width="120px">
 		</td>
 	</div>
@@ -280,7 +281,7 @@ $horaF = date("H:i", strtotime($hora));
 		
 		<br>
 		<?php if($mesa > 0){ ?>
-		Pedido: <b><?php echo $id ?></b> - <?php } ?>  Hora: <?php echo $hora ?>
+		Pedido: <b><?php echo $id ?></b> - <?php } ?>  Hora: <?php echo $horaF ?>
 		<br>
 		Status: <b><?php echo $status ?></b> 
 	</div>
