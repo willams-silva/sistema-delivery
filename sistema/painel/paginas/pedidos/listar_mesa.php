@@ -639,14 +639,19 @@ window.bcHistoricoLocal = window.bcHistoricoLocal || function(id,setor){
 </script>
 
 <script>
-window.bcEnfileirarLocal=window.bcEnfileirarLocal||function(id,setor,botao){
- if(!window.confirm('Adicionar item #'+id+' à fila de impressão? Nenhuma impressão será iniciada.'))return;
+window.bcEnfileirarLocal=window.bcEnfileirarLocal||async function(id,setor,botao){
+ if(botao && botao.disabled)return;
  if(botao)botao.disabled=true;
- var dados=new URLSearchParams({carrinho_id:id,setor:setor});
- fetch('paginas/pedidos/fila_impressao_local.php',{method:'POST',credentials:'same-origin',headers:{'Content-Type':'application/x-www-form-urlencoded'},body:dados.toString()})
-  .then(function(r){return r.json().then(function(d){if(!r.ok)throw new Error(d.erro||'Erro ao enfileirar');return d;});})
-  .then(function(d){alert('Item #'+id+' na fila. Estado: '+d.estado+'. Nenhuma impressão foi iniciada.');})
-  .catch(function(e){alert('Não foi possível enfileirar: '+e.message);})
-  .finally(function(){if(botao)botao.disabled=false;});
+ var popup=function(opts){return Swal.fire(Object.assign({confirmButtonColor:'#633c2c',cancelButtonColor:'#89756a',background:'#fffaf4',color:'#4d2b22'},opts));};
+ try {
+  var escolha=await popup({icon:'question',title:'Adicionar à fila de impressão?',text:'Item #'+id+' · '+setor+'. Nenhuma impressão será iniciada agora.',showCancelButton:true,confirmButtonText:'Confirmar',cancelButtonText:'Cancelar',focusCancel:true});
+  if(!escolha.isConfirmed)return;
+  var dados=new URLSearchParams({carrinho_id:id,setor:setor});
+  var r=await fetch('paginas/pedidos/fila_impressao_local.php',{method:'POST',credentials:'same-origin',headers:{'Content-Type':'application/x-www-form-urlencoded'},body:dados.toString()});
+  var d=await r.json();
+  if(!r.ok)throw new Error(d.erro||'Erro ao enfileirar');
+  await popup({icon:'success',title:'Item adicionado à fila',text:'Item #'+id+' · Estado: '+d.estado+'. Nenhuma impressão foi iniciada.',confirmButtonText:'Fechar'});
+ }catch(e){await popup({icon:'error',title:'Não foi possível enfileirar',text:e.message,confirmButtonText:'Fechar'});}
+ finally{if(botao)botao.disabled=false;}
 };
 </script>
