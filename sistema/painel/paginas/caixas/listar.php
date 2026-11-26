@@ -204,22 +204,22 @@ HTML;
 				<td>{$nome_usu_fechamento}</td>
 				<td>
 
-		<big><a class="{$ocultar} btn btn-info-light btn-sm" href="#" onclick="editar('{$id}', '{$operador}', '{$data_abertura}','{$valor_abertura}',{$obsJs})" title="Editar Dados"><i class="bi bi-pencil-square"></i></a></big>
+		<big><a class="{$ocultar} btn btn-info-light btn-sm" href="#" onclick="editar('{$id}', '{$operador}', '{$data_abertura}','{$valor_abertura}',{$obsJs})" title="Editar Dados"><i class="fa fa-edit"></i></a></big>
 
 
-		<big><a href="#" class="btn btn-danger-light btn-sm {$ocultar}" onclick="excluirBusca('{$id}')" title="Excluir"><i class="bi bi-trash text-danger"></i></a></big>
+		<big><a href="#" class="btn btn-danger-light btn-sm {$ocultar}" onclick="excluirBusca('{$id}')" title="Excluir"><i class="fa fa-trash-can text-danger"></i></a></big>
 
 
-		<big><a class="{$ocultar} btn btn-success-light btn-sm" href="#" onclick="fechamento('{$id}', {$nomeOperadorJs}, '{$valor_abertura}', '{$total_caixa}')" title="Fechar Caixa"><i class="bi bi-lock"></i></a></big>
+		<big><a class="{$ocultar} btn btn-success-light btn-sm" href="#" onclick="fechamento('{$id}', {$nomeOperadorJs}, '{$valor_abertura}', '{$total_caixa}')" title="Fechar Caixa"><i class="fa fa-check-square"></i></a></big>
 
 
-		<big><a class="{$ocultar} btn btn-success-light btn-sm" href="#" onclick="sangria('{$id}')" title="Sangria"><i class="bi bi-cash-stack"></i></a></big>
+		<big><a class="{$ocultar} btn btn-success-light btn-sm" href="#" onclick="sangria('{$id}')" title="Sangria"><i class="fa fa-money"></i></a></big>
 
 
 
 		<form   method="POST" action="rel/detalhamento_caixa_class.php" target="_blank" style="display:inline-block">
 			<input type="hidden" name="id" value="{$id}">
-			<button class="btn btn-danger-light btn-sm" title="Detalhamento do Caixa"><i class="bi bi-file-earmark-pdf" ></i></button>
+			<button class="btn btn-danger-light btn-sm" title="Detalhamento do Caixa"><i class="fa fa-file-pdf-o" ></i></button>
 		</form>
 
 
@@ -247,6 +247,17 @@ HTML;
 
 <style>
 .bc-caixa-icon{display:inline-block!important;color:#914a29!important;font-size:16px!important;margin-right:5px}.bc-caixa-toolbar{display:flex;gap:6px;margin-bottom:16px}.bc-caixa-toolbar button{border:1px solid #d7c5b7;color:#63351e}.bc-caixa-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,300px),1fr));gap:14px;margin:12px 0}.bc-caixa-card{background:#fffaf5;border:1px solid #e5d4c6;border-radius:12px;padding:15px;color:#4e2d20}.bc-caixa-top{display:flex;align-items:center;justify-content:space-between;gap:8px;border-bottom:1px solid #e5d4c6;padding-bottom:12px}.bc-caixa-status{font-size:12px;border-radius:20px;padding:4px 9px}.bc-caixa-status.aberto{background:#e1f4e9;color:#13745a}.bc-caixa-status.fechado{background:#f8e7e7;color:#b42332}.bc-caixa-fields{display:grid;grid-template-columns:1fr 1fr;gap:12px;padding:12px 0}.bc-caixa-fields small,.bc-caixa-fields strong{display:block;overflow-wrap:anywhere}.bc-caixa-fields small{color:#795038}.bc-caixa-actions{border-top:1px solid #e5d4c6;padding-top:10px;display:flex;gap:6px;flex-wrap:wrap}.bc-caixa-actions .ocultar{display:none!important}
+html body #listar :is(.bc-caixa-actions,.caixa-detail-actions-buttons){display:flex!important;flex-wrap:wrap!important;justify-content:center!important;gap:7px!important;align-items:center;justify-items:center;padding-top:12px!important}
+html body #listar :is(.bc-caixa-actions,.caixa-detail-actions-buttons) .btn{--bc-fg:#795038;--bc-bg:#f4e7dc;min-width:36px!important;min-height:36px!important;padding:7px!important;border-radius:9px!important;border:1px solid var(--bc-fg)!important;background:var(--bc-bg)!important;color:var(--bc-fg)!important;transition:background .2s,color .2s,transform .2s,box-shadow .2s!important}
+html body #listar :is(.bc-caixa-actions,.caixa-detail-actions-buttons) .btn-info-light{--bc-fg:#17658a;--bc-bg:#e1f2fa}
+html body #listar :is(.bc-caixa-actions,.caixa-detail-actions-buttons) .btn-primary-light,html body #listar :is(.bc-caixa-actions,.caixa-detail-actions-buttons) .btn-warning-light{--bc-fg:#89500a;--bc-bg:#fff0d7}
+html body #listar :is(.bc-caixa-actions,.caixa-detail-actions-buttons) .btn-danger-light{--bc-fg:#b42332;--bc-bg:#fde5e7}
+html body #listar :is(.bc-caixa-actions,.caixa-detail-actions-buttons) .btn-success-light{--bc-fg:#13745a;--bc-bg:#def3e9}
+html body #listar :is(.bc-caixa-actions,.caixa-detail-actions-buttons) .btn i{color:inherit!important;font-size:16px!important}
+html body #listar :is(.bc-caixa-actions,.caixa-detail-actions-buttons) .btn:not(.disabled):not([aria-disabled=true]):hover{background:var(--bc-fg)!important;color:#fff!important;transform:translateY(-2px);box-shadow:0 4px 9px #63351e30!important}
+html body #listar :is(.bc-caixa-actions,.caixa-detail-actions-buttons) .btn:focus-visible{outline:2px solid var(--bc-fg)!important;outline-offset:2px}
+html body #listar :is(.bc-caixa-actions,.caixa-detail-actions-buttons) .btn.ocultar,html body #listar :is(.bc-caixa-actions,.caixa-detail-actions-buttons) .btn.d-none{display:none!important}
+@media(prefers-reduced-motion:reduce){html body #listar :is(.bc-caixa-actions,.caixa-detail-actions-buttons) .btn{transition:none!important;transform:none!important}}
 </style>
 <script type="text/javascript">
 	$(document).ready(function() {
