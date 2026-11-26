@@ -1444,12 +1444,12 @@ html body .bc-unified-header a.bc-unified-back:hover{background:#fff0dc!importan
     $('#taxa-entrega-input').val('');
     bcFreteRequest=$.ajax({
       url:'js/ajax/calcular-frete.php',method:'POST',
-      data:{bairro:$('#bairro').val(),rua:$('#rua').val(),total_compra:<?= json_encode($total_carrinho) ?>,entrega:$('#entrega').val()},
+      data:{bairro:$('#bairro').val(),rua:$('#rua').val(),numero:$('#numero').val(),cidade:$('#cidade').val(),cep:$('#cep').val(),total_compra:<?= json_encode($total_carrinho) ?>,entrega:$('#entrega').val()},
       success:function(result){var split=result.split('-');$('#taxa-entrega').text(split[0]);$('#total-carrinho-finalizar').text(split[1]);$('#taxa-entrega-input').val(split[0].replace(/\./g,''));pix();},
       error:function(xhr,status){if(status!=='abort'){$('#taxa-entrega').text('—');$('#taxa-entrega-input').val('');}}
     });
   }
-  $(document).on('change blur','#rua',function(){if($('#entrega').val()==='Delivery' && <?= json_encode($entrega_distancia != 'Sim' || $chave_api_maps == '') ?>) calcularFrete();});
+  $(document).on('change','#rua,#numero,#bairro,#cidade,#cep',function(){if($('#entrega').val()==='Delivery') calcularFrete();});
 </script>
 
 
@@ -1607,67 +1607,7 @@ html body .bc-unified-header a.bc-unified-back:hover{background:#fff0dc!importan
     if (cep.length === 8) fetchAddressData(cep);
   });
 
-  function calcularFreteDistancia() {
-
-    var chave_api = "<?= $chave_api_maps ?>";
-    var distancia_km = "<?= $distancia_entrega_km ?>";
-
-    var cep = document.getElementById('cep').value;
-    var address = document.getElementById('rua').value;
-    var number = document.getElementById('numero').value;
-    var bairro = document.getElementById('bairro').value;
-    var cidade = document.getElementById('cidade').value;
-    var complement = document.getElementById('complemento').value;
-
-    if (cep == "") {
-      return;
-    }
-
-    var encodedAddress = encodeURIComponent(address + ', ' + number + ', ' + bairro + ', ' + cidade + ', ' + complement);
-    //alert(encodedAddress)
-
-    fetch('https://maps.googleapis.com/maps/api/geocode/json?address=' + encodedAddress + '&key=' + chave_api)
-      .then(function(response) {
-        return response.json();
-      })
-      .then(function(data) {
-        if (data.status === 'OK' && data.results.length > 0) {
-
-          var deliveryCoords = {
-
-            latitude: data.results[0].geometry.location.lat,
-            longitude: data.results[0].geometry.location.lng
-          };
-
-          var distance = calculateDistance(restaurantCoords, deliveryCoords);
-
-          //alert(distance)
-          //document.getElementById('distancia').innerText = distance.toFixed(2) + ' KM';
-
-          if (distance <= distancia_km) {
-            var deliveryCost = calculateDeliveryCost(distance);
-            $('#taxa-entrega').text(deliveryCost.toFixed(2));
-            $('#taxa-entrega-input').val(deliveryCost);
-
-            var total_compra = "<?= $total_carrinho ?>";
-            var total_final_compra = parseFloat(deliveryCost) + parseFloat(total_compra);
-            $('#total-carrinho-finalizar').text(total_final_compra.toLocaleString('pt-br', {
-              minimumFractionDigits: 2
-            }));
-
-          } else {
-            alertWarning('Endereço fora da área de entrega.');
-            return;
-          }
-        } else {
-          alertWarning('Endereço inválido ou Chave Api Inexistente.');
-          return;
-        }
-      })
-      .catch(function(error) {
-        console.error(error);
-      });
-  }
+  function calcularFreteDistancia() { calcularFrete(); }
 
   function fetchAddressData(cep) {
     fetch('https://viacep.com.br/ws/' + cep + '/json/')
