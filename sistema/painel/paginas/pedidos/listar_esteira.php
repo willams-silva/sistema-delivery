@@ -18,7 +18,7 @@ $total_vendas = 0;
 
 $sql_pedido_balcao = " and empresa = '$id_empresa' ";
 if($pedidos_pdv_delivery != 'Sim'){
-	$sql_pedido_balcao = " and tipo_pedido != 'Balcão' and empresa = '$id_empresa' ";
+	$sql_pedido_balcao = " and (tipo_pedido IS NULL OR TRIM(tipo_pedido) <> 'Balcão') and empresa = '$id_empresa' ";
 }
 
 //TOTAIS DOS PEDIDOS
@@ -58,6 +58,7 @@ $total_reg = @count($res);
 // Resumo de produção em lote: não altera carrinho, valores nem a automação.
 $itensPorVenda = [];
 if ($total_reg > 0) {
+    try {
     $idsVenda = array_values(array_unique(array_map('intval', array_column($res, 'id'))));
     $marcadores = implode(',', array_fill(0, count($idsVenda), '?'));
     $consultaItens = $pdo->prepare("SELECT c.id, c.pedido, c.quantidade, c.nome_produto, c.produto, c.obs, c.sabores,
@@ -102,6 +103,9 @@ if ($total_reg > 0) {
             'nome' => htmlspecialchars($textoItem, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8'),
             'detalhes' => htmlspecialchars(implode(' · ', $detalhes), ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8')
         ];
+    }
+    } catch (Throwable $e) {
+        error_log('Esteira: falha no resumo de itens: ' . $e->getMessage());
     }
 }
 if ($total_reg > 0) {
@@ -363,6 +367,7 @@ $total_dos_itens_pedidos = @count($res);
 
 		$('#todos_pedidos').text("<?= $total_pedidos ?>");
 		$('#ini_pedidos').text("<?= $total_ini ?>");
+        $('#ace_pedidos').text("<?= $total_ace ?>");
 		$('#prep_pedidos').text("<?= $total_prep ?>");
 		$('#ent_pedidos').text("<?= $total_ent ?>");
 		$('#id_pedido').val("<?= $id_ult_pedido ?>");
