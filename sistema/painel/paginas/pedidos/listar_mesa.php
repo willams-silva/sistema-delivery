@@ -622,15 +622,19 @@ $total_dos_itens_pedidos = @count($res);
 <script>
 window.bcHistoricoLocal = window.bcHistoricoLocal || function(id,setor){
   var endereco='paginas/pedidos/historico_local.php?id='+encodeURIComponent(id)+'&setor='+encodeURIComponent(setor);
+  var esc=function(v){var el=document.createElement('span');el.textContent=String(v==null?'':v);return el.innerHTML;};
+  var popup=function(opts){return Swal.fire(Object.assign({confirmButtonColor:'#633c2c',confirmButtonText:'Fechar',background:'#fffaf4',color:'#4d2b22',width:560},opts));};
   fetch(endereco,{credentials:'same-origin',cache:'no-store'})
-    .then(function(res){return res.json().then(function(d){if(!res.ok)throw new Error(d.erro||'Falha ao consultar historico');return d;});})
+    .then(function(res){return res.json().then(function(d){if(!res.ok)throw new Error(d.erro||'Falha ao consultar histórico');return d;});})
     .then(function(d){
-      var registros=d.historico||[];
-      var texto=registros.length?registros.map(function(r){
-        return r.criado_em+' | Operador #'+r.usuario_id+' | '+r.status_anterior+' → '+r.status_novo;
-      }).join('\\n'):'Nenhuma movimentacao registrada para este item.';
-      alert('Histórico do pedido #'+id+' ('+setor+')\\n\\n'+texto);
-    }).catch(function(e){alert('Histórico indisponível: '+e.message);});
+      var registros=Array.isArray(d.historico)?d.historico:[];
+      var html='<div style="text-align:left;font-size:14px"><div style="margin-bottom:14px;color:#795548">Item #'+esc(id)+' · '+esc(setor)+'</div>';
+      html+=registros.length?registros.map(function(r){
+        var data=String(r.criado_em||'').replace(/^(\d{4})-(\d{2})-(\d{2})/,'$3/$2/$1');
+        return '<div style="border:1px solid #e4d4c8;border-left:4px solid #795548;border-radius:8px;padding:12px;margin-bottom:10px;background:#fff"><div style="font-size:12px;color:#795548">'+esc(data)+' · Operador #'+esc(r.usuario_id)+'</div><div style="margin-top:8px;font-weight:600">'+esc(r.status_anterior)+' &rarr; '+esc(r.status_novo)+'</div></div>';
+      }).join(''):'<div style="padding:16px;text-align:center">Nenhuma movimentação registrada para este item.</div>';
+      popup({title:'Histórico do pedido',html:html+'</div>',showCloseButton:true});
+    }).catch(function(e){popup({icon:'error',title:'Histórico indisponível',text:e.message});});
 };
 </script>
 
