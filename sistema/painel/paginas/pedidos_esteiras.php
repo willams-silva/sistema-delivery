@@ -548,7 +548,10 @@ $(document).on('show.bs.modal', '#modalBaixar', function(){
             const tempo=card.querySelector('.esteira-tempo');
             if(tempo)tempo.textContent=minutos===null?'Horário indisponível':'Aguardando há '+minutos+' min';
             card.classList.toggle('esteira-atrasado',minutos!==null && minutos>=30 && card.dataset.status!=='Entrega');
-            card.style.display=(!filtro || card.dataset.tipo===filtro)?'':'none';
+            const normalizarOrigem = valor => String(valor || '').trim().toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/^retirada$/, 'retirar');
+            const visivel = !filtro || normalizarOrigem(card.dataset.tipo) === normalizarOrigem(filtro);
+            if (visivel) card.style.removeProperty('display');
+            else card.style.setProperty('display', 'none', 'important');
             if(card.style.display!=='none'){
                 metricas.total++;
                 if(card.dataset.status==='Iniciado'||card.dataset.status==='Aceito')metricas.aguardando++;
