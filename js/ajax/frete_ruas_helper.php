@@ -19,6 +19,8 @@ function bcFreteRua(PDO $pdo,int $empresa,string $bairro,string $rua,string $ent
 function bcFreteHibrido(PDO $pdo,int $empresa,array $end,array $cfg): ?float {
  $entrega=(string)($end['entrega']??'');$bairro=(string)($end['bairro']??'');$rua=(string)($end['rua']??'');
  if($entrega!=='Delivery')return 0.0;
+ $memoria=bcFreteMemoria($pdo,$empresa,$end);
+ if($memoria!==null)return $memoria;
  $especifica=bcFreteRua($pdo,$empresa,$bairro,$rua,$entrega,true);
  if($especifica!==null)return $especifica;
  if(($cfg['modo']??'')!=='Sim'||empty($cfg['key']))return bcFreteRua($pdo,$empresa,$bairro,$rua,$entrega);
@@ -46,4 +48,14 @@ function bcFreteConsultaAceita(PDO $pdo,int $empresa,array $end): ?float {
  $q=$pdo->prepare("SELECT c.valor FROM bc_frete_consultas c JOIN bc_frete_consulta_config f ON f.empresa=c.empresa AND f.ativo=1 WHERE c.empresa=? AND c.token_hash=? AND c.endereco=? AND c.status='aceito' AND c.expira_em>NOW()");
  $q->execute([$empresa,hash('sha256',$token),json_encode($normal,JSON_UNESCAPED_UNICODE)]);
  $v=$q->fetchColumn();return $v===false||$v===null?null:(float)$v;
+}
+
+function bcFreteEnderecoHash(array $end): ?string {
+ $normal=[];foreach(['rua','numero','bairro','cidade','cep'] as $k){$v=trim((string)($end[$k]??''));$normal[$k]=$k==='cep'?preg_replace('/\D/','',$v):(function_exists('mb_strtolower')?mb_strtolower($v,'UTF-8'):strtolower($v));}
+ if(!$normal['rua']||!$normal['numero']||!$normal['bairro']||strlen($normal['cep'])!==8)return null;
+ return hash('sha256',json_encode($normal,JSON_UNESCAPED_UNICODE));
+}
+function bcFreteMemoria(PDO $pdo,int $empresa,array $end): ?float {
+ $hash=bcFreteEnderecoHash($end);if(!$hash)return null;
+ try{$q=$pdo->prepare("SELECT m.valor FROM bc_frete_memoria m JOIN bc_frete_consulta_config c ON c.empresa=m.empresa AND c.ativo=1 WHERE m.empresa=? AND m.endereco_hash=?");$q->execute([$empresa,$hash]);$v=$q->fetchColumn();return $v===false?null:(float)$v;}catch(PDOException $e){return null;}
 }
