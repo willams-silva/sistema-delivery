@@ -1,0 +1,9 @@
+CREATE TABLE IF NOT EXISTS bc_frete_memoria (
+ empresa INT NOT NULL,
+ endereco_hash CHAR(64) NOT NULL,
+ endereco TEXT NOT NULL,
+ valor DECIMAL(10,2) NOT NULL,
+ operador INT NOT NULL,
+ atualizado_em DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+ PRIMARY KEY (empresa,endereco_hash)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
