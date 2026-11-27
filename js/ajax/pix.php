@@ -11,6 +11,25 @@ require_once("../../sistema/painel/buscar_config.php");
 
 require_once('../../js/ajax/ApiConfig.php');
 
+// Validate delivery fee before exposing any payment instructions.
+require_once __DIR__.'/frete_ruas_helper.php';
+$entrega=(string)($_POST['entrega']??'');
+if($entrega===''){http_response_code(422);exit('Selecione a modalidade de entrega.');}
+$frete=bcFreteHibrido($pdo,(int)$id_empresa,$_POST,['modo'=>$entrega_distancia,'key'=>$chave_api_maps,'lat'=>$latitude_rest,'lng'=>$longitude_rest,'limite'=>$distancia_entrega_km,'km'=>$valor_km]);
+if($frete===null)$frete=bcFreteConsultaAceita($pdo,(int)$id_empresa,$_POST);
+$informado=str_replace(',','.',(string)($_POST['taxa_entrega']??''));
+if($frete===null||($entrega==='Delivery'&&(!is_numeric($informado)||abs((float)$informado-$frete)>0.005))){http_response_code(422);exit('Confirme o valor da entrega antes de pagar.');}
+$sessao=(string)($_SESSION['sessao_usuario']??'');
+$q=$pdo->prepare("SELECT SUM(total_item*quantidade) FROM carrinho WHERE sessao=? AND empresa=? AND (pedido=0 OR pedido IS NULL)");
+$q->execute([$sessao,$id_empresa]);$subtotal=$q->fetchColumn();
+if($sessao===''||$subtotal===null||$subtotal===false){http_response_code(422);exit('Carrinho vazio.');}
+$base=round((float)$subtotal+(float)$taxa_extra+$frete,2);
+$valorInformado=(float)($_POST['valor']??0);
+$desconto=$base-$valorInformado;
+// Preserve existing coupon flow; only configured loyalty discount is allowed here.
+if($valorInformado<=0||($desconto>0.005&&(!isset($valor_cupom_config)||abs($desconto-(float)$valor_cupom_config)>0.005))||$desconto < -0.005){http_response_code(422);exit('Total do pagamento inválido. Atualize o carrinho.');}
+$valor=round($valorInformado,2);
+
 // Prioriza o QR Code Pix fixo cadastrado nas configurações da empresa.
 $arquivos_qrcode_pix = glob(__DIR__ . '/../../sistema/img/qrcode_pix_' . (int)$id_empresa . '.*');
 if (!empty($arquivos_qrcode_pix) && is_file($arquivos_qrcode_pix[0])) {
@@ -31,7 +50,7 @@ if ($dados_pagamento != "" || $api_merc == '') {
     exit();
 }
 
-$valor = $_POST['valor'];
+
 
 $curl = curl_init();
 
