@@ -257,6 +257,7 @@ $id_pedido_feito = $pdo->lastInsertId();
 $pdo->query("UPDATE carrinho SET cliente = '$cliente', pedido = '$id_pedido' where sessao = '$sessao' and pedido = '0' and empresa = '$id_empresa' ");
 
 //limpar a sessao aberta
+unset($_SESSION['bc_consulta_token'][(int)$id_empresa]);
 @$_SESSION['sessao_usuario'] = "";
 //session_destroy();
 
