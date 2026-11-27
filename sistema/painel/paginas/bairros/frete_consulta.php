@@ -22,6 +22,9 @@ if (!hash_equals((string)($_SESSION['bc_frete_csrf'] ?? ''), (string)($_POST['cs
 
 $acao=$_POST['acao']??'listar';
 try {
+if($acao==='alertas'){
+$q=$pdo->prepare("SELECT c.id FROM bc_frete_consultas c JOIN bc_frete_consulta_config f ON f.empresa=c.empresa AND f.ativo=1 WHERE c.empresa=? AND c.status='pendente' AND c.expira_em>NOW() ORDER BY c.id DESC");$q->execute([$empresa]);echo json_encode(['ids'=>$q->fetchAll(PDO::FETCH_COLUMN)]);exit;
+}
 if($acao==='listar'){
 $q=$pdo->prepare("SELECT ativo FROM bc_frete_consulta_config WHERE empresa=?");$q->execute([$empresa]);$ativo=(int)$q->fetchColumn();
 $q=$pdo->prepare("SELECT id,endereco,status,valor,criado_em,expira_em FROM bc_frete_consultas WHERE empresa=? AND expira_em>NOW() AND status IN ('pendente','cotado') ORDER BY criado_em DESC LIMIT 100");$q->execute([$empresa]);
