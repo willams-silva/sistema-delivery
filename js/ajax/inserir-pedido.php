@@ -101,6 +101,7 @@ $esta_pago = filter_var(@$_POST['esta_pago'], @FILTER_SANITIZE_STRING);
 require_once __DIR__.'/frete_ruas_helper.php';
 {
   $bc_taxa = bcFreteHibrido($pdo,(int)$id_empresa,['bairro'=>$bairro,'rua'=>$rua,'numero'=>$numero,'cidade'=>$cidade,'cep'=>$cep,'entrega'=>$entrega],['modo'=>$entrega_distancia,'key'=>$chave_api_maps,'lat'=>$latitude_rest,'lng'=>$longitude_rest,'limite'=>$distancia_entrega_km,'km'=>$valor_km]);
+  if ($bc_taxa === null) $bc_taxa=bcFreteConsultaAceita($pdo,(int)$id_empresa,array_merge($_POST,['entrega'=>$entrega]));
   if ($bc_taxa === null || ($entrega === 'Delivery' && (!is_numeric($taxa_entrega) || abs((float)$taxa_entrega-$bc_taxa)>0.005))) {
     echo 'Taxa de entrega alterada ou inválida. Atualize o endereço e tente novamente.'; exit;
   }
