@@ -21,5 +21,13 @@ if($acao==='solicitar'){
 }
 if(!$token)resposta(['status'=>'inexistente']);
 if($acao==='cancelar'){$q=$pdo->prepare("UPDATE bc_frete_consultas SET status='recusado' WHERE empresa=? AND token_hash=? AND status IN ('pendente','cotado','aceito')");$q->execute([$id_empresa,hash('sha256',$token)]);unset($_SESSION['bc_consulta_token'][$id_empresa]);resposta(['status'=>'recusado']);}
-if($acao==='status'){$q=$pdo->prepare("SELECT status,valor FROM bc_frete_consultas WHERE empresa=? AND token_hash=? AND expira_em>NOW()");$q->execute([$id_empresa,hash('sha256',$token)]);resposta($q->fetch(PDO::FETCH_ASSOC)?:['status'=>'expirado']);}
+if($acao==='aceitar'){
+ $end=[];foreach(['rua','numero','bairro','cidade','cep'] as $k){$end[$k]=trim((string)($_POST[$k]??''));}
+ $end['entrega']='Delivery';
+ $q=$pdo->prepare("UPDATE bc_frete_consultas SET status='aceito' WHERE empresa=? AND token_hash=? AND endereco=? AND status='cotado' AND valor IS NOT NULL AND expira_em>NOW()");
+ $q->execute([$id_empresa,hash('sha256',$token),json_encode($end,JSON_UNESCAPED_UNICODE)]);
+ if(!$q->rowCount())resposta(['erro'=>'Cotação indisponível ou endereço alterado'],409);
+ $acao='status';
+}
+if($acao==='status'){$q=$pdo->prepare("SELECT status,valor,endereco FROM bc_frete_consultas WHERE empresa=? AND token_hash=? AND expira_em>NOW()");$q->execute([$id_empresa,hash('sha256',$token)]);resposta($q->fetch(PDO::FETCH_ASSOC)?:['status'=>'expirado']);}
 resposta(['erro'=>'Operação inválida'],400);
