@@ -589,6 +589,7 @@ html body .bc-unified-header a.bc-unified-back:hover{background:#fff0dc!importan
 <strong>Frete sob consulta</strong>
 <p id="bc-consulta-status" role="status">Solicite o valor da entrega ao estabelecimento.</p>
 <button type="button" id="bc-consulta-solicitar" style="background:#914a29;color:white;border:0;border-radius:8px;padding:10px 14px;width:100%"><i class="fa fa-calculator"></i> Solicitar valor da entrega</button>
+<button type="button" id="bc-consulta-aceitar" style="display:none;background:#914a29;color:white;border:0;border-radius:8px;padding:10px;width:100%">Aceitar valor da entrega</button>
 <button type="button" id="bc-consulta-cancelar" style="display:none;background:white;color:#914a29;border:1px solid #914a29;border-radius:8px;padding:8px;margin-top:8px;width:100%">Cancelar consulta</button>
 </div>
 <?php } ?>
@@ -1451,20 +1452,21 @@ html body .bc-unified-header a.bc-unified-back:hover{background:#fff0dc!importan
 <script type="text/javascript">
   $(function(){
     const box=$('#bc-consulta-box');if(!box.length)return;
-    const status=$('#bc-consulta-status'), solicitar=$('#bc-consulta-solicitar'), cancelar=$('#bc-consulta-cancelar');
+    const status=$('#bc-consulta-status'), solicitar=$('#bc-consulta-solicitar'), cancelar=$('#bc-consulta-cancelar'), aceitar=$('#bc-consulta-aceitar');
     let timer=null, busy=false;
     function req(acao){return $.ajax({url:'js/ajax/frete_consulta.php',method:'POST',dataType:'json',data:{acao:acao,csrf:<?= json_encode($_SESSION['bc_consulta_csrf']) ?>,rua:$('#rua').val(),numero:$('#numero').val(),bairro:$('#bairro').val(),cidade:$('#cidade').val(),cep:$('#cep').val()}});}
     function render(r){
       if(r.status==='pendente'||r.status==='cotado'||r.status==='aceito'){
         if($('#entrega').val()==='Delivery')box.show();
-        solicitar.hide();cancelar.show();
-        status.text(r.status==='pendente'?'Aguardando resposta do estabelecimento (até 15 minutos).':'Frete informado: R$ '+Number(r.valor).toFixed(2).replace('.',',')+'. A confirmação ainda não está disponível.');
+        solicitar.hide();cancelar.show();aceitar.toggle(r.status==='cotado');
+        status.text(r.status==='pendente'?'Aguardando resposta do estabelecimento (até 15 minutos).':'Frete informado: R$ '+Number(r.valor).toFixed(2).replace('.',',')+(r.status==='aceito'?' — aprovado.':' — confirme para continuar.'));
         if(!timer)timer=setInterval(check,5000);
-      }else{clearInterval(timer);timer=null;solicitar.show();cancelar.hide();status.text(r.status==='expirado'?'Consulta expirada. Solicite novamente.':'Solicite o valor da entrega ao estabelecimento.');}
+      }else{clearInterval(timer);timer=null;solicitar.show();cancelar.hide();aceitar.hide();status.text(r.status==='expirado'?'Consulta expirada. Solicite novamente.':'Solicite o valor da entrega ao estabelecimento.');}
     }
     function check(){if(busy)return;busy=true;req('status').done(render).always(()=>busy=false);}
     solicitar.on('click',function(){if(busy)return;busy=true;solicitar.prop('disabled',true);req('solicitar').done(render).fail(x=>status.text(x.responseJSON?.erro||'Não foi possível solicitar o frete.')).always(()=>{busy=false;solicitar.prop('disabled',false);});});
-    cancelar.on('click',function(){if(busy)return;busy=true;req('cancelar').done(render).fail(()=>status.text('Não foi possível cancelar.')).always(()=>busy=false);});
+    aceitar.on('click',function(){if(busy)return;busy=true;aceitar.prop('disabled',true);req('aceitar').done(function(r){render(r);calcularFrete();}).fail(x=>status.text(x.responseJSON?.erro||'Não foi possível aceitar.')).always(()=>{busy=false;aceitar.prop('disabled',false);});});
+    cancelar.on('click',function(){if(busy)return;busy=true;req('cancelar').done(function(r){render(r);calcularFrete();}).fail(()=>status.text('Não foi possível cancelar.')).always(()=>busy=false);});
     check();
   });
   var bcFreteRequest;
