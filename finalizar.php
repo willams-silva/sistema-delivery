@@ -927,7 +927,11 @@ html body .bc-unified-header a.bc-unified-back:hover{background:#fff0dc!importan
 
 
 <script type="text/javascript">
+  var bcPixRequest;
   function pix() {
+    if(bcPixRequest)bcPixRequest.abort();
+    $('#listar_pix').empty();
+    if($('#entrega').val()==='Delivery' && !$('#taxa-entrega-input').val())return;
 
     var entrega = $('#entrega').val();
 
@@ -966,17 +970,17 @@ html body .bc-unified-header a.bc-unified-back:hover{background:#fff0dc!importan
 
     var valor = total_compra_final.toFixed(2)
 
-    $.ajax({
+    bcPixRequest=$.ajax({
       url: 'js/ajax/pix.php',
       method: 'POST',
       data: {
-        valor
+        valor,entrega:entrega,taxa_entrega:taxa_entrega,bairro:$('#bairro').val(),rua:$('#rua').val(),numero:$('#numero').val(),cidade:$('#cidade').val(),cep:$('#cep').val()
       },
       dataType: "html",
 
       success: function(result) {
         $('#listar_pix').html(result);
-      }
+      },error:function(xhr,status){if(status!=='abort')$('#listar_pix').text('Confirme o endereço e o valor da entrega antes de pagar.');}
     });
 
     document.getElementById('radio_credito').checked = false;
@@ -1472,6 +1476,8 @@ html body .bc-unified-header a.bc-unified-back:hover{background:#fff0dc!importan
   var bcFreteRequest;
   function calcularFrete() {
     if(bcFreteRequest) bcFreteRequest.abort();
+    if(bcPixRequest)bcPixRequest.abort();
+    $('#listar_pix').empty();
     $('#taxa-entrega-input').val('');
     bcFreteRequest=$.ajax({
       url:'js/ajax/calcular-frete.php',method:'POST',
