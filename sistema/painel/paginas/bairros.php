@@ -104,19 +104,24 @@ $('#bc-zona-cancelar').on('click',reset);load();
 <button type="button" id="bc-consulta-refresh" class="btn btn-sm ms-2" style="background:#914a29;color:white"><i class="fa-solid fa-rotate"></i> Atualizar</button>
 <div id="bc-consulta-msg" role="status" class="mt-2"></div>
 <div id="bc-consulta-list" class="mt-3"></div>
+<h5 class="mt-3" style="color:#4e2d20"><i class="fa-solid fa-map-pin"></i> Fretes memorizados</h5>
+<div id="bc-frete-memorias"></div>
 </div></div>
 <script>
 $(function(){
 const ativo=$('#bc-consulta-ativo'), lista=$('#bc-consulta-list'), msg=$('#bc-consulta-msg');
 function req(data){return $.ajax({url:'paginas/bairros/frete_consulta.php',method:'POST',dataType:'json',data:Object.assign({csrf:<?= json_encode($_SESSION['bc_frete_csrf']) ?>},data)});}
+function endereco(v){try{const e=JSON.parse(v);return [e.rua,e.numero,e.bairro,e.cidade,e.cep].filter(Boolean).join(', ');}catch(e){return v;}}
+function memorias(){const el=$('#bc-frete-memorias');req({acao:'memorias'}).done(rows=>{el.empty();if(!rows.length)el.text('Nenhum endereço memorizado.');rows.forEach(v=>{const card=$('<div>').addClass('border rounded p-2 mb-2').appendTo(el);$('<span>').text(endereco(v.endereco)+' — R$ '+Number(v.valor).toFixed(2).replace('.',',')).appendTo(card);$('<button type="button">').addClass('btn btn-outline-danger btn-sm ms-2').text('Excluir').appendTo(card).on('click',()=>{if(confirm('Remover taxa memorizada?'))req({acao:'excluir_memoria',hash:v.endereco_hash}).done(memorias).fail(()=>msg.text('Não foi possível excluir.'));});});}).fail(()=>el.text('Memorização indisponível. Verifique a atualização do banco.'));}
 let busy=false;
-function load(){if(busy||lista.find('input:focus').length)return;busy=true;req({acao:'listar'}).done(function(r){
+function load(){memorias();if(busy||lista.find('input:focus').length)return;busy=true;req({acao:'listar'}).done(function(r){
 ativo.prop('checked',Number(r.ativo)===1).prop('disabled',false);lista.empty();
 if(!r.consultas.length){lista.text('Nenhuma solicitação em aberto.');return;}
 r.consultas.forEach(function(v){
 const card=$('<div>').addClass('border rounded p-3 mb-2').appendTo(lista);
-$('<strong>').text('Consulta #'+v.id+' — '+(v.status==='pendente'?'Aguardando cotação':'Cotado')).appendTo(card);
-$('<p>').text(v.endereco).appendTo(card);
+$('<strong>').text('Consulta #'+v.id+' — '+(v.status==='pendente'?'Aguardando cotação':v.status==='aceito'?'Aceito':'Cotado')).appendTo(card);
+$('<p>').text(endereco(v.endereco)).appendTo(card);
+if(v.status==='aceito'){$('<span>').text('R$ '+Number(v.valor).toFixed(2).replace('.',',')).appendTo(card);$('<button type="button">').addClass('btn btn-sm ms-2').css({background:'#914a29',color:'white'}).text('Memorizar frete').appendTo(card).on('click',()=>{if(confirm('Usar este valor em futuras entregas neste endereço?'))req({acao:'memorizar',id:v.id}).done(()=>{msg.text('Frete memorizado.');memorias();}).fail(()=>msg.text('Não foi possível memorizar.'));});return;}
 if(v.status==='cotado'){$('<span>').text('R$ '+Number(v.valor).toFixed(2).replace('.',',')).appendTo(card);return;}
 const input=$('<input type="text" inputmode="decimal" placeholder="Valor do frete (R$)" aria-label="Valor do frete">').addClass('form-control mb-2').appendTo(card);
 const btn=$('<button type="button">').addClass('btn btn-sm').css({background:'#914a29',color:'white'}).text('Enviar cotação').appendTo(card);
