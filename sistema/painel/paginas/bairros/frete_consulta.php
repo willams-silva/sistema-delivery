@@ -34,10 +34,15 @@ if($acao==='config'){
 $ativo=($_POST['ativo']??'')==='1'?1:0;
 $q=$pdo->prepare("INSERT INTO bc_frete_consulta_config (empresa,ativo) VALUES (?,?) ON DUPLICATE KEY UPDATE ativo=VALUES(ativo)");$q->execute([$empresa,$ativo]);echo json_encode(['ok'=>true]);exit;
 }
-if(in_array($acao,['memorias','memorizar','excluir_memoria'],true)){
+if(in_array($acao,['memorias','memorizar','excluir_memoria','editar_memoria'],true)){
  require_once __DIR__.'/../../../../js/ajax/frete_ruas_helper.php';
  if($acao==='memorias'){
  $q=$pdo->prepare("SELECT endereco_hash,endereco,valor,atualizado_em FROM bc_frete_memoria WHERE empresa=? ORDER BY atualizado_em DESC LIMIT 200");$q->execute([$empresa]);echo json_encode($q->fetchAll(PDO::FETCH_ASSOC));exit;
+ }
+ if($acao==='editar_memoria'){
+ $valor=str_replace(',','.',trim((string)($_POST['valor']??'')));
+ if(!preg_match('/^\d+(?:\.\d{1,2})?$/',$valor)||(float)$valor>999999.99){http_response_code(400);exit(json_encode(['erro'=>'Valor inválido']));}
+ $q=$pdo->prepare("UPDATE bc_frete_memoria SET valor=?,operador=? WHERE empresa=? AND endereco_hash=?");$q->execute([$valor,$usuario,$empresa,(string)($_POST['hash']??'')]);echo json_encode(['ok'=>true]);exit;
  }
  if($acao==='excluir_memoria'){
  $q=$pdo->prepare("DELETE FROM bc_frete_memoria WHERE empresa=? AND endereco_hash=?");$q->execute([$empresa,(string)($_POST['hash']??'')]);echo json_encode(['ok'=>true]);exit;
