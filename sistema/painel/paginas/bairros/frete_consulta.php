@@ -27,12 +27,25 @@ $q=$pdo->prepare("SELECT c.id FROM bc_frete_consultas c JOIN bc_frete_consulta_c
 }
 if($acao==='listar'){
 $q=$pdo->prepare("SELECT ativo FROM bc_frete_consulta_config WHERE empresa=?");$q->execute([$empresa]);$ativo=(int)$q->fetchColumn();
-$q=$pdo->prepare("SELECT id,endereco,status,valor,criado_em,expira_em FROM bc_frete_consultas WHERE empresa=? AND expira_em>NOW() AND status IN ('pendente','cotado') ORDER BY criado_em DESC LIMIT 100");$q->execute([$empresa]);
+$q=$pdo->prepare("SELECT id,endereco,status,valor,criado_em,expira_em FROM bc_frete_consultas WHERE empresa=? AND ((expira_em>NOW() AND status IN ('pendente','cotado')) OR (status='aceito' AND criado_em>DATE_SUB(NOW(),INTERVAL 7 DAY))) ORDER BY criado_em DESC LIMIT 100");$q->execute([$empresa]);
 echo json_encode(['ativo'=>$ativo,'consultas'=>$q->fetchAll(PDO::FETCH_ASSOC)]);exit;
 }
 if($acao==='config'){
 $ativo=($_POST['ativo']??'')==='1'?1:0;
 $q=$pdo->prepare("INSERT INTO bc_frete_consulta_config (empresa,ativo) VALUES (?,?) ON DUPLICATE KEY UPDATE ativo=VALUES(ativo)");$q->execute([$empresa,$ativo]);echo json_encode(['ok'=>true]);exit;
+}
+if(in_array($acao,['memorias','memorizar','excluir_memoria'],true)){
+ require_once __DIR__.'/../../../../js/ajax/frete_ruas_helper.php';
+ if($acao==='memorias'){
+ $q=$pdo->prepare("SELECT endereco_hash,endereco,valor,atualizado_em FROM bc_frete_memoria WHERE empresa=? ORDER BY atualizado_em DESC LIMIT 200");$q->execute([$empresa]);echo json_encode($q->fetchAll(PDO::FETCH_ASSOC));exit;
+ }
+ if($acao==='excluir_memoria'){
+ $q=$pdo->prepare("DELETE FROM bc_frete_memoria WHERE empresa=? AND endereco_hash=?");$q->execute([$empresa,(string)($_POST['hash']??'')]);echo json_encode(['ok'=>true]);exit;
+ }
+ $q=$pdo->prepare("SELECT endereco,valor FROM bc_frete_consultas WHERE empresa=? AND id=? AND status='aceito' AND valor IS NOT NULL");$q->execute([$empresa,(int)($_POST['id']??0)]);$r=$q->fetch(PDO::FETCH_ASSOC);
+ $hash=$r?bcFreteEnderecoHash(json_decode($r['endereco'],true)?:[]):null;
+ if(!$hash){http_response_code(409);exit(json_encode(['erro'=>'Cotação aceita não encontrada']));}
+ $q=$pdo->prepare("INSERT INTO bc_frete_memoria (empresa,endereco_hash,endereco,valor,operador) VALUES (?,?,?,?,?) ON DUPLICATE KEY UPDATE valor=VALUES(valor),operador=VALUES(operador),endereco=VALUES(endereco),atualizado_em=NOW()");$q->execute([$empresa,$hash,$r['endereco'],$r['valor'],$usuario]);echo json_encode(['ok'=>true]);exit;
 }
 if($acao==='cotar'){
 $valor=str_replace(',','.',trim((string)($_POST['valor']??'')));
