@@ -36,3 +36,14 @@ function bcFreteHibrido(PDO $pdo,int $empresa,array $end,array $cfg): ?float {
  if($dist>(float)$cfg['limite'])return null;
  $km=(float)$cfg['km'];return round(ceil($dist)*($km>0?$km:1),2);
 }
+
+function bcFreteConsultaAceita(PDO $pdo,int $empresa,array $end): ?float {
+ if(($end['entrega']??'')!=='Delivery')return null;
+ $token=$_SESSION['bc_consulta_token'][$empresa]??'';
+ if(!$token)return null;
+ $normal=[];foreach(['rua','numero','bairro','cidade','cep'] as $k){$normal[$k]=trim((string)($end[$k]??''));}
+ $normal['entrega']='Delivery';
+ $q=$pdo->prepare("SELECT c.valor FROM bc_frete_consultas c JOIN bc_frete_consulta_config f ON f.empresa=c.empresa AND f.ativo=1 WHERE c.empresa=? AND c.token_hash=? AND c.endereco=? AND c.status='aceito' AND c.expira_em>NOW()");
+ $q->execute([$empresa,hash('sha256',$token),json_encode($normal,JSON_UNESCAPED_UNICODE)]);
+ $v=$q->fetchColumn();return $v===false||$v===null?null:(float)$v;
+}
