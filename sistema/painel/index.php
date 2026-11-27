@@ -1660,6 +1660,27 @@ html body .main-header .main-header-message > a.new.nav-link > .header-badge{pos
 
 
 
+<?php if(empty($_SESSION['bc_frete_csrf'])) $_SESSION['bc_frete_csrf']=bin2hex(random_bytes(32)); ?>
+<div id="bc-frete-alert" style="display:none;position:fixed;bottom:20px;right:16px;max-width:calc(100vw - 32px);z-index:1040;background:#fffaf5;border:1px solid #d7b5a0;border-radius:12px;padding:12px;box-shadow:0 4px 16px #0002;color:#4e2d20">
+<a href="bairros" style="color:#914a29;font-weight:600"><i class="fa-solid fa-bell"></i> Frete sob consulta <span id="bc-frete-count"></span></a>
+<button type="button" id="bc-frete-sound" aria-label="Ativar som de consultas" style="border:0;background:transparent;color:#914a29;margin-left:8px"><i class="fa-solid fa-volume-xmark"></i></button>
+</div>
+<script>
+(function(){
+const box=document.getElementById('bc-frete-alert'),count=document.getElementById('bc-frete-count'),sound=document.getElementById('bc-frete-sound');
+let seen=new Set(),audio=null,busy=false,enabled=false;
+sound.addEventListener('click',async function(){
+try{if(!audio)audio=new (window.AudioContext||window.webkitAudioContext)();await audio.resume();enabled=!enabled;sound.innerHTML=enabled?'<i class="fa-solid fa-volume-high"></i>':'<i class="fa-solid fa-volume-xmark"></i>';sound.setAttribute('aria-label',enabled?'Silenciar consultas':'Ativar som de consultas');if(enabled)beep();}catch(e){}
+});
+function beep(){if(!enabled||!audio||audio.state!=='running')return;const o=audio.createOscillator(),g=audio.createGain();o.frequency.value=740;g.gain.value=.12;o.connect(g);g.connect(audio.destination);o.start();g.gain.exponentialRampToValueAtTime(.001,audio.currentTime+.45);o.stop(audio.currentTime+.5);}
+async function poll(){if(busy)return;busy=true;try{
+const res=await fetch('paginas/bairros/frete_consulta.php',{method:'POST',body:new URLSearchParams({acao:'alertas',csrf:<?= json_encode($_SESSION['bc_frete_csrf']) ?>})});
+if(!res.ok){box.style.display='none';return;}
+const data=await res.json(),ids=(data.ids||[]).map(String);if(ids.some(id=>!seen.has(id)))beep();seen=new Set(ids);count.textContent='('+ids.length+')';box.style.display='block';
+}catch(e){}finally{busy=false;}}
+poll();setInterval(poll,10000);
+})();
+</script>
 </body>
 
 </html>
